@@ -24,12 +24,14 @@ Keep the failing command, its complete output, your operating system, and the ou
 
 ## Actions
 
-1. If `beskid` is not found, open a new terminal and inspect which executable the shell selects.
+1. If `beskid` is not found, inspect which executable a new terminal selects.
 2. If the version or host is wrong, compare `beskid --version` and `beskid up host-target` with the selected Downloads artifact.
-3. If `beskid analyze Main.bd --plain` fails, start at the first diagnostic and correct the named span. Keep the entrypoint spelling `Main`.
+3. If `beskid analyze Main.bd --plain` fails, correct the span in the first diagnostic while you keep the entrypoint spelling `Main`.
 4. If `beskid run Main.bd --plain` reaches linking and fails, reinstall the compiler and runtime kit from the same release.
-5. If VS Code has no diagnostics, run **Beskid: Install LSP**, reload the window, and inspect the extension output channel.
-6. Run one failed check again. Continue only after its observable result matches the task page.
+5. If VS Code has no diagnostics, run **Beskid: Install LSP**.
+6. Reload the VS Code window after the LSP installation completes.
+7. Inspect the extension output channel for the selected server path.
+8. Run one failed check again. Its observable result must match the task page before you continue.
 
 ```mermaid
 flowchart TD

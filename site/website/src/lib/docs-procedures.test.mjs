@@ -474,17 +474,19 @@ function section(body, heading) {
 }
 
 function assertOneObservableAction(path, content) {
-	const steps = [...content.matchAll(/^(\d+)\.\s+(.+)$/gm)];
+	const actionContent = content.split(/\n```mermaid\n|\n### Diagram text\n/, 1)[0];
+	const steps = [...actionContent.matchAll(/^(\d+)\.\s+(.+)$/gm)];
 	assert.ok(steps.length >= 2, `${path} must contain at least two numbered steps`);
+	const imperative = '(?:Accept|Add|Analyze|Build|Change|Check|Choose|Click|Commit|Compare|Complete|Configure|Confirm|Continue|Correct|Create|Declare|Download|Edit|Enter|Execute|Expand|Find|Focus|Give|Identify|Inject|Inspect|Install|Keep|Leave|List|Match|Name|Obtain|Open|Pack|Pass|Prefer|Prevent|Prohibit|Publish|Put|Read|Record|Regenerate|Reinstall|Reload|Render|Repeat|Replace|Require|Resolve|Restart|Restore|Return|Review|Run|Save|Search|Select|Set|Start|Stop|Submit|Treat|Update|Upload|Use|Verify|Wait|Write)';
 	for (const [, , action] of steps) {
 		const proseAction = action.replace(/`[^`]*`|\*\*[^*]*\*\*|\[[^\]]+\]\([^)]+\)/g, 'reference');
-		const actionStarts = proseAction.match(/(?:^|[.!?]\s+)(?:(?:After|Before|For|If|When)[^,]{0,100},\s*)?(?:Do not\s+)?(?:Accept|Change|Choose|Click|Configure|Continue|Expand|Focus|Inspect|Keep|Open|Put|Return|Run|Select|Set|Use|Verify)\b/gi) ?? [];
+		const actionStarts = proseAction.match(new RegExp(`(?:^|[.!?]\\s+)(?:(?:After|Before|For|From|If|On|To|When|With)[^,]{0,100},\\s*)?(?:Do not\\s+)?${imperative}\\b`, 'gi')) ?? [];
 		assert.equal(actionStarts.length, 1, `${path} must have one observable action in step: ${action}`);
-		assert.doesNotMatch(
-			proseAction,
-			/(?:,\s*|;\s*|\s)(?:and|then)\s+(?:accept|change|choose|click|configure|continue|expand|focus|inspect|keep|open|return|run|select|set|use|verify)\b/i,
-			`${path} must split the compound action: ${action}`,
-		);
+		const compoundAction = new RegExp(`(?:,\\s*|;\\s*|\\s)(?:and|then)\\s+${imperative}\\b`, 'i').exec(proseAction);
+		if (compoundAction) {
+			const clauseBeforeConjunction = proseAction.slice(0, compoundAction.index);
+			assert.match(clauseBeforeConjunction, /\bto\b[^.!?]*$/i, `${path} must split the compound action: ${action}`);
+		}
 	}
 }
 
@@ -535,51 +537,74 @@ async function loadPage(page) {
 	return { ...page, filePath: filePath.pathname, ...splitDocument(source, filePath.pathname) };
 }
 
-test('task pages provide complete executable procedures', async () => {
-	for (const page of await Promise.all(procedurePages.map(loadPage))) {
+test('declared task pages provide complete executable procedures', async () => {
+	const pages = await Promise.all((await technicalDocsFiles()).map(loadTechnicalDocsPage));
+	for (const page of pages.filter((candidate) => candidate.data.pageKind === 'task')) {
 		for (const heading of ['Prerequisites', 'Actions', 'Expected result', 'Recovery', 'Next task']) {
 			const content = section(page.body, heading);
 			assert.ok(content.length > 0, `${page.path} must contain non-empty ${heading}`);
 		}
 		const steps = [...section(page.body, 'Actions').matchAll(/^(\d+)\.\s+(.+)$/gm)];
-		assert.ok(steps.length >= 2, `${page.path} must contain at least two numbered actions`);
+		assert.ok(steps.length > 0, `${page.path} must contain numbered actions`);
 		assert.equal(new Set(steps.map((step) => step[2])).size, steps.length, `${page.path} actions must be distinct`);
 		for (const [, , action] of steps) {
 			assert.ok(action.trim().length >= 12, `${page.path} numbered actions must contain substantive text`);
 		}
 		assert.match(section(page.body, 'Actions'), /`[^`]+`|\[[^\]]+\]\([^)]+\)|```[a-z]*\n/i, `${page.path} actions must include a command, link, or configuration token`);
 		assert.match(section(page.body, 'Next task'), /\[[^\]]+\]\(\/[^)]+\)/, `${page.path} next task must contain an internal Markdown link`);
+		assertOneObservableAction(page.path, section(page.body, 'Actions'));
+	}
+});
+
+test('declared guide pages use guide structure and reject task headings', async () => {
+	const pages = await Promise.all((await technicalDocsFiles()).map(loadTechnicalDocsPage));
+	for (const page of pages.filter((candidate) => candidate.data.pageKind === 'guide')) {
+		for (const heading of ['Orientation', 'Limits', 'Next steps']) {
+			assert.ok(section(page.body, heading).length > 0, `${page.path} must contain non-empty ${heading}`);
+		}
+		assert.match(page.body, /^## (?:Choose|Use|Decide)\b.+$/m, `${page.path} must contain a decision-or-use section`);
+		for (const heading of ['Prerequisites', 'Actions', 'Expected result', 'Recovery', 'Next task']) {
+			assert.equal(section(page.body, heading), '', `${page.path} must not use task heading ${heading}`);
+		}
+	}
+});
+
+test('declared reference pages state scope, authority, and a mismatch-report path', async () => {
+	const pages = await Promise.all((await technicalDocsFiles()).map(loadTechnicalDocsPage));
+	for (const page of pages.filter((candidate) => candidate.data.pageKind === 'reference')) {
+		for (const heading of ['Scope', 'Authority', 'Report a mismatch']) {
+			assert.ok(section(page.body, heading).length > 0, `${page.path} must contain non-empty ${heading}`);
+		}
+		assert.match(section(page.body, 'Report a mismatch'), /\[[^\]]+\]\((?:https?:\/\/|\/)[^)]+\)/, `${page.path} must link to an explicit mismatch-report path`);
+	}
+});
+
+test('route-specific procedure expectations remain aligned with declared task pages', async () => {
+	for (const page of await Promise.all(procedurePages.filter((candidate) => ![
+		'docs/index.md',
+		'docs/getting-started/index.md',
+		'docs/tooling/index.md',
+		'docs/language-basics/index.md',
+		'docs/projects/index.md',
+		'docs/packages/index.md',
+		'docs/platform/index.md',
+		'docs/services/index.md',
+		'docs/operations/index.md',
+		'docs/reference/index.md',
+		'docs/reference/licensing.md',
+	].includes(candidate.path)).map(loadPage))) {
+		assert.equal(page.data.pageKind, 'task', `${page.path} procedure fixture must describe a task page`);
 		for (const [heading, key] of [
 			['Prerequisites', 'prerequisites'],
 			['Actions', 'actions'],
 			['Expected result', 'expectedResult'],
 			['Recovery', 'recovery'],
 		]) {
-			assert.ok(page.sections[key].length >= 2, `${page.path} must define meaningful ${heading} expectations`);
 			const content = section(page.body, heading);
 			for (const concept of page.sections[key]) {
 				assert.ok(content.includes(concept), `${page.path} ${heading} must explain ${concept}`);
 			}
 		}
-
-		assert.ok(Array.isArray(page.data.audience) && page.data.audience.length > 0, `${page.path} must name its audience`);
-		assert.ok(['task', 'guide', 'reference'].includes(page.data.pageKind), `${page.path} must identify its page kind`);
-		assert.ok(['required', 'not-needed'].includes(page.data.diagramPolicy), `${page.path} must identify its diagram policy`);
-		if (page.data.diagramPolicy === 'not-needed') {
-			assert.equal(typeof page.data.diagramOmissionReason, 'string', `${page.path} must record its diagram omission reason in frontmatter`);
-			assert.ok(page.data.diagramOmissionReason.length > 0, `${page.path} must record its diagram omission reason in frontmatter`);
-		}
-		for (const [field, value] of [
-			['description', page.data.description],
-			['authority.status', page.data.authority?.status],
-			['authority.sourceLabel', page.data.authority?.sourceLabel],
-			['authority.sourceHref', page.data.authority?.sourceHref],
-			['authority.limits', page.data.authority?.limits],
-		]) {
-			assert.ok(typeof value === 'string' && value.trim().length > 0, `${page.path} must define non-empty ${field}`);
-		}
-		assert.match(page.data.verified?.revision ?? '', /^[0-9a-f]{40}$/, `${page.path} must name a verified revision`);
-		assert.match(String(page.data.verified?.date ?? ''), /^2026-09-08$/, `${page.path} must name its verification date`);
 	}
 });
 
@@ -1160,7 +1185,8 @@ test('security-sensitive procedures protect secrets before operator actions', as
 	for (const path of ['docs/services/authentication.md', 'docs/operations/index.md', 'docs/operations/deployment.md', 'docs/packages/credentials-and-recovery.md']) {
 		const page = await loadPage(procedurePages.find((candidate) => candidate.path === path));
 		assert.equal(page.data.authority.status, 'security-sensitive', `${path} must use a security-sensitive annotation`);
-		const beforeActions = page.body.slice(0, page.body.indexOf('\n## Actions'));
+		const actionHeading = page.data.pageKind === 'guide' ? '\n## Choose an operating procedure' : '\n## Actions';
+		const beforeActions = page.body.slice(0, page.body.indexOf(actionHeading));
 		assert.match(beforeActions, /secret manager|OpenBao/i, `${path} must explain secret storage before actions`);
 		assert.match(beforeActions, /do not (?:print|commit|copy|put|store|expose)/i, `${path} must prohibit unsafe secret handling before actions`);
 	}
@@ -1200,7 +1226,7 @@ test('deployment guidance distinguishes verification from production control', a
 
 test('operator recovery and delivery steps stay within available ownership and evidence', async () => {
 	const operations = await loadPage(procedurePages.find((page) => page.path === 'docs/operations/index.md'));
-	const recovery = section(operations.body, 'Recovery');
+	const recovery = section(operations.body, 'Limits');
 	assert.match(recovery, /CI stops and reports/);
 	assert.match(recovery, /production operator owns (?:the )?(?:restore|rollback)/i);
 	assert.match(recovery, /rerun (?:production )?verification/i);

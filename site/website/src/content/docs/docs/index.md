@@ -23,11 +23,11 @@ verified:
 
 Use these guides for technical work with Beskid. Use the [Beskid Standard](/docs/standard/) when you need a normative requirement.
 
-## Prerequisites
+## Orientation
 
 Know the result that you want. You do not need to install Beskid to evaluate the documentation.
 
-## Actions
+## Choose a route
 
 1. Select your role in the diagram.
 2. Open the linked guide for your first task.
@@ -60,14 +60,12 @@ flowchart TD
 | Operate | Service operation guides in the Operate navigation group |
 | Contribute | [Documentation authoring](/docs/contributing/documentation/) |
 
-## Expected result
+## Limits
 
 You are on a task page whose audience and authority annotation match your work.
 
-## Recovery
-
 If a link describes a different task, return here and select the result that you need. If guidance conflicts with the standard, follow the standard and report the documentation mismatch.
 
-## Next task
+## Next steps
 
 Start with [Evaluate Beskid](/docs/evaluate/) to record readiness evidence. Open [Learn Beskid](/docs/learn/) for browser lessons. Otherwise, start with [installing Beskid](/docs/getting-started/install/).

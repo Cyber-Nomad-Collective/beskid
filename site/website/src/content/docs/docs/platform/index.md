@@ -17,11 +17,11 @@ verified:
 
 Use this guide to select a public platform task. Read public information before you sign in. Use an operator contract only for service operation, not ordinary product use.
 
-## Prerequisites
+## Orientation
 
 Use a browser and an internet connection. Identify the platform task that you need to complete. Record a public route and visible error when a service does not respond.
 
-## Actions
+## Choose a platform task
 
 1. Open [Use your account](/docs/platform/account/) when you need the Hub sign-in or account page.
 2. Open [Read Tracker](/docs/platform/tracker/) when you need delivery status or public bugs.
@@ -48,14 +48,12 @@ flowchart TD
 4. Use the Nexus task to select an indexed repository graph and inspect it.
 5. Use an operator contract only when a public route fails. It preserves service recovery actions outside ordinary product use.
 
-## Expected result
+## Limits
 
 You have a selected task for the account, delivery status, bug, or repository graph. You know that service recovery belongs in the linked operator contract.
 
-## Recovery
-
 If a public route fails, record its URL, time, and visible error. Give that record to the service operator. Do not provide a secret, pairing value, or private response body.
 
-## Next task
+## Next steps
 
 Open [Use your account](/docs/platform/account/) to begin with the Hub, or open [Read Tracker](/docs/platform/tracker/) to read delivery status.

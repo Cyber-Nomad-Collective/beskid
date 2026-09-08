@@ -161,7 +161,8 @@ The frontmatter classification that defines the required structure of a
 technical Docs page. A `task` has prerequisites, actions, an expected result,
 a recovery path, and a next task. A `guide` has orientation, a decision or use
 section, limits, and next steps. A `reference` states its scope and authority
-and explains how to report a mismatch.
+and explains how to report a mismatch. Each numbered task step has one
+observable reader action.
 
 ## Normative requirement
 

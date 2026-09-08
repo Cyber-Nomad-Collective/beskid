@@ -49,7 +49,7 @@ Select one project manifest. Ensure that each local dependency has one `.bproj` 
    beskid fetch --project ./App.bproj --plain
    ```
 
-4. Inspect `Project.lock` after every registry resolution. Compare `resolved_version` with the requested version. Stop the workflow if `resolved_version` differs from the requested version.
+4. Inspect `Project.lock` after every registry resolution for a `resolved_version` that matches the requested version. A mismatch stops the workflow.
 5. Review each materialized leaf under `obj/beskid/deps/src/<materialized-id>`.
 6. Require an existing lockfile that matches resolution:
 
@@ -57,7 +57,7 @@ Select one project manifest. Ensure that each local dependency has one `.bproj` 
    beskid fetch --project ./App.bproj --locked --plain
    ```
 
-7. Forbid lockfile updates during resolution:
+7. Prevent lockfile updates during resolution:
 
    ```bash
    beskid fetch --project ./App.bproj --frozen --plain

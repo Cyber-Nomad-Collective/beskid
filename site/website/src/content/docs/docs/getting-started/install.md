@@ -27,7 +27,7 @@ Confirm that your host is Linux AMD64, macOS ARM64, or Windows AMD64. Close term
 
 1. Open [Downloads](/downloads/).
 2. Select your exact operating system and architecture.
-3. Read the displayed release channel. Use stable for routine work. Treat unstable as a pre-release build.
+3. Select the displayed release channel that fits the work. Stable is for routine work, and unstable is a pre-release build.
 4. Use only an install command or package that the page displays. The direct installer puts the CLI at `~/.beskid/bin/beskid` on Linux and macOS. It uses `%USERPROFILE%\.beskid\bin\beskid.exe` on Windows.
 5. On Linux or macOS, the POSIX installer only prints a `PATH` instruction. Add this line to the relevant shell profile. You can also run it in the current shell:
 
@@ -61,7 +61,7 @@ Confirm that your host is Linux AMD64, macOS ARM64, or Windows AMD64. Close term
    beskid lsp install --release-tag lsp-stable
    ```
 
-11. To pin a direct installation, replace the example version with the immutable tag that Downloads displays:
+11. Replace the example version with the immutable tag that Downloads displays for a pinned direct installation:
 
    ```bash
    curl -fsSL https://beskid-lang.org/install.sh | BESKID_RELEASE_TAG=cli-v0.4.0 bash
@@ -73,7 +73,7 @@ Confirm that your host is Linux AMD64, macOS ARM64, or Windows AMD64. Close term
    beskid lsp install --release-tag lsp-v0.4.0
    ```
 
-12. To upgrade, repeat the Downloads install command for the channel or immutable tag that you need. Then install the corresponding LSP tag.
+12. Repeat the Downloads install command for the channel or immutable tag that you need. The corresponding LSP tag remains a separate installation.
 
 ```mermaid
 flowchart TD

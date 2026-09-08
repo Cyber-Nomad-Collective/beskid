@@ -37,7 +37,8 @@ Install Beskid. Confirm that you have an installed `console` template. Choose an
    ```
 
 3. Confirm that the command reports `Created template output at ./MyApp`. The installed template controls the emitted file names.
-4. Find the single `.bproj` manifest. Read its target name and source entry. Set the command values to those exact names, then analyze the target:
+4. Inspect the single `.bproj` manifest for its target name and source entry.
+5. Analyze the target with those exact values:
 
    ```bash
    project_manifest=./MyApp/MyApp.bproj

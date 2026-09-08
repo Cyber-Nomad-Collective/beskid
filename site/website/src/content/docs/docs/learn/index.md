@@ -27,11 +27,12 @@ Use a browser and an internet connection. Choose a lesson goal before you start.
 1. Open [Beskid Learn](https://learn.beskid-lang.org) in your browser.
 2. Select a lesson that matches the language feature or command that you want to learn.
 3. Edit the source in the lesson editor to complete the current instruction.
-4. Run the lesson check and wait for the result.
+4. Run the lesson check. Its result appears after the service completes the check.
 5. Read the diagnostic and its source location when the check reports an error.
 6. Use the lesson hint only when the diagnostic does not explain the next change.
-7. Edit the source and run the check again until the lesson reports success.
-8. Continue to the next lesson when you can explain the successful change.
+7. Edit the source to address the diagnostic or hint.
+8. Run the lesson check again until it reports success.
+9. Continue to the next lesson when you can explain the successful change.
 
 ```mermaid
 flowchart LR

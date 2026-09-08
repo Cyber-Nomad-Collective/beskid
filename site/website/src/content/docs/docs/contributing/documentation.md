@@ -1,7 +1,7 @@
 ---
 title: Write Beskid Documentation
 description: Write clear technical documentation with ASD-STE100 Simplified Technical English.
-pageKind: task
+pageKind: guide
 diagramPolicy: not-needed
 diagramOmissionReason: The authoring checklist and examples are clearer than a flow diagram.
 audience:
@@ -17,6 +17,10 @@ verified:
 ---
 
 Use ASD-STE100 Simplified Technical English, Issue 9, January 2025, for technical prose. Read the [official ASD-STE100 site](https://asd-ste100.org/) when you need the standard or its dictionary.
+
+## Orientation
+
+Identify the document audience and the information authority before you write. Keep normative requirements, current procedures, learning material, and dated news in their separate sources.
 
 ## Choose the correct source
 
@@ -37,3 +41,11 @@ Check that the title states the task. Check that links work. Run `pnpm review:st
 Run the website tests and build for Docs changes. Run OpenSpec validation for normative changes. The STE review tool gives authoring evidence; it does not certify compliance.
 
 The repository skill at `.claude/skills/ste-100-technical-documentation/SKILL.md` gives the same working rules to coding agents. It helps with authoring. It does not certify compliance.
+
+## Limits
+
+This guide explains the repository authoring policy. The ASD-STE100 publication and the Beskid Standard remain authoritative. The advisory review finds candidates, but a contributor must make the final review decision.
+
+## Next steps
+
+Use the [ASD-STE100 guide](/docs/contributing/ste-100/) for controlled-language checks. Use [Standard changes](/docs/contributing/standard-changes/) when the change affects normative behavior.

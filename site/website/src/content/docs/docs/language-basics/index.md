@@ -20,11 +20,11 @@ verified:
 
 Use the exact case shown in Beskid identifiers. The standard, not this summary, defines lexical and syntax behavior.
 
-## Prerequisites
+## Orientation
 
 Open the `Main.bd` source from [Write and run a program](/docs/getting-started/first-program/).
 
-## Actions
+## Use the first-program syntax
 
 1. Read the function from left to right:
 
@@ -41,14 +41,12 @@ Open the `Main.bd` source from [Write and run a program](/docs/getting-started/f
 6. Interpret `return 0;` as a return statement whose integer value is the process success status.
 7. Use [the Beskid Standard](/docs/standard/) for complete language requirements and [the Book](/book/) for lessons and larger examples.
 
-## Expected result
+## Limits
 
 You can identify the return type, entrypoint, parameter list, body, statement terminator, and returned value in the first program.
 
-## Recovery
-
 If analysis rejects an example, copy the verified source exactly and analyze it before you add syntax. Check case, braces, parentheses, and the semicolon at the diagnostic span.
 
-## Next task
+## Next steps
 
 Return to [Write and run a program](/docs/getting-started/first-program/) to execute the source, or continue through [the Book](/book/) for structured language lessons.

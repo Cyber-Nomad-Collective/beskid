@@ -47,8 +47,8 @@ Create two project directories. Put one `.bproj` manifest in each directory. Kee
    ```
 
 3. Source-path selection chooses the deepest matching member directory. Add `--workspace-member app` when you must override that result.
-4. With no input path and no `--workspace-member`, selection uses `defaultTestMember` and then the first declared member.
-5. Without `--target`, host target selection tries App, then Test, then Lib. It then uses the first remaining target.
+4. Use `defaultTestMember` when selection has no input path and no `--workspace-member`. Selection otherwise uses the first declared member.
+5. Use automatic host target selection only when its App, then Test, then Lib, then remaining-target order fits the task.
 6. Pass `--target` when the manifest has more than one target that could satisfy your task.
 
 ## Expected result

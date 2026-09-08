@@ -67,6 +67,11 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Enforce each technical Docs page structure from its declared page kind.
+  Discover all task, guide, and reference pages so coverage and procedure gates
+  cannot omit new routes. Give guide and reference pages distinct structures,
+  provide explicit mismatch-report paths, and keep one observable reader action
+  in each numbered task step.
 - Correct the operator guide to distinguish checksummed manifests from signed
   images and production verification from external Watchtower control. Limit
   operator evidence to workflow-owned validation and exposed run records, and

@@ -33,8 +33,9 @@ Install VS Code and complete [Install Beskid](/docs/getting-started/install/). K
 2. Open the directory that contains `Main.bd` in VS Code.
 3. Leave `beskid.lsp.server.path` empty to use automatic selection. The extension checks a managed binary first. It then checks a preferred bundled binary and a CLI-backed server.
 4. To select a specific server, set `beskid.lsp.server.path` to the absolute path of `beskid_lsp` or `beskid_lsp.exe`.
-5. Save `Main.bd` and inspect the Problems panel.
-6. Change `return 0;` to `return missingValue;`, save the file, and confirm that a diagnostic appears. Restore `return 0;` and save again.
+5. Save `Main.bd`. The Problems panel must show the current analysis result.
+6. Change `return 0;` to `return missingValue;`. The saved file must produce a diagnostic.
+7. Restore `return 0;`. The saved file must clear the diagnostic.
 
 ```mermaid
 flowchart TD

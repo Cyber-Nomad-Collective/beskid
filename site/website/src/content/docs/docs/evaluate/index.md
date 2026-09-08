@@ -24,13 +24,13 @@ State your intended use. Use a supported host: Linux on AMD64, macOS on ARM64, o
 ## Actions
 
 1. Record the intended use that you need to evaluate, such as a local program, a project, a package, or a public service.
-2. Open [Downloads](/downloads/) and confirm that it lists an artifact for your supported host.
-3. Record the displayed release channel or immutable tag. Do not treat either label as a maturity promise.
-4. If your intended use needs a local CLI or editor, complete [Write and run a program](/docs/getting-started/first-program/) and [Connect VS Code](/docs/getting-started/editor/). Record the results.
-5. If your intended use needs a project, read [Projects](/docs/projects/) and record whether the manifest and lock workflow fits.
-6. If your intended use needs a package, read [Packages](/docs/packages/) and record whether the package workflow and recovery limits fit.
-7. Only when your intended use needs a public service, check [Tracker](https://tracker.beskid-lang.org) for delivery status and record the date with the related issue or version link.
-8. Compare required language behavior with the [Beskid Standard](/docs/standard/) and record the exact capability or requirement link.
+2. Confirm that [Downloads](/downloads/) lists an artifact for your supported host.
+3. Record the displayed release channel or immutable tag without treating either label as a maturity promise.
+4. If your intended use needs a local CLI or editor, record the results from [Write and run a program](/docs/getting-started/first-program/) and [Connect VS Code](/docs/getting-started/editor/).
+5. If your intended use needs a project, record whether the manifest and lock workflow in [Projects](/docs/projects/) fits.
+6. If your intended use needs a package, record whether the workflow and recovery limits in [Packages](/docs/packages/) fit.
+7. Only when your intended use needs a public service, record the date and related issue or version from [Tracker](https://tracker.beskid-lang.org).
+8. Record the exact [Beskid Standard](/docs/standard/) capability or requirement for each required behavior.
 
 ```mermaid
 flowchart TD

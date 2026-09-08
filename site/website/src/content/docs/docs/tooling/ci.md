@@ -56,7 +56,7 @@ Commit the project `.bproj` manifest and `Project.lock`. Pin the same immutable 
    beskid build --project App.bproj --target App --release --frozen --plain
    ```
 
-7. Publish only the output from a job in which all prior commands succeeded.
+7. Use only the output from a job in which all prior commands succeeded for publication.
 
 ```mermaid
 flowchart LR

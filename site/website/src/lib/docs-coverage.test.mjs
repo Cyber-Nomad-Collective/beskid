@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
@@ -9,60 +9,20 @@ import { parse } from 'yaml';
 const root = new URL('../../../../', import.meta.url);
 const docsRoot = fileURLToPath(new URL('site/website/src/content/docs/docs/', root));
 
-const expectedRoutes = [
-	'/docs/',
-	'/docs/evaluate/',
-	'/docs/learn/',
-	'/docs/getting-started/',
-	'/docs/getting-started/install/',
-	'/docs/getting-started/first-program/',
-	'/docs/getting-started/editor/',
-	'/docs/getting-started/troubleshooting/',
-	'/docs/editor/',
-	'/docs/editor/vs-code/',
-	'/docs/extend/',
-	'/docs/extend/bsol/',
-	'/docs/extend/templates/',
-	'/docs/extend/tree-sitter/',
-	'/docs/extend/web-packages/',
-	'/docs/tooling/',
-	'/docs/tooling/build-run-test/',
-	'/docs/tooling/ci/',
-	'/docs/language-basics/',
-	'/docs/projects/',
-	'/docs/projects/create/',
-	'/docs/projects/workspaces/',
-	'/docs/projects/dependencies-and-locks/',
-	'/docs/packages/',
-	'/docs/packages/publish/',
-	'/docs/packages/consume/',
-	'/docs/packages/credentials-and-recovery/',
-	'/docs/platform/',
-	'/docs/platform/account/',
-	'/docs/platform/tracker/',
-	'/docs/platform/report-bug/',
-	'/docs/platform/nexus/',
-	'/docs/services/',
-	'/docs/services/authentication/',
-	'/docs/services/learn/',
-	'/docs/services/pckg/',
-	'/docs/services/tracker/',
-	'/docs/services/nexus/',
-	'/docs/operations/',
-	'/docs/operations/containers/',
-	'/docs/operations/deployment/',
-	'/docs/operations/health-and-monitoring/',
-	'/docs/contributing/',
-	'/docs/contributing/repository/',
-	'/docs/contributing/superrepo-workflow/',
-	'/docs/contributing/learn-curriculum/',
-	'/docs/contributing/standard-changes/',
-	'/docs/contributing/documentation/',
-	'/docs/contributing/ste-100/',
-	'/docs/reference/',
-	'/docs/reference/licensing/',
-	'/docs/standard/',
-];
+async function technicalDocsFiles(directory = docsRoot) {
+	const entries = await readdir(directory, { withFileTypes: true });
+	const nested = await Promise.all(entries.map((entry) => {
+		const entryPath = path.join(directory, entry.name);
+		return entry.isDirectory() ? technicalDocsFiles(entryPath) : [entryPath];
+	}));
+	return nested.flat().filter((filePath) => /\.mdx?$/.test(filePath)).sort();
+}
+
+function docsRoute(filePath) {
+	const relative = path.relative(docsRoot, filePath).replaceAll(path.sep, '/').replace(/\.mdx?$/, '');
+	const suffix = relative === 'index' ? '' : relative.endsWith('/index') ? relative.slice(0, -'/index'.length) : relative;
+	return `/docs/${suffix ? `${suffix}/` : ''}`;
+}
 
 function navigationLinks(items) {
 	return items.flatMap((item) => 'items' in item ? navigationLinks(item.items) : [item.link]);
@@ -83,12 +43,14 @@ function frontmatter(source, filePath) {
 }
 
 test('catalogues every public Docs surface and keeps it aligned with the sole navigation model', async () => {
-	const [coverageModule, navigationModule] = await Promise.all([
+	const [coverageModule, navigationModule, files] = await Promise.all([
 		tsImport('../data/docs-coverage.ts', import.meta.url),
 		tsImport('../data/docs-navigation.ts', import.meta.url),
+		technicalDocsFiles(),
 	]);
 	const coverage = coverageModule.docsCoverage;
 	const routes = coverage.map((surface) => surface.route).sort();
+	const expectedRoutes = files.map(docsRoute).sort();
 
 	assert.deepEqual(routes, [...expectedRoutes].sort(), 'every public Docs surface must have one coverage entry');
 	assert.deepEqual(
