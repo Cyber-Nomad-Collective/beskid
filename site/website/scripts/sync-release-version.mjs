@@ -16,6 +16,34 @@ if (CHANNEL !== "stable" && CHANNEL !== "unstable") {
 
 const SEMVER_PREFIX = /^\d+\.\d+\.\d+/;
 const PREFERRED_MAJOR = "0.4.";
+const TRANSIENT_HTTP_STATUSES = new Set([429, 500, 502, 503, 504]);
+const RELEASE_LOOKUP_ATTEMPTS = 3;
+const RELEASE_LOOKUP_RETRY_DELAY_MS = 1000;
+
+export async function fetchWithRetry(
+	url,
+	options,
+	{ fetchImpl = fetch, sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds)) } = {},
+) {
+	let lastError;
+	for (let attempt = 1; attempt <= RELEASE_LOOKUP_ATTEMPTS; attempt += 1) {
+		try {
+			const response = await fetchImpl(url, options);
+			if (!TRANSIENT_HTTP_STATUSES.has(response.status) || attempt === RELEASE_LOOKUP_ATTEMPTS) {
+				return response;
+			}
+		} catch (error) {
+			lastError = error;
+			if (attempt === RELEASE_LOOKUP_ATTEMPTS) {
+				throw error;
+			}
+		}
+
+		await sleep(RELEASE_LOOKUP_RETRY_DELAY_MS * attempt);
+	}
+
+	throw lastError ?? new Error("GitHub release lookup failed without a response");
+}
 
 function resolveRollingTag(channel) {
 	return channel === "unstable" ? "cli-unstable" : "cli-stable";
@@ -70,7 +98,7 @@ function pickLatest(entries) {
 const rollingTag = resolveRollingTag(CHANNEL);
 
 async function resolveVersionFromRollingTag(tag) {
-	const releaseResponse = await fetch(`${REPO_API_BASE}/releases/tags/${encodeURIComponent(tag)}`, {
+	const releaseResponse = await fetchWithRetry(`${REPO_API_BASE}/releases/tags/${encodeURIComponent(tag)}`, {
 		headers: { Accept: "application/vnd.github+json", "User-Agent": "beskid-website-build" },
 	});
 	if (!releaseResponse.ok) {
@@ -89,14 +117,14 @@ async function resolveVersionFromRollingTag(tag) {
 		return undefined;
 	}
 
-	const payloadResponse = await fetch(payloadAsset.browser_download_url, {
+	const payloadResponse = await fetchWithRetry(payloadAsset.browser_download_url, {
 		headers: { "User-Agent": "beskid-website-build" },
 	});
 	if (!payloadResponse.ok) {
 		return undefined;
 	}
 
-const raw = await payloadResponse.text();
+	const raw = await payloadResponse.text();
 	const version = parseVersion(raw.trim());
 	return version
 		? {
@@ -106,62 +134,68 @@ const raw = await payloadResponse.text();
 		: undefined;
 }
 
-let selected = await resolveVersionFromRollingTag(rollingTag);
+export async function syncReleaseVersion() {
+	let selected = await resolveVersionFromRollingTag(rollingTag);
 
-if (!selected && CHANNEL === "unstable") {
-	selected = await resolveVersionFromRollingTag("cli-stable");
-}
-
-if (!selected) {
-	const releases = [];
-	for (let page = 1; ; page += 1) {
-		const response = await fetch(
-			`${REPO_API_BASE}/releases?per_page=100&page=${page}`,
-			{ headers: { Accept: "application/vnd.github+json", "User-Agent": "beskid-website-build" } },
-		);
-		if (!response.ok) {
-			throw new Error(`GitHub release lookup failed (${response.status})`);
-		}
-
-		const pageReleases = await response.json();
-		if (!Array.isArray(pageReleases) || pageReleases.length === 0) {
-			break;
-		}
-
-		releases.push(
-			...pageReleases
-				.filter(
-					(release) =>
-						!release.draft &&
-						!release.prerelease &&
-						/^cli-v\d+\.\d+\.\d+/.test(release.tag_name),
-				)
-				.map((release) => ({
-					tag: release.tag_name,
-					version: release.tag_name.slice("cli-v".length),
-					published: Date.parse(release.published_at ?? ""),
-				})),
-		);
+	if (!selected && CHANNEL === "unstable") {
+		selected = await resolveVersionFromRollingTag("cli-stable");
 	}
 
-	const preferredMajor = releases.filter((entry) => entry.version.startsWith(PREFERRED_MAJOR));
-	selected = pickLatest(preferredMajor.length > 0 ? preferredMajor : releases);
+	if (!selected) {
+		const releases = [];
+		for (let page = 1; ; page += 1) {
+			const response = await fetchWithRetry(
+				`${REPO_API_BASE}/releases?per_page=100&page=${page}`,
+				{ headers: { Accept: "application/vnd.github+json", "User-Agent": "beskid-website-build" } },
+			);
+			if (!response.ok) {
+				throw new Error(`GitHub release lookup failed (${response.status})`);
+			}
+
+			const pageReleases = await response.json();
+			if (!Array.isArray(pageReleases) || pageReleases.length === 0) {
+				break;
+			}
+
+			releases.push(
+				...pageReleases
+					.filter(
+						(release) =>
+							!release.draft &&
+							!release.prerelease &&
+							/^cli-v\d+\.\d+\.\d+/.test(release.tag_name),
+					)
+					.map((release) => ({
+						tag: release.tag_name,
+						version: release.tag_name.slice("cli-v".length),
+						published: Date.parse(release.published_at ?? ""),
+					})),
+			);
+		}
+
+		const preferredMajor = releases.filter((entry) => entry.version.startsWith(PREFERRED_MAJOR));
+		selected = pickLatest(preferredMajor.length > 0 ? preferredMajor : releases);
+	}
+
+	if (!selected) {
+		throw new Error("No immutable CLI release was found");
+	}
+
+	const version = selected.version;
+	const payload = {
+		version,
+		source: "github",
+		downloadTag: selected.tag,
+		latestTag: rollingTag,
+		releasePageUrl: `https://github.com/${repository}/releases/tag/${selected.tag}`,
+		latestReleasePageUrl: `https://github.com/${repository}/releases/tag/${rollingTag}`,
+	};
+
+	await mkdir(dirname(outputPath), { recursive: true });
+	await writeFile(outputPath, `${JSON.stringify(payload, null, 2)}\n`, "utf8");
+	console.log(`sync-release-version: wrote ${outputPath} (${version})`);
 }
 
-if (!selected) {
-	throw new Error("No immutable CLI release was found");
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+	await syncReleaseVersion();
 }
-
-const version = selected.version;
-const payload = {
-	version,
-	source: "github",
-	downloadTag: selected.tag,
-	latestTag: rollingTag,
-	releasePageUrl: `https://github.com/${repository}/releases/tag/${selected.tag}`,
-	latestReleasePageUrl: `https://github.com/${repository}/releases/tag/${rollingTag}`,
-};
-
-await mkdir(dirname(outputPath), { recursive: true });
-await writeFile(outputPath, `${JSON.stringify(payload, null, 2)}\n`, "utf8");
-console.log(`sync-release-version: wrote ${outputPath} (${version})`);

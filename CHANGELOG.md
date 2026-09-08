@@ -39,6 +39,12 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   core-library revisions, so CI can fetch the complete deployment graph.
 - Learn's release image now includes the compiler license metadata required by
   the runtime-kit build. Platform delivery also runs when templates change.
+- Programs now resolve the bundled `Core` namespace without repeating
+  `use Core.*` declarations. Website release-version generation retries
+  transient GitHub gateway failures while preserving fail-closed behavior for
+  invalid release responses.
+- The platform-delivery contract test now requires the restored corelib gate
+  before release-manifest promotion.
 
 ### Changed
 
