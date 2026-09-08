@@ -5,6 +5,7 @@ set -euo pipefail
 root="$(cd "$(dirname "$0")/../../.." && pwd)"
 extension_root="${root}/editors/zed"
 language_root="${extension_root}/languages/beskid"
+manifest_language_root="${extension_root}/languages/beskid-manifest"
 bsol_language_root="${extension_root}/languages/bsol"
 tree_sitter_cli='npx --yes tree-sitter-cli@0.25.10'
 scratch_dir="$(mktemp -d "${TMPDIR:-/tmp}/beskid-zed-language-assets.XXXXXX")"
@@ -61,6 +62,8 @@ for asset in \
   "${extension_root}/tests/fixtures/runnables.bd" \
   "${bsol_language_root}/config.toml" \
   "${bsol_language_root}/highlights.scm" \
+  "${manifest_language_root}/config.toml" \
+  "${manifest_language_root}/highlights.scm" \
   "${extension_root}/tests/fixtures/bsol.bsol"; do
   require_nonempty "$asset"
 done
@@ -108,6 +111,8 @@ bsol_worktree_added=true
   fail "manifest-pinned BSOL grammar ${bsol_grammar_commit} is missing committed src/parser.c"
 cmp -s "${bsol_grammar_checkout}/queries/highlights.scm" "${bsol_language_root}/highlights.scm" || \
   fail 'packaged BSOL highlights query has drifted from its pinned grammar source'
+cmp -s "${bsol_grammar_checkout}/queries/highlights.scm" "${manifest_language_root}/highlights.scm" || \
+  fail 'packaged manifest highlights query has drifted from the pinned BSOL grammar source'
 printf '{"parser-directories":["%s","%s"]}\n' "${parser_directory}" "${bsol_checkout}/grammars" >"${tree_sitter_config}"
 
 node - "${extension_root}/extension.toml" "${language_root}/tasks.json" \
@@ -174,6 +179,7 @@ require_text "${language_root}/runnables.scm" '(#set! tag beskid-test)'
 require_text "${language_root}/runnables.scm" '@entrypoint'
 require_text "${language_root}/runnables.scm" '(#set! tag beskid-entry)'
 require_text "${bsol_language_root}/config.toml" 'grammar = "bsol"'
+require_text "${manifest_language_root}/config.toml" 'grammar = "bsol"'
 require_text "${bsol_language_root}/highlights.scm" '(block (block_kind) @keyword)'
 require_text "${bsol_language_root}/highlights.scm" '(assignment (identifier) @property)'
 require_text "${bsol_language_root}/highlights.scm" '(comment) @comment'
@@ -183,6 +189,14 @@ for snippet in "${scratch_dir}"/snippet-*.bd; do
   parse_without_errors source.beskid "$snippet"
 done
 parse_without_errors source.bsol "${extension_root}/tests/fixtures/bsol.bsol"
+for bsol_schema in "${bsol_checkout}"/schemas/*.bsol; do
+  parse_without_errors source.bsol "${bsol_schema}"
+done
+for manifest_fixture in \
+  "${root}/compiler/crates/beskid_e2e_tests/fixtures/smoke_project/SmokeProject.bproj" \
+  "${root}/compiler/crates/beskid_e2e_tests/fixtures/deps_workspace/DepsWorkspace.bws"; do
+  parse_without_errors source.bsol "${manifest_fixture}"
+done
 
 for query in outline indents brackets runnables; do
   query_output="${scratch_dir}/${query}.matches"
@@ -210,5 +224,16 @@ ${tree_sitter_cli} query --config-path "${tree_sitter_config}" --scope source.bs
   fail 'BSOL highlights.scm did not capture assignment keys as properties'
 [[ "$(grep -Fc 'comment' "${bsol_matches}")" -eq 1 ]] || \
   fail 'BSOL highlights.scm did not capture the fixture comment'
+
+for manifest_fixture in \
+  "${root}/compiler/crates/beskid_e2e_tests/fixtures/smoke_project/SmokeProject.bproj" \
+  "${root}/compiler/crates/beskid_e2e_tests/fixtures/deps_workspace/DepsWorkspace.bws"; do
+  manifest_matches="${scratch_dir}/$(basename "${manifest_fixture}").highlights.matches"
+  ${tree_sitter_cli} query --config-path "${tree_sitter_config}" --scope source.bsol \
+    "${manifest_language_root}/highlights.scm" "${manifest_fixture}" >"${manifest_matches}" || \
+    fail "manifest highlights.scm does not compile for ${manifest_fixture#"${root}/"}"
+  [[ -s "${manifest_matches}" ]] || \
+    fail "manifest highlights.scm did not match ${manifest_fixture#"${root}/"}"
+done
 
 printf 'Zed language asset tests OK\n'

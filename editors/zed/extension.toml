@@ -19,7 +19,7 @@ commit = "d27b6f966f1d841de57f622804211a6dd9f9c64e"
 
 [grammars.bsol]
 repository = "https://github.com/Cyber-Nomad-Collective/beskid_bsol"
-commit = "87f25ff7282443b9030f0b77f2ce121ff9b4c32e"
+commit = "f227b51ec3352fb449a8b9ffc3d1f07a74159bb9"
 path = "grammars/tree-sitter-bsol"
 
 [language_servers.beskid-lsp]

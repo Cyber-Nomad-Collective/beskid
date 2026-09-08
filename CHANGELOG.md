@@ -39,6 +39,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   publication dispatch, and document the initial registry submission metadata.
 - Zed extension: pin the reviewed registry action source, reduce its repository
   token to read-only contents access, and validate SDK metadata as parsed TOML.
+- Zed extension: reuse the complete canonical BSOL Tree-sitter grammar for
+  `.bsol`, `.bproj`, and `.bws`, and parse every production schema fixture in
+  the language-assets gate so highlighting cannot silently drift to a subset.
 - Production site smoke checks now reject redirects and other non-2xx
   responses, so an authentication proxy or routing drift cannot be promoted as
   a healthy public website.

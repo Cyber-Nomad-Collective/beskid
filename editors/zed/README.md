@@ -92,9 +92,11 @@ download. An explicit override or PATH installation can still work elsewhere.
 ## Editor features and tasks
 
 The package owns Tree-sitter highlighting, symbols, outline, indentation,
-brackets, runnable captures, and declaration snippets. Standard semantic token
-types from `beskid_lsp` use Zed's built-in mappings. To combine them with
-Tree-sitter highlighting, set `"semantic_tokens": "combined"` in Zed settings.
+brackets, runnable captures, and declaration snippets. `.bsol`, `.bproj`, and
+`.bws` all reuse the one pinned BSOL grammar for structural highlighting.
+Standard semantic token types from `beskid_lsp` add configuration-aware roles
+through Zed's built-in mappings. To combine them with Tree-sitter highlighting,
+set `"semantic_tokens": "combined"` in Zed settings.
 The package intentionally has no custom semantic-token rules because the server
 advertises standard token types only; Beskid-specific token types would require
 verified mappings before being added.

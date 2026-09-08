@@ -25,10 +25,11 @@ The current normative requirements in `openspec/specs`. A text outside that dire
 ## BSOL (Beskid Structured Object Language)
 
 The generic block syntax used by `.bproj`, `.bws`, and standalone `.bsol`
-documents. In Zed, standalone `.bsol` is a separate `bsol` language ID routed
-to the native `beskid_lsp`; it has generic diagnostics and limited
-`@schemaless` assistance plus highlighting from the pinned nested
-`beskid_bsol` Tree-sitter grammar.
+documents. In Zed, all three reuse the same pinned `beskid_bsol` Tree-sitter
+grammar for structure and the same native `beskid_lsp` for semantic editor
+features. Standalone `.bsol` remains a separate `bsol` language ID with generic
+diagnostics and `@schemaless` assistance rather than project-manifest schema
+rules.
 
 ## Beskid service licensing boundary
 

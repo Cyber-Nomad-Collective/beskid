@@ -1,4 +1,5 @@
 name = "Beskid Manifest"
+grammar = "bsol"
 path_suffixes = ["bproj", "bws"]
 line_comments = ["# "]
 block_comment = ["/*", " */"]
