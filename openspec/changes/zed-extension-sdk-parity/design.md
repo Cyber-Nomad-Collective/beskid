@@ -21,7 +21,7 @@ so registry packaging cannot accidentally select a second implementation.
 
 The extension resolves the Beskid language-server binary in exactly this order:
 (1) explicit trusted user override; (2) `beskid_lsp` on PATH; (3) `beskid` on
-PATH, invoked as `beskid lsp`; (4) the `lsp-stable` release download. An
+PATH, invoked as `beskid dev tooling lsp`; (4) the `lsp-stable` release download. An
 override is a user-selected nonempty path and arguments structure. The WASM
 extension host validates that structure but cannot inspect arbitrary executable
 contents or prove binary compatibility before launch. The download comes from

@@ -17,7 +17,7 @@
 - The extension package root is exactly `editors/zed`; no Zed package implementation remains at the repository root or under `.zed`.
 - Build the Rust extension for `wasm32-wasip2`, never `wasm32-wasip1`.
 - Keep `beskid_lsp` as semantic and workspace authority; do not parse Beskid manifests or rebuild graphs in the extension.
-- Resolve an explicit Zed binary override first, then `beskid_lsp` on PATH, then `beskid` on PATH as `beskid lsp`, then the `lsp-stable` GitHub release.
+- Resolve an explicit Zed binary override first, then `beskid_lsp` on PATH, then `beskid` on PATH as `beskid dev tooling lsp`, then the `lsp-stable` GitHub release.
 - Preserve explicit binary arguments and environment exactly; default native-server invocation uses `--stdio`.
 - Supported release assets are Linux x86-64, macOS arm64, and Windows x86-64; all other pairs fail closed.
 - Restrict download capability to `github.com/Cyber-Nomad-Collective/beskid_compiler/**` and process execution to Beskid commands.
@@ -208,7 +208,7 @@ assert_eq!(select_launch(None, None, None), LaunchChoice::Download);
 ```
 
 Also test that override arguments and environment remain unchanged and that
-default commands become `beskid_lsp --stdio` and `beskid lsp`.
+default commands become `beskid_lsp --stdio` and `beskid dev tooling lsp`.
 
 - [ ] **Step 4: Implement launch selection and make tests green**
 
