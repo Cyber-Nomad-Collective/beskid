@@ -15,11 +15,12 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   reports sentence-length, passive-voice, abbreviation, and article candidates
   with file and line evidence; joins wrapped prose without crossing Markdown
   block boundaries; retains inline MDX container prose while excluding
-  lexically balanced expressions, including regular-expression literals;
-  evaluates abbreviation explanations in document order; joins lazy list
-  continuations; detects controlled regular and irregular passive forms; skips
-  symbolic links and syntax that must stay exact; and rejects vague, unused, or
-  stale exceptions. The tool does not certify ASD-STE100 compliance.
+  lexically balanced expressions, including regular-expression literals in
+  argument, condition, array, and index operand positions; evaluates
+  abbreviation explanations in document order; joins lazy list continuations;
+  detects controlled regular and irregular passive forms; skips symbolic links
+  and syntax that must stay exact; and rejects vague, unused, or stale
+  exceptions. The tool does not certify ASD-STE100 compliance.
 - Generate stable public identity pages for all OpenSpec capabilities and
   requirements from the checked-in catalog. Preserve known Platform Spec
   aliases and valid requirement fragments, link every identity to its

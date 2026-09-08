@@ -199,7 +199,8 @@ function mdxProse(line, state) {
 					state.expressionReturnMode = null;
 				}
 				else state.canStartRegex = false;
-			} else if (character === ')' || character === ']') state.canStartRegex = false;
+			} else if (character === '(' || character === '[') state.canStartRegex = true;
+			else if (character === ')' || character === ']') state.canStartRegex = false;
 			else if (character === '.') state.canStartRegex = false;
 			else if ((character === '+' || character === '-') && next === character && !state.canStartRegex) {
 				state.canStartRegex = false;

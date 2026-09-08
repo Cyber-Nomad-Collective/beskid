@@ -80,6 +80,30 @@ test('uses regular-expression lexical state inside JSX attribute expressions', (
 	]);
 });
 
+test('recognizes operand positions after parentheses and brackets without breaking division', async (t) => {
+	const expressions = [
+		['function argument', String.raw`{matches(/\{/, "QBI was built")}`],
+		['JSX attribute function argument', String.raw`<Aside matcher={matches(/\{/, "QBI was built")}>\nThe XYZ result was built by the tool.\n</Aside>`],
+		['if condition', String.raw`{(() => { if (/\{/.test(value)) return "QBI was built"; })()}`],
+		['computed index expression', String.raw`{patterns[/\{/].test("QBI was built")}`],
+		['array literal', String.raw`{[/\{/].some((pattern) => pattern.test(value))}`],
+		['division', String.raw`{total / count}`],
+		['index followed by division', String.raw`{items[index] / count}`],
+	];
+
+	for (const [name, expression] of expressions) {
+		await t.test(name, () => {
+			const source = expression.includes('\n') ? expression : `${expression}\nThe XYZ result was built by the tool.`;
+			const candidates = reviewDocument(`${source}\n`, 'operand-position.mdx');
+
+			assert.deepEqual(candidates.map(({ line, rule, token }) => ({ line, rule, ...(token ? { token } : {}) })), [
+				{ line: 2, rule: 'passive-voice' },
+				{ line: 2, rule: 'unexplained-abbreviation', token: 'XYZ' },
+			]);
+		});
+	}
+});
+
 test('applies abbreviation explanations in source order inside a joined paragraph', () => {
 	const candidates = reviewDocument(`This sentence starts here\nand uses QBI before the quality boundary interface\n(QBI) explanation appears. Use QBI after the explanation.\n`, 'ordered-terms.md');
 
