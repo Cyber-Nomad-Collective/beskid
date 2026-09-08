@@ -56,6 +56,13 @@ if [[ "${promotion_content}" != *'manifest-base64:'* ]] ||
   exit 1
 fi
 
+production_block="$(sed -n '/^  production:/,$p' "${workflow}")"
+if [[ "${promotion_content}" == *$'  actions: read'* ]] &&
+   [[ "${production_block}" != *$'      actions: read'* ]]; then
+  echo "production must grant the reusable promotion workflow its declared actions permission" >&2
+  exit 1
+fi
+
 report_block="$(sed -n '/- name: Upload vulnerability report/,/- uses: sigstore\/cosign-installer/p' "${image_workflow}")"
 if [[ "${report_block}" != *'continue-on-error: true'* ]]; then
 	echo "vulnerability report upload must remain best-effort after a successful image push" >&2

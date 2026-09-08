@@ -230,6 +230,7 @@ jobs:
     needs: manifest
     if: ${{ !cancelled() && needs.manifest.result == 'success' }}
     permissions:
+      actions: read
       contents: read
       deployments: write
       id-token: write
