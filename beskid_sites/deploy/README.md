@@ -26,11 +26,15 @@ The production host is `root@bdziam.dev`; the runtime directory defaults to
 `/opt/beskid`. Before the first apply, an operator must provide:
 
 - DNS for `beskid-lang.org`, `learn`, `tracker`, `nexus`, `pckg`,
-  `cr`, and `auth` subdomains.
+`cr`, and `auth` subdomains.
 - OpenBao production secrets, or a populated local `.env` copied from
   `.env.example`. Do not commit `.env`.
 - An `authelia/users_database.yml` file copied from the example with an Argon2
   password hash for the administrator.
+
+The Authelia portal uses the Beskid logo and Authelia’s supported dark theme.
+The assets live in `authelia/assets/`; do not add custom portal CSS because
+Authelia does not provide a stable CSS override API.
 - `BESKID_EDGE_NETWORK`, the existing host network used by the shared Caddy
   Docker proxy. Beskid joins this network but does not own its ports or proxy.
 

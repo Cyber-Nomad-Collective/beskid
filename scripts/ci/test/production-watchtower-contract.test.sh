@@ -35,6 +35,7 @@ forbid '^  auth:' "$compose"
 forbid '^  community:' "$compose"
 require '  authelia:' "$compose"
 require 'authelia/authelia:4.39.20' "$compose"
+require './authelia/assets:/config/assets:ro' "$compose"
 require 'AUTHELIA_SESSION_SECRET' "$env_example"
 require 'AUTHELIA_STORAGE_ENCRYPTION_KEY' "$env_example"
 

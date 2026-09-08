@@ -11,6 +11,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- The Authelia portal now uses the Beskid logo and Authelia’s supported dark
+  theme through versioned asset overrides.
 - Authelia is restored as the sole browser authentication gateway for every
   public Beskid application in the Compose and Watchtower deployment.
 - Production delivery now uses only the self-hosted Compose stack and

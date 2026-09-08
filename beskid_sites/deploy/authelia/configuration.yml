@@ -1,6 +1,7 @@
 # Authelia is the only browser authentication boundary for the Beskid platform.
 server:
   address: tcp://0.0.0.0:9091
+  asset_path: /config/assets
   endpoints:
     authz:
       forward-auth:
@@ -14,6 +15,7 @@ authentication_backend:
     path: /config/users_database.yml
 access_control:
   default_policy: one_factor
+theme: dark
 session:
   cookies:
     - domain: beskid-lang.org
