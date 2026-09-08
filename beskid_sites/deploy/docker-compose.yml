@@ -306,7 +306,17 @@ services:
       com.beskid.release: production
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://pckg.beskid-lang.org
-      caddy_0.reverse_proxy: "{{upstreams 8082}}"
+      # Keep the catalogue public. The outpost path establishes the proxy
+      # session; only callers that already carry that session are checked and
+      # receive the identity headers pckg needs for its dashboard APIs.
+      "caddy_0.@pckg_authentik_session.header_regexp": pckg_authentik Cookie authentik_proxy_[^=]+=
+      caddy_0.route_0: /outpost.goauthentik.io/*
+      caddy_0.route_0.0_reverse_proxy: authentik-server:9000
+      caddy_0.route_1: "@pckg_authentik_session"
+      caddy_0.route_1.0_forward_auth: authentik-server:9000
+      caddy_0.route_1.0_forward_auth.uri: /outpost.goauthentik.io/auth/caddy
+      caddy_0.route_1.0_forward_auth.copy_headers: X-Authentik-Username X-Authentik-Groups X-Authentik-Entitlements X-Authentik-Email X-Authentik-Name X-Authentik-Uid X-Authentik-Jwt
+      caddy_0.route_2.reverse_proxy: "{{upstreams 8082}}"
     networks:
       - beskid-edge
       - beskid-backend
@@ -317,6 +327,10 @@ services:
         condition: service_healthy
     env_file:
       - ${BESKID_ENV_FILE:-.env}
+    environment:
+      SHELL_AUTH_MODE: authentik
+      SHELL_ADMIN_GROUP: pckg-admins
+      SHELL_MODERATOR_GROUP: pckg-moderators
     volumes:
       - pckg-packages:/app/packages
       - pckg-data:/app/data

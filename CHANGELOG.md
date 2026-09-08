@@ -24,6 +24,10 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- pckg now routes its Authentik outpost callback correctly and forwards the
+  verified identity only for visitors with an Authentik proxy session. The
+  public catalogue stays reachable without sign-in while dashboard requests
+  receive the identity headers required by the registry.
 - Production now serves the public website, Learn, and pckg routes directly
   through the shared Caddy edge. Tracker and Nexus retain their Authentik
   protection, preventing the former global edge policy from redirecting public

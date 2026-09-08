@@ -37,11 +37,11 @@ require_public_service() {
   block="$(service_block "${service}")"
 
   [[ -n "${block}" ]] || { echo "missing ${service} service block" >&2; exit 1; }
-  [[ "${block}" == *"caddy_0.reverse_proxy: \"{{upstreams ${upstream}}}\""* ]] || {
+  [[ "${block}" == *"caddy_0.reverse_proxy: \"{{upstreams ${upstream}}}\""* || "${block}" == *"caddy_0.route_2.reverse_proxy: \"{{upstreams ${upstream}}}\""* ]] || {
     echo "${service} must route directly through Caddy" >&2
     exit 1
   }
-  [[ "${block}" != *"authentik-forward-auth"* && "${block}" != *"forward_auth"* ]] || {
+  [[ "${service}" == "pckg" || ( "${block}" != *"authentik-forward-auth"* && "${block}" != *"forward_auth"* ) ]] || {
     echo "${service} must remain publicly reachable without Authentik" >&2
     exit 1
   }
@@ -111,6 +111,24 @@ require_public_service learn 80
 require_public_service pckg 8082
 require_protected_service tracker
 require_protected_service nexus
+
+pckg_block="$(service_block pckg)"
+[[ "${pckg_block}" == *"caddy_0.route_0: /outpost.goauthentik.io/*"* ]] || {
+  echo 'pckg must route the Authentik outpost callback before its application upstream' >&2
+  exit 1
+}
+[[ "${pckg_block}" == *"\"caddy_0.@pckg_authentik_session.header_regexp\": pckg_authentik Cookie authentik_proxy_[^=]+="* ]] || {
+  echo 'pckg must inject Authentik identity only when the proxy session cookie is present' >&2
+  exit 1
+}
+[[ "${pckg_block}" == *"caddy_0.route_1: \"@pckg_authentik_session\""* ]] || {
+  echo 'pckg must forward authenticated browser requests through Authentik' >&2
+  exit 1
+}
+[[ "${pckg_block}" == *"SHELL_AUTH_MODE: authentik"* ]] || {
+  echo 'pckg must parse the Authentik identity injected by the edge' >&2
+  exit 1
+}
 forbid 'AUTHELIA_' "$env_example"
 
 forbid 'coolify' "$compose"
