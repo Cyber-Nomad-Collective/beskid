@@ -180,6 +180,14 @@ direct bounds-checked ISLE lowering rather than part of this runtime call.
 
 A learner-facing unit in Beskid Learn that pairs explanatory copy with an optional editor focus range and source or command check. Steps are ordered, visibly tracked, and must pass before the next locked step becomes available.
 
+## Fixed lesson tile mosaic
+
+The immutable Beskid Learn workspace arrangement derived from a lesson's declared visible tiles. It sizes and splits the editor, terminal, lesson content, and optional lesson views automatically. Learners cannot open, close, reorder, or resize its tiles.
+
+## Document annotation
+
+A short statement on a public technical guide that identifies its status, authoritative source, and limits. Beskid Docs uses annotations to distinguish informative guidance from normative OpenSpec requirements.
+
 ## Beskid.Glue
 
 The generator/reader layer that lets Beskid integrate with multiple target languages through a common model. It instantiates the `Interop.Contracts` vocabulary as typed values and adds glue-specific generation and reading constructs; it does not redefine the boundary vocabulary.

@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Learn now uses a fixed lesson-defined tile mosaic. It no longer persists,
+  opens, closes, or resizes panels. The learner workspace no longer renders
+  the lesson editor.
 - Learn now starts one authenticated compiler language-server session per
   Monaco editor. Completion candidates and diagnostics come from
   `beskid_lsp`; the prior hard-coded playground suggestions are removed.
@@ -42,6 +45,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Docs now provide annotated ASD-STE100 guidance for installation, a first
+  program, tooling, projects, packages, and documentation authoring. The Docs
+  navigation exposes these guides beside the standard.
 - The main website landing page now links directly to Beskid Docs.
 - Authentik replaces Authelia as the sole browser authentication gateway for
   every public Beskid application. Its embedded proxy outpost protects the

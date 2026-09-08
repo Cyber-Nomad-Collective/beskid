@@ -9,6 +9,10 @@ The 0.4.0 tag exists. Post-tag work is still under verification: the Rust-backed
 
 Start with the task that you need to do:
 
+- Read [Get started](/docs/getting-started/) to install the toolchain and check a first program.
+- Read [Tooling](/docs/tooling/) for analysis, formatting, builds, and language-service support.
+- Read [Projects](/docs/projects/) before you add a `.bproj` manifest or dependencies.
+- Read [Packages](/docs/packages/) before you pack or publish a `.bpk` artifact.
 - Read [the standard](/docs/standard/) for normative language and tool behavior.
 - Read [documentation authoring](/docs/contributing/documentation/) before you change technical documentation.
 - Read [The Beskid Book](/book/) to learn the language step by step.

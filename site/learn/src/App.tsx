@@ -628,9 +628,7 @@ function App() {
 								<div key="lesson" className="tab-content-enter">
 									<LessonWorkspace
 										exercise={activeExercise}
-						onPassed={(exerciseId) => handlePassed(exerciseId, user)}
-										canEdit={user != null && user.login != null}
-										onExerciseUpdated={handleExerciseUpdated}
+										onPassed={(exerciseId) => handlePassed(exerciseId, user)}
 									/>
 								</div>
 							)}
