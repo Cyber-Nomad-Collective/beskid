@@ -17,6 +17,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Zed extension: keep Zed's generated grammar-source checkout out of version
   control and block registry publication unless the stable LSP release and all
   declared platform assets are actually available.
+- Zed extension: correct the registry gitlink path, prevent invalid tag-less
+  publication dispatches, and document the required first-submission metadata
+  for the nested `editors/zed` package.
 - Learn: the Playground now submits the live Monaco model rather than a stale
   editor state, accepts its own analyze target, offers Beskid completions, and
   uses a single workspace surface instead of nested cards. The signed-in header

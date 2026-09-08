@@ -4,7 +4,6 @@ on:
   push:
     tags:
       - 'v*'
-  workflow_dispatch:
 
 permissions:
   contents: write
@@ -43,7 +42,8 @@ jobs:
       - uses: huacnlee/zed-extension-action@v1
         with:
           extension-name: beskid
-          extension-path: editors/zed
-          push-to: Cyber-Nomad-Collective/zed-extensions
+          # This is the gitlink path in zed-industries/extensions. The nested
+          # source directory is declared there as path = "editors/zed".
+          extension-path: extensions/beskid
         env:
           COMMITTER_TOKEN: ${{ secrets.COMMITTER_TOKEN }}

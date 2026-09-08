@@ -58,7 +58,7 @@ grep -Fq '[grammars.bsol]' "${extension_root}/extension.toml" || \
   fail 'Zed extension manifest does not declare the standalone BSOL grammar'
 grep -Fq 'repository = "https://github.com/Cyber-Nomad-Collective/beskid_bsol"' "${extension_root}/extension.toml" || \
   fail 'standalone BSOL grammar does not use the canonical repository'
-grep -Fq 'commit = "3bb342a858361bf36eef98b2ccf1373df414783a"' "${extension_root}/extension.toml" || \
+grep -Fq 'commit = "c4f350c319ca9cc9013204743116c75cc34e965a"' "${extension_root}/extension.toml" || \
   fail 'standalone BSOL grammar does not use the exact pinned submodule commit'
 grep -Fq 'path = "grammars/tree-sitter-bsol"' "${extension_root}/extension.toml" || \
   fail 'standalone BSOL grammar does not select the nested grammar directory'
@@ -74,8 +74,14 @@ grep -Fq 'path = ["Cyber-Nomad-Collective", "beskid_compiler", "releases", "down
   fail 'Zed extension download capability must remain limited to the stable Beskid release path'
 
 [[ -f "${publish_workflow}" ]] || fail 'missing Zed publication workflow'
-grep -Fq 'extension-path: editors/zed' "${publish_workflow}" || \
-  fail 'Zed publication workflow does not publish editors/zed'
+grep -Fq 'extension-path: extensions/beskid' "${publish_workflow}" || \
+  fail 'Zed publication workflow does not update the canonical registry submodule path'
+! grep -Fq 'extension-path: editors/zed' "${publish_workflow}" || \
+  fail 'Zed publication workflow confuses the source subdirectory with the registry submodule path'
+! grep -Eq '^[[:space:]]*workflow_dispatch:' "${publish_workflow}" || \
+  fail 'Zed publication workflow permits a tag-less dispatch that the registry action rejects'
+! grep -Fq 'push-to: Cyber-Nomad-Collective/zed-extensions' "${publish_workflow}" || \
+  fail 'Zed publication workflow targets a registry fork that does not exist'
 grep -Fq 'bash scripts/ci/test/zed-extension-package.test.sh' "${publish_workflow}" || \
   fail 'Zed publication workflow does not run the package gate'
 grep -Fq 'bash scripts/ci/test/zed-language-assets.test.sh' "${publish_workflow}" || \
@@ -112,6 +118,16 @@ grep -Fq 'wasm32-wasip2' "${extension_readme}" || \
   fail 'Zed README does not document the extension build target'
 grep -Fq 'SDK-supported parity' "${extension_readme}" || \
   fail 'Zed README does not document the SDK parity boundary'
+grep -Fq 'Initial registry publication' "${extension_readme}" || \
+  fail 'Zed README does not document the manual initial registry submission'
+grep -Fq 'submodule = "extensions/beskid"' "${extension_readme}" || \
+  fail 'Zed README does not declare the canonical registry submodule'
+grep -Fq 'path = "editors/zed"' "${extension_readme}" || \
+  fail 'Zed README does not declare the nested extension source path'
+manifest_version="$(sed -n 's/^version = "\([^"]*\)"$/\1/p' "${extension_root}/extension.toml" | head -n1)"
+registry_version="$(sed -n '/^\[beskid\]$/,/^```$/s/^version = "\([^"]*\)"$/\1/p' "${extension_readme}" | head -n1)"
+[[ -n "${manifest_version}" && "${registry_version}" == "${manifest_version}" ]] || \
+  fail "Zed initial registry version ${registry_version:-<missing>} does not match manifest ${manifest_version:-<missing>}"
 
 cargo test --manifest-path "${extension_root}/Cargo.toml"
 cargo build --release --target wasm32-wasip2 --manifest-path "${extension_root}/Cargo.toml"

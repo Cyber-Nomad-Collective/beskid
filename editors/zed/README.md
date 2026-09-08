@@ -165,6 +165,34 @@ clean-machine download that cannot succeed. During such an outage, development
 can continue with an explicit binary override or a PATH-installed
 `beskid_lsp`/`beskid`.
 
+### Initial registry publication
+
+The community publication action updates an extension that already exists in
+`zed-industries/extensions`; it cannot create Beskid's first registry entry.
+After the exact root commit is public on a branch, manually tested as a Zed
+development extension, and backed by a complete `lsp-stable` release, the
+initial registry pull request must add the root Beskid repository as the
+`extensions/beskid` submodule. Its top-level `extensions.toml` entry is:
+
+```toml
+[beskid]
+submodule = "extensions/beskid"
+path = "editors/zed"
+version = "0.4.598"
+```
+
+Run `pnpm sort-extensions` in the registry checkout before opening the pull
+request. The version above must exactly match this package's `extension.toml`.
+Once Zed maintainers merge the initial entry, future releases use the guarded
+tag workflow: bump the manifest, merge and test the public root commit, verify
+`lsp-stable`, then push the matching `v<version>` tag. The workflow updates the
+registry gitlink at `extensions/beskid`; the registry's `path` field selects
+this nested package. Maintainers must first configure `COMMITTER_TOKEN` with
+the community action's documented cross-repository `repo` and `workflow`
+scopes. With no fixed `push-to` repository, the action creates or reuses that
+committer's fork of `zed-industries/extensions` instead of targeting a missing
+organization fork.
+
 ## Verify the package
 
 From the repository root:
@@ -175,4 +203,5 @@ bash scripts/ci/test/zed-language-assets.test.sh
 ```
 
 The publication workflow runs both gates and validates the complete stable LSP
-release before submitting `editors/zed` to the extension registry.
+release before updating the `extensions/beskid` registry gitlink. Initial
+publication follows the manual registry pull-request procedure above.
