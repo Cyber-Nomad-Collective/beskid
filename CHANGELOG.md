@@ -69,6 +69,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Beskid IntelliSense: preserve the prepared assembly generation when building
   LSP syntax facts and synchronize the JSON-RPC completion test on scan-idle
   plus versioned document diagnostics.
+- Beskid IntelliSense: advertise `@` as a completion trigger so the shared
+  standalone-BSOL provider offers `@schemaless` naturally in Zed and VS Code.
 - Zed extension: package the generated BSOL parser, ignore Zed's generated
   grammar checkout, and require the stable LSP release assets before registry
   publication.
