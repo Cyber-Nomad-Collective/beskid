@@ -13,7 +13,8 @@ promotion_content="$(<"${promotion_workflow}")"
 
 manifest_block="$(sed -n '/^  manifest:/,/^  production:/p' "${workflow}")"
 for required in \
-  'needs: [openspec, conformance, integration, security, shared-ui-nexus, image-site, image-learn, image-tracker, image-nexus, image-pckg]' \
+  'needs: [corelib, openspec, conformance, integration, security, shared-ui-nexus, image-site, image-learn, image-tracker, image-nexus, image-pckg]' \
+  "needs.corelib.result == 'success'" \
   "needs.openspec.result == 'success'" \
   "needs.conformance.result == 'success'" \
   "needs.integration.result == 'success'" \

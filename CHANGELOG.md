@@ -24,6 +24,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Keep the platform delivery contract synchronized with the mandatory corelib
+  gate, allowing a fully validated release manifest to reach production.
 - The documented `beskid dev` syntax, build, project, and package-registry
   command paths now parse and dispatch through the same canonical CLI
   implementations as their concise root commands.
