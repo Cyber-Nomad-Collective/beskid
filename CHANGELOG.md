@@ -22,8 +22,11 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   identity headers, and starts browser sign-in at its local Authentik outpost.
   Learn also projects the proxy identity to its session API.
 - Tracker now projects the Authentik proxy identity into its own authenticated
-  session and uses the server-side GitHub integration credential, removing the
+  session and uses GitHub's public API for public roadmap reads, removing the
   retired Auth Hub pairing requirement from the active application path.
+- Nexus now accepts only Authentik's trusted forwarded identity and group
+  claims for administration; its retired Auth Hub pairing and GitHub OAuth
+  setup screens have been removed.
 - Legacy `auth.beskid-lang.org/login?app=learn` bookmarks now redirect to the
   protected Learn origin, which starts the canonical Authentik flow.
 - Docs pages now use their left pane for the page table of contents, and the
