@@ -42,6 +42,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Zed extension: reuse the complete canonical BSOL Tree-sitter grammar for
   `.bsol`, `.bproj`, and `.bws`, and parse every production schema fixture in
   the language-assets gate so highlighting cannot silently drift to a subset.
+- Beskid LSP: emit canonical-parser-backed semantic tokens for block kinds and
+  configuration keys across `.bsol`, `.bproj`, and `.bws`, while invalid BSOL
+  continues to fail closed without partial semantic facts.
 - Production site smoke checks now reject redirects and other non-2xx
   responses, so an authentication proxy or routing drift cannot be promoted as
   a healthy public website.
