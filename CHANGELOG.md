@@ -18,6 +18,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   GitHub is the configured social-login source. Learn now starts sign-in at its
   protected origin, and the repeatable Authentik brand uses Beskid typography,
   logo, and an attributed Beskid Żywiecki photograph.
+- Legacy `auth.beskid-lang.org/login?app=learn` bookmarks now redirect to the
+  protected Learn origin, which starts the canonical Authentik flow.
 - Production delivery now uses only the self-hosted Compose stack and
   Watchtower. Application images publish to the Beskid registry without
   credentials; the release manifest covers the five running applications.

@@ -165,6 +165,10 @@ services:
     labels:
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://auth.beskid-lang.org
+      # Authentik no longer serves the former Learn-specific /login endpoint.
+      # Preserve old sign-in bookmarks by entering the protected Learn origin,
+      # whose proxy outpost starts the canonical OAuth flow.
+      caddy_0.redir_0: /login https://learn.beskid-lang.org/ 302
       caddy_0.reverse_proxy: "{{upstreams 9000}}"
     env_file:
       - ${BESKID_ENV_FILE:-.env}

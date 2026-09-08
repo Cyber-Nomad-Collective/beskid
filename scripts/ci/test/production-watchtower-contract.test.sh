@@ -38,6 +38,7 @@ require '  authentik-postgresql:' "$compose"
 require '  authentik-server:' "$compose"
 require '  authentik-worker:' "$compose"
 require 'ghcr.io/goauthentik/server:2025.10.4' "$compose"
+require 'caddy_0.redir_0: /login https://learn.beskid-lang.org/ 302' "$compose"
 [[ -f "$branding_script" ]] || { echo "missing Authentik branding configuration: $branding_script" >&2; exit 1; }
 require 'Beskid Żywiecki' "$branding_script"
 require 'learn' "$branding_script"
