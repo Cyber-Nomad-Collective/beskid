@@ -127,7 +127,10 @@ The exhaustive generated rule set that consumes typed AST shape plus AST semanti
 
 ## Legacy alias
 
-A stable `/platform-spec/**` path mapped through `openspec/catalog.json` to a canonical capability or requirement, preserving existing Book, Tracker, Nexus, and external links.
+A stable `/platform-spec/**` path mapped through `openspec/catalog.json` to a
+canonical capability identity page. A fragment is retained only when it names
+a requirement anchor that the destination renders. The path alone never
+selects a requirement because some legacy documents contain more than one.
 
 ## Managed object allocation
 
@@ -217,6 +220,13 @@ unwoken not-ready unit.
 ## Source provenance
 
 Informative text and hashes retained inside OpenSpec capabilities and `openspec/catalog.json` to explain where migrated requirements came from. Provenance preserves history but is not itself normative.
+
+## Standard identity page
+
+An informative website page generated from `openspec/catalog.json` for one
+capability or requirement. Its stable URL, identifier, status, catalog
+revision, and canonical source link help readers find and cite the normative
+OpenSpec text without copying that text into Docs.
 
 ## Workspace manifest
 

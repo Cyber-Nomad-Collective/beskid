@@ -163,7 +163,8 @@ function verifyBuiltDocs(distDir) {
 
 	const docsFiles = htmlFiles.filter((filePath) => {
 		const route = routeForFile(distDir, filePath);
-		return route === "/docs/" || route.startsWith("/docs/");
+		const html = htmlByFile.get(filePath);
+		return (route === "/docs/" || route.startsWith("/docs/")) && redirectDestination(html) === null;
 	});
 
 	for (const filePath of docsFiles) {

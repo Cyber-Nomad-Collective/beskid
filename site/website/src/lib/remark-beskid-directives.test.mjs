@@ -6,10 +6,26 @@ import { __test, remarkBeskidDirectives } from './remark-beskid-directives.mjs';
 test('renders a spec directive as a standard link', () => {
 	const html = __test.renderDirective(
 		'spec',
-		'ref: compiler--pipeline--aot#artifact\ntitle: AOT artifact',
+		'ref: compiler--build-pipeline--backends-jit-aot\ntitle: AOT backends',
 	);
 	assert.match(html, /data-beskid-doc-kind="spec"/);
-	assert.match(html, />AOT artifact<\/a>/);
+	assert.match(
+		html,
+		/href="https:\/\/beskid-lang\.org\/docs\/standard\/capabilities\/compiler--build-pipeline--backends-jit-aot\/"/,
+	);
+	assert.match(html, />AOT backends<\/a>/);
+});
+
+test('renders a spec directive with a defined requirement fragment', () => {
+	const fragment = 'requirement-shared-codegenartifact-for-jit-and-aot-decision-d-comp-build-0003';
+	const html = __test.renderDirective(
+		'spec',
+		`ref: compiler--build-pipeline--backends-jit-aot#${fragment}\ntitle: Shared artifact requirement`,
+	);
+	assert.match(
+		html,
+		new RegExp(`/capabilities/compiler--build-pipeline--backends-jit-aot/#${fragment}`),
+	);
 });
 
 test('remark transformer only replaces supported typed fences', () => {
@@ -46,7 +62,54 @@ test('rewrites legacy platform-spec links to catalog-backed canonical URLs', () 
 	remarkBeskidDirectives({ aliases })(tree);
 	assert.equal(
 		tree.children[0].children[0].url,
-		'https://beskid-lang.org/docs/standard/',
+		'https://beskid-lang.org/docs/standard/capabilities/language--syntax--blocks/',
+	);
+});
+
+test('preserves a catalog-defined requirement fragment on a legacy link', () => {
+	const fragment = 'requirement-shared-codegenartifact-for-jit-and-aot-decision-d-comp-build-0003';
+	const aliases = new Map([
+		[
+			'platform-spec/compiler/build-pipeline/backends-jit-aot',
+			{
+				href: 'https://beskid-lang.org/docs/standard/capabilities/compiler--build-pipeline--backends-jit-aot/',
+				fragments: new Set([fragment]),
+			},
+		],
+	]);
+	assert.equal(
+		__test.canonicalSpecHref(
+			`/platform-spec/compiler/build-pipeline/backends-jit-aot/#${fragment}`,
+			aliases,
+		),
+		`https://beskid-lang.org/docs/standard/capabilities/compiler--build-pipeline--backends-jit-aot/#${fragment}`,
+	);
+});
+
+test('rewrites an absolute legacy URL without losing its defined fragment', () => {
+	const fragment = 'requirement-stable-cli-command-families';
+	const aliases = new Map([
+		[
+			'platform-spec/tooling/cli/command-surface',
+			{
+				href: 'https://beskid-lang.org/docs/standard/capabilities/tooling--cli--command-surface/',
+				fragments: [fragment],
+			},
+		],
+	]);
+	assert.equal(
+		__test.canonicalSpecHref(
+			`https://beskid-lang.org/platform-spec/tooling/cli/command-surface/#${fragment}`,
+			aliases,
+		),
+		`https://beskid-lang.org/docs/standard/capabilities/tooling--cli--command-surface/#${fragment}`,
+	);
+});
+
+test('sends an unknown legacy identifier to the Standard search state', () => {
+	assert.equal(
+		__test.canonicalSpecHref('/platform-spec/not/a/catalog-entry/', new Map()),
+		'https://beskid-lang.org/docs/standard/not-found/?id=not%2Fa%2Fcatalog-entry',
 	);
 });
 

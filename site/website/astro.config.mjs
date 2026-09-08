@@ -15,6 +15,7 @@ import { remarkRepoLinkFence } from 'trudoc/scripts/remark-repo-link-fence.mjs';
 import { loadBeskidGrammar } from 'trudoc/grammars/load-beskid-grammar.mjs';
 import { beskidUiRoot } from './src/lib/beskid-ui-root.mjs';
 import { remarkBeskidDirectives } from './src/lib/remark-beskid-directives.mjs';
+import { createLegacyStandardRedirects } from './src/lib/standard-routes.mjs';
 import { docsNavigation } from './src/data/docs-navigation';
 
 const beskidGrammar = loadBeskidGrammar();
@@ -122,6 +123,7 @@ export default defineConfig({
 	},
 	redirects: {
 		...platformSpecRedirects,
+		...createLegacyStandardRedirects(),
 		...renamedReferenceRedirects,
 		...siteRedirects(),
 	},

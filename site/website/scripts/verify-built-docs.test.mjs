@@ -57,3 +57,16 @@ test("reports redirect cycles", async (t) => {
 		verifyBuiltDocs(distDir).some((error) => error.includes("redirect cycle")),
 	);
 });
+
+test("validates a Docs redirect through its rendered destination", async (t) => {
+	const distDir = await createDist(t);
+	await writeRoute(distDir, "/docs/", "<main><h1>Docs</h1></main>");
+	await writeRoute(distDir, "/docs/standard/legacy/", redirectHtml("/docs/standard/capabilities/example/"));
+	await writeRoute(
+		distDir,
+		"/docs/standard/capabilities/example/",
+		'<main><h1>Example capability</h1></main>',
+	);
+
+	assert.deepEqual(verifyBuiltDocs(distDir), []);
+});

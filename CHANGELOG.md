@@ -11,6 +11,11 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Added
 
+- Generate stable public identity pages for all OpenSpec capabilities and
+  requirements from the checked-in catalog. Preserve known Platform Spec
+  aliases and valid requirement fragments, link every identity to its
+  canonical OpenSpec source, and send unknown document references to a
+  Standard-specific not-found search state.
 - Add complete service, operator, contributor, and reference guidance. Document
   verified public and local boundaries, authentication, persistence, images,
   health checks, deployment ownership, secret sources, monitoring, recovery,
