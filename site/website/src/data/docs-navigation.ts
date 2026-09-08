@@ -1,5 +1,6 @@
 import type { DocsNavigationGroup } from '@beskid/beskid-ui/docs/docs-navigation';
 
+// Keep ordering here; docsCoverage records completeness without becoming a second navigation model.
 export const docsNavigation: DocsNavigationGroup[] = [
 	{
 		label: 'Beskid Docs',

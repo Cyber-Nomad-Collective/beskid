@@ -1,6 +1,9 @@
 ---
 title: Reference Map
 description: Select the canonical source for behavior, procedure, delivery, or licensing facts.
+pageKind: reference
+diagramPolicy: not-needed
+diagramOmissionReason: The authority table is clearer than a flow diagram for reference selection.
 audience:
   - evaluator
   - developer

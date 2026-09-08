@@ -1,6 +1,9 @@
 ---
 title: Beskid Licensing
 description: Identify the license that applies to a Beskid component, service, document, or output.
+pageKind: reference
+diagramPolicy: not-needed
+diagramOmissionReason: The component license matrix is clearer than a relationship diagram.
 audience:
   - evaluator
   - contributor

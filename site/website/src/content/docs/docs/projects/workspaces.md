@@ -1,6 +1,9 @@
 ---
 title: Use a workspace
 description: Group projects in a .bws manifest and select one member and target.
+pageKind: task
+diagramPolicy: not-needed
+diagramOmissionReason: The Projects overview already shows the workspace and member relationships.
 audience:
   - developer
 authority:

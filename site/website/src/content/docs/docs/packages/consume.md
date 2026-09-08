@@ -1,6 +1,9 @@
 ---
 title: Consume a package
 description: Request a package version, inspect the resolved lock entry, and stop on a mismatch.
+pageKind: task
+diagramPolicy: not-needed
+diagramOmissionReason: The manifest edit and fetch procedure is linear, and the Packages overview shows the participants.
 audience:
   - developer
 authority:

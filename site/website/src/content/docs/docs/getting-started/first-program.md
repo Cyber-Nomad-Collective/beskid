@@ -1,6 +1,8 @@
 ---
 title: Write and run a program
 description: Analyze, format, AOT-compile, and execute a minimal Beskid program.
+pageKind: task
+diagramPolicy: required
 audience:
   - evaluator
   - newcomer

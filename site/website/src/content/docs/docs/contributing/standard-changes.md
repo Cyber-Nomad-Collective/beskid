@@ -1,6 +1,8 @@
 ---
 title: Change the Beskid Standard
 description: Propose, validate, and publish a normative behavior change through OpenSpec.
+pageKind: task
+diagramPolicy: required
 audience:
   - specification contributor
   - maintainer

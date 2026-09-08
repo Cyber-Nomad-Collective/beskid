@@ -1,6 +1,8 @@
 ---
 title: Install Beskid
 description: Select a supported release, install the CLI and language server, and verify the selected binaries.
+pageKind: task
+diagramPolicy: required
 audience:
   - newcomer
   - developer

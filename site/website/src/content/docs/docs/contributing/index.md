@@ -1,6 +1,9 @@
 ---
 title: Contribute to Beskid
 description: Select the repository, Standard, or documentation contribution procedure.
+pageKind: guide
+diagramPolicy: not-needed
+diagramOmissionReason: The contributor task list is a short route to detailed procedures.
 audience:
   - contributor
   - maintainer

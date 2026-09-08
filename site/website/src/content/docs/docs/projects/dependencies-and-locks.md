@@ -1,6 +1,9 @@
 ---
 title: Resolve dependencies and locks
 description: Declare path and registry dependencies, materialize them, and enforce Project.lock.
+pageKind: task
+diagramPolicy: not-needed
+diagramOmissionReason: The Projects overview already shows the dependency graph; this page is an ordered lockfile procedure.
 audience:
   - developer
   - operator
@@ -8,7 +11,7 @@ authority:
   status: informative
   sourceLabel: Pinned dependency preparation implementation
   sourceHref: https://github.com/Cyber-Nomad-Collective/beskid_compiler/blob/252aa528ac7ee01a64e49e9b88b32393206fbd71/crates/beskid_analysis/src/projects/workflow/prepare.rs
-  limits: This procedure covers implemented path and registry materialization. Git dependency materialization is not implemented.
+  limits: This procedure covers implemented path and registry materialization. The current implementation does not materialize Git dependencies.
 verified:
   revision: 252aa528ac7ee01a64e49e9b88b32393206fbd71
   date: 2026-09-08

@@ -1,6 +1,8 @@
 ---
 title: Services
 description: Select a Beskid public service and identify its operating boundary.
+pageKind: guide
+diagramPolicy: required
 audience:
   - platform user
   - evaluator

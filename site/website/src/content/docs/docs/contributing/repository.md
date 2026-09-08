@@ -1,6 +1,9 @@
 ---
 title: Set Up the Repository
 description: Initialize the superrepo, preserve submodule ownership, and run focused gates.
+pageKind: task
+diagramPolicy: not-needed
+diagramOmissionReason: The checkout and focused-gate procedure is a linear sequence.
 audience:
   - contributor
   - maintainer

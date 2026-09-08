@@ -1,6 +1,9 @@
 ---
 title: Operate the Platform
 description: Select the safe container, deployment, health, or recovery procedure.
+pageKind: guide
+diagramPolicy: not-needed
+diagramOmissionReason: The ordered operator checklist is clearer than a second platform diagram.
 audience:
   - self-hoster
   - service operator

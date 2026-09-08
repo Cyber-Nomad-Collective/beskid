@@ -1,6 +1,8 @@
 ---
 title: Beskid Docs
 description: Choose a verified Beskid task for evaluation, development, delivery, or contribution.
+pageKind: guide
+diagramPolicy: required
 audience:
   - evaluator
   - newcomer

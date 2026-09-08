@@ -1,6 +1,9 @@
 ---
 title: Language basics for the first program
 description: Read the minimum Beskid syntax used by the verified Main program.
+pageKind: guide
+diagramPolicy: not-needed
+diagramOmissionReason: A syntax reference table is clearer than a flow diagram.
 audience:
   - evaluator
   - newcomer

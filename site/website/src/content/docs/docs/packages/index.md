@@ -1,6 +1,8 @@
 ---
 title: Packages
 description: Publish immutable Beskid package versions and consume them through project resolution.
+pageKind: guide
+diagramPolicy: required
 audience:
   - package author
   - developer

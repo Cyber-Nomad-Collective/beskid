@@ -1,6 +1,9 @@
 ---
 title: Operate Nexus
 description: Run the repository graph service behind its verified trust boundary.
+pageKind: task
+diagramPolicy: not-needed
+diagramOmissionReason: The service contract table is clearer than a diagram for one service.
 audience:
   - maintainer
   - service operator

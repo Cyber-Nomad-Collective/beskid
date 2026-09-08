@@ -1,6 +1,9 @@
 ---
 title: Verify Service Containers
 description: Verify image, port, profile, and persistent-volume boundaries before deployment.
+pageKind: task
+diagramPolicy: not-needed
+diagramOmissionReason: The container matrix gives a more precise comparison than a diagram.
 audience:
   - self-hoster
   - service operator

@@ -1,6 +1,8 @@
 ---
 title: Connect VS Code
 description: Install the Beskid extension, select a language-server binary, and verify editor diagnostics.
+pageKind: task
+diagramPolicy: required
 audience:
   - newcomer
   - developer

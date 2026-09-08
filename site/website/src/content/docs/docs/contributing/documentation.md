@@ -1,12 +1,15 @@
 ---
 title: Write Beskid Documentation
 description: Write clear technical documentation with ASD-STE100 Simplified Technical English.
+pageKind: task
+diagramPolicy: not-needed
+diagramOmissionReason: The authoring checklist and examples are clearer than a flow diagram.
 audience:
   - contributor
 authority:
   status: informative
   sourceLabel: Standard STE compliance policy
-  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid/blob/main/openspec/specs/standard-ste-compliance/spec.md
+  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid/blob/35fdb92cd9c4ad8f61e3d06d7171e94a694b2562/openspec/specs/standard-ste-compliance/spec.md
   limits: This page gives authoring guidance. It does not certify ASD-STE100 compliance.
 verified:
   revision: 35fdb92cd9c4ad8f61e3d06d7171e94a694b2562

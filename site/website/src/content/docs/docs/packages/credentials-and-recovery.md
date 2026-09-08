@@ -1,6 +1,9 @@
 ---
 title: Package credentials and recovery
 description: Store publisher credentials safely, verify identity, yank a bad version, and rotate a key.
+pageKind: task
+diagramPolicy: not-needed
+diagramOmissionReason: A symptom-to-command recovery table is clearer than a flow diagram.
 audience:
   - package author
   - operator

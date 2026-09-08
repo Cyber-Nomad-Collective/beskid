@@ -1,6 +1,9 @@
 ---
 title: Verify Production Delivery
 description: Verify one release manifest and hand production recovery to the owning operator.
+pageKind: task
+diagramPolicy: not-needed
+diagramOmissionReason: The numbered promotion and rollback procedure is already linear.
 audience:
   - service operator
   - release maintainer

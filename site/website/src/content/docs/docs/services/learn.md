@@ -1,6 +1,9 @@
 ---
 title: Operate Beskid Learn
 description: Run and verify the interactive Beskid learning service.
+pageKind: task
+diagramPolicy: not-needed
+diagramOmissionReason: The service contract table is clearer than a diagram for one service.
 audience:
   - learner
   - service operator

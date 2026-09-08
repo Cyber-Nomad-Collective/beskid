@@ -1,6 +1,8 @@
 ---
 title: Tooling
 description: Select concise Beskid commands and their grouped developer aliases for source, build, project, and package tasks.
+pageKind: guide
+diagramPolicy: required
 audience:
   - developer
   - contributor

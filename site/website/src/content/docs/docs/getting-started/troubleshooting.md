@@ -1,6 +1,8 @@
 ---
 title: Troubleshoot the first day
 description: Recover from installation, PATH, analysis, runtime-kit, and editor failures.
+pageKind: task
+diagramPolicy: required
 audience:
   - newcomer
   - developer

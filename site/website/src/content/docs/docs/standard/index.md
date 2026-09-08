@@ -1,20 +1,23 @@
 ---
 title: Beskid Standard
 description: The normative source for Beskid language and tool behavior.
+pageKind: reference
+diagramPolicy: not-needed
+diagramOmissionReason: The OpenSpec catalogue is a reference index; a flow diagram would not add clarity.
 audience:
   - implementer
   - contributor
 authority:
   status: normative
   sourceLabel: Beskid OpenSpec source
-  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid/tree/main/openspec/specs
+  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid/tree/e4cf3d521f553988a1648884a1c935afb2214682/openspec/specs
   limits: This page identifies the normative source. It does not reproduce the requirements.
 verified:
   revision: e4cf3d521f553988a1648884a1c935afb2214682
   date: 2026-09-08
 ---
 
-The Beskid standard defines normative behavior. The source files are in [`openspec/specs/`](https://github.com/Cyber-Nomad-Collective/beskid/tree/main/openspec/specs).
+The Beskid standard defines normative behavior. The source files are in [`openspec/specs/`](https://github.com/Cyber-Nomad-Collective/beskid/tree/e4cf3d521f553988a1648884a1c935afb2214682/openspec/specs).
 
 Use a requirement only when it contains `SHALL` or `MUST` and one or more scenarios. A Book page, blog post, README, or generated catalog does not define a new rule.
 

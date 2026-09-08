@@ -1,6 +1,9 @@
 ---
 title: Operate Tracker
 description: Run the Beskid delivery authority and preserve its SQLite source of truth.
+pageKind: task
+diagramPolicy: not-needed
+diagramOmissionReason: The service contract table is clearer than a diagram for one service.
 audience:
   - platform user
   - service operator

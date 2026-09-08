@@ -1,6 +1,9 @@
 ---
 title: Get started
 description: Follow the verified path from installation to a checked and executed Beskid program.
+pageKind: guide
+diagramPolicy: not-needed
+diagramOmissionReason: This short route delegates decisions to the detailed task pages.
 audience:
   - evaluator
   - newcomer

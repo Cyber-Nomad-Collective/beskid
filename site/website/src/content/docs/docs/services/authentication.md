@@ -1,6 +1,9 @@
 ---
 title: Operate Authentication
 description: Configure and recover the central Beskid authentication boundary.
+pageKind: task
+diagramPolicy: not-needed
+diagramOmissionReason: The service contract table is clearer than a diagram for one service.
 audience:
   - service operator
   - maintainer

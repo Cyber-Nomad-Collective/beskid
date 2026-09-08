@@ -1,6 +1,8 @@
 ---
 title: Run Beskid in CI
 description: Use lockfile, plain-output, format, analysis, test, and build gates in a reproducible pipeline.
+pageKind: task
+diagramPolicy: required
 audience:
   - developer
   - operator

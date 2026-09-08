@@ -20,7 +20,6 @@ const procedurePages = [
 	},
 	{
 		path: 'docs/getting-started/index.md',
-		noDiagram: 'This short route delegates decisions to the detailed task pages.',
 		sections: {
 			prerequisites: ['supported host', 'user-local program'],
 			actions: ['/docs/getting-started/install/', '/docs/getting-started/editor/'],
@@ -90,7 +89,6 @@ const procedurePages = [
 	},
 	{
 		path: 'docs/tooling/build-run-test.md',
-		noDiagram: 'The numbered build, run, and test procedure is already linear.',
 		sections: {
 			prerequisites: ['beskid analyze', '`.bproj` manifest'],
 			actions: ['beskid build Main.bd --kind exe --plain', 'beskid test --project App.bproj'],
@@ -112,7 +110,6 @@ const procedurePages = [
 	},
 	{
 		path: 'docs/language-basics/index.md',
-		noDiagram: 'A syntax reference table is clearer than a flow diagram.',
 		sections: {
 			prerequisites: ['`Main.bd`', '/docs/getting-started/first-program/'],
 			actions: ['i32 Main()', '/docs/standard/'],
@@ -134,7 +131,6 @@ const procedurePages = [
 	},
 	{
 		path: 'docs/projects/create.md',
-		noDiagram: 'The project creation procedure is a short linear scaffold-and-check sequence.',
 		sections: {
 			prerequisites: ['installed `console` template', 'empty output directory'],
 			actions: ['beskid new console -n MyApp -o ./MyApp --no-interactive', 'beskid analyze --project "$project_manifest" --target "$target_name" --plain'],
@@ -144,7 +140,6 @@ const procedurePages = [
 	},
 	{
 		path: 'docs/projects/workspaces.md',
-		noDiagram: 'The Projects overview already shows the workspace and member relationships.',
 		sections: {
 			prerequisites: ['two project directories', 'one `.bproj`'],
 			actions: ['member "app"', 'beskid analyze ./app/Src/Main.bd --project ./Workspace.bws'],
@@ -154,7 +149,6 @@ const procedurePages = [
 	},
 	{
 		path: 'docs/projects/dependencies-and-locks.md',
-		noDiagram: 'The Projects overview already shows the dependency graph; this page is an ordered lockfile procedure.',
 		sections: {
 			prerequisites: ['Project.lock', 'registry access'],
 			actions: ['source = "path"', 'source = "registry"', 'beskid fetch --project ./App.bproj --locked --plain', 'beskid fetch --project ./App.bproj --frozen --plain'],
@@ -176,7 +170,6 @@ const procedurePages = [
 	},
 	{
 		path: 'docs/packages/publish.md',
-		noDiagram: 'The Packages overview already shows the publication and consumption sequence.',
 		sections: {
 			prerequisites: ['BESKID_PCKG_API_KEY', 'publisher permission'],
 			actions: ['POST /api/packages', 'beskid pckg pack --package Acme.Math', 'unzip -p', 'beskid pckg upload Acme.Math'],
@@ -186,7 +179,6 @@ const procedurePages = [
 	},
 	{
 		path: 'docs/packages/consume.md',
-		noDiagram: 'The manifest edit and fetch procedure is linear, and the Packages overview shows the participants.',
 		sections: {
 			prerequisites: ['package name', 'requested version'],
 			actions: ['beskid pckg details Acme.Math', 'beskid pckg download Acme.Math --version 1.0.0', 'beskid fetch --project ./App.bproj --locked --plain'],
@@ -196,7 +188,6 @@ const procedurePages = [
 	},
 	{
 		path: 'docs/packages/credentials-and-recovery.md',
-		noDiagram: 'A symptom-to-command recovery table is clearer than a flow diagram.',
 		sections: {
 			prerequisites: ['secret manager', 'publish scope'],
 			actions: ['beskid pckg configure', 'beskid pckg whoami', 'beskid pckg yank Acme.Math --version 1.0.0', 'beskid pckg unyank Acme.Math --version 1.0.0'],
@@ -224,7 +215,6 @@ const procedurePages = [
 		['docs/services/nexus.md', 'repository graph', 'GITNEXUS_HOME', '/api/health', 'forward-auth'],
 	].map(([path, purpose, setting, health, state]) => ({
 		path,
-		noDiagram: 'The service contract table is clearer than a diagram for one service.',
 		sections: {
 			prerequisites: [purpose, setting],
 			actions: [health, 'service contract'],
@@ -234,7 +224,6 @@ const procedurePages = [
 	})),
 	{
 		path: 'docs/operations/index.md',
-		noDiagram: 'The ordered operator checklist is clearer than a second platform diagram.',
 		sections: {
 			prerequisites: ['Coolify lane', 'OpenBao token'],
 			actions: ['/docs/operations/containers/', '/docs/operations/deployment/'],
@@ -244,7 +233,6 @@ const procedurePages = [
 	},
 	{
 		path: 'docs/operations/containers.md',
-		noDiagram: 'The container matrix gives a more precise comparison than a diagram.',
 		sections: {
 			prerequisites: ['container engine', 'pinned Compose contract'],
 			actions: ['docker compose', 'persistent volumes'],
@@ -254,7 +242,6 @@ const procedurePages = [
 	},
 	{
 		path: 'docs/operations/deployment.md',
-		noDiagram: 'The numbered promotion and rollback procedure is already linear.',
 		sections: {
 			prerequisites: ['protected GitHub environment', 'lane-scoped'],
 			actions: ['just seed-openbao-check', 'reusable-promote.yml'],
@@ -264,7 +251,6 @@ const procedurePages = [
 	},
 	{
 		path: 'docs/operations/health-and-monitoring.md',
-		noDiagram: 'The endpoint and symptom matrix is clearer than a flow diagram.',
 		sections: {
 			prerequisites: ['expected image identity', 'monitoring access'],
 			actions: ['/api/v1/health', '/health/ready'],
@@ -274,7 +260,6 @@ const procedurePages = [
 	},
 	{
 		path: 'docs/contributing/index.md',
-		noDiagram: 'The contributor task list is a short route to detailed procedures.',
 		sections: {
 			prerequisites: ['repository change', 'ownership boundary'],
 			actions: ['/docs/contributing/repository/', '/docs/contributing/standard-changes/'],
@@ -284,7 +269,6 @@ const procedurePages = [
 	},
 	{
 		path: 'docs/contributing/repository.md',
-		noDiagram: 'The checkout and focused-gate procedure is a linear sequence.',
 		sections: {
 			prerequisites: ['repository checkout', 'pnpm'],
 			actions: ['./scripts/setup-environment.sh', 'pnpm --dir site/website test'],
@@ -306,7 +290,6 @@ const procedurePages = [
 	},
 	{
 		path: 'docs/reference/index.md',
-		noDiagram: 'The authority table is clearer than a flow diagram for reference selection.',
 		sections: {
 			prerequisites: ['fact to verify', 'authority type'],
 			actions: ['/docs/standard/', '/docs/reference/licensing/'],
@@ -316,7 +299,6 @@ const procedurePages = [
 	},
 	{
 		path: 'docs/reference/licensing.md',
-		noDiagram: 'The component license matrix is clearer than a relationship diagram.',
 		sections: {
 			prerequisites: ['component path', 'more specific license'],
 			actions: ['LICENSING.md', 'pnpm licenses:check'],
@@ -395,6 +377,12 @@ test('task pages provide complete executable procedures', async () => {
 		}
 
 		assert.ok(Array.isArray(page.data.audience) && page.data.audience.length > 0, `${page.path} must name its audience`);
+		assert.ok(['task', 'guide', 'reference'].includes(page.data.pageKind), `${page.path} must identify its page kind`);
+		assert.ok(['required', 'not-needed'].includes(page.data.diagramPolicy), `${page.path} must identify its diagram policy`);
+		if (page.data.diagramPolicy === 'not-needed') {
+			assert.equal(typeof page.data.diagramOmissionReason, 'string', `${page.path} must record its diagram omission reason in frontmatter`);
+			assert.ok(page.data.diagramOmissionReason.length > 0, `${page.path} must record its diagram omission reason in frontmatter`);
+		}
 		for (const [field, value] of [
 			['description', page.data.description],
 			['authority.status', page.data.authority?.status],
@@ -411,7 +399,9 @@ test('task pages provide complete executable procedures', async () => {
 
 test('procedure diagrams are accessible and have a following text equivalent', async () => {
 	for (const page of await Promise.all(procedurePages.map(loadPage))) {
-		if (page.diagram) {
+		if (page.data.diagramPolicy === 'required') {
+			assert.ok(page.diagram, `${page.path} must define its required diagram contract`);
+			assert.equal(page.data.diagramPolicy, 'required', `${page.path} must require its decision diagram`);
 			const match = page.body.match(/```mermaid\n([\s\S]*?)\n```\s*\n### Diagram text\n\n([\s\S]*?)(?=\n## |$)/);
 			assert.ok(match, `${page.path} Diagram text must immediately follow its Mermaid fence`);
 			const [, diagram, equivalent] = match;
@@ -429,7 +419,9 @@ test('procedure diagrams are accessible and have a following text equivalent', a
 				assert.ok(equivalent.includes(concept), `${page.path} text equivalent must explain ${concept}`);
 			}
 		} else {
-			assert.ok(page.noDiagram, `${page.path} must record why a diagram is not useful`);
+			assert.equal(page.data.diagramPolicy, 'not-needed', `${page.path} must record that a diagram is not needed`);
+			assert.equal(typeof page.data.diagramOmissionReason, 'string', `${page.path} must record why a diagram is not useful`);
+			assert.ok(page.data.diagramOmissionReason.length > 0, `${page.path} must record why a diagram is not useful`);
 			assert.doesNotMatch(page.body, /```mermaid/, `${page.path} must remain diagram-free while the rationale applies`);
 		}
 	}

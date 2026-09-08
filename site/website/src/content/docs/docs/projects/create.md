@@ -1,6 +1,9 @@
 ---
 title: Create a project
 description: Instantiate a project template and verify its manifest, target, and source tree.
+pageKind: task
+diagramPolicy: not-needed
+diagramOmissionReason: The project creation procedure is a short linear scaffold-and-check sequence.
 audience:
   - developer
 authority:

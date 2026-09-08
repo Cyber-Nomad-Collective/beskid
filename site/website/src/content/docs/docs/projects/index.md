@@ -1,6 +1,8 @@
 ---
 title: Projects
 description: Select a Beskid project or workspace and resolve its dependency graph.
+pageKind: guide
+diagramPolicy: required
 audience:
   - developer
 authority:

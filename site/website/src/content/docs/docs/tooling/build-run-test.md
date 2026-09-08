@@ -1,6 +1,9 @@
 ---
 title: Build, run, and test
 description: Analyze source, create an AOT artifact, execute it, and run declared test items.
+pageKind: task
+diagramPolicy: not-needed
+diagramOmissionReason: The numbered build, run, and test procedure is already linear.
 audience:
   - developer
 authority:

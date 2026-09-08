@@ -53,8 +53,24 @@ test('requires complete typed annotation metadata on every technical Docs page',
 		assert.equal(typeof data.authority?.sourceLabel, 'string', `${filePath} must define authority.sourceLabel`);
 		assert.equal(typeof data.authority?.sourceHref, 'string', `${filePath} must define authority.sourceHref`);
 		assert.equal(typeof data.authority?.limits, 'string', `${filePath} must define authority.limits`);
+		assert.ok(['task', 'guide', 'reference'].includes(data.pageKind), `${filePath} must define a permitted pageKind`);
+		assert.ok(['required', 'not-needed'].includes(data.diagramPolicy), `${filePath} must define a permitted diagramPolicy`);
+		if (data.diagramPolicy === 'not-needed') {
+			assert.equal(typeof data.diagramOmissionReason, 'string', `${filePath} must explain why a diagram is not needed`);
+			assert.ok(data.diagramOmissionReason.length > 0, `${filePath} must explain why a diagram is not needed`);
+		}
 		assert.match(data.verified?.revision ?? '', /^[0-9a-f]{40}$/, `${filePath} must define a Git revision`);
 		assert.match(String(data.verified?.date ?? ''), /^2026-09-08$/, `${filePath} must define the verification date`);
+	}
+});
+
+test('pins immutable verified authority URLs to an immutable revision', async () => {
+	for (const filePath of await technicalDocsFiles()) {
+		const data = frontmatter(await readFile(filePath, 'utf8'), filePath);
+		if (/^https:\/\/github\.com\/[^/]+\/[^/]+\/(?:blob|tree)\//.test(data.authority?.sourceHref ?? '')) {
+			assert.match(data.authority.sourceHref, /\/(?:blob|tree)\/[0-9a-f]{40}(?:\/|$)/, `${filePath} must pin its authority URL to an immutable revision`);
+			assert.doesNotMatch(data.authority.sourceHref, /\/(?:blob|tree)\/main(?:\/|$)/, `${filePath} must not use a mutable main authority URL`);
+		}
 	}
 });
 
