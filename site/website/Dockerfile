@@ -1,7 +1,9 @@
 # syntax=docker/dockerfile:1.7
 FROM node:24-alpine AS build
 
-RUN apk add --no-cache git
+# git resolves pnpm git dependencies; Python and the compiler toolchain build
+# the native packages selected by the root frozen lockfile.
+RUN apk add --no-cache git python3 make g++
 RUN npm install -g corepack@latest && corepack enable && corepack prepare pnpm@10.17.1 --activate
 
 WORKDIR /app

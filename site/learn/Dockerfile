@@ -5,7 +5,9 @@ WORKDIR /app
 
 ARG BESKID_RELEASE_CHANNEL=stable
 
-RUN apk add --no-cache git
+# The root frozen install includes native lifecycle packages (for example
+# better-sqlite3), which require node-gyp's Alpine build toolchain.
+RUN apk add --no-cache git python3 make g++
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY site/auth/package.json ./site/auth/package.json
@@ -59,11 +61,13 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
 # The production server is a Bun program (`Bun.serve` / `Bun.file`). Keep the
 # runtime separate from the Node build stage and pin it to the project Bun
 # release so the container starts with the APIs server.ts requires.
-FROM oven/bun:1.3.14-alpine
+FROM oven/bun:1.3.14
 
 ARG BESKID_RELEASE_CHANNEL=stable
 
-RUN apk add --no-cache wget
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends wget \
+  && rm -rf /var/lib/apt/lists/*
 WORKDIR /app/site/learn
 
 COPY --from=web /app/.npmrc /app/.npmrc

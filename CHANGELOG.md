@@ -15,6 +15,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   10.17 configuration, refreshes the root lockfile for the Tracker workspace,
   and treats vulnerability-report artifact upload as best-effort evidence after
   a successful image build and push.
+- Site and Learn images now install the Alpine node-gyp build toolchain before
+  the root frozen install. Learn uses the glibc Bun runtime required to execute
+  the bundled compiler binary.
 - Docs and Standard now share the Book-style content rail, a local search
   field, and a single title instead of an empty generic sidebar and duplicate
   heading.

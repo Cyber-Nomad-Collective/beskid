@@ -21,6 +21,17 @@ for dockerfile in site/website/Dockerfile site/auth/Dockerfile; do
   done
 done
 
+# The root workspace includes native lifecycle packages. Every Alpine Node
+# build stage which performs that frozen install must provide node-gyp's
+# compiler toolchain, just as the Auth image already does.
+for dockerfile in site/website/Dockerfile site/learn/Dockerfile; do
+  content="$(<"${root}/${dockerfile}")"
+  if [[ "${content}" != *'apk add --no-cache git python3 make g++'* ]]; then
+    echo "${dockerfile} must install the Alpine node-gyp toolchain before the root frozen install" >&2
+    exit 1
+  fi
+done
+
 # Root Docker contexts intentionally omit generated dist directories. Consumers
 # of shared packages that export compiled entries must recreate those entries
 # after their frozen install rather than relying on a developer's local output.
@@ -68,11 +79,14 @@ if [[ "${learn}" == *$'RUN cd compiler'* ]]; then
   exit 1
 fi
 
-# Learn's HTTP server is deliberately implemented with Bun APIs. A Node/tsx
-# runtime can build the assets yet crash before the Compose healthcheck runs.
-if [[ "${learn}" != *'FROM oven/bun:1.3.14-alpine'* ]] ||
+# Learn's HTTP server is deliberately implemented with Bun APIs. The compiler
+# is built in Debian Rust, so its runtime must also provide glibc rather than
+# Alpine's musl loader; otherwise the binary exists but cannot execute.
+if [[ "${learn}" != *'FROM oven/bun:1.3.14'* ]] ||
+   [[ "${learn}" == *'FROM oven/bun:1.3.14-alpine'* ]] ||
+   [[ "${learn}" != *'apt-get install -y --no-install-recommends wget'* ]] ||
    [[ "${learn}" != *'CMD ["bun", "run", "server.ts"]'* ]]; then
-  echo "site/learn/Dockerfile must run the Bun server with the pinned Bun runtime" >&2
+  echo "site/learn/Dockerfile must run the bundled glibc compiler with the pinned Bun runtime" >&2
   exit 1
 fi
 if [[ "${learn}" == *'npm install -g tsx'* ]]; then
