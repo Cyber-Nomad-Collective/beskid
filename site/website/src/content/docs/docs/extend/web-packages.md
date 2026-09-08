@@ -1,6 +1,6 @@
 ---
 title: Use Shared Web Packages
-description: Select, install, verify, and publish Beskid shared web packages.
+description: Select, install, and verify Beskid shared web packages.
 pageKind: task
 diagramPolicy: not-needed
 diagramOmissionReason: The package identity and ownership tables are clearer than a flow diagram.

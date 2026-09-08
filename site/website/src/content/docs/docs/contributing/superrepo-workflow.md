@@ -36,7 +36,7 @@ A focused gate means the smallest check that owns the changed component. An aggr
 | Website Docs | `pnpm --dir site/website test` | Docs contracts and website behavior. |
 | Shared web package behavior | `pnpm --dir beskid_web_common run test` | Shared package behavior. |
 | Shared web package types | `pnpm --dir beskid_web_common run typecheck` | Shared package type contracts. |
-| Learn lesson | `pnpm --dir site/learn run lesson:check <lesson-id>` | One selected lesson. |
+| Learn lesson | `pnpm --dir site/learn run lesson:check 01-hello-beskid` | The selected example lesson. Replace the final argument with another known lesson identifier. |
 | BSOL | `cargo test --workspace` from `beskid_bsol/` | BSOL workspace behavior. |
 | Tree-sitter | `bunx tree-sitter test` from `beskid_treesitter/` | Parser corpus behavior. |
 | First-party templates | `bash scripts/ci/corelib-publish.sh --dry-run` | All template artifacts without a registry write. |
@@ -49,7 +49,7 @@ A focused gate means the smallest check that owns the changed component. An aggr
 2. Select one setup profile in the wizard.
 3. Select the owned tree for the planned change.
 4. Inspect root status with `git status --short`.
-5. Inspect the owned tree status with `git -C <owned-submodule> status --short` when the tree is a submodule.
+5. Inspect the owned shared web tree with `git -C beskid_web_common status --short` when that tree is the selected submodule.
 6. Run the focused gate from the gate table for the owned component.
 7. Run the aggregate gate from the gate table when the change crosses a root contract boundary.
 

@@ -7,6 +7,10 @@ import { parse } from 'yaml';
 const root = new URL('../../../../', import.meta.url);
 const docsRoot = new URL('../content/docs/docs/', import.meta.url);
 
+function markdownLinkRoutes(markdown) {
+	return [...markdown.matchAll(/\[[^\]]+\]\((\/docs\/[^)]+)\)/g)].map((match) => match[1]).sort();
+}
+
 const procedurePages = [
 	{
 		path: 'docs/evaluate/index.md',
@@ -795,8 +799,14 @@ test('Extend chooser uses guide structure and routes every extension task', asyn
 	for (const route of ['/docs/extend/', '/docs/extend/bsol/', '/docs/extend/templates/', '/docs/extend/tree-sitter/', '/docs/extend/web-packages/']) {
 		assert.match(navigation, new RegExp(`link: '${escapeRegExp(route)}'`), `navigation must expose ${route}`);
 		assert.ok(coverage.includes(`route: '${route}'`), `coverage must catalogue ${route}`);
-		assert.ok(chooser.body.includes(route) || route === '/docs/extend/', `Extend chooser must link to ${route}`);
 	}
+	assert.deepEqual(markdownLinkRoutes(section(chooser.body, 'Choose an extension task')), [
+		'/docs/editor/vs-code/',
+		'/docs/extend/bsol/',
+		'/docs/extend/templates/',
+		'/docs/extend/tree-sitter/',
+		'/docs/extend/web-packages/',
+	]);
 	assert.equal(chooser.data.pageKind, 'guide');
 	assertOneObservableAction('docs/extend/index.md', section(chooser.body, 'Choose an extension task'));
 });
@@ -850,6 +860,7 @@ test('web package task records identities, ownership, aliases, token scopes, and
 	const page = await loadPage(procedurePages.find((candidate) => candidate.path === 'docs/extend/web-packages.md'));
 	assert.equal(page.data.authority.sourceHref, 'https://github.com/Cyber-Nomad-Collective/beskid_web_common/blob/c3957dc4b8dc8c5b1bda10c00e0717bbf364ad5e/README.md');
 	assert.equal(page.data.verified.revision, 'c3957dc4b8dc8c5b1bda10c00e0717bbf364ad5e');
+	assert.doesNotMatch(page.data.description, /publish/i, 'the task description must not promise an undocumented publication action');
 	for (const packageName of [
 		'@cyber-nomad-collective/trudoc',
 		'@cyber-nomad-collective/beskid-ui',
@@ -878,7 +889,6 @@ test('superrepo and Learn contributor tasks preserve ownership and focused valid
 	for (const route of ['/docs/contributing/superrepo-workflow/', '/docs/contributing/learn-curriculum/']) {
 		assert.match(navigation, new RegExp(`link: '${escapeRegExp(route)}'`), `navigation must expose ${route}`);
 		assert.ok(coverage.includes(`route: '${route}'`), `coverage must catalogue ${route}`);
-		assert.ok(contributing.body.includes(route), `contributor chooser must link to ${route}`);
 	}
 	for (const heading of ['Orientation', 'Choose a contribution task', 'Limits', 'Next steps']) {
 		assert.ok(section(contributing.body, heading).length > 0, `docs/contributing/index.md must contain ${heading}`);
@@ -886,6 +896,13 @@ test('superrepo and Learn contributor tasks preserve ownership and focused valid
 	for (const taskHeading of ['Prerequisites', 'Actions', 'Expected result', 'Recovery', 'Next task']) {
 		assert.equal(section(contributing.body, taskHeading), '', `docs/contributing/index.md must not use task heading ${taskHeading}`);
 	}
+	assert.deepEqual(markdownLinkRoutes(section(contributing.body, 'Choose a contribution task')), [
+		'/docs/contributing/documentation/',
+		'/docs/contributing/learn-curriculum/',
+		'/docs/contributing/repository/',
+		'/docs/contributing/standard-changes/',
+		'/docs/contributing/superrepo-workflow/',
+	]);
 	assertOneObservableAction('docs/contributing/index.md', section(contributing.body, 'Choose a contribution task'));
 	assert.equal(superrepo.data.authority.sourceHref, 'https://github.com/Cyber-Nomad-Collective/beskid/blob/3143396b796d86c1a70a0bfb1aa4761b593bbae5/site/setup-wizard.sh');
 	assert.equal(superrepo.data.verified.revision, '3143396b796d86c1a70a0bfb1aa4761b593bbae5');
@@ -897,11 +914,13 @@ test('superrepo and Learn contributor tasks preserve ownership and focused valid
 	for (const command of [
 		'pnpm --dir site/website test',
 		'pnpm --dir beskid_web_common run test',
-		'pnpm --dir site/learn run lesson:check <lesson-id>',
+		'pnpm --dir site/learn run lesson:check 01-hello-beskid',
 		'bash scripts/ci/corelib-publish.sh --dry-run',
 		'pnpm typecheck',
 		'./validate-ci-local.sh',
 	]) assert.ok(superrepo.body.includes(command), `superrepo gate table must include ${command}`);
+	assert.ok(superrepo.body.includes('git -C beskid_web_common status --short'));
+	assert.doesNotMatch(superrepo.body, /`[^`\n]*<[^>\n]+>[^`\n]*`/, 'superrepo executable commands must not contain shell-metacharacter placeholders');
 	const superrepoBeforeActions = superrepo.body.slice(0, superrepo.body.indexOf('\n## Actions'));
 	for (const term of ['focused gate', 'aggregate gate', 'root contract boundary']) {
 		assert.match(superrepoBeforeActions, new RegExp(`${escapeRegExp(term)}[^.]*means`, 'i'), `${term} must be defined before the actions`);
