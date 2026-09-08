@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Beskid IntelliSense: preserve the prepared assembly generation when building
+  LSP syntax facts so completion and hover return semantic results instead of
+  silently falling back to empty responses.
 - Zed extension: keep Zed's generated grammar-source checkout out of version
   control and block registry publication unless the stable LSP release and all
   declared platform assets are actually available.
