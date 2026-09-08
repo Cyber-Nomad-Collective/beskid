@@ -91,7 +91,7 @@ jobs:
     name: Windows ABI-v5 runtime-kit matrix
     needs: gate
     if: ${{ always() }}
-    runs-on: windows-latest
+    runs-on: blacksmith-2vcpu-windows-2025
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v7
@@ -182,7 +182,7 @@ jobs:
     name: macOS ABI-v5 runtime-kit matrix
     needs: gate
     if: ${{ always() }}
-    runs-on: macos-latest
+    runs-on: blacksmith-6vcpu-macos-latest
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v7

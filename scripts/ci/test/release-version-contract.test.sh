@@ -21,6 +21,13 @@ for workflow in "${release_workflow}" "${cleanup_workflow}" "${distribute_workfl
   fi
 done
 
+for workflow in "${compiler_workflow}" "${release_workflow}"; do
+  grep -Fq 'blacksmith-2vcpu-windows-2025' "${workflow}" || \
+    fail "release-critical Windows work still depends on the billing-locked GitHub runner: ${workflow}"
+  grep -Fq 'blacksmith-6vcpu-macos-latest' "${workflow}" || \
+    fail "release-critical macOS work still depends on the billing-locked GitHub runner: ${workflow}"
+done
+
 grep -Fq 'GITHUB_RUN_NUMBER: ${{ github.run_number }}' "${compiler_workflow}" || \
   fail 'compiler workflow does not provide its run number to the global version resolver'
 grep -Fq 'version: ${{ steps.version.outputs.version }}' "${compiler_workflow}" || \

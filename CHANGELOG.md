@@ -85,6 +85,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 - Zed extension: move the complete package into the dedicated `editors/zed`
   crate and use `zed_extension_api` 0.7.0 with `wasm32-wasip2`.
+- Run release-critical compiler and LSP Windows/macOS gates on Blacksmith so a
+  locked GitHub-hosted runner account cannot suppress stable release assets.
 - Zed extension: keep one DRY native LSP adapter for Beskid source, manifests,
   and standalone BSOL; resolve configured/PATH servers before the guarded
   versioned `lsp-stable` download and forward settings without reinterpretation.
