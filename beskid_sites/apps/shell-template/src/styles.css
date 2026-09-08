@@ -2,8 +2,8 @@
 
 /* Scan the shared lib's source for shadcn utility classes. Under a workspace
  * `workspace:*` link the package resolves into the pnpm virtual store, so we
- * point at the workspace source directly to keep class detection stable. */
-@source "../../../packages/beskid-ui-react/src";
+ * point at the canonical web-common source directly to keep class detection stable. */
+@source "../../../../beskid_web_common/packages/beskid-ui-react/src";
 @source "../../../packages/shell-core/src";
 @source inline("rounded-4xl");
 

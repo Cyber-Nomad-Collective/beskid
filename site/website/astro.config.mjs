@@ -145,6 +145,10 @@ export default defineConfig({
 		trudoc({
 			htmlDataAttrs: [
 				{
+					htmlSubdir: 'docs',
+					docAttr: 'data-docs',
+				},
+				{
 					htmlSubdir: 'book',
 					docAttr: 'data-book',
 				},
@@ -153,7 +157,7 @@ export default defineConfig({
 		starlight({
 			expressiveCode: {
 				shiki: {
-					langs: /** @type {any} */ (beskidGrammar),
+					langs: /** @type {any} */ ([beskidGrammar]),
 					langAlias: {
 						bd: 'beskid',
 					},
@@ -175,7 +179,33 @@ export default defineConfig({
   			},
 			customCss: docsShellCustomCss,
 			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/Cyber-Nomad-Collective/beskid' }],
-			sidebar: [],
+			sidebar: [
+				{
+					label: 'Beskid Docs',
+					items: [
+						{ label: 'Overview', link: '/docs/' },
+						{
+							label: 'Get started',
+							items: [
+								{ label: 'Overview', link: '/docs/getting-started/' },
+								{ label: 'Install Beskid', link: '/docs/getting-started/install/' },
+								{ label: 'Write and check a program', link: '/docs/getting-started/first-program/' },
+							],
+						},
+						{ label: 'Tooling', link: '/docs/tooling/' },
+						{ label: 'Projects', link: '/docs/projects/' },
+						{ label: 'Packages', link: '/docs/packages/' },
+						{ label: 'Beskid Standard', link: '/docs/standard/' },
+						{
+							label: 'Contribute',
+							items: [
+								{ label: 'Write Beskid documentation', link: '/docs/contributing/documentation/' },
+								{ label: 'Use ASD-STE100', link: '/docs/contributing/ste-100/' },
+							],
+						},
+					],
+				},
+			],
 		}),
 	],
 });

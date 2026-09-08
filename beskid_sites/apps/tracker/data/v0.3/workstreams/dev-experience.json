@@ -1,8 +1,0 @@
-{
-	"slug": "dev-experience",
-	"title": "Deploy & roadmap ergonomics",
-	"summary": "Docs-site Docker git for platform-spec git-meta generation, roadmap GitHub label documentation, Bun-aligned container builds, VS Code CLI toolchain bootstrap paths, and tracker local dev bootstrap (Backlog: bun install before vite dev).",
-	"order": 9,
-	"deliverableIds": ["v03-docs-reader-hardening"],
-	"$schema": "../schemas/seed/workstream.schema.json"
-}

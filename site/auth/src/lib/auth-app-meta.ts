@@ -3,15 +3,21 @@ import {
 	AUTH_APP_META,
 	type AuthAppId,
 } from "@beskid/auth-client";
+import { pairingAppIdSchema } from "./pairing-app-id";
+
+function authAppMeta(appId: string) {
+	const parsed = pairingAppIdSchema.safeParse(appId);
+	return parsed.success ? AUTH_APP_META[parsed.data] : undefined;
+}
 
 /** Fail-closed label when meta is missing or out of date vs app id (catalog may lag). */
 export function authAppLabel(appId: string): string {
-	return AUTH_APP_META[appId as AuthAppId]?.label ?? appId;
+	return authAppMeta(appId)?.label ?? appId;
 }
 
 /** Fail-closed description when meta is missing. */
 export function authAppDescription(appId: string): string {
-	return AUTH_APP_META[appId as AuthAppId]?.description ?? "";
+	return authAppMeta(appId)?.description ?? "";
 }
 
 /**

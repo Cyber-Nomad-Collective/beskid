@@ -34,12 +34,19 @@ interface RenderedTab {
 	codeHtml: string;
 	output: string;
 	hasOutput: boolean;
+	playgroundHref: string;
 }
 
 async function renderTab(tab: CodeTab): Promise<RenderedTab> {
 	const codeHtml = await highlightCode(tab.code, tab.lang ?? 'beskid');
 	const output = tab.output ?? '';
-	return { file: tab.file, codeHtml, output, hasOutput: output.length > 0 };
+	return {
+		file: tab.file,
+		codeHtml,
+		output,
+		hasOutput: output.length > 0,
+		playgroundHref: `https://learn.beskid-lang.org/?code=${encodeURIComponent(tab.code)}`,
+	};
 }
 
 const renderedTabs: RenderedTab[] = await Promise.all(tabs.map((tab) => renderTab(tab)));
@@ -86,6 +93,9 @@ const windowLabel = renderedTabs[0]?.file ?? '';
 				data-tab-index={i}
 				hidden={i !== 0}
 			>
+				<a class="landing-terminal__playground-link" href={tab.playgroundHref}>
+					Try in playground
+				</a>
 				<pre class="landing-terminal__pre"><code set:html={tab.codeHtml}></code></pre>
 				{useSplit && tab.hasOutput && (
 					<Fragment>
@@ -99,6 +109,25 @@ const windowLabel = renderedTabs[0]?.file ?? '';
 		))}
 	</div>
 </div>
+
+<style>
+	.landing-terminal__playground-link {
+		display: inline-flex;
+		align-items: center;
+		margin: 0.8rem 0.9rem 0;
+		padding: 0.35rem 0.6rem;
+		border: 1px solid var(--landing-border);
+		border-radius: 0.35rem;
+		color: var(--landing-accent);
+		font-size: 0.78rem;
+		font-weight: 700;
+		text-decoration: none;
+	}
+
+	.landing-terminal__playground-link:hover {
+		background: color-mix(in srgb, var(--landing-accent) 14%, transparent);
+	}
+</style>
 
 <script is:inline>
 	(function () {

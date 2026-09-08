@@ -7,14 +7,18 @@ tableOfContents: true
 import { Aside } from '@astrojs/starlight/components';
 
 <Aside type="caution">
-This chapter is **informative**. Enforceable rules live under the [Platform specification](/platform-spec/).
+This chapter is **informative**. Enforceable rules live in the [Beskid Standard](/docs/standard/).
 </Aside>
 
 
-Beskid packages are not "upload a folder, pick a version number that feels lucky, pray." The **pckg registry** assigns versions; manifests declare **dependencies**; lockfiles make CI reproducible. If that sounds boring, good—we have enough trauma from ecosystems that treat breaking changes as personality.
+Beskid packages are not "upload a folder, pick a version number that feels lucky, pray." The Rust-backed **pckg registry** assigns versions; manifests declare **dependencies**; lockfiles make CI reproducible. If that sounds boring, good—we have enough trauma from ecosystems that treat breaking changes as personality.
 
 <Aside type="note">
 All package workflows use `beskid pckg` (the **pckg** backend). The command `beskid pkg` does not exist — see the [pckg CLI](/book/18-packages-without-npm-trauma/pckg-cli/) page for the actual subcommands.
+</Aside>
+
+<Aside type="caution">
+The registry cutover is still being verified after the 0.4.0 tag. Treat the public registry as the source for packages that are published and visible there. Do not rely on retired .NET registry behavior or migration tooling.
 </Aside>
 
 ## What you will find here

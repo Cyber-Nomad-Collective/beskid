@@ -3,7 +3,6 @@ import { describe, expect, it } from "vitest";
 import {
 	getPlaygroundCode,
 	getPlaygroundExercise,
-	playgroundCompletionItems,
 } from "./playground";
 
 describe("playground editor integration", () => {
@@ -16,11 +15,6 @@ describe("playground editor integration", () => {
 		).toBe("use System;\nunit Run() {}");
 	});
 
-	it("registers practical Beskid completions", () => {
-		expect(playgroundCompletionItems.map((item) => item.label)).toEqual(
-			expect.arrayContaining(["use Core.Output", "unit Run", "i64"]),
-		);
-	});
 });
 
 describe("playground request metadata", () => {

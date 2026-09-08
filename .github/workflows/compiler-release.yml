@@ -26,22 +26,28 @@ permissions:
   contents: read
   actions: read
 
+env:
+  COMPILER_REPO: Cyber-Nomad-Collective/beskid_compiler
+
 jobs:
   version:
     name: Resolve release state inputs
     if: >-
       ${{
-        (github.event_name == 'workflow_run' && github.event.workflow_run.head_branch == 'main' &&
+        (github.event_name == 'workflow_run' && github.event.workflow_run.event == 'push' &&
+          github.event.workflow_run.head_repository.full_name == github.repository &&
+          github.event.workflow_run.head_branch == 'main' &&
           (github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure')) ||
         (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
       }}
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     outputs:
       version: ${{ steps.release.outputs.version }}
       release_channel: ${{ steps.release.outputs.channel }}
       gate_result: ${{ steps.release.outputs.gate_result }}
       source_sha: ${{ steps.release.outputs.source_sha }}
       compiler_sha: ${{ steps.compiler.outputs.sha }}
+      handoff_tag: ${{ steps.release.outputs.handoff_tag }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -90,7 +96,28 @@ jobs:
             echo "gate_result=${gate_result}"
             echo "source_sha=${source_sha}"
             echo "version=${version}"
+            echo "handoff_tag=compiler-handoff-${GITHUB_RUN_ID}"
           } >>"${GITHUB_OUTPUT}"
+
+      - name: Clean up expired compiler handoffs
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.COMPILER_RELEASE_TOKEN || secrets.COMPILER_SUBMODULE_TOKEN }}
+        run: >-
+          bash ./scripts/ci/github-release-handoff.sh cleanup
+          "${COMPILER_REPO}" 31
+
+      - name: Initialize quota-independent release handoff
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.COMPILER_RELEASE_TOKEN || secrets.COMPILER_SUBMODULE_TOKEN }}
+          HANDOFF_TAG: ${{ steps.release.outputs.handoff_tag }}
+          COMPILER_SHA: ${{ steps.compiler.outputs.sha }}
+          VERSION: ${{ steps.release.outputs.version }}
+        run: >-
+          bash ./scripts/ci/github-release-handoff.sh init
+          "${COMPILER_REPO}" "${HANDOFF_TAG}" "${COMPILER_SHA}"
+          "Compiler release handoff ${VERSION}"
 
   platform:
     name: Native pair (${{ matrix.target }})
@@ -100,7 +127,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-latest
+          - os: blacksmith-4vcpu-ubuntu-2404
             target: x86_64-unknown-linux-gnu
             cli_asset: beskid-linux-amd64
             lsp_asset: beskid_lsp-linux-amd64
@@ -159,20 +186,26 @@ jobs:
           release-output
           "${{ matrix.bundle_asset }}"
 
-      - name: Upload native artifacts, result, and raw logs
+      - name: Upload native outputs to the GitHub Release handoff
         if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: compiler-release-${{ matrix.target }}
-          path: release-output
-          if-no-files-found: warn
-          retention-days: 14
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.COMPILER_RELEASE_TOKEN || secrets.COMPILER_SUBMODULE_TOKEN }}
+          HANDOFF_TAG: ${{ needs.version.outputs.handoff_tag }}
+        run: |
+          set -euo pipefail
+          if [[ ! -d release-output ]]; then
+            echo '::warning::Native build produced no handoff outputs; release aggregation will fail closed.'
+            exit 0
+          fi
+          bash ./scripts/ci/github-release-handoff.sh upload \
+            "${COMPILER_REPO}" "${HANDOFF_TAG}" release-output
 
   state:
     name: Aggregate release state
     needs: [version, platform]
     if: ${{ always() && needs.version.result == 'success' }}
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     outputs:
       publishable: ${{ steps.state.outputs.publishable }}
     steps:
@@ -181,22 +214,14 @@ jobs:
           ref: ${{ needs.version.outputs.source_sha }}
           fetch-depth: 0
 
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
-        with:
-          path: release-assets
-          pattern: compiler-release-*
-          merge-multiple: true
-
-      - name: Download triggering Compiler diagnostic evidence
-        if: github.event_name == 'workflow_run'
+      - name: Download native outputs from the GitHub Release handoff
         shell: bash
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.COMPILER_RELEASE_TOKEN || secrets.COMPILER_SUBMODULE_TOKEN }}
+          HANDOFF_TAG: ${{ needs.version.outputs.handoff_tag }}
         run: >-
-          gh run download "${{ github.event.workflow_run.id }}"
-          --repo "${{ github.repository }}"
-          --name compiler-ci-report
-          --dir gate-evidence
+          bash ./scripts/ci/github-release-handoff.sh download
+          "${COMPILER_REPO}" "${HANDOFF_TAG}" release-assets
 
       - name: Record triggering Compiler job outcomes
         if: github.event_name == 'workflow_run'
@@ -216,6 +241,7 @@ jobs:
         shell: bash
         env:
           GATE_REPORT_DIR: ${{ github.workspace }}/gate-evidence
+          HANDOFF_RELEASE_URL: https://github.com/${{ env.COMPILER_REPO }}/releases/download/${{ needs.version.outputs.handoff_tag }}
         run: |
           set -euo pipefail
           mapfile -t results < <(find release-assets -name 'platform-result-*.json' -type f | sort)
@@ -237,23 +263,40 @@ jobs:
             bash ./scripts/ci/render-compiler-release-notes.sh release-assets/release-state.json release | tee release-assets/release-report.md >>"${GITHUB_STEP_SUMMARY}"
           fi
 
-      - name: Upload release state and report
+      - name: Retain release state in the GitHub Release handoff
         if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: compiler-release-state
-          path: |
-            release-assets/release-state.json
-            release-assets/release-report.md
-            release-assets/gate-evidence
-          if-no-files-found: warn
-          retention-days: 30
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.COMPILER_RELEASE_TOKEN || secrets.COMPILER_SUBMODULE_TOKEN }}
+          HANDOFF_TAG: ${{ needs.version.outputs.handoff_tag }}
+        run: |
+          set -euo pipefail
+          handoff_state=()
+          for candidate in release-assets/release-state.json release-assets/release-report.md; do
+            [[ -f "${candidate}" ]] && handoff_state+=("${candidate}")
+          done
+          [[ "${#handoff_state[@]}" -gt 0 ]] || {
+            echo 'release aggregation produced no state or report' >&2
+            exit 1
+          }
+          bash ./scripts/ci/github-release-handoff.sh upload \
+            "${COMPILER_REPO}" "${HANDOFF_TAG}" "${handoff_state[@]}"
+
+      - name: Finalize aggregated release handoff
+        if: steps.state.outputs.publishable == 'true'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.COMPILER_RELEASE_TOKEN || secrets.COMPILER_SUBMODULE_TOKEN }}
+          HANDOFF_TAG: ${{ needs.version.outputs.handoff_tag }}
+        run: >-
+          bash ./scripts/ci/github-release-handoff.sh finalize
+          "${COMPILER_REPO}" "${HANDOFF_TAG}"
 
   publish:
     name: Publish compiler release
     needs: [version, state]
     if: ${{ always() && needs.state.result == 'success' && needs.state.outputs.publishable == 'true' }}
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 20
     permissions:
       contents: write
@@ -263,11 +306,14 @@ jobs:
           ref: ${{ needs.version.outputs.source_sha }}
           fetch-depth: 0
 
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
-        with:
-          path: release-assets
-          pattern: compiler-release-*
-          merge-multiple: true
+      - name: Download verified release outputs
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.COMPILER_RELEASE_TOKEN || secrets.COMPILER_SUBMODULE_TOKEN }}
+          HANDOFF_TAG: ${{ needs.version.outputs.handoff_tag }}
+        run: >-
+          bash ./scripts/ci/github-release-handoff.sh download
+          "${COMPILER_REPO}" "${HANDOFF_TAG}" release-assets
 
       - name: Publish immutable and rolling streams
         shell: bash

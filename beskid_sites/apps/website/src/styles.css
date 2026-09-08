@@ -2,19 +2,19 @@
 
 /* Scan the shared lib's source for shadcn utility classes. Under a workspace
  * `workspace:*` link the package resolves into the pnpm virtual store, so we
- * point at the workspace source directly to keep class detection stable.
+ * point at the canonical web-common source directly to keep class detection stable.
  *
  * `@source` paths resolve relative to this CSS file
  * (`apps/website/src/styles.css`), so reaching the workspace `packages/` tree
- * at `beskid_sites/packages/` requires three `..` segments
- * (src → website → apps → beskid_sites). The previous two-segment path
- * silently resolved to the non-existent `apps/packages/`, which left the
+ * at `beskid_web_common/packages/` requires four `..` segments
+ * (src → website → apps → beskid_sites → repository root). A shorter path
+ * silently resolves inside `beskid_sites`, which leaves the
  * shell-core Topbar/AppShell utilities (e.g. `h-14`, `border-border`,
  * `px-4`, `items-center`) ungenerated — the topbar rendered unstyled
  * because the website's own landing source only uses custom `beskid-*`
  * classes, unlike the tracker/shell-template whose own routes use the same
  * Tailwind utilities and thus masked the broken scan. */
-@source "../../../packages/beskid-ui-react/src";
+@source "../../../../beskid_web_common/packages/beskid-ui-react/src";
 @source "../../../packages/shell-core/src";
 /* `rounded-4xl` is emitted by shadcn primitives (Button, Dialog, ...) via
  * `--radius-4xl` from tokens.css. Inline-pin it so detection does not depend

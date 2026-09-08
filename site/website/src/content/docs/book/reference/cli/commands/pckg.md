@@ -21,14 +21,14 @@ For ordinary **library** projects (`project.type` omitted or `Host`), `beskid de
 The package browser lists Markdown from:
 
 - `docs/**/*.md` in the artifact
-- optional root `README.md` (from `readme.md` at package root, `readme = "path"` in `Project.proj`, or an explicit on-disk `README.md`)
+- optional root `README.md` (from `readme.md` at package root, `readme = "path"` in the project's `.bproj` manifest, or an explicit on-disk `README.md`)
 - **`.beskid/docs/**/*.md`** (same layout as Beskid pack output)
 
 You can also ship hand-written docs under a top-level `docs/` directory in the package source; those paths are packed as usual and appear alongside generated files.
 
 Entrypoint resolution for generation:
 
-1. `<source>/Project.proj` (preferred)
+1. the single `<source>/*.bproj` project manifest (preferred)
 2. `<source>/main.bd`, `<source>/src/main.bd`, or `<source>/index.bd`
 3. otherwise, exactly one `.bd` file under `<source>`
 
@@ -36,10 +36,11 @@ If no deterministic entrypoint can be inferred, packing fails with an explicit e
 
 ## Template packages (`project.type = Template`)
 
-When `Project.proj` declares **`type = Template`**, pack uses the **template profile**:
+When the project `.bproj` declares **`type = Template`**, pack uses the **template profile**:
 
 - sets root `package.json` **`packageKind: "template"`**
-- includes **`.beskid/template.json`** in the artifact (required at pack time; schema **`beskid.template.v1`**)
+- reads the authoring manifest from **`.beskid/template.json`** and writes it as
+  artifact-root **`template.json`** (schema **`beskid.template.v1`**)
 - copies a **`template`** summary (`shortName`, `identity`, `tags`) from that manifest into `package.json`
 - **does not** run `beskid dev syntax doc` or embed **`.beskid/docs/api.json`**
 
@@ -59,24 +60,28 @@ Typical flags:
 
 On success the CLI prints a line of the form `Resolved package version: <semver>` (the version embedded in the packed `package.json`).
 
-## Workspace publish (registry API)
+## Publishing a workspace
 
-For multi-package workspaces (for example **corelib** with `foundation`, `runtime`, `compiler_sdk`, and aggregate `corelib`), the registry exposes:
+The registry accepts one canonical `.bpk` artifact per package; it does not
+accept workspace ZIP bundles. A workspace publisher (for example the corelib
+release workflow) must:
 
-`POST /api/workspaces/publish`
+1. classify the publishable workspace members and resolve their versions;
+2. pack and validate every member before the first registry mutation;
+3. create or update each package through `POST /api/packages`;
+4. upload each member through `POST /api/packages/<name>/versions` with the
+   artifact's version, SHA-256 checksum, and `.bpk` bytes.
 
-Multipart fields:
-
-- `artifact` (required) — ZIP whose root contains `Workspace.proj` and each member’s source tree (`Project.proj`, `src/`, optional `package.json`)
-- `versionBump` (optional `patch` | `minor` | `major`, default `patch`) — registry-assigned semver bump applied to **every** member package
-
-The server publishes each member as a separate package version, rewrites workspace **path** dependencies to **registry** references using the versions assigned in that upload, and rejects published `package.json` dependencies that still use `path` or `workspace` sources. Optional root `workspace.package.json` (`schema: beskid.workspace.package.v1`) and per-member `package.json` `pckg.configuration` / `pckg.overrides` supply publish metadata; `Workspace.proj` `override` blocks pin external dependency versions.
-
-CLI support for bundling and calling this endpoint is planned; CI can call the HTTP API directly until then.
+Workspace metadata controls inventory and ordering in the publisher only. Each
+artifact must contain registry dependencies rather than `path` or `workspace`
+sources. The server applies the same immutable-version and artifact validation
+rules to every member; there is no separate workspace publication contract or
+rollback envelope.
 
 ## Upload (`beskid dev package registry upload`)
 
-Publishes an existing `.bpk` to the registry (`POST /api/packages/<package>/publish`).
+Publishes an existing `.bpk` to an existing registry package
+(`POST /api/packages/<package>/versions`).
 
 Usage shape:
 
@@ -84,17 +89,21 @@ Usage shape:
 beskid dev package registry upload <package> --artifact path/to/package.bpk
 ```
 
-The CLI does **not** accept a `--version` flag and does **not** send a multipart `version` field. The **pckg** server assigns the next semantic version for that package (by default a **patch** bump over the latest non-yanked published version; first publish uses `0.0.1`). The artifact’s internal `package.json` version may differ from the registry-assigned publish version; the server validates the artifact accordingly.
+The CLI does **not** accept a separate `--version` flag. It reads the version
+from the validated artifact-root `package.json` and sends that exact value with
+the checksum and artifact bytes. Packing or the release version plan therefore
+owns version selection; the registry rejects a different artifact at an
+already-published package/version coordinate.
 
 Optional upload flags:
 
 - `--checksum-sha256 <hex>` — must match the artifact when provided
-- `--manifest-json <string>` — forwarded as optional `manifestJson` form metadata (the server still persists manifest material from the artifact)
 
 On success, when the API returns version details, the CLI prints:
 
 - `PCKG_PUBLISHED_VERSION=<semver>` — stable line for scripts and CI (for example the corelib publish script parses this)
-- a human-readable summary including `version: <semver> (registry-assigned)` plus checksum, size, and timestamps
+- a human-readable summary including the published version, checksum, size,
+  and timestamps
 
 Other subcommands that target a specific release (`download`, `yank`, `unyank`) still take `--version` because they refer to an already-published version.
 

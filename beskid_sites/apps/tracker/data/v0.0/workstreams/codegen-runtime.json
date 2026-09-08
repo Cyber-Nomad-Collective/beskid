@@ -1,8 +1,0 @@
-{
-	"slug": "codegen-runtime",
-	"title": "JIT/runtime and GC research",
-	"summary": "CLIF lowering design, execution-plan phase tracking, runtime allocator and gc-arena integration, and CI AOT smoke coverage. Parallel GC and production runtime collection were explicitly out of scope for this band.",
-	"order": 2,
-	"deliverableIds": ["v00-execution-jit-gc"],
-	"$schema": "../schemas/seed/workstream.schema.json"
-}

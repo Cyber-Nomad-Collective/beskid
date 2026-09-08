@@ -1,7 +1,0 @@
-{
-	"id": "v03-verify-main",
-	"title": "verify-all-on-main evidence",
-	"closedOn": "2026-05-24",
-	"subtasks": [],
-	"$schema": "../schemas/seed/deliverable.schema.json"
-}

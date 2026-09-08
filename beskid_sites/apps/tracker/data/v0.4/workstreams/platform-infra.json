@@ -1,7 +1,0 @@
-{
-	"slug": "platform-infra",
-	"title": "Platform infrastructure & observability",
-	"summary": "Shared Nitro observability, GHCR container builds, Coolify deploy fixes, and cross-service infra passes for tracker, auth, and platform lanes.",
-	"order": 8,
-	"$schema": "../schemas/seed/workstream.schema.json"
-}

@@ -1,8 +1,0 @@
-{
-	"id": "v02-corelib-workspace-publish",
-	"title": "Corelib workspace publish hardening",
-	"description": "Closed **2026-05-21** on superrepo [`f57377a`](https://github.com/Cyber-Nomad-Collective/beskid/commit/f57377a) (v0.2 delivery tip).\n\nCorelib workspace **package.json** metadata, api.json tree validation before publish, bundle filtering for non-docs artifacts, prelude lowering CI (stack and release profile), and publish CI submodule coordination.\n\nWorkstreams: `pckg-registry`, `ci-release`. **3** catalog tasks anchor this deliverable (`milestoneId: v02-corelib-workspace-publish`).\n\n## Provenance\n- [`483e7f4`](https://github.com/Cyber-Nomad-Collective/beskid_standard/commit/483e7f4) (`corelib`) — fix(corelib): exclude non-docs .beskid files from workspace publish bundle\n- [`361e370`](https://github.com/Cyber-Nomad-Collective/beskid_standard/commit/361e370) (`corelib`) — ci: validate api.json library tree before corelib publish\n- [`3845ef3`](https://github.com/Cyber-Nomad-Collective/beskid_standard/commit/3845ef3) (`corelib`) — chore(corelib): add workspace.package.json member metadata for pckg publish\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Deliverable:** `v02-corelib-workspace-publish` — Corelib workspace publish hardening\n\n## Relation\nGroups the v0.2 seed tasks linked via `milestoneId` for **Corelib workspace publish hardening**.",
-	"closedOn": "2026-05-21",
-	"subtasks": [],
-	"$schema": "../schemas/seed/deliverable.schema.json"
-}

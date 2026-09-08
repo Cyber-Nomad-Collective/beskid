@@ -1,8 +1,0 @@
-{
-	"id": "v03-editor-lsp-cli",
-	"title": "CLI LSP launch & VS Code toolchain",
-	"description": "Ship `beskid lsp` for stdio editor sessions, LSP release CI, extension download of cli-latest with verify/bootstrap, and superrepo inventory docs.",
-	"closedOn": "2026-05-25",
-	"subtasks": [],
-	"$schema": "../schemas/seed/deliverable.schema.json"
-}

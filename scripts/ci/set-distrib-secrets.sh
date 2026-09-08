@@ -45,7 +45,6 @@ gh auth status >/dev/null 2>&1 || { echo "gh is not authenticated. Run: gh auth 
 declare -a KEYS=(
   "DISTRIB_GH_PAT|Classic/fine-grained PAT, repo scope on beskid_compiler + beskid. See docs/Windows_Guide.md / Ubuntu_Guide.md."
   "HOMEBREW_TAP_GIT_TOKEN|PAT with contents:write on Cyber-Nomad-Collective/beskid_homebrew. See docs/MacOS_Guide.md."
-  "SNAPCRAFT_STORE_CREDENTIALS|Output of: snapcraft export-login --snaps=beskid ... See docs/Snap_Guide.md."
 )
 
 want() { [[ -z "$ONLY" ]] || [[ ",${ONLY}," == *",$1,"* ]]; }

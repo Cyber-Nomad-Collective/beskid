@@ -1,7 +1,0 @@
-{
-	"slug": "codegen-runtime",
-	"title": "Codegen & runtime",
-	"summary": "Execution surfaces for v0.2: spawn/fiber runtime and channels, vendored **abfall** GC heap integration, runtime/ABI module alignment, and lowering-test CI stack hardening on the compiler side.\n\n- Syscall-backed I/O remains under corelib `System` split surfaces.\n- GC spec chapters align with abfall vendoring and heap integration commits.",
-	"order": 5,
-	"$schema": "../schemas/seed/workstream.schema.json"
-}

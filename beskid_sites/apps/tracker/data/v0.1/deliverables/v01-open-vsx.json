@@ -1,8 +1,0 @@
-{
-	"id": "v01-open-vsx",
-	"title": "Open VSX publish on main",
-	"closedOn": "2026-04-22",
-	"description": "**editor-extension** deliverable: VS Code extension defaults to **bundled LSP** (`devMode` gates cargo launch); **Open VSX** workflow scaffold, semver derivation from tags/commits, namespace bootstrap, PAT/token **submodule checkout** for private **pckg**, VSCE icon compatibility, relative submodule URLs for CI auth propagation, and publish retries — CI publishes the extension from `main` through superrepo tag **v0.1.0** without manual registry steps.\n\n## Provenance\n- **Closing repository:** `beskid`\n- **Closing commit:** [`f777b79`](https://github.com/Cyber-Nomad-Collective/beskid/commit/f777b79)\n- **Tag:** **v0.1.0** (final Open VSX publish hardening in the v0.1 band)\n- **Closed:** 2026-04-22\n\n## Catalog scope\n- **Delivery version:** v0.1 (Compiler foundation)\n- **Workstream:** `editor-extension`\n- **Milestone:** `v01-open-vsx` (deliverable **#4**)\n\n## Relation\nAnchored tasks: `vscode-bundled-lsp-default`, `open-vsx-workflow-scaffold`, `open-vsx-version-derivation`, `open-vsx-namespace-bootstrap`, `open-vsx-submodule-token-checkout`, `open-vsx-private-submodule-pat`, `relative-submodule-urls-token-propagation`, `vscode-icon-vsce-compat`, `open-vsx-publish`, `open-vsx-publish-retry`. Closes the v0.1 delivery band on [`f777b79`](https://github.com/Cyber-Nomad-Collective/beskid/commit/f777b79); v0.2 platform-spec cutover begins immediately after this SHA on `main`.",
-	"subtasks": [],
-	"$schema": "../schemas/seed/deliverable.schema.json"
-}

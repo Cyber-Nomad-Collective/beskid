@@ -1,8 +1,0 @@
-{
-	"id": "v02-pckg-registry-foundation",
-	"title": "Registry dashboard and package docs foundation",
-	"description": "Public package pages, registry activity and semver-on-publish, PackageDocs explorer with Fluent grids, and early publish UX hardening.",
-	"closedOn": "2026-04-24",
-	"subtasks": [],
-	"$schema": "../schemas/seed/deliverable.schema.json"
-}

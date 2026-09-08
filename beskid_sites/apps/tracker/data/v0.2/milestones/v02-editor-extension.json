@@ -1,8 +1,0 @@
-{
-	"id": "v02-editor-extension",
-	"title": "VS Code extension & Open VSX",
-	"description": "Wire beskid_vscode into the superrepo, green Open VSX CI with platform LSP matrix, LSP client/outline/status UX, and modular extension runtime ahead of v0.3 CLI launch.",
-	"closedOn": "2026-05-22",
-	"subtasks": [],
-	"$schema": "../schemas/seed/deliverable.schema.json"
-}

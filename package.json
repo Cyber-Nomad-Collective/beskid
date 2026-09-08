@@ -1,8 +1,16 @@
 {
 	"name": "beskid",
 	"private": true,
-	"pnpm": {
-		"overrides": {
+	"license": "SEE LICENSE IN LICENSING.md",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@biomejs/biome",
+      "@fission-ai/openspec",
+      "better-sqlite3",
+      "esbuild",
+      "sharp"
+    ],
+    "overrides": {
 			"uuid": "^14.0.0",
 			"devalue": "^5.8.1",
 			"@dagrejs/dagre": "^3.0.0",
@@ -12,6 +20,7 @@
 	},
 	"scripts": {
 		"install:all": "pnpm install",
+		"licenses:check": "node scripts/ci/check-license-policy.mjs",
 		"website": "pnpm --dir site/website run dev",
 		"openspec:catalog": "pnpm exec tsx scripts/openspec/build-catalog.ts",
 		"openspec:layouts": "pnpm exec tsx scripts/openspec/validate-layouts.ts",

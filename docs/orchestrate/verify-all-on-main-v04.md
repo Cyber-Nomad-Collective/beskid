@@ -46,8 +46,8 @@ Evidence template mirroring v0.3 closure at [`aba4331`](https://github.com/Cyber
 | --- | --- | --- | --- |
 | auth hub | `https://auth.beskid-lang.org` | OAuth + pairing | |
 | tracker | `https://tracker.beskid-lang.org` | Settings sync + webhook | |
-| nexus | `https://nexus.beskid-lang.org:8452` | catalog analyze | |
-| pckg | `https://pckg.beskid-lang.org:8082` | public catalog + OAuth | |
+| nexus | `https://nexus.beskid-lang.org` | catalog analyze | |
+| pckg | `https://pckg.beskid-lang.org` | public catalog + package readback | |
 | site | `https://beskid-lang.org` | platform-spec + book | |
 
 ## Prior CI fixes (still valid)
@@ -60,7 +60,7 @@ MCP `deploy` or manual redeploy after GitHub Actions green. See [deploy matrix](
 
 ## Sign-off checklist
 
-- [ ] Distribution preflight confirms required secret names are configured, without disclosing values: `DISTRIB_GH_PAT`, `HOMEBREW_TAP_GIT_TOKEN`, and `SNAPCRAFT_STORE_CREDENTIALS`
+- [ ] Distribution preflight confirms required secret names are configured, without disclosing values: `DISTRIB_GH_PAT` and `HOMEBREW_TAP_GIT_TOKEN`
 - [ ] GitHub Packages install proof covers the exact `@beskid/beskid-ui`, `@beskid/ui-react`, and `trudoc` versions used by the release; the associated image workflow URL is recorded
 - [ ] Open VSX credential is configured and the extension publication run is green or records an idempotent already-published outcome
 - [ ] Coolify production evidence records immutable image digests and deployment URLs; Auth Hub OAuth pairing succeeds for every consumer

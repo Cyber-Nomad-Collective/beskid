@@ -1,8 +1,0 @@
-{
-	"slug": "concurrency-research",
-	"title": "Concurrency research",
-	"summary": "Documented preemptible fibers, pointer channels, and syscall-pool guard models in Plan.md without implementing a shipping concurrency runtime. Findings informed later execution-band planning (v0.2+).",
-	"order": 3,
-	"deliverableIds": ["v00-execution-jit-gc"],
-	"$schema": "../schemas/seed/workstream.schema.json"
-}

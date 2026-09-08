@@ -1,26 +1,16 @@
-# Corelib: native quality + test gate → publish to pckg.beskid-lang.org.
-name: Corelib
+# Reusable native quality gate for the production corelib closure.
+name: Corelib and templates
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'compiler'
-      - 'compiler/corelib'
-      - 'compiler/corelib/**'
-      - 'beskid_bsol'
-      - 'beskid_bsol/**'
-      - 'beskid_infra'
-      - 'beskid_infra/**'
-      - 'scripts/ci/**'
-      - '.github/actions/**'
-      - '.github/workflows/corelib.yml'
+  workflow_call:
   pull_request:
     branches: [main]
     paths:
       - 'compiler'
       - 'compiler/corelib'
       - 'compiler/corelib/**'
+      - 'beskid_templates'
+      - 'beskid_templates/**'
       - 'beskid_bsol'
       - 'beskid_bsol/**'
       - 'beskid_infra'
@@ -46,8 +36,7 @@ jobs:
     runs-on: blacksmith-4vcpu-ubuntu-2404
     # Hard ceiling so a hung corelib test cannot burn the 6h GitHub cap.
     timeout-minutes: 45
-    # Supersede an in-flight gate when a newer commit lands (including on main);
-    # the publish job uses the workflow-level group and is never cancelled.
+    # Supersede an in-flight gate when a newer commit lands on the same ref.
     concurrency:
       group: corelib-gate-${{ github.ref }}
       cancel-in-progress: true
@@ -79,38 +68,22 @@ jobs:
           bash ./scripts/ci/corelib-gate.sh
 
       # The gate writes the Markdown report through an EXIT trap, including
-      # failures before the test suite starts. Retain it after a failed gate;
-      # GitHub cannot guarantee post-cancellation steps after a hard runner
-      # termination, hence a missing file is a warning rather than a second
-      # failure that obscures the original result.
-      - name: Upload Corelib build report
+      # failures before the test suite starts. Summarize any emitted files after
+      # a failed gate; a missing report remains a warning so it cannot obscure
+      # the original failure.
+      - name: Summarize Corelib build report
         if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: corelib-build-report
-          path: ${{ runner.temp }}/corelib-build-report
-          if-no-files-found: warn
-          retention-days: 14
-
-  publish:
-    name: Publish corelib to pckg
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [gate]
-    runs-on: blacksmith-4vcpu-ubuntu-2404
-    timeout-minutes: 30
-    steps:
-      # The repository checkout includes history for version and release logic.
-      - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-
-      # Native publish: provisions Rust + Bun + compiler/bsol submodules, then
-      # builds beskid_cli and runs the pure-Node publish runner on the host.
-      - uses: ./.github/actions/setup-compiler-gate
-        with:
-          compiler-submodule-token: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
-
-      - name: Publish corelib workspace to pckg (native)
         env:
-          BESKID_PCKG_API_KEY: ${{ secrets.BESKID_PCKG_KEY }}
-        run: bash ./scripts/ci/corelib-publish.sh patch
+          REPORT_DIR: ${{ runner.temp }}/corelib-build-report
+        run: |
+          set -euo pipefail
+          printf '### Corelib build evidence\n\n' >>"${GITHUB_STEP_SUMMARY}"
+          if [[ ! -d "${REPORT_DIR}" ]]; then
+            echo 'No report files were emitted; see the gate log.' >>"${GITHUB_STEP_SUMMARY}"
+            exit 0
+          fi
+          find "${REPORT_DIR}" -type f -print0 | sort -z | while IFS= read -r -d '' file; do
+            bytes="$(wc -c <"${file}" | tr -d ' ')"
+            relative="${file#"${REPORT_DIR}"/}"
+            printf -- "- %s (%s bytes)\n" "${relative}" "${bytes}" >>"${GITHUB_STEP_SUMMARY}"
+          done

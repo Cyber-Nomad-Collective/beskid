@@ -1,8 +1,0 @@
-{
-	"id": "v00-execution-jit-gc",
-	"title": "Execution and GC prototype",
-	"description": "Delivered execution-plan milestones for HIR typing and runtime phases, a trait-based CLIF lowering roadmap, gc-arena crate integration with derive macro and JIT allocation hooks, Phase 5 allocator/GC scaffolding, CI with staged AOT smoke tests, and research notes on simple vs parallel GC plus deferred fiber/channel concurrency models.\n\n## Provenance\n- **Repository:** `pekan`\n- **Commit:** [`9bbf2f4`](https://github.com/Cyber-Nomad-Collective/pekan/commit/9bbf2f4)\n- **Subject:** Mark Phase 5 complete with runtime allocator, GC scaffolding, interop builtins, and diagnostic improvements\n- **Closed:** 2026-02-25\n\n## Catalog scope\n- **Delivery version:** v0.0 (Pecan prototype)\n- **Deliverable:** `v00-execution-jit-gc`\n\n## Relation\nGroups v0.0 seed tasks for **Execution and GC prototype** (see `data/v0.0/article.md`).",
-	"closedOn": "2026-02-25",
-	"subtasks": [],
-	"$schema": "../schemas/seed/deliverable.schema.json"
-}

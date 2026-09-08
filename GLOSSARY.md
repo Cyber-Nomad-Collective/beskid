@@ -12,9 +12,11 @@ Generation-scoped results computed by Salsa for expanded AST nodes, including re
 
 An informative, checked-in conceptual map of the Beskid compiler and its direct boundaries. It resolves canonical public specification links from the OpenSpec catalog, presents implementation paths as evidence, and never replaces OpenSpec requirements as the normative authority.
 
-## Auth Hub
+## Authentik
 
-The central `site/auth` service. It is the only browser identity authority for pckg and authenticates users through the GitHub application login flow. pckg consumes a paired handoff and retains only pckg-specific authorization and profile data.
+The sole browser identity authority for Beskid services. Its embedded proxy
+outpost authenticates users, forwards the verified subject and group claims to
+each application, and provides the canonical account and sign-out surfaces.
 
 ## Beskid standard
 
@@ -28,6 +30,23 @@ to the native `beskid_lsp`; it has generic diagnostics and limited
 `@schemaless` assistance plus highlighting from the pinned nested
 `beskid_bsol` Tree-sitter grammar.
 
+## Beskid service licensing boundary
+
+The licensing boundary under which Beskid-owned programs designed to accept
+user requests over a network are AGPL-3.0-only, while reusable clients,
+protocol contracts, SDKs, templates, core-library code, and runtime components
+remain Apache-2.0. Third-party components retain their upstream terms; in
+particular, the GitNexus-derived Nexus implementation remains PolyForm
+Noncommercial rather than AGPL.
+
+## Compiler output independence
+
+The licensing rule that running the Apache-2.0 Beskid compiler does not impose
+a Beskid license on input source or generated programs. Beskid runtime,
+core-library, startup, template, or generated material incorporated into an
+output is deliberately Apache-2.0 so that output may be licensed independently,
+subject to any separately identified third-party material.
+
 ## Bug-only GitHub synchronization
 
 Tracker integration in which GitHub Issues represents public bugs and their supported status/discussion fields only. Roadmap tasks, versions, workstreams, milestones, and deliverables remain in Tracker's SQLite domain model.
@@ -40,9 +59,9 @@ Tracker integration in which GitHub Issues represents public bugs and their supp
 
 An OpenSpec unit stored at `openspec/specs/<capability>/spec.md`. During migration, Beskid feature hubs become feature capabilities while domains and areas become taxonomy/governance capabilities.
 
-## Clankers
+## Coolify target URL
 
-Small automated helpers that perform bounded, checked work for Beskid. The term describes the project operating model. It is not a language feature or a source of technical authority.
+The `https://<host>:<container-port>` route descriptor sent to Coolify so its proxy selects the correct Compose service port. It is deployment configuration, not necessarily a public TLS listener; public health checks and API clients use the service's separate standard-HTTPS public URL.
 
 ## Draft Context
 
@@ -91,7 +110,7 @@ The exhaustive generated rule set that consumes typed AST shape plus AST semanti
 
 ## Legacy alias
 
-A former `/platform-spec/**` path that redirects to `/docs/standard/`, preserving access to the Beskid standard while readers update saved links.
+A stable `/platform-spec/**` path mapped through `openspec/catalog.json` to a canonical capability or requirement, preserving existing Book, Tracker, Nexus, and external links.
 
 ## Managed object allocation
 
@@ -104,17 +123,22 @@ The installed ABI-v5 target/profile directory containing `abi.json` and matching
 ## Node SQLite adapter
 
 The service-local synchronous SQLite boundary used by Node-hosted site apps.
-Auth uses pinned `better-sqlite3`; Platform Spec uses the Bun-compatible facade
-over built-in `node:sqlite`. Both preserve prepared statements and transactions
-while keeping native SQLite out of browser bundles.
+Auth uses pinned `better-sqlite3`, preserving prepared statements and
+transactions while keeping native SQLite out of browser bundles.
 
 ## Normative requirement
 
 A named OpenSpec requirement using SHALL or MUST and one or more testable scenarios. It defines behavior required for Beskid conformance.
 
-## Platform specification (retired)
+## Platform specification
 
-The former public reader and service for the Beskid standard. Beskid Docs now provides the public entry point at `/docs/standard/`; `openspec/specs` remains the normative source.
+The historical name for the separately deployed standard reader. That service is retired; the canonical website now renders the Beskid standard at `/docs/standard/`, while `openspec/specs` remains the sole normative source.
+
+## Playground
+
+The authenticated Beskid Learn workspace for trying arbitrary Beskid source with
+the analyzer. It is not a curriculum exercise: it uses the editor's current
+Monaco model and the dedicated `playground` analyze target.
 
 ## Playground
 
@@ -166,15 +190,7 @@ than simulated.
 
 ## Staged promotion
 
-A delivery process that builds an artifact once, verifies and deploys its immutable digest to staging, then automatically promotes that exact digest to production after staging succeeds, with environment-scoped secrets, smoke/SLO gates, and rollback evidence.
-
-## Production Watchtower release
-
-The production-only Beskid delivery model. CI publishes each service image to
-the self-hosted registry under an immutable audit reference and a controlled
-production tag. Watchtower on the production host polls only explicitly
-labelled Beskid application services and replaces them when that production tag
-changes; stateful services, the registry, and the proxy remain pinned.
+A GitHub Actions-controlled delivery process that builds an image once, publishes it to GHCR, deploys its immutable digest to Coolify staging, then automatically promotes that exact digest to production after staging succeeds, with environment-scoped secrets, smoke/SLO gates, and rollback evidence. Host-side image watchers and private-registry deployment paths are outside this process.
 
 ## Typed Markdown directive
 
@@ -187,13 +203,6 @@ An immutable graph that remains usable for exploration: pointer, touch, and keyb
 ## word
 
 The lowercase Beskid source primitive for an unsigned pointer-width machine value. `word` maps to the target native integer during semantic typing and ISLE lowering; ABI-v5 manifests and generated headers retain `usize` as their wire/layout term.
-
-## Zed extension adapter
-
-The thin Rust WebAssembly component in `editors/zed` that uses the official Zed
-extension SDK to resolve and launch the native Beskid language server and to
-forward Zed initialization and workspace settings unchanged. It does not own
-language semantics or reconstruct compiler workspace state.
 
 ## Tracker delivery relation
 
@@ -209,6 +218,14 @@ direct bounds-checked ISLE lowering rather than part of this runtime call.
 ## Guided lesson step
 
 A learner-facing unit in Beskid Learn that pairs explanatory copy with an optional editor focus range and source or command check. Steps are ordered, visibly tracked, and must pass before the next locked step becomes available.
+
+## Fixed lesson tile mosaic
+
+The immutable Beskid Learn workspace arrangement derived from a lesson's declared visible tiles. It sizes and splits the editor, terminal, lesson content, and optional lesson views automatically. Learners cannot open, close, reorder, or resize its tiles.
+
+## Document annotation
+
+A short statement on a public technical guide that identifies its status, authoritative source, and limits. Beskid Docs uses annotations to distinguish informative guidance from normative OpenSpec requirements.
 
 ## Beskid.Glue
 

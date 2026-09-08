@@ -9,8 +9,9 @@ tableOfContents: true
 ## Tie documentation to exports
 
 - Document public callables with `///` (chapter 20).
-- Run `beskid dev syntax doc` before publish (chapter 16).
-- Dry-run publish catches manifest lies early: `beskid pckg publish --dry-run`.
+- Run `beskid doc` before upload (chapter 16).
+- Pack locally to catch manifest lies before registry mutation: `beskid pckg pack --package <id> --source . --output <id>.bpk`.
+- Upload the validated artifact and its embedded version: `beskid pckg upload <id> --artifact <id>.bpk`.
 
 ## Next
 

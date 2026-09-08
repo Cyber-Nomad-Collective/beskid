@@ -26,13 +26,8 @@ export interface LandingCodeTab {
  * example carries compact inline helpers built on `ByteAt` (digit arithmetic
  * `b - 48`) and `DigitChar` — the same idioms `Core.Time` uses internally.
  */
-const calculatorCode = `use Core.Input;
-use Core.Output;
-use Core.String;
-use Core.Results;
-use Core.Syscall.SyscallError;
-
-// Parse a signed decimal integer. Returns 0 on empty or invalid input.
+const calculatorCode = `// Corelib is available by default. Parse a signed decimal integer.
+// Return 0 on empty or invalid input.
 i64 ParseInt(string text) {
     i64 len = Core.String.Len(text);
     if len == 0 {

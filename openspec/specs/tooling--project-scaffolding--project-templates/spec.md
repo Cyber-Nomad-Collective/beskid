@@ -216,7 +216,7 @@ High-level flow is specified in **[flow and algorithm](./flow-and-algorithm/)**.
 
 <SpecSection title="Compatibility and versioning" id="compatibility-and-versioning">
 - Engine schema: **`beskid.template.v1`** (breaking changes require new schema id and migration notes).
-- Template packages use the same **registry-assigned semver** as library packages; template identity string includes package id and version.
+- Template packages use the same **artifact-bound semver** as library packages; artifact-root `package.json` is authoritative for the uploaded package version, while the template identity retains its own package-qualified contract suffix.
 - **No host constraints** block (OS, SDK version, etc.)—templates are always eligible when installed.
 </SpecSection>
 

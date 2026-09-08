@@ -1,8 +1,0 @@
-{
-	"id": "v02-lsp-workspace",
-	"title": "LSP workspace & project graph",
-	"description": "Compiler LSP capabilities (rename, symbols, code actions, workspace execute commands) delivered through workspace templates and project graph pipeline.",
-	"closedOn": "2026-05-22",
-	"subtasks": [],
-	"$schema": "../schemas/seed/deliverable.schema.json"
-}

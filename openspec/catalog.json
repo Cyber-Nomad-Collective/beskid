@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "84e1950e36281fe1237f33f839a3657434437fe2b018b3a2222c194bcc3a0483",
+  "revision": "cbb9547d4f00b4fec896600983e79f5f857e09ef5901be1741f12fae3944978a",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -30484,7 +30484,6 @@
         "/book/13-reading-the-law/platform-spec-home/",
         "/book/16-corelib-batteries-with-opinions/",
         "/book/17-execution-abi-host-runtime/",
-        "/book/18-packages-without-npm-trauma/",
         "/book/19-public-api-that-survives-review/",
         "/book/20-doc-comments-that-are-not-lies/",
         "/book/21-ffi-and-forbidden-friendships/",
@@ -37627,15 +37626,15 @@
           "migrationStatus": "extracted"
         },
         {
-          "id": "BSP-REQ-96F30E1AED03",
-          "title": "Registry versions: Decision [D-TOOL-PCKG-0002]",
-          "anchor": "requirement-registry-versions-decision-d-tool-pckg-0002",
-          "legacySlug": "/platform-spec/tooling/registry-client/pckg-client-contract/adr/0002-registry-assigned-versions/",
-          "sourcePath": "site/spec-content/platform-spec/tooling/registry-client/pckg-client-contract/adr/0002-registry-assigned-versions/content.md",
-          "sourceHash": "b202b1e7377a19ac989aefe5f1b07e702cf42377fa2db20c4d287616385c0a84",
+          "id": "BSP-REQ-30F18B115127",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--registry-client--pckg-client-contract/spec.md",
+          "sourceHash": "3ca1a259b0f5abbbe221942390e84e079187c710be49a08c9d3f3b4f371e825c",
           "status": "Standard",
           "normative": true,
-          "migrationStatus": "extracted"
+          "migrationStatus": "extracted",
+          "title": "Artifact-bound versions: Decision [D-TOOL-PCKG-0002]",
+          "anchor": "requirement-artifact-bound-versions-decision-d-tool-pckg-0002"
         },
         {
           "id": "BSP-REQ-BBEFDCD80BA7",
@@ -39082,7 +39081,7 @@
       "path": "AGENTS.md",
       "title": "Beskid — Toolchain & Stack",
       "authority": "informative",
-      "sourceHash": "83014c78225314921aceba6c3712bd4194820bc58cd939e7d49b66a2ab1489d9",
+      "sourceHash": "2046fd5222293a4f4bb2bbe539ae7a3fbff36948a8c86366f279ce223b095efd",
       "standardLinks": [],
       "containsNormativeKeywords": true,
       "disposition": "informative-by-policy"
@@ -39091,7 +39090,7 @@
       "path": "GLOSSARY.md",
       "title": "Glossary",
       "authority": "informative",
-      "sourceHash": "b25374a7103ee9672274606bd21c9f4184657210b0a3e1a8eb92808a94c7a453",
+      "sourceHash": "5545f46b26e0fb27fe03c53942c53a483991c7484b6edbe3d3fac9b42153ee1b",
       "standardLinks": [
         "/platform-spec/"
       ],
@@ -39102,7 +39101,7 @@
       "path": "GUIDE.md",
       "title": "Beskid project guide",
       "authority": "informative",
-      "sourceHash": "58b57c2739d21358783629ae92b0d6be65d1edbac98cf30b6740c8ba0713cd10",
+      "sourceHash": "29235421c656b9eef07aa418ff76eab01866194f84c1143666b751a5761a798e",
       "standardLinks": [
         "/platform-spec/"
       ],
@@ -39113,7 +39112,7 @@
       "path": "README.md",
       "title": "Beskid Superrepo",
       "authority": "informative",
-      "sourceHash": "184bd7d8f8505e57efc7fa3509bb9d722e7b7f9f431d58bfdb3341bb25563594",
+      "sourceHash": "a85c8d211041c9986158fa70e88925df07052d5397fac03affe4655b7dfb8d19",
       "standardLinks": [
         "/platform-spec/",
         "/platform-spec/README.md"
@@ -39125,7 +39124,7 @@
       "path": "docs/distribution/SECRETS.md",
       "title": "Distribution Pipeline Secrets",
       "authority": "informative",
-      "sourceHash": "b22bbbed00ff000f4d4992a5041ea936c83dea75f6388f29c3033a5c3ed794b7",
+      "sourceHash": "b25a217e1baaf95107745a770bb8cf70a75f056fc2a0dcbe2c814c91497c4614",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -39134,7 +39133,7 @@
       "path": "docs/orchestrate/verify-all-on-main-v04.md",
       "title": "verify-all-on-main (v0.4)",
       "authority": "informative",
-      "sourceHash": "06d8af08bd45f533e0b5e2cb37f59e3bcca970b2cfdd5338a002a09af5375c05",
+      "sourceHash": "8ace251a6bf1ef25e2b83472422cc8a66a189a67a6598c915b6fd1991fcf3988",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -39322,7 +39321,7 @@
       "path": "site/website/src/content/docs/book/01-it-works-on-my-machine/downloads-and-releases.md",
       "title": "Downloads and rolling releases",
       "authority": "informative",
-      "sourceHash": "d349c62cbbf49ae4fcc52b62ffdd7090eb290322d719de3ca9b6823471a69dce",
+      "sourceHash": "befc4fa9a43d6b6e0fddc1a2a26ee6c362eeb208e2435403ef677d90c36c29e0",
       "standardLinks": [
         "/platform-spec/tooling/cli-and-distribution/"
       ],
@@ -40471,7 +40470,7 @@
       "path": "site/website/src/content/docs/book/16-corelib-batteries-with-opinions/index.mdx",
       "title": "Corelib: batteries with opinions",
       "authority": "informative",
-      "sourceHash": "f245bc897ebbccb016f035a7e3558f407591bd05de4bb49ca3d391a9cc1a991e",
+      "sourceHash": "7cc0cb93a141dc6625b12a1618051c8c30bd03a12e1eec8670f0b11866de641f",
       "standardLinks": [
         "/platform-spec/"
       ],
@@ -40604,10 +40603,8 @@
       "path": "site/website/src/content/docs/book/18-packages-without-npm-trauma/index.mdx",
       "title": "Packages without npm trauma",
       "authority": "informative",
-      "sourceHash": "18a1d713d48b0e81acd104dde1bbc68763a7704c1d0e2972ace80d00edac5c52",
-      "standardLinks": [
-        "/platform-spec/"
-      ],
+      "sourceHash": "f862171d2aeb3b8a973f03097cd643bfb422dc8312442a6669739fcf7f423368",
+      "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
     },
@@ -40615,7 +40612,7 @@
       "path": "site/website/src/content/docs/book/18-packages-without-npm-trauma/pckg-cli.md",
       "title": "The pckg CLI",
       "authority": "informative",
-      "sourceHash": "d8ce5a2900c69266dc84875ff585209cf6c4f45c41aecc53fcb414b249e619b3",
+      "sourceHash": "7dde2c32f7e30721cbffbb1ab49397fe4e3e9a0cef0eb92d9fd70efb2ca674dd",
       "standardLinks": [
         "/platform-spec/tooling/registry-client/",
         "/platform-spec/tooling/registry-client/pckg-client-contract/"
@@ -40636,7 +40633,7 @@
       "path": "site/website/src/content/docs/book/18-packages-without-npm-trauma/registry-versions.md",
       "title": "Registry-assigned versions",
       "authority": "informative",
-      "sourceHash": "eea756aa89163a0f183f5eff37de4a43b392ab489fad3a5f59d960fcb323347e",
+      "sourceHash": "09b51f3a48fb93633415fe860d5a80805d77485f3bd02675d5630e171b9a66f8",
       "standardLinks": [
         "/platform-spec/tooling/registry-client/package-kinds/",
         "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/"
@@ -40671,7 +40668,7 @@
       "path": "site/website/src/content/docs/book/19-public-api-that-survives-review/package-public-surface.md",
       "title": "Package public surface",
       "authority": "informative",
-      "sourceHash": "dee2750c1a91715eedcd9bdaaa19d579a787640868c1a26eebd531835a806cc5",
+      "sourceHash": "6675fdc0db0bb822030538c78df15ac26b7f82f9343f289b15ea6ed2454551f2",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -41008,7 +41005,7 @@
       "path": "site/website/src/content/docs/book/reference/cli/command-reference.md",
       "title": "CLI command reference",
       "authority": "informative",
-      "sourceHash": "e4dd2b48d1a22518cf8376d6f21759142ad1cc0235e557e2d05991a7fdf9fedb",
+      "sourceHash": "f8372c609ce48c6106eac5e8bd988da3f5bf0f0cfb806f3258dae670ce02c7a3",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -41113,7 +41110,7 @@
       "path": "site/website/src/content/docs/book/reference/cli/commands/pckg.md",
       "title": "beskid pckg",
       "authority": "informative",
-      "sourceHash": "983832b209e081855eb7debf51aecfb3034f81d6c069ac5ab70a3c07a00c3be4",
+      "sourceHash": "b04f78d29227ead102d25041098d249257969d026ecc5cc790d09aa416d19209",
       "standardLinks": [
         "/platform-spec/tooling/project-scaffolding/template-packages/"
       ],
@@ -41173,7 +41170,7 @@
       "path": "site/website/src/content/docs/book/reference/cli/index.md",
       "title": "Beskid CLI",
       "authority": "informative",
-      "sourceHash": "1aab8513b8631572635fccc4b82330ef3e49cb527a0ae86a4c3268137911a89c",
+      "sourceHash": "7a798eabdea169730a0746fc88c310b85cd5dd819a060852994a2a6ff4d299b2",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -41309,7 +41306,7 @@
       "path": "site/website/src/content/docs/book/reference/publish-first-package.md",
       "title": "Publish Your First Package",
       "authority": "informative",
-      "sourceHash": "fb0a717b2c0ea51b9065b34934cbb0a8addcd01998ea62f18611d1a0fff1f0be",
+      "sourceHash": "80f27ae5ec5ce5db185f96fa9ee9ff005834a2ac374d44cebd4abd407952f172",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -41345,7 +41342,7 @@
       "path": "site/website/src/content/docs/index.mdx",
       "title": "beskid",
       "authority": "informative",
-      "sourceHash": "19e75e30abf55dd7c851b874efb48281d21ca71a00adc22913240ceabc157364",
+      "sourceHash": "55b968ab9eeb892b344944756cdf56cd6e97864fc982f46d150d33fd6a6c22c6",
       "standardLinks": [
         "/platform-spec/",
         "/platform-spec/language-meta/"
@@ -60777,7 +60774,7 @@
       "decision": null,
       "title": "Contracts and edge cases",
       "status": "Standard",
-      "sourceHash": "92b6c0ed75b55e4b5731740335de737401f7b667db12b0634f32cf2114458440"
+      "sourceHash": "cd0468c8d965c7ee7fcd353e24a58c152097dcc124ae7be3a9d8589e6feb6427"
     },
     {
       "id": "BSP-CAP-2BA104D80F90",
@@ -61283,7 +61280,7 @@
       "decision": null,
       "title": "Project templates",
       "status": "Standard",
-      "sourceHash": "0737b1d8fb1dde74bd26c16e22b5195e0d84217cf271e7069f72f68915fe353c"
+      "sourceHash": "8f9f2efed36f596265607ad835b58edc73ea5548edd287ec9e817e8a552d8dca"
     },
     {
       "id": "BSP-CAP-13DBD951E2CC",
@@ -61305,7 +61302,7 @@
       "decision": null,
       "title": "Template packages",
       "status": "Standard",
-      "sourceHash": "87b5ebf73ba8571cab6c4b7e594e3a2b30b3aa8381582be6d315bc64b8be6e3a"
+      "sourceHash": "fd4418158431082d584e3a8af11bbfdd16a263708a5410c5ddcd2876ed32dc52"
     },
     {
       "id": "BSP-CAP-1CF9F3FDE3DB",
@@ -61327,7 +61324,7 @@
       "decision": null,
       "title": "Package kinds",
       "status": "Standard",
-      "sourceHash": "4dbd3b74b5c10442a4901aafe713384db53ca017d053c2ce458b03dc870145c2"
+      "sourceHash": "a6c85dad7883546c5ac9481339f4c2e01b65c027fb65270a982a8e2269003f62"
     },
     {
       "id": "BSP-CAP-D4BA52E299F6",
@@ -61349,7 +61346,7 @@
       "decision": null,
       "title": "pckg client contract",
       "status": "Standard",
-      "sourceHash": "a080187a642ae76a5301d9e012b37f2a45f747a0b377f8ce1171ca4b085906f2"
+      "sourceHash": "82e4c2a0aa79a2c84bb76142e2234035ab0b9e23cb3ae4dabd578ec01a937c58"
     },
     {
       "id": "BSP-CAP-5A23843812F0",

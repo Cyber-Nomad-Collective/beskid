@@ -10,16 +10,6 @@ source "${root}/scripts/ci/test/lib/assert.sh"
 pckg_commit="$(git -C "${root}" ls-files -s -- pckg | awk '{print $2}')"
 pckg_web_styles="$(git -C "${root}/pckg" show "${pckg_commit}:web/src/styles.css")"
 
-assert_contains "$(cat "${root}/site/platform-spec/src/styles.css")" \
-  '@source "../node_modules/@beskid/ui-react/src"' \
-  "Platform Spec scans shared React component utilities"
-assert_contains "$(cat "${root}/site/platform-spec/src/styles.css")" \
-  '@import "@beskid/ui-react/styles/shadcn-entry.css"' \
-  "Platform Spec loads shared sidebar tokens"
-assert_contains "$(cat "${root}/site/platform-spec/src/styles.css")" \
-  '@import "@beskid/beskid-ui/styles/hub.css"' \
-  "Platform Spec loads the service hub stylesheet"
-
 for consumer in beskid_tracker/src/styles.css beskid_nexus/gitnexus-web/src/styles.css; do
   assert_contains "$(cat "${root}/${consumer}")" \
     'styles/shadcn-entry.css' \

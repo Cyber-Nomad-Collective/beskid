@@ -55,7 +55,7 @@ test('provides a reduced-motion-safe blog index that uses the shared blog helper
 
 	assert.match(index, /ReleaseBlogIndex/);
 	assert.match(component, /sortBlogEntries/);
-	assert.match(component, /blogStatusLabel/);
+	assert.doesNotMatch(component, /blogStatusLabel/);
 	assert.match(component, /entry\.data\.date !== undefined/);
 	assert.match(component, /prefers-reduced-motion:\s*reduce/);
 	assert.match(contentConfig, /date:\s*z\.coerce\.date\(\)/);

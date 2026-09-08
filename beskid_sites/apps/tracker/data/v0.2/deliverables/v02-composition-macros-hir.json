@@ -1,8 +1,0 @@
-{
-	"id": "v02-composition-macros-hir",
-	"title": "Composition HIR & macro expansion",
-	"description": "Closed **2026-05-20** on superrepo [`f57377a`](https://github.com/Cyber-Nomad-Collective/beskid/commit/f57377a) (v0.2 delivery tip).\n\nComposition collect/graph/pass, mod-host query bridge, macro registry and expand passes, type-check context wiring, and structured api.json signatures in the compiler by May 20.\n\nWorkstreams: `analysis-pipeline`. **3** catalog tasks anchor this deliverable (`milestoneId: v02-composition-macros-hir`).\n\n## Provenance\n- [`efb67a5`](https://github.com/Cyber-Nomad-Collective/compiler/commit/efb67a5) (`compiler`) — feat(compiler): composition, macros, structured API docs, and resolver fixes\n- [`760098d`](https://github.com/Cyber-Nomad-Collective/compiler/commit/760098d) (`compiler`) — feat(compiler): extend macro expand and type-check context wiring\n- [`2518c48`](https://github.com/Cyber-Nomad-Collective/compiler/commit/2518c48) (`compiler`) — fix(compiler): refine macro substitution implementation\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Deliverable:** `v02-composition-macros-hir` — Composition HIR & macro expansion\n\n## Relation\nGroups the v0.2 seed tasks linked via `milestoneId` for **Composition HIR & macro expansion**.",
-	"closedOn": "2026-05-20",
-	"subtasks": [],
-	"$schema": "../schemas/seed/deliverable.schema.json"
-}

@@ -1,7 +1,0 @@
-{
-	"id": "v04-vscode-pckg-docs",
-	"title": "VS Code ↔ pckg, docs, smooth editor DX",
-	"description": "beskid_vscode integrates pckg registry browsing, platform-spec and book navigation, LSP from cli-latest releases, and status-bar feedback for long-running toolchain operations.\n\n## Provenance\n- **Catalog cutoff:** [`aaddd32`](https://github.com/Cyber-Nomad-Collective/beskid/commit/aaddd32) → [`ee88edf`](https://github.com/Cyber-Nomad-Collective/beskid/commit/ee88edf) on **beskid** (2026-05-26 – 2026-06-07)\n- **Anchor commit:** [`aaddd32`](https://github.com/Cyber-Nomad-Collective/beskid/commit/aaddd32)\n\n## Catalog scope\n- **Delivery version:** v0.4 (Platform services, auth, and delivery tooling)\n- **Status:** Mostly done — `vscode-pckg-docs-integration` and `vscode-lsp-status-bar-dx` tasks Done; `beskid.docs.specBaseUrl`, platform-spec deep links, registry API docs, status-bar pckg health, and extension unit tests landed. Deferred: diagnostic → spec anchor links (LSP `publishDiagnostics`) and Open VSX publish smoke.\n- **Workstreams:** `vscode-editor`",
-	"subtasks": [],
-	"$schema": "../schemas/seed/deliverable.schema.json"
-}

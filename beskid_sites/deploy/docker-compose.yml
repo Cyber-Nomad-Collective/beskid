@@ -13,10 +13,10 @@
 #   - CI moves controlled production tags; Watchtower updates only explicitly
 #     labelled application services. Third-party infrastructure stays pinned.
 #   - All secrets via env_file (deploy/.env), never inline.
-#   - Postgres serves pckg; Authelia keeps its single-instance state locally.
+#   - Postgres serves pckg and Authentik. Authentik is pinned infrastructure.
 #
 # Secrets: OpenBao `secret/beskid/production/*` → deploy/.env (see deploy.sh).
-# Do NOT commit deploy/.env or deploy/registry/htpasswd.
+# Do NOT commit deploy/.env.
 
 name: beskid-platform
 
@@ -30,6 +30,15 @@ x-resource-limits: &default-limits
   limits:
     memory: 512m
     cpus: "1.0"
+
+# The outpost must receive both its callback path and Caddy's authentication
+# subrequest before the application upstream. Numeric route labels preserve the
+# required directive order in caddy-docker-proxy.
+x-authentik-forward-auth: &authentik-forward-auth
+  caddy_0.route.0_reverse_proxy: /outpost.goauthentik.io/* authentik-server:9000
+  caddy_0.route.1_forward_auth: authentik-server:9000
+  caddy_0.route.1_forward_auth.uri: /outpost.goauthentik.io/auth/caddy
+  caddy_0.route.1_forward_auth.copy_headers: X-Authentik-Username X-Authentik-Groups X-Authentik-Entitlements X-Authentik-Email X-Authentik-Name X-Authentik-Uid X-Authentik-Jwt
 
 networks:
   beskid-edge:
@@ -53,7 +62,7 @@ volumes:
     name: beskid-sites_tracker-data
     external: true
   nexus-data:
-  authelia-data:
+  authentik-postgres-data:
   pckg-packages:
     name: beskid-pckg_pckg-artifacts
     external: true
@@ -61,9 +70,8 @@ volumes:
 
 services:
   # ---------------------------------------------------------------------------
-  # Private Docker registry at cr.beskid-lang.org. Authentication
-  # happens in the registry itself so every client, including Watchtower, gets
-  # the same bearer challenge and authorization behavior.
+  # Self-hosted Docker registry at cr.beskid-lang.org. The shared edge
+  # terminates TLS; registry:2 enforces its own bcrypt htpasswd challenge.
   # ---------------------------------------------------------------------------
   registry:
     image: registry:2.8
@@ -83,11 +91,8 @@ services:
     environment:
       REGISTRY_HTTP_ADDR: "0.0.0.0:5000"
       REGISTRY_STORAGE_DELETE_ENABLED: "true"
-      REGISTRY_AUTH: htpasswd
-      REGISTRY_AUTH_HTPASSWD_REALM: Beskid registry
-      REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
     healthcheck:
-      test: ["CMD-SHELL", "wget -S -q --spider http://127.0.0.1:5000/v2/ 2>&1 | grep -q '401 Unauthorized'"]
+      test: ["CMD-SHELL", "wget -q --server-response --spider http://127.0.0.1:5000/v2/ 2>&1 | grep -q '401 Unauthorized'"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -126,37 +131,83 @@ services:
           memory: 1g
           cpus: "2.0"
 
-  # ---------------------------------------------------------------------------
-  # Authelia is the sole browser-facing authentication service. It protects
-  # every public application through the shared Caddy edge; application images
-  # do not implement an alternate sign-in path.
-  # ---------------------------------------------------------------------------
-  authelia:
-    image: authelia/authelia:4.39.20
+  # Authentik is the sole browser-facing authentication service. Its embedded
+  # proxy outpost protects every public application at the shared Caddy edge.
+  authentik-postgresql:
+    image: postgres:16-alpine
     restart: unless-stopped
+    networks:
+      - beskid-backend
+    environment:
+      POSTGRES_DB: authentik
+      POSTGRES_USER: authentik
+      POSTGRES_PASSWORD: ${AUTHENTIK_POSTGRES_PASSWORD:?set AUTHENTIK_POSTGRES_PASSWORD}
+    volumes:
+      - authentik-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U authentik -d authentik"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    logging: *default-logging
+
+  authentik-server:
+    image: ghcr.io/goauthentik/server:2025.10.4
+    command: server
+    restart: unless-stopped
+    depends_on:
+      authentik-postgresql:
+        condition: service_healthy
+    networks:
+      - beskid-edge
+      - beskid-backend
+    expose:
+      - "9000"
     labels:
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://auth.beskid-lang.org
-      caddy_0.reverse_proxy: "{{upstreams 9091}}"
-    networks:
-      - beskid-edge
-    expose:
-      - "9091"
+      caddy_0.redir_0: /login https://learn.beskid-lang.org/ 302
+      caddy_0.reverse_proxy: "{{upstreams 9000}}"
     env_file:
       - ${BESKID_ENV_FILE:-.env}
-    volumes:
-      - ./authelia/configuration.yml:/config/configuration.yml:ro
-      - ./authelia/users_database.yml:/config/users_database.yml:ro
-      - authelia-data:/var/lib/authelia
+    environment:
+      AUTHENTIK_POSTGRESQL__HOST: authentik-postgresql
+      AUTHENTIK_POSTGRESQL__NAME: authentik
+      AUTHENTIK_POSTGRESQL__USER: authentik
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${AUTHENTIK_POSTGRES_PASSWORD:?set AUTHENTIK_POSTGRES_PASSWORD}
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY:?set AUTHENTIK_SECRET_KEY}
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:9091/api/health || exit 1"]
+      test: ["CMD", "ak", "healthcheck"]
       interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 20s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
     logging: *default-logging
-    deploy:
-      resources: *default-limits
+
+  authentik-worker:
+    image: ghcr.io/goauthentik/server:2025.10.4
+    command: worker
+    restart: unless-stopped
+    depends_on:
+      authentik-postgresql:
+        condition: service_healthy
+    networks:
+      - beskid-backend
+    env_file:
+      - ${BESKID_ENV_FILE:-.env}
+    environment:
+      AUTHENTIK_POSTGRESQL__HOST: authentik-postgresql
+      AUTHENTIK_POSTGRESQL__NAME: authentik
+      AUTHENTIK_POSTGRESQL__USER: authentik
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${AUTHENTIK_POSTGRES_PASSWORD:?set AUTHENTIK_POSTGRES_PASSWORD}
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY:?set AUTHENTIK_SECRET_KEY}
+    healthcheck:
+      test: ["CMD", "ak", "healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    logging: *default-logging
 
   # ---------------------------------------------------------------------------
   # Beskid applications. CI advances only these mutable production tags;
@@ -172,9 +223,8 @@ services:
       com.beskid.release: production
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://beskid-lang.org
-      caddy_0.forward_auth: authelia:9091
-      caddy_0.forward_auth.uri: /api/authz/forward-auth
-      caddy_0.reverse_proxy: "{{upstreams 80}}"
+      <<: *authentik-forward-auth
+      caddy_0.route.2_reverse_proxy: "{{upstreams 80}}"
     networks:
       - beskid-edge
     expose:
@@ -199,9 +249,8 @@ services:
       com.beskid.release: production
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://tracker.beskid-lang.org
-      caddy_0.forward_auth: authelia:9091
-      caddy_0.forward_auth.uri: /api/authz/forward-auth
-      caddy_0.reverse_proxy: "{{upstreams 3000}}"
+      <<: *authentik-forward-auth
+      caddy_0.route.2_reverse_proxy: "{{upstreams 3000}}"
     networks:
       - beskid-edge
     expose:
@@ -228,15 +277,16 @@ services:
       com.beskid.release: production
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://nexus.beskid-lang.org
-      caddy_0.forward_auth: authelia:9091
-      caddy_0.forward_auth.uri: /api/authz/forward-auth
-      caddy_0.reverse_proxy: "{{upstreams 8452}}"
+      <<: *authentik-forward-auth
+      caddy_0.route.2_reverse_proxy: "{{upstreams 8452}}"
     networks:
       - beskid-edge
     expose:
       - "8452"
     env_file:
       - ${BESKID_ENV_FILE:-.env}
+    environment:
+      NEXUS_AUTHENTIK_ADMIN_GROUPS: ${NEXUS_AUTHENTIK_ADMIN_GROUPS:-authentik Admins}
     volumes:
       - nexus-data:/data/gitnexus
     healthcheck:
@@ -257,9 +307,8 @@ services:
       com.beskid.release: production
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://pckg.beskid-lang.org
-      caddy_0.forward_auth: authelia:9091
-      caddy_0.forward_auth.uri: /api/authz/forward-auth
-      caddy_0.reverse_proxy: "{{upstreams 8082}}"
+      <<: *authentik-forward-auth
+      caddy_0.route.2_reverse_proxy: "{{upstreams 8082}}"
     networks:
       - beskid-edge
       - beskid-backend
@@ -270,6 +319,10 @@ services:
         condition: service_healthy
     env_file:
       - ${BESKID_ENV_FILE:-.env}
+    environment:
+      SHELL_AUTH_MODE: authentik
+      SHELL_ADMIN_GROUP: pckg-admins
+      SHELL_MODERATOR_GROUP: pckg-moderators
     volumes:
       - pckg-packages:/app/packages
       - pckg-data:/app/data
@@ -294,9 +347,8 @@ services:
       com.beskid.release: production
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://learn.beskid-lang.org
-      caddy_0.forward_auth: authelia:9091
-      caddy_0.forward_auth.uri: /api/authz/forward-auth
-      caddy_0.reverse_proxy: "{{upstreams 80}}"
+      <<: *authentik-forward-auth
+      caddy_0.route.2_reverse_proxy: "{{upstreams 80}}"
     networks:
       - beskid-edge
     expose:
@@ -315,14 +367,12 @@ services:
 
   # The Docker socket is intentionally available only to this updater. It is
   # label-scoped: registry, edge, and databases stay pinned until a
-  # deliberate Compose change. Credentials live in the mounted Docker config
-  # generated by deploy.sh and are never stored in this repository.
+  # deliberate Compose change.
   watchtower:
     image: containrrr/watchtower:1.7.1
     restart: unless-stopped
     command: --label-enable --interval 60 --rolling-restart --cleanup
     environment:
-      DOCKER_CONFIG: /config
       DOCKER_API_VERSION: "1.40"
       WATCHTOWER_LABEL_ENABLE: "true"
       WATCHTOWER_POLL_INTERVAL: "60"
@@ -330,5 +380,4 @@ services:
       WATCHTOWER_CLEANUP: "true"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./watchtower:/config:ro
     logging: *default-logging

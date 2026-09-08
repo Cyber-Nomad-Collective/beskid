@@ -102,16 +102,6 @@ identity_providers:
       #   grant_types: ["authorization_code"]
       #   response_types: ["code"]
       #   userinfo_signing_algorithm: "none"
-      # - client_id: platform-spec
-      #   client_secret: ${PLATFORM_SPEC_OIDC_CLIENT_SECRET}
-      #   authorization_policy: one_factor
-      #   redirect_uris:
-      #     - "https://spec.beskid-lang.org/api/auth/callback"
-      #     - "http://localhost:8460/api/auth/callback"
-      #   scopes: ["openid", "profile", "email", "groups"]
-      #   grant_types: ["authorization_code"]
-      #   response_types: ["code"]
-      #   userinfo_signing_algorithm: "none"
       # - client_id: tracker
       #   client_secret: ${TRACKER_OIDC_CLIENT_SECRET}
       #   authorization_policy: one_factor

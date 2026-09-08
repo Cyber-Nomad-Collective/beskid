@@ -1,7 +1,0 @@
-{
-	"slug": "editor-extension",
-	"title": "Editor & Open VSX",
-	"order": 4,
-	"summary": "VS Code extension defaults to a **bundled LSP** (cargo launch gated behind devMode). **Open VSX** automation on `main`: workflow scaffold, semver derivation from tags/commits, namespace bootstrap, PAT/token submodule checkout for private **pckg**, VSCE icon compatibility, and publish retries — deliverable **v01-open-vsx** closes on superrepo **v0.1.0** (`f777b79`).",
-	"$schema": "../schemas/seed/workstream.schema.json"
-}

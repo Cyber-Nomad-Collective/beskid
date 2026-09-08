@@ -1,8 +1,0 @@
-{
-	"id": "v03-pckg-tool-registry",
-	"title": "Tool packageKind and registry integration",
-	"description": "packageKind tool across pckg UI and CLI pack; docs UI refactor; api.json tier and per-package artifact paths.",
-	"closedOn": "2026-05-24",
-	"subtasks": [],
-	"$schema": "../schemas/seed/deliverable.schema.json"
-}

@@ -10,23 +10,25 @@ FROM node:24-alpine AS build
 RUN apk add --no-cache git python3 make g++ bash
 RUN npm install -g pnpm@10.17.1
 
-WORKDIR /app
+WORKDIR /src
 
 # Workspace root + lockfile first for a frozen, cached install.
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc tsconfig.base.json ./
-# Shared library + this app (the only consumer in this image).
-COPY packages/beskid-ui-react ./packages/beskid-ui-react
-COPY packages/shell-core ./packages/shell-core
-COPY apps/shell-template ./apps/shell-template
+COPY beskid_sites/package.json beskid_sites/pnpm-lock.yaml beskid_sites/pnpm-workspace.yaml beskid_sites/.npmrc beskid_sites/tsconfig.base.json ./beskid_sites/
+COPY beskid_sites/packages/shell-core ./beskid_sites/packages/shell-core
+COPY beskid_sites/apps/shell-template ./beskid_sites/apps/shell-template
+COPY beskid_web_common ./beskid_web_common
 
-RUN pnpm install --frozen-lockfile --filter beskid-shell-template...
+RUN pnpm --dir /src/beskid_sites install --frozen-lockfile --filter beskid-shell-template...
 
-WORKDIR /app/apps/shell-template
+WORKDIR /src/beskid_sites/apps/shell-template
 
 ENV SKIP_ENV_VALIDATION=1
 RUN pnpm exec vite build
 
 FROM node:24-alpine AS runtime
+
+LABEL org.opencontainers.image.licenses="Apache-2.0" \
+  org.opencontainers.image.source="https://github.com/Cyber-Nomad-Collective/beskid"
 
 RUN apk add --no-cache wget
 
@@ -35,10 +37,12 @@ WORKDIR /app/apps/shell-template
 ENV NODE_ENV=production
 ENV PORT=8499
 
-COPY --from=build /app/apps/shell-template/node_modules ./node_modules
-COPY --from=build /app/node_modules /app/node_modules
-COPY --from=build /app/apps/shell-template/package.json ./package.json
-COPY --from=build /app/apps/shell-template/.output ./.output
+COPY --from=build /src/beskid_sites/apps/shell-template/node_modules ./node_modules
+COPY --from=build /src/beskid_sites/node_modules /app/node_modules
+COPY --from=build /src/beskid_sites/apps/shell-template/package.json ./package.json
+COPY --from=build /src/beskid_sites/apps/shell-template/.output ./.output
+COPY LICENSE /usr/share/licenses/beskid/Apache-2.0.txt
+COPY NOTICE /usr/share/licenses/beskid/NOTICE
 
 EXPOSE 8499
 

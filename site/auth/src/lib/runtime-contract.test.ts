@@ -11,7 +11,10 @@ const workspaceRoot = new URL("../../../../", import.meta.url);
 describe("TanStack runtime contract", () => {
 	test("auth uses the React Start dependency catalog", () => {
 		const startPackage = readJson(
-			new URL("../../node_modules/@tanstack/react-start/package.json", import.meta.url),
+			new URL(
+				"../../node_modules/@tanstack/react-start/package.json",
+				import.meta.url,
+			),
 		);
 		const workspace = readFileSync(
 			fileURLToPath(new URL("pnpm-workspace.yaml", workspaceRoot)),
@@ -53,6 +56,5 @@ describe("TanStack runtime contract", () => {
 			expect(deployment).toContain("http://127.0.0.1:8090/api/v1/health");
 			expect(deployment).toContain("http://127.0.0.1:8090/");
 		}
-
 	});
 });

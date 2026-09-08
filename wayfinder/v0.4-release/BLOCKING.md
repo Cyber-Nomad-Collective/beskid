@@ -43,7 +43,13 @@ After issue creation:
 [20 compiler releasable-slice proof] ──> [21 root release-surface integration]
 [21 root release-surface integration] ──> final corelib/runtime-kit/CI evidence
 [22 pckg legacy-data disposition] ──> [19 pckg Rust cutover proof]
+[GitHub account billing lock] ──> hosted CI ──> staging/production Coolify promotion ──> package publication
 ```
+
+The repository-side artifact quota has been reduced to zero stored Actions
+artifacts. GitHub still refuses to start hosted jobs with an account-level
+billing lock, so this external account state remains the only non-code release
+blocker after local verification and push.
 
 ## Ticket type summary
 

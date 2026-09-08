@@ -40,7 +40,7 @@ normalize_smoke_urls() {
   )
 }
 
-canonical_urls=$'https://beskid-lang.org/\nhttps://auth.beskid-lang.org/api/health\nhttps://learn.beskid-lang.org/api/health\nhttps://tracker.beskid-lang.org/api/health\nhttps://nexus.beskid-lang.org/api/health\nhttps://pckg.beskid-lang.org/health/ready'
+canonical_urls=$'https://beskid-lang.org/\nhttps://learn.beskid-lang.org/api/health\nhttps://tracker.beskid-lang.org/api/health\nhttps://nexus.beskid-lang.org/api/health\nhttps://pckg.beskid-lang.org/health/ready'
 if [[ -n "${BESKID_SMOKE_URLS:-}" ]]; then
   configured_urls="$(normalize_smoke_urls "${BESKID_SMOKE_URLS}")" || exit 1
   if [[ "${configured_urls}" != "${canonical_urls}" ]]; then
@@ -52,13 +52,21 @@ fi
 probe_url() {
   local url="$1"
   local headers
-  local code
+  local code http_status
   headers="$(mktemp)"
   code=$(curl --fail-with-body --silent --show-error --retry "${smoke_retries}" --retry-delay 2 --retry-all-errors \
     --max-time 20 -D "${headers}" -o /dev/null -H "traceparent: ${TRACEPARENT:-}" \
     "${url}" 2>/dev/null; echo $?)
   if [[ "${code}" != "0" ]]; then
     echo "smoke production: failed ${url}" >&2
+    cat "${headers}" >&2
+    rm -f "${headers}"
+    return 1
+  fi
+
+  http_status="$(awk '/^HTTP\// { status = $2 } END { print status }' "${headers}")"
+  if [[ ! "${http_status}" =~ ^2[0-9][0-9]$ ]]; then
+    echo "smoke production: expected a 2xx response from ${url}, got ${http_status:-no HTTP status}" >&2
     cat "${headers}" >&2
     rm -f "${headers}"
     return 1

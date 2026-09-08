@@ -37,6 +37,10 @@ test("falls back from missing stable metadata to the published unstable release 
 	assert.equal(payload.version, "0.4.607-unstable");
 	assert.equal(payload.source, "github:unstable");
 	assert.equal(payload.assets.length, 3);
+	assert.equal(
+		payload.packages.some((pkg: { label: string }) => pkg.label === "Snap"),
+		false,
+	);
 	assert.ok(requested.some((url) => url.includes("cli-stable/release-state.json")));
 	assert.ok(requested.some((url) => url.includes("cli-unstable/release-state.json")));
 });

@@ -1,7 +1,9 @@
 # syntax=docker/dockerfile:1.7
 FROM node:24-alpine AS build
 
-RUN apk add --no-cache git
+# git resolves pnpm git dependencies; Python and the compiler toolchain build
+# the native packages selected by the root frozen lockfile.
+RUN apk add --no-cache git python3 make g++
 RUN npm install -g corepack@latest && corepack enable && corepack prepare pnpm@10.17.1 --activate
 
 WORKDIR /app
@@ -34,8 +36,14 @@ RUN pnpm --filter beskid-website build
 
 FROM nginx:1.27-alpine AS runtime
 
+LABEL org.opencontainers.image.licenses="AGPL-3.0-only AND CC-BY-4.0" \
+  org.opencontainers.image.source="https://github.com/Cyber-Nomad-Collective/beskid"
+
 COPY --from=build /app/site/website/dist /usr/share/nginx/html
 COPY site/website/nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY LICENSES/AGPL-3.0-only.txt /usr/share/licenses/beskid/AGPL-3.0-only.txt
+COPY LICENSES/CC-BY-4.0.txt /usr/share/licenses/beskid/CC-BY-4.0.txt
+COPY NOTICE /usr/share/licenses/beskid/NOTICE
 
 EXPOSE 80
 

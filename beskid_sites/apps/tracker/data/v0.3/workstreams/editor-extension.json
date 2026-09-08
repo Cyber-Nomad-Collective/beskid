@@ -1,8 +1,0 @@
-{
-	"slug": "editor-extension",
-	"title": "Editor & CLI LSP",
-	"summary": "`beskid lsp` stdio subcommand and GitHub Actions LSP release tags alongside CLI publish, VS Code extension cli-latest download/bootstrap, bundled LSP host scripts, superrepo submodule bumps, and inventory/documentation refresh at v0.3 tip.",
-	"order": 7,
-	"deliverableIds": ["v03-editor-lsp-cli"],
-	"$schema": "../schemas/seed/workstream.schema.json"
-}

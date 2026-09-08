@@ -8,18 +8,23 @@ compiler_workflow="${root}/.github/workflows/compiler.yml"
 release_workflow="${root}/.github/workflows/compiler-release.yml"
 open_vsx_workflow="${root}/.github/workflows/publish-open-vsx.yml"
 distribute_workflow="${root}/.github/workflows/distribute.yml"
+cleanup_workflow="${root}/.github/workflows/compiler-handoff-cleanup.yml"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
   exit 1
 }
 
+for workflow in "${release_workflow}" "${cleanup_workflow}" "${distribute_workflow}"; do
+  if rg -Fq 'runs-on: ubuntu-latest' "${workflow}"; then
+    fail "release-critical Linux orchestration still depends on the billing-locked GitHub Ubuntu runner: ${workflow}"
+  fi
+done
+
 grep -Fq 'GITHUB_RUN_NUMBER: ${{ github.run_number }}' "${compiler_workflow}" || \
   fail 'compiler workflow does not provide its run number to the global version resolver'
-grep -Fq 'name: Emit global release version' "${compiler_workflow}" || \
-  fail 'compiler workflow does not emit its minted version as an artifact'
-grep -Fq 'name: release-version' "${compiler_workflow}" || \
-  fail 'compiler workflow does not name the version artifact release-version'
+grep -Fq 'version: ${{ steps.version.outputs.version }}' "${compiler_workflow}" || \
+  fail 'compiler workflow does not expose its minted version as a same-run job output'
 
 # Legacy in-workflow publishing is removed; the dedicated release workflow
 # is the sole CLI, LSP, and bundle publisher.
@@ -37,9 +42,20 @@ grep -Fq "github.event.workflow_run.conclusion == 'success' && 'stable' || 'unst
   fail 'automatic compiler release channel does not follow the gate conclusion'
 grep -Fq 'bash ./scripts/ci/build-release-platform.sh' "${release_workflow}" || \
   fail 'compiler release workflow does not use the structured platform wrapper'
-grep -Fq 'name: compiler-release-${{ matrix.target }}' "${release_workflow}" || \
-  fail 'compiler release workflow does not retain independent platform reports'
-grep -Fq 'name: compiler-release-state' "${release_workflow}" || \
+grep -Fq 'handoff_tag: ${{ steps.release.outputs.handoff_tag }}' "${release_workflow}" || \
+  fail 'compiler release workflow does not expose its GitHub Release handoff tag'
+grep -Fq "github.event.workflow_run.event == 'push'" "${release_workflow}" || \
+  fail 'compiler release workflow accepts non-push workflow_run sources into its privileged release path'
+grep -Fq 'github.event.workflow_run.head_repository.full_name == github.repository' "${release_workflow}" || \
+  fail 'compiler release workflow does not require the triggering run to originate in the same repository'
+grep -Fq 'handoff_tag=compiler-handoff-${GITHUB_RUN_ID}' "${release_workflow}" || \
+  fail 'compiler release handoff identity is not stable across failed-job reruns'
+if grep -Fq 'handoff_tag=compiler-handoff-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}' "${release_workflow}"; then
+  fail 'compiler release handoff identity still changes across failed-job reruns'
+fi
+grep -Fq "find release-assets -name 'platform-result-*.json'" "${release_workflow}" || \
+  fail 'compiler release workflow does not retain independent platform reports in its handoff release'
+grep -Fq 'release-state.json' "${release_workflow}" || \
   fail 'compiler release workflow does not retain machine-readable release state'
 grep -Fq "if: \${{ always() && needs.state.result == 'success' && needs.state.outputs.publishable == 'true' }}" "${release_workflow}" || \
   fail 'compiler release publication is not explicitly allowed after a partial platform failure'
@@ -48,10 +64,13 @@ grep -Fq 'workflow_run:' "${open_vsx_workflow}" || \
   fail 'Open VSX is not triggered by a completed workflow run'
 grep -Fq 'workflows: [Compiler release]' "${open_vsx_workflow}" || \
   fail 'Open VSX does not consume Compiler release workflow runs'
-grep -Fq 'github.event.workflow_run.id' "${open_vsx_workflow}" || \
-  fail 'Open VSX does not download the triggering Compiler release run artifact'
-grep -Fq -- '--name compiler-release-state' "${open_vsx_workflow}" || \
-  fail 'Open VSX does not consume the compiler-release-state artifact'
+grep -Fq 'compiler-handoff-${{ github.event.workflow_run.id }}' "${open_vsx_workflow}" || \
+  fail 'Open VSX does not address the triggering compiler GitHub Release handoff'
+if grep -Fq 'github.event.workflow_run.run_attempt' "${open_vsx_workflow}"; then
+  fail 'Open VSX handoff lookup changes across failed-job reruns'
+fi
+grep -Fq -- '--pattern release-state.json' "${open_vsx_workflow}" || \
+  fail 'Open VSX does not consume release state from the compiler GitHub Release handoff'
 grep -Fq 'BESKID_RELEASE_VERSION: ${{ steps.release-version.outputs.version }}' "${open_vsx_workflow}" || \
   fail 'Open VSX does not pass the consumed compiler version to its publisher'
 resolver_workflows="$(rg -l 'resolve-beskid-version\.sh' "${root}/.github/workflows" -g '*.yml' -g '*.yaml' | sort || true)"
@@ -65,9 +84,14 @@ grep -Fq 'workflow_run:' "${distribute_workflow}" || \
   fail 'Distribute is not triggered by a completed workflow run'
 grep -Fq 'workflows: [Compiler release]' "${distribute_workflow}" || \
   fail 'Distribute does not consume Compiler release workflow runs'
-grep -Fq -- '--name compiler-release-state' "${distribute_workflow}" || \
-  fail 'Distribute does not consume the compiler-release-state artifact'
-grep -Fq '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$' "${distribute_workflow}" || \
-  fail 'Distribute does not fail closed on a non-strict semver version'
+grep -Fq 'compiler-handoff-${{ github.event.workflow_run.id }}' "${distribute_workflow}" || \
+  fail 'Distribute does not address the triggering compiler GitHub Release handoff'
+if grep -Fq 'github.event.workflow_run.run_attempt' "${distribute_workflow}"; then
+  fail 'Distribute handoff lookup changes across failed-job reruns'
+fi
+grep -Fq -- '--pattern release-state.json' "${distribute_workflow}" || \
+  fail 'Distribute does not consume release state from the compiler GitHub Release handoff'
+grep -Fq 'validate_distribution_version "${version}"' "${distribute_workflow}" || \
+  fail 'Distribute does not validate the compiler-owned stable/unstable version shape'
 
 printf 'Global release version workflow contract tests OK\n'

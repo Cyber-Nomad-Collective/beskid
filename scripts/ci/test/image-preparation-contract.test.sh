@@ -21,6 +21,17 @@ for dockerfile in site/website/Dockerfile site/auth/Dockerfile; do
   done
 done
 
+# The root workspace includes native lifecycle packages. Every Alpine Node
+# build stage which performs that frozen install must provide node-gyp's
+# compiler toolchain, just as the Auth image already does.
+for dockerfile in site/website/Dockerfile site/learn/Dockerfile; do
+  content="$(<"${root}/${dockerfile}")"
+  if [[ "${content}" != *'apk add --no-cache git python3 make g++'* ]]; then
+    echo "${dockerfile} must install the Alpine node-gyp toolchain before the root frozen install" >&2
+    exit 1
+  fi
+done
+
 # Root Docker contexts intentionally omit generated dist directories. Consumers
 # of shared packages that export compiled entries must recreate those entries
 # after their frozen install rather than relying on a developer's local output.
@@ -47,15 +58,19 @@ for requirement in \
   'command -v clang' \
   'command -v ld.lld' \
   'CARGO_TARGET_DIR=/workspace/target cargo build -p beskid_cli --release' \
+  'CARGO_TARGET_DIR=/workspace/target cargo build -p beskid_lsp --release' \
   'BESKID_RUNTIME_PREFIX=/workspace/target/native-runtime-kit' \
   'BESKID_CLI_BIN=/workspace/target/release/beskid_cli' \
   'mkdir -p /workspace/runtime-output' \
   'install -m 0755 /workspace/target/release/beskid_cli /workspace/runtime-output/beskid' \
+  'install -m 0755 /workspace/target/release/beskid_lsp /workspace/runtime-output/beskid_lsp' \
   'cp -a /workspace/target/native-runtime-kit /workspace/runtime-output/native-runtime-kit' \
   'COPY --from=rust /workspace/runtime-output/beskid /app/site/learn/beskid' \
+  'COPY --from=rust /workspace/runtime-output/beskid_lsp /app/site/learn/beskid_lsp' \
   'COPY --from=rust /workspace/runtime-output/native-runtime-kit /app/site/learn/native-runtime-kit' \
   'COPY --from=web /app/site/learn/src/data /app/site/learn/src/data' \
   'COPY --from=web /app/site/learn/src/lib/playground.ts /app/site/learn/src/lib/playground.ts' \
+  'COPY --from=web /app/site/learn/src/server /app/site/learn/src/server' \
   './scripts/stage-native-runtime-kit.sh'; do
   if [[ "${learn}" != *"${requirement}"* ]]; then
     echo "site/learn/Dockerfile is missing required dependency preparation: ${requirement}" >&2
@@ -63,16 +78,24 @@ for requirement in \
   fi
 done
 
+if [[ "${learn}" != *'ENV BESKID_LSP_BINARY=/app/site/learn/beskid_lsp'* ]]; then
+  echo "site/learn/Dockerfile must configure the bundled compiler language server" >&2
+  exit 1
+fi
+
 if [[ "${learn}" == *$'RUN cd compiler'* ]]; then
   echo "site/learn/Dockerfile must stage the runtime kit in the cache-mounted compiler build step" >&2
   exit 1
 fi
 
-# Learn's HTTP server is deliberately implemented with Bun APIs. A Node/tsx
-# runtime can build the assets yet crash before the Compose healthcheck runs.
-if [[ "${learn}" != *'FROM oven/bun:1.3.14-alpine'* ]] ||
+# Learn's HTTP server is deliberately implemented with Bun APIs. The compiler
+# is built in Debian Rust, so its runtime must also provide glibc rather than
+# Alpine's musl loader; otherwise the binary exists but cannot execute.
+if [[ "${learn}" != *'FROM oven/bun:1.3.14'* ]] ||
+   [[ "${learn}" == *'FROM oven/bun:1.3.14-alpine'* ]] ||
+   [[ "${learn}" != *'apt-get install -y --no-install-recommends wget'* ]] ||
    [[ "${learn}" != *'CMD ["bun", "run", "server.ts"]'* ]]; then
-  echo "site/learn/Dockerfile must run the Bun server with the pinned Bun runtime" >&2
+  echo "site/learn/Dockerfile must run the bundled glibc compiler with the pinned Bun runtime" >&2
   exit 1
 fi
 if [[ "${learn}" == *'npm install -g tsx'* ]]; then
@@ -148,6 +171,7 @@ done
 pckg="$(<"${root}/pckg/Dockerfile")"
 for requirement in \
   'COPY beskid_web_common ./beskid_web_common' \
+  'COPY beskid_bsol ./beskid_bsol' \
   'pnpm install --dir /src/beskid_web_common --frozen-lockfile' \
   'pnpm install --dir /src/pckg/web --frozen-lockfile' \
   'COPY compiler ./compiler' \
@@ -160,13 +184,16 @@ for requirement in \
   fi
 done
 
-pckg_lane="$(sed -n '/^  image-pckg:/,/^  manifest:/p' "${root}/.github/workflows/platform-delivery.yml")"
-if [[ "${pckg_lane}" != *'submodules: compiler pckg beskid_bsol beskid_web_common'* ]]; then
-  echo "image-pckg must initialize the bsol submodule required by compiler" >&2
+pckg_image_block="$(sed -n '/^  image-pckg:/,/^  release-manifest:/p' "${root}/.github/workflows/platform-delivery.yml")"
+if [[ "${pckg_image_block}" != *'submodules: beskid_bsol compiler pckg beskid_web_common'* ]]; then
+  echo "pckg image lane must check out the bsol parser required by artifact validation" >&2
   exit 1
 fi
 
-for manifest in site/auth/package.json beskid_tracker/package.json beskid_nexus/gitnexus/package.json; do
+# Nexus authenticates through the Authentik proxy and deliberately has no
+# application-level auth client dependency. Keep this contract to the two
+# applications that still bundle that shared package.
+for manifest in site/auth/package.json beskid_tracker/package.json; do
   source='../../beskid_web_common/packages/beskid-auth-client'
   if [[ "${manifest}" == beskid_tracker/* ]]; then
     source='../beskid_web_common/packages/beskid-auth-client'

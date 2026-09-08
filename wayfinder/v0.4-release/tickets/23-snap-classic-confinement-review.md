@@ -1,19 +1,19 @@
 ## Status
 
-Blocked on publisher forum submission
+Resolved as out of scope
 
 ## Type
 
-Task (HITL)
+Task (AFK)
 
 ## Question
 
-Can the `beskid` Snap Store submission obtain classic-confinement approval without misrepresenting its compiler and host-composition requirements?
+Does Snap Store publication remain on the v0.4 release path after revision 1 was rejected for requiring classic-confinement review?
 
 ## Resolution
 
-**Repository work completed 2026-09-07.** The snap correctly declares `confinement: classic`; Store review therefore requires a publisher request in the Snapcraft Forum Store requests category. Compiler and programming-language tools are an explicitly supported classic-confinement category. The distribution repository now contains a forum-ready request at `docs/Snap_Classic_Confinement_Request.md`, corrects `docs/Snap_Guide.md`, and has a static regression test preventing the unverified strict-confinement fallback guidance from returning.
-
-## Required human action
-
-Post the prepared request from the Ubuntu One account that owns the `beskid` snap, then attach the forum URL to the rejected revision review. The current environment has no authenticated Snapcraft Forum publishing session.
+**Resolved 2026-09-07.** No. The publisher explicitly retired Snap from the
+v0.4 destination after the rejected upload. The workflow, recipe, Store
+credential contract, operator guidance, and completion dependency are removed.
+Corelib, templates, other packages, and the remaining platform/container lanes
+continue independently. There is no publisher or human-approval action.

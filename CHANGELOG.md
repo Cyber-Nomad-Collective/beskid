@@ -9,17 +9,114 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ## [Unreleased]
 
+### Added
+
+- Zed extension: register standalone `.bsol` documents with the existing
+  `beskid_lsp` adapter for generic diagnostics, `@schemaless` completion,
+  hover help, and highlighting from the pinned nested BSOL grammar.
+- Zed extension: add outlines, indentation and bracket queries, pinned CLI
+  runnable tasks, declaration snippets, and grammar-validated fixtures.
+- Publish a licensing announcement that explains the Apache-2.0 toolchain,
+  AGPL-3.0-only service, CC-BY-4.0 documentation, compiler-output, trademark,
+  and third-party code boundaries in practical terms.
+
+### Security
+
+- Require native htpasswd authentication at the production OCI registry and
+  deploy its ignored credential separately with restrictive host permissions.
+  Keep Authentik as the sole browser-authentication path and remove the retired
+  Authelia configuration files.
+
 ### Fixed
 
 - Beskid IntelliSense: preserve the prepared assembly generation when building
-  LSP syntax facts so completion and hover return semantic results instead of
-  silently falling back to empty responses.
-- Zed extension: keep Zed's generated grammar-source checkout out of version
-  control and block registry publication unless the stable LSP release and all
-  declared platform assets are actually available.
-- Zed extension: correct the registry gitlink path, prevent invalid tag-less
-  publication dispatches, and document the required first-submission metadata
-  for the nested `editors/zed` package.
+  LSP syntax facts and synchronize the JSON-RPC completion test on scan-idle
+  plus versioned document diagnostics.
+- Zed extension: package the generated BSOL parser, ignore Zed's generated
+  grammar checkout, and require the stable LSP release assets before registry
+  publication.
+- Zed extension: correct the registry gitlink path, remove invalid tag-less
+  publication dispatch, and document the initial registry submission metadata.
+- Production site smoke checks now reject redirects and other non-2xx
+  responses, so an authentication proxy or routing drift cannot be promoted as
+  a healthy public website.
+- Remove the deleted Coolify deployment fixture and its unused Compose renderer
+  from the active Watchtower delivery gate, eliminating a stale second release
+  model that still expected the retired auth image and GHCR paths.
+- Keep the platform delivery contract synchronized with the mandatory corelib
+  gate, allowing a fully validated release manifest to reach production.
+- The documented `beskid dev` syntax, build, project, and package-registry
+  command paths now parse and dispatch through the same canonical CLI
+  implementations as their concise root commands.
+- Learn: the Playground now submits the live Monaco model rather than a stale
+  editor state, accepts its own analyze target, offers Beskid completions, and
+  uses a single workspace surface instead of nested cards. The signed-in header
+  now provides the standard account menu with account and sign-out actions.
+- The website delivery projection now uses its supported Node test runner
+  instead of invoking an uninstalled Vitest binary.
+- Release projections now reference published Tracker, Nexus, compiler, and
+  core-library revisions, so CI can fetch the complete deployment graph.
+- Learn's release image now includes the compiler license metadata required by
+  the runtime-kit build. Platform delivery also runs when templates change.
+- Programs now resolve the bundled `Core` namespace without repeating
+  `use Core.*` declarations. Website release-version generation retries
+  transient GitHub gateway failures while preserving fail-closed behavior for
+  invalid release responses.
+- The platform-delivery contract test now requires the restored corelib gate
+  before release-manifest promotion.
+
+### Changed
+
+- Zed extension: move the complete package into the dedicated `editors/zed`
+  crate and use `zed_extension_api` 0.7.0 with `wasm32-wasip2`.
+- Zed extension: keep one DRY native LSP adapter for Beskid source, manifests,
+  and standalone BSOL; resolve configured/PATH servers before the guarded
+  versioned `lsp-stable` download and forward settings without reinterpretation.
+- Licensing: adopt Apache-2.0 for the compiler, runtime, tooling, reusable
+  libraries, and templates; AGPL-3.0-only for Beskid-owned network services;
+  and CC-BY-4.0 for documentation prose. Add an explicit compiler-output
+  boundary, preserve the PolyForm-licensed GitNexus exception, ship legal files
+  in service images, and add a metadata drift check.
+
+### Fixed
+
+- Docs now register the Beskid Shiki grammar as an Expressive Code language and
+  mark the getting-started program samples as Beskid source, so keywords,
+  types, and literals receive syntax highlighting.
+- The landing Download action now opens the Downloads page instead of a direct
+  platform-specific asset. Landing code examples can open their exact source
+  in the Learn playground.
+- The Learn application accepts website playground handoffs through `?code=`
+  and opens the playground with that source loaded.
+- The shared Docs rail now exposes the public documentation tree instead of
+  leaving newly published pages inaccessible from navigation.
+- Learn now uses a fixed lesson-defined tile mosaic. It no longer persists,
+  opens, closes, or resizes panels. The learner workspace no longer renders
+  the lesson editor.
+- Learn now starts one authenticated compiler language-server session per
+  Monaco editor. Completion candidates and diagnostics come from
+  `beskid_lsp`; the prior hard-coded playground suggestions are removed.
+- Learn production images now bundle `beskid_lsp` and configure the server
+  process explicitly, so the deployed editor has the same language service as
+  local tooling.
+- Platform delivery passes required image records and the immutable release
+  manifest through reusable-workflow outputs, avoiding Actions artifact quota
+  failures after successful image publication. Unstable releases no longer
+  bypass required quality gates.
+- Delivery now authorizes required pnpm lifecycle builds with the pinned pnpm
+  10.17 configuration, refreshes the root lockfile for the Tracker workspace,
+  and treats vulnerability-report artifact upload as best-effort evidence after
+  a successful image build and push.
+- Site and Learn images now install the Alpine node-gyp build toolchain before
+  the root frozen install. Learn uses the glibc Bun runtime required to execute
+  the bundled compiler binary.
+- Docs and Standard now share the Book-style content rail, a local search
+  field, and a single title instead of an empty generic sidebar and duplicate
+  heading.
+- pckg now derives its navigation from the active Authentik session, showing
+  an account menu instead of concurrent Sign in and Dashboard actions. Package
+  cards and the primary navigation now provide a direct path to the existing
+  package-documentation view.
 - Learn: the Playground now submits the live Monaco model rather than a stale
   editor state, accepts its own analyze target, offers Beskid completions, and
   uses a single workspace surface instead of nested cards. The signed-in header
@@ -27,133 +124,113 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
-- Zed extension: move the complete registry package into the dedicated
-  `editors/zed` crate and point the guarded publication workflow at that path.
-- Zed extension: replace the legacy adapter contract with the official
-  `zed_extension_api` 0.7.0 SDK and the registry-required `wasm32-wasip2`
-  component target.
-- Zed extension: provide SDK-supported parity through native LSP features,
-  grammar-backed editor queries, runnables, pinned top-level compiler tasks,
-  snippets, settings forwarding, and explicit unsupported-UI documentation.
-- Zed extension: resolve the native Beskid language server through the
-  configured override, `beskid_lsp`, `beskid lsp`, then the exact stable
-  release asset; forward opaque LSP settings unchanged and restrict extension
-  capabilities to the supported launch/download surface.
-- Zed extension: preserve trusted configured and PATH server candidates on
-  hosts outside the release matrix, mark every stable-install failure clearly,
-  and atomically promote verified versioned download caches.
-- Zed extension: project the immutable `lsp-version.txt` release token before
-  caching a rolling `lsp-stable` download, rejecting unsafe projections and
-  removing their temporary files on every outcome.
-- OpenSpec: align the Zed extension contract with SDK platform fallback and
-  trusted-argument capability semantics.
-- Deployment: replaced the custom GitHub auth image with Authelia forward
-  authentication for every public Beskid application. The production runtime
-  now exposes Authelia at `auth.beskid-lang.org` and retains the Compose,
-  private-registry, and Watchtower release path.
-- CI: build the Rust pckg image from the compiler's authoritative workspace.
-- CI: completed the minimal Rust pckg image workspace dependency declaration.
-- CI: retry private-registry login through transient shared-edge proxy reloads
-  before failing an image-delivery lane.
-- Deployment: adopted the existing production registry data volume as an
-  external Compose volume, preserving registry contents through cutover.
-- Deployment: restored the Nexus Compose upstream, exposed port, and health
-  probe to its authoritative GitNexus listener on port 8452.
-- CI: corrected the Rust pckg image build context so its `beskid_pckg` crate is
-  available to the server workspace during image construction.
-- Deployment: made the production environment contract complete for Authelia
-  storage and OIDC clients, and removed the retired platform-spec OIDC client
-  from the standalone runtime.
-- Deployment: replaced the Beskid Coolify and staging promotion path with a
-  production-only Docker Compose runtime. CI publishes immutable SHA audit tags
-  and controlled `production` tags to `cr.beskid-lang.org`; Watchtower updates
-  only explicitly labelled application services.
-- Operations: moved the active site, auth, and learn deployment guidance to
-  `beskid_sites/deploy/`, with registry-level htpasswd authentication and a
-  shared-edge-network contract that does not disrupt unrelated host services.
+- Docs now provide annotated ASD-STE100 guidance for installation, a first
+  program, tooling, projects, packages, and documentation authoring. The Docs
+  navigation exposes these guides beside the standard.
+- The main website landing page now links directly to Beskid Docs.
+- Authentik replaces Authelia as the sole browser authentication gateway for
+  every public Beskid application. Its embedded proxy outpost protects the
+  website, Docs, Learn, Tracker, Nexus, and pckg through the shared Caddy edge;
+  GitHub is the configured social-login source. Learn now starts sign-in at its
+  protected origin, and the repeatable Authentik brand uses Beskid typography,
+  logo, and an attributed Beskid Żywiecki photograph.
+- pckg explicitly uses Authentik in production, accepts the proxy's forwarded
+  identity headers, and starts browser sign-in at its local Authentik outpost.
+  Learn also projects the proxy identity to its session API.
+- Tracker now projects the Authentik proxy identity into its own authenticated
+  session and uses GitHub's public API for public roadmap reads, removing the
+  retired Auth Hub pairing requirement from the active application path.
+- Nexus now accepts only Authentik's trusted forwarded identity and group
+  claims for administration; its retired Auth Hub pairing and GitHub OAuth
+  setup screens have been removed.
+- Legacy `auth.beskid-lang.org/login?app=learn` bookmarks now redirect to the
+  protected Learn origin, which starts the canonical Authentik flow.
+- Docs pages now use their left pane for the page table of contents, and the
+  global desktop navigation groups Docs, Standard, and Book under one menu.
+- The Blog now uses a centered editorial layout with published dates,
+  reusable React tiles, no status badges, a small recent-post carousel with
+  attributed public-domain art, and compact text-first archive cards.
+- The Docs menu now opens inward at narrow desktop widths, and the Blog index
+  keeps its heading without an explanatory summary deck.
+- Production delivery now uses only the self-hosted Compose stack and
+  Watchtower. Application images publish to the Beskid registry without
+  credentials; the release manifest covers the five running applications.
+
 - Documentation: established `beskid-lang.org/docs/` as the single public technical documentation surface. The new STE-100 authoring skill and Docs pages link to OpenSpec for normative requirements and to the Book for learning material.
 - Local site deployment: publish Docs on port `4321` and Learn on port `4322` in both Compose files. The site guide now documents the source-build command and local URLs.
 
 ### Removed
 
-- Zed extension: remove duplicate root and `.zed` package language/grammar
-  paths; `editors/zed` is now the single extension implementation.
-- CI: removed the retired custom-auth image delivery lane and its production
-  volume; Authelia is the sole browser authentication boundary.
-- Deployment: removed the invalid, unused Authelia and community services from
-  the production Compose path; they are not part of the Watchtower migration.
-- Deployment: removed Coolify diagnostics, staging promotion, runtime-env sync,
-  and digest-render deployment scripts, plus the retired site/auth/learn
-  Coolify operator guides and standalone cutover Compose file.
+- Zed extension: remove duplicate root and `.zed` language/grammar package
+  paths; `editors/zed` is the single implementation.
+- Authelia’s runtime, file-user database, asset overrides, and deployment
+  contract. Browser authentication now has one Authentik implementation.
+
+- Coolify, staging promotion, and registry credential paths, including their
+  workflows, scripts, test contracts, and runtime configuration.
+
 - Platform Spec: retired the separate `site/platform-spec` application, its workspace member, CI build gate, and image-delivery lane. Legacy `/platform-spec/` URLs now redirect to `/docs/standard/`.
+- Snap distribution: remove the classic-confinement recipe, Store credential
+  contract, release job, and human approval path. v0.4 continues through the
+  Windows, macOS, Debian, Homebrew, container, corelib, template, and pckg lanes.
 
 ### Added
 
-- Zed extension: register standalone `.bsol` documents with the existing
-  native `beskid_lsp` adapter for generic BSOL diagnostics, `@schemaless`
-  completion, hover help, and Tree-sitter highlighting from the pinned nested
-  `beskid_bsol` grammar path.
-- Zed extension: add registry-packaged outlines, indentation and bracket
-  queries, pinned-CLI runnable task bindings, declaration snippets, and
-  grammar-validated runnable fixtures for Beskid source files.
-
-- `beskid_sites/` — greenfield standalone pnpm workspace (own
-  `pnpm-workspace.yaml`; not a submodule, not in the root workspace) for the
-  Beskid web properties, built on TanStack Start (React + Nitro).
-  - `packages/beskid-ui-react` — the single canonical React component library
-    (`@cyber-nomad-collective/beskid-ui-react`), copied from
-    `beskid_web_common` and purged of non-React code. The old mixed Astro/React
-    `beskid-ui` package's React parts (`BeskidHub`, `LinkedAstFactsPanel`, hub
-    icons, `beskid-services`) were already byte-identical relocations into this
-    lib, so no duplicate package is created (DRY). Folded the missing
-    `theme.material.css` into the lib and resolved the
-    `@import "@beskid/material-theme"` to a local path so the lib is
-    self-contained.
+- `beskid_sites/` — an isolated pnpm integration workspace (not a submodule and
+  not part of the root workspace) for the consolidated TanStack Start website
+  and reusable application shell. It consumes the canonical
+  `@cyber-nomad-collective/beskid-ui-react` implementation directly from
+  `beskid_web_common`; no copied UI package is retained.
   - `apps/shell-template` — reusable shell template app (the base for all
     Beskid sites), generalized from the `beskid_tracker` shell. Exposes
     convenience wrappers for sidebar items, sidebar show/hide, and topbar
-    left/right nav-slot services; renders an avatar dropdown with user data in
-    the topbar when the sidebar is disabled. Auth via Authelia as an OIDC
-    provider: the app is an OIDC client (authorization-code flow, ID token
-    verified with `jose` against Authelia's JWKS, claims sealed into a signed
-    session cookie), GitHub is the sole identity provider (no local
-    password/email user store), and each beskid app is registered as an OIDC
-    client of Authelia. Reuses the existing Beskid GitHub OAuth App via env
-    vars (no new GitHub App). `mock` mode for local dev. Ships a Postgres +
-    Authelia + app compose, a Dockerfile, and 31 vitest tests (sidebar, slots,
-    avatar dropdown, OIDC claims, session seal/unseal, guards, theme).
-  - `_planning/<service>/Plan.md` — per-service migration assessments for
-    website, pckg, platform-spec, tracker, auth, learn, and nexus.
-  - `beskid_sites/apps/pckg` — TanStack Start (React + Nitro) rewrite of the
-    `pckg/web` Vite SPA, built on the shared `@cyber-nomad-collective/beskid-shell-core`
-    shell. Two-mode (Docs / Registry) topbar with an animated shifting-index
-    `ModeSwitcher`; `AppShell` with `sidebarEnabled=true` only for the
-    `/dashboard/*` tree (the sole sidebar app) and `sidebarEnabled=false` for
-    consumer routes via a `_public` pathless layout; `GlobalSearch` +
-    `BeskidHub` in the topbar right slot; Authelia OIDC auth wired through
-    `createShellAuth` (`PCKG_OIDC_*` env). Lifted `PckgApiClient`
-    (`src/lib/pckg-api.ts`) verbatim from `pckg/web` (byte-identical, excluded
-    from biome via a per-app `biome.json`) — the framework-agnostic typed
-    .NET API contract is the reusable backbone. Ports the signature "nice"
-    pages as presentational components: `PackageDetail` (hero + facts card +
-    README + dependencies + community reviews + bordered version list +
-    NodeBB "Discuss" deep-link) and `PublisherProfile` (hero + follow +
-    social links + shared `PackageGrid`), plus the self-profile editor at
-    `/dashboard/profile`. NodeBB integration is server-only
-    (`src/server/nodebb.ts` + `POST /api/nodebb/create-subforum`): creates a
-    locked per-package subforum under a parent "Packages" category and
-    rescinds `registered-users` topic-create privileges; the admin token is
-    never exposed to the client. Ships a multi-stage Dockerfile (port 8082),
-    `env.server.ts` (`PCKG_API_BASE_URL`, `NODEBB_*`, `COMMUNITY_URL`), and 16
-    vitest tests (mode switcher, package grid/detail, publisher profile,
-    health endpoint, NodeBB subforum creation with mocked fetch).
-- `beskid_infra` production compose: commented-out example block documenting
-  how a future `shell-template`-based service + Authelia (OIDC provider) +
-  shared Postgres would be wired into the production lane (documentation only;
-  no real service or UUIDs).
+  left/right nav-slot services and avatar-dropdown behaviour when the sidebar
+  is disabled. The production deployment no longer includes this experimental
+  authentication path.
 
 ### Changed
 
+- Carry the six active platform image records and the immutable release
+  manifest through same-run GitHub workflow outputs instead of quota-bound
+  Actions artifacts. Staging and production now decode and verify the same
+  manifest checksum before Coolify mutation, image security results remain
+  OCI-native or in GitHub logs, and package publication remains gated on the
+  completed production promotion.
+- Reconcile the GitHub release publisher into the Rust registry from a
+  SHA-256 digest only: the raw bearer key remains in GitHub, promotion sends
+  only its digest to Coolify, and registry startup idempotently provisions the
+  single automation principal before package publication.
+- Replace GitHub Actions artifact transport with job summaries, job outputs,
+  and retry-safe compiler GitHub Release handoffs across compiler, tracker,
+  Open VSX, and distribution workflows.
+- Run release-critical Linux orchestration on Blacksmith so compiler,
+  promotion, tracker, container, and handoff work does not depend on the
+  account-billing state of GitHub-hosted Ubuntu runners.
+- Coordinate exact corelib dependency versions through each staged
+  `package.json`, leaving source `.bproj` files unchanged while the canonical
+  compiler packer emits path-independent registry artifacts. Current Book
+  pages now document `pckg upload`, artifact-bound semver, and
+  `POST /api/packages/{name}/versions`.
+- Make the platform release manifest depend on the reusable 61-target corelib
+  gate, keep unstable channel builds behind the same quality gates, and publish
+  the eight production corelib packages plus seven first-party templates only
+  after GitHub has completed the protected production promotion. The final job
+  performs a credential-free 15-artifact rehearsal before mutation and targets
+  the public Rust registry at `https://pckg.beskid-lang.org`.
+- Keep Coolify routing target ports explicit in `domains.json`, while defining
+  each public HTTPS URL separately for post-deployment smoke and package
+  publication. This prevents an internal container port from being mistaken
+  for a public TLS listener.
+- Render production with the six exact existing external state volumes while
+  leaving staging on isolated project-scoped volumes, preventing a Coolify
+  promotion from silently attaching empty databases or artifact stores.
+- Replace the stale corelib workspace-bundle publisher with one fail-closed
+  native release path for the exact eight-package production corelib closure
+  and all seven first-party templates. The workflow initializes both
+  submodules, checks pckg readiness and canonical bearer credentials, packs
+  and validates every `.bpk` before the first registry mutation, and exposes a
+  no-secret `--dry-run` contract. Development/test-only corelib packages stay
+  explicitly excluded.
 - Initialize the compiler submodule before building the Rust-backed pckg image,
   advancing its delivery pointer to the no-session bearer-publishing compiler
   integration.
@@ -170,10 +247,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - CLI docs: completed final command-reference cleanup for parser/analysis docs and core command pages (`parse`, `tree`, `analyze`, `format`, `doc`, `clif`, `fetch`, `lock`, `update`) and updated cross-references to `beskid dev ...` command paths outside legacy `pckg` docs.
 - `site/website`: removed the legacy platform-spec-derived `packages/` MDX
   content tree (9 pages + the orphaned `PackageRegistryConsole.astro`
-  component); the pckg registry surface is now served canonically by
-  `site/platform-spec` and the book. Repointed two book CLI references to the
-  book's own pckg chapter and added an nginx `/packages/` legacy-bridge
-  redirect to `spec.beskid-lang.org`. Build passes (239 → 231 pages).
+  component); the Rust pckg application owns the registry surface while the
+  Book owns package guidance. Repointed two CLI references to the Book and
+  retained only canonical documentation routes under `/docs/standard/`.
 
 ### Removed
 
@@ -181,6 +257,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   companion seam (Authelia + the existing GitHub App is the sole auth path)
   and the Authelia file user store (`users_database.yml`) — GitHub is the only
   identity provider, no password/email login.
+
+### Added
 
 - `Beskid.Glue` corelib package with seven atomized contracts: TypeMapping,
   SymbolEmission, LinkArgs, SignatureReader, SignatureWriter, ToolchainProbe,
@@ -283,6 +361,19 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Repair the compiler distribution fan-out: accept the canonical unstable
+  release identity, preserve Debian asset filenames, isolate stable-only
+  Homebrew publication, emit canonical container channel tags, and
+  provision the Windows installer icon before packaging.
+
+- Keep the Coolify deployment happy-path contract aligned with the active pckg
+  lane by reporting its exact release digest while retaining a separate stale
+  application to exercise orphan-tolerant readiness checks.
+
+- Regenerate the OpenSpec catalog after the repository guidance update so the
+  conformance and OpenSpec delivery gates agree on the authoritative document
+  hash.
+
 - 26 stale `semantic_facts` integration tests in `beskid_queries`: 23 built
   `ProgramAssembly` with `SyntaxGenerationId(0)` but called
   `build_typed_program` with a different generation (the generation-equality
@@ -317,7 +408,7 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
-- Reduced the landing hero from five buttons to two (Download + Learn more);
+- Reduced the landing hero to three focused actions (Download, Blog, and Learn more);
   Language semantics, Read the Book, and Blog remain in the nav.
 - Removed the duplicated bottom CTA band that re-rendered all hero actions.
 - Simplified the STE (Software Transactional Memory / .NET) explanatory copy

@@ -21,10 +21,16 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
-### Requirement: Registry versions: Decision [D-TOOL-PCKG-0002]
-The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
-
-> Registry-assigned publish versions in routine flows.
+### Requirement: Artifact-bound versions: Decision [D-TOOL-PCKG-0002]
+The Beskid standard SHALL enforce one immutable coordinate for each published
+artifact. The publisher SHALL read the package id and semantic version from the
+validated artifact-root `package.json`, and SHALL send that exact version with
+the checksum and `.bpk` bytes to
+`POST /api/packages/<name>/versions`. The registry SHALL reject different bytes
+for an existing package/version coordinate. A workspace publisher SHALL package
+and validate every member before its first registry mutation and SHALL publish
+each member through this same per-package route; the registry SHALL NOT expose
+a separate workspace-bundle publication path.
 
 **Stable ID:** `BSP-REQ-96F30E1AED03`  
 **Legacy source:** `site/spec-content/platform-spec/tooling/registry-client/pckg-client-contract/adr/0002-registry-assigned-versions/content.md`  
@@ -423,21 +429,21 @@ flowchart TD
 2. Walk files (respect template exclude strips via `strip_template_pack_excludes`).
 3. Include `.beskid/docs/**` and package docs for library profiles.
 4. Copy resolved readme to zip root `README.md` when not already present.
-5. Emit `package.json` metadata (registry assigns version on publish—clients do not invent release versions in normal flows).
+5. Emit `package.json` metadata with the exact artifact version selected by the pack or coordinated release plan.
 
 ## Publish / upload
 
 1. Build or locate `.bpk` bytes.
-2. `PckgClient::send_multipart` to registry upload endpoint with publisher auth.
+2. `PckgClient::send_multipart` sends artifact-bound `version`, `checksumSha256`, and `.bpk` bytes to `POST /api/packages/{name}/versions` with publisher auth.
 3. Server runs `PackageArtifactValidator` + documentation ingestion; failures return structured API errors mapped to `PckgError::Api`.
 
 ## Fetch into workspace
 
-`beskid fetch` (CLI command in `beskid_cli`) uses registry URLs from `Workspace.proj` and downloads through `PckgClient`, writing materialized roots recorded later in `Project.lock`. Version resolution follows registry-assigned versions, not ad-hoc client version strings.
+`beskid fetch` (CLI command in `beskid_cli`) uses registry URLs from the `.bws` workspace manifest and downloads through `PckgClient`, writing materialized roots recorded later in `Project.lock`. Resolution selects published artifact versions and records exact pins in the lockfile.
 
 ## Version state file
 
-Pack may persist local version hints in `.beskid/pckg` state (`PackVersionState`) for iterative dev publishes; production CI should rely on server-assigned versions after upload.
+Pack may persist local version hints in `.beskid/pckg` state (`PackVersionState`) for iterative development. Production CI must coordinate the planned exact versions before packing and upload those artifact-bound versions unchanged.
 
 ## Error handling
 

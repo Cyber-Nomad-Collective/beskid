@@ -1,6 +1,7 @@
 {
 	"name": "beskid-shell-template",
 	"private": true,
+	"license": "Apache-2.0",
 	"type": "module",
 	"imports": {
 		"#/*": "./src/*"
@@ -20,7 +21,7 @@
 	"dependencies": {
 		"@base-ui/react": "^1.5.0",
 		"@cyber-nomad-collective/beskid-shell-core": "workspace:*",
-		"@cyber-nomad-collective/beskid-ui-react": "workspace:*",
+		"@cyber-nomad-collective/beskid-ui-react": "file:../../../beskid_web_common/packages/beskid-ui-react",
 		"@dagrejs/dagre": "^3.0.0",
 		"@t3-oss/env-core": "^0.13.10",
 		"@tailwindcss/vite": "^4.1.18",

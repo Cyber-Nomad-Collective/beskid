@@ -131,14 +131,15 @@ Verification **must** reject tokens when `expectedApp` does not match `app`.
 
 ## Production URLs (reference)
 
-Coolify proxy URLs include explicit ports. App-facing env origins omit the port suffix.
+Coolify target URLs include explicit container ports. Public browser and API
+origins terminate TLS on the standard HTTPS port and omit the target-port suffix.
 
 | Service | Coolify URL | `*_PUBLIC_URL` |
 | --- | --- | --- |
 | auth | `https://auth.beskid-lang.org:8090` | `AUTH_HUB_PUBLIC_URL` |
 | tracker | `https://tracker.beskid-lang.org:3000` | `TRACKER_PUBLIC_URL` |
 | nexus | `https://nexus.beskid-lang.org:8452` | (pairing `publicUrl`) |
-| pckg | `https://pckg.beskid-lang.org:8082` | `PCKG_PUBLIC_URL` |
+| pckg | `https://pckg.beskid-lang.org:8082` | `PCKG_PUBLIC_URL=https://pckg.beskid-lang.org` |
 
 Canonical matrix: [beskid_infra/docs/deploy-matrix.md](https://github.com/Cyber-Nomad-Collective/beskid_infra/blob/main/docs/deploy-matrix.md).
 

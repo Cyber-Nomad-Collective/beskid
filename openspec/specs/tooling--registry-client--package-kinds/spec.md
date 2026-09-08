@@ -130,7 +130,7 @@ A **`library`** package **must not** publish with `type: Template` on `Project.p
 </SpecSection>
 
 <SpecSection title="Versioning" id="versioning">
-All kinds share: registry-assigned publish semver, immutability per version, yank, checksum verification, and download URLs.
+All kinds share: exact artifact-bound publish semver, immutability per package/version coordinate, yank, checksum verification, and download URLs.
 </SpecSection>
 
 <SpecSection title="Decisions" id="decisions">

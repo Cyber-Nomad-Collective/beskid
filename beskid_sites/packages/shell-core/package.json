@@ -1,0 +1,60 @@
+{
+	"name": "@cyber-nomad-collective/beskid-shell-core",
+	"version": "0.1.0",
+	"private": true,
+	"license": "Apache-2.0",
+	"type": "module",
+	"description": "Shared Beskid app shell — client components, server auth (Authelia OIDC + session), and route factories for TanStack Start site apps.",
+	"exports": {
+		".": "./src/index.ts",
+		"./client": "./src/client.ts",
+		"./server": "./src/server.ts",
+		"./types": "./src/types.ts",
+		"./styles": "./src/styles.css"
+	},
+	"files": [
+		"src"
+	],
+	"scripts": {
+		"typecheck": "tsc --noEmit",
+		"test": "vitest run"
+	},
+	"peerDependencies": {
+		"@tanstack/react-router": "^1.170.28",
+		"@tanstack/react-start": "^1.168.45",
+		"react": "^19.2.0",
+		"react-dom": "^19.2.0"
+	},
+	"peerDependenciesMeta": {
+		"@tanstack/react-router": {
+			"optional": true
+		},
+		"@tanstack/react-start": {
+			"optional": true
+		}
+	},
+	"dependencies": {
+		"@cyber-nomad-collective/beskid-ui-react": "file:../../../beskid_web_common/packages/beskid-ui-react",
+		"@tanstack/react-query": "^5.101.4",
+		"cmdk": "^1.1.1",
+		"framer-motion": "^11.18.2",
+		"jose": "^6.2.3",
+		"lucide-react": "^0.577.0",
+		"next-themes": "^0.4.6"
+	},
+	"devDependencies": {
+		"@testing-library/jest-dom": "^6.8.0",
+		"@testing-library/react": "^16.3.0",
+		"@types/node": "^22.20.1",
+		"@types/react": "catalog:react",
+		"@types/react-dom": "catalog:react",
+		"@vitejs/plugin-react": "^4.7.0",
+		"@tanstack/react-router": "catalog:tanstack-start",
+		"@tanstack/react-start": "catalog:tanstack-start",
+		"jsdom": "^26.1.0",
+		"react": "catalog:react",
+		"react-dom": "catalog:react",
+		"typescript": "^5.9.3",
+		"vitest": "^3.2.7"
+	}
+}

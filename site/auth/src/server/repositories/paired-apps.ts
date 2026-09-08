@@ -1,6 +1,7 @@
 import type { AuthAppId } from "@beskid/auth-client";
 import { env } from "#/env.server";
 import { authAppDescription, authAppLabel } from "#/lib/auth-app-meta";
+import { pairingAppIdSchema } from "#/lib/pairing-app-id";
 import { hashSecret } from "#/server/crypto";
 import {
 	getAuthDatabase,
@@ -71,14 +72,21 @@ export async function listEnabledApps(): Promise<
 	}>
 > {
 	const hubBase = env.AUTH_HUB_PUBLIC_URL.replace(/\/$/, "");
-	return listActivePairedApps().map((row) => ({
-		id: row.id as AuthAppId,
-		label: authAppLabel(row.id),
-		description: authAppDescription(row.id),
-		publicUrl: row.public_url,
-		finishUrl: `${row.public_url}/api/auth/hub-finish`,
-		loginUrl: `${hubBase}/login?app=${row.id}`,
-	}));
+	return listActivePairedApps().flatMap((row) => {
+		const appId = pairingAppIdSchema.safeParse(row.id);
+		if (!appId.success) return [];
+
+		return [
+			{
+				id: appId.data,
+				label: authAppLabel(appId.data),
+				description: authAppDescription(appId.data),
+				publicUrl: row.public_url,
+				finishUrl: `${row.public_url}/api/auth/hub-finish`,
+				loginUrl: `${hubBase}/login?app=${appId.data}`,
+			},
+		];
+	});
 }
 
 export function getServiceTokenForApp(appId: string): string | null {

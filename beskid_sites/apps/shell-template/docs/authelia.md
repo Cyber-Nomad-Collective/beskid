@@ -105,8 +105,8 @@ session cookie.
   No `authentication_backend.file` / password store.
 - `identity_providers.oidc` — Authelia as OIDC provider, with per-app
   client registrations. The `shell-template` client is real; commented
-  example entries exist for `website`, `platform-spec`, `tracker`, `pckg`,
-  `learn`, `nexus` (each with its own `client_id` + redirect URI placeholder)
+  example entries exist for `website`, `tracker`, `pckg`, `learn`, and `nexus`
+  (each with its own `client_id` + redirect URI placeholder)
   to adopt when those apps migrate onto the shell.
 - `access_control` — `beskid-admins` group gating; public health/metrics
   endpoints bypass auth at the proxy layer.
@@ -138,8 +138,8 @@ Document the recovery procedure for your deployment.
    cookie signing.
 5. **Redirect URIs** — register `http://localhost:8499/api/auth/callback`
    (dev) and the production callback on the Authelia client config.
-6. **Other apps** — when `website`, `platform-spec`, `tracker`, `pckg`,
-   `learn`, or `nexus` adopt the shell, uncomment their client block in
+6. **Other apps** — when `website`, `tracker`, `pckg`, `learn`, or `nexus`
+   adopt the shell, uncomment their client block in
    `configuration.yml` and set their per-app OIDC client secret env.
 
 ## Why `jose`

@@ -29,6 +29,6 @@ beskid dev syntax parse path/to/file.bd
 beskid dev build compile --project path/to/Project.proj
 beskid dev build test path/to/file.bd
 beskid dev project graph path/to/Project.proj
-``` 
+```
 
 Install prebuilt binaries from [Downloads](/downloads/) or build from the compiler repository.
