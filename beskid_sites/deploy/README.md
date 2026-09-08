@@ -14,8 +14,8 @@ Watchtower. There is no staging deployment and no deployment control plane.
 4. CI waits through the Watchtower window and smokes the canonical production
    endpoints.
 
-The tagged application services are `website`, `auth`, `learn`, `tracker`,
-`nexus`, and `pckg`. The shared edge, registry, Watchtower, and Postgres are
+The tagged application services are `website`, `learn`, `tracker`, `nexus`,
+and `pckg`. Authelia, the shared edge, registry, Watchtower, and Postgres are
 pinned infrastructure: change them only with an audited Compose
 deployment.
 
@@ -29,6 +29,9 @@ The production host is `root@bdziam.dev`; the runtime directory defaults to
 - A registry account with pull access on the host and push access stored in the
   repository secrets `REGISTRY_USERNAME` and `REGISTRY_PASSWORD`.
 - A bcrypt registry credential file at `registry/htpasswd`.
+- An Authelia file-backed user database at `authelia/users_database.yml`.
+  Start from `users_database.yml.example`, generate an Argon2id password hash,
+  and keep the completed file off Git.
 - OpenBao production secrets, or a populated local `.env` copied from
   `.env.example`. Do not commit `.env`, `htpasswd`, or Watchtower’s Docker
   credential file.
@@ -50,6 +53,14 @@ application tag other than `production`.
 The first cutover adopts the host's existing `beskid-registry-data` Docker
 volume. It is external to Compose so existing registry images and rollback tags
 are retained; do not delete or recreate that volume during the switch.
+
+## Browser authentication
+
+Authelia at `https://auth.beskid-lang.org` is the only browser authentication
+path. The shared Caddy edge sends every request for the website, Learn,
+Tracker, Nexus, and pckg through Authelia forward authentication before it can
+reach an application container. The legacy custom GitHub auth image is not
+part of the production Compose runtime or Watchtower release flow.
 
 ## Registry authentication
 

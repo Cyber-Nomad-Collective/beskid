@@ -110,28 +110,6 @@ jobs:
       REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
       REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
 
-  image-auth:
-    # Delivery is intentionally decoupled from quality gates, which remain
-    # independent branch-protection checks.
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-    uses: ./.github/workflows/reusable-image.yml
-    with:
-      name: beskid-auth
-      repository: cr.beskid-lang.org/beskid/auth
-      context: .
-      dockerfile: site/auth/Dockerfile
-      build-args: |
-        BESKID_RELEASE_CHANNEL=${{ github.event_name == 'workflow_dispatch' && inputs.unstable && 'unstable' || 'stable' }}
-      submodules: beskid_web_common
-      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.unstable)) }}
-      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.unstable)) }}
-    secrets:
-      REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
-      REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
-
   image-learn:
     # Delivery is intentionally decoupled from quality gates, which remain
     # independent branch-protection checks.
@@ -244,12 +222,11 @@ jobs:
   manifest:
     # A manifest is the promotion boundary. It must only exist when every
     # required validation and image lane from this run succeeded.
-    needs: [openspec, conformance, integration, security, shared-ui-nexus, image-site, image-auth, image-learn, image-tracker, image-nexus, image-pckg]
+    needs: [openspec, conformance, integration, security, shared-ui-nexus, image-site, image-learn, image-tracker, image-nexus, image-pckg]
     if: >-
       ${{
         !cancelled() &&
         needs.image-site.result == 'success' &&
-        needs.image-auth.result == 'success' &&
         needs.image-learn.result == 'success' &&
         needs.image-tracker.result == 'success' &&
         needs.image-nexus.result == 'success' &&

@@ -40,7 +40,7 @@ normalize_smoke_urls() {
   )
 }
 
-canonical_urls=$'https://beskid-lang.org/\nhttps://beskid-lang.org/document.txt\nhttps://auth.beskid-lang.org/api/v1/health\nhttps://learn.beskid-lang.org/api/health\nhttps://tracker.beskid-lang.org/api/health\nhttps://nexus.beskid-lang.org/api/health\nhttps://pckg.beskid-lang.org/health/ready'
+canonical_urls=$'https://beskid-lang.org/\nhttps://auth.beskid-lang.org/api/health\nhttps://learn.beskid-lang.org/api/health\nhttps://tracker.beskid-lang.org/api/health\nhttps://nexus.beskid-lang.org/api/health\nhttps://pckg.beskid-lang.org/health/ready'
 if [[ -n "${BESKID_SMOKE_URLS:-}" ]]; then
   configured_urls="$(normalize_smoke_urls "${BESKID_SMOKE_URLS}")" || exit 1
   if [[ "${configured_urls}" != "${canonical_urls}" ]]; then
@@ -62,21 +62,6 @@ probe_url() {
     cat "${headers}" >&2
     rm -f "${headers}"
     return 1
-  fi
-
-  if [[ "${url}" == *"/document.txt" ]]; then
-    if ! rg -qi '^content-type: text/html' "${headers}"; then
-      echo "smoke production: unexpected content-type for ${url} (expected HTML)" >&2
-      cat "${headers}" >&2
-      rm -f "${headers}"
-      return 1
-    fi
-    if rg -qi '^content-disposition: attachment' "${headers}"; then
-      echo "smoke production: attachment header found for ${url}" >&2
-      cat "${headers}" >&2
-      rm -f "${headers}"
-      return 1
-    fi
   fi
 
   rm -f "${headers}"

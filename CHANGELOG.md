@@ -11,6 +11,10 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Deployment: replaced the custom GitHub auth image with Authelia forward
+  authentication for every public Beskid application. The production runtime
+  now exposes Authelia at `auth.beskid-lang.org` and retains the Compose,
+  private-registry, and Watchtower release path.
 - CI: build the Rust pckg image from the compiler's authoritative workspace.
 - CI: completed the minimal Rust pckg image workspace dependency declaration.
 - CI: retry private-registry login through transient shared-edge proxy reloads
@@ -36,6 +40,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Removed
 
+- CI: removed the retired custom-auth image delivery lane and its production
+  volume; Authelia is the sole browser authentication boundary.
 - Deployment: removed the invalid, unused Authelia and community services from
   the production Compose path; they are not part of the Watchtower migration.
 - Deployment: removed Coolify diagnostics, staging promotion, runtime-env sync,

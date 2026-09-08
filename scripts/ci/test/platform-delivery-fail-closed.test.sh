@@ -7,14 +7,13 @@ workflow="${root}/.github/workflows/platform-delivery.yml"
 
 manifest_block="$(sed -n '/^  manifest:/,/^  staging:/p' "${workflow}")"
 for required in \
-  'needs: [openspec, conformance, integration, security, shared-ui-nexus, image-site, image-auth, image-learn, image-tracker, image-nexus, image-pckg]' \
+  'needs: [openspec, conformance, integration, security, shared-ui-nexus, image-site, image-learn, image-tracker, image-nexus, image-pckg]' \
   "needs.openspec.result == 'success'" \
   "needs.conformance.result == 'success'" \
   "needs.integration.result == 'success'" \
   "needs.security.result == 'success'" \
   "needs.shared-ui-nexus.result == 'success'" \
   "needs.image-site.result == 'success'" \
-  "needs.image-auth.result == 'success'" \
   "needs.image-learn.result == 'success'" \
   "needs.image-tracker.result == 'success'" \
   "needs.image-nexus.result == 'success'" \
@@ -24,5 +23,10 @@ for required in \
     exit 1
   fi
 done
+
+if rg -q '^  image-auth:' "${workflow}"; then
+  echo 'FAIL - legacy custom-auth image lane remains in production delivery' >&2
+  exit 1
+fi
 
 echo "platform delivery fail-closed contract OK"

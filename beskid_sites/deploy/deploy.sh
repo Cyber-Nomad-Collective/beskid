@@ -33,6 +33,7 @@ OPENBAO_PREFIX="secret/beskid/production"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ENV_FILE="${SCRIPT_DIR}/.env"
 HTPASSWD_FILE="${SCRIPT_DIR}/registry/htpasswd"
+AUTHELIA_USERS_FILE="${SCRIPT_DIR}/authelia/users_database.yml"
 
 FROM_OPENBAO=0
 NO_DEPLOY=0
@@ -72,7 +73,7 @@ smoke() {
   local failures=0
   local endpoints=(
     "https://beskid-lang.org/|beskid-lang.org homepage"
-    "https://auth.beskid-lang.org/api/v1/health|auth hub health"
+    "https://auth.beskid-lang.org/api/health|Authelia health"
     "https://tracker.beskid-lang.org/api/health|tracker health"
     "https://nexus.beskid-lang.org/api/health|nexus health"
     "https://pckg.beskid-lang.org/health/ready|pckg health"
@@ -114,6 +115,8 @@ fi
 log "validating local prerequisites"
 [ -f "${SCRIPT_DIR}/docker-compose.yml" ] || { err "missing docker-compose.yml"; exit 1; }
 [ -f "${SCRIPT_DIR}/registry/config.yml" ] || { err "missing registry/config.yml"; exit 1; }
+[ -f "${SCRIPT_DIR}/authelia/configuration.yml" ] || { err "missing authelia/configuration.yml"; exit 1; }
+[ -f "${AUTHELIA_USERS_FILE}" ] || { err "missing authelia/users_database.yml — copy the example and set a generated password hash"; exit 1; }
 [ -f "${HTPASSWD_FILE}" ] || { err "missing registry/htpasswd — generate: htpasswd -Bbn <user> <pass> > registry/htpasswd"; exit 1; }
 
 # ---------------------------------------------------------------------------
@@ -138,7 +141,7 @@ if [ "$FROM_OPENBAO" -eq 1 ]; then
   }
 
   # Per-service OpenBao paths (mirror beskid_infra/docs/openbao-layout.md).
-  for svc in auth postgres tracker nexus pckg learn; do
+  for svc in authelia postgres tracker nexus pckg learn; do
     read_secrets "$svc" >> "${ENV_FILE}" || true
   done
   # Registry credentials.
@@ -163,15 +166,14 @@ need BESKID_EDGE_NETWORK "shared host edge network name"
   exit 1
 }
 need POSTGRES_PASSWORD "shared Postgres password"
-need GITHUB_CLIENT_ID "GitHub OAuth App client id"
-need GITHUB_CLIENT_SECRET "GitHub OAuth App client secret"
+need AUTHELIA_SESSION_SECRET "Authelia session secret"
+need AUTHELIA_STORAGE_ENCRYPTION_KEY "Authelia storage encryption key"
 need SITE_IMAGE_TAG "website image tag (production)"
-need AUTH_IMAGE_TAG "auth image tag (production)"
 need TRACKER_IMAGE_TAG "tracker image tag (production)"
 need NEXUS_IMAGE_TAG "nexus image tag (production)"
 need PCKG_IMAGE_TAG "pckg image tag (production)"
 need LEARN_IMAGE_TAG "learn image tag (production)"
-for image_tag in "$SITE_IMAGE_TAG" "$AUTH_IMAGE_TAG" "$TRACKER_IMAGE_TAG" "$NEXUS_IMAGE_TAG" "$PCKG_IMAGE_TAG" "$LEARN_IMAGE_TAG"; do
+for image_tag in "$SITE_IMAGE_TAG" "$TRACKER_IMAGE_TAG" "$NEXUS_IMAGE_TAG" "$PCKG_IMAGE_TAG" "$LEARN_IMAGE_TAG"; do
   [[ "${image_tag}" == production ]] || { err "all application image tags must be production for Watchtower"; exit 1; }
 done
 
@@ -183,14 +185,16 @@ remote "docker network inspect ${BESKID_EDGE_NETWORK} >/dev/null" || {
   err "BESKID_EDGE_NETWORK does not exist on ${DEPLOY_HOST}: ${BESKID_EDGE_NETWORK}"
   exit 1
 }
-remote "mkdir -p ${REMOTE_DIR}/registry ${REMOTE_DIR}/watchtower"
+remote "mkdir -p ${REMOTE_DIR}/registry ${REMOTE_DIR}/watchtower ${REMOTE_DIR}/authelia"
 
 scp -q "${SCRIPT_DIR}/docker-compose.yml" "${DEPLOY_HOST}:${REMOTE_DIR}/docker-compose.yml"
 scp -q "${SCRIPT_DIR}/registry/config.yml" "${DEPLOY_HOST}:${REMOTE_DIR}/registry/config.yml"
 scp -q "${HTPASSWD_FILE}" "${DEPLOY_HOST}:${REMOTE_DIR}/registry/htpasswd"
+scp -q "${SCRIPT_DIR}/authelia/configuration.yml" "${DEPLOY_HOST}:${REMOTE_DIR}/authelia/configuration.yml"
+scp -q "${AUTHELIA_USERS_FILE}" "${DEPLOY_HOST}:${REMOTE_DIR}/authelia/users_database.yml"
 # Ship .env with restricted perms.
 scp -q "${ENV_FILE}" "${DEPLOY_HOST}:${REMOTE_DIR}/.env"
-remote "chmod 600 ${REMOTE_DIR}/.env ${REMOTE_DIR}/registry/htpasswd"
+remote "chmod 600 ${REMOTE_DIR}/.env ${REMOTE_DIR}/registry/htpasswd ${REMOTE_DIR}/authelia/users_database.yml"
 
 # ---------------------------------------------------------------------------
 # 4. Authenticate host and Watchtower to the private registry. Keep the

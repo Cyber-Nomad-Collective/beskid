@@ -13,7 +13,7 @@
 #   - CI moves controlled production tags; Watchtower updates only explicitly
 #     labelled application services. Third-party infrastructure stays pinned.
 #   - All secrets via env_file (deploy/.env), never inline.
-#   - Shared Postgres for Authelia + pckg + community.
+#   - Postgres serves pckg; Authelia keeps its single-instance state locally.
 #
 # Secrets: OpenBao `secret/beskid/production/*` → deploy/.env (see deploy.sh).
 # Do NOT commit deploy/.env or deploy/registry/htpasswd.
@@ -49,13 +49,11 @@ volumes:
   postgres-data:
     name: s4ir1ovgqtubarqeql3gf3pz_pckg-pg-data
     external: true
-  auth-data:
-    name: s4ir1ovgqtubarqeql3gf3pz_auth-data
-    external: true
   tracker-data:
     name: beskid-sites_tracker-data
     external: true
   nexus-data:
+  authelia-data:
   pckg-packages:
     name: beskid-pckg_pckg-artifacts
     external: true
@@ -129,6 +127,37 @@ services:
           cpus: "2.0"
 
   # ---------------------------------------------------------------------------
+  # Authelia is the sole browser-facing authentication service. It protects
+  # every public application through the shared Caddy edge; application images
+  # do not implement an alternate sign-in path.
+  # ---------------------------------------------------------------------------
+  authelia:
+    image: authelia/authelia:4.39.20
+    restart: unless-stopped
+    labels:
+      caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
+      caddy_0: https://auth.beskid-lang.org
+      caddy_0.reverse_proxy: "{{upstreams 9091}}"
+    networks:
+      - beskid-edge
+    expose:
+      - "9091"
+    env_file:
+      - ${BESKID_ENV_FILE:-.env}
+    volumes:
+      - ./authelia/configuration.yml:/config/configuration.yml:ro
+      - ./authelia/users_database.yml:/config/users_database.yml:ro
+      - authelia-data:/var/lib/authelia
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:9091/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    logging: *default-logging
+    deploy:
+      resources: *default-limits
+
   # ---------------------------------------------------------------------------
   # Beskid applications. CI advances only these mutable production tags;
   # Watchtower updates only services carrying its explicit label. Infrastructure
@@ -143,6 +172,8 @@ services:
       com.beskid.release: production
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://beskid-lang.org
+      caddy_0.forward_auth: authelia:9091
+      caddy_0.forward_auth.uri: /api/authz/forward-auth
       caddy_0.reverse_proxy: "{{upstreams 80}}"
     networks:
       - beskid-edge
@@ -160,33 +191,6 @@ services:
     deploy:
       resources: *default-limits
 
-  auth:
-    image: cr.beskid-lang.org/beskid/auth:${AUTH_IMAGE_TAG:?set AUTH_IMAGE_TAG}
-    restart: unless-stopped
-    labels:
-      com.centurylinklabs.watchtower.enable: "true"
-      com.beskid.release: production
-      caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
-      caddy_0: https://auth.beskid-lang.org
-      caddy_0.reverse_proxy: "{{upstreams 8090}}"
-    networks:
-      - beskid-edge
-    expose:
-      - "8090"
-    env_file:
-      - ${BESKID_ENV_FILE:-.env}
-    volumes:
-      - auth-data:/app/site/auth/data/runtime
-    healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:8090/api/v1/health && wget -q --spider http://127.0.0.1:8090/ || exit 1"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
-    logging: *default-logging
-    deploy:
-      resources: *default-limits
-
   tracker:
     image: cr.beskid-lang.org/beskid/tracker:${TRACKER_IMAGE_TAG:?set TRACKER_IMAGE_TAG}
     restart: unless-stopped
@@ -195,6 +199,8 @@ services:
       com.beskid.release: production
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://tracker.beskid-lang.org
+      caddy_0.forward_auth: authelia:9091
+      caddy_0.forward_auth.uri: /api/authz/forward-auth
       caddy_0.reverse_proxy: "{{upstreams 3000}}"
     networks:
       - beskid-edge
@@ -222,6 +228,8 @@ services:
       com.beskid.release: production
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://nexus.beskid-lang.org
+      caddy_0.forward_auth: authelia:9091
+      caddy_0.forward_auth.uri: /api/authz/forward-auth
       caddy_0.reverse_proxy: "{{upstreams 8452}}"
     networks:
       - beskid-edge
@@ -249,6 +257,8 @@ services:
       com.beskid.release: production
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://pckg.beskid-lang.org
+      caddy_0.forward_auth: authelia:9091
+      caddy_0.forward_auth.uri: /api/authz/forward-auth
       caddy_0.reverse_proxy: "{{upstreams 8082}}"
     networks:
       - beskid-edge
@@ -284,6 +294,8 @@ services:
       com.beskid.release: production
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://learn.beskid-lang.org
+      caddy_0.forward_auth: authelia:9091
+      caddy_0.forward_auth.uri: /api/authz/forward-auth
       caddy_0.reverse_proxy: "{{upstreams 80}}"
     networks:
       - beskid-edge

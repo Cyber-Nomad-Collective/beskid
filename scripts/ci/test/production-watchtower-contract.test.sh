@@ -22,6 +22,11 @@ forbid() {
 require 'watchtower:' "$compose"
 require 'containrrr/watchtower:' "$compose"
 require 'registry:2.8' "$compose"
+require 'authelia:' "$compose"
+require 'authelia/authelia:4.39.20' "$compose"
+require './authelia/configuration.yml:/config/configuration.yml:ro' "$compose"
+require 'caddy_0: https://auth.beskid-lang.org' "$compose"
+require 'caddy_0.reverse_proxy: "{{upstreams 9091}}"' "$compose"
 require 'REGISTRY_AUTH: htpasswd' "$compose"
 require 'REGISTRY_AUTH_HTPASSWD_REALM: Beskid registry' "$compose"
 require 'auth:' "$registry_config"
@@ -35,13 +40,18 @@ require 'registry-data:' "$compose"
 require 'name: beskid-registry-data' "$compose"
 require 'external: true' "$compose"
 
-forbid '^  authelia:' "$compose"
+forbid '^  auth:' "$compose"
 forbid '^  community:' "$compose"
 
-for service in website auth learn tracker nexus pckg; do
+for service in website learn tracker nexus pckg; do
   require "  ${service}:" "$compose"
   require "com.centurylinklabs.watchtower.enable: \"true\"" "$compose"
 done
+
+if [[ "$(rg -Fc 'caddy_0.forward_auth: authelia:9091' "$compose")" -ne 5 ]]; then
+  echo 'every public Beskid application must use Authelia forward authentication' >&2
+  exit 1
+fi
 
 forbid 'coolify' "$compose"
 forbid 'staging' "$compose"
