@@ -23,7 +23,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Docs pages now use their left pane for the page table of contents, and the
   global desktop navigation groups Docs, Standard, and Book under one menu.
 - The Blog now uses a centered editorial layout with published dates,
-  reusable React tiles, no status badges, and linked public-domain art.
+  reusable React tiles, no status badges, a small recent-post carousel with
+  attributed public-domain art, and compact text-first archive cards.
 - The Docs menu now opens inward at narrow desktop widths, and the Blog index
   keeps its heading without an explanatory summary deck.
 - Production delivery now uses only the self-hosted Compose stack and
