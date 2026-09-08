@@ -31,6 +31,10 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/*
 
 COPY compiler/Cargo.toml compiler/Cargo.lock ./compiler/
+# Keep the compiler's own license metadata beside its Cargo workspace. The
+# runtime-kit build embeds these files, so the Rust stage must receive them
+# before it compiles beskid_abi.
+COPY compiler/LICENSE compiler/NOTICE ./compiler/
 # beskid_abi's build script reads the runtime manifest at the compiler root.
 COPY compiler/runtime_manifest.bsol ./compiler/runtime_manifest.bsol
 # beskid_abi embeds corelib foundation sources via include_str!.

@@ -20,7 +20,7 @@ for required in \
 	'pnpm install --dir beskid_tracker --frozen-lockfile' \
 	'pnpm --dir beskid_tracker test' \
 	'pnpm --dir beskid_tracker check' \
-	'pnpm --dir site/website exec vitest run src/lib/tracker-delivery.test.ts' \
+	'pnpm --dir site/website exec node --test src/lib/tracker-delivery.test.ts' \
 	'pnpm --dir site/website build' \
 	'beskid_nexus/gitnexus' \
 	'website tracker-delivery' \

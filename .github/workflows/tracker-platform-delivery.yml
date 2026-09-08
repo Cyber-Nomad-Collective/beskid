@@ -118,7 +118,7 @@ jobs:
           bash ./scripts/ci/run-ci-reported-command.sh
           website tracker-delivery "${{ runner.os }}"
           "${{ runner.temp }}/website-nexus-report" --
-          pnpm --dir site/website exec vitest run src/lib/tracker-delivery.test.ts
+          pnpm --dir site/website exec node --test src/lib/tracker-delivery.test.ts
       - name: Build the website
         run: >-
           bash ./scripts/ci/run-ci-reported-command.sh

@@ -24,10 +24,19 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- The documented `beskid dev` syntax, build, project, and package-registry
+  command paths now parse and dispatch through the same canonical CLI
+  implementations as their concise root commands.
 - Learn: the Playground now submits the live Monaco model rather than a stale
   editor state, accepts its own analyze target, offers Beskid completions, and
   uses a single workspace surface instead of nested cards. The signed-in header
   now provides the standard account menu with account and sign-out actions.
+- The website delivery projection now uses its supported Node test runner
+  instead of invoking an uninstalled Vitest binary.
+- Release projections now reference published Tracker, Nexus, compiler, and
+  core-library revisions, so CI can fetch the complete deployment graph.
+- Learn's release image now includes the compiler license metadata required by
+  the runtime-kit build. Platform delivery also runs when templates change.
 
 ### Changed
 
