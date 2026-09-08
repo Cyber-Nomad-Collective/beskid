@@ -1,10 +1,13 @@
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
 import { readdir, readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import test from 'node:test';
 
 const contentRoot = new URL('../content/docs/book/', import.meta.url);
 const siteRoot = new URL('../../', import.meta.url);
+const compilerRoot = fileURLToPath(new URL('../../../../compiler/', import.meta.url));
 const snapshot = JSON.parse(await readFile(new URL('../data/pinned-cli-reference.json', import.meta.url), 'utf8'));
 const scopedDirectories = [
 	'reference/cli',
@@ -21,6 +24,62 @@ const scopedDirectories = [
 ];
 
 const rootCommands = snapshot.commands.map(({ name }) => name);
+const pinnedSourceFiles = [
+	'crates/beskid_cli/src/cli.rs',
+	'crates/beskid_cli/src/project_args.rs',
+	'crates/beskid_cli/src/commands/analyze.rs',
+	'crates/beskid_cli/src/commands/build.rs',
+	'crates/beskid_cli/src/commands/clif.rs',
+	'crates/beskid_cli/src/commands/compiler_mod.rs',
+	'crates/beskid_cli/src/commands/corelib.rs',
+	'crates/beskid_cli/src/commands/doc/model.rs',
+	'crates/beskid_cli/src/commands/fetch.rs',
+	'crates/beskid_cli/src/commands/format.rs',
+	'crates/beskid_cli/src/commands/graph.rs',
+	'crates/beskid_cli/src/commands/hi.rs',
+	'crates/beskid_cli/src/commands/import.rs',
+	'crates/beskid_cli/src/commands/lock.rs',
+	'crates/beskid_cli/src/commands/lsp.rs',
+	'crates/beskid_cli/src/commands/migrate_bsol.rs',
+	'crates/beskid_cli/src/commands/new.rs',
+	'crates/beskid_cli/src/commands/parse.rs',
+	'crates/beskid_cli/src/commands/repl.rs',
+	'crates/beskid_cli/src/commands/run.rs',
+	'crates/beskid_cli/src/commands/runtime_kit.rs',
+	'crates/beskid_cli/src/commands/test.rs',
+	'crates/beskid_cli/src/commands/tree.rs',
+	'crates/beskid_cli/src/commands/update.rs',
+	'crates/beskid_cli/src/commands/validate_bsol.rs',
+	'crates/beskid_pckg/src/cli/arguments.rs',
+	'crates/beskid_up/src/commands.rs',
+];
+
+function pinnedGit(...args) {
+	return execFileSync('git', ['-C', compilerRoot, ...args], { encoding: 'utf8' }).trim();
+}
+
+function enumVariants(source, enumName) {
+	const declaration = source.indexOf(`enum ${enumName}`);
+	assert.notEqual(declaration, -1, `missing enum ${enumName}`);
+	const opening = source.indexOf('{', declaration);
+	let depth = 0;
+	let lineStart = opening + 1;
+	const variants = [];
+	for (let index = opening; index < source.length; index += 1) {
+		if (source[index] === '{') depth += 1;
+		if (source[index] === '}') depth -= 1;
+		if (source[index] === '\n') {
+			if (depth === 1) {
+				const line = source.slice(lineStart, index).trim();
+				const variant = line.match(/^([A-Z][A-Za-z0-9]*)\s*(?:\(|\{|,)/)?.[1];
+				if (variant) variants.push(variant.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase());
+			}
+			lineStart = index + 1;
+		}
+		if (depth === 0) break;
+	}
+	return variants;
+}
 
 async function markdownFiles(relativeDirectory) {
 	const directory = new URL(`${relativeDirectory}/`, contentRoot);
@@ -91,6 +150,28 @@ test('active Book and reference guidance uses the current toolchain contracts', 
 test('CLI reference has one Markdown page for every pinned root command and no extra page', async () => {
 	const pages = (await commandPagePaths()).map(({ name }) => name).sort();
 	assert.deepEqual(pages, [...rootCommands].sort());
+});
+
+test('pinned CLI fixture is tied to immutable source blobs and the root Clap enum', () => {
+	assert.deepEqual(Object.keys(snapshot.sourceBlobs ?? {}).sort(), [...pinnedSourceFiles].sort());
+	for (const sourcePath of pinnedSourceFiles) {
+		const actualBlob = pinnedGit('rev-parse', `${snapshot.sourceRevision}:${sourcePath}`);
+		assert.equal(snapshot.sourceBlobs[sourcePath], actualBlob, `${sourcePath}: pinned blob changed`);
+	}
+	const cliSource = pinnedGit('show', `${snapshot.sourceRevision}:crates/beskid_cli/src/cli.rs`);
+	assert.deepEqual(enumVariants(cliSource, 'Commands'), rootCommands);
+});
+
+test('new command records output as a conditional requirement and pins its registry default', () => {
+	const command = snapshot.commands.find(({ name }) => name === 'new');
+	assert.equal((command.requiredFlags ?? []).includes('--output'), false, '--output is not required for the TUI picker');
+	assert.deepEqual(command.conditionalRequirements, [
+		{ when: 'instantiate', requiredFlags: ['--output'], bypass: 'tui-picker' },
+	]);
+	assert.equal(command.defaults['--registry-url'], 'https://pckg.beskid-lang.org');
+	const source = pinnedGit('show', `${snapshot.sourceRevision}:crates/beskid_cli/src/commands/new.rs`);
+	assert.match(source, /args\.tui && args\.command\.is_none\(\) && args\.short_name\.is_none\(\)/);
+	assert.match(source, /flags\.output\.clone\(\)\.ok_or_else\([^\n]*--output` is required/);
 });
 
 function collectContractTokens(command) {
@@ -172,6 +253,7 @@ test('reviewed command contracts and terminology do not regress', async () => {
 	assert.match(files.rustAbi, /under reconciliation/i);
 	assert.match(files.bsol, /BSOL[^\n]*parser[^\n]*\.bproj/i);
 	assert.match(files.bsol, /\.bd[^\n]*Beskid source parser/i);
+	assert.doesNotMatch(files.bsol, /Both paths use one parser/i);
 	assert.match(files.format, /compiler\/crates\/beskid_tests_surface\/fixtures\/format/);
 	assert.match(files.cliIndex, /--log-cranelift/);
 	for (const source of Object.values(files)) assert.doesNotMatch(source, /\ba\s+`?App\.bproj\b/i);

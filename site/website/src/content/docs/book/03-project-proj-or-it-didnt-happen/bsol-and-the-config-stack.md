@@ -84,7 +84,7 @@ flowchart LR
   end
 ```
 
-**Text equivalent:** BSOL source becomes a `BsolDocument`, then a schema profile validates it before project lowering and graph resolution. Beskid source separately passes through parsing, semantic facts, and code generation. Both paths use one parser and validation spine.
+**Text equivalent:** BSOL source uses the BSOL parser to become a `BsolDocument`, then a schema profile validates it before project lowering and graph resolution. Beskid source uses a separate source parser before semantic facts and code generation. The two paths have analogous parse-and-validate spines; they do not share one parser.
 
 Both paths share the platform rule: **one spine, no shadow parsers**. Manifest files are not special-cased with ad hoc regex in the LSP; they go through BSOL first, then contract validation—mirroring how `.bd` goes through parse, then semantic rules.
 

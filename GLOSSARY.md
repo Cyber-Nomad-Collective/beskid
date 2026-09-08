@@ -60,7 +60,9 @@ command has one Book reference page. Task procedures use the concise root
 forms; `beskid dev` only groups documented aliases for discovery. The committed
 `site/website/src/data/pinned-cli-reference.json` snapshot records the source
 revision, arguments, flags, defaults, subcommands, and alias relationships that
-the public reference must cover.
+the public reference must cover. Its source-blob map binds the fixture to the
+immutable compiler object. Conditional requirements distinguish command paths
+such as `beskid new` instantiation from the output-free TUI picker.
 
 ## Capability
 
