@@ -107,6 +107,8 @@ jobs:
         with:
           targets: x86_64-pc-windows-msvc
 
+      - uses: ./.github/actions/setup-native-llvm-windows
+
       - name: Setup Visual Studio environment
         uses: ilammy/msvc-dev-cmd@v1
 
@@ -122,17 +124,6 @@ jobs:
       - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
         with:
           workspaces: compiler
-
-      - name: Require native LLVM tooling
-        shell: pwsh
-        run: |
-          $llvmNm = Get-Command llvm-nm.exe -ErrorAction Stop
-          $llvmMl = Get-Command llvm-ml.exe -ErrorAction Stop
-          $clang = Get-Command clang.exe -ErrorAction Stop
-          $llvmBin = Split-Path -Parent $llvmNm.Source
-          "LLVM_NM=$($llvmNm.Source)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          $llvmBin | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-          Write-Host "Using LLVM tools: $($llvmNm.Source), $($llvmMl.Source), $($clang.Source)"
 
       - name: Build and smoke exact Windows runtime-kit matrix
         shell: bash

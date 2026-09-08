@@ -10,7 +10,7 @@ trap 'rm -rf "${TMP}"' EXIT
 source "${ROOT}/scripts/ci/test/lib/assert.sh"
 
 MOCK_LOG="${TMP}/curl.log"
-export MOCK_LOG MOCK_FAIL_URL="" MOCK_BAD_DOCUMENT=""
+export MOCK_LOG MOCK_FAIL_URL="" MOCK_BAD_DOCUMENT="" MOCK_HTTP_STATUS="200"
 mkdir -p "${TMP}/bin"
 cat >"${TMP}/bin/curl" <<'SH'
 #!/usr/bin/env bash
@@ -27,7 +27,7 @@ if [[ "${url}" == *'/document.txt' && "${MOCK_BAD_DOCUMENT}" == 1 ]]; then
 elif [[ "${url}" == *'/document.txt' ]]; then
   printf 'HTTP/2 200\ncontent-type: text/html\n' >"${header}"
 else
-  printf 'HTTP/2 200\ncontent-type: application/json\n' >"${header}"
+  printf 'HTTP/2 %s\ncontent-type: application/json\n' "${MOCK_HTTP_STATUS}" >"${header}"
 fi
 printf '%s\n' "${url}" >>"${MOCK_LOG}"
 SH
@@ -75,5 +75,13 @@ else
   _TESTS_RUN=$((_TESTS_RUN + 1)); echo '  ok   - curl error fails smoke'
 fi
 MOCK_FAIL_URL=''
+
+MOCK_HTTP_STATUS=302
+if run_smoke "${production_urls}" >/dev/null 2>&1; then
+  _TESTS_RUN=$((_TESTS_RUN + 1)); _TESTS_FAIL=$((_TESTS_FAIL + 1)); echo '  FAIL - redirect response fails smoke'
+else
+  _TESTS_RUN=$((_TESTS_RUN + 1)); echo '  ok   - redirect response fails smoke'
+fi
+MOCK_HTTP_STATUS=200
 
 finish_tests

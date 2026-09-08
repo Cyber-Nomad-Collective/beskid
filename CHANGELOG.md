@@ -71,6 +71,20 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Align download API assets and packages with the shared release-platform IDs,
   restore canonical LSP and project reference indexes with redirects from their
   former README routes, and serve unknown website routes as explicit 404s.
+- Install one exact LLVM 20.1.8 toolset for both Windows compiler-gate and
+  native-release jobs, and fail closed unless the required Clang, assembler,
+  symbol, and object-inspection tools are present at that pinned location.
+- pckg now routes its Authentik outpost callback correctly and forwards the
+  verified identity only for visitors with an Authentik proxy session. The
+  public catalogue stays reachable without sign-in while dashboard requests
+  receive the identity headers required by the registry.
+- Production now serves the public website, Learn, and pckg routes directly
+  through the shared Caddy edge. Tracker and Nexus retain their Authentik
+  protection, preventing the former global edge policy from redirecting public
+  health endpoints and application pages to sign-in.
+- Production site smoke checks now reject redirects and other non-2xx
+  responses, so an authentication proxy or routing drift cannot be promoted as
+  a healthy public website.
 - Remove the deleted Coolify deployment fixture and its unused Compose renderer
   from the active Watchtower delivery gate, eliminating a stale second release
   model that still expected the retired auth image and GHCR paths.
