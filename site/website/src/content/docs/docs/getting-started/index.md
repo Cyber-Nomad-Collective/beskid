@@ -21,7 +21,7 @@ The command must print the command help. If it does not, install or repair the t
 
 Create a file named `Main.bd`.
 
-```text
+```beskid
 i32 Main() {
   return 0;
 }

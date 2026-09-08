@@ -157,7 +157,7 @@ export default defineConfig({
 		starlight({
 			expressiveCode: {
 				shiki: {
-					langs: /** @type {any} */ (beskidGrammar),
+					langs: /** @type {any} */ ([beskidGrammar]),
 					langAlias: {
 						bd: 'beskid',
 					},

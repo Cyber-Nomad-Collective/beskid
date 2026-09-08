@@ -29,3 +29,13 @@ test('renders Docs and Standard titles once', async () => {
 	assert.equal((docs.match(/^# Beskid Docs$/gm) ?? []).length, 0);
 	assert.equal((standard.match(/^# Beskid Standard$/gm) ?? []).length, 0);
 });
+
+test('registers Beskid code fences with the Docs highlighter', async () => {
+	const [firstProgram, config] = await Promise.all([
+		read('site/website/src/content/docs/docs/getting-started/first-program.md'),
+		read('site/website/astro.config.mjs'),
+	]);
+
+	assert.match(firstProgram, /```beskid\ni32 Main\(\)/);
+	assert.match(config, /expressiveCode:[\s\S]*?langs: \/\*\* @type \{any\} \*\/ \(\[beskidGrammar\]\)/);
+});

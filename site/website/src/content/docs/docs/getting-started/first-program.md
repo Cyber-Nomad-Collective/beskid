@@ -7,7 +7,7 @@ description: Create a small Beskid program and use semantic analysis to check it
 
 Create `Main.bd` with one entry function.
 
-```text
+```beskid
 i32 Main() {
   return 0;
 }
