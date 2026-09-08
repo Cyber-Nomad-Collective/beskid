@@ -26,8 +26,15 @@ override is a user-selected nonempty path and arguments structure. The WASM
 extension host validates that structure but cannot inspect arbitrary executable
 contents or prove binary compatibility before launch. The download comes from
 the `Cyber-Nomad-Collective/beskid_compiler` GitHub release, tag `lsp-stable`,
-uses the exact platform-matrix asset, and is cached under a path containing the
-release version. No other network source or guessed relative path is allowed.
+resolves the exact `lsp-version.txt` release asset URL first, downloads that
+projection through a disposable temporary file, and trims then strictly validates
+its immutable release-version token before using it in the versioned cache path
+for the exact platform-matrix asset. The rolling release tag itself is never a
+cache key. A projection token starts with a digit or `v` followed by a digit;
+empty, traversal, path-separator, control-character, and other unsafe projection
+values fail closed; projection fetch/read/cleanup failures report a
+failed installation and cannot promote or poison a binary cache entry. No other
+network source or guessed relative path is allowed.
 The release matrix is evaluated only for that final download fallback;
 configured and PATH-resolved commands are host-owned and remain usable on
 hosts outside the release matrix.

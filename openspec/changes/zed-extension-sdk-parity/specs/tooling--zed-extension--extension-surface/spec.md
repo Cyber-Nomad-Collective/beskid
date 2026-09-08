@@ -19,9 +19,16 @@ invoked as `beskid lsp`; then the `lsp-stable` download. An override SHALL be a
 user-selected nonempty path and arguments structure. The WASM extension host
 SHALL validate that structure but cannot inspect arbitrary executable contents
 or prove binary compatibility before launch. The download SHALL come from the
-`Cyber-Nomad-Collective/beskid_compiler` GitHub release, tag `lsp-stable`, use
-the exact platform-matrix asset, and be cached under a path containing the
-release version. No other network source or guessed relative path is allowed.
+`Cyber-Nomad-Collective/beskid_compiler` GitHub release, tag `lsp-stable`, resolve
+the exact `lsp-version.txt` release asset URL, and download that projection through
+a disposable temporary file. The extension SHALL trim and strictly validate the
+projected immutable release-version token before using it in the versioned cache
+path for the exact platform-matrix asset; the rolling release tag SHALL NOT be a
+cache key. A projection token SHALL start with a digit or `v` followed by a digit;
+empty, traversal, path-separator, control-character, and other unsafe projection
+values SHALL fail closed. Projection fetch, read, validation, or cleanup
+failure SHALL report failed installation and SHALL NOT promote or poison a binary
+cache entry. No other network source or guessed relative path is allowed.
 Configured and PATH-resolved commands are host-owned candidates and SHALL NOT
 be rejected by the release platform matrix; platform validation applies only
 when resolution reaches the download fallback.
@@ -48,6 +55,18 @@ behavior locally.
   `lsp-stable` download in that order
 - **AND** it never tries a later candidate before an earlier candidate fails
 - **AND** platform validation occurs only after both PATH candidates are absent
+
+#### Scenario: Rolling release projects an immutable cache version
+
+- **GIVEN** the `lsp-stable` release exposes `lsp-version.txt` with a valid
+  immutable token such as `v2`
+- **WHEN** the extension reaches the release-download fallback
+- **THEN** it resolves the exact `lsp-version.txt` asset URL and reads that
+  projection from a disposable temporary file
+- **AND** it caches the selected platform binary at a path containing `v2`, not
+  `lsp-stable`
+- **AND** a missing, unreadable, or unsafe projection reports failed installation
+  and leaves no promoted or poisoned cache entry
 
 #### Scenario: Missing binary fails closed
 
@@ -187,10 +206,11 @@ extension configuration.
 #### Scenario: Download scope is restricted
 
 - **WHEN** the extension performs the `lsp-stable` download
-- **THEN** its URL is the `lsp-stable` release asset from repository
+- **THEN** its binary and `lsp-version.txt` projection URLs are exact
+  `lsp-stable` release assets from repository
   `Cyber-Nomad-Collective/beskid_compiler`
 - **AND** the selected asset is exact for the declared platform matrix and the
-  cache path contains the release version
+  cache path contains the validated `lsp-version.txt` projection
 - **AND** no other host or path is contacted
 
 ### Requirement: Honest unsupported-UI documentation

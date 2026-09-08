@@ -1,7 +1,8 @@
 use std::path::Path;
 
 use installer::{
-    cache_paths, install_cache, run_install, CacheInstaller, InstallStatus, InstallStatusSink,
+    cache_paths, fetch_version_projection, install_cache, run_install, CacheInstaller,
+    InstallStatus, InstallStatusSink,
 };
 use language_server::{platform_for_download, select_launch, LaunchChoice, LaunchSettings};
 use platform::{platform_asset, Arch, Os, PlatformAsset};
@@ -15,6 +16,7 @@ mod settings;
 
 const BESKID_REPO: &str = "Cyber-Nomad-Collective/beskid_compiler";
 const BESKID_RELEASE_TAG: &str = "lsp-stable";
+const BESKID_RELEASE_VERSION_PROJECTION: &str = "lsp-version.txt";
 const BESKID_LANGUAGE_SERVER_ID: &str = "beskid-lsp";
 
 struct BeskidExtension;
@@ -50,6 +52,10 @@ impl CacheInstaller for ZedCache {
 
     fn download(&mut self, url: &str, path: &str) -> Result<(), String> {
         zed::download_file(url, path, zed::DownloadedFileType::Uncompressed)
+    }
+
+    fn read_to_string(&mut self, path: &str) -> Result<String, String> {
+        std::fs::read_to_string(path).map_err(|error| format!("failed to read {path}: {error}"))
     }
 
     fn make_executable(&mut self, path: &str) -> Result<(), String> {
@@ -156,8 +162,16 @@ fn download_beskid_lsp(
     let mut status = ZedStatus { language_server_id };
     run_install(&mut status, |status| {
         let release = zed::github_release_by_tag_name(BESKID_REPO, BESKID_RELEASE_TAG)?;
-        let download_url = release_asset_url(&release, platform_asset)?;
-        let paths = cache_paths(platform_asset.binary_name, &release.version);
+        let version_projection_url =
+            release_asset_url(&release, BESKID_RELEASE_VERSION_PROJECTION)?;
+        let release_version = fetch_version_projection(
+            &mut ZedCache,
+            &version_projection_url,
+            platform_asset.binary_name,
+            BESKID_RELEASE_TAG,
+        )?;
+        let download_url = release_asset_url(&release, platform_asset.asset_name)?;
+        let paths = cache_paths(platform_asset.binary_name, &release_version);
         install_cache(
             status,
             &mut ZedCache,
@@ -168,19 +182,16 @@ fn download_beskid_lsp(
     })
 }
 
-fn release_asset_url(
-    release: &zed::GithubRelease,
-    platform_asset: PlatformAsset,
-) -> zed::Result<String> {
+fn release_asset_url(release: &zed::GithubRelease, asset_name: &str) -> zed::Result<String> {
     release
         .assets
         .iter()
-        .find(|asset| asset.name == platform_asset.asset_name)
+        .find(|asset| asset.name == asset_name)
         .map(|asset| asset.download_url.to_string())
         .ok_or_else(|| {
             format!(
                 "missing {} asset in {} release {}",
-                platform_asset.asset_name, BESKID_REPO, BESKID_RELEASE_TAG
+                asset_name, BESKID_REPO, BESKID_RELEASE_TAG
             )
         })
 }
@@ -324,7 +335,8 @@ mod settings_tests {
 #[cfg(test)]
 mod installer_tests {
     use crate::installer::{
-        cache_paths, install_cache, run_install, CacheInstaller, InstallStatus, InstallStatusSink,
+        cache_paths, fetch_version_projection, install_cache, run_install,
+        validate_release_version, CacheInstaller, InstallStatus, InstallStatusSink,
     };
 
     #[derive(Default)]
@@ -383,6 +395,10 @@ mod installer_tests {
             Ok(())
         }
 
+        fn read_to_string(&mut self, _path: &str) -> Result<String, String> {
+            Err("unexpected projection read".into())
+        }
+
         fn make_executable(&mut self, path: &str) -> Result<(), String> {
             self.actions.push(format!("chmod {path}"));
             if matches!(self.failure, Some(Failure::Chmod)) {
@@ -398,6 +414,128 @@ mod installer_tests {
             }
             Ok(())
         }
+    }
+
+    struct ProjectionCache {
+        contents: Result<String, String>,
+        actions: Vec<String>,
+    }
+
+    impl CacheInstaller for ProjectionCache {
+        fn exists(&self, _path: &str) -> bool {
+            false
+        }
+
+        fn remove_file(&mut self, path: &str) -> Result<(), String> {
+            self.actions.push(format!("remove {path}"));
+            Ok(())
+        }
+
+        fn download(&mut self, _url: &str, path: &str) -> Result<(), String> {
+            self.actions.push(format!("download {path}"));
+            Ok(())
+        }
+
+        fn read_to_string(&mut self, path: &str) -> Result<String, String> {
+            self.actions.push(format!("read {path}"));
+            self.contents.clone()
+        }
+
+        fn make_executable(&mut self, _path: &str) -> Result<(), String> {
+            Ok(())
+        }
+
+        fn rename(&mut self, _source: &str, _destination: &str) -> Result<(), String> {
+            Ok(())
+        }
+    }
+
+    #[test]
+    fn rolling_release_projections_produce_distinct_cache_paths() {
+        let first = validate_release_version(" v1\n").unwrap();
+        let second = validate_release_version("v2").unwrap();
+
+        assert_eq!(
+            cache_paths("beskid_lsp", &first).final_path,
+            "./beskid_lsp-v1"
+        );
+        assert_eq!(
+            cache_paths("beskid_lsp", &second).final_path,
+            "./beskid_lsp-v2"
+        );
+    }
+
+    #[test]
+    fn unsafe_release_version_projections_fail_closed() {
+        for projection in [
+            "",
+            "../v1",
+            "v1/child",
+            "v1\\child",
+            "v1\nchild",
+            "v1;child",
+            "not-a-version",
+            "..",
+        ] {
+            assert!(
+                validate_release_version(projection).is_err(),
+                "{projection:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn version_projection_is_read_from_a_temporary_file_then_removed() {
+        let mut cache = ProjectionCache {
+            contents: Ok("v2\n".into()),
+            actions: Vec::new(),
+        };
+
+        assert_eq!(
+            fetch_version_projection(
+                &mut cache,
+                "https://example.test/lsp-version.txt",
+                "beskid_lsp",
+                "lsp-stable",
+            ),
+            Ok("v2".into())
+        );
+        assert_eq!(
+            cache.actions,
+            vec![
+                "download ./beskid_lsp-lsp-stable.version.partial",
+                "read ./beskid_lsp-lsp-stable.version.partial",
+                "remove ./beskid_lsp-lsp-stable.version.partial",
+            ]
+        );
+    }
+
+    #[test]
+    fn failed_version_projection_is_removed_and_reports_failed_status() {
+        let mut cache = ProjectionCache {
+            contents: Err("projection read failed".into()),
+            actions: Vec::new(),
+        };
+        let mut status = RecordingStatus::default();
+
+        assert!(run_install::<String>(&mut status, |_| {
+            fetch_version_projection(
+                &mut cache,
+                "https://example.test/lsp-version.txt",
+                "beskid_lsp",
+                "lsp-stable",
+            )
+        })
+        .is_err());
+        assert_eq!(
+            cache.actions,
+            vec![
+                "download ./beskid_lsp-lsp-stable.version.partial",
+                "read ./beskid_lsp-lsp-stable.version.partial",
+                "remove ./beskid_lsp-lsp-stable.version.partial",
+            ]
+        );
+        assert!(matches!(status.0.last(), Some(InstallStatus::Failed(_))));
     }
 
     #[test]
