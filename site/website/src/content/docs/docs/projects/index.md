@@ -5,8 +5,8 @@ audience:
   - developer
 authority:
   status: informative
-  sourceLabel: Beskid project CLI reference
-  sourceHref: /book/reference/projects/
+  sourceLabel: Beskid project manifest contract
+  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid/blob/35fdb92cd9c4ad8f61e3d06d7171e94a694b2562/openspec/specs/tooling--manifests-and-lockfiles--project-manifest-contract/spec.md
   limits: This page gives a verified project workflow. It does not define the manifest format.
 verified:
   revision: 252aa528ac7ee01a64e49e9b88b32393206fbd71

@@ -5,8 +5,8 @@ audience:
   - developer
 authority:
   status: informative
-  sourceLabel: Beskid CLI reference
-  sourceHref: /book/reference/cli/
+  sourceLabel: Pinned Beskid CLI command model
+  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid_compiler/blob/252aa528ac7ee01a64e49e9b88b32393206fbd71/crates/beskid_cli/src/cli.rs
   limits: This page groups verified tool tasks. It does not define command semantics.
 verified:
   revision: 252aa528ac7ee01a64e49e9b88b32393206fbd71
@@ -20,7 +20,7 @@ The `beskid` command is the main tool interface. Run `beskid --help` before you 
 Use semantic analysis to parse source, resolve names, and check types.
 
 ```bash
-beskid dev syntax analyze --project path/to/Project.proj
+beskid dev syntax analyze --project path/to/App.bproj
 ```
 
 The input can be a source file or a project entry point. Read the [analysis reference](/book/reference/cli/commands/analyze/) for all options.
@@ -40,7 +40,7 @@ Use `--write` to change files. Use `--check` in CI to report formatting drift wi
 Use ahead-of-time compilation to create an object file, a library, or an executable.
 
 ```bash
-beskid dev build compile --project path/to/Project.proj --release
+beskid dev build compile --project path/to/App.bproj --release
 ```
 
 The command needs a valid resolved project and the matching runtime kit for executable or library output.

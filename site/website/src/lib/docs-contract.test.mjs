@@ -58,10 +58,37 @@ test('requires complete typed annotation metadata on every technical Docs page',
 	}
 });
 
+test('rejects retired project manifest names in active technical Docs', async () => {
+	for (const filePath of await technicalDocsFiles()) {
+		assert.doesNotMatch(await readFile(filePath, 'utf8'), /\b(?:Project|Workspace)\.proj\b/, filePath);
+	}
+});
+
+test('keeps command and project authority out of mutable Book pages', async () => {
+	const expectedSources = new Map([
+		['getting-started/index.md', 'https://github.com/Cyber-Nomad-Collective/beskid_compiler/blob/252aa528ac7ee01a64e49e9b88b32393206fbd71/crates/beskid_cli/src/cli.rs'],
+		['getting-started/first-program.md', 'https://github.com/Cyber-Nomad-Collective/beskid_compiler/blob/252aa528ac7ee01a64e49e9b88b32393206fbd71/crates/beskid_cli/src/cli.rs'],
+		['tooling/index.md', 'https://github.com/Cyber-Nomad-Collective/beskid_compiler/blob/252aa528ac7ee01a64e49e9b88b32393206fbd71/crates/beskid_cli/src/cli.rs'],
+		['projects/index.md', 'https://github.com/Cyber-Nomad-Collective/beskid/blob/35fdb92cd9c4ad8f61e3d06d7171e94a694b2562/openspec/specs/tooling--manifests-and-lockfiles--project-manifest-contract/spec.md'],
+		['packages/index.md', 'https://github.com/Cyber-Nomad-Collective/beskid_compiler/blob/252aa528ac7ee01a64e49e9b88b32393206fbd71/crates/beskid_pckg/src/cli.rs'],
+	]);
+
+	for (const [relativePath, expectedSource] of expectedSources) {
+		const filePath = path.join(docsRoot, relativePath);
+		const data = frontmatter(await readFile(filePath, 'utf8'), filePath);
+		assert.equal(data.authority.sourceHref, expectedSource, `${filePath} must link its exact pinned authority`);
+		assert.doesNotMatch(data.authority.sourceHref, /^\/book\//, `${filePath} must not use the Book as command authority`);
+	}
+});
+
 test('uses docsNavigation as the sole navigation model and covers every technical Docs route', async () => {
-	const [config, docsRail, files] = await Promise.all([
+	const [config, websiteHeader, sharedHeader, docsRail, navigationData, navigationTypes, files] = await Promise.all([
 		read('site/website/astro.config.mjs'),
+		read('site/website/src/components/starlight/Header.astro'),
+		read('beskid_web_common/packages/beskid-ui/src/starlight/Header.astro'),
 		read('beskid_web_common/packages/beskid-ui/src/docs/DocsNavChrome.astro'),
+		read('site/website/src/data/docs-navigation.ts'),
+		read('beskid_web_common/packages/beskid-ui/src/docs/docs-navigation.ts'),
 		technicalDocsFiles(),
 	]);
 	const navigationModule = await tsImport('../data/docs-navigation.ts', import.meta.url);
@@ -70,7 +97,17 @@ test('uses docsNavigation as the sole navigation model and covers every technica
 
 	assert.match(config, /import \{ docsNavigation \} from ['"]\.\/src\/data\/docs-navigation['"]/);
 	assert.match(config, /sidebar:\s*docsNavigation/);
-	assert.match(docsRail, /import \{ docsNavigation \} from ['"]@beskid\/docs-navigation['"]/);
+	assert.match(config, /Header:\s*['"]\.\/src\/components\/starlight\/Header\.astro['"]/);
+	assert.doesNotMatch(config, /@beskid\/docs-navigation/);
+	assert.match(websiteHeader, /import \{ docsNavigation \} from ['"]\.\.\/\.\.\/data\/docs-navigation['"]/);
+	assert.match(websiteHeader, /<SharedHeader docsNavigation=\{docsNavigation\} \/>/);
+	assert.match(sharedHeader, /docsNavigation:\s*DocsNavigationGroup\[\]/);
+	assert.match(sharedHeader, /<DocsNavChrome currentPath=\{path\} navigation=\{docsNavigation\} \/>/);
+	assert.match(docsRail, /navigation:\s*DocsNavigationGroup\[\]/);
+	assert.match(docsRail, /const \{ currentPath, navigation \} = Astro\.props/);
+	assert.doesNotMatch(docsRail, /@beskid\/docs-navigation/);
+	assert.match(navigationData, /import type \{ DocsNavigationGroup \} from ['"]@beskid\/beskid-ui\/docs\/docs-navigation['"]/);
+	assert.match(navigationTypes, /export interface DocsNavigationGroup/);
 	assert.doesNotMatch(docsRail, /href="\/docs\//);
 	assert.deepEqual([...new Set(links.filter((link) => link.startsWith('/docs/')))].sort(), routes);
 });

@@ -54,6 +54,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Give every technical Docs page typed audience, authority, and verification
   metadata. Render one accessible annotation after the shared page title, and
   derive the Starlight sidebar and custom Docs rail from one navigation tree.
+- Use `.bproj` in active Docs commands, link annotations to pinned CLI or
+  OpenSpec sources, and pass the Docs navigation tree through the shared Header
+  and rail as serializable data.
 - Licensing: adopt Apache-2.0 for the compiler, runtime, tooling, reusable
   libraries, and templates; AGPL-3.0-only for Beskid-owned network services;
   and CC-BY-4.0 for documentation prose. Add an explicit compiler-output

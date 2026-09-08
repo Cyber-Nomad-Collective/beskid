@@ -98,9 +98,6 @@ export default defineConfig({
 	trailingSlash: 'always',
 	vite: {
 		resolve: {
-			alias: {
-				'@beskid/docs-navigation': fileURLToPath(new URL('./src/data/docs-navigation.ts', import.meta.url)),
-			},
 			dedupe: ['react', 'react-dom'],
 		},
 		esbuild: {
@@ -175,7 +172,7 @@ export default defineConfig({
 			components: {
 				PageTitle: './src/components/starlight/BlogAwarePageTitle.astro',
 				Head: '@beskid/beskid-ui/starlight/Head.astro',
-				Header: '@beskid/beskid-ui/starlight/Header.astro',
+				Header: './src/components/starlight/Header.astro',
 				Footer: '@beskid/beskid-ui/starlight/Footer.astro',
 				ThemeSelect: '@beskid/beskid-ui/starlight/ThemeSelect.astro',
 				Sidebar: '@beskid/beskid-ui/starlight/Sidebar.astro',

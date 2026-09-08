@@ -5,8 +5,8 @@ audience:
   - newcomer
 authority:
   status: informative
-  sourceLabel: Beskid CLI reference
-  sourceHref: /book/reference/cli/
+  sourceLabel: Pinned Beskid CLI command model
+  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid_compiler/blob/252aa528ac7ee01a64e49e9b88b32393206fbd71/crates/beskid_cli/src/cli.rs
   limits: This page gives a verified starting workflow. It does not define language behavior.
 verified:
   revision: 252aa528ac7ee01a64e49e9b88b32393206fbd71

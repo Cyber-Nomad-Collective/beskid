@@ -5,8 +5,8 @@ audience:
   - package author
 authority:
   status: informative
-  sourceLabel: Beskid package CLI reference
-  sourceHref: /book/reference/cli/commands/pckg/
+  sourceLabel: Pinned Beskid package CLI implementation
+  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid_compiler/blob/252aa528ac7ee01a64e49e9b88b32393206fbd71/crates/beskid_pckg/src/cli.rs
   limits: This page gives a verified package workflow. It does not define publication rules.
 verified:
   revision: 252aa528ac7ee01a64e49e9b88b32393206fbd71
