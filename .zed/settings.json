@@ -1,13 +1,4 @@
 {
-    "file_types": {
-        "Beskid": [
-            "bd"
-        ],
-        "Beskid Manifest": [
-            "bproj",
-            "bws"
-        ]
-    },
     "tab_size": 4,
     "hard_tabs": false,
     "ensure_final_newline_on_save": true,

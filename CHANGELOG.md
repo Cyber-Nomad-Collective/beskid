@@ -18,6 +18,14 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Zed extension: move the complete registry package into the dedicated
+  `editors/zed` crate and point the guarded publication workflow at that path.
+- Zed extension: replace the legacy adapter contract with the official
+  `zed_extension_api` 0.7.0 SDK and the registry-required `wasm32-wasip2`
+  component target.
+- Zed extension: provide SDK-supported parity through native LSP features,
+  grammar-backed editor queries, runnables, pinned top-level compiler tasks,
+  snippets, settings forwarding, and explicit unsupported-UI documentation.
 - Zed extension: resolve the native Beskid language server through the
   configured override, `beskid_lsp`, `beskid lsp`, then the exact stable
   release asset; forward opaque LSP settings unchanged and restrict extension
@@ -59,6 +67,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Removed
 
+- Zed extension: remove duplicate root and `.zed` package language/grammar
+  paths; `editors/zed` is now the single extension implementation.
 - CI: removed the retired custom-auth image delivery lane and its production
   volume; Authelia is the sole browser authentication boundary.
 - Deployment: removed the invalid, unused Authelia and community services from

@@ -4,6 +4,9 @@ set -euo pipefail
 
 root="$(cd "$(dirname "$0")/../../.." && pwd)"
 extension_root="${root}/editors/zed"
+publish_workflow="${root}/.github/workflows/publish-zed-extension.yml"
+developer_tasks="${root}/.zed/tasks.json"
+extension_readme="${extension_root}/README.md"
 
 # Prefer the complete rustup-managed compiler when a Homebrew rustc shim is active.
 if command -v rustup >/dev/null 2>&1; then
@@ -18,6 +21,9 @@ fail() {
 
 [[ -f "${extension_root}/Cargo.toml" ]] || fail 'missing editors/zed Cargo package'
 [[ ! -e "${root}/extension.toml" ]] || fail 'legacy root Zed package remains'
+[[ ! -e "${root}/.zed/grammars/beskid.wasm" ]] || fail 'duplicate .zed Beskid grammar remains'
+[[ ! -e "${root}/.zed/languages/beskid/config.toml" ]] || fail 'duplicate .zed Beskid language configuration remains'
+[[ ! -e "${root}/.zed/languages/beskid-manifest/config.toml" ]] || fail 'duplicate .zed Beskid manifest configuration remains'
 [[ -f "${extension_root}/grammars/beskid.wasm" ]] || fail 'Zed package is missing grammars/beskid.wasm'
 [[ -s "${extension_root}/grammars/beskid.wasm" ]] || fail 'Zed grammar artifact is empty'
 [[ -s "${extension_root}/extension.wasm" ]] || fail 'Zed package is missing extension.wasm'
@@ -39,6 +45,31 @@ grep -Fq 'args = ["**"]' "${extension_root}/extension.toml" || \
   fail 'Zed extension process capability must preserve trusted configured arguments'
 grep -Fq 'path = ["Cyber-Nomad-Collective", "beskid_compiler", "releases", "download", "lsp-stable", "**"]' "${extension_root}/extension.toml" || \
   fail 'Zed extension download capability must remain limited to the stable Beskid release path'
+
+[[ -f "${publish_workflow}" ]] || fail 'missing Zed publication workflow'
+grep -Fq 'extension-path: editors/zed' "${publish_workflow}" || \
+  fail 'Zed publication workflow does not publish editors/zed'
+grep -Fq 'bash scripts/ci/test/zed-extension-package.test.sh' "${publish_workflow}" || \
+  fail 'Zed publication workflow does not run the package gate'
+grep -Fq 'bash scripts/ci/test/zed-language-assets.test.sh' "${publish_workflow}" || \
+  fail 'Zed publication workflow does not run the language-assets gate'
+package_gate_line="$(grep -nF 'bash scripts/ci/test/zed-extension-package.test.sh' "${publish_workflow}" | head -n1 | cut -d: -f1)"
+asset_gate_line="$(grep -nF 'bash scripts/ci/test/zed-language-assets.test.sh' "${publish_workflow}" | head -n1 | cut -d: -f1)"
+publish_action_line="$(grep -nF 'uses: huacnlee/zed-extension-action@v1' "${publish_workflow}" | head -n1 | cut -d: -f1)"
+[[ "${package_gate_line}" -lt "${publish_action_line}" && "${asset_gate_line}" -lt "${publish_action_line}" ]] || \
+  fail 'Zed publication gates must run before the registry action'
+
+[[ -f "${developer_tasks}" ]] || fail 'missing repository Zed developer tasks'
+grep -Fq 'bash scripts/ci/test/zed-extension-package.test.sh' "${developer_tasks}" || \
+  fail 'repository Zed tasks do not expose the package gate'
+
+[[ -f "${extension_readme}" ]] || fail 'missing Zed package README'
+grep -Fq 'zed_extension_api = "0.7.0"' "${extension_readme}" || \
+  fail 'Zed README does not document the official SDK version'
+grep -Fq 'wasm32-wasip2' "${extension_readme}" || \
+  fail 'Zed README does not document the extension build target'
+grep -Fq 'SDK-supported parity' "${extension_readme}" || \
+  fail 'Zed README does not document the SDK parity boundary'
 
 cargo test --manifest-path "${extension_root}/Cargo.toml"
 cargo build --release --target wasm32-wasip2 --manifest-path "${extension_root}/Cargo.toml"

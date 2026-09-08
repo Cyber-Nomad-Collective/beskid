@@ -14,10 +14,20 @@ jobs:
   release:
     runs-on: ubuntu-24.04-arm
     steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: true
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-wasip2
+      - name: Verify Zed extension package
+        run: bash scripts/ci/test/zed-extension-package.test.sh
+      - name: Verify Zed language assets
+        run: bash scripts/ci/test/zed-language-assets.test.sh
       - uses: huacnlee/zed-extension-action@v1
         with:
           extension-name: beskid
-          extension-path: .
+          extension-path: editors/zed
           push-to: Cyber-Nomad-Collective/zed-extensions
         env:
           COMMITTER_TOKEN: ${{ secrets.COMMITTER_TOKEN }}

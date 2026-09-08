@@ -148,6 +148,14 @@ Informative text and hashes retained inside OpenSpec capabilities and `openspec/
 
 The process of turning preserved descriptive migration text into precise, independently testable OpenSpec requirements without inventing behavior or losing source rationale.
 
+## SDK-supported parity
+
+The set of VS Code capabilities that can be reproduced through supported Zed
+registry APIs or Zed-native declarative assets. LSP semantics remain native;
+language metadata, queries, snippets, and tasks are re-expressed for Zed; UI
+surfaces with no registry SDK capability are documented as unsupported rather
+than simulated.
+
 ## Staged promotion
 
 A delivery process that builds an artifact once, verifies and deploys its immutable digest to staging, then automatically promotes that exact digest to production after staging succeeds, with environment-scoped secrets, smoke/SLO gates, and rollback evidence.
@@ -171,6 +179,13 @@ An immutable graph that remains usable for exploration: pointer, touch, and keyb
 ## word
 
 The lowercase Beskid source primitive for an unsigned pointer-width machine value. `word` maps to the target native integer during semantic typing and ISLE lowering; ABI-v5 manifests and generated headers retain `usize` as their wire/layout term.
+
+## Zed extension adapter
+
+The thin Rust WebAssembly component in `editors/zed` that uses the official Zed
+extension SDK to resolve and launch the native Beskid language server and to
+forward Zed initialization and workspace settings unchanged. It does not own
+language semantics or reconstruct compiler workspace state.
 
 ## Tracker delivery relation
 
