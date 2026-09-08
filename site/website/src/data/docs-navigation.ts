@@ -1,10 +1,23 @@
 import type { DocsNavigationGroup } from '@beskid/beskid-ui/docs/docs-navigation';
 
+// Keep ordering here; docsCoverage records completeness without becoming a second navigation model.
 export const docsNavigation: DocsNavigationGroup[] = [
 	{
 		label: 'Beskid Docs',
 		items: [
 			{ label: 'Overview', link: '/docs/' },
+			{
+				label: 'Evaluate',
+				items: [
+					{ label: 'Check readiness', link: '/docs/evaluate/' },
+				],
+			},
+			{
+				label: 'Learn',
+				items: [
+					{ label: 'Use Beskid Learn', link: '/docs/learn/' },
+				],
+			},
 			{
 				label: 'Start',
 				items: [
@@ -13,6 +26,18 @@ export const docsNavigation: DocsNavigationGroup[] = [
 					{ label: 'Write and run a program', link: '/docs/getting-started/first-program/' },
 					{ label: 'Connect VS Code', link: '/docs/getting-started/editor/' },
 					{ label: 'Troubleshoot the first day', link: '/docs/getting-started/troubleshooting/' },
+				],
+			},
+			{
+				label: 'Extend',
+				items: [
+					{ label: 'Choose an extension task', link: '/docs/extend/' },
+					{ label: 'Choose an editor task', link: '/docs/editor/' },
+					{ label: 'Use VS Code projects', link: '/docs/editor/vs-code/' },
+					{ label: 'Integrate BSOL', link: '/docs/extend/bsol/' },
+					{ label: 'Author templates', link: '/docs/extend/templates/' },
+					{ label: 'Integrate Tree-sitter', link: '/docs/extend/tree-sitter/' },
+					{ label: 'Use shared web packages', link: '/docs/extend/web-packages/' },
 				],
 			},
 			{
@@ -38,6 +63,16 @@ export const docsNavigation: DocsNavigationGroup[] = [
 				],
 			},
 			{
+				label: 'Platform',
+				items: [
+					{ label: 'Platform tasks', link: '/docs/platform/' },
+					{ label: 'Use your account', link: '/docs/platform/account/' },
+					{ label: 'Read Tracker', link: '/docs/platform/tracker/' },
+					{ label: 'Report a bug', link: '/docs/platform/report-bug/' },
+					{ label: 'Explore Nexus', link: '/docs/platform/nexus/' },
+				],
+			},
+			{
 				label: 'Operate',
 				items: [
 					{ label: 'Services', link: '/docs/services/' },
@@ -57,6 +92,8 @@ export const docsNavigation: DocsNavigationGroup[] = [
 				items: [
 					{ label: 'Contribution paths', link: '/docs/contributing/' },
 					{ label: 'Set up the repository', link: '/docs/contributing/repository/' },
+					{ label: 'Use the superrepo workflow', link: '/docs/contributing/superrepo-workflow/' },
+					{ label: 'Change Learn curriculum', link: '/docs/contributing/learn-curriculum/' },
 					{ label: 'Change the Standard', link: '/docs/contributing/standard-changes/' },
 					{ label: 'Write Beskid documentation', link: '/docs/contributing/documentation/' },
 					{ label: 'Use ASD-STE100', link: '/docs/contributing/ste-100/' },

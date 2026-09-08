@@ -1,16 +1,19 @@
 ---
 title: Operate Authentication
 description: Configure and recover the central Beskid authentication boundary.
+pageKind: task
+diagramPolicy: not-needed
+diagramOmissionReason: The service contract table is clearer than a diagram for one service.
 audience:
   - service operator
   - maintainer
 authority:
   status: security-sensitive
   sourceLabel: Pinned auth hub contract
-  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid/blob/90c40a91fefa8150134663de120afcb1ef582f2a/site/auth/README.md
+  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid/blob/3143396b796d86c1a70a0bfb1aa4761b593bbae5/site/auth/README.md
   limits: This page does not contain credentials. The deployed auth and infrastructure contracts control the service.
 verified:
-  revision: 90c40a91fefa8150134663de120afcb1ef582f2a
+  revision: 3143396b796d86c1a70a0bfb1aa4761b593bbae5
   date: 2026-09-08
 ---
 
@@ -56,4 +59,4 @@ If pairing fails, discard the pairing code and create a new code. If administrat
 
 ## Next task
 
-[Verify production delivery](/docs/operations/deployment/).
+For sign-in and account use, see [Use your account](/docs/platform/account/). For authorized service pairing and recovery, [verify production delivery](/docs/operations/deployment/).

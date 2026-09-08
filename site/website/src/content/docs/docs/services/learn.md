@@ -1,6 +1,9 @@
 ---
 title: Operate Beskid Learn
 description: Run and verify the interactive Beskid learning service.
+pageKind: task
+diagramPolicy: not-needed
+diagramOmissionReason: The service contract table is clearer than a diagram for one service.
 audience:
   - learner
   - service operator
@@ -56,4 +59,4 @@ If the page works but a check fails, verify the deployed CLI and runtime-kit evi
 
 ## Next task
 
-[Check all service health endpoints](/docs/operations/health-and-monitoring/).
+Learners should [Use Beskid Learn](/docs/learn/). Service operators should [check all service health endpoints](/docs/operations/health-and-monitoring/).

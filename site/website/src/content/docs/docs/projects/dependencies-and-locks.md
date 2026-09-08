@@ -1,6 +1,9 @@
 ---
 title: Resolve dependencies and locks
 description: Declare path and registry dependencies, materialize them, and enforce Project.lock.
+pageKind: task
+diagramPolicy: not-needed
+diagramOmissionReason: The Projects overview already shows the dependency graph; this page is an ordered lockfile procedure.
 audience:
   - developer
   - operator
@@ -8,7 +11,7 @@ authority:
   status: informative
   sourceLabel: Pinned dependency preparation implementation
   sourceHref: https://github.com/Cyber-Nomad-Collective/beskid_compiler/blob/252aa528ac7ee01a64e49e9b88b32393206fbd71/crates/beskid_analysis/src/projects/workflow/prepare.rs
-  limits: This procedure covers implemented path and registry materialization. Git dependency materialization is not implemented.
+  limits: This procedure covers implemented path and registry materialization. The current implementation does not materialize Git dependencies.
 verified:
   revision: 252aa528ac7ee01a64e49e9b88b32393206fbd71
   date: 2026-09-08
@@ -46,7 +49,7 @@ Select one project manifest. Ensure that each local dependency has one `.bproj` 
    beskid fetch --project ./App.bproj --plain
    ```
 
-4. Inspect `Project.lock` after every registry resolution. Compare `resolved_version` with the requested version. Stop the workflow if `resolved_version` differs from the requested version.
+4. Inspect `Project.lock` after every registry resolution for a `resolved_version` that matches the requested version. A mismatch stops the workflow.
 5. Review each materialized leaf under `obj/beskid/deps/src/<materialized-id>`.
 6. Require an existing lockfile that matches resolution:
 
@@ -54,7 +57,7 @@ Select one project manifest. Ensure that each local dependency has one `.bproj` 
    beskid fetch --project ./App.bproj --locked --plain
    ```
 
-7. Forbid lockfile updates during resolution:
+7. Prevent lockfile updates during resolution:
 
    ```bash
    beskid fetch --project ./App.bproj --frozen --plain

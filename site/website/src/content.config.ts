@@ -2,6 +2,7 @@ import { defineCollection, z } from "astro:content";
 import { docsLoader } from "@astrojs/starlight/loaders";
 import { docsSchema } from "@astrojs/starlight/schema";
 import { blogStatuses } from "./lib/blog";
+import { docsDiagramPolicies, docsPageKinds } from "./data/docs-coverage";
 
 const docsAuthorityStatus = z.enum([
 	"normative",
@@ -35,6 +36,9 @@ export const collections = {
 				date: z.coerce.date().optional(),
 				release: z.string().optional(),
 				...docsContract.partial().shape,
+				pageKind: z.enum(docsPageKinds).optional(),
+				diagramPolicy: z.enum(docsDiagramPolicies).optional(),
+				diagramOmissionReason: z.string().min(1).optional(),
 			}),
 		}),
 	}),

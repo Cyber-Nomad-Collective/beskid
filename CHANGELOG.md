@@ -16,6 +16,12 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   hover help, and highlighting from the pinned nested BSOL grammar.
 - Zed extension: add outlines, indentation and bracket queries, pinned CLI
   runnable tasks, declaration snippets, and grammar-validated fixtures.
+- Add a checked-in documentation coverage catalogue for 52 non-compiler
+  technical Docs routes. Map each public surface to one audience, source
+  boundary, page kind, diagram policy, page, and navigation leaf. Add focused
+  product-use journeys for evaluation, Learn, the public platform, VS Code,
+  BSOL, templates, Tree-sitter, shared web packages, the superrepo workflow,
+  and Learn curriculum maintenance.
 - Add a deterministic, advisory STE review command for technical Docs. It
   reports sentence-length, passive-voice, abbreviation, and article candidates
   with file and line evidence; joins wrapped prose without crossing Markdown
@@ -92,6 +98,14 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Compiler delivery: advance the embedded compiler through the guarded-stack
   harness, recursive generic-array surface, and canonical Corelib gate fixes,
   restoring the full 67-entry Corelib matrix required by stable LSP releases.
+- Enforce each technical Docs page structure from its declared page kind.
+  Discover all task, guide, and reference pages so coverage and procedure gates
+  cannot omit new routes. Give guide and reference pages distinct structures,
+  provide explicit mismatch-report paths, and keep one observable reader action
+  in each numbered task step.
+- Give every documentation coverage entry a unique stable machine key. Clarify
+  the Nexus reader, administrator, and MCP boundaries, introduce new diagrams
+  in prose, and link the Docs home operator path to the public operations guide.
 - Correct the operator guide to distinguish checksummed manifests from signed
   images and production verification from external Watchtower control. Limit
   operator evidence to workflow-owned validation and exposed run records, and
@@ -150,6 +164,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Zed extension: keep one DRY native LSP adapter for Beskid source, manifests,
   and standalone BSOL; resolve configured/PATH servers before the guarded
   versioned `lsp-stable` download and forward settings without reinterpretation.
+- Separate product-use guides from service-operation guides. Keep deployment
+  ownership, service inventory, and authentication topology under
+  reconciliation while their tracked authorities disagree.
 - Align the active Book and CLI reference with the pinned 0.4 command surface.
   Add one reference page for each of the 26 root commands, remove the
   nonexistent `beskid publish` page, document grouped aliases once, and link

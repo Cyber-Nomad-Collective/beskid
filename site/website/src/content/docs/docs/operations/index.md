@@ -1,6 +1,9 @@
 ---
 title: Operate the Platform
 description: Select the safe container, deployment, health, or recovery procedure.
+pageKind: guide
+diagramPolicy: not-needed
+diagramOmissionReason: The ordered operator checklist is clearer than a second platform diagram.
 audience:
   - self-hoster
   - service operator
@@ -16,25 +19,23 @@ verified:
 
 Store runtime and deployment credentials in OpenBao or the protected GitHub environment. Do not print, commit, copy, or reuse a lane secret.
 
-## Prerequisites
+## Orientation
 
 Select the exact Coolify lane. Obtain a lane-scoped OpenBao token and a separate Coolify token through the approved operator process.
 
-## Actions
+## Choose an operating procedure
 
 1. Review [Containers](/docs/operations/containers/).
 2. Identify the required images and volumes.
 3. Follow [Verify production delivery](/docs/operations/deployment/) with one immutable release manifest.
 4. Verify [Health and monitoring](/docs/operations/health-and-monitoring/) before you promote the release.
 
-## Expected result
+## Limits
 
 All application services run from immutable image digests. The selected lane reports healthy services, and persistent volumes remain attached.
 
-## Recovery
-
 If a required check fails, CI stops and reports the failure. Preserve the workflow URL, status, and exposed evidence. The production operator owns restore or rollback. After the operator completes recovery, rerun production verification.
 
-## Next task
+## Next steps
 
 [Inspect the container contract](/docs/operations/containers/).

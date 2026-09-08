@@ -1,6 +1,9 @@
 ---
 title: Operate Tracker
 description: Run the Beskid delivery authority and preserve its SQLite source of truth.
+pageKind: task
+diagramPolicy: not-needed
+diagramOmissionReason: The service contract table is clearer than a diagram for one service.
 audience:
   - platform user
   - service operator
@@ -55,4 +58,4 @@ If the health request fails, inspect the volume mount and session configuration.
 
 ## Next task
 
-[Change the Standard without changing delivery ownership](/docs/contributing/standard-changes/).
+For public delivery reading, see [Read Tracker](/docs/platform/tracker/). For authorized delivery changes, [change the Standard without changing delivery ownership](/docs/contributing/standard-changes/).

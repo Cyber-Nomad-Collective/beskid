@@ -1,6 +1,8 @@
 ---
 title: Packages
 description: Publish immutable Beskid package versions and consume them through project resolution.
+pageKind: guide
+diagramPolicy: required
 audience:
   - package author
   - developer
@@ -16,15 +18,16 @@ verified:
 
 The registry stores a `.bpk` artifact at an immutable package name-and-version coordinate. Use `beskid pckg` for ordinary package commands. The equivalent grouped form is `beskid dev package registry`; this guide uses the concise form.
 
-## Prerequisites
+## Orientation
 
 A package author needs a package name and a publisher API key with publish scope. A package consumer needs the package name and an exact active version.
 
-## Actions
+## Choose a package workflow
 
 1. [Configure credentials and recovery](/docs/packages/credentials-and-recovery/) before a package mutation.
 2. [Create, pack, inspect, and upload a package](/docs/packages/publish/).
 3. [Consume the exact package version](/docs/packages/consume/) through a project manifest and lockfile.
+4. In VS Code, [use the Packages view](/docs/editor/vs-code/) for the focused project's declared and locked dependencies.
 
 ```mermaid
 sequenceDiagram
@@ -51,14 +54,12 @@ sequenceDiagram
 
 The package author first creates the package record. The author then packs and uploads one artifact. The registry assigns that artifact to an immutable name-and-version coordinate. A package consumer requests a version in the project manifest. The resolver can fall back to the first active version when the request is absent. Fetch materializes the selected artifact and writes `Project.lock`. The consumer then inspects `resolved_version` and stops all later work on a mismatch. A yanked version is not available for a new download.
 
-## Expected result
+## Limits
 
 The author can verify one immutable name-and-version coordinate and its checksum. The consumer has a reviewed `Project.lock` and a materialized leaf under `obj/beskid/deps/src/<materialized-id>`.
 
-## Recovery
-
 If identity, checksum, or generated documentation is wrong, do not upload the artifact. The resolver can fall back, which is an implementation limitation under reconciliation. Stop when the lockfile differs from the request. Use [credentials and recovery](/docs/packages/credentials-and-recovery/) for authentication failures, yanking, and key rotation.
 
-## Next task
+## Next steps
 
-[Publish a package](/docs/packages/publish/) or [consume a package](/docs/packages/consume/).
+[Publish a package](/docs/packages/publish/), [consume a package](/docs/packages/consume/), or use [Packages in VS Code](/docs/editor/vs-code/).

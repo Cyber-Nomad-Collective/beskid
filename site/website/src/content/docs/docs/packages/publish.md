@@ -1,6 +1,9 @@
 ---
 title: Publish a package
 description: Create a package record, generate docs, pack and inspect a .bpk file, and upload it.
+pageKind: task
+diagramPolicy: not-needed
+diagramOmissionReason: The Packages overview already shows the publication and consumption sequence.
 audience:
   - package author
 authority:

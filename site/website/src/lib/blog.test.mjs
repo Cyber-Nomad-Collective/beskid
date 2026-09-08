@@ -1,9 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { execFile } from 'node:child_process';
 import { access, readFile } from 'node:fs/promises';
 import { constants } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { promisify } from 'node:util';
 import { blogStatusLabel, sortBlogEntries, splitBlogEntries } from './blog.ts';
+
+const execFileAsync = promisify(execFile);
 
 test('orders newest posts first and labels publication state', () => {
 	const posts = [
@@ -59,6 +63,16 @@ test('provides a reduced-motion-safe blog index that uses the shared blog helper
 	assert.match(component, /entry\.data\.date !== undefined/);
 	assert.match(component, /prefers-reduced-motion:\s*reduce/);
 	assert.match(contentConfig, /date:\s*z\.coerce\.date\(\)/);
+});
+
+test('accepts blog entries without technical Docs metadata', { timeout: 30_000 }, async () => {
+	const here = new URL('.', import.meta.url);
+	const websiteRoot = fileURLToPath(new URL('../../', here));
+	const entry = await readFile(new URL('../content/docs/blog/compiler-01-type-system-refactor.md', here), 'utf8');
+
+	assert.doesNotMatch(entry, /^pageKind:/m);
+	assert.doesNotMatch(entry, /^diagramPolicy:/m);
+	await execFileAsync('pnpm', ['exec', 'astro', 'build'], { cwd: websiteRoot });
 });
 
 test('surfaces the release blog from the landing page', async () => {

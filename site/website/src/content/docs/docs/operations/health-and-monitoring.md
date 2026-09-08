@@ -1,6 +1,9 @@
 ---
 title: Check Health and Monitoring
 description: Test each service boundary and collect safe evidence for recovery.
+pageKind: task
+diagramPolicy: not-needed
+diagramOmissionReason: The endpoint and symptom matrix is clearer than a flow diagram.
 audience:
   - service operator
   - maintainer

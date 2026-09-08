@@ -1,6 +1,9 @@
 ---
 title: Consume a package
 description: Request a package version, inspect the resolved lock entry, and stop on a mismatch.
+pageKind: task
+diagramPolicy: not-needed
+diagramOmissionReason: The manifest edit and fetch procedure is linear, and the Packages overview shows the participants.
 audience:
   - developer
 authority:
@@ -21,14 +24,14 @@ Know the package name and requested version. Select the consuming project. Ensur
 
 ## Actions
 
-1. Inspect the package and its active versions. Confirm that the active versions include the requested version:
+1. Inspect the package and its active versions for the requested version:
 
    ```bash
    beskid pckg details Acme.Math
    beskid pckg versions Acme.Math
    ```
 
-2. Optionally download that coordinate for offline inspection:
+2. Download that coordinate when you need offline inspection:
 
    ```bash
    beskid pckg download Acme.Math --version 1.0.0 --output ./vendor/Acme.Math-1.0.0.bpk
@@ -49,9 +52,10 @@ Know the package name and requested version. Select the consuming project. Ensur
    beskid fetch --project ./App.bproj --plain
    ```
 
-5. Inspect `Project.lock` after every registry resolution. Find the `Acme.Math` entry and compare `resolved_version` with `1.0.0`.
+5. Inspect `Project.lock` after every registry resolution for an `Acme.Math` `resolved_version` that matches `1.0.0`.
 6. You must stop the workflow if `resolved_version` differs from the requested version. Do not analyze, build, test, or publish with that lockfile.
-7. Commit the lockfile only after the values match. Then repeat with the reviewed lockfile enforced:
+7. Commit `Project.lock` only after its values match the requested package coordinate.
+8. Run the resolution with the reviewed lockfile enforced:
 
    ```bash
    beskid fetch --project ./App.bproj --locked --plain

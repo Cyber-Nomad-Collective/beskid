@@ -1,6 +1,9 @@
 ---
 title: Reference Map
 description: Select the canonical source for behavior, procedure, delivery, or licensing facts.
+pageKind: reference
+diagramPolicy: not-needed
+diagramOmissionReason: The authority table is clearer than a flow diagram for reference selection.
 audience:
   - evaluator
   - developer
@@ -17,17 +20,15 @@ verified:
 
 Use the authority that matches the fact. Record its verification revision when the fact can change.
 
-## Prerequisites
+## Scope
 
 State the fact to verify. Classify its authority type as behavior, procedure, command, learning, delivery, service operation, or licensing.
 
-## Actions
+This reference map covers source selection. It does not replace the selected source or define a new rule.
 
-1. Use the [Beskid Standard](/docs/standard/) for required language and tool behavior.
-2. Use task Docs for current procedures.
-3. Use the Book for learning sequence and rationale.
-4. Use Tracker for delivery status.
-5. Use [Licensing](/docs/reference/licensing/) for component terms.
+## Authority
+
+Use the [Beskid Standard](/docs/standard/) for required language and tool behavior. Use task Docs for current procedures. Use the Book for learning sequence and rationale. Use Tracker for delivery status. Use [Licensing](/docs/reference/licensing/) for component terms.
 
 | Information | Canonical source |
 | --- | --- |
@@ -39,14 +40,8 @@ State the fact to verify. Classify its authority type as behavior, procedure, co
 | Service operation | Service and infrastructure contracts. |
 | License boundary | `LICENSING.md` and local license declarations. |
 
-## Expected result
+Use one canonical source and record its verification revision. An informative page links to the authority instead of duplicating its rule.
 
-You have one canonical source and its verification revision. An informative page links to the authority instead of duplicating its rule.
+## Report a mismatch
 
-## Recovery
-
-If two sources conflict, do not infer a new rule. Report the conflicting sources to their owners. Use an OpenSpec change for normative reconciliation.
-
-## Next task
-
-[Review component licensing](/docs/reference/licensing/).
+If two sources conflict, do not infer a new rule. Use [Report a bug](/docs/platform/report-bug/) to record both source URLs, both revisions, and the conflicting statements. Use an [OpenSpec change](/docs/contributing/standard-changes/) only when normative reconciliation changes observable behavior.

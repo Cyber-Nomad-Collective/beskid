@@ -1,6 +1,9 @@
 ---
 title: Operate Nexus
 description: Run the repository graph service behind its verified trust boundary.
+pageKind: task
+diagramPolicy: not-needed
+diagramOmissionReason: The service contract table is clearer than a diagram for one service.
 audience:
   - maintainer
   - service operator
@@ -55,4 +58,4 @@ If health fails, inspect the image and `nexus-data` mount. If only sign-in fails
 
 ## Next task
 
-[Review service containers and volumes](/docs/operations/containers/).
+For public graph reading, see [Explore Nexus](/docs/platform/nexus/). For protected operations, [review service containers and volumes](/docs/operations/containers/).

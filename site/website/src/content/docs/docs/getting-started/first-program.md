@@ -1,6 +1,8 @@
 ---
 title: Write and run a program
 description: Analyze, format, AOT-compile, and execute a minimal Beskid program.
+pageKind: task
+diagramPolicy: required
 audience:
   - evaluator
   - newcomer
@@ -42,14 +44,14 @@ i32 Main() {
    beskid format Main.bd --check
    ```
 
-4. If the format check reports drift, update the file and run the check again:
+4. If the format check reports drift, update the file before the next check:
 
    ```bash
    beskid format Main.bd --write
    beskid format Main.bd --check
    ```
 
-5. AOT-compile and execute the program:
+5. Execute the program through the AOT pipeline:
 
    ```bash
    beskid run Main.bd --plain

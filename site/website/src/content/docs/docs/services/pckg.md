@@ -1,6 +1,9 @@
 ---
 title: Operate pckg
 description: Run and verify the Rust package registry and its persistent stores.
+pageKind: task
+diagramPolicy: not-needed
+diagramOmissionReason: The service contract table is clearer than a diagram for one service.
 audience:
   - package author
   - service operator

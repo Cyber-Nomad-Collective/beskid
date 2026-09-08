@@ -1,6 +1,9 @@
 ---
 title: Package credentials and recovery
 description: Store publisher credentials safely, verify identity, yank a bad version, and rotate a key.
+pageKind: task
+diagramPolicy: not-needed
+diagramOmissionReason: A symptom-to-command recovery table is clearer than a flow diagram.
 audience:
   - package author
   - operator
@@ -23,7 +26,7 @@ Create a key with publish scope through the registry account surface. Put the ke
 ## Actions
 
 1. For one process, inject the key as `BESKID_PCKG_API_KEY` from the secret manager. Do not type a literal value into a committed script.
-2. Prefer the process environment. If you need repository-local CLI configuration, use a trusted host because `configure` receives the key through process arguments. Prevent Git from tracking the file, then save the injected value:
+2. Save the injected value on a trusted host only when repository-local CLI configuration is necessary. The `configure` command receives the key through process arguments, and the file must stay outside Git:
 
    ```bash
    printf '%s\n' '.beskid/pckg/repositories.json' >> .gitignore

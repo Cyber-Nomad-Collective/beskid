@@ -1,6 +1,8 @@
 ---
 title: Services
 description: Select a Beskid public service and identify its operating boundary.
+pageKind: guide
+diagramPolicy: required
 audience:
   - platform user
   - evaluator
@@ -17,11 +19,11 @@ verified:
 
 Beskid has separate services for guidance, identity, learning, packages, delivery, and repository graphs. Select a service task before you diagnose a public service status.
 
-## Prerequisites
+## Orientation
 
 Identify your service task. Check the public service status and record the page URL, time, and visible error.
 
-## Actions
+## Choose a service guide
 
 1. Read [Authentication](/docs/services/authentication/) before you diagnose sign-in or service pairing.
 2. Select [Learn](/docs/services/learn/), [pckg](/docs/services/pckg/), [Tracker](/docs/services/tracker/), or [Nexus](/docs/services/nexus/).
@@ -58,14 +60,12 @@ flowchart LR
 | Tracker | Publishes delivery status and bugs from its own data. | It uses the Auth hub for GitHub sign-in. |
 | Nexus | Presents a repository graph and an MCP endpoint. | Caddy and Authentik form its pinned forward-auth boundary. |
 
-## Expected result
+## Limits
 
 You can name the selected service boundary and its authentication boundary. You also know which service owns persistent state.
 
-## Recovery
-
 If the public route fails, check the documented health endpoint. Give the service operator the URL, time, release identity, and response status. Do not send a credential or private response body.
 
-## Next task
+## Next steps
 
 [Check service health and monitoring](/docs/operations/health-and-monitoring/).

@@ -1,6 +1,8 @@
 ---
 title: Tooling
 description: Select concise Beskid commands and their grouped developer aliases for source, build, project, and package tasks.
+pageKind: guide
+diagramPolicy: required
 audience:
   - developer
   - contributor
@@ -16,11 +18,11 @@ verified:
 
 Use concise root commands for routine work. Use `beskid dev` groups when a script or explanation benefits from an explicit domain.
 
-## Prerequisites
+## Orientation
 
 Install Beskid and open a terminal in the source or project directory. Run `beskid --help` before you infer a command name.
 
-## Actions
+## Choose a command
 
 1. Use `beskid analyze`, `beskid format`, or `beskid doc` for source tasks.
 2. Use `beskid build` to create an AOT artifact. Use `beskid run` to create and start a temporary AOT executable.
@@ -61,14 +63,12 @@ flowchart TD
 - Project commands resolve manifests, lockfiles, dependencies, and graphs.
 - Package commands communicate with the package registry.
 
-## Expected result
+## Limits
 
 The selected command help describes the input and flags for one task. The concise and grouped forms dispatch to the same command implementation where a grouped alias exists.
 
-## Recovery
-
 If the CLI rejects a command path, run `beskid --help`, then run `--help` on the next command group. Do not combine segments from different groups. Use the concise root command when a grouped path makes a script harder to read.
 
-## Next task
+## Next steps
 
 Use [build, run, and test](/docs/tooling/build-run-test/) for local work or [run Beskid in CI](/docs/tooling/ci/) for automation.

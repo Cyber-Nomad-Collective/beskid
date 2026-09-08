@@ -1,6 +1,9 @@
 ---
 title: Build, run, and test
 description: Analyze source, create an AOT artifact, execute it, and run declared test items.
+pageKind: task
+diagramPolicy: not-needed
+diagramOmissionReason: The numbered build, run, and test procedure is already linear.
 audience:
   - developer
 authority:
@@ -39,7 +42,7 @@ Start with source that passes `beskid analyze`. To run test items, select a proj
    beskid build Main.bd --kind exe --release --plain
    ```
 
-4. Compile and execute the same entrypoint in a subprocess:
+4. Execute the same entrypoint in an AOT-compiled subprocess:
 
    ```bash
    beskid run Main.bd --entrypoint Main --plain
@@ -51,7 +54,7 @@ Start with source that passes `beskid analyze`. To run test items, select a proj
    beskid test --project App.bproj --target AppTests --plain
    ```
 
-6. Use `--include-tag`, `--exclude-tag`, or `--group` to narrow tests. Use `--all-targets` to run every Test target in one project process.
+6. Select tests with `--include-tag`, `--exclude-tag`, `--group`, or `--all-targets`. The last option runs every Test target in one project process.
 
 ## Expected result
 

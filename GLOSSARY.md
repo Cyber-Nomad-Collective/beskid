@@ -81,6 +81,13 @@ An OpenSpec unit stored at `openspec/specs/<capability>/spec.md`. During migrati
 
 The `https://<host>:<container-port>` route descriptor sent to Coolify so its proxy selects the correct Compose service port. It is deployment configuration, not necessarily a public TLS listener; public health checks and API clients use the service's separate standard-HTTPS public URL.
 
+## Documentation coverage catalogue
+
+The checked-in, informative list that gives each non-compiler public surface a
+stable machine key and maps it to one display label, Docs route, audience,
+source boundary, page kind, and diagram policy. The catalogue is a completeness
+assertion. It does not define normative behavior or replace the navigation model.
+
 ## Draft Context
 
 A revision-pinned, ordered set of Platform Spec document operations authored in the
@@ -157,6 +164,15 @@ The service-local synchronous SQLite boundary used by Node-hosted site apps.
 Auth uses pinned `better-sqlite3`, preserving prepared statements and
 transactions while keeping native SQLite out of browser bundles.
 
+## Page kind
+
+The frontmatter classification that defines the required structure of a
+technical Docs page. A `task` has prerequisites, actions, an expected result,
+a recovery path, and a next task. A `guide` has orientation, a decision or use
+section, limits, and next steps. A `reference` states its scope and authority
+and explains how to report a mismatch. Each numbered task step has one
+observable reader action.
+
 ## Normative requirement
 
 A named OpenSpec requirement using SHALL or MUST and one or more testable scenarios. It defines behavior required for Beskid conformance.
@@ -175,6 +191,14 @@ workflow run and record only its status and exposed evidence. They do not
 materialize the workflow's internal validation files or repeat its internal
 validation commands.
 
+## Product-use guide
+
+An informative Docs page for an ordinary product task, such as signing in,
+reading Tracker, or exploring Nexus. It states the user role, observable
+result, stop condition, and recovery route. It links to service-operation
+guidance instead of including deployment, secret, state, or administrator
+actions.
+
 ## Release platform identifier
 
 The exact operating-system and architecture key shared by release metadata and the download UI. The closed public set is `linux-amd64`, `darwin-arm64`, and `windows-amd64`; broader platform names and separate architecture fields are invalid.
@@ -185,6 +209,14 @@ The verified public and local boundary for one deployed service. It identifies
 the service purpose, audience, authentication boundary, persistent state,
 container image, health check, deployment owner, secret source, monitoring
 evidence, and recovery path without publishing credential values.
+
+## Service-operation guide
+
+An informative Docs page for an authorized operator. It explains service
+availability, authentication, persistent state, containers, deployment,
+monitoring, and recovery within a verified ownership boundary. It can present
+a service operating contract, but it does not define normative Beskid
+behavior.
 
 ## Playground
 
