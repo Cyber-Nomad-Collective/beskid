@@ -1,6 +1,7 @@
 import { AUTH_HUB_ISSUER, type AuthAppId } from "@beskid/auth-client";
 import { jwtVerify } from "jose";
 
+import { pairingAppIdSchema } from "#/lib/pairing-app-id";
 import { getServiceTokenForApp } from "#/server/repositories/paired-apps";
 import { getGithubTokenForSession } from "#/server/repositories/user-sessions";
 
@@ -40,7 +41,9 @@ async function resolveHubUserSession(
 	}
 
 	if (!appId || !sessionId) return null;
-	const serviceToken = getServiceTokenForApp(appId);
+	const parsedAppId = pairingAppIdSchema.safeParse(appId);
+	if (!parsedAppId.success) return null;
+	const serviceToken = getServiceTokenForApp(parsedAppId.data);
 	if (!serviceToken) return null;
 
 	try {
@@ -51,7 +54,11 @@ async function resolveHubUserSession(
 		if (typeof payload.app !== "string" || typeof payload.sid !== "string") {
 			return null;
 		}
-		return { appId: payload.app as AuthAppId, sessionId: payload.sid };
+		const verifiedAppId = pairingAppIdSchema.safeParse(payload.app);
+		if (!verifiedAppId.success || verifiedAppId.data !== parsedAppId.data) {
+			return null;
+		}
+		return { appId: verifiedAppId.data, sessionId: payload.sid };
 	} catch {
 		return null;
 	}
@@ -63,11 +70,12 @@ export async function proxyGitHubApi(
 ): Promise<Response> {
 	const authHeader = incoming.headers.get("authorization") ?? "";
 	const match = /^Bearer\s+(.+)$/i.exec(authHeader.trim());
-	if (!match) {
+	const hubUserToken = match?.[1];
+	if (!hubUserToken) {
 		return Response.json({ error: "Missing hub user token" }, { status: 401 });
 	}
 
-	const resolved = await resolveHubUserSession(match[1]!);
+	const resolved = await resolveHubUserSession(hubUserToken);
 	if (!resolved) {
 		return Response.json({ error: "Invalid hub user token" }, { status: 401 });
 	}

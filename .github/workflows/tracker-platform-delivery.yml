@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   openspec-projection:
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v7
         with:
@@ -43,19 +43,26 @@ jobs:
       - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
       - run: pnpm install --frozen-lockfile
       - name: Validate OpenSpec strictly
-        run: pnpm run openspec:validate | tee openspec-validation.txt
-      - name: Validate deterministic projection/reconciliation report
-        run: |
-          pnpm run openspec:catalog
-          git diff --exit-code -- openspec/catalog.json
-          pnpm --dir beskid_tracker run reconcile:plan | tee projection-reconciliation.txt
-      - uses: actions/upload-artifact@v4
-        with:
-          name: openspec-projection-reports
-          path: "*-validation.txt\nprojection-reconciliation.txt"
+        run: >-
+          bash ./scripts/ci/run-ci-reported-command.sh
+          openspec strict-validation "${{ runner.os }}"
+          "${{ runner.temp }}/openspec-report" --
+          pnpm run openspec:validate
+      - name: Validate deterministic catalog projection
+        run: >-
+          bash ./scripts/ci/run-ci-reported-command.sh
+          openspec deterministic-catalog "${{ runner.os }}"
+          "${{ runner.temp }}/openspec-report" --
+          bash -c 'pnpm run openspec:catalog && git diff --exit-code -- openspec/catalog.json'
+      - name: Validate tracker reconciliation plan
+        run: >-
+          bash ./scripts/ci/run-ci-reported-command.sh
+          tracker reconciliation-plan "${{ runner.os }}"
+          "${{ runner.temp }}/openspec-report" --
+          pnpm --dir beskid_tracker run reconcile:plan
 
   tracker:
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v7
         with:
@@ -69,15 +76,21 @@ jobs:
           node-version: "24"
       - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
       - run: pnpm install --dir beskid_tracker --frozen-lockfile
-      - run: pnpm --dir beskid_tracker test | tee tracker-tests.txt
-      - run: pnpm --dir beskid_tracker check | tee tracker-check.txt
-      - uses: actions/upload-artifact@v4
-        with:
-          name: tracker-reports
-          path: "tracker-tests.txt\ntracker-check.txt"
+      - name: Run tracker tests
+        run: >-
+          bash ./scripts/ci/run-ci-reported-command.sh
+          tracker tests "${{ runner.os }}"
+          "${{ runner.temp }}/tracker-report" --
+          pnpm --dir beskid_tracker test
+      - name: Check tracker source
+        run: >-
+          bash ./scripts/ci/run-ci-reported-command.sh
+          tracker check "${{ runner.os }}"
+          "${{ runner.temp }}/tracker-report" --
+          pnpm --dir beskid_tracker check
 
   website-nexus:
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v7
         with:
@@ -100,17 +113,28 @@ jobs:
       - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --dir site/website exec vitest run src/lib/tracker-delivery.test.ts | tee latest-delivery.txt
-      - run: pnpm --dir site/website build | tee website-build.txt
+      - name: Test the website delivery projection
+        run: >-
+          bash ./scripts/ci/run-ci-reported-command.sh
+          website tracker-delivery "${{ runner.os }}"
+          "${{ runner.temp }}/website-nexus-report" --
+          pnpm --dir site/website exec vitest run src/lib/tracker-delivery.test.ts
+      - name: Build the website
+        run: >-
+          bash ./scripts/ci/run-ci-reported-command.sh
+          website build "${{ runner.os }}"
+          "${{ runner.temp }}/website-nexus-report" --
+          pnpm --dir site/website build
       - run: bun install --cwd beskid_nexus/gitnexus --frozen-lockfile
-      - run: cd beskid_nexus/gitnexus && ./node_modules/.bin/vitest run test/unit/tracker-delivery-link-index.test.ts | tee ../../nexus-delivery.txt
-      - uses: actions/upload-artifact@v4
-        with:
-          name: website-nexus-reports
-          path: "latest-delivery.txt\nwebsite-build.txt\nnexus-delivery.txt"
+      - name: Test the nexus delivery projection
+        run: >-
+          bash ./scripts/ci/run-ci-reported-command.sh
+          nexus tracker-delivery "${{ runner.os }}"
+          "${{ runner.temp }}/website-nexus-report" --
+          bash -c 'cd beskid_nexus/gitnexus && ./node_modules/.bin/vitest run test/unit/tracker-delivery-link-index.test.ts'
 
   workflow-contract:
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v7
         with:

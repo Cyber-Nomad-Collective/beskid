@@ -1,68 +1,92 @@
 ---
 import { getCollection } from 'astro:content';
-import { blogStatusLabel, sortBlogEntries, type BlogStatus } from '../lib/blog';
+import { sortBlogEntries, type BlogStatus } from '../lib/blog';
+import { BlogPostCard } from './blog/BlogPostCard.tsx';
 
 const entries =
 	(await getCollection('docs')).filter(
 		(entry): entry is typeof entry & { data: typeof entry.data & { blogStatus: BlogStatus; date: Date } } =>
 			entry.id.startsWith('blog/') && entry.data.blogStatus !== undefined && entry.data.date !== undefined,
 	);
-const [featured, ...archive] = sortBlogEntries(entries);
+const entriesByDate = sortBlogEntries(entries);
+const recent = entriesByDate.slice(0, 5);
+const archive = entriesByDate.slice(5);
 
 const dateFormatter = new Intl.DateTimeFormat('en', {
 	day: 'numeric',
 	month: 'long',
 	year: 'numeric',
 });
+
+const RECENT_IMAGES = {
+	'platform-spec-retirement': {
+		src: 'https://upload.wikimedia.org/wikipedia/commons/4/4c/Among_the_Sierra_Nevada%2C_California-saam_1977.107.1.jpg',
+		alt: 'Sierra Nevada mountain landscape.',
+		sourceHref: 'https://commons.wikimedia.org/wiki/File:Among_the_Sierra_Nevada,_California-saam_1977.107.1.jpg',
+		sourceLabel: 'Smithsonian Open Access, CC0',
+	},
+	'beskid-runtime-honesty-arc': {
+		src: 'https://commons.wikimedia.org/wiki/Special:FilePath/NASAComputerRoom7090.NARA.jpg?width=1200',
+		alt: 'NASA IBM 7090 computer room.',
+		sourceHref: 'https://commons.wikimedia.org/wiki/File:NASAComputerRoom7090.NARA.jpg',
+		sourceLabel: 'NASA, public domain',
+	},
+	'compiler-04-parse-recovery': {
+		src: 'https://commons.wikimedia.org/wiki/Special:FilePath/IBM_3151_terminal.jpg?width=1200',
+		alt: 'IBM 3151 terminal.',
+		sourceHref: 'https://commons.wikimedia.org/wiki/File:IBM_3151_terminal.jpg',
+		sourceLabel: 'CC0',
+	},
+	'design-07-draft-contexts': {
+		src: 'https://commons.wikimedia.org/wiki/Special:FilePath/Engineering_drawing-dessin_de_definition.png?width=1200',
+		alt: 'Engineering drawing.',
+		sourceHref: 'https://commons.wikimedia.org/wiki/File:Engineering_drawing-dessin_de_definition.png',
+		sourceLabel: 'Public domain',
+	},
+	'tooling-01-bun-to-pnpm': {
+		src: 'https://commons.wikimedia.org/wiki/Special:FilePath/PLATO4kb.jpg?width=1200',
+		alt: 'PLATO IV terminal keyboard.',
+		sourceHref: 'https://commons.wikimedia.org/wiki/File:PLATO4kb.jpg',
+		sourceLabel: 'Public domain',
+	},
+};
+
+function imageFor(id: string) {
+	return RECENT_IMAGES[id as keyof typeof RECENT_IMAGES] ?? RECENT_IMAGES['platform-spec-retirement'];
+}
 ---
 
 <section class="blog" aria-label="Blog">
 	<header class="blog__intro">
 		<p class="blog__eyebrow">Blog</p>
 		<h1>The work behind Beskid</h1>
-		<p>Release notes, engineering essays, and design records. Read what shipped, what changed our minds, and what remains unfinished.</p>
 	</header>
 
-	{featured && (
-		<article class="blog__feature">
-			<div class="blog__feature-copy">
-				<div class="blog__meta">
-					<time datetime={featured.data.date.toISOString()}>{dateFormatter.format(featured.data.date)}</time>
-					<span class:list={['blog__status', `blog__status--${featured.data.blogStatus}`]}>{blogStatusLabel(featured.data.blogStatus)}</span>
-				</div>
-				<p class="blog__feature-label">Latest post{featured.data.release ? ` · ${featured.data.release}` : ''}</p>
-				<h2><a href={`/${featured.id}/`}>{featured.data.title}</a></h2>
-				<p>{featured.data.description}</p>
-				<a class="blog__read" href={`/${featured.id}/`}>Read the latest post <span aria-hidden="true">→</span></a>
-			</div>
-		</article>
-	)}
+	<section class="blog__recent" aria-labelledby="blog-recent-title">
+		<div class="blog__section-heading">
+			<p class="blog__eyebrow">Recent</p>
+			<h2 id="blog-recent-title">What just happened</h2>
+		</div>
+		<ol class="blog__recent-list">
+		{recent.map((entry) => (
+			<li>
+				<BlogPostCard title={entry.data.title} description={entry.data.description} href={`/${entry.id}/`} date={dateFormatter.format(entry.data.date)} dateTime={entry.data.date.toISOString()} release={entry.data.release} image={imageFor(entry.id)} variant="recent" />
+			</li>
+		))}
+		</ol>
+	</section>
 
 	<section class="blog__archive" aria-labelledby="blog-archive-title">
-		<div class="blog__archive-heading">
+		<div class="blog__section-heading">
 			<div>
-				<p class="blog__eyebrow">Archive</p>
-				<h2 id="blog-archive-title">All posts</h2>
+				<p class="blog__eyebrow">From the archive</p>
+				<h2 id="blog-archive-title">Older notes</h2>
 			</div>
-			<p>{archive.length} posts, newest first</p>
 		</div>
 		<ol class="blog__list">
 		{archive.map((entry) => (
-			<li class="blog__item">
-				<article class="blog__card">
-					<div class="blog__meta">
-						<time datetime={entry.data.date.toISOString()}>{dateFormatter.format(entry.data.date)}</time>
-						<span class:list={['blog__status', `blog__status--${entry.data.blogStatus}`]}>
-							{blogStatusLabel(entry.data.blogStatus)}
-						</span>
-					</div>
-					<h2><a href={`/${entry.id}/`}>{entry.data.title}</a></h2>
-					<p>{entry.data.description}</p>
-					<div class="blog__footer">
-						<span>{entry.data.release}</span>
-						<a href={`/${entry.id}/`} aria-label={`Read ${entry.data.title}`}>Read post <span aria-hidden="true">→</span></a>
-					</div>
-				</article>
+			<li>
+				<BlogPostCard title={entry.data.title} description={entry.data.description} href={`/${entry.id}/`} date={dateFormatter.format(entry.data.date)} dateTime={entry.data.date.toISOString()} release={entry.data.release} variant="compact" />
 			</li>
 		))}
 		</ol>
@@ -71,37 +95,36 @@ const dateFormatter = new Intl.DateTimeFormat('en', {
 
 <style>
 	:global(.page:has(.blog) nav.sidebar), :global(.page:has(.blog) .right-sidebar-container) { display: none; }
-	:global(.page:has(.blog) .main-pane) { margin-inline: auto; max-width: 78rem; }
+	:global(.page:has(.blog) .main-frame) { grid-template-columns: 1fr; }
+	:global(.page:has(.blog) .main-pane) { width: 100%; margin-inline: auto; max-width: 78rem; }
 	:global(.page:has(.blog) .content-panel .sl-container) { max-width: 78rem; }
 	.blog { max-width: 70rem; margin: 3.5rem auto 5rem; padding-inline: clamp(1rem, 4vw, 3rem); }
-	.blog__intro { max-width: 48rem; margin-bottom: 2.5rem; color: var(--sl-color-gray-3); font-size: var(--sl-text-lg); }
+	.blog__intro { margin-bottom: 3rem; }
 	.blog__eyebrow { margin-bottom: .5rem; color: var(--sl-color-text-accent); font-size: var(--sl-text-sm); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
-	.blog__intro h1, .blog__archive h2 { margin: 0; color: var(--sl-color-white); }
-	.blog__feature { display: grid; min-height: 20rem; margin-bottom: 4.5rem; border-top: 1px solid var(--sl-color-gray-5); border-bottom: 1px solid var(--sl-color-gray-5); background: linear-gradient(135deg, color-mix(in srgb, var(--sl-color-text-accent) 12%, var(--sl-color-bg) 88%), var(--sl-color-bg)); }
-	.blog__feature-copy { display: flex; flex-direction: column; justify-content: center; max-width: 46rem; padding: clamp(1.5rem, 6vw, 4.5rem); }
-	.blog__feature-label { margin: 1.75rem 0 .5rem; color: var(--sl-color-text-accent); font-size: var(--sl-text-sm); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
-	.blog__feature h2 { margin: 0 0 1rem; font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.05; }
-	.blog__feature h2 a { color: var(--sl-color-white); text-decoration: none; }
-	.blog__feature-copy > p:not(.blog__feature-label) { margin: 0; color: var(--sl-color-gray-3); font-size: var(--sl-text-lg); }
-	.blog__read { display: inline-flex; width: fit-content; gap: .5rem; margin-top: 1.75rem; color: var(--sl-color-white); font-weight: 700; text-decoration: none; }
-	.blog__archive-heading { display: flex; align-items: end; justify-content: space-between; gap: 1rem; margin-bottom: 1.25rem; }
-	.blog__archive-heading > p { margin: 0; color: var(--sl-color-gray-3); }
-	.blog__list { margin: 0; padding: 0; list-style: none; }
-	.blog__item { border-top: 1px solid var(--sl-color-gray-5); }
-	.blog__item:last-child { border-bottom: 1px solid var(--sl-color-gray-5); }
-	.blog__card { display: grid; grid-template-columns: minmax(9rem, 1fr) minmax(0, 3fr) minmax(7rem, auto); gap: 1.5rem; align-items: start; padding: 1.5rem 0; }
+	.blog__intro h1, .blog h2 { margin: 0; color: var(--sl-color-white); }
+	.blog__recent { margin-bottom: 4.5rem; }
+	.blog__section-heading { margin-bottom: 1.1rem; }
+	.blog__recent-list { display: grid; grid-auto-columns: minmax(16rem, 22rem); grid-auto-flow: column; gap: 1rem; overflow-x: auto; margin: 0; padding: 0 0 .85rem; list-style: none; scroll-snap-type: x mandatory; scrollbar-color: var(--sl-color-gray-5) transparent; }
+	.blog__recent-list > li { scroll-snap-align: start; }
+	.blog__list { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: .8rem; margin: 0; padding: 0; list-style: none; }
+	:global(.blog-card) { height: 100%; overflow: hidden; border: 1px solid var(--sl-color-gray-5); border-radius: .7rem; }
+	:global(.blog-card--recent) { background: color-mix(in srgb, var(--sl-color-bg-nav) 68%, var(--sl-color-bg)); }
+	:global(.blog-card__figure) { margin: 0; }
+	:global(.blog-card__image) { display: block; aspect-ratio: 16 / 9; background: var(--sl-color-gray-6); }
+	:global(.blog-card__image img) { width: 100%; height: 100%; object-fit: cover; filter: saturate(.68) contrast(1.08); transition: transform 180ms ease; }
+	:global(.blog-card:hover .blog-card__image img) { transform: scale(1.03); }
+	:global(.blog-card__figure figcaption) { padding: .45rem .8rem; color: var(--sl-color-gray-3); font-size: .7rem; }
+	:global(.blog-card__figure figcaption a) { color: inherit; }
+	:global(.blog-card__body) { display: flex; min-height: 15rem; flex-direction: column; padding: 1rem; }
+	:global(.blog-card--compact) { background: transparent; }
+	:global(.blog-card--compact .blog-card__body) { min-height: 12rem; }
+	:global(.blog-card__meta), :global(.blog-card__footer) { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; justify-content: space-between; color: var(--sl-color-gray-3); font-size: var(--sl-text-sm); }
 	.blog__meta, .blog__footer { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; justify-content: space-between; color: var(--sl-color-gray-3); font-size: var(--sl-text-sm); }
-	.blog__status { padding: .2rem .55rem; border-radius: 999px; background: var(--sl-color-gray-5); color: var(--sl-color-white); font-weight: 600; }
-	.blog__status--released { background: var(--sl-color-green); }
-	.blog__status--truncated { background: var(--sl-color-orange); }
-	.blog__status--in-progress { background: var(--sl-color-purple); }
-	.blog__card h2 { margin: 0 0 .5rem; font-size: var(--sl-text-2xl); }
-	.blog__card h2 a { color: var(--sl-color-white); text-decoration: none; }
-	.blog__card h2 a:hover, .blog__card h2 a:focus-visible, .blog__footer a:hover, .blog__footer a:focus-visible { color: var(--sl-color-text-accent); text-decoration: underline; text-underline-offset: .18em; }
-	.blog__card > p { margin: 0 0 1rem; color: var(--sl-color-gray-3); }
-	.blog__footer { padding-top: 1rem; border-top: 1px solid var(--sl-color-gray-5); }
-	.blog__footer a { color: var(--sl-color-text-accent); font-weight: 700; text-decoration: none; transition: color 160ms ease; }
-	@media (max-width: 44rem) { .blog__archive-heading { align-items: flex-start; flex-direction: column; } .blog__card { grid-template-columns: 1fr; gap: .5rem; } .blog__footer { padding-top: .75rem; } }
-	@media (max-width: 32rem) { .blog__card { padding: 1rem 0; } .blog__meta, .blog__footer { align-items: flex-start; flex-direction: column; gap: .45rem; } }
-	@media (prefers-reduced-motion: reduce) { .blog__footer a { transition: none; } }
+	:global(.blog-card h2) { margin: 1rem 0 .55rem; font-size: var(--sl-text-xl); line-height: 1.15; }
+	:global(.blog-card h2 a) { color: var(--sl-color-white); text-decoration: none; }
+	:global(.blog-card h2 a:hover), :global(.blog-card__footer a:hover) { color: var(--sl-color-text-accent); text-decoration: underline; text-underline-offset: .18em; }
+	:global(.blog-card__body > p) { margin: 0; color: var(--sl-color-gray-3); }
+	:global(.blog-card__footer) { margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--sl-color-gray-5); }
+	:global(.blog-card__footer a), :global(.blog-card__source) { color: var(--sl-color-text-accent); font-weight: 700; text-decoration: none; }
+	@media (prefers-reduced-motion: reduce) { :global(.blog-card__image img) { transition: none; } }
 </style>

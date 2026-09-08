@@ -57,7 +57,7 @@ In every case, the move is the same: from trust to verify. From "we wrote this c
 
 ## Why this matters beyond the website
 
-The platform-spec site at `spec.beskid-lang.org` serves the OpenSpec catalog directly. The `site/platform-spec` server reads `openspec/catalog.json` at startup, builds the navigation tree from the catalog's document index, and serves spec pages with the catalog's cross-reference data embedded. There is no separate database. No CMS. No content API that could drift from the source of truth.
+The canonical website serves the standard at `/docs/standard/` from the checked-in OpenSpec catalog. Its build reads `openspec/catalog.json`, constructs the navigation from the catalog's document index, and renders the catalog's cross-reference data. There is no separate specification service, database, CMS, or content API that could drift from the source of truth.
 
 The catalog is also how the tracker knows which spec capabilities to link against delivery bands. When a v0.4 task says "implement D-EXEC-ABI-0003," the tracker resolves that identifier against the catalog to find the exact spec section, its requirements, and its decisions. The tracker doesn't maintain its own spec map. It reads the catalog.
 

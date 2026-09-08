@@ -8,18 +8,17 @@ FROM node:24-alpine AS build
 RUN apk add --no-cache git python3 make g++ bash
 RUN npm install -g pnpm@10.17.1
 
-WORKDIR /app
+WORKDIR /src
 
 # Workspace root + lockfile first for a frozen, cached install.
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc tsconfig.base.json ./
-# Shared libraries + this app.
-COPY packages/beskid-ui-react ./packages/beskid-ui-react
-COPY packages/shell-core ./packages/shell-core
-COPY apps/website ./apps/website
+COPY beskid_sites/package.json beskid_sites/pnpm-lock.yaml beskid_sites/pnpm-workspace.yaml beskid_sites/.npmrc beskid_sites/tsconfig.base.json ./beskid_sites/
+COPY beskid_sites/packages/shell-core ./beskid_sites/packages/shell-core
+COPY beskid_sites/apps/website ./beskid_sites/apps/website
+COPY beskid_web_common ./beskid_web_common
 
-RUN pnpm install --frozen-lockfile --filter beskid-website...
+RUN pnpm --dir /src/beskid_sites install --frozen-lockfile --filter beskid-website...
 
-WORKDIR /app/apps/website
+WORKDIR /src/beskid_sites/apps/website
 
 ENV SKIP_ENV_VALIDATION=1
 RUN pnpm exec vite build
@@ -30,17 +29,20 @@ RUN pnpm exec vite build
 # an SSR router that references the Nitro-only CSS hash 404s and the initial
 # server-rendered HTML loads no stylesheet (unstyled navbar). Patch every SSR
 # server bundle to reference the client CSS hash that actually ships.
-RUN SSR_CSS=$(basename /app/apps/website/node_modules/.nitro/vite/services/ssr/assets/styles-*.css) \
-    && CLIENT_CSS=$(basename /app/apps/website/.output/public/assets/styles-*.css) \
+RUN SSR_CSS=$(basename /src/beskid_sites/apps/website/node_modules/.nitro/vite/services/ssr/assets/styles-*.css) \
+    && CLIENT_CSS=$(basename /src/beskid_sites/apps/website/.output/public/assets/styles-*.css) \
     && echo "SSR CSS: $SSR_CSS  CLIENT CSS: $CLIENT_CSS" \
     && if [ "$SSR_CSS" != "$CLIENT_CSS" ]; then \
-         find /app/apps/website/.output/server -type f -exec sed -i "s/$SSR_CSS/$CLIENT_CSS/g" {} +; \
+         find /src/beskid_sites/apps/website/.output/server -type f -exec sed -i "s/$SSR_CSS/$CLIENT_CSS/g" {} +; \
          echo "patched SSR bundles: $SSR_CSS -> $CLIENT_CSS"; \
        else \
          echo "SSR and client CSS hashes match — no patch needed"; \
        fi
 
 FROM node:24-alpine AS runtime
+
+LABEL org.opencontainers.image.licenses="AGPL-3.0-only AND CC-BY-4.0" \
+  org.opencontainers.image.source="https://github.com/Cyber-Nomad-Collective/beskid"
 
 RUN apk add --no-cache wget
 
@@ -49,10 +51,13 @@ WORKDIR /app/apps/website
 ENV NODE_ENV=production
 ENV PORT=80
 
-COPY --from=build /app/apps/website/node_modules ./node_modules
-COPY --from=build /app/node_modules /app/node_modules
-COPY --from=build /app/apps/website/package.json ./package.json
-COPY --from=build /app/apps/website/.output ./.output
+COPY --from=build /src/beskid_sites/apps/website/node_modules ./node_modules
+COPY --from=build /src/beskid_sites/node_modules /app/node_modules
+COPY --from=build /src/beskid_sites/apps/website/package.json ./package.json
+COPY --from=build /src/beskid_sites/apps/website/.output ./.output
+COPY LICENSES/AGPL-3.0-only.txt /usr/share/licenses/beskid/AGPL-3.0-only.txt
+COPY LICENSES/CC-BY-4.0.txt /usr/share/licenses/beskid/CC-BY-4.0.txt
+COPY NOTICE /usr/share/licenses/beskid/NOTICE
 
 EXPOSE 80
 

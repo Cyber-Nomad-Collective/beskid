@@ -20,6 +20,19 @@ test ! -e site/auth/bun.lock
 grep -Fxq "  - site/auth" pnpm-workspace.yaml
 grep -Fxq "  - site/learn" pnpm-workspace.yaml
 
+# pnpm 10.17 reads native-build approvals from the root manifest. `allowBuilds`
+# only arrived in pnpm 10.26, so workspace placeholders silently leave tools
+# such as OpenSpec and esbuild unbuilt in clean CI checkouts.
+node - <<'NODE'
+const manifest = require("./package.json");
+const expected = ["@biomejs/biome", "@fission-ai/openspec", "better-sqlite3", "esbuild", "sharp"];
+const actual = manifest.pnpm?.onlyBuiltDependencies;
+if (!Array.isArray(actual) || expected.some((pkg) => !actual.includes(pkg))) {
+	process.exit(1);
+}
+NODE
+! grep -Fq 'allowBuilds:' pnpm-workspace.yaml
+
 auth_sync_output="$(bash scripts/sync-beskid-packages.sh site/auth 2>&1)"
 grep -Fq "site/auth" <<<"${auth_sync_output}"
 if grep -Fq "Bun runtime migration is pending" <<<"${auth_sync_output}"; then

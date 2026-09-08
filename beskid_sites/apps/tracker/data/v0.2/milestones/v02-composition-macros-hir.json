@@ -1,8 +1,0 @@
-{
-	"id": "v02-composition-macros-hir",
-	"title": "Composition HIR & macro expansion",
-	"description": "Composition collect/graph/pass, mod-host query bridge, macro expand/type-check wiring, and structured api.json signatures shipped in the compiler by May 20.",
-	"closedOn": "2026-05-20",
-	"subtasks": [],
-	"$schema": "../schemas/seed/deliverable.schema.json"
-}

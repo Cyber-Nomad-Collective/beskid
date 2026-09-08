@@ -16,8 +16,8 @@ import { ThemeToggle } from "#/components/theme-toggle";
 import { authAppLabel } from "#/lib/auth-app-meta";
 import {
 	cancelPairingRequestFn,
-	repairServicePairingsFn,
 	fetchPairingRequests,
+	repairServicePairingsFn,
 } from "#/server/app-server.functions";
 
 export const Route = createFileRoute("/admin/pairing/")({
@@ -97,23 +97,23 @@ function PairingListPage() {
 			<div className="mx-auto max-w-2xl space-y-6">
 				<div className="flex items-center justify-between gap-4">
 					<h1 className="text-2xl font-bold">Service pairing</h1>
-						<Link
-							to="/admin/pairing/new"
-							className="inline-flex h-9 items-center justify-center rounded-4xl bg-primary px-4 text-sm font-medium text-primary-foreground"
-						>
-							New pairing
-						</Link>
-						<Button
-							type="button"
-							variant="outline"
-							disabled={repairBusy}
-							onClick={onRepairAll}
-						>
-							{repairBusy ? "Repairing…" : "Repair paired services"}
-						</Button>
-					</div>
-					{error ? <p className="text-destructive text-sm">{error}</p> : null}
-					{repairMsg ? <p className="text-sm">{repairMsg}</p> : null}
+					<Link
+						to="/admin/pairing/new"
+						className="inline-flex h-9 items-center justify-center rounded-4xl bg-primary px-4 text-sm font-medium text-primary-foreground"
+					>
+						New pairing
+					</Link>
+					<Button
+						type="button"
+						variant="outline"
+						disabled={repairBusy}
+						onClick={onRepairAll}
+					>
+						{repairBusy ? "Repairing…" : "Repair paired services"}
+					</Button>
+				</div>
+				{error ? <p className="text-destructive text-sm">{error}</p> : null}
+				{repairMsg ? <p className="text-sm">{repairMsg}</p> : null}
 				<Card>
 					<CardHeader>
 						<CardTitle>Recent requests</CardTitle>

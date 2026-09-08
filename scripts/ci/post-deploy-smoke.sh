@@ -40,7 +40,7 @@ normalize_smoke_urls() {
   )
 }
 
-canonical_urls=$'https://beskid-lang.org/\nhttps://auth.beskid-lang.org/api/health\nhttps://learn.beskid-lang.org/api/health\nhttps://tracker.beskid-lang.org/api/health\nhttps://nexus.beskid-lang.org/api/health\nhttps://pckg.beskid-lang.org/health/ready'
+canonical_urls=$'https://beskid-lang.org/\nhttps://learn.beskid-lang.org/api/health\nhttps://tracker.beskid-lang.org/api/health\nhttps://nexus.beskid-lang.org/api/health\nhttps://pckg.beskid-lang.org/health/ready'
 if [[ -n "${BESKID_SMOKE_URLS:-}" ]]; then
   configured_urls="$(normalize_smoke_urls "${BESKID_SMOKE_URLS}")" || exit 1
   if [[ "${configured_urls}" != "${canonical_urls}" ]]; then

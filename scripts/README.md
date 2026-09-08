@@ -20,13 +20,13 @@ runners (the compiler gate is also Testbox-compatible). Dagger is retired.
 
 | Script | Used by |
 |--------|---------|
-| [`init-submodules.sh`](ci/init-submodules.sh) | Release / Open VSX / platform matrix checkouts |
+| [`init-submodules.sh`](ci/init-submodules.sh) | GHCR / release / Open VSX / platform matrix checkouts |
 | [`init-compiler-submodule.sh`](ci/init-compiler-submodule.sh) | Compiler + corelib (tags for semver) |
 | [`compiler-rust-gate.sh`](ci/compiler-rust-gate.sh) | Compiler Rust gate (clippy + workspace tests) |
 | [`lsp-command-contract-gate.sh`](ci/lsp-command-contract-gate.sh) | LSP + VS Code command-contract gate |
 | [`corelib-gate.sh`](ci/corelib-gate.sh) | Corelib quality + `beskid test` |
 | [`platform-smoke.sh`](ci/platform-smoke.sh) | Aggregate web-workspace smoke |
-| [`site-build-gate.sh`](ci/site-build-gate.sh) | Auth / Docs site build gate |
+| [`site-build-gate.sh`](ci/site-build-gate.sh) | Auth / canonical website build gate |
 | [`vscode-gate.sh`](ci/vscode-gate.sh) | VS Code extension `pnpm test` |
 | [`verify-frozen-lockfile.sh`](ci/verify-frozen-lockfile.sh) | Per-directory `pnpm install --frozen-lockfile` |
 | [`compute-cli-version.sh`](ci/compute-cli-version.sh) | Compiler-minted global `0.4.<build>` version |
@@ -36,20 +36,25 @@ runners (the compiler gate is also Testbox-compatible). Dagger is retired.
 | [`build-release-state.sh`](ci/build-release-state.sh) | Stable/unstable publication eligibility and machine-readable release state |
 | [`render-compiler-release-notes.sh`](ci/render-compiler-release-notes.sh) | Human-readable GitHub release notes generated from release state |
 | [`run-ci-reported-command.sh`](ci/run-ci-reported-command.sh) | GitHub annotations, summaries, raw logs, and JSON for failed gate commands |
-| [`corelib-publish.sh`](ci/corelib-publish.sh) | Corelib workspace → pckg |
+| [`corelib-publish.sh`](ci/corelib-publish.sh) | Pack and publish the production corelib closure plus all first-party templates to pckg (`--dry-run` validates every artifact without secrets or registry mutation) |
 | [`open-vsx-publish.sh`](ci/open-vsx-publish.sh) | Open VSX publish (native) |
+| [`resolve-coolify-project-uuid.sh`](ci/resolve-coolify-project-uuid.sh) | Operator: resolve **Beskid** Coolify project UUID |
 | [`build-release-manifest.sh`](ci/build-release-manifest.sh) | Aggregate immutable OCI image records into a release manifest |
 | [`validate-release-manifest.sh`](ci/validate-release-manifest.sh) | Enforce digest, SBOM, provenance, and source-commit policy |
-| [`post-deploy-smoke.sh`](ci/post-deploy-smoke.sh) | Production-only Watchtower release health checks |
+| [`render-release-compose.sh`](ci/render-release-compose.sh) | Replace Beskid Compose image tags with exact manifest digests |
+| [`render-lane-compose.sh`](ci/render-lane-compose.sh) | Apply lane identity and production-only external-volume adoption |
+| [`deploy-release-manifest.sh`](ci/deploy-release-manifest.sh) | Plan/apply Coolify promotion with polling and rollback |
+| [`post-deploy-smoke.sh`](ci/post-deploy-smoke.sh) | Trace-correlated lane health checks |
 | [`sign-image.sh`](ci/sign-image.sh) | Required keyless cosign signing for promotable images |
 | [`prepare-secure-dockerfile.sh`](ci/prepare-secure-dockerfile.sh) | Convert package-token ARGs to BuildKit secret mounts at build time |
+| [`sync-runtime-env.sh`](ci/sync-runtime-env.sh) | Fail-closed OpenBao KV v2 → Coolify lane env sync (`COOLIFY_SERVICE_UUID` or lane `service_uuid`) |
 | [`openspec-gate.sh`](ci/openspec-gate.sh) | Strict OpenSpec authority validation |
 | [`conformance-gate.sh`](ci/conformance-gate.sh) | Requirement/provenance conformance validation |
 | [`platform-integration-gate.sh`](ci/platform-integration-gate.sh) | Cross-site delivery integration contract |
 | [`shared-ui-nexus-gate.sh`](ci/shared-ui-nexus-gate.sh) | Shared UI Vitest + Nexus unit/Playwright E2E |
 | [`security-policy-gate.sh`](ci/security-policy-gate.sh) | Offline workflow and supply-chain policy |
 
-Production runtime configuration: [`beskid_sites/deploy/`](../beskid_sites/deploy/README.md).
+Coolify lane configuration: [`beskid_infra/`](../beskid_infra/README.md).
 
 ## Lazygit
 
@@ -67,6 +72,16 @@ Replacement delivery contracts run without external state changes:
 ```bash
 bash scripts/ci/test/run-cicd-foundation-tests.sh
 ```
+
+The foundation suite also runs the component license-policy guard. Run it
+directly after adding or moving a package:
+
+```bash
+pnpm licenses:check
+```
+
+The declared boundaries live in `license-policy.json`; the human-readable
+policy and third-party exceptions live in `LICENSING.md`.
 
 ## Interactive setup
 

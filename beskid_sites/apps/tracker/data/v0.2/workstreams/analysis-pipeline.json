@@ -1,7 +1,0 @@
-{
-	"slug": "analysis-pipeline",
-	"title": "Analysis & pipeline",
-	"summary": "Typed compiler spine for v0.2: **beskid_pipeline** progress phases, **beskid_analysis** services split, composition and macro HIR passes, structured **api.json** emission, **ast_reflect_gen** Mod SDK regen, and LSP workspace/project-graph integration aligned with the platform spec.\n\n- Pipeline crate owns shared lower → resolve → normalize → type progress.\n- Registry doc pipeline feeds hierarchical api.json for pckg ingest.\n- Macro registry, expand pass, and resolver fixes land before May 20 composition wave.",
-	"order": 1,
-	"$schema": "../schemas/seed/workstream.schema.json"
-}

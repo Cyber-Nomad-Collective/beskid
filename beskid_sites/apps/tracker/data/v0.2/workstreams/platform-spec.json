@@ -1,7 +1,0 @@
-{
-	"slug": "platform-spec",
-	"title": "Platform specification",
-	"summary": "Normative **platform-spec** tree on beskid-lang.org: cutover from legacy Starlight guides, home browse/map UX, build-pipeline and conformance guide sync, language-meta interop and file-scoped module articles, assembly/DI/macro hubs, submodule-aligned api.json and LSP chapters, trudoc frontmatter verification, and GC/runtime alignment with compiler work.\n\n- `/platform-spec/` is the sole normative docs area beside the Book.\n- Spec leads code: hub updates track compiler and pckg submodule bumps.",
-	"order": 2,
-	"$schema": "../schemas/seed/workstream.schema.json"
-}

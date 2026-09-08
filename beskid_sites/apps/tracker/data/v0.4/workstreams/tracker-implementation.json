@@ -1,7 +1,0 @@
-{
-	"slug": "tracker-implementation",
-	"title": "beskid_tracker product",
-	"summary": "Roadmap planner as a first-class superrepo service: seed catalog per version, GitHub Issues mirror via webhooks, auth hub session handoff, and production deploy parity with site/nexus.",
-	"order": 2,
-	"$schema": "../schemas/seed/workstream.schema.json"
-}

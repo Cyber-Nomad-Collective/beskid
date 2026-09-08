@@ -6,8 +6,8 @@ import { useEffect, useRef, useState } from "react";
 import { Terminal } from "xterm";
 import {
 	getPlaygroundCode,
-	playgroundCompletionItems,
 } from "#/lib/playground";
+import { attachBeskidLsp, registerBeskidLanguage } from "#/lib/beskidLspClient";
 import "xterm/css/xterm.css";
 
 type CheckResponse = {
@@ -57,54 +57,6 @@ function parseCheckResponse(payload: string): CheckResponse {
 	}
 }
 
-let playgroundCompletionsRegistered = false;
-
-function registerBeskidLanguage(monaco: typeof monacoEditor) {
-	const languageId = "beskid";
-	if (!monaco.languages.getLanguages().some((lang) => lang.id === languageId)) {
-		monaco.languages.register({ id: languageId, aliases: ["Beskid"] });
-		monaco.languages.setLanguageConfiguration(languageId, {
-			comments: { lineComment: "//" },
-			brackets: [["{", "}"], ["(", ")"], ["[", "]"]],
-			autoClosingPairs: [
-				{ open: "{", close: "}" },
-				{ open: "(", close: ")" },
-				{ open: "[", close: "]" },
-			],
-		});
-		monaco.languages.setMonarchTokensProvider(languageId, {
-			tokenizer: { root: [
-				["\\b(fn|pub|let|use|return|if|else|while|for|break|continue)\\b", "keyword"],
-				["\\b(i32|i64|u32|u64|f32|f64|string|bool|unit|true|false)\\b", "type"],
-				["//.*$", "comment"], ['"(?:[^\\"\\\\]|\\\\.)*"', "string"], ["'[^']*'", "string"], ["[0-9]+", "number"],
-			] },
-		});
-	}
-
-	if (!playgroundCompletionsRegistered) {
-		monaco.languages.registerCompletionItemProvider(languageId, {
-			provideCompletionItems(model, position) {
-				const word = model.getWordUntilPosition(position);
-				const range = {
-					startLineNumber: position.lineNumber,
-					endLineNumber: position.lineNumber,
-					startColumn: word.startColumn,
-					endColumn: word.endColumn,
-				};
-				return {
-					suggestions: playgroundCompletionItems.map((item) => ({
-						...item,
-						kind: monaco.languages.CompletionItemKind.Keyword,
-						insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-						range,
-					})),
-				};
-			},
-		});
-		playgroundCompletionsRegistered = true;
-	}
-}
-
 interface PlaygroundProps {
 	initialCode?: string;
 }
@@ -113,10 +65,15 @@ export default function Playground({ initialCode = "" }: PlaygroundProps) {
 	const [code, setCode] = useState(initialCode);
 	const [running, setRunning] = useState(false);
 	const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(null);
+	const lspDisposableRef = useRef<{ dispose(): void } | null>(null);
 
 	const terminalRef = useRef<HTMLDivElement | null>(null);
 	const terminalShell = useRef<Terminal | null>(null);
 	const fitAddon = useRef(new FitAddon());
+
+	useEffect(() => {
+		return () => lspDisposableRef.current?.dispose();
+	}, []);
 
 	useEffect(() => {
 		const term = new Terminal({
@@ -155,6 +112,8 @@ export default function Playground({ initialCode = "" }: PlaygroundProps) {
 		editorRef.current = editor;
 		registerBeskidLanguage(monaco);
 		monaco.editor.setModelLanguage(editor.getModel()!, "beskid");
+		lspDisposableRef.current?.dispose();
+		lspDisposableRef.current = attachBeskidLsp(editor, monaco);
 	};
 
 	const runChecks = async () => {

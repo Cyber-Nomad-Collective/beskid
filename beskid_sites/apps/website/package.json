@@ -1,6 +1,7 @@
 {
 	"name": "beskid-website",
 	"private": true,
+	"license": "AGPL-3.0-only",
 	"type": "module",
 	"imports": {
 		"#/*": "./src/*"
@@ -20,7 +21,7 @@
 	},
 	"dependencies": {
 		"@cyber-nomad-collective/beskid-shell-core": "workspace:*",
-		"@cyber-nomad-collective/beskid-ui-react": "workspace:*",
+		"@cyber-nomad-collective/beskid-ui-react": "file:../../../beskid_web_common/packages/beskid-ui-react",
 		"@mdx-js/react": "^3.1.0",
 		"@t3-oss/env-core": "^0.13.10",
 		"@tailwindcss/vite": "^4.1.18",

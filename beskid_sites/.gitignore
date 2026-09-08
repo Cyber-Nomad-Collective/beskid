@@ -14,6 +14,8 @@ coverage
 # from OpenBao at deploy time (see deploy/README.md).
 deploy/registry/htpasswd
 deploy/.env
+deploy/authelia/users_database.yml
+deploy/authelia/notification.txt
 deploy/.env.*
 deploy/authelia/users_database.yml
 deploy/authelia/notification.txt

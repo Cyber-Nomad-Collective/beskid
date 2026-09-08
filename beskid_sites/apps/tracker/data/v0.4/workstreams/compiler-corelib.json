@@ -1,7 +1,0 @@
-{
-	"slug": "compiler-corelib",
-	"title": "Compiler & corelib completion",
-	"summary": "Wave-aligned compiler/corelib closure: complete the remaining structural splits, recover the authoritative 61-target Corelib matrix, prove the sub-five-minute EOF-bound harness, then implement rooted Core.Collections, canonical host-backed Core.FS, full stub retirement, three-target runtime kits, and pckg publish evidence.",
-	"order": 5,
-	"$schema": "../schemas/seed/workstream.schema.json"
-}

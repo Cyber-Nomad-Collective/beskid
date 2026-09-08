@@ -1,8 +1,0 @@
-{
-	"slug": "metaprogramming-mods",
-	"title": "Metaprogramming and compiler mods",
-	"summary": "Stage-8 metaprogramming experiments for compiler mods (generators/analyzers/rewriters) explored how Beskid-side mods attach to pipeline stages without reintroducing language-level meta blocks.",
-	"order": 4,
-	"deliverableIds": ["v00-tooling-research"],
-	"$schema": "../schemas/seed/workstream.schema.json"
-}

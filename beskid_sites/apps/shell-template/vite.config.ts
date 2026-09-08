@@ -1,3 +1,5 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
@@ -22,6 +24,12 @@ export default defineConfig({
 		tsconfigPaths(),
 	],
 	resolve: {
+		alias: {
+			"@beskid/material-theme": path.resolve(
+				path.dirname(fileURLToPath(import.meta.url)),
+				"../../../beskid_web_common/packages/beskid-ui/src/styles/theme.material.css",
+			),
+		},
 		dedupe: [
 			"class-variance-authority",
 			"clsx",

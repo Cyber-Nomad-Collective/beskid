@@ -1,7 +1,0 @@
-{
-	"slug": "web-auth-web-common",
-	"title": "Web auth & beskid_web_common",
-	"summary": "Central GitHub OAuth hub at site/auth (8090), shared trudoc and docs-ui in beskid_web_common, npm workspace wiring for site/tracker/nexus/pckg, and AGENTS/COOLIFY auth handoff documentation.",
-	"order": 1,
-	"$schema": "../schemas/seed/workstream.schema.json"
-}

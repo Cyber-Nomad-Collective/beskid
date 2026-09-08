@@ -14,21 +14,21 @@ I started my career as a desktop developer. From **2019** onward there was a sud
 
 I caught a few desktop jobs, then some backend—but I really liked working in UI. When **Blazor** came along I was hooked immediately. The problem was a lack of projects in that stack. I still managed to find one in my area.
 
-The interview was full of red flags. I did not care. This was my only chance to become full-stack, and I was desperate for any job involving more than slowly loosing the sense of self at the Corp. 
+The interview was full of red flags. I did not care. This was my only chance to become full-stack, and I was desperate for any job involving more than slowly loosing the sense of self at the Corp.
 
 
 ![Red flags reaction](https://media1.tenor.com/m/uScmyrBrE2YAAAAC/empresa-company.gif)
 
-I was not asked any coding questions. There was no technical interview. The "software house" was truly an IT department, with all the usual flaws: tribalism, harassment-as-process, and zero accountability.  
+I was not asked any coding questions. There was no technical interview. The "software house" was truly an IT department, with all the usual flaws: tribalism, harassment-as-process, and zero accountability.
 
 ![Suspicious side-eye](https://media.giphy.com/media/K0nfRxt3s9SZDB3tmN/giphy.gif)
 
 ## The "new" team
 
-I was part of the **new** team, dedicated to eventually migrating a legacy WinForms app that had lost the meaning of its existence years earlier. It was no longer an ERP — it was at some point used to **order meals**, or had modules created for one specific person which no longer works here. Yeah, if you are a .NET/Java Dev you know this codebase, even tho you did not see it. 
-This is a hardcore case, but I had many similar experiences in my desktop days. 
-The DOD shifts from "Let's make the world a better place" to "I want to sell my fridge and move to Pitcairn - which is a real country at the actual edge of the world where [they give land away for free](https://www.freedomsurfer.com/articles/pitcairn). 
-Yeah, I considered it some time ago... 
+I was part of the **new** team, dedicated to eventually migrating a legacy WinForms app that had lost the meaning of its existence years earlier. It was no longer an ERP — it was at some point used to **order meals**, or had modules created for one specific person which no longer works here. Yeah, if you are a .NET/Java Dev you know this codebase, even tho you did not see it.
+This is a hardcore case, but I had many similar experiences in my desktop days.
+The DOD shifts from "Let's make the world a better place" to "I want to sell my fridge and move to Pitcairn - which is a real country at the actual edge of the world where [they give land away for free](https://www.freedomsurfer.com/articles/pitcairn).
+Yeah, I considered it some time ago...
 
 
 The architect was an interesting persona: master of the **"wait till retirement"** philosophy. Knowledgeable in WinForms and Oracle databases—for some reason put in charge of "consulting" our tech stack. He chose Blazor because he thought his WinForms devs would jump straight into web development.
@@ -89,7 +89,7 @@ Management asked why changing a field took **a week**. We were a two-person team
 
 Adding a feature in the legacy app was: add another button to a one-off view, implement `onclick`, ship. We had to wade through legacy layers, fight tribal politics, and prove our worth to developers approaching retirement—why we cared about DRY while implementing an entire WMS.
 
-Our projects got cancelled one after another, because the management was spending money they didn't have on project which had no sense. The WinForms team won. Not because of better code, or smarter architecture. Because the management doesn't care about the same parameters as devs, but that's the knowledge you gain on your day one as a developer. 
+Our projects got cancelled one after another, because the management was spending money they didn't have on project which had no sense. The WinForms team won. Not because of better code, or smarter architecture. Because the management doesn't care about the same parameters as devs, but that's the knowledge you gain on your day one as a developer.
 
 ## Where Beskid starts
 

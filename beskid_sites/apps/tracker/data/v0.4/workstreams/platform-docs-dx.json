@@ -1,7 +1,0 @@
-{
-	"slug": "platform-docs-dx",
-	"title": "Platform docs & cross-app DX",
-	"summary": "beskid-lang.org, tracker, nexus, and pckg share beskid-hub navigation, legacy URL redirects, trudoc verify in CI, and consistent Coolify deploy docs.",
-	"order": 7,
-	"$schema": "../schemas/seed/workstream.schema.json"
-}

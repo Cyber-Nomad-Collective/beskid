@@ -18,7 +18,7 @@ Each operation references the canonical document identity of the target document
 
 ## The validation pipeline
 
-When a draft context is proposed — typically via a GitHub PR — the validation pipeline runs before the PR can be merged. The pipeline is defined in `site/platform-spec/src/server/git-sync/pr.ts`. It does not trust the proposal. It verifies it.
+When an OpenSpec change is proposed through a GitHub PR, the repository's OpenSpec validators run before the PR can be merged. They do not trust the proposal. They verify it against the canonical catalog and standard sources.
 
 First: does every referenced capability exist in the current catalog? A draft context that references `runtime--execution-model--fibers` must find that capability in `catalog.json`. If the capability was renamed, the context must reference the new name. No dangling references.
 
@@ -26,7 +26,7 @@ Second: do all requirement IDs match? If a document change adds a requirement `D
 
 Third: are TBD Purpose headers resolved? A new spec document with a Purpose section that says "TBD" fails validation. The hard-fail rule applies to draft contexts exactly as it applies to the main catalog. You cannot propose a spec change that introduces an unresolved purpose. Write the purpose or keep the spec provisional.
 
-Fourth: do cross-references resolve? A document change that links to `language--types--generics` must find that capability in the catalog. Broken cross-references in a draft context would become broken links in the live spec. The validator catches them before they go live.
+Fourth: do cross-references resolve? A document change that links to `language--types--generics` must find that capability in the catalog. Broken cross-references would become broken links in the published standard. The validator catches them before publication.
 
 If all four checks pass, the context can be approved by a moderator. If any check fails, the context is rejected with specific reasons. The PR gets a comment listing every failure. The author fixes them and pushes again. The spec never moves without proof.
 

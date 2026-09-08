@@ -1,8 +1,9 @@
 # Beskid production deployment
 
 This directory is the sole Beskid production runtime for `beskid-lang.org`. It uses
-Docker Compose, the shared host edge network, the private registry at `cr.beskid-lang.org`, and
-Watchtower. There is no staging deployment and no deployment control plane.
+Docker Compose, Authentik, the shared host edge network, the registry at
+`cr.beskid-lang.org`, and Watchtower. There is no staging deployment and no
+deployment control plane.
 
 ## Release flow
 
@@ -15,7 +16,7 @@ Watchtower. There is no staging deployment and no deployment control plane.
    endpoints.
 
 The tagged application services are `website`, `learn`, `tracker`, `nexus`,
-and `pckg`. Authelia, the shared edge, registry, Watchtower, and Postgres are
+and `pckg`. The shared edge, registry, Watchtower, and Postgres are
 pinned infrastructure: change them only with an audited Compose
 deployment.
 
@@ -24,17 +25,17 @@ deployment.
 The production host is `root@bdziam.dev`; the runtime directory defaults to
 `/opt/beskid`. Before the first apply, an operator must provide:
 
-- DNS for `beskid-lang.org`, `auth`, `learn`, `tracker`, `nexus`, `pckg`, and
-  `cr` subdomains.
-- A registry account with pull access on the host and push access stored in the
-  repository secrets `REGISTRY_USERNAME` and `REGISTRY_PASSWORD`.
-- A bcrypt registry credential file at `registry/htpasswd`.
-- An Authelia file-backed user database at `authelia/users_database.yml`.
-  Start from `users_database.yml.example`, generate an Argon2id password hash,
-  and keep the completed file off Git.
+- DNS for `beskid-lang.org`, `learn`, `tracker`, `nexus`, `pckg`,
+`cr`, and `auth` subdomains.
 - OpenBao production secrets, or a populated local `.env` copied from
-  `.env.example`. Do not commit `.env`, `htpasswd`, or Watchtower’s Docker
-  credential file.
+  `.env.example`. Do not commit `.env`.
+- Authentik secrets: `AUTHENTIK_POSTGRES_PASSWORD`, `AUTHENTIK_SECRET_KEY`,
+  and a one-time `AUTHENTIK_BOOTSTRAP_TOKEN`. Store them in OpenBao or the
+  host `.env`; never commit them.
+- A GitHub OAuth application whose callback URL is
+  `https://auth.beskid-lang.org/source/oauth/callback/github/`. Configure its
+  client ID and secret in the host `.env` as `GITHUB_CLIENT_ID` and
+  `GITHUB_CLIENT_SECRET`. Authentik is the only browser authentication path.
 - `BESKID_EDGE_NETWORK`, the existing host network used by the shared Caddy
   Docker proxy. Beskid joins this network but does not own its ports or proxy.
 
@@ -45,32 +46,26 @@ cd beskid_sites/deploy
 ./deploy.sh --from-openbao
 ```
 
-`deploy.sh` copies the Compose files, writes `/opt/beskid/.env`, logs the host
-into the registry using stdin, creates Watchtower’s private Docker credential
-file, starts the stack, and runs public smoke checks. The script rejects any
+`deploy.sh` copies the Compose files, writes `/opt/beskid/.env`, starts the
+stack, reapplies the idempotent Authentik brand configuration, and runs public
+smoke checks. The script rejects any
 application tag other than `production`.
+
+The Authentik login uses the Beskid logo and a real Beskid Żywiecki view from
+Mała Racza. The photograph is by Pudelek and is used under CC BY 3.0; its
+source and attribution are recorded in `authentik-branding.py` and the login
+footer.
 
 The first cutover adopts the host's existing `beskid-registry-data` Docker
 volume. It is external to Compose so existing registry images and rollback tags
 are retained; do not delete or recreate that volume during the switch.
 
-## Browser authentication
+## Registry access
 
-Authelia at `https://auth.beskid-lang.org` is the only browser authentication
-path. The shared Caddy edge sends every request for the website, Learn,
-Tracker, Nexus, and pckg through Authelia forward authentication before it can
-reach an application container. The legacy custom GitHub auth image is not
-part of the production Compose runtime or Watchtower release flow.
-
-## Registry authentication
-
-The shared edge terminates TLS only. `registry:2.8` performs its own htpasswd challenge,
-so CI, operators, Docker, and Watchtower observe identical authentication.
-Generate or rotate the host credential outside Git:
-
-```bash
-htpasswd -Bbn <registry-user> <registry-password> > registry/htpasswd
-```
+The shared edge terminates TLS. The Beskid registry is intentionally
+unauthenticated so CI and Watchtower can publish and pull without credentials.
+Keep it exposed only through the intended host edge and do not treat it as a
+general-purpose public image registry.
 
 ## Rollback
 

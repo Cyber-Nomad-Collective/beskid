@@ -50,9 +50,14 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
 ### Requirement: Contracts and edge cases: Purpose and scope [tooling/project-scaffolding/template-packages/articles/contracts-and-edge-cases]
-The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
-
-> Registry validator and UI MUST rules.
+The Beskid standard SHALL require a template `.bpk` to declare
+`packageKind: template` and its semantic version in artifact-root
+`package.json`, and to place the `beskid.template.v1` manifest at artifact-root
+`template.json`. The packer SHALL derive that artifact file from the authoring
+`.beskid/template.json`. A publisher SHALL upload the artifact through
+`POST /api/packages/<name>/versions` using the version from `package.json`;
+there SHALL NOT be a separate workspace-bundle publication path. A template
+artifact SHALL NOT be required to contain `.beskid/docs/api.json`.
 
 **Stable ID:** `BSP-REQ-BC228B8A50A8`  
 **Legacy source:** `site/spec-content/platform-spec/tooling/project-scaffolding/template-packages/articles/contracts-and-edge-cases/content.md`  
@@ -89,7 +94,7 @@ The records below preserve migration history and are not normative except where 
 </SpecSection>
 
 <SpecSection title="Contract statement" id="contract-statement">
-A **template package** is a published **`.bpk`** artifact whose root **`package.json`** declares **`packageKind: template`**. Template packages distribute **`.beskid/template.json`** and scaffold sources. They use the **same versioning, yank, checksum, and registry-assigned publish semver** as library packages, but **different validation** and **pckg UI**.
+A **template package** is a published **`.bpk`** artifact whose root **`package.json`** declares **`packageKind: template`**. Template packages distribute artifact-root **`template.json`** and scaffold sources. They use the **same artifact-bound versioning, yank, checksum, and immutable package/version coordinates** as library packages, but **different validation** and **pckg UI**.
 </SpecSection>
 
 <SpecSection title="Inputs and outputs" id="inputs-and-outputs">
@@ -98,7 +103,7 @@ A **template package** is a published **`.bpk`** artifact whose root **`package.
 | `schema` | **`beskid.package.v1`** (unchanged) |
 | `id` | Package id; first-party **`beskid.templates.*`** |
 | `packageKind` | **`template`** (required for this profile) |
-| `version` | Present in artifact; registry may assign publish version independently |
+| `version` | Exact artifact version; upload and registry metadata must agree |
 | **Output** | Downloaded `.bpk` → extracted template root for `beskid new install` |
 </SpecSection>
 
@@ -107,21 +112,21 @@ Template packages **must not** be required to expose structured API documentatio
 </SpecSection>
 
 <SpecSection title="Algorithms and flow" id="algorithms-and-flow">
-**Pack:** `beskid pckg pack` on a **`type: Template`** project **must** set `packageKind: template` in generated `package.json` and include `.beskid/template.json` plus template `sources` roots.
+**Pack:** `beskid pckg pack` on a **`type: Template`** project **must** set `packageKind: template` in generated `package.json`, derive artifact-root `template.json` from authoring `.beskid/template.json`, and include the template `sources` roots.
 
-**Publish:** Same `POST /api/packages/<id>/publish` and workspace publish flows; server selects validator profile by `packageKind`.
+**Upload:** `beskid pckg upload <id> --artifact <path.bpk>` sends artifact-bound `version`, `checksumSha256`, and `.bpk` bytes as multipart fields to `POST /api/packages/<id>/versions`; the server selects validator profile by `packageKind`. There is no workspace-bundle publication route.
 
 **Consume:** `beskid new install <id>` downloads version, verifies kind, registers cache entry.
 </SpecSection>
 
 <SpecSection title="Edge cases and errors" id="edge-cases-and-errors">
 - Library package accidentally packed without `api.json` — existing rule; template profile **must not** require `api.json`.
-- Template package missing `.beskid/template.json` — reject at publish with HTTP 400.
+- Template package missing artifact-root `template.json` — reject at upload with HTTP 400.
 - `packageKind: library` with template manifest present — reject or require repack as `template`.
 </SpecSection>
 
 <SpecSection title="Compatibility and versioning" id="compatibility-and-versioning">
-Identical to library packages: immutable versions, yank semantics, registry-assigned bumps on upload.
+Identical to library packages: artifact-bound exact versions, immutable package/version coordinates, and yank semantics.
 </SpecSection>
 
 <SpecSection title="Decisions" id="decisions">

@@ -1,7 +1,0 @@
-{
-	"slug": "corelib-packaging",
-	"title": "Corelib & registry",
-	"order": 2,
-	"summary": "Move stdlib ownership to nested **corelib** / **beskid_standard** submodules, expose **artifact manifests** in **pckg**, wire **beskid_pckg** into the compiler workspace, and land deploy/bootstrap flows (Coolify compose, first-run onboarding, official service account) so registry and CLI provisioning share one stdlib source — deliverable **v01-corelib-submodule**.",
-	"$schema": "../schemas/seed/workstream.schema.json"
-}

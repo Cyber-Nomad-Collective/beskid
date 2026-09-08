@@ -1,8 +1,0 @@
-{
-	"id": "v02-ci-deploy-infra",
-	"title": "CI workflows and deploy infra",
-	"description": "Nox logging, workflow refinements, site image lockfile, Coolify compose, and compiler CLI GitHub Releases publishing.",
-	"closedOn": "2026-05-20",
-	"subtasks": [],
-	"$schema": "../schemas/seed/deliverable.schema.json"
-}

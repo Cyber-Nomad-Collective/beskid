@@ -15,6 +15,21 @@ case "${channel}" in stable|unstable) ;; *) echo "unsupported channel: ${channel
 [[ "$#" -gt 0 ]] || { echo 'at least one platform result is required' >&2; exit 1; }
 
 results_json="$(jq -s 'sort_by(.target)' "$@")"
+if [[ -n "${HANDOFF_RELEASE_URL:-}" ]]; then
+  handoff_release_url="${HANDOFF_RELEASE_URL%/}"
+  results_json="$(jq --arg release_url "${handoff_release_url}" '
+    def release_asset_url:
+      if type == "string" and length > 0 and
+          (startswith("http://") or startswith("https://")) | not
+      then $release_url + "/" + .
+      else .
+      end;
+    map(
+      .builds |= with_entries(.value.log_path |= release_asset_url)
+      | .diagnostics |= ((. // []) | map(.log_path |= release_asset_url))
+    )
+  ' <<<"${results_json}")"
+fi
 gate_diagnostics='[]'
 test_results='[]'
 if [[ -n "${GATE_REPORT_DIR:-}" && -d "${GATE_REPORT_DIR}/stages" ]]; then
@@ -33,6 +48,27 @@ if [[ -n "${GATE_REPORT_DIR:-}" && -d "${GATE_REPORT_DIR}/stages" ]]; then
 fi
 
 if [[ -n "${GATE_REPORT_DIR:-}" && -f "${GATE_REPORT_DIR}/triggering-run-jobs.json" ]]; then
+  gate_job_results="$(jq '
+    [.jobs[] | select(.name == "Rust gate") | . as $job |
+      [
+        {component:"compiler", stage:"rust-gate", step_name:"Compiler Rust gate"},
+        {component:"lsp", stage:"command-contract-gate", step_name:"LSP command contract gate"}
+      ][] |
+      . as $descriptor |
+      (($job.steps // []) | map(select(.name == $descriptor.step_name)) | first) as $step |
+      {
+        component: $descriptor.component,
+        stage: $descriptor.stage,
+        platform: "Linux",
+        status: (if ($step.conclusion // "missing") == "success" then "success" else "failed" end),
+        conclusion: ($step.conclusion // "missing"),
+        command: ($step.name // $descriptor.step_name),
+        raw_log: $job.html_url,
+        job_id: $job.id,
+        job_url: $job.html_url
+      }
+    ]
+  ' "${GATE_REPORT_DIR}/triggering-run-jobs.json")"
   matrix_results="$(jq '
     [.jobs[] |
       select(.name == "Windows ABI-v5 runtime-kit matrix" or
@@ -54,6 +90,23 @@ if [[ -n "${GATE_REPORT_DIR:-}" && -f "${GATE_REPORT_DIR}/triggering-run-jobs.js
       }
     ] | sort_by(.stage)
   ' "${GATE_REPORT_DIR}/triggering-run-jobs.json")"
+  if [[ "$(jq 'length' <<<"${test_results}")" -eq 0 ]]; then
+    test_results="${gate_job_results}"
+    gate_job_diagnostics="$(jq '[.[] | select(.status == "failed") | {
+      schema_version: 1,
+      component,
+      stage,
+      platform,
+      command,
+      identifier: "unavailable",
+      signature: "unavailable",
+      location: {file:"unavailable", line:0, column:0, offset:null},
+      reason: ("GitHub Actions step concluded " + .conclusion),
+      log_path: .job_url,
+      job_url
+    }]' <<<"${gate_job_results}")"
+    gate_diagnostics="$(jq -n --argjson reports "${gate_diagnostics}" --argjson jobs "${gate_job_diagnostics}" '$reports + $jobs')"
+  fi
   test_results="$(jq -n --argjson stages "${test_results}" --argjson matrices "${matrix_results}" '$stages + $matrices')"
   matrix_diagnostics="$(jq '[.[] | select(.status == "failed") | {
     schema_version: 1,

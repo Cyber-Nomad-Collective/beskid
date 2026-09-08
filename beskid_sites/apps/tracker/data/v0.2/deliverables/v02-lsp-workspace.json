@@ -1,8 +1,0 @@
-{
-	"id": "v02-lsp-workspace",
-	"title": "LSP workspace & project graph",
-	"description": "Closed **2026-05-22** on superrepo [`f57377a`](https://github.com/Cyber-Nomad-Collective/beskid/commit/f57377a) (v0.2 delivery tip).\n\nCompiler LSP: rename, code actions, inlay hints, signature help, workspace symbols, workspace templates, project explorer, and project graph pipeline—consumed by VS Code extension client middleware.\n\nWorkstreams: `analysis-pipeline`. **3** catalog tasks anchor this deliverable (`milestoneId: v02-lsp-workspace`).\n\n## Provenance\n- [`582170b`](https://github.com/Cyber-Nomad-Collective/compiler/commit/582170b) (`compiler`) — compiler: LSP rename feature and corelib bump\n- [`158215a`](https://github.com/Cyber-Nomad-Collective/compiler/commit/158215a) (`compiler`) — LSP: code actions, inlay hints, signature help, workspace symbols; protocol and session updates\n- [`6ae272b`](https://github.com/Cyber-Nomad-Collective/compiler/commit/6ae272b) (`compiler`) — feat: workspace templates, LSP project explorer, and project graph pipeline\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Deliverable:** `v02-lsp-workspace` — LSP workspace & project graph\n\n## Relation\nGroups the v0.2 seed tasks linked via `milestoneId` for **LSP workspace & project graph**.",
-	"closedOn": "2026-05-22",
-	"subtasks": [],
-	"$schema": "../schemas/seed/deliverable.schema.json"
-}

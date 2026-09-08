@@ -81,7 +81,7 @@ describe("AuthGate", () => {
 
 		expect(screen.getByRole("link", { name: "Manage account" })).toHaveAttribute(
 			"href",
-			"https://auth.beskid-lang.org/profile",
+			"https://auth.beskid-lang.org/if/user/",
 		);
 		expect(screen.getByRole("menuitem", { name: "Log out" })).toBeVisible();
 	});

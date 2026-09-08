@@ -1,8 +1,0 @@
-{
-	"id": "v01-corelib-submodule",
-	"title": "Nested corelib submodule",
-	"description": "Standalone compiler CI embeds stdlib via nested corelib submodule only.",
-	"closedOn": "2026-04-10",
-	"subtasks": [],
-	"$schema": "../schemas/seed/deliverable.schema.json"
-}

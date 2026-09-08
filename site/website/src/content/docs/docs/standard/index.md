@@ -3,8 +3,6 @@ title: Beskid Standard
 description: The normative source for Beskid language and tool behavior.
 ---
 
-# Beskid Standard
-
 The Beskid standard defines normative behavior. The source files are in [`openspec/specs/`](https://github.com/Cyber-Nomad-Collective/beskid/tree/main/openspec/specs).
 
 Use a requirement only when it contains `SHALL` or `MUST` and one or more scenarios. A Book page, blog post, README, or generated catalog does not define a new rule.

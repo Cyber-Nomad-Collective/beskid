@@ -3,12 +3,12 @@ name: Reusable production Watchtower verification
 on:
   workflow_call:
     inputs:
-      manifest-artifact:
-        required: false
-        default: release-manifest
+      manifest-base64:
+        description: Immutable release manifest produced by the caller.
+        required: true
         type: string
-      manifest-run-id:
-        description: Authoritative platform-delivery run that produced the manifest
+      source-run-id:
+        description: Authoritative platform-delivery run that produced the manifest.
         required: true
         type: string
       apply:
@@ -33,12 +33,14 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
-        with:
-          name: ${{ inputs.manifest-artifact }}
-          path: release
-          run-id: ${{ inputs.manifest-run-id }}
-          github-token: ${{ github.token }}
+      - name: Materialize immutable release manifest
+        env:
+          MANIFEST_BASE64: ${{ inputs.manifest-base64 }}
+        run: |
+          set -euo pipefail
+          mkdir -p release
+          printf '%s' "${MANIFEST_BASE64}" | base64 --decode >release/release-manifest.json
+          sha256sum release/release-manifest.json >release/release-manifest.json.sha256
 
       - name: Verify release manifest
         run: |
@@ -49,7 +51,7 @@ jobs:
       - name: Verify authoritative main source
         env:
           GH_TOKEN: ${{ github.token }}
-          RUN_ID: ${{ inputs.manifest-run-id }}
+          RUN_ID: ${{ inputs.source-run-id }}
         run: |
           set -euo pipefail
           curl --fail-with-body --silent --show-error \

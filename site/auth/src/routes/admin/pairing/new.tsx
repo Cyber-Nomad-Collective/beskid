@@ -13,6 +13,7 @@ import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useState } from "react";
 import { ThemeToggle } from "#/components/theme-toggle";
 import { defaultPairingAppId, pairingAppOptions } from "#/lib/auth-app-meta";
+import { pairingAppIdSchema } from "#/lib/pairing-app-id";
 import { fetchAdminAccess } from "#/server/app-server.functions";
 
 const PAIRING_APP_OPTIONS = pairingAppOptions();
@@ -67,6 +68,11 @@ function NewPairingPage() {
 		setResult(body);
 	}
 
+	function onAppIdChange(value: string) {
+		const parsed = pairingAppIdSchema.safeParse(value);
+		if (parsed.success) setAppId(parsed.data);
+	}
+
 	return (
 		<div className="page-wrap py-10">
 			<div className="auth-topbar">
@@ -98,7 +104,7 @@ function NewPairingPage() {
 										id="appId"
 										className="w-full rounded-md border px-3 py-2 text-sm"
 										value={appId}
-										onChange={(e) => setAppId(e.target.value as AuthAppId)}
+										onChange={(event) => onAppIdChange(event.target.value)}
 									>
 										{PAIRING_APP_OPTIONS.map((opt) => (
 											<option key={opt.id} value={opt.id}>

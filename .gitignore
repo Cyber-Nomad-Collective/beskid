@@ -35,6 +35,7 @@ dist/
 
 # dependencies
 node_modules/
+/node_modules
 
 # logs
 npm-debug.log*
@@ -284,6 +285,9 @@ PublishScripts/
 # Keep this repo's JS workspaces under the root `packages/` tracked.
 !/packages/
 !/packages/**
+!beskid_sites/packages/
+!beskid_sites/packages/shell-core/
+!beskid_sites/packages/shell-core/**
 # VS Code extension: pckg client sources live under `src/packages/` (not NuGet).
 !beskid_vscode/src/packages/
 !beskid_vscode/src/packages/**

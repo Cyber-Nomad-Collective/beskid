@@ -1,7 +1,0 @@
-{
-	"id": "v04-corelib-complete",
-	"title": "corelib full Standard implementation",
-	"description": "In progress. The normative Corelib/runtime completion contract is defined, but functional, semantic, and release evidence is not green. Fresh current-tip reconstruction at root 0733294b and compiler 8bbdb593 covers all 61 targets at 38 passing / 23 failing with no per-target hang after deterministic EOF binding. The failures collapse to generic specialization/ABI facts plus focused syntax result/storage, scalar-payload enum-layout, and Concurrency.Yield leaves. Rooted Core.Collections storage and host-backed Core.FS remain specified but unimplemented, and 61/61 does not substitute for the separate API/no-stub gate. Runtime-kit verification still lacks valid same-revision per-artifact static/shared proof on Linux x86-64, macOS arm64, and Windows x86-64. Completion requires 61/61 Corelib, real Corelib semantics and stub retirement, corelib-quality/pckg evidence, and native debug/release static/shared JIT+AOT+REPL/run evidence on all three targets.",
-	"subtasks": [],
-	"$schema": "../schemas/seed/deliverable.schema.json"
-}

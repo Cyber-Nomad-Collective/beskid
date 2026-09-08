@@ -71,8 +71,8 @@ if ! rg -Fq 'cr.beskid-lang.org/beskid/' .github/workflows/platform-delivery.yml
   exit 1
 fi
 
-if ! rg -Fq 'REGISTRY_USERNAME' .github/workflows/reusable-image.yml; then
-  echo "registry image workflow must require private registry credentials" >&2
+if rg -n 'REGISTRY_(USERNAME|PASSWORD)|docker login' .github/workflows/reusable-image.yml .github/workflows/platform-delivery.yml; then
+  echo "public registry workflow must not retain registry credentials" >&2
   exit 1
 fi
 

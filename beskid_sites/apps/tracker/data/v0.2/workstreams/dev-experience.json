@@ -1,7 +1,0 @@
-{
-	"slug": "dev-experience",
-	"title": "Superrepo & deploy ergonomics",
-	"summary": "Superrepo ergonomics: submodule pins (vscode, bsharp references), Coolify shallow-clone fixes, monorepo **bun** lockfile in site image builds, and AGENTS/workflow guidance refinements.\n\n- Deploy paths skip inactive `references/bsharp` when not initialized.\n- Canonical vscode submodule URL prevents drift across clones.",
-	"order": 9,
-	"$schema": "../schemas/seed/workstream.schema.json"
-}

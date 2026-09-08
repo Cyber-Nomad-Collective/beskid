@@ -19,7 +19,7 @@
 - **Git:** no `Co-authored-by`
 - **Naming:** PascalCase types/functions/methods; camelCase locals/params; crates `beskid_<domain>`
 - **Packages:** `@beskid/*` on GitHub Packages (not monorepo `file:` links); pin `^0.2.0`; refresh via `./scripts/sync-beskid-packages.sh`
-- **Domains:** Coolify URLs use explicit ports per service (`https://<host>:<port>`); staging uses `stg-` prefix
+- **Domains:** Coolify target URLs use explicit container ports per service (`https://<host>:<port>`); public browser/API origins use standard HTTPS; staging uses the `stg-` prefix
 - **UI:** match existing Fluent Blazor / `@beskid` patterns; hub launcher leftmost in navbars
 - **Docs:** no emoji; Beskid Book tone (`book/00-why-beskid-exists/...`); prefer practical deploy/container guidance over abstraction
 

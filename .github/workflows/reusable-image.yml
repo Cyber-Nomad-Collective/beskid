@@ -71,12 +71,8 @@ on:
     outputs:
       digest:
         value: ${{ jobs.image.outputs.digest }}
-    secrets:
-      REGISTRY_USERNAME:
-        required: true
-      REGISTRY_PASSWORD:
-        required: true
-
+      record:
+        value: ${{ jobs.image.outputs.record }}
 permissions:
   contents: read
   id-token: write
@@ -88,6 +84,7 @@ jobs:
     timeout-minutes: 45
     outputs:
       digest: ${{ steps.build.outputs.digest }}
+      record: ${{ steps.record.outputs.record }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -103,26 +100,6 @@ jobs:
             ./scripts/ci/init-submodules.sh "${submodule}"
           done
 
-
-      - name: Log in to the Beskid registry
-        if: inputs.push
-        # Retry registry login after a transient edge-proxy reset. The shared
-        # host proxy can reload while unrelated services change; an OCI client
-        # retry is safe because no image mutation has happened yet.
-        env:
-          REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
-          REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
-        run: |
-          set -euo pipefail
-          for attempt in 1 2 3 4 5; do
-            if printf '%s' "$REGISTRY_PASSWORD" | docker login cr.beskid-lang.org --username "$REGISTRY_USERNAME" --password-stdin; then
-              exit 0
-            fi
-            if [ "$attempt" -eq 5 ]; then
-              exit 1
-            fi
-            sleep "$((attempt * 2))"
-          done
 
       - name: Setup Blacksmith builder
         uses: useblacksmith/setup-docker-builder@ab5c1da94f53f5cd75c1038092aa276dddfccbba # v1
@@ -202,6 +179,9 @@ jobs:
 
       - name: Upload vulnerability report
         if: always() && inputs.push && steps.build.outcome == 'success'
+        # Evidence collection must not turn a successfully built, scanned, and
+        # pushed image into a failed delivery lane when artifact storage flakes.
+        continue-on-error: true
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: vulnerability-${{ inputs.name }}
@@ -220,7 +200,8 @@ jobs:
           IMAGE: ${{ inputs.repository }}@${{ steps.build.outputs.digest }}
         run: ./scripts/ci/sign-image.sh "${IMAGE}"
 
-      - name: Write image manifest record
+      - name: Emit image manifest record
+        id: record
         if: inputs.push && steps.build.outcome == 'success'
         env:
           NAME: ${{ inputs.name }}
@@ -228,15 +209,6 @@ jobs:
           DIGEST: ${{ steps.build.outputs.digest }}
           SIGNED: ${{ inputs.sign }}
         run: |
-          mkdir -p image-record
-          jq -n --arg name "${NAME}" --arg repository "${REPOSITORY}" --arg digest "${DIGEST}" --argjson signed "${SIGNED}" \
-            '{name: $name, repository: $repository, digest: $digest, sbom: true, provenance: true, vulnerabilities: "passed", signed: $signed}' \
-            >"image-record/${NAME}.json"
-
-      - name: Upload image manifest record
-        if: inputs.push && steps.build.outcome == 'success'
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: image-record-${{ inputs.name }}
-          path: image-record/
-          retention-days: 90
+          record="$(jq -cn --arg name "${NAME}" --arg repository "${REPOSITORY}" --arg digest "${DIGEST}" --argjson signed "${SIGNED}" \
+            '{name: $name, repository: $repository, digest: $digest, sbom: true, provenance: true, vulnerabilities: "passed", signed: $signed}')"
+          echo "record=${record}" >>"${GITHUB_OUTPUT}"

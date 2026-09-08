@@ -1,8 +1,0 @@
-{
-	"id": "v02-concurrency-runtime",
-	"title": "Fibers, channels, and GC runtime",
-	"description": "Spawn/fiber runtime surfaces, channel primitives, vendored abfall GC heap integration, and runtime module alignment for v0.2 execution.",
-	"closedOn": "2026-05-20",
-	"subtasks": [],
-	"$schema": "../schemas/seed/deliverable.schema.json"
-}

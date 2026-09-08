@@ -1,8 +1,7 @@
-# Docker registry:2 configuration — Beskid private registry.
+# Docker registry:2 configuration — Beskid registry.
 #
 # The registry runs HTTP-only inside the beskid-frontend network. Caddy
-# terminates TLS at cr.beskid-lang.org; registry-level htpasswd authenticates
-# every OCI client, including Watchtower.
+# terminates TLS at cr.beskid-lang.org; OCI clients pull and push directly.
 
 version: 0.1
 log:
@@ -22,11 +21,6 @@ http:
   addr: 0.0.0.0:5000
   headers:
     X-Content-Type-Options: [nosniff]
-
-auth:
-  htpasswd:
-    realm: Beskid registry
-    path: /auth/htpasswd
 
 health:
   storagedriver:

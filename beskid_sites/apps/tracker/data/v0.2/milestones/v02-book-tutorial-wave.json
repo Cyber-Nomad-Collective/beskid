@@ -1,8 +1,0 @@
-{
-	"id": "v02-book-tutorial-wave",
-	"title": "Book tutorial rollout",
-	"description": "Early v0.2 language book chapters, corelib naming on the public site, and trudoc/bootstrap wiring ahead of the May platform-spec cutover.",
-	"closedOn": "2026-05-05",
-	"subtasks": [],
-	"$schema": "../schemas/seed/deliverable.schema.json"
-}

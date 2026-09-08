@@ -1,7 +1,0 @@
-{
-	"slug": "editor-extension",
-	"title": "Editor & Open VSX",
-	"summary": "**beskid_vscode** submodule, Open VSX publish matrix with cross-arch LSP bundles, extension runtime modularization, and CLI-driven language client launch (`beskid lsp`).\n\n- darwin-x64 jobs cross-build Intel LSP when CI runs on Apple Silicon.\n- Extension tracks package workflow UI and LSP outline/status integration.",
-	"order": 7,
-	"$schema": "../schemas/seed/workstream.schema.json"
-}

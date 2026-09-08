@@ -36,11 +36,11 @@ run_build() {
     printf 'builder exited successfully but did not produce %s\n' "${asset}" >>"${log}"
   fi
   reason="$(tail -n 5 "${log}" | tr '\n' ' ' | sed 's/[[:space:]]\+/ /g' | cut -c1-500)"
-  [[ -n "${reason}" || "${status}" == success ]] || reason="command exited with status ${rc}; see release-logs/$(basename "${log}")"
+  [[ -n "${reason}" || "${status}" == success ]] || reason="command exited with status ${rc}; see $(basename "${log}")"
   jq -n \
     --arg status "${status}" --arg asset "${asset}" \
     --arg command "build-release-artifact.sh ${package} ${binary} ${target} ${asset} ${version}" \
-    --arg log_path "release-logs/$(basename "${log}")" \
+    --arg log_path "$(basename "${log}")" \
     --arg reason "${reason}" \
     --argjson exit_code "${rc}" \
     '{status:$status,asset:$asset,command:$command,exit_code:$exit_code,log_path:$log_path,reason:$reason}'
@@ -69,12 +69,12 @@ for component in $(jq -r '.builds | keys[]' "${result}"); do
     if ! bash "${reporter}" compiler "${component}-release-build" "${target}" \
       "$(jq -r ".builds.${component}.command" "${result}")" \
       "${output_dir}/release-logs/${target}-${component}.log" \
-      "release-logs/${target}-${component}.log" "${diagnostic}"; then
+      "${target}-${component}.log" "${diagnostic}"; then
       jq -n \
         --arg component compiler --arg stage "${component}-release-build" --arg platform "${target}" \
         --arg command "$(jq -r ".builds.${component}.command" "${result}")" \
         --arg reason "structured reporter failed; inspect retained raw log" \
-        --arg log_path "release-logs/${target}-${component}.log" \
+        --arg log_path "${target}-${component}.log" \
         '{schema_version:1,component:$component,stage:$stage,platform:$platform,command:$command,
           test_case:"unavailable",identifier:"unavailable",
           location:{file:"unavailable",line:0,column:0},reason:$reason,log_path:$log_path}' >"${diagnostic}"

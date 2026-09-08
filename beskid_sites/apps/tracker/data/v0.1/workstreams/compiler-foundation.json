@@ -1,7 +1,0 @@
-{
-	"slug": "compiler-foundation",
-	"title": "Compiler foundations",
-	"order": 1,
-	"summary": "Bootstrap and evolve the standalone **compiler** repository after [`dd75bff`](https://github.com/Cyber-Nomad-Collective/compiler/commit/dd75bff): superrepo submodule wiring, **AOT** refactor baseline, **`beskid pack`**, **optional null-conditional (`?.`)** operand, **file-scoped module** grammar plus resolver/analysis hardening, and graph **Std** injection tests leading to deliverable **v01-compiler-parity**.",
-	"$schema": "../schemas/seed/workstream.schema.json"
-}

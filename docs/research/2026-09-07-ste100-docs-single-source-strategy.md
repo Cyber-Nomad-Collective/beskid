@@ -1,7 +1,7 @@
 # Research: ASD-STE100 and a single Beskid Docs source
 
-**Date:** 2026-09-07  
-**Scope:** Establish a safe documentation strategy for a public `beskid-lang.org/docs` area, STE-governed technical prose, and retirement of the separate Platform Spec application.  
+**Date:** 2026-09-07
+**Scope:** Establish a safe documentation strategy for a public `beskid-lang.org/docs` area, STE-governed technical prose, and retirement of the separate Platform Spec application.
 **Status:** Research only. No product documentation changed.
 
 ## Evidence

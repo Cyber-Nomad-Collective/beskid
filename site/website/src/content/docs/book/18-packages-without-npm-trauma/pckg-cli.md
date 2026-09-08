@@ -1,12 +1,12 @@
 ---
 title: "The pckg CLI"
-description: Publish, login, and dry-run flows through beskid pckg—not a second package manager hiding in the bushes.
+description: Pack and upload flows through beskid pckg—not a second package manager hiding in the bushes.
 tableOfContents: true
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
-`beskid pckg` is the toolchain entry for registry operations: authentication, dry-run validation, publish, and related workflows implemented in the **`beskid_pckg`** crate and the **pckg** registry service.
+`beskid pckg` is the toolchain entry for registry operations: credential configuration, artifact packing, upload, and related workflows implemented in the **`beskid_pckg`** crate and the **pckg** registry service.
 
 <Aside type="caution">
 Scaffolding templates use **`beskid new`**, not `pckg`. There is no `beskid pkg` command — `pckg` is the canonical spelling in every context.
@@ -15,18 +15,20 @@ Scaffolding templates use **`beskid new`**, not `pckg`. There is no `beskid pkg`
 ## Commands you will actually use
 
 ```bash
-beskid pckg login
+beskid pckg configure --api-key "$BESKID_PCKG_API_KEY"
 beskid pckg whoami
-beskid pckg publish --dry-run
-beskid pckg publish
+beskid pckg pack --package acme.math --source . --output acme.math.bpk
+beskid pckg upload acme.math --artifact acme.math.bpk
 ```
 
-## What happens during publish
+## What happens during upload
 
-1. **`beskid pckg pack`** (run automatically) — collects source, generates API docs for library packages, assembles `.bpk` artifact
-2. **`POST /api/packages/<name>/publish`** — streaming upload with progress reporting; the server assigns the next semver
+1. **`beskid pckg pack`** — collects source, generates API docs for library packages, selects an exact semantic version, and assembles the `.bpk` artifact
+2. **`beskid pckg upload`** — reads that version from artifact-root `package.json` and streams `version`, checksum, and artifact bytes to **`POST /api/packages/<name>/versions`**
 3. **Server-side validation** — manifest integrity, checksum match, review/moderation policy enforcement
-4. **Catalog update** — version appears in search and listing endpoints; dependents can `beskid pckg add` it
+4. **Catalog update** — version appears in search and listing endpoints; project fetch/lock flows can resolve it
+
+The registry does not assign a different version during upload. Package/version coordinates are immutable: publish a new artifact version instead of replacing existing bytes.
 
 ## Authentication
 
@@ -36,7 +38,7 @@ beskid pckg publish
 2. `BESKID_PCKG_TOKEN` / `BESKID_PCKG_API_KEY` environment variables
 3. `.beskid/pckg/repositories.json` (written by `beskid pckg configure`)
 
-Publisher operations (`publish`, `yank`, `unyank`) require a `Publisher` or `SuperAdmin` role.
+Publisher operations (`upload`, `yank`, `unyank`) require a valid publish-scoped credential.
 
 ## See also
 

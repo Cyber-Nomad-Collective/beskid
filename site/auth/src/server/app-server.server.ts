@@ -1,5 +1,5 @@
 import { getRequest } from "@tanstack/react-start/server";
-
+import { pairingAppIdSchema } from "#/lib/pairing-app-id";
 import {
 	isAdminLogin,
 	isOnboarded,
@@ -8,17 +8,16 @@ import {
 import { getAdminLogins } from "#/server/hub-admin-bootstrap.server";
 import { hubOAuthCallbackUrl, hubPublicBase } from "#/server/hub-public.server";
 import {
-	getPairingRequest,
-	createPairingRequest,
-	listPairingAudit,
-	listPairingRequests,
-} from "#/server/repositories/pairing";
-import {
 	getServiceTokenForApp,
 	listActivePairedApps,
 	type PairedAppRow,
 } from "#/server/repositories/paired-apps";
-import { pairingAppIdSchema } from "#/lib/pairing-app-id";
+import {
+	createPairingRequest,
+	getPairingRequest,
+	listPairingAudit,
+	listPairingRequests,
+} from "#/server/repositories/pairing";
 import { getSessionFromRequest } from "#/server/session";
 
 export async function resolveAdminAccess() {
@@ -97,7 +96,6 @@ export async function loadPairingRequestDetail(requestId: string) {
 
 const repairPaths: Record<string, string> = {
 	tracker: "/api/admin/auth/pair",
-	"platform-spec": "/api/admin/setup",
 	nexus: "/api/admin/auth/pair",
 	pckg: "/api/auth/hub/pair",
 };
@@ -136,7 +134,7 @@ export async function loadAdminPairingRepairTargets(input: {
 			});
 			continue;
 		}
-		const repairPath = repairPaths[row.id];
+		const repairPath = repairPaths[rowAppId.data];
 		if (!repairPath) {
 			results.skipped.push(row.id);
 			continue;
@@ -156,11 +154,7 @@ export async function loadAdminPairingRepairTargets(input: {
 			createdByLogin: access.session.login,
 		});
 		const pairingPayload: Record<string, unknown> = {};
-		if (row.id === "platform-spec") {
-			pairingPayload.pairingCode = request.pairingCode;
-			pairingPayload.platformSpecPublicUrl = targetPublicUrl;
-			pairingPayload.forceRepair = true;
-		} else if (row.id === "pckg") {
+		if (rowAppId.data === "pckg") {
 			pairingPayload.code = request.pairingCode;
 			pairingPayload.publicUrl = targetPublicUrl;
 			pairingPayload.force = true;

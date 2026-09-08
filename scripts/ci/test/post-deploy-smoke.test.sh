@@ -33,7 +33,7 @@ printf '%s\n' "${url}" >>"${MOCK_LOG}"
 SH
 chmod +x "${TMP}/bin/curl"
 
-production_urls='https://beskid-lang.org/ https://auth.beskid-lang.org/api/health https://learn.beskid-lang.org/api/health https://tracker.beskid-lang.org/api/health https://nexus.beskid-lang.org/api/health https://pckg.beskid-lang.org/health/ready'
+production_urls='https://beskid-lang.org/ https://learn.beskid-lang.org/api/health https://tracker.beskid-lang.org/api/health https://nexus.beskid-lang.org/api/health https://pckg.beskid-lang.org/health/ready'
 
 run_smoke() {
   : >"${MOCK_LOG}"
@@ -48,13 +48,13 @@ read_logged_urls() {
 
 run_smoke "${production_urls}"
 read_logged_urls
-assert_eq 6 "${#logged_urls[@]}" "canonical URLs produce one curl per endpoint"
+assert_eq 5 "${#logged_urls[@]}" "canonical URLs produce one curl per endpoint"
 assert_eq 'https://beskid-lang.org/' "${logged_urls[0]}" "site root is first"
-assert_eq 'https://pckg.beskid-lang.org/health/ready' "${logged_urls[5]}" "pckg is last"
+assert_eq 'https://pckg.beskid-lang.org/health/ready' "${logged_urls[4]}" "pckg is last"
 
 run_smoke "\"https://beskid-lang.org/\" ${production_urls#* }"
 read_logged_urls
-assert_eq 6 "${#logged_urls[@]}" "quoted URL is normalized"
+assert_eq 5 "${#logged_urls[@]}" "quoted URL is normalized"
 
 if PATH="${TMP}/bin:${PATH}" bash "${SCRIPT}" staging >/dev/null 2>&1; then
   _TESTS_RUN=$((_TESTS_RUN + 1)); _TESTS_FAIL=$((_TESTS_FAIL + 1)); echo '  FAIL - staging argument is rejected'
@@ -68,7 +68,7 @@ else
   _TESTS_RUN=$((_TESTS_RUN + 1)); echo '  ok   - non-HTTPS override is rejected'
 fi
 
-MOCK_FAIL_URL='https://auth.beskid-lang.org/api/health'
+MOCK_FAIL_URL='https://tracker.beskid-lang.org/api/health'
 if run_smoke "${production_urls}" >/dev/null 2>&1; then
   _TESTS_RUN=$((_TESTS_RUN + 1)); _TESTS_FAIL=$((_TESTS_FAIL + 1)); echo '  FAIL - curl error fails smoke'
 else

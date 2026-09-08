@@ -44,7 +44,6 @@ concurrency:
 
 jobs:
   openspec:
-    if: ${{ github.event_name != 'workflow_dispatch' || !inputs.unstable }}
     uses: ./.github/workflows/reusable-quality.yml
     with:
       gate-name: openspec
@@ -53,7 +52,6 @@ jobs:
       command: bash scripts/ci/openspec-gate.sh
 
   conformance:
-    if: ${{ github.event_name != 'workflow_dispatch' || !inputs.unstable }}
     uses: ./.github/workflows/reusable-quality.yml
     with:
       gate-name: conformance
@@ -62,7 +60,6 @@ jobs:
       command: bash scripts/ci/conformance-gate.sh
 
   integration:
-    if: ${{ github.event_name != 'workflow_dispatch' || !inputs.unstable }}
     uses: ./.github/workflows/reusable-quality.yml
     with:
       gate-name: platform-integration
@@ -72,14 +69,12 @@ jobs:
       command: bash scripts/ci/platform-integration-gate.sh
 
   security:
-    if: ${{ github.event_name != 'workflow_dispatch' || !inputs.unstable }}
     uses: ./.github/workflows/reusable-quality.yml
     with:
       gate-name: supply-chain-security
       command: bash scripts/ci/security-policy-gate.sh
 
   shared-ui-nexus:
-    if: ${{ github.event_name != 'workflow_dispatch' || !inputs.unstable }}
     uses: ./.github/workflows/reusable-quality.yml
     with:
       gate-name: shared-ui-nexus
@@ -92,6 +87,7 @@ jobs:
     # Delivery is intentionally decoupled from quality gates, which remain
     # independent branch-protection checks.
     permissions:
+      actions: read
       contents: read
       packages: write
       id-token: write
@@ -106,14 +102,11 @@ jobs:
       submodules: beskid_web_common
       push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.unstable)) }}
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.unstable)) }}
-    secrets:
-      REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
-      REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
-
   image-learn:
     # Delivery is intentionally decoupled from quality gates, which remain
     # independent branch-protection checks.
     permissions:
+      actions: read
       contents: read
       packages: write
       id-token: write
@@ -131,10 +124,6 @@ jobs:
         BESKID_RELEASE_CHANNEL=${{ github.event_name == 'workflow_dispatch' && inputs.unstable && 'unstable' || 'stable' }}
       push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.unstable)) }}
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.unstable)) }}
-    secrets:
-      REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
-      REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
-
   image-tracker:
     # Delivery is intentionally decoupled from quality gates, which remain
     # independent branch-protection checks.
@@ -159,10 +148,6 @@ jobs:
         SESSION_SECRET=0123456789abcdef0123456789abcdef
       push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.unstable)) }}
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.unstable)) }}
-    secrets:
-      REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
-      REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
-
   image-nexus:
     # Delivery is intentionally decoupled from quality gates, which remain
     # independent branch-protection checks.
@@ -183,10 +168,6 @@ jobs:
       submodules: beskid_nexus beskid_web_common
       push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.unstable)) }}
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.unstable)) }}
-    secrets:
-      REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
-      REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
-
   image-pckg:
     # Delivery is intentionally decoupled from quality gates, which remain
     # independent branch-protection checks.
@@ -205,7 +186,7 @@ jobs:
       # Keep the context at the repository root so file:../../beskid_web_common exists.
       context: .
       dockerfile: pckg/Dockerfile
-      submodules: compiler pckg beskid_bsol beskid_web_common
+      submodules: beskid_bsol compiler pckg beskid_web_common
       healthcheck-url: /health/ready
       healthcheck-port: '8082'
       # Hard gate: a failed pckg build/push fails the whole delivery. The
@@ -215,10 +196,6 @@ jobs:
       # Compose profiles: [pckg] remains deploy-profile gating only.
       push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.unstable)) }}
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.unstable)) }}
-    secrets:
-      REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
-      REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
-
   manifest:
     # A manifest is the promotion boundary. It must only exist when every
     # required validation and image lane from this run succeeded.
@@ -232,23 +209,22 @@ jobs:
         needs.image-nexus.result == 'success' &&
         needs.image-pckg.result == 'success' &&
         (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.unstable))) &&
-        (
-          inputs.unstable ||
-          (
-            needs.openspec.result == 'success' &&
-            needs.conformance.result == 'success' &&
-            needs.integration.result == 'success' &&
-            needs.security.result == 'success' &&
-            needs.shared-ui-nexus.result == 'success'
-          )
-        )
+        needs.openspec.result == 'success' &&
+        needs.conformance.result == 'success' &&
+        needs.integration.result == 'success' &&
+        needs.security.result == 'success' &&
+        needs.shared-ui-nexus.result == 'success'
       }}
     permissions:
       contents: read
-      actions: read
     uses: ./.github/workflows/reusable-release-manifest.yml
     with:
-      artifact-name: release-manifest
+      records-jsonl: |-
+        ${{ needs.image-site.outputs.record }}
+        ${{ needs.image-learn.outputs.record }}
+        ${{ needs.image-tracker.outputs.record }}
+        ${{ needs.image-nexus.outputs.record }}
+        ${{ needs.image-pckg.outputs.record }}
 
   production:
     needs: manifest
@@ -260,6 +236,7 @@ jobs:
       id-token: write
     uses: ./.github/workflows/reusable-promote.yml
     with:
-      manifest-run-id: ${{ format('{0}', github.run_id) }}
+      manifest-base64: ${{ needs.manifest.outputs.manifest-base64 }}
+      source-run-id: ${{ format('{0}', github.run_id) }}
       apply: true
     secrets: inherit

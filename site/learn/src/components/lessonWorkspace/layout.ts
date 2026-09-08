@@ -2,15 +2,8 @@ import {
 	clampSplit,
 	type MosaicDirection,
 	type MosaicNode,
-	reconcileMosaicTree,
 } from "#/components/workspaceLayout";
 import type { LearnExercise } from "#/data/learningCatalog";
-
-export interface PersistedLayout {
-	version: 2;
-	visibleTiles: string[];
-	tree: MosaicNode;
-}
 
 interface TileConfig {
 	id: string;
@@ -18,11 +11,6 @@ interface TileConfig {
 	defaultVisible: boolean;
 	defaultSize: number;
 }
-
-const LAYOUT_KEY = (exerciseId: string) => `exercise-${exerciseId}-layout`;
-const LAYOUT_VERSION = 2;
-export const HANDLE_SIZE_PX = 10;
-export const KEYBOARD_SPLIT_STEP = 2;
 
 const DEFAULT_TILES: TileConfig[] = [
 	{ id: "editor", label: "Editor", defaultVisible: true, defaultSize: 44 },
@@ -112,13 +100,28 @@ export function getTileConfigForExercise(exercise: LearnExercise): TileConfig[] 
 	return DEFAULT_TILES.map((tile) => ({
 		...tile,
 		defaultVisible:
-			 tile.id === "editor" ||
-			 (tile.id === "terminal" && shouldShowTerminal) ||
-			 (tile.id === "fileExplorer" && shouldShowFiles),
+			tile.id === "editor" ||
+			tile.id === "terminal" ||
+			tile.id === "content" ||
+			(tile.id === "fileExplorer" && shouldShowFiles) ||
+			(tile.id === "hints" && shouldShowTerminal && exercise.hints.length > 0),
 	}));
 }
 
-export function buildPersistedFromVisible(visible: string[], exercise: LearnExercise): PersistedLayout {
+/** Returns the complete, non-user-mutable set of views declared for a lesson. */
+export function getLessonTileIds(exercise: LearnExercise): string[] {
+	const ids = getTileConfigForExercise(exercise)
+		.filter((tile) => tile.defaultVisible)
+		.map((tile) => tile.id);
+	return ids.length > 0 ? ids : ["editor"];
+}
+
+/** Builds the deterministic split tree used by the fixed lesson workspace. */
+export function buildLessonTileLayout(exercise: LearnExercise): MosaicNode {
+	return buildTreeForVisible(getLessonTileIds(exercise), exercise);
+}
+
+function buildTreeForVisible(visible: string[], exercise: LearnExercise): MosaicNode {
 	const config = getTileConfigForExercise(exercise);
 	const allowed = new Set(config.map((tile) => tile.id));
 	const deduped = [...new Set(visible)].filter((id) => allowed.has(id));
@@ -139,58 +142,5 @@ export function buildPersistedFromVisible(visible: string[], exercise: LearnExer
 			? weighted
 			: [{ id: "editor", size: 1 }, { id: "terminal", size: 1 }, { id: "content", size: 1 }];
 
-	return {
-		version: LAYOUT_VERSION,
-		visibleTiles: effective.map((entry) => entry.id),
-		tree: buildTreeFromWeightedTiles(effective),
-	};
-}
-
-function sanitizeLayout(raw: unknown, exercise: LearnExercise): PersistedLayout {
-	const fallback = buildPersistedFromVisible([], exercise);
-	if (!raw || typeof raw !== "object") return fallback;
-
-	const candidate = raw as {
-		version?: unknown;
-		visibleTiles?: unknown;
-		tree?: unknown;
-	};
-
-	if (Array.isArray(candidate.visibleTiles) && candidate.visibleTiles.length > 0) {
-		const allowed = new Set(getTileConfigForExercise(exercise).map((tile) => tile.id));
-		const visible = candidate.visibleTiles.filter(
-			(value): value is string => typeof value === "string" && allowed.has(value),
-		);
-		if (visible.length > 0) {
-			const normalized = buildPersistedFromVisible(visible, exercise);
-			const tree =
-				candidate.version === LAYOUT_VERSION
-					? reconcileMosaicTree(candidate.tree, normalized.visibleTiles)
-					: null;
-			if (tree) return { ...normalized, tree };
-			return normalized;
-		}
-	}
-
-	return fallback;
-}
-
-export function loadLayout(exercise: LearnExercise): PersistedLayout {
-	try {
-		const raw = localStorage.getItem(LAYOUT_KEY(exercise.id));
-		if (!raw) return buildPersistedFromVisible([], exercise);
-
-		const parsed = JSON.parse(raw) as unknown;
-		return sanitizeLayout(parsed, exercise);
-	} catch {
-		return buildPersistedFromVisible([], exercise);
-	}
-}
-
-export function persistLayout(exercise: LearnExercise, layout: PersistedLayout): void {
-	try {
-		localStorage.setItem(LAYOUT_KEY(exercise.id), JSON.stringify(layout));
-	} catch {
-		// ignore storage failures
-	}
+	return buildTreeFromWeightedTiles(effective);
 }
