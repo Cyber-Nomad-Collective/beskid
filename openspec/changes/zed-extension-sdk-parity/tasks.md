@@ -25,6 +25,8 @@
 - [x] 3.3 Restrict requested Zed capabilities to the approved language and
   runnable surface.
 - [x] 3.4 Document supported parity and unsupported VS Code-specific UI.
+- [x] 3.5 Register standalone `.bsol` with the existing native `beskid_lsp`
+  adapter and document the intentionally deferred Tree-sitter surface.
 
 ## 4. Verification and promotion
 

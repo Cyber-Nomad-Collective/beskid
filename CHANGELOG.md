@@ -83,6 +83,10 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Added
 
+- Zed extension: register standalone `.bsol` documents with the existing
+  native `beskid_lsp` adapter for generic BSOL diagnostics, `@schemaless`
+  completion, and hover help; Tree-sitter highlighting and structural queries
+  remain deferred until BSOL has a standalone publishable grammar package.
 - Zed extension: add registry-packaged outlines, indentation and bracket
   queries, pinned-CLI runnable task bindings, declaration snippets, and
   grammar-validated runnable fixtures for Beskid source files.

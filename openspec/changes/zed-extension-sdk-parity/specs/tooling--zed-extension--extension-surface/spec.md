@@ -178,6 +178,26 @@ included in the built registry artifact.
 - **THEN** the package resolves the declared runnable definition and forwards
   the action to the Beskid toolchain
 
+### Requirement: Standalone BSOL language-server IntelliSense
+
+The registry package SHALL register standalone `.bsol` documents as `Beskid
+BSOL`, map that language to the existing `beskid-lsp` language-server entry
+with the `bsol` language ID, and retain one native `beskid_lsp` adapter and
+binary-resolution authority. The native server SHALL provide generic BSOL
+syntax diagnostics plus the supported generic completion and hover behavior.
+The package SHALL NOT bind `.bsol` to the Beskid source grammar or claim an
+unsupported nested grammar path, highlighting query, outline, or structural
+Tree-sitter asset.
+
+#### Scenario: Standalone BSOL uses the native server without a second adapter
+
+- **GIVEN** a Zed workspace contains a standalone `.bsol` document
+- **WHEN** Zed selects its language server
+- **THEN** it sends the `bsol` language ID to the existing `beskid-lsp` entry
+- **AND** generic BSOL diagnostics, completion, and hover come from native
+  `beskid_lsp`
+- **AND** the package declares no `grammars.bsol` entry or nested grammar path
+
 ### Requirement: Restricted extension capabilities
 
 The extension SHALL request and use only `download_file` for the exact GitHub

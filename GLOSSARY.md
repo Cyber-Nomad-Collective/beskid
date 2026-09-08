@@ -20,6 +20,13 @@ The central `site/auth` service. It is the only browser identity authority for p
 
 The current normative requirements in `openspec/specs`. A text outside that directory is not part of the standard unless it is incorporated through a validated OpenSpec change.
 
+## BSOL (Beskid Structured Object Language)
+
+The generic block syntax used by `.bproj`, `.bws`, and standalone `.bsol`
+documents. In Zed, standalone `.bsol` is a separate `bsol` language ID routed
+to the native `beskid_lsp`; it has generic diagnostics and limited
+`@schemaless` assistance, not a falsely claimed Tree-sitter grammar surface.
+
 ## Bug-only GitHub synchronization
 
 Tracker integration in which GitHub Issues represents public bugs and their supported status/discussion fields only. Roadmap tasks, versions, workstreams, milestones, and deliverables remain in Tracker's SQLite domain model.

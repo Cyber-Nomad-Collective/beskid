@@ -9,7 +9,7 @@ authority for semantic and workspace behavior.
 ## Install
 
 Install **Beskid** from Zed's Extensions view. The extension recognizes `.bd`
-source files and `.bproj` and `.bws` manifests.
+source files, `.bproj` and `.bws` manifests, and standalone `.bsol` documents.
 
 To load this checkout for development:
 
@@ -99,6 +99,15 @@ The package intentionally has no custom semantic-token rules because the server
 advertises standard token types only; Beskid-specific token types would require
 verified mappings before being added.
 
+Standalone `.bsol` documents use the same native `beskid_lsp` through Zed's
+`bsol` language ID. They receive generic BSOL syntax diagnostics and the
+`@schemaless` completion and hover help. They intentionally do not claim
+Tree-sitter highlighting, outline, or query support: the repository's nested
+`beskid_bsol/grammars/tree-sitter-bsol` source is not a standalone Zed grammar
+package, and the Zed grammar manifest has no supported grammar-subdirectory
+field. A separately published BSOL grammar is required before those assets can
+be added truthfully.
+
 Source runnables use these pinned top-level compiler commands:
 
 | Action | Command template |
@@ -122,8 +131,9 @@ surface for which the SDK has no host capability.
 | VS Code capability | Zed status | Zed implementation |
 | --- | --- | --- |
 | Diagnostics, completion, hover, go-to-definition, references, document/workspace symbols, formatting, and semantic tokens | LSP-native | The same native `beskid_lsp`, with initialization and workspace configuration forwarded unchanged |
-| `.bd`, `.bproj`, and `.bws` language association | Re-expressed | Zed language manifests and explicit LSP language IDs |
+| `.bd`, `.bproj`, `.bws`, and `.bsol` language association | Re-expressed | Zed language manifests and explicit LSP language IDs |
 | Syntax highlighting and symbols | Re-expressed | Packaged Tree-sitter grammar plus highlight, tag, and outline queries |
+| Standalone `.bsol` Tree-sitter highlighting and structural queries | Deferred | The nested BSOL grammar is not a registry-consumable standalone grammar package; the same native LSP still supplies generic diagnostics, completion, and hover |
 | Declaration snippets | Re-expressed | Zed JSON snippets for module, function, type, contract, enum, and test declarations |
 | Test, run, build, analyze, fetch, and lock actions | Re-expressed | Runnable captures and Zed task templates using the pinned top-level CLI |
 | Projects and Packages tree views | Unsupported UI | Registry extensions cannot register custom tree views |

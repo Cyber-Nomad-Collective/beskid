@@ -64,10 +64,20 @@ event-listener/restart API and does not claim to perform those host behaviors.
 ### Language and runnable assets
 
 The package ships the Beskid language definition, query files, snippets, and
-runnable/task definitions required for `.bd` editing and execution. Assets are
-owned by the Zed package, use stable repository-relative paths, and are checked
-by the package gate so a source checkout and registry artifact expose the same
-surface.
+runnable/task definitions required for `.bd` editing and execution. It also
+registers standalone `.bsol` as `Beskid BSOL` and maps it to the existing
+`beskid-lsp` server using the `bsol` language ID. Native `beskid_lsp` owns
+generic BSOL diagnostics and its small generic completion/hover surface; no
+second Zed adapter or installer exists.
+
+The nested `beskid_bsol/grammars/tree-sitter-bsol` source is not a
+registry-consumable Zed grammar package, and Zed's grammar manifest supports a
+repository plus revision but no grammar-subdirectory field. The package must
+therefore not reuse the Beskid grammar or claim BSOL highlighting, outline, or
+query assets. Those remain deferred until BSOL is published as its own grammar
+repository. Assets are owned by the Zed package, use stable
+repository-relative paths, and are checked by the package gate so a source
+checkout and registry artifact expose the same surface.
 
 ### Capability and UI boundary
 
