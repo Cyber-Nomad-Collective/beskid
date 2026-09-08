@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "cbb9547d4f00b4fec896600983e79f5f857e09ef5901be1741f12fae3944978a",
+  "revision": "d3904f5cbd5a36615d351f1d4c43164d2e27c5eb634f120c36ed665c9606e92a",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -39090,7 +39090,7 @@
       "path": "GLOSSARY.md",
       "title": "Glossary",
       "authority": "informative",
-      "sourceHash": "5545f46b26e0fb27fe03c53942c53a483991c7484b6edbe3d3fac9b42153ee1b",
+      "sourceHash": "ab2792a6fb642af84abf1d811e9fdacdd092eeece6bb0c3475f1dbdc1e56a64f",
       "standardLinks": [
         "/platform-spec/"
       ],
