@@ -40,12 +40,47 @@ test('does not join sentences across Markdown block boundaries or inspect MDX ma
 	assert.deepEqual(candidates, []);
 });
 
+test('reviews prose inside inline MDX containers but excludes multiline expressions', () => {
+	const candidates = reviewDocument(`<Aside>The XYZ result was built by the tool.</Aside>\n{condition ?\n  <Aside title={"The QBI result was built by hidden code"}>\n    {"A hidden QBI sentence was deliberately written with enough extra ordinary words to exceed the configured sentence limit without becoming reviewable prose."}\n  </Aside>\n  : null}\nUse the tool.\n`, 'inline-container.mdx');
+
+	assert.deepEqual(candidates.map(({ line, rule, token }) => ({ line, rule, ...(token ? { token } : {}) })), [
+		{ line: 1, rule: 'passive-voice' },
+		{ line: 1, rule: 'unexplained-abbreviation', token: 'XYZ' },
+	]);
+});
+
+test('applies abbreviation explanations in source order inside a joined paragraph', () => {
+	const candidates = reviewDocument(`This sentence starts here\nand uses QBI before the quality boundary interface\n(QBI) explanation appears. Use QBI after the explanation.\n`, 'ordered-terms.md');
+
+	assert.deepEqual(candidates.map(({ line, rule, token }) => ({ line, rule, token })), [
+		{ line: 2, rule: 'unexplained-abbreviation', token: 'QBI' },
+	]);
+});
+
+test('joins a CommonMark lazy list continuation into the rendered sentence', () => {
+	const candidates = reviewDocument(`- This list item begins a rendered sentence with enough ordinary words to approach the configured candidate threshold\nand this lazy continuation adds enough more ordinary words to cross the limit safely.\n`, 'lazy-list.md');
+
+	assert.deepEqual(candidates.map(({ line, rule }) => ({ line, rule })), [
+		{ line: 1, rule: 'sentence-length' },
+	]);
+});
+
 test('reports controlled irregular passive participles', () => {
 	const candidates = reviewDocument('The package was built by CI.\nThe default is set by the project.\nThe builder built the package and set the default.\n', 'irregular.md');
 
 	assert.deepEqual(candidates.map(({ line, rule }) => ({ line, rule })), [
 		{ line: 1, rule: 'passive-voice' },
 		{ line: 2, rule: 'passive-voice' },
+	]);
+});
+
+test('does not treat set or built noun phrases as passive voice', () => {
+	const candidates = reviewDocument(`The result is a set of values.\nThis is the set that applies.\nThe object is a built structure.\nThe default is set by the project.\nThe artifact was deliberately built by CI.\nThe value is not yet set by default.\n`, 'passive-boundaries.md');
+
+	assert.deepEqual(candidates.map(({ line, rule }) => ({ line, rule })), [
+		{ line: 4, rule: 'passive-voice' },
+		{ line: 5, rule: 'passive-voice' },
+		{ line: 6, rule: 'passive-voice' },
 	]);
 });
 
