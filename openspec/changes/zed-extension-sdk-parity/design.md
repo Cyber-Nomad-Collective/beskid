@@ -28,6 +28,9 @@ contents or prove binary compatibility before launch. The download comes from
 the `Cyber-Nomad-Collective/beskid_compiler` GitHub release, tag `lsp-stable`,
 uses the exact platform-matrix asset, and is cached under a path containing the
 release version. No other network source or guessed relative path is allowed.
+The release matrix is evaluated only for that final download fallback;
+configured and PATH-resolved commands are host-owned and remain usable on
+hosts outside the release matrix.
 
 Native `beskid_lsp` remains the semantic and workspace authority. The Zed
 extension only launches and configures that server; it SHALL NOT rebuild,
@@ -39,8 +42,10 @@ diagnostics, queries, or graph/domain behavior.
 The release matrix is exact: Linux x86-64 uses
 `beskid_lsp-linux-amd64`, macOS arm64 uses `beskid_lsp-darwin-arm64`, and
 Windows x86-64 uses `beskid_lsp-windows-amd64.exe`. Other host/platform pairs
-fail closed with a clear diagnostic. The extension forwards the configured
-server path and the exact Zed keys `lsp.beskid-lsp.binary.path`,
+fail closed with a clear diagnostic only if resolution reaches the release
+download fallback; they do not invalidate a configured or PATH-resolved server
+command. The extension forwards the configured server path and the exact Zed
+keys `lsp.beskid-lsp.binary.path`,
 `lsp.beskid-lsp.arguments`, `lsp.beskid-lsp.env`,
 `lsp.beskid-lsp.initialization_options`, and `lsp.beskid-lsp.settings` into the
 LSP flow. Initialization options and settings are opaque JSON forwarded
@@ -61,12 +66,13 @@ surface.
 
 The capability allowlist is only `download_file` for the exact GitHub release
 repository path and `process:exec` narrowly scoped to launching explicit,
-PATH-resolved, or downloaded Beskid server commands. If the manifest schema
-requires `command = "*"` for arbitrary explicit paths or versioned downloaded
-paths, the manifest may use it, but `args` remain constrained to the server
-forms. Workspace file access and task execution are host-owned capabilities and
-are not claimed by the extension. No other process, filesystem, network,
-telemetry, or UI capability is requested. The extension does not claim
+PATH-resolved, or downloaded Beskid server commands. Zed's static matcher
+requires `command = "*"`, `args = ["**"]` to preserve trusted configured
+arguments unchanged and to permit arbitrary explicit or versioned cache paths;
+the extension keeps that capability operationally narrow by constructing only
+the selected Beskid server command. Workspace file access and task execution
+are host-owned capabilities and are not claimed by the extension. No other
+process, filesystem, network, telemetry, or UI capability is requested. The extension does not claim
 to provide VS Code activity-bar views, webview panels, status-bar modal cards,
 or the VS Code package/project/outline UI. Documentation must distinguish
 implemented parity from unsupported UI rather than implying that those views

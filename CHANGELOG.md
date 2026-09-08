@@ -25,6 +25,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Zed extension: preserve trusted configured and PATH server candidates on
   hosts outside the release matrix, mark every stable-install failure clearly,
   and atomically promote verified versioned download caches.
+- OpenSpec: align the Zed extension contract with SDK platform fallback and
+  trusted-argument capability semantics.
 - Deployment: replaced the custom GitHub auth image with Authelia forward
   authentication for every public Beskid application. The production runtime
   now exposes Authelia at `auth.beskid-lang.org` and retains the Compose,

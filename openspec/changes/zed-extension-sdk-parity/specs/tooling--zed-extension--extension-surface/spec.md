@@ -22,6 +22,9 @@ or prove binary compatibility before launch. The download SHALL come from the
 `Cyber-Nomad-Collective/beskid_compiler` GitHub release, tag `lsp-stable`, use
 the exact platform-matrix asset, and be cached under a path containing the
 release version. No other network source or guessed relative path is allowed.
+Configured and PATH-resolved commands are host-owned candidates and SHALL NOT
+be rejected by the release platform matrix; platform validation applies only
+when resolution reaches the download fallback.
 
 Native `beskid_lsp` SHALL remain the semantic and workspace authority. The
 extension SHALL only launch and configure that server and SHALL NOT duplicate
@@ -34,6 +37,8 @@ behavior locally.
 - **WHEN** the extension initializes the language server
 - **THEN** it launches that path
 - **AND** it does not search or download another binary
+- **AND** an unsupported release-download platform does not invalidate the
+  trusted configured command
 
 #### Scenario: PATH and stable download fallbacks follow the fixed order
 
@@ -42,6 +47,7 @@ behavior locally.
 - **THEN** it tries `beskid_lsp` on PATH, then `beskid lsp`, then the
   `lsp-stable` download in that order
 - **AND** it never tries a later candidate before an earlier candidate fails
+- **AND** platform validation occurs only after both PATH candidates are absent
 
 #### Scenario: Missing binary fails closed
 
@@ -59,19 +65,30 @@ behavior locally.
 
 ### Requirement: Fail-closed platform support
 
-The extension SHALL declare exactly this release matrix: Linux x86-64 uses
+The release-download fallback SHALL declare exactly this release matrix: Linux x86-64 uses
 `beskid_lsp-linux-amd64`; macOS arm64 uses `beskid_lsp-darwin-arm64`; Windows
-x86-64 uses `beskid_lsp-windows-amd64.exe`. Every other host/platform pair
-SHALL be rejected before launching a server. Unsupported platforms SHALL
-produce a clear diagnostic and SHALL NOT use a compatibility fallback, network
-download, or host-binary substitution.
+x86-64 uses `beskid_lsp-windows-amd64.exe`. When resolution reaches that
+fallback, every other host/platform pair SHALL be rejected before requesting or
+launching a release asset. Unsupported release-download platforms SHALL produce
+a clear diagnostic and SHALL NOT use a compatibility fallback or network
+download. Trusted configured and PATH-resolved commands remain usable on hosts
+outside the release matrix.
 
 #### Scenario: Unsupported host is rejected
 
-- **GIVEN** the extension runs on a host outside its declared platform matrix
-- **WHEN** activation resolves runtime support
+- **GIVEN** the extension runs on a host outside its declared release platform
+  matrix and no configured or PATH command is selected
+- **WHEN** resolution reaches the stable release fallback
 - **THEN** activation reports the unsupported platform
-- **AND** no language-server process is started
+- **AND** no release asset is requested or language-server process is started
+
+#### Scenario: Host-owned command bypasses release platform mapping
+
+- **GIVEN** the extension runs on a host outside its declared release platform
+  matrix and a configured or PATH-resolved Beskid command is selected
+- **WHEN** the extension initializes the language server
+- **THEN** it launches the selected host-owned command
+- **AND** it does not resolve or download a release asset
 
 #### Scenario: Supported release asset is selected
 
@@ -145,21 +162,26 @@ included in the built registry artifact.
 ### Requirement: Restricted extension capabilities
 
 The extension SHALL request and use only `download_file` for the exact GitHub
-release repository path and `process:exec` narrowly scoped to launching
-explicit, PATH-resolved, or downloaded Beskid server commands. If the manifest
-schema requires `command = "*"` for arbitrary explicit paths or versioned
-downloaded paths, the manifest may use it, but `args` SHALL remain constrained
-to the server forms. Workspace file access and task execution are host-owned
-capabilities and SHALL NOT be claimed by the extension. The approved task
-commands are `test`, `run`, `build`, `analyze`, `fetch`, and `lock`; the
-extension SHALL only declare their runnable definitions. No other capability
-is requested, and secrets SHALL stay out of extension configuration.
+release repository path and `process:exec` for launching explicit,
+PATH-resolved, or downloaded Beskid server commands. Because Zed's static
+capability matcher cannot enumerate trusted configured paths or arguments that
+the extension forwards unchanged, the manifest SHALL declare the minimum
+schema-compatible process capability: `command = "*"`, `args = ["**"]`. Its
+operational scope SHALL remain limited: the extension SHALL construct only the
+selected Beskid server command after deterministic resolution. Workspace file
+access and task execution are host-owned capabilities and SHALL NOT be claimed
+by the extension. The approved task commands are `test`, `run`, `build`,
+`analyze`, `fetch`, and `lock`; the extension SHALL only declare their runnable
+definitions. No other capability is requested, and secrets SHALL stay out of
+extension configuration.
 
 #### Scenario: Capability manifest is minimal
 
 - **WHEN** the package manifest is inspected
 - **THEN** every requested capability maps to an approved language or runnable
   behavior
+- **AND** it contains exactly one `process:exec` declaration with
+  `command = "*"` and `args = ["**"]`
 - **AND** no undeclared capability is present
 
 #### Scenario: Download scope is restricted
