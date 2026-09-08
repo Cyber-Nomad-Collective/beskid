@@ -11,6 +11,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- The shared Docs rail now exposes the public documentation tree instead of
+  leaving newly published pages inaccessible from navigation.
 - Learn now uses a fixed lesson-defined tile mosaic. It no longer persists,
   opens, closes, or resizes panels. The learner workspace no longer renders
   the lesson editor.
