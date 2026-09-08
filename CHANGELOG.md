@@ -18,6 +18,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   editor state, accepts its own analyze target, offers Beskid completions, and
   uses a single workspace surface instead of nested cards. The signed-in header
   now provides the standard account menu with account and sign-out actions.
+- The website delivery projection now uses its supported Node test runner
+  instead of invoking an uninstalled Vitest binary.
 
 ### Changed
 
