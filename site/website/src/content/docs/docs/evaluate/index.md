@@ -30,7 +30,7 @@ State your intended use. Use a supported host: Linux on AMD64, macOS on ARM64, o
 5. If your intended use needs a project, read [Projects](/docs/projects/) and record whether the manifest and lock workflow fits.
 6. If your intended use needs a package, read [Packages](/docs/packages/) and record whether the package workflow and recovery limits fit.
 7. Only when your intended use needs a public service, check [Tracker](https://tracker.beskid-lang.org) for delivery status and record the date with the related issue or version link.
-9. Compare required language behavior with the [Beskid Standard](/docs/standard/) and record the exact capability or requirement link.
+8. Compare required language behavior with the [Beskid Standard](/docs/standard/) and record the exact capability or requirement link.
 
 ```mermaid
 flowchart TD
@@ -41,26 +41,34 @@ flowchart TD
   B -->|Yes| C{Need a local CLI or editor?}
   C -->|Yes| D[Verify first program and editor]
   C -->|No| E{Need a project?}
-  D --> E
+  D --> D1{First program and editor evidence verified?}
+  D1 -->|No| Z[Stop and record evidence]
+  D1 -->|Yes| E
   E -->|Yes| F[Verify project workflow]
   E -->|No| G{Need a package?}
-  F --> G
+  F --> F1{Project evidence verified?}
+  F1 -->|No| Z[Stop and record evidence]
+  F1 -->|Yes| G
   G -->|Yes| H[Verify package workflow]
   G -->|No| I{Need a public service?}
-  H --> I
+  H --> H1{Package evidence verified?}
+  H1 -->|No| Z[Stop and record evidence]
+  H1 -->|Yes| I
   I -->|Yes| J[Record Tracker service evidence]
   I -->|No| K[Record readiness decision]
-  J --> K
+  J --> J1{Service evidence verified?}
+  J1 -->|No| Z[Stop and record evidence]
+  J1 -->|Yes| K
 ```
 
 ### Diagram text
 
 1. Start with the intended use and a supported host with a listed release.
-2. Verify the first program and editor only when the intended use needs local CLI or editor work.
-3. Verify project and package work only when the intended use needs each workflow.
-4. Record service evidence from Tracker only when the intended use depends on a public service. A local-only evaluation does not need service evidence.
+2. Verify the first program and editor only when the intended use needs local CLI or editor work. Stop if the evidence is missing.
+3. Verify project and package work only when the intended use needs each workflow. Stop if either selected evidence check is missing.
+4. Record service evidence from Tracker only when the intended use depends on a public service. A local-only evaluation does not need service evidence. Stop if selected service evidence is missing.
 5. Compare behavior with the Standard and record the linked requirement.
-6. Use this stop condition when a required check has no verified result. Record the missing evidence instead of inferring readiness.
+6. When any selected evidence check has no verified result, stop and record the missing evidence instead of inferring readiness.
 
 ## Expected result
 

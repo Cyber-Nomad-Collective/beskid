@@ -491,6 +491,20 @@ test('evaluation applies service evidence only to the selected intended use', as
 	assert.match(equivalent, /A local-only evaluation does not need service evidence/);
 });
 
+test('evaluation stops after any selected evidence check fails', async () => {
+	const evaluation = await loadPage(procedurePages.find((page) => page.path === 'docs/evaluate/index.md'));
+	const { diagram, equivalent } = accessibleDiagram(evaluation);
+	for (const check of ['First program and editor', 'Project', 'Package', 'Service']) {
+		assert.match(diagram, new RegExp(`${escapeRegExp(check)} evidence verified\\?`));
+	}
+	for (const decision of ['D1', 'F1', 'H1', 'J1']) {
+		assert.match(diagram, new RegExp(`${decision} -->\\|No\\| Z\\[Stop and record evidence\\]`));
+	}
+	assert.match(equivalent, /When any selected evidence check has no verified result, stop and record the missing evidence/);
+	const actions = section(evaluation.body, 'Actions').split('```mermaid', 1)[0];
+	assert.deepEqual([...actions.matchAll(/^(\d+)\.\s+/gm)].map((match) => Number(match[1])), [1, 2, 3, 4, 5, 6, 7, 8]);
+});
+
 test('navigation routes evaluators and learners to the public task pages', async () => {
 	const [navigation, coverage, docsHome, learnService] = await Promise.all([
 		readFile(new URL('../data/docs-navigation.ts', import.meta.url), 'utf8'),
