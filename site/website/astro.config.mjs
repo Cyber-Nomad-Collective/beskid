@@ -37,6 +37,12 @@ const platformSpecRedirects = {
 	},
 };
 
+/** @type {import('astro').AstroUserConfig['redirects']} */
+const renamedReferenceRedirects = {
+	[redirectKey('/book/reference/lsp/readme')]: '/book/reference/lsp/',
+	[redirectKey('/book/reference/projects/readme')]: '/book/reference/projects/',
+};
+
 /** @param {string} dir @param {string} fromPrefix @param {string} toPrefix */
 function addMarkdownRedirects(dir, fromPrefix, toPrefix) {
 	/** @type {Record<string, string>} */
@@ -115,6 +121,7 @@ export default defineConfig({
 	},
 	redirects: {
 		...platformSpecRedirects,
+		...renamedReferenceRedirects,
 		...siteRedirects(),
 	},
 	markdown: {

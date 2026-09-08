@@ -1,5 +1,5 @@
 ---
-title: "Beskid Projects (HCL-based)"
+title: Beskid Projects (HCL-based)
 ---
 
 

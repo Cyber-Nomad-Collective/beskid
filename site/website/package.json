@@ -11,6 +11,7 @@
 		"generate:book-nav-tree": "node scripts/run-trudoc.mjs generate-book-nav-tree.mjs",
 		"verify:book-images": "node scripts/run-trudoc.mjs verify-book-images.mjs",
 		"verify:book-layout": "node scripts/run-trudoc.mjs verify-book-layout.mjs",
+		"verify:built-docs": "node scripts/verify-built-docs.mjs dist",
 		"test:docs-links": "node --test src/lib/remark-beskid-directives.test.mjs",
 		"test:release-version": "node --test scripts/sync-release-version.test.mjs",
 		"test:blog": "node --test src/lib/blog.test.mjs src/lib/tracker-provenance.test.mjs",
@@ -19,6 +20,7 @@
 		"dev:clean": "rm -rf .astro dist node_modules/.vite && pnpm dev",
 		"start": "astro dev",
 		"build": "astro build",
+		"postbuild": "pnpm verify:built-docs",
 		"preview": "astro preview",
 		"astro": "astro"
 	},

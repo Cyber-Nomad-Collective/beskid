@@ -41,3 +41,10 @@ test('pins the website root in the static image so release metadata is discovera
 	assert.match(dockerfile, /ENV BESKID_WEBSITE_ROOT=\/app\/site\/website/);
 	assert.match(dockerfile, /pnpm --dir site\/website sync:release-version/);
 });
+
+test('serves the explicit 404 document for unknown routes instead of the home page', async () => {
+	const nginxConfig = await readFile(path.join(siteRoot, 'nginx/default.conf'), 'utf8');
+	assert.match(nginxConfig, /error_page\s+404\s+\/404\.html;/);
+	assert.match(nginxConfig, /location\s+\/\s*\{\s*try_files\s+\$uri\s+\$uri\/\s+=404;/);
+	assert.doesNotMatch(nginxConfig, /location\s+\/\s*\{\s*try_files[^;]*\/index\.html;/);
+});

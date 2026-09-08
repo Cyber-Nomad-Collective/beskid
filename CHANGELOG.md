@@ -11,6 +11,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Added
 
+- Verify built Docs routes, internal anchors, single-H1 output, and the explicit
+  404 document after each website production build.
 - Publish a licensing announcement that explains the Apache-2.0 toolchain,
   AGPL-3.0-only service, CC-BY-4.0 documentation, compiler-output, trademark,
   and third-party code boundaries in practical terms.
@@ -24,6 +26,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Align download API assets and packages with the shared release-platform IDs,
+  restore canonical LSP and project reference indexes with redirects from their
+  former README routes, and serve unknown website routes as explicit 404s.
 - Remove the deleted Coolify deployment fixture and its unused Compose renderer
   from the active Watchtower delivery gate, eliminating a stale second release
   model that still expected the retired auth image and GHCR paths.

@@ -126,6 +126,10 @@ A named OpenSpec requirement using SHALL or MUST and one or more testable scenar
 
 The historical name for the separately deployed standard reader. That service is retired; the canonical website now renders the Beskid standard at `/docs/standard/`, while `openspec/specs` remains the sole normative source.
 
+## Release platform identifier
+
+The exact operating-system and architecture key shared by release metadata and the download UI. The closed public set is `linux-amd64`, `darwin-arm64`, and `windows-amd64`; broader platform names and separate architecture fields are invalid.
+
 ## Playground
 
 The authenticated Beskid Learn workspace for trying arbitrary Beskid source with
