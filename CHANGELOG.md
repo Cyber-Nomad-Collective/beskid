@@ -19,7 +19,7 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 ### Changed
 
 - Zed extension: resolve the native Beskid language server through the
-  configured override, `beskid_lsp`, `beskid dev tooling lsp`, then the exact stable
+  configured override, `beskid_lsp`, `beskid lsp`, then the exact stable
   release asset; forward opaque LSP settings unchanged and restrict extension
   capabilities to the supported launch/download surface.
 - Zed extension: preserve trusted configured and PATH server candidates on
@@ -71,8 +71,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 ### Added
 
 - Zed extension: add registry-packaged outlines, indentation and bracket
-  queries, runnable task bindings, declaration snippets, and grammar-validated
-  runnable fixtures for Beskid source files.
+  queries, pinned-CLI runnable task bindings, declaration snippets, and
+  grammar-validated runnable fixtures for Beskid source files.
 
 - `beskid_sites/` — greenfield standalone pnpm workspace (own
   `pnpm-workspace.yaml`; not a submodule, not in the root workspace) for the

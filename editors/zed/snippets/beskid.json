@@ -11,7 +11,7 @@
   },
   "Type declaration": {
     "prefix": "type",
-    "body": ["type ${1:Type} {", "\t${2:i32} ${3:value};", "}"],
+    "body": ["type ${1:Type} {", "\t${2:i32} ${3:value},", "}"],
     "description": "Declare a Beskid type"
   },
   "Contract declaration": {

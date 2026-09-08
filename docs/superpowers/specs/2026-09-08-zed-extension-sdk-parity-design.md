@@ -72,7 +72,7 @@ For the `beskid-lsp` adapter, resolution is deterministic:
 2. Otherwise use `beskid_lsp` discovered through `Worktree::which`, launching
    it with `--stdio` and the worktree shell environment.
 3. Otherwise use `beskid` discovered through `Worktree::which`, launching
-   `beskid dev tooling lsp` with the worktree shell environment.
+   `beskid lsp` with the worktree shell environment.
 4. Otherwise query the compiler repository's `lsp-stable` GitHub release,
    select the exact supported platform asset, download it into the extension
    work directory when absent, mark it executable where required, and launch
@@ -108,9 +108,8 @@ The package provides and verifies:
   LSP;
 - snippets for canonical Beskid declarations;
 - runnable captures for tests and entry points, backed by documented Zed task
-  templates that invoke `beskid dev build test`, `beskid run ... --entrypoint ...`,
-  `beskid dev build compile`, `beskid dev syntax analyze`,
-  `beskid dev project fetch`, and `beskid dev project lock`;
+  templates that invoke `beskid test`, `beskid run ... --entrypoint ...`,
+  `beskid build`, `beskid analyze`, `beskid fetch`, and `beskid lock`;
 - README guidance for binary overrides, LSP settings, tasks, logs, and the
   known SDK parity boundary.
 

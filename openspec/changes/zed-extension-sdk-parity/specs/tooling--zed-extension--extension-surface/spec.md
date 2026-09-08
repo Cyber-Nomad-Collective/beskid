@@ -15,7 +15,7 @@ The Beskid Zed extension SHALL be rooted at `editors/zed`, SHALL use
 
 The extension SHALL resolve the Beskid language-server binary in this exact
 order: explicit trusted user override; `beskid_lsp` on PATH; `beskid` on PATH
-invoked as `beskid dev tooling lsp`; then the `lsp-stable` download. An override SHALL be a
+invoked as `beskid lsp`; then the `lsp-stable` download. An override SHALL be a
 user-selected nonempty path and arguments structure. The WASM extension host
 SHALL validate that structure but cannot inspect arbitrary executable contents
 or prove binary compatibility before launch. The download SHALL come from the
@@ -51,7 +51,7 @@ behavior locally.
 
 - **GIVEN** no configured override is usable
 - **WHEN** binary resolution runs
-- **THEN** it tries `beskid_lsp` on PATH, then `beskid dev tooling lsp`, then the
+- **THEN** it tries `beskid_lsp` on PATH, then `beskid lsp`, then the
   `lsp-stable` download in that order
 - **AND** it never tries a later candidate before an earlier candidate fails
 - **AND** platform validation occurs only after both PATH candidates are absent
@@ -189,10 +189,9 @@ schema-compatible process capability: `command = "*"`, `args = ["**"]`. Its
 operational scope SHALL remain limited: the extension SHALL construct only the
 selected Beskid server command after deterministic resolution. Workspace file
 access and task execution are host-owned capabilities and SHALL NOT be claimed
-by the extension. The approved task commands are `beskid dev build test`,
-`beskid run ... --entrypoint ...`, `beskid dev build compile`,
-`beskid dev syntax analyze`, `beskid dev project fetch`, and
-`beskid dev project lock`; the extension SHALL only declare their runnable
+by the extension. The approved task commands are `beskid test`,
+`beskid run ... --entrypoint ...`, `beskid build`, `beskid analyze`,
+`beskid fetch`, and `beskid lock`; the extension SHALL only declare their runnable
 definitions. No other capability is requested, and secrets SHALL stay out of
 extension configuration.
 

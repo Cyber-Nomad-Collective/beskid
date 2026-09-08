@@ -2,7 +2,7 @@
   {
     "label": "Beskid: Run source tests",
     "command": "beskid",
-    "args": ["dev", "build", "test", "$ZED_FILE"],
+    "args": ["test", "$ZED_FILE"],
     "tags": ["beskid-test"],
     "cwd": "$ZED_WORKTREE_ROOT",
     "use_new_terminal": true,
@@ -22,7 +22,7 @@
   {
     "label": "Beskid: Compile current file",
     "command": "beskid",
-    "args": ["dev", "build", "compile", "$ZED_FILE"],
+    "args": ["build", "$ZED_FILE"],
     "tags": ["beskid-build"],
     "cwd": "$ZED_WORKTREE_ROOT",
     "use_new_terminal": true,
@@ -32,7 +32,7 @@
   {
     "label": "Beskid: Analyze current file",
     "command": "beskid",
-    "args": ["dev", "syntax", "analyze", "$ZED_FILE"],
+    "args": ["analyze", "$ZED_FILE"],
     "tags": ["beskid-analyze"],
     "cwd": "$ZED_WORKTREE_ROOT",
     "use_new_terminal": true,
@@ -42,7 +42,7 @@
   {
     "label": "Beskid: Fetch project dependencies",
     "command": "beskid",
-    "args": ["dev", "project", "fetch"],
+    "args": ["fetch"],
     "tags": ["beskid-fetch"],
     "cwd": "$ZED_WORKTREE_ROOT",
     "use_new_terminal": true,
@@ -51,7 +51,7 @@
   {
     "label": "Beskid: Lock project dependencies",
     "command": "beskid",
-    "args": ["dev", "project", "lock"],
+    "args": ["lock"],
     "tags": ["beskid-lock"],
     "cwd": "$ZED_WORKTREE_ROOT",
     "use_new_terminal": true,
