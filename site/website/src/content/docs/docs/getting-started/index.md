@@ -1,9 +1,17 @@
 ---
 title: Get started
 description: Install Beskid, create a small program, and check it with the compiler.
+audience:
+  - newcomer
+authority:
+  status: informative
+  sourceLabel: Beskid CLI reference
+  sourceHref: /book/reference/cli/
+  limits: This page gives a verified starting workflow. It does not define language behavior.
+verified:
+  revision: 252aa528ac7ee01a64e49e9b88b32393206fbd71
+  date: 2026-09-08
 ---
-
-# Get started
 
 This guide gives you a small, verified Beskid workflow. It is informative guidance. The [Beskid Standard](/docs/standard/) defines language and tool requirements.
 
@@ -41,9 +49,3 @@ The command parses the source, resolves names, and checks types. It does not cre
 - Read [Write and check a program](/docs/getting-started/first-program/) for the first program in more detail.
 - Read [Tooling](/docs/tooling/) for the command groups.
 - Read [Projects](/docs/projects/) before you add a manifest or dependencies.
-
-## Document annotation
-
-**Status:** informative.
-
-**Authority:** the [Beskid Standard](/docs/standard/) is normative. The CLI reference records command syntax. This page gives a safe starting sequence.

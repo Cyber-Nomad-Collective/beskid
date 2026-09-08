@@ -15,6 +15,7 @@ import { remarkRepoLinkFence } from 'trudoc/scripts/remark-repo-link-fence.mjs';
 import { loadBeskidGrammar } from 'trudoc/grammars/load-beskid-grammar.mjs';
 import { beskidUiRoot } from './src/lib/beskid-ui-root.mjs';
 import { remarkBeskidDirectives } from './src/lib/remark-beskid-directives.mjs';
+import { docsNavigation } from './src/data/docs-navigation';
 
 const beskidGrammar = loadBeskidGrammar();
 
@@ -97,6 +98,9 @@ export default defineConfig({
 	trailingSlash: 'always',
 	vite: {
 		resolve: {
+			alias: {
+				'@beskid/docs-navigation': fileURLToPath(new URL('./src/data/docs-navigation.ts', import.meta.url)),
+			},
 			dedupe: ['react', 'react-dom'],
 		},
 		esbuild: {
@@ -179,33 +183,7 @@ export default defineConfig({
   			},
 			customCss: docsShellCustomCss,
 			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/Cyber-Nomad-Collective/beskid' }],
-			sidebar: [
-				{
-					label: 'Beskid Docs',
-					items: [
-						{ label: 'Overview', link: '/docs/' },
-						{
-							label: 'Get started',
-							items: [
-								{ label: 'Overview', link: '/docs/getting-started/' },
-								{ label: 'Install Beskid', link: '/docs/getting-started/install/' },
-								{ label: 'Write and check a program', link: '/docs/getting-started/first-program/' },
-							],
-						},
-						{ label: 'Tooling', link: '/docs/tooling/' },
-						{ label: 'Projects', link: '/docs/projects/' },
-						{ label: 'Packages', link: '/docs/packages/' },
-						{ label: 'Beskid Standard', link: '/docs/standard/' },
-						{
-							label: 'Contribute',
-							items: [
-								{ label: 'Write Beskid documentation', link: '/docs/contributing/documentation/' },
-								{ label: 'Use ASD-STE100', link: '/docs/contributing/ste-100/' },
-							],
-						},
-					],
-				},
-			],
+			sidebar: docsNavigation,
 		}),
 	],
 });

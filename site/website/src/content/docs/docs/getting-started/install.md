@@ -1,9 +1,18 @@
 ---
 title: Install Beskid
 description: Install the current Beskid toolchain and verify the command line interface.
+audience:
+  - newcomer
+  - contributor
+authority:
+  status: informative
+  sourceLabel: Beskid Downloads
+  sourceHref: /downloads/
+  limits: This page gives verified installation checks. It does not define release availability.
+verified:
+  revision: 252aa528ac7ee01a64e49e9b88b32393206fbd71
+  date: 2026-09-08
 ---
-
-# Install Beskid
 
 Use the current release instructions on the [Downloads](/downloads/) page. That page names the available artifacts and the supported installation methods.
 
@@ -38,9 +47,3 @@ just replace
 ```
 
 This command installs `beskid` and `beskid_lsp` from the current checkout. Run the command again after compiler changes.
-
-## Document annotation
-
-**Status:** informative.
-
-**Verified source:** [Downloads](/downloads/) is the public distribution entry point. `scripts/setup-environment.sh` and `just replace` are repository-maintained developer commands.

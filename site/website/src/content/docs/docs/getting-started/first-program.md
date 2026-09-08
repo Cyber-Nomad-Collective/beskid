@@ -1,9 +1,17 @@
 ---
 title: Write and check a program
 description: Create a small Beskid program and use semantic analysis to check it.
+audience:
+  - newcomer
+authority:
+  status: informative
+  sourceLabel: Beskid CLI reference
+  sourceHref: /book/reference/cli/
+  limits: This page gives a verified workflow. It does not define language behavior.
+verified:
+  revision: 252aa528ac7ee01a64e49e9b88b32393206fbd71
+  date: 2026-09-08
 ---
-
-# Write and check a program
 
 Create `Main.bd` with one entry function.
 
@@ -54,9 +62,3 @@ beskid dev build compile Main.bd --kind exe
 ```
 
 The compiler uses ahead-of-time compilation. It links the matching installed runtime kit for executable and library outputs.
-
-## Document annotation
-
-**Status:** informative.
-
-**Command source:** [analyze](/book/reference/cli/commands/analyze/), [format](/book/reference/cli/commands/format/), and [compile](/book/reference/cli/commands/build/) are the command references. The standard remains the authority for language behavior.

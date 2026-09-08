@@ -1,6 +1,17 @@
 ---
 title: Beskid Standard
 description: The normative source for Beskid language and tool behavior.
+audience:
+  - implementer
+  - contributor
+authority:
+  status: normative
+  sourceLabel: Beskid OpenSpec source
+  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid/tree/main/openspec/specs
+  limits: This page identifies the normative source. It does not reproduce the requirements.
+verified:
+  revision: 35fdb92cd9c4ad8f61e3d06d7171e94a694b2562
+  date: 2026-09-08
 ---
 
 The Beskid standard defines normative behavior. The source files are in [`openspec/specs/`](https://github.com/Cyber-Nomad-Collective/beskid/tree/main/openspec/specs).

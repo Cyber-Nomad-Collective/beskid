@@ -1,9 +1,17 @@
 ---
 title: Tooling
 description: Use the Beskid command line tools for analysis, formatting, builds, and language-service support.
+audience:
+  - developer
+authority:
+  status: informative
+  sourceLabel: Beskid CLI reference
+  sourceHref: /book/reference/cli/
+  limits: This page groups verified tool tasks. It does not define command semantics.
+verified:
+  revision: 252aa528ac7ee01a64e49e9b88b32393206fbd71
+  date: 2026-09-08
 ---
-
-# Tooling
 
 The `beskid` command is the main tool interface. Run `beskid --help` before you guess a command or an option.
 
@@ -42,9 +50,3 @@ The command needs a valid resolved project and the matching runtime kit for exec
 `beskid_lsp` provides diagnostics and completion data to editor clients. Install it with the toolchain. The Beskid Learn editor and supported development tools use the same compiler-backed language service.
 
 Read the [language-service reference](/book/reference/lsp/) for architecture and troubleshooting information.
-
-## Document annotation
-
-**Status:** informative.
-
-**Authority:** command flags and edge cases are defined by the CLI command references. This page groups the common tasks.

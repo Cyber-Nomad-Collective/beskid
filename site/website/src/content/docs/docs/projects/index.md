@@ -1,9 +1,17 @@
 ---
 title: Projects
 description: Define a Beskid project with a .bproj manifest, targets, and dependencies.
+audience:
+  - developer
+authority:
+  status: informative
+  sourceLabel: Beskid project CLI reference
+  sourceHref: /book/reference/projects/
+  limits: This page gives a verified project workflow. It does not define the manifest format.
+verified:
+  revision: 252aa528ac7ee01a64e49e9b88b32393206fbd71
+  date: 2026-09-08
 ---
-
-# Projects
 
 A Beskid project uses a `.bproj` manifest. The manifest states the project identity, source root, targets, and dependencies.
 
@@ -42,9 +50,3 @@ beskid dev syntax analyze --project ./MyApp.bproj
 ```
 
 Use the project reference when you add targets, workspaces, or dependencies. Do not treat this page as a second specification of the manifest format.
-
-## Document annotation
-
-**Status:** informative.
-
-**Source:** [Project manifest](/book/03-project-proj-or-it-didnt-happen/project-manifest/) explains the active manifest shape. The [standard](/docs/standard/) is normative.

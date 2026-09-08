@@ -1,11 +1,13 @@
 ---
 import { blogStatusLabel, type BlogStatus } from '../../lib/blog';
 import BlogShareMenu from '../BlogShareMenu';
+import DocsPageTitle from './DocsPageTitle.astro';
 
 const PAGE_TITLE_ID = '_top';
 const entry = Astro.locals.starlightRoute.entry;
 const isBlogIndex = entry.id === 'blog' || entry.id.startsWith('blog/index');
 const isBlogPost = entry.id.startsWith('blog/') && !isBlogIndex;
+const isDocsPage = entry.id === 'docs' || entry.id.startsWith('docs/');
 const data = entry.data as typeof entry.data & { blogStatus?: BlogStatus; date?: Date; release?: string };
 const date = data.date
 	? new Intl.DateTimeFormat('en', { day: 'numeric', month: 'long', year: 'numeric' }).format(data.date)
@@ -26,6 +28,8 @@ const date = data.date
 		)}
 		<a href="/blog/">← All posts</a>
 	</header>
+) : isDocsPage ? (
+	<DocsPageTitle />
 ) : (
 	<h1 id={PAGE_TITLE_ID}>{data.title}</h1>
 )}

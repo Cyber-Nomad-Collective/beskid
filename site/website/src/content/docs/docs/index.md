@@ -1,6 +1,21 @@
 ---
 title: Beskid Docs
 description: Technical documentation for the Beskid language and its tools.
+audience:
+  - evaluator
+  - newcomer
+  - developer
+  - package author
+  - operator
+  - contributor
+authority:
+  status: informative
+  sourceLabel: Beskid Standard
+  sourceHref: /docs/standard/
+  limits: This page routes readers to technical guidance. It does not define language behavior.
+verified:
+  revision: 66b9df956038d24f9d216308223175ca9da60931
+  date: 2026-09-08
 ---
 
 Use this area for technical work with Beskid. It is the public documentation surface at `beskid-lang.org/docs`.
