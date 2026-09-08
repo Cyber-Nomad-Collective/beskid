@@ -1,8 +1,8 @@
 ## 1. Normative contract
 
-- [ ] 1.1 Add the Zed extension-surface capability delta.
-- [ ] 1.2 Validate the change strictly with the non-interactive OpenSpec gate.
-- [ ] 1.3 Review every requirement against the existing VS Code extension
+- [x] 1.1 Add the Zed extension-surface capability delta.
+- [x] 1.2 Validate the change strictly with the non-interactive OpenSpec gate.
+- [x] 1.3 Review every requirement against the existing VS Code extension
   capability and the approved design.
 
 ## 2. Package and runtime parity

@@ -13,12 +13,19 @@ The Beskid Zed extension SHALL be rooted at `editors/zed`, SHALL use
 
 ### Requirement: Deterministic language-server binary resolution
 
-The extension SHALL resolve the Beskid language-server binary using a
-documented deterministic candidate order. It SHALL select only a present,
+The extension SHALL resolve the Beskid language-server binary in this exact
+order: configured override; `beskid_lsp` on PATH; `beskid` on PATH invoked as
+`beskid lsp`; then the `lsp-stable` download. It SHALL select only a present,
 regular executable file compatible with the declared host platform, and SHALL
-report an actionable error when no candidate or more than one valid candidate
-can be selected. It SHALL NOT silently fall back to PATH, download a binary,
-or select a guessed relative path.
+report an actionable error when all candidates fail. The download SHALL be
+restricted to `github.com/Cyber-Nomad-Collective/beskid_compiler/**`; the
+extension SHALL NOT select a guessed relative path or an incompatible host
+binary.
+
+Native `beskid_lsp` SHALL remain the semantic and workspace authority. The
+extension SHALL only launch and configure that server and SHALL NOT duplicate
+semantic analysis, workspace discovery, diagnostics, query, graph, or domain
+behavior locally.
 
 #### Scenario: Configured executable wins deterministically
 
@@ -26,6 +33,14 @@ or select a guessed relative path.
 - **WHEN** the extension initializes the language server
 - **THEN** it launches that path
 - **AND** it does not search or download another binary
+
+#### Scenario: PATH and stable download fallbacks follow the fixed order
+
+- **GIVEN** no configured override is usable
+- **WHEN** binary resolution runs
+- **THEN** it tries `beskid_lsp` on PATH, then `beskid lsp`, then the
+  `lsp-stable` download in that order
+- **AND** it never tries a later candidate before an earlier candidate fails
 
 #### Scenario: Missing binary fails closed
 
@@ -43,10 +58,12 @@ or select a guessed relative path.
 
 ### Requirement: Fail-closed platform support
 
-The extension SHALL declare its supported host/platform combinations and SHALL
-reject every unsupported combination before launching a server. Unsupported
-platforms SHALL produce a clear diagnostic and SHALL NOT use a compatibility
-fallback, network download, or host-binary substitution.
+The extension SHALL declare exactly this release matrix: Linux x86-64 uses
+`beskid_lsp-linux-amd64`; macOS arm64 uses `beskid_lsp-darwin-arm64`; Windows
+x86-64 uses `beskid_lsp-windows-amd64.exe`. Every other host/platform pair
+SHALL be rejected before launching a server. Unsupported platforms SHALL
+produce a clear diagnostic and SHALL NOT use a compatibility fallback, network
+download, or host-binary substitution.
 
 #### Scenario: Unsupported host is rejected
 
@@ -55,11 +72,20 @@ fallback, network download, or host-binary substitution.
 - **THEN** activation reports the unsupported platform
 - **AND** no language-server process is started
 
+#### Scenario: Supported release asset is selected
+
+- **GIVEN** a host is Linux x86-64, macOS arm64, or Windows x86-64
+- **WHEN** the stable release fallback is selected
+- **THEN** it selects respectively `beskid_lsp-linux-amd64`,
+  `beskid_lsp-darwin-arm64`, or `beskid_lsp-windows-amd64.exe`
+
 ### Requirement: LSP and settings forwarding parity
 
-The extension SHALL initialize the Beskid language server with the resolved
-server path, workspace roots, and supported Beskid settings. It SHALL forward
-subsequent supported setting changes through LSP configuration notifications.
+The extension SHALL initialize the Beskid language server with initialization
+options containing the resolved server path and workspace roots, plus the
+workspace `settings` payload containing supported Beskid settings. It SHALL
+forward subsequent supported setting changes through LSP configuration
+notifications.
 A server-path change SHALL restart the language client; ordinary setting or
 focus changes SHALL NOT restart it unless the LSP contract requires restart.
 
@@ -82,6 +108,13 @@ focus changes SHALL NOT restart it unless the LSP contract requires restart.
 - **WHEN** the setting change is applied
 - **THEN** the client receives a configuration notification
 - **AND** the client is not restarted
+
+#### Scenario: Native server remains authority
+
+- **GIVEN** a request for semantic analysis or workspace data
+- **WHEN** the Zed extension handles the request
+- **THEN** it obtains the result from native `beskid_lsp`
+- **AND** it does not rebuild or reinterpret the result locally
 
 ### Requirement: Language, query, snippet, and runnable assets
 
@@ -106,10 +139,14 @@ included in the built registry artifact.
 
 ### Requirement: Restricted extension capabilities
 
-The extension SHALL request and use only capabilities required for language
-server startup, editor configuration, and the approved runnable actions. It
-SHALL NOT request or use undeclared filesystem, network, process, telemetry, or
-UI capabilities, and SHALL keep secrets out of extension configuration.
+The extension SHALL request and use only this capability allowlist: process
+launch for Beskid executable forms `beskid_lsp [args]` and `beskid lsp [args]`;
+read/write access to the workspace and extension-managed runtime cache;
+download access to `github.com/Cyber-Nomad-Collective/beskid_compiler/**`; and
+editor/LSP configuration plus the approved task commands `test`, `run`,
+`build`, `analyze`, `fetch`, and `lock`. It SHALL NOT request or use any other
+filesystem, network, process, telemetry, or UI capability, and SHALL keep
+secrets out of extension configuration.
 
 #### Scenario: Capability manifest is minimal
 
@@ -117,6 +154,12 @@ UI capabilities, and SHALL keep secrets out of extension configuration.
 - **THEN** every requested capability maps to an approved language or runnable
   behavior
 - **AND** no undeclared capability is present
+
+#### Scenario: Download scope is restricted
+
+- **WHEN** the extension performs the `lsp-stable` download
+- **THEN** its URL is under `github.com/Cyber-Nomad-Collective/beskid_compiler/**`
+- **AND** no other host or path is contacted
 
 ### Requirement: Honest unsupported-UI documentation
 
