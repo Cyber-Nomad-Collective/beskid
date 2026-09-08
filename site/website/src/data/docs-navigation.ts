@@ -7,6 +7,18 @@ export const docsNavigation: DocsNavigationGroup[] = [
 		items: [
 			{ label: 'Overview', link: '/docs/' },
 			{
+				label: 'Evaluate',
+				items: [
+					{ label: 'Check readiness', link: '/docs/evaluate/' },
+				],
+			},
+			{
+				label: 'Learn',
+				items: [
+					{ label: 'Use Beskid Learn', link: '/docs/learn/' },
+				],
+			},
+			{
 				label: 'Start',
 				items: [
 					{ label: 'Overview', link: '/docs/getting-started/' },

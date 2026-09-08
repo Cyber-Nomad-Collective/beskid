@@ -38,18 +38,22 @@ flowchart TD
   accTitle: Audience routing
   accDescr: Route each reader role to its first technical task.
   A[Choose your role] --> B{What do you need?}
-  B -->|Evaluate or start| C[Get started]
-  B -->|Develop| D[Tooling and language basics]
-  B -->|Publish| E[Packages]
-  B -->|Operate| F[Services]
-  B -->|Contribute| G[Contribution guides]
+  B -->|Evaluate| C[Evaluate Beskid]
+  B -->|Learn| D[Learn Beskid]
+  B -->|Start| E[Get started]
+  B -->|Develop| F[Tooling and language basics]
+  B -->|Publish| G[Packages]
+  B -->|Operate| H[Services]
+  B -->|Contribute| I[Contribution guides]
 ```
 
 ### Diagram text
 
 | Need | First guide |
 | --- | --- |
-| Evaluate or start | [Get started](/docs/getting-started/) |
+| Evaluate | [Evaluate Beskid](/docs/evaluate/) |
+| Learn | [Learn Beskid](/docs/learn/) |
+| Start | [Get started](/docs/getting-started/) |
 | Develop | [Tooling](/docs/tooling/) and [language basics](/docs/language-basics/) |
 | Publish | [Packages](/docs/packages/) |
 | Operate | Service operation guides in the Operate navigation group |
@@ -65,4 +69,4 @@ If a link describes a different task, return here and select the result that you
 
 ## Next task
 
-Start with [installing Beskid](/docs/getting-started/install/) or read [the language basics](/docs/language-basics/) before you evaluate source code.
+Start with [Evaluate Beskid](/docs/evaluate/) to record readiness evidence. Open [Learn Beskid](/docs/learn/) for browser lessons. Otherwise, start with [installing Beskid](/docs/getting-started/install/).

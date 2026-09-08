@@ -9,10 +9,34 @@ const docsRoot = new URL('../content/docs/docs/', import.meta.url);
 
 const procedurePages = [
 	{
+		path: 'docs/evaluate/index.md',
+		diagram: 'Evaluation readiness decision',
+		diagramBranches: ['Intended use?', 'Supported host and release?', 'First program and editor?', 'Project and package?', 'Service evidence?', 'Stop and record evidence'],
+		equivalentConcepts: ['intended use', 'supported host', 'release', 'first program', 'editor', 'project', 'package', 'service evidence', 'stop'],
+		sections: {
+			prerequisites: ['intended use', 'supported host'],
+			actions: ['/downloads/', '/docs/getting-started/first-program/', '/docs/getting-started/editor/', '/docs/projects/', '/docs/packages/', 'tracker.beskid-lang.org'],
+			expectedResult: ['evidence record', 'readiness decision'],
+			recovery: ['Stop the evaluation', 'do not infer'],
+		},
+	},
+	{
+		path: 'docs/learn/index.md',
+		diagram: 'Lesson-check feedback loop',
+		diagramBranches: ['Select lesson', 'Edit source', 'Run check', 'Read diagnostic', 'Use hint', 'Continue'],
+		equivalentConcepts: ['lesson', 'source', 'check', 'diagnostic', 'hint', 'continue'],
+		sections: {
+			prerequisites: ['browser', 'temporary workspace'],
+			actions: ['learn.beskid-lang.org', 'Select a lesson', 'Edit the source', 'Run the check', 'Read the diagnostic', 'Use the lesson hint'],
+			expectedResult: ['temporary workspace', 'local project'],
+			recovery: ['diagnostic', 'hint'],
+		},
+	},
+	{
 		path: 'docs/index.md',
 		diagram: 'Audience routing',
-		diagramBranches: ['Evaluate or start', 'Develop', 'Publish', 'Operate', 'Contribute'],
-		equivalentConcepts: ['Get started', 'Tooling', 'Packages', 'Operate', 'Documentation authoring'],
+		diagramBranches: ['Evaluate', 'Learn', 'Start', 'Develop', 'Publish', 'Operate', 'Contribute'],
+		equivalentConcepts: ['Evaluate Beskid', 'Learn Beskid', 'Get started', 'Tooling', 'Packages', 'Operate', 'Documentation authoring'],
 		sections: {
 			prerequisites: ['result that you want', 'evaluate the documentation'],
 			actions: ['Select your role', 'verification revision'],
@@ -430,6 +454,44 @@ test('required diagrams are accessible and have a following text equivalent on e
 	for (const page of await Promise.all((await technicalDocsFiles()).map(loadTechnicalDocsPage))) {
 		if (page.data.diagramPolicy === 'required') accessibleDiagram(page);
 	}
+});
+
+test('evaluation and learning routes use their pinned authority and public roles', async () => {
+	const evaluation = await loadPage(procedurePages.find((page) => page.path === 'docs/evaluate/index.md'));
+	assert.deepEqual(evaluation.data.audience, ['evaluator']);
+	assert.equal(evaluation.data.authority.sourceHref, 'https://github.com/Cyber-Nomad-Collective/beskid/blob/3143396b796d86c1a70a0bfb1aa4761b593bbae5/README.md');
+	assert.equal(evaluation.data.verified.revision, '3143396b796d86c1a70a0bfb1aa4761b593bbae5');
+
+	const learn = await loadPage(procedurePages.find((page) => page.path === 'docs/learn/index.md'));
+	assert.deepEqual(learn.data.audience, ['learner', 'newcomer']);
+	assert.equal(learn.data.authority.sourceHref, 'https://github.com/Cyber-Nomad-Collective/beskid/blob/3143396b796d86c1a70a0bfb1aa4761b593bbae5/site/learn/README.md');
+	assert.equal(learn.data.verified.revision, '3143396b796d86c1a70a0bfb1aa4761b593bbae5');
+});
+
+test('evaluation and learning routes preserve stop and privacy boundaries', async () => {
+	const evaluation = await loadPage(procedurePages.find((page) => page.path === 'docs/evaluate/index.md'));
+	assert.match(section(evaluation.body, 'Recovery'), /Stop the evaluation/i);
+	assert.match(section(evaluation.body, 'Recovery'), /do not infer/i);
+
+	const learn = await loadPage(procedurePages.find((page) => page.path === 'docs/learn/index.md'));
+	assert.match(learn.body, /temporary workspace/i);
+	assert.match(learn.body, /does not retain learner source/i);
+	assert.match(section(learn.body, 'Next task'), /\/docs\/projects\//);
+});
+
+test('navigation routes evaluators and learners to the public task pages', async () => {
+	const [navigation, docsHome, learnService] = await Promise.all([
+		readFile(new URL('../data/docs-navigation.ts', import.meta.url), 'utf8'),
+		loadPage({ path: 'docs/index.md' }),
+		loadPage({ path: 'docs/services/learn.md' }),
+	]);
+	assert.match(navigation, /label: 'Evaluate'/);
+	assert.match(navigation, /link: '\/docs\/evaluate\/'/);
+	assert.match(navigation, /label: 'Learn'/);
+	assert.match(navigation, /link: '\/docs\/learn\/'/);
+	assert.match(docsHome.body, /\[Evaluate Beskid\]\(\/docs\/evaluate\/\)/);
+	assert.match(docsHome.body, /\[Learn Beskid\]\(\/docs\/learn\/\)/);
+	assert.match(learnService.body, /\[Use Beskid Learn\]\(\/docs\/learn\/\)/);
 });
 
 test('procedure diagrams retain their verified titles, branches, and text concepts', async () => {

@@ -59,4 +59,4 @@ If the page works but a check fails, verify the deployed CLI and runtime-kit evi
 
 ## Next task
 
-[Check all service health endpoints](/docs/operations/health-and-monitoring/).
+Learners should [Use Beskid Learn](/docs/learn/). Service operators should [check all service health endpoints](/docs/operations/health-and-monitoring/).

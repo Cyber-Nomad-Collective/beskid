@@ -11,6 +11,8 @@ const docsRoot = fileURLToPath(new URL('site/website/src/content/docs/docs/', ro
 
 const expectedRoutes = [
 	'/docs/',
+	'/docs/evaluate/',
+	'/docs/learn/',
 	'/docs/getting-started/',
 	'/docs/getting-started/install/',
 	'/docs/getting-started/first-program/',
