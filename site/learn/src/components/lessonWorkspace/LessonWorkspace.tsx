@@ -43,6 +43,7 @@ import {
 	TILE_MAP,
 } from "./layout";
 import { getLessonSteps, type LessonStepStatus, validateSourceStep } from "./steps";
+import { attachBeskidLsp, registerBeskidLanguage } from "#/lib/beskidLspClient";
 
 interface LessonWorkspaceProps {
 	exercise: LearnExercise;
@@ -69,6 +70,7 @@ export function LessonWorkspace({
 	const [stepStatuses, setStepStatuses] = useState<LessonStepStatus[]>(() => steps.map((_, index) => index === 0 ? "current" : "locked"));
 	const [stepMessage, setStepMessage] = useState<string | null>(null);
 	const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(null);
+	const lspDisposableRef = useRef<{ dispose(): void } | null>(null);
 	const decorationsRef = useRef<string[]>([]);
 
 	const visibleTiles = useMemo(() => {
@@ -97,6 +99,10 @@ export function LessonWorkspace({
 		exercise.difficulty === "beginner"
 			? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400"
 			: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400";
+
+	useEffect(() => {
+		return () => lspDisposableRef.current?.dispose();
+	}, []);
 
 	useEffect(() => {
 		setCompact(window.matchMedia("(max-width: 1279px)").matches);
@@ -168,40 +174,14 @@ export function LessonWorkspace({
 			monaco: typeof monacoEditor,
 		) => {
 			editorRef.current = editor;
-			const languageId = "beskid";
-			if (!monaco.languages.getLanguages().some((lang) => lang.id === languageId)) {
-				monaco.languages.register({ id: languageId, aliases: ["Beskid"] });
-				monaco.languages.setLanguageConfiguration(languageId, {
-					comments: { lineComment: "//" },
-					brackets: [
-						["{", "}"],
-						["(", ")"],
-						["[", "]"],
-					],
-					autoClosingPairs: [
-						{ open: "{", close: "}" },
-						{ open: "(", close: ")" },
-						{ open: "[", close: "]" },
-					],
-				});
-				monaco.languages.setMonarchTokensProvider(languageId, {
-					tokenizer: {
-						root: [
-							[/\b(fn|pub|let|use|return|if|else|while|for|break|continue)\b/, "keyword"],
-							[/\b(i32|i64|u32|u64|f32|f64|string|bool|unit|true|false)\b/, "type"],
-							[/\/\/.*$/, "comment"],
-							[/\"(?:[^\"\\]|\\.)*\"/, "string"],
-							[/'(?:[^'\\]|\\.)*'/, "string"],
-							[/[0-9]+/, "number"],
-						],
-					},
-				});
-			}
+			registerBeskidLanguage(monaco);
 
 			const model = editor.getModel();
 			if (model) {
-				monaco.editor.setModelLanguage(model, languageId);
+				monaco.editor.setModelLanguage(model, "beskid");
 			}
+			lspDisposableRef.current?.dispose();
+			lspDisposableRef.current = attachBeskidLsp(editor, monaco);
 		},
 		[],
 	);
