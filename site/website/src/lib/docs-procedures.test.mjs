@@ -90,6 +90,27 @@ const procedurePages = [
 		},
 	},
 	{
+		path: 'docs/editor/index.md',
+		sections: {
+			prerequisites: ['installed extension', 'daily task'],
+			actions: ['/docs/editor/vs-code/', '/docs/getting-started/editor/'],
+			expectedResult: ['first installation', 'daily project work'],
+			recovery: ['Beskid LSP', 'Getting Started'],
+		},
+	},
+	{
+		path: 'docs/editor/vs-code.md',
+		diagram: 'VS Code project-context lifecycle',
+		diagramBranches: ['Open .bws or .bproj', 'Select .bproj project focus', 'Start CLI and LSP', 'Automatic fetch enabled?', 'Run beskid fetch once', 'Projects and Packages', 'Graph Explorer', 'Beskid status dashboard', 'Beskid LSP output'],
+		equivalentConcepts: ['.bws', '.bproj', 'project focus', 'CLI', 'language server', 'automatic fetch', 'Projects', 'Packages', 'Graph Explorer', 'status dashboard', 'Beskid LSP output'],
+		sections: {
+			prerequisites: ['installed extension', '`.bws` or `.bproj`'],
+			actions: ['Beskid status-bar entry', 'Projects', 'Packages', 'Graph Explorer', 'beskid.toolchain.autoFetchDependencies', 'Beskid: Configure Package Registry API Key'],
+			expectedResult: ['focused `.bproj`', 'Project.lock'],
+			recovery: ['Beskid LSP', 'Beskid: Setup Toolchain'],
+		},
+	},
+	{
 		path: 'docs/getting-started/troubleshooting.md',
 		diagram: 'First-day troubleshooting',
 		diagramBranches: ['Command missing', 'Wrong version or host', 'Source diagnostic', 'Link failure', 'No editor diagnostics'],
@@ -630,6 +651,58 @@ test('platform routes keep public user tasks separate from authenticated and ope
 	for (const [service, userRoute] of [[authentication, '/docs/platform/account/'], [trackerService, '/docs/platform/tracker/'], [nexusService, '/docs/platform/nexus/']]) {
 		assert.match(service.body, new RegExp(escapeRegExp(userRoute)));
 	}
+});
+
+test('VS Code routes separate first installation from daily project work', async () => {
+	const [navigation, coverage, chooser, workflow, gettingStarted, projects, packages] = await Promise.all([
+		readFile(new URL('../data/docs-navigation.ts', import.meta.url), 'utf8'),
+		readFile(new URL('../data/docs-coverage.ts', import.meta.url), 'utf8'),
+		loadPage(procedurePages.find((page) => page.path === 'docs/editor/index.md')),
+		loadPage(procedurePages.find((page) => page.path === 'docs/editor/vs-code.md')),
+		loadPage(procedurePages.find((page) => page.path === 'docs/getting-started/editor.md')),
+		loadPage(procedurePages.find((page) => page.path === 'docs/projects/index.md')),
+		loadPage(procedurePages.find((page) => page.path === 'docs/packages/index.md')),
+	]);
+
+	for (const route of ['/docs/editor/', '/docs/editor/vs-code/']) {
+		assert.ok(navigation.includes(route), `navigation must expose ${route}`);
+		assert.ok(coverage.includes(`route: '${route}'`), `coverage must catalogue ${route}`);
+	}
+	assert.equal(chooser.data.pageKind, 'guide');
+	assert.equal(workflow.data.pageKind, 'task');
+	assert.equal(workflow.data.authority.sourceHref, 'https://github.com/Cyber-Nomad-Collective/beskid_vscode/blob/94640e47f3292a883cb2f92c4a04321f8724a3f7/README.md');
+	assert.equal(workflow.data.verified.revision, '94640e47f3292a883cb2f92c4a04321f8724a3f7');
+	assert.match(gettingStarted.body, /first installation/i);
+	assert.match(gettingStarted.body, /\/docs\/editor\/vs-code\//);
+	assert.match(chooser.body, /first installation/i);
+	assert.match(chooser.body, /daily project work/i);
+	assert.match(projects.body, /\/docs\/editor\/vs-code\//);
+	assert.match(packages.body, /\/docs\/editor\/vs-code\//);
+});
+
+test('daily VS Code workflow uses verified project, view, settings, and recovery behavior', async () => {
+	const workflow = await loadPage(procedurePages.find((page) => page.path === 'docs/editor/vs-code.md'));
+	const actions = section(workflow.body, 'Actions');
+	const recovery = section(workflow.body, 'Recovery');
+
+	assert.match(workflow.body, /\.bws[^.]*workspace/i);
+	assert.match(workflow.body, /\.bproj[^.]*focused project|focused project[^.]*\.bproj/i);
+	assert.match(actions, /Beskid status-bar entry[^.]*Status dashboard/i);
+	for (const surface of ['Projects', 'Packages', 'Graph Explorer']) {
+		assert.match(actions, new RegExp(surface));
+	}
+	assert.match(actions, /beskid\.toolchain\.autoFetchDependencies/);
+	assert.match(actions, /runs `beskid fetch` once|run `beskid fetch` once/i);
+	assert.match(actions, /beskid\.project\.autoSelectFromEditor/);
+	assert.match(actions, /beskid\.graph\.defaultKind/);
+	assert.match(actions, /Beskid: Configure Package Registry API Key/);
+	assert.match(actions, /VS Code SecretStorage/);
+	assert.match(actions, /beskid\.pckg\.apiKey[^.]*plain-text|plain-text[^.]*beskid\.pckg\.apiKey/i);
+	assert.match(recovery, /Beskid LSP output channel/i);
+	assert.match(recovery, /Beskid: Setup Toolchain/);
+	assert.match(recovery, /Beskid: Fetch Packages/);
+	assert.match(recovery, /Project\.lock/);
+	assert.match(workflow.body, /UI behavior is informative|interface behavior is informative/i);
 });
 
 test('procedure diagrams retain their verified titles, branches, and text concepts', async () => {

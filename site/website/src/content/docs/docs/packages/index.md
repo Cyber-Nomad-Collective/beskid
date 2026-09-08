@@ -27,6 +27,7 @@ A package author needs a package name and a publisher API key with publish scope
 1. [Configure credentials and recovery](/docs/packages/credentials-and-recovery/) before a package mutation.
 2. [Create, pack, inspect, and upload a package](/docs/packages/publish/).
 3. [Consume the exact package version](/docs/packages/consume/) through a project manifest and lockfile.
+4. In VS Code, [use the Packages view](/docs/editor/vs-code/) for the focused project's declared and locked dependencies.
 
 ```mermaid
 sequenceDiagram
@@ -63,4 +64,4 @@ If identity, checksum, or generated documentation is wrong, do not upload the ar
 
 ## Next task
 
-[Publish a package](/docs/packages/publish/) or [consume a package](/docs/packages/consume/).
+[Publish a package](/docs/packages/publish/), [consume a package](/docs/packages/consume/), or use [Packages in VS Code](/docs/editor/vs-code/).

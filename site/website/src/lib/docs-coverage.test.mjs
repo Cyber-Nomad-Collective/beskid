@@ -18,6 +18,8 @@ const expectedRoutes = [
 	'/docs/getting-started/first-program/',
 	'/docs/getting-started/editor/',
 	'/docs/getting-started/troubleshooting/',
+	'/docs/editor/',
+	'/docs/editor/vs-code/',
 	'/docs/tooling/',
 	'/docs/tooling/build-run-test/',
 	'/docs/tooling/ci/',

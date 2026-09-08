@@ -16,7 +16,7 @@ verified:
   date: 2026-09-08
 ---
 
-The extension selects one language server. An explicit `beskid.lsp.server.path` has priority. Without it, the extension checks each fallback in a fixed order.
+This first installation task connects one language server and verifies diagnostics. An explicit `beskid.lsp.server.path` has priority. Without it, the extension checks each fallback in a fixed order.
 
 ## Prerequisites
 
@@ -78,4 +78,4 @@ If the extension cannot start a server, run **Beskid: Install LSP** or repeat `b
 
 ## Next task
 
-Use [first-day troubleshooting](/docs/getting-started/troubleshooting/) if a check still fails. Otherwise, continue to [Tooling](/docs/tooling/).
+Use [first-day troubleshooting](/docs/getting-started/troubleshooting/) if a check still fails. After the first installation succeeds, continue to the [daily VS Code project workflow](/docs/editor/vs-code/).

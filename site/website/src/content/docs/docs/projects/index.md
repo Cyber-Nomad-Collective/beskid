@@ -27,6 +27,7 @@ Run `beskid --version`. Keep exactly one `.bproj` file in each project directory
 2. [Group projects in a workspace](/docs/projects/workspaces/) when one checkout contains related projects.
 3. [Resolve dependencies and control Project.lock](/docs/projects/dependencies-and-locks/).
 4. Pass `--project` when automatic discovery could select the wrong manifest.
+5. In VS Code, [select the matching project focus](/docs/editor/vs-code/) before you use Projects or Graph Explorer.
 
 ```mermaid
 flowchart LR
@@ -56,4 +57,4 @@ If a directory contains multiple `.bproj` files, automatic discovery reports an 
 
 ## Next task
 
-[Create a project](/docs/projects/create/) or go directly to [dependencies and locks](/docs/projects/dependencies-and-locks/) for an existing project.
+[Create a project](/docs/projects/create/), open [dependencies and locks](/docs/projects/dependencies-and-locks/), or use the [VS Code project workflow](/docs/editor/vs-code/).

@@ -29,6 +29,13 @@ export const docsNavigation: DocsNavigationGroup[] = [
 				],
 			},
 			{
+				label: 'Editor',
+				items: [
+					{ label: 'Choose an editor task', link: '/docs/editor/' },
+					{ label: 'Use VS Code projects', link: '/docs/editor/vs-code/' },
+				],
+			},
+			{
 				label: 'Develop',
 				items: [
 					{ label: 'Tooling', link: '/docs/tooling/' },
