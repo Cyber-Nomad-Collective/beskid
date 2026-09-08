@@ -9,6 +9,14 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ## [Unreleased]
 
+### Changed
+
+- Licensing: adopt Apache-2.0 for the compiler, runtime, tooling, reusable
+  libraries, and templates; AGPL-3.0-only for Beskid-owned network services;
+  and CC-BY-4.0 for documentation prose. Add an explicit compiler-output
+  boundary, preserve the PolyForm-licensed GitNexus exception, ship legal files
+  in service images, and add a metadata drift check.
+
 ### Fixed
 
 - The landing Download action now opens the Downloads page instead of a direct

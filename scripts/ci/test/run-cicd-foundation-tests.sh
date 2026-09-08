@@ -5,6 +5,9 @@ root="$(cd "$(dirname "$0")/../../.." && pwd)"
 tmp="$(mktemp -d)"
 trap 'rm -rf "${tmp}"' EXIT
 
+node --test "${root}/scripts/ci/test/license-policy.test.mjs"
+node "${root}/scripts/ci/check-license-policy.mjs" --root "${root}"
+
 for script in \
   build-release-manifest.sh \
   validate-release-manifest.sh \

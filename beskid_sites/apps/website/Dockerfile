@@ -41,6 +41,9 @@ RUN SSR_CSS=$(basename /src/beskid_sites/apps/website/node_modules/.nitro/vite/s
 
 FROM node:24-alpine AS runtime
 
+LABEL org.opencontainers.image.licenses="AGPL-3.0-only AND CC-BY-4.0" \
+  org.opencontainers.image.source="https://github.com/Cyber-Nomad-Collective/beskid"
+
 RUN apk add --no-cache wget
 
 WORKDIR /app/apps/website
@@ -52,6 +55,9 @@ COPY --from=build /src/beskid_sites/apps/website/node_modules ./node_modules
 COPY --from=build /src/beskid_sites/node_modules /app/node_modules
 COPY --from=build /src/beskid_sites/apps/website/package.json ./package.json
 COPY --from=build /src/beskid_sites/apps/website/.output ./.output
+COPY LICENSES/AGPL-3.0-only.txt /usr/share/licenses/beskid/AGPL-3.0-only.txt
+COPY LICENSES/CC-BY-4.0.txt /usr/share/licenses/beskid/CC-BY-4.0.txt
+COPY NOTICE /usr/share/licenses/beskid/NOTICE
 
 EXPOSE 80
 

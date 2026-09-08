@@ -68,6 +68,9 @@ FROM oven/bun:1.3.14
 
 ARG BESKID_RELEASE_CHANNEL=stable
 
+LABEL org.opencontainers.image.licenses="AGPL-3.0-only" \
+  org.opencontainers.image.source="https://github.com/Cyber-Nomad-Collective/beskid"
+
 RUN apt-get update \
   && apt-get install -y --no-install-recommends wget \
   && rm -rf /var/lib/apt/lists/*
@@ -84,6 +87,9 @@ COPY --from=web /app/site/learn/package.json /app/site/learn/package.json
 COPY --from=rust /workspace/runtime-output/beskid /app/site/learn/beskid
 COPY --from=rust /workspace/runtime-output/beskid_lsp /app/site/learn/beskid_lsp
 COPY --from=rust /workspace/runtime-output/native-runtime-kit /app/site/learn/native-runtime-kit
+COPY LICENSE /usr/share/licenses/beskid/Apache-2.0.txt
+COPY LICENSES/AGPL-3.0-only.txt /usr/share/licenses/beskid/AGPL-3.0-only.txt
+COPY NOTICE /usr/share/licenses/beskid/NOTICE
 
 ENV NODE_ENV=production
 ENV PORT=80

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "licenses": {
+    "Apache-2.0": "LICENSE",
+    "AGPL-3.0-only": "LICENSES/AGPL-3.0-only.txt",
+    "CC-BY-4.0": "LICENSES/CC-BY-4.0.txt"
+  },
+  "packages": [
+    { "path": "package.json", "license": "SEE LICENSE IN LICENSING.md" },
+    { "path": "site/auth/package.json", "license": "AGPL-3.0-only" },
+    { "path": "site/learn/package.json", "license": "AGPL-3.0-only" },
+    { "path": "site/website/package.json", "license": "AGPL-3.0-only" },
+    { "path": "site/beskid_brand/package.json", "license": "Apache-2.0" },
+    { "path": "beskid_sites/package.json", "license": "SEE LICENSE IN ../LICENSING.md" },
+    { "path": "beskid_sites/apps/shell-template/package.json", "license": "Apache-2.0" },
+    { "path": "beskid_sites/apps/website/package.json", "license": "AGPL-3.0-only" },
+    { "path": "beskid_sites/packages/shell-core/package.json", "license": "Apache-2.0" }
+  ]
+}

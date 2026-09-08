@@ -73,6 +73,16 @@ Replacement delivery contracts run without external state changes:
 bash scripts/ci/test/run-cicd-foundation-tests.sh
 ```
 
+The foundation suite also runs the component license-policy guard. Run it
+directly after adding or moving a package:
+
+```bash
+pnpm licenses:check
+```
+
+The declared boundaries live in `license-policy.json`; the human-readable
+policy and third-party exceptions live in `LICENSING.md`.
+
 ## Interactive setup
 
 [`../site/setup-wizard.sh`](../site/setup-wizard.sh) — `just setup` from repo root.

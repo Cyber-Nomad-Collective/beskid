@@ -37,6 +37,9 @@ FROM node:24-alpine AS runtime
 
 ARG BESKID_RELEASE_CHANNEL=stable
 
+LABEL org.opencontainers.image.licenses="AGPL-3.0-only" \
+  org.opencontainers.image.source="https://github.com/Cyber-Nomad-Collective/beskid"
+
 RUN apk add --no-cache wget
 
 WORKDIR /app/site/auth
@@ -49,6 +52,9 @@ COPY --from=build /app/site/auth/node_modules ./node_modules
 COPY --from=build /app/node_modules /app/node_modules
 COPY --from=build /app/site/auth/package.json ./package.json
 COPY --from=build /app/site/auth/.output ./.output
+COPY LICENSE /usr/share/licenses/beskid/Apache-2.0.txt
+COPY LICENSES/AGPL-3.0-only.txt /usr/share/licenses/beskid/AGPL-3.0-only.txt
+COPY NOTICE /usr/share/licenses/beskid/NOTICE
 
 EXPOSE 8090
 

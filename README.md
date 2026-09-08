@@ -149,3 +149,12 @@ Local CI sanity check for web/docs: `./validate-ci-local.sh` (submodule init and
 Questions about the language: **[beskid-lang.org](https://beskid-lang.org)**. Registry behavior and URLs: **[pckg.beskid-lang.org](https://pckg.beskid-lang.org)** plus the pckg guides in the docs sidebar. Delivery timeline and bugs: **[tracker.beskid-lang.org](https://tracker.beskid-lang.org)**.
 
 Automation conventions for agents and recurring tasks: [AGENTS.md](AGENTS.md).
+
+## License
+
+Beskid uses a component-based licensing policy: Apache-2.0 for the compiler,
+runtime, tooling, reusable libraries, and templates; AGPL-3.0-only for
+Beskid-owned network services; and CC-BY-4.0 for documentation prose. Programs
+compiled with Beskid are not required to adopt a particular license merely
+because Beskid compiled them. See [LICENSING.md](LICENSING.md) for exact path
+boundaries, runtime-output terms, and the separately licensed Nexus exception.
