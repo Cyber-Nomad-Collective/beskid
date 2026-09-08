@@ -49,6 +49,37 @@ test('reviews prose inside inline MDX containers but excludes multiline expressi
 	]);
 });
 
+test('keeps braces inside MDX regular-expression literals out of brace depth', async (t) => {
+	const expressions = [
+		['escaped opening brace', String.raw`{/\{/.test("QBI was built")}`],
+		['closing brace', String.raw`{/}/.test("QBI was built")}`],
+		['closing brace in a character class', String.raw`{/[}]/.test("QBI was built")}`],
+		['opening brace in a character class', String.raw`{/[{]/.test("QBI was built")}`],
+		['brace after an escaped slash', String.raw`{/a\/}/.test("QBI was built")}`],
+		['division operator', String.raw`{total / count > 0 ? "QBI was built" : null}`],
+	];
+
+	for (const [name, expression] of expressions) {
+		await t.test(name, () => {
+			const candidates = reviewDocument(`${expression}\nThe XYZ result was built by the tool.\n`, 'regex-expression.mdx');
+
+			assert.deepEqual(candidates.map(({ line, rule, token }) => ({ line, rule, ...(token ? { token } : {}) })), [
+				{ line: 2, rule: 'passive-voice' },
+				{ line: 2, rule: 'unexplained-abbreviation', token: 'XYZ' },
+			]);
+		});
+	}
+});
+
+test('uses regular-expression lexical state inside JSX attribute expressions', () => {
+	const candidates = reviewDocument(`<Aside pattern={/\{/}>\nThe XYZ result was built by the tool.\n</Aside>\n`, 'regex-attribute.mdx');
+
+	assert.deepEqual(candidates.map(({ line, rule, token }) => ({ line, rule, ...(token ? { token } : {}) })), [
+		{ line: 2, rule: 'passive-voice' },
+		{ line: 2, rule: 'unexplained-abbreviation', token: 'XYZ' },
+	]);
+});
+
 test('applies abbreviation explanations in source order inside a joined paragraph', () => {
 	const candidates = reviewDocument(`This sentence starts here\nand uses QBI before the quality boundary interface\n(QBI) explanation appears. Use QBI after the explanation.\n`, 'ordered-terms.md');
 

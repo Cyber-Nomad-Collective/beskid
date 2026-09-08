@@ -12,6 +12,20 @@ const RULE_ORDER = new Map([
 	['unexplained-abbreviation', 2],
 	['article', 3],
 ]);
+const REGEX_PREFIX_KEYWORDS = new Set([
+	'await',
+	'case',
+	'delete',
+	'in',
+	'instanceof',
+	'new',
+	'of',
+	'return',
+	'throw',
+	'typeof',
+	'void',
+	'yield',
+]);
 
 export const APPROVED_TERMS = new Set([
 	'ABI',
@@ -96,6 +110,18 @@ function articleCandidates(line) {
 	return found;
 }
 
+function enterMdxExpression(state, returnMode) {
+	state.mode = 'expression';
+	state.expressionReturnMode = returnMode;
+	state.braceDepth = 1;
+	state.quote = null;
+	state.escaped = false;
+	state.blockComment = false;
+	state.regex = false;
+	state.regexCharacterClass = false;
+	state.canStartRegex = true;
+}
+
 function mdxProse(line, state) {
 	let visible = '';
 	let lineComment = false;
@@ -104,6 +130,17 @@ function mdxProse(line, state) {
 		const next = line[index + 1];
 
 		if (state.mode === 'expression') {
+			if (state.regex) {
+				if (state.escaped) state.escaped = false;
+				else if (character === '\\') state.escaped = true;
+				else if (character === '[') state.regexCharacterClass = true;
+				else if (character === ']') state.regexCharacterClass = false;
+				else if (character === '/' && !state.regexCharacterClass) {
+					state.regex = false;
+					state.canStartRegex = false;
+				}
+				continue;
+			}
 			if (lineComment) continue;
 			if (state.blockComment) {
 				if (character === '*' && next === '/') {
@@ -115,7 +152,10 @@ function mdxProse(line, state) {
 			if (state.quote) {
 				if (state.escaped) state.escaped = false;
 				else if (character === '\\') state.escaped = true;
-				else if (character === state.quote) state.quote = null;
+				else if (character === state.quote) {
+					state.quote = null;
+					state.canStartRegex = false;
+				}
 				continue;
 			}
 			if (character === '/' && next === '/') {
@@ -128,12 +168,43 @@ function mdxProse(line, state) {
 				index += 1;
 				continue;
 			}
-			if (character === '"' || character === "'" || character === '`') state.quote = character;
-			else if (character === '{') state.braceDepth += 1;
-			else if (character === '}') {
-				state.braceDepth -= 1;
-				if (state.braceDepth === 0) state.mode = null;
+			if (/\s/.test(character)) continue;
+			if (/[A-Za-z_$]/.test(character)) {
+				const identifier = line.slice(index).match(/^[A-Za-z_$][\w$]*/)[0];
+				state.canStartRegex = REGEX_PREFIX_KEYWORDS.has(identifier);
+				index += identifier.length - 1;
+				continue;
 			}
+			if (/\d/.test(character)) {
+				const number = line.slice(index).match(/^\d+(?:\.\d+)*/)[0];
+				state.canStartRegex = false;
+				index += number.length - 1;
+				continue;
+			}
+			if (character === '"' || character === "'" || character === '`') {
+				state.quote = character;
+				state.escaped = false;
+			} else if (character === '/' && state.canStartRegex) {
+				state.regex = true;
+				state.regexCharacterClass = false;
+				state.escaped = false;
+			} else if (character === '/') state.canStartRegex = true;
+			else if (character === '{') {
+				state.braceDepth += 1;
+				state.canStartRegex = true;
+			} else if (character === '}') {
+				state.braceDepth -= 1;
+				if (state.braceDepth === 0) {
+					state.mode = state.expressionReturnMode;
+					state.expressionReturnMode = null;
+				}
+				else state.canStartRegex = false;
+			} else if (character === ')' || character === ']') state.canStartRegex = false;
+			else if (character === '.') state.canStartRegex = false;
+			else if ((character === '+' || character === '-') && next === character && !state.canStartRegex) {
+				state.canStartRegex = false;
+				index += 1;
+			} else if (/[,;:?=+\-*%&|^!~<>]/.test(character)) state.canStartRegex = true;
 			continue;
 		}
 
@@ -143,18 +214,13 @@ function mdxProse(line, state) {
 				else if (character === '\\') state.escaped = true;
 				else if (character === state.quote) state.quote = null;
 			} else if (character === '"' || character === "'") state.quote = character;
-			else if (character === '{') state.braceDepth += 1;
-			else if (character === '}') state.braceDepth = Math.max(0, state.braceDepth - 1);
-			else if (character === '>' && state.braceDepth === 0) state.mode = null;
+			else if (character === '{') enterMdxExpression(state, 'tag');
+			else if (character === '>') state.mode = null;
 			continue;
 		}
 
 		if (character === '{') {
-			state.mode = 'expression';
-			state.braceDepth = 1;
-			state.quote = null;
-			state.escaped = false;
-			state.blockComment = false;
+			enterMdxExpression(state, null);
 			continue;
 		}
 		if (character === '<' && /[A-Za-z/!>]/.test(next ?? '')) {
@@ -208,7 +274,17 @@ function collectProse(source, file) {
 	const exceptions = [];
 	let inFrontmatter = lines[0] === '---';
 	let inFence = false;
-	const mdxState = { mode: null, braceDepth: 0, quote: null, escaped: false, blockComment: false };
+	const mdxState = {
+		mode: null,
+		expressionReturnMode: null,
+		braceDepth: 0,
+		quote: null,
+		escaped: false,
+		blockComment: false,
+		regex: false,
+		regexCharacterClass: false,
+		canStartRegex: true,
+	};
 	let excludedHeadingLevel = null;
 	let pendingException = null;
 	let activeBlock = null;
