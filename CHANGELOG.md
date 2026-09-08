@@ -11,6 +11,11 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Added
 
+- Add complete service, operator, contributor, and reference guidance. Document
+  verified public and local boundaries, authentication, persistence, images,
+  health checks, deployment ownership, secret sources, monitoring, recovery,
+  repository setup, OpenSpec authority, and component licensing. Add accessible
+  service-topology and authority-flow diagrams with text-equivalent tables.
 - Add complete project and package procedures for `.bproj` and `.bws`
   selection, dependency materialization, lockfile enforcement, credential
   handling, artifact inspection, immutable publication, consumption, yanking,

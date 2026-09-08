@@ -144,6 +144,13 @@ The historical name for the separately deployed standard reader. That service is
 
 The exact operating-system and architecture key shared by release metadata and the download UI. The closed public set is `linux-amd64`, `darwin-arm64`, and `windows-amd64`; broader platform names and separate architecture fields are invalid.
 
+## Service operating contract
+
+The verified public and local boundary for one deployed service. It identifies
+the service purpose, audience, authentication boundary, persistent state,
+container image, health check, deployment owner, secret source, monitoring
+evidence, and recovery path without publishing credential values.
+
 ## Playground
 
 The authenticated Beskid Learn workspace for trying arbitrary Beskid source with

@@ -204,6 +204,126 @@ const procedurePages = [
 			recovery: ['revoke', 'rotate'],
 		},
 	},
+	{
+		path: 'docs/services/index.md',
+		diagram: 'Public service and authentication topology',
+		diagramBranches: ['Website', 'Auth hub', 'Learn', 'pckg', 'Tracker', 'Nexus'],
+		equivalentConcepts: ['public guidance', 'GitHub OAuth', 'learning checks', 'package artifacts', 'delivery status', 'repository graph'],
+		sections: {
+			prerequisites: ['service task', 'public service status'],
+			actions: ['/docs/services/authentication/', '/docs/operations/health-and-monitoring/'],
+			expectedResult: ['service boundary', 'authentication boundary'],
+			recovery: ['health endpoint', 'service operator'],
+		},
+	},
+	...[
+		['docs/services/authentication.md', 'GitHub OAuth', 'AUTH_HUB_PUBLIC_URL', 'pairing code', 'service token'],
+		['docs/services/learn.md', 'interactive learning', 'BESKID_BINARY', '/api/health', 'temporary workspace'],
+		['docs/services/pckg.md', 'package registry', 'PCKG_DATABASE_URL', '/health/ready', 'PostgreSQL'],
+		['docs/services/tracker.md', 'delivery authority', 'TRACKER_DATA_DIR', '/api/health', 'SQLite'],
+		['docs/services/nexus.md', 'repository graph', 'GITNEXUS_HOME', '/api/health', 'forward-auth'],
+	].map(([path, purpose, setting, health, state]) => ({
+		path,
+		noDiagram: 'The service contract table is clearer than a diagram for one service.',
+		sections: {
+			prerequisites: [purpose, setting],
+			actions: [health, 'service contract'],
+			expectedResult: [health, state],
+			recovery: ['restore', 'redeploy'],
+		},
+	})),
+	{
+		path: 'docs/operations/index.md',
+		noDiagram: 'The ordered operator checklist is clearer than a second platform diagram.',
+		sections: {
+			prerequisites: ['Coolify lane', 'OpenBao token'],
+			actions: ['/docs/operations/containers/', '/docs/operations/deployment/'],
+			expectedResult: ['immutable image digests', 'healthy services'],
+			recovery: ['stop promotion', 'previous Compose payload'],
+		},
+	},
+	{
+		path: 'docs/operations/containers.md',
+		noDiagram: 'The container matrix gives a more precise comparison than a diagram.',
+		sections: {
+			prerequisites: ['container engine', 'pinned Compose contract'],
+			actions: ['docker compose', 'persistent volumes'],
+			expectedResult: ['healthy', 'immutable digest'],
+			recovery: ['container logs', 'do not delete'],
+		},
+	},
+	{
+		path: 'docs/operations/deployment.md',
+		noDiagram: 'The numbered promotion and rollback procedure is already linear.',
+		sections: {
+			prerequisites: ['protected GitHub environment', 'lane-scoped'],
+			actions: ['just seed-openbao-check', 'just sync-env-prod'],
+			expectedResult: ['release manifest', 'traceparent'],
+			recovery: ['rollback', 'previous Compose payload'],
+		},
+	},
+	{
+		path: 'docs/operations/health-and-monitoring.md',
+		noDiagram: 'The endpoint and symptom matrix is clearer than a flow diagram.',
+		sections: {
+			prerequisites: ['release manifest', 'monitoring access'],
+			actions: ['/api/v1/health', '/health/ready'],
+			expectedResult: ['successful HTTP status', 'same release manifest'],
+			recovery: ['correlation evidence', 'rollback'],
+		},
+	},
+	{
+		path: 'docs/contributing/index.md',
+		noDiagram: 'The contributor task list is a short route to detailed procedures.',
+		sections: {
+			prerequisites: ['repository change', 'ownership boundary'],
+			actions: ['/docs/contributing/repository/', '/docs/contributing/standard-changes/'],
+			expectedResult: ['focused gate', 'correct authority'],
+			recovery: ['unrelated changes', 'source owner'],
+		},
+	},
+	{
+		path: 'docs/contributing/repository.md',
+		noDiagram: 'The checkout and focused-gate procedure is a linear sequence.',
+		sections: {
+			prerequisites: ['repository checkout', 'pnpm'],
+			actions: ['./scripts/setup-environment.sh', 'pnpm --dir site/website test'],
+			expectedResult: ['pinned submodule commits', 'focused gate'],
+			recovery: ['submodule owner', 'unrelated dirty state'],
+		},
+	},
+	{
+		path: 'docs/contributing/standard-changes.md',
+		diagram: 'OpenSpec authority and publication flow',
+		diagramBranches: ['OpenSpec change', 'Strict validation', 'Canonical specification', 'Catalog projection', 'Docs summary'],
+		equivalentConcepts: ['proposal', 'SHALL', 'GIVEN', 'catalog', 'informative'],
+		sections: {
+			prerequisites: ['observable behavior', 'capability identifier'],
+			actions: ['openspec validate', 'pnpm run openspec:validate'],
+			expectedResult: ['SHALL or MUST', 'GIVEN, WHEN, and THEN'],
+			recovery: ['do not change Docs', 'validation error'],
+		},
+	},
+	{
+		path: 'docs/reference/index.md',
+		noDiagram: 'The authority table is clearer than a flow diagram for reference selection.',
+		sections: {
+			prerequisites: ['fact to verify', 'authority type'],
+			actions: ['/docs/standard/', '/docs/reference/licensing/'],
+			expectedResult: ['canonical source', 'verification revision'],
+			recovery: ['conflicting sources', 'do not infer'],
+		},
+	},
+	{
+		path: 'docs/reference/licensing.md',
+		noDiagram: 'The component license matrix is clearer than a relationship diagram.',
+		sections: {
+			prerequisites: ['component path', 'more specific license'],
+			actions: ['LICENSING.md', 'pnpm licenses:check'],
+			expectedResult: ['Apache-2.0', 'AGPL-3.0-only'],
+			recovery: ['third-party notice', 'do not distribute'],
+		},
+	},
 ];
 
 function escapeRegExp(value) {
@@ -418,4 +538,68 @@ test('package record creation keeps the bearer value off curl argv', async () =>
 	const actions = section(publish.body, 'Actions');
 	assert.match(actions, /printf[\s\S]*BESKID_PCKG_API_KEY[\s\S]*\|[\s\n]*curl[^\n]*--config -/);
 	assert.doesNotMatch(actions, /curl[^\n]*BESKID_PCKG_API_KEY/);
+});
+
+test('service and operations guidance covers each public audience in navigation', async () => {
+	const navigation = await readFile(new URL('../data/docs-navigation.ts', import.meta.url), 'utf8');
+	for (const [audience, route] of [
+		['platform user', '/docs/services/'],
+		['self-hoster', '/docs/operations/'],
+		['maintainer', '/docs/contributing/repository/'],
+		['contributor', '/docs/contributing/'],
+		['evaluator', '/docs/reference/'],
+	]) {
+		assert.ok(navigation.includes(route), `${audience} must have a navigation entry at ${route}`);
+	}
+	for (const group of ['Operate', 'Contribute', 'Reference']) {
+		assert.match(navigation, new RegExp(`label: '${group}'`), `navigation must contain the ${group} group`);
+	}
+});
+
+test('service pages publish a complete verified operating contract', async () => {
+	const servicePages = await Promise.all(procedurePages.filter((page) => /^docs\/services\/(?:authentication|learn|pckg|tracker|nexus)\.md$/.test(page.path)).map(loadPage));
+	for (const page of servicePages) {
+		const contract = section(page.body, 'Service contract');
+		for (const field of ['Purpose', 'Audience', 'Public boundary', 'Local boundary', 'Authentication', 'Persistent state', 'Container image', 'Health check', 'Deployment owner', 'Secret source', 'Monitoring', 'Recovery']) {
+			assert.ok(contract.includes(`| ${field} |`), `${page.path} must define ${field}`);
+		}
+		assert.match(contract, /ghcr\.io\/cyber-nomad-collective\/beskid-/);
+	}
+});
+
+test('security-sensitive procedures protect secrets before operator actions', async () => {
+	for (const path of ['docs/services/authentication.md', 'docs/operations/index.md', 'docs/operations/deployment.md', 'docs/packages/credentials-and-recovery.md']) {
+		const page = await loadPage(procedurePages.find((candidate) => candidate.path === path));
+		assert.equal(page.data.authority.status, 'security-sensitive', `${path} must use a security-sensitive annotation`);
+		const beforeActions = page.body.slice(0, page.body.indexOf('\n## Actions'));
+		assert.match(beforeActions, /secret manager|OpenBao/i, `${path} must explain secret storage before actions`);
+		assert.match(beforeActions, /do not (?:print|commit|copy|put|store|expose)/i, `${path} must prohibit unsafe secret handling before actions`);
+	}
+});
+
+test('repository setup is separate from end-user installation and uses pnpm', async () => {
+	const repository = await loadPage(procedurePages.find((page) => page.path === 'docs/contributing/repository.md'));
+	assert.match(repository.body, /does not install Beskid for an end user/i);
+	assert.ok(repository.body.includes('./scripts/setup-environment.sh'));
+	assert.match(repository.body, /pnpm --dir site\/website/);
+	assert.match(repository.body, /submodule owner/i);
+	assert.ok(repository.body.includes('site/website/src/content/docs/'));
+	assert.match(repository.body, /do not edit generated output/i);
+});
+
+test('standard changes preserve the OpenSpec-to-Docs authority boundary', async () => {
+	const standard = await loadPage(procedurePages.find((page) => page.path === 'docs/contributing/standard-changes.md'));
+	assert.match(standard.body, /OpenSpec is the sole normative authority/);
+	assert.match(standard.body, /SHALL or MUST/);
+	assert.match(standard.body, /GIVEN, WHEN, and THEN/);
+	assert.match(standard.body, /openspec\/catalog\.json/);
+	assert.match(standard.body, /Docs (?:is|are) informative/);
+});
+
+test('licensing reference reflects component boundaries and the Nexus exception', async () => {
+	const licensing = await loadPage(procedurePages.find((page) => page.path === 'docs/reference/licensing.md'));
+	for (const concept of ['Apache-2.0', 'AGPL-3.0-only', 'CC-BY-4.0', 'PolyForm Noncommercial License 1.0.0', 'Corresponding Source', 'compiled programs']) {
+		assert.ok(licensing.body.includes(concept), `licensing guidance must explain ${concept}`);
+	}
+	assert.match(licensing.body, /more specific license[^.]*overrides/i);
 });

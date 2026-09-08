@@ -38,8 +38,26 @@ export const docsNavigation: DocsNavigationGroup[] = [
 				],
 			},
 			{
+				label: 'Operate',
+				items: [
+					{ label: 'Services', link: '/docs/services/' },
+					{ label: 'Authentication', link: '/docs/services/authentication/' },
+					{ label: 'Learn', link: '/docs/services/learn/' },
+					{ label: 'pckg', link: '/docs/services/pckg/' },
+					{ label: 'Tracker', link: '/docs/services/tracker/' },
+					{ label: 'Nexus', link: '/docs/services/nexus/' },
+					{ label: 'Operations', link: '/docs/operations/' },
+					{ label: 'Containers', link: '/docs/operations/containers/' },
+					{ label: 'Deploy and roll back', link: '/docs/operations/deployment/' },
+					{ label: 'Health and monitoring', link: '/docs/operations/health-and-monitoring/' },
+				],
+			},
+			{
 				label: 'Contribute',
 				items: [
+					{ label: 'Contribution paths', link: '/docs/contributing/' },
+					{ label: 'Set up the repository', link: '/docs/contributing/repository/' },
+					{ label: 'Change the Standard', link: '/docs/contributing/standard-changes/' },
 					{ label: 'Write Beskid documentation', link: '/docs/contributing/documentation/' },
 					{ label: 'Use ASD-STE100', link: '/docs/contributing/ste-100/' },
 				],
@@ -47,6 +65,8 @@ export const docsNavigation: DocsNavigationGroup[] = [
 			{
 				label: 'Reference',
 				items: [
+					{ label: 'Reference map', link: '/docs/reference/' },
+					{ label: 'Licensing', link: '/docs/reference/licensing/' },
 					{ label: 'Beskid Standard', link: '/docs/standard/' },
 					{ label: 'The Beskid Book', link: '/book/' },
 				],
