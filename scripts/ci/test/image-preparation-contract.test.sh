@@ -106,12 +106,6 @@ if [[ "${learn}" == *'npm install -g tsx'* ]]; then
   exit 1
 fi
 
-learn_lane="$(sed -n '/^  image-learn:/,/^  image-tracker:/p' "${root}/.github/workflows/platform-delivery.yml")"
-if [[ "${learn_lane}" != *'submodules: compiler beskid_bsol beskid_web_common'* ]]; then
-  echo "image-learn must initialize the shared UI source required by its local lockfile" >&2
-  exit 1
-fi
-
 tracker_ignore="$(<"${root}/beskid_tracker/.dockerignore")"
 if [[ "${tracker_ignore}" == *$'\npnpm-lock.yaml'* || "${tracker_ignore}" == pnpm-lock.yaml* ]]; then
   echo "beskid_tracker/.dockerignore excludes the lockfile required by its Dockerfile" >&2
@@ -136,26 +130,6 @@ if [[ "${tracker_vite}" != *'nitro({ preset: "node-server" })'* ]] ||
    [[ "${tracker}" != *'CMD ["node", ".output/server/index.mjs"]'* ]]; then
 	echo "beskid_tracker bundle and production image must use the same Node runtime" >&2
 	exit 1
-fi
-
-reusable_image="$(<"${root}/.github/workflows/reusable-image.yml")"
-for requirement in \
-	'healthcheck-url:' \
-	'healthcheck-env:' \
-	'Probe published image health' \
-  'docker run -d --rm'; do
-  if [[ "${reusable_image}" != *"${requirement}"* ]]; then
-    echo "reusable image workflow is missing runtime health contract: ${requirement}" >&2
-    exit 1
-  fi
-done
-
-tracker_image_block="$(sed -n '/^  image-tracker:/,/^  image-nexus:/p' "${root}/.github/workflows/platform-delivery.yml")"
-if [[ "${tracker_image_block}" != *'healthcheck-url: /api/health'* ]] ||
-   [[ "${tracker_image_block}" != *'AUTH_HUB_PUBLIC_URL=https://auth.invalid'* ]] ||
-   [[ "${tracker_image_block}" != *'SESSION_SECRET=0123456789abcdef0123456789abcdef'* ]]; then
-  echo "tracker image lane must declare its published-image health endpoint" >&2
-  exit 1
 fi
 
 nexus="$(<"${root}/beskid_nexus/Dockerfile")"
@@ -186,12 +160,6 @@ for requirement in \
     exit 1
   fi
 done
-
-pckg_image_block="$(sed -n '/^  image-pckg:/,/^  release-manifest:/p' "${root}/.github/workflows/platform-delivery.yml")"
-if [[ "${pckg_image_block}" != *'submodules: beskid_bsol compiler pckg beskid_web_common'* ]]; then
-  echo "pckg image lane must check out the bsol parser required by artifact validation" >&2
-  exit 1
-fi
 
 # Nexus authenticates through the Authentik proxy and deliberately has no
 # application-level auth client dependency. Keep this contract to the two

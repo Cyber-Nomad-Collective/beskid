@@ -15,13 +15,20 @@
 
 ## CI (`scripts/ci/`)
 
-Submodule init + native gates/publish lanes that run directly on Blacksmith
-runners (the compiler gate is also Testbox-compatible). Dagger is retired.
+Submodule initialization plus native gates and publication entrypoints. AppVeyor
+owns repository validation and platform-image publication; retained GitHub
+Actions workflows handle only GitHub-native release and marketplace concerns.
+Dagger, Blacksmith, and Testbox CI orchestration are retired.
 
 | Script | Used by |
 |--------|---------|
-| [`init-submodules.sh`](ci/init-submodules.sh) | GHCR / release / Open VSX / platform matrix checkouts |
-| [`init-compiler-submodule.sh`](ci/init-compiler-submodule.sh) | Compiler + corelib (tags for semver) |
+| [`appveyor-install.sh`](ci/appveyor-install.sh) | Native AppVeyor toolchain and pinned-submodule setup by lane |
+| [`appveyor-entrypoint.sh`](ci/appveyor-entrypoint.sh) | Linux/macOS AppVeyor validation dispatcher |
+| [`appveyor-entrypoint.ps1`](ci/appveyor-entrypoint.ps1) | Windows AppVeyor ABI-v5 runtime-kit validation dispatcher |
+| [`appveyor-package-publish.sh`](ci/appveyor-package-publish.sh) | Unconditional Corelib/template rehearsal plus trusted-main publication to `pckg.beskid-lang.org` |
+| [`appveyor-platform-publish.sh`](ci/appveyor-platform-publish.sh) | Fail-closed five-lane image build and trusted-main publication to `cr.beskid-lang.org` |
+| [`init-submodules.sh`](ci/init-submodules.sh) | AppVeyor / release / Open VSX pinned-submodule checkouts |
+| [`init-compiler-submodule.sh`](ci/init-compiler-submodule.sh) | Compiler + corelib checkout (tags for semver) |
 | [`compiler-rust-gate.sh`](ci/compiler-rust-gate.sh) | Compiler Rust gate (clippy + workspace tests) |
 | [`lsp-command-contract-gate.sh`](ci/lsp-command-contract-gate.sh) | LSP + VS Code command-contract gate |
 | [`corelib-gate.sh`](ci/corelib-gate.sh) | Corelib quality + `beskid test` |
@@ -38,16 +45,11 @@ runners (the compiler gate is also Testbox-compatible). Dagger is retired.
 | [`run-ci-reported-command.sh`](ci/run-ci-reported-command.sh) | GitHub annotations, summaries, raw logs, and JSON for failed gate commands |
 | [`corelib-publish.sh`](ci/corelib-publish.sh) | Pack and publish the production corelib closure plus all first-party templates to pckg (`--dry-run` validates every artifact without secrets or registry mutation) |
 | [`open-vsx-publish.sh`](ci/open-vsx-publish.sh) | Open VSX publish (native) |
-| [`build-release-manifest.sh`](ci/build-release-manifest.sh) | Aggregate immutable OCI image records into a release manifest |
-| [`validate-release-manifest.sh`](ci/validate-release-manifest.sh) | Enforce digest, SBOM, provenance, and source-commit policy |
-| [`post-deploy-smoke.sh`](ci/post-deploy-smoke.sh) | Retry production public endpoints while Watchtower converges |
-| [`sign-image.sh`](ci/sign-image.sh) | Required keyless cosign signing for promotable images |
-| [`prepare-secure-dockerfile.sh`](ci/prepare-secure-dockerfile.sh) | Convert package-token ARGs to BuildKit secret mounts at build time |
 | [`openspec-gate.sh`](ci/openspec-gate.sh) | Strict OpenSpec authority validation |
 | [`conformance-gate.sh`](ci/conformance-gate.sh) | Requirement/provenance conformance validation |
 | [`platform-integration-gate.sh`](ci/platform-integration-gate.sh) | Cross-site delivery integration contract |
 | [`shared-ui-nexus-gate.sh`](ci/shared-ui-nexus-gate.sh) | Shared UI Vitest + Nexus unit/Playwright E2E |
-| [`security-policy-gate.sh`](ci/security-policy-gate.sh) | Offline workflow and supply-chain policy |
+| [`security-policy-gate.sh`](ci/security-policy-gate.sh) | Offline AppVeyor-publication and Watchtower-authority policy |
 
 ## Lazygit
 
@@ -56,11 +58,12 @@ runners (the compiler gate is also Testbox-compatible). Dagger is retired.
 ## Local CI
 
 [`../validate-ci-local.sh`](../validate-ci-local.sh) runs the same integration,
-shared-ui/Nexus, OpenSpec, conformance, and supply-chain policy used by
-platform delivery. Shared UI + Nexus command parity:
+shared-ui/Nexus, OpenSpec, conformance, and supply-chain policy used by the
+AppVeyor platform lane. Shared UI + Nexus command parity:
 [`../docs/orchestrate/shared-ui-nexus-gate.md`](../docs/orchestrate/shared-ui-nexus-gate.md).
 
-Replacement delivery contracts run without external state changes:
+AppVeyor and retained GitHub-native release contracts run without external
+state changes:
 
 ```bash
 bash scripts/ci/test/run-cicd-foundation-tests.sh

@@ -3,8 +3,8 @@
 # Initializes the compiler (+ recursive corelib) and beskid_bsol submodules
 # (compiler workspace path dependency) plus beskid_vscode (LSP command contract),
 # then installs the Rust and Bun toolchains so `scripts/ci/compiler-rust-gate.sh`
-# and `scripts/ci/lsp-command-contract-gate.sh` can run directly on a Blacksmith
-# runner or Testbox VM.
+# and `scripts/ci/lsp-command-contract-gate.sh` can run on any supported native
+# worker. AppVeyor provisions these tools through repository-owned scripts.
 name: Setup compiler gate
 description: Init compiler/beskid_bsol/beskid_vscode submodules and install the Rust + Bun toolchain for the compiler gate.
 

@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "8ac649f1f4093748583e6f3d775d58bbf387b8c008bcb2b256d2d2d5e32f552c",
+  "revision": "fc1e7d6edde479cd2efd5c52d7931f69afbe452ecb936f42d4d2ee95f475833d",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
     "nodes": 1042,
     "capabilities": 198,
-    "requirements": 571,
+    "requirements": 572,
     "normativeSources": 304,
     "provisionalCapabilities": 52,
     "legacyArtifacts": 3189,
@@ -30236,26 +30236,26 @@
           "anchor": "requirement-ci-blocks-unsafe-integration"
         },
         {
-          "id": "BSP-REQ-E455C4B15885",
+          "id": "BSP-REQ-82799F40E758",
           "legacySlug": null,
           "sourcePath": "openspec/specs/staged-delivery-observability/spec.md",
-          "sourceHash": "35e9da575a795d2b4c3bf9cc5476f69fc6024f8a89fd97ccc199f07094de0a15",
+          "sourceHash": "722eea0cfb87b8c145e9fbd9cd051c67ed25f9736b740e628f64c75ee6be4a66",
           "status": "Standard",
           "normative": true,
           "migrationStatus": "extracted",
-          "title": "Artifacts are built once and promoted by digest",
-          "anchor": "requirement-artifacts-are-built-once-and-promoted-by-digest"
+          "title": "Platform images retain immutable identities",
+          "anchor": "requirement-platform-images-retain-immutable-identities"
         },
         {
-          "id": "BSP-REQ-4235C8DD2C79",
+          "id": "BSP-REQ-5FCBE0D9FF1D",
           "legacySlug": null,
           "sourcePath": "openspec/specs/staged-delivery-observability/spec.md",
-          "sourceHash": "35e9da575a795d2b4c3bf9cc5476f69fc6024f8a89fd97ccc199f07094de0a15",
+          "sourceHash": "722eea0cfb87b8c145e9fbd9cd051c67ed25f9736b740e628f64c75ee6be4a66",
           "status": "Standard",
           "normative": true,
           "migrationStatus": "extracted",
-          "title": "Staging and production are distinct protected environments",
-          "anchor": "requirement-staging-and-production-are-distinct-protected-environments"
+          "title": "Watchtower is the exclusive platform deployment authority",
+          "anchor": "requirement-watchtower-is-the-exclusive-platform-deployment-authority"
         },
         {
           "id": "BSP-REQ-B61836781840",
@@ -30278,6 +30278,17 @@
           "migrationStatus": "extracted",
           "title": "Production failures are never suppressed",
           "anchor": "requirement-production-failures-are-never-suppressed"
+        },
+        {
+          "id": "BSP-REQ-9770555C8D0E",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/staged-delivery-observability/spec.md",
+          "sourceHash": "722eea0cfb87b8c145e9fbd9cd051c67ed25f9736b740e628f64c75ee6be4a66",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Pull requests cannot publish or deploy",
+          "anchor": "requirement-pull-requests-cannot-publish-or-deploy"
         }
       ],
       "records": [],
@@ -38954,7 +38965,7 @@
       "path": "AGENTS.md",
       "title": "Beskid — Toolchain & Stack",
       "authority": "informative",
-      "sourceHash": "2046fd5222293a4f4bb2bbe539ae7a3fbff36948a8c86366f279ce223b095efd",
+      "sourceHash": "c82a2569a1b372e20e868d299d031dc6d9fe9ea8569357f36c297eb76adadfc7",
       "standardLinks": [],
       "containsNormativeKeywords": true,
       "disposition": "informative-by-policy"
@@ -38963,7 +38974,7 @@
       "path": "GLOSSARY.md",
       "title": "Glossary",
       "authority": "informative",
-      "sourceHash": "4993d8c4f635ba823ecee8f00620a940b4cca42f88d2071078e3cd5011ffd952",
+      "sourceHash": "c425a6007eb565512bbaeb709d8b56d912e24e8639cbcfcd3ff99c4821c05d5a",
       "standardLinks": [
         "/platform-spec/"
       ],
@@ -38974,7 +38985,7 @@
       "path": "GUIDE.md",
       "title": "Beskid project guide",
       "authority": "informative",
-      "sourceHash": "58b57c2739d21358783629ae92b0d6be65d1edbac98cf30b6740c8ba0713cd10",
+      "sourceHash": "469772d2fee13e3a203e343a3d6c22fc4ad81b2650964e17b82ba6c263f72bb9",
       "standardLinks": [
         "/platform-spec/"
       ],
@@ -39006,7 +39017,7 @@
       "path": "docs/orchestrate/verify-all-on-main-v04.md",
       "title": "verify-all-on-main (v0.4)",
       "authority": "informative",
-      "sourceHash": "8ace251a6bf1ef25e2b83472422cc8a66a189a67a6598c915b6fd1991fcf3988",
+      "sourceHash": "2ebf9c3141317a43884b3e3803057e7f26b4275b510748f477613ead9201537a",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"

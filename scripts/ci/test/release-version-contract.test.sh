@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
-# Release workflow contract: compiler CI is the only mint and downstream
-# consumers read the exact version emitted by that compiler run.
+# Release workflow contract: AppVeyor is the CI authority while GitHub remains
+# the explicit, GitHub-native release publisher.
 set -euo pipefail
 
 root="$(cd "$(dirname "$0")/../../.." && pwd)"
-compiler_workflow="${root}/.github/workflows/compiler.yml"
 release_workflow="${root}/.github/workflows/compiler-release.yml"
 open_vsx_workflow="${root}/.github/workflows/publish-open-vsx.yml"
 distribute_workflow="${root}/.github/workflows/distribute.yml"
@@ -17,8 +16,8 @@ fail() {
 }
 
 for workflow in "${release_workflow}" "${cleanup_workflow}" "${distribute_workflow}"; do
-  if rg -Fq 'runs-on: ubuntu-latest' "${workflow}"; then
-    fail "release-critical Linux orchestration still depends on the billing-locked GitHub Ubuntu runner: ${workflow}"
+  if rg -Fq 'blacksmith-' "${workflow}"; then
+    fail "retained GitHub-native publication still depends on Blacksmith: ${workflow}"
   fi
 done
 
@@ -29,38 +28,30 @@ for tool in llvm-nm.exe llvm-readobj.exe llvm-ml.exe clang.exe; do
   grep -Fq "${tool}" "${windows_llvm_action}" || \
     fail "Windows LLVM setup does not require ${tool}"
 done
-for workflow in "${compiler_workflow}" "${release_workflow}"; do
-  grep -Fq 'uses: ./.github/actions/setup-native-llvm-windows' "${workflow}" || \
-    fail "Windows release path does not install the shared pinned LLVM toolchain: ${workflow}"
-done
+[[ ! -e "${root}/.github/workflows/compiler.yml" ]] || \
+  fail 'GitHub still contains the superseded Compiler validation workflow'
+grep -Fq 'uses: ./.github/actions/setup-native-llvm-windows' "${release_workflow}" || \
+  fail 'Windows release path does not install the shared pinned LLVM toolchain'
 
-grep -Fq 'GITHUB_RUN_NUMBER: ${{ github.run_number }}' "${compiler_workflow}" || \
-  fail 'compiler workflow does not provide its run number to the global version resolver'
-grep -Fq 'version: ${{ steps.version.outputs.version }}' "${compiler_workflow}" || \
-  fail 'compiler workflow does not expose its minted version as a same-run job output'
-
-# Legacy in-workflow publishing is removed; the dedicated release workflow
-# is the sole CLI, LSP, and bundle publisher.
-for release_job in release-cli-build release-cli-publish release-lsp-build release-lsp-publish release-bundle-build release-bundle-publish; do
-  if grep -Eq "^  ${release_job}:" "${compiler_workflow}"; then
-    fail "${release_job} duplicates compiler-release.yml"
-  fi
-done
-
-grep -Fq 'workflows: [Compiler]' "${release_workflow}" || \
-  fail 'compiler release workflow is not triggered by Compiler completion'
-grep -Fq 'github.event.workflow_run.run_number' "${release_workflow}" || \
-  fail 'compiler release workflow does not preserve the triggering Compiler run number'
-grep -Fq "github.event.workflow_run.conclusion == 'success' && 'stable' || 'unstable'" "${release_workflow}" || \
-  fail 'automatic compiler release channel does not follow the gate conclusion'
+if grep -Fq 'workflow_run:' "${release_workflow}"; then
+  fail 'compiler release still couples publication to a GitHub validation workflow'
+fi
+grep -Fq 'source_sha:' "${release_workflow}" || \
+  fail 'manual compiler release does not require the AppVeyor-validated source SHA'
+grep -Fq 'appveyor_build_version:' "${release_workflow}" || \
+  fail 'manual compiler release does not record its AppVeyor evidence identity'
+grep -Fq 'appveyor_gate_result:' "${release_workflow}" || \
+  fail 'manual compiler release does not record the AppVeyor gate result'
+grep -Fq 'MANUAL_SOURCE_SHA: ${{ inputs.source_sha }}' "${release_workflow}" || \
+  fail 'manual compiler release does not consume the validated source SHA'
+grep -Fq 'MANUAL_GATE_RESULT: ${{ inputs.appveyor_gate_result }}' "${release_workflow}" || \
+  fail 'manual compiler release does not consume the AppVeyor gate result'
+grep -Fq 'appveyor-build.txt' "${release_workflow}" || \
+  fail 'compiler release does not retain AppVeyor build evidence'
 grep -Fq 'bash ./scripts/ci/build-release-platform.sh' "${release_workflow}" || \
   fail 'compiler release workflow does not use the structured platform wrapper'
 grep -Fq 'handoff_tag: ${{ steps.release.outputs.handoff_tag }}' "${release_workflow}" || \
   fail 'compiler release workflow does not expose its GitHub Release handoff tag'
-grep -Fq "github.event.workflow_run.event == 'push'" "${release_workflow}" || \
-  fail 'compiler release workflow accepts non-push workflow_run sources into its privileged release path'
-grep -Fq 'github.event.workflow_run.head_repository.full_name == github.repository' "${release_workflow}" || \
-  fail 'compiler release workflow does not require the triggering run to originate in the same repository'
 grep -Fq 'handoff_tag=compiler-handoff-${GITHUB_RUN_ID}' "${release_workflow}" || \
   fail 'compiler release handoff identity is not stable across failed-job reruns'
 if grep -Fq 'handoff_tag=compiler-handoff-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}' "${release_workflow}"; then
@@ -87,9 +78,8 @@ grep -Fq -- '--pattern release-state.json' "${open_vsx_workflow}" || \
 grep -Fq 'BESKID_RELEASE_VERSION: ${{ steps.release-version.outputs.version }}' "${open_vsx_workflow}" || \
   fail 'Open VSX does not pass the consumed compiler version to its publisher'
 resolver_workflows="$(rg -l 'resolve-beskid-version\.sh' "${root}/.github/workflows" -g '*.yml' -g '*.yaml' | sort || true)"
-expected_resolvers="$(printf '%s\n%s\n' "${release_workflow}" "${compiler_workflow}" | sort)"
-if [[ "${resolver_workflows}" != "${expected_resolvers}" ]]; then
-  fail "only compiler and compiler-release workflows may resolve the central version (found: ${resolver_workflows:-none})"
+if [[ "${resolver_workflows}" != "${release_workflow}" ]]; then
+  fail "only compiler-release may resolve the central version (found: ${resolver_workflows:-none})"
 fi
 
 

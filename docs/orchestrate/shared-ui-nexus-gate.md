@@ -20,10 +20,10 @@ are owned by CYB-89 / CYB-90; this document only covers root wiring.
 bash scripts/ci/shared-ui-nexus-gate.sh
 
 # Or via root package script
-bun run gate:shared-ui-nexus
+pnpm run gate:shared-ui-nexus
 
 # Optional: skip Chromium reinstall when browsers are already on the machine
-SKIP_NEXUS_E2E_INSTALL=1 bun run gate:shared-ui-nexus
+SKIP_NEXUS_E2E_INSTALL=1 pnpm run gate:shared-ui-nexus
 ```
 
 `./validate-ci-local.sh` also runs this gate alongside the other platform
@@ -52,17 +52,11 @@ Package-level notes: `beskid_nexus/gitnexus-web/TESTING.md`.
 
 ## CI
 
-`platform-delivery.yml` job `shared-ui-nexus` calls the same script through
-`reusable-quality.yml`:
-
-```yaml
-command: bash scripts/ci/shared-ui-nexus-gate.sh
-submodules: beskid_web_common beskid_nexus
-```
-
-Local and CI therefore share one authority path. Branch protection may require
-the `shared-ui-nexus` check for merge; image publish remains decoupled from
-quality gates (existing platform-delivery contract).
+The AppVeyor `linux-platform` lane calls the same script from the root
+AppVeyor entrypoint after initializing `beskid_web_common` and `beskid_nexus`.
+Local and CI therefore share one authority path. The lane must pass before any
+platform image is published to `cr.beskid-lang.org`; Watchtower deployment is
+outside this gate.
 
 ## Prerequisite diagnostics
 

@@ -1,31 +1,30 @@
-# Coolify: beskid site
+# Production: beskid site
 
-The documentation site runs as the **`site`** service in the production Coolify compose stack.
+The documentation site runs as the **`website`** service in the standalone production Compose stack.
 
-## Delivery model (GHCR + Compose)
+## Delivery model
 
 | Layer | Responsibility |
 |-------|----------------|
-| **GitHub Actions** (`.github/workflows/container-images.yml`) | Build and push `ghcr.io/cyber-nomad-collective/beskid-site` |
-| **beskid_infra** | [`compose/production/docker-compose.yml`](../beskid_infra/compose/production/docker-compose.yml) on Coolify |
+| **AppVeyor** (`linux-platform`) | Build and push `cr.beskid-lang.org/beskid/site` |
+| **Watchtower runtime** | [`beskid_sites/deploy/docker-compose.yml`](../beskid_sites/deploy/docker-compose.yml) |
 | **OpenBao** | Optional keys under `secret/beskid/production/site` |
 
-Operator guide: [beskid_infra/docs/deploy-compose.md](../beskid_infra/docs/deploy-compose.md).
+Operator guide: [`beskid_sites/deploy/README.md`](../beskid_sites/deploy/README.md).
 
 ## Compose entry
 
 | Mode | File |
 |------|------|
-| **Platform stack (production)** | [`beskid_infra/compose/production/docker-compose.yml`](../beskid_infra/compose/production/docker-compose.yml) |
+| **Platform stack (production)** | [`beskid_sites/deploy/docker-compose.yml`](../beskid_sites/deploy/docker-compose.yml) |
 | **Single-service reference** | [`docker-compose.yml`](docker-compose.yml) |
 | **Local build** | [`docker-compose.build.yml`](docker-compose.build.yml) |
 
 ## Domain
 
-Production: `https://beskid-lang.org` (Coolify **Domains** on the `site` compose service).
+Production: `https://beskid-lang.org` through the shared host edge.
 
 ## Related
 
 - [Beskid auth hub](auth/COOLIFY.md)
-- [Platform deploy matrix](../beskid_infra/docs/deploy-matrix.md)
-- [beskid_infra](../beskid_infra/README.md)
+- [Production deployment](../beskid_sites/deploy/README.md)

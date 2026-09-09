@@ -171,10 +171,17 @@ check_text ".github/actions/setup-compiler-gate/action.yml" \
   'install-sccache: true' \
   "compiler gate enables sccache in the shared action"
 
-for workflow in .github/workflows/compiler.yml .github/workflows/compiler-release.yml .github/workflows/publish-open-vsx.yml; do
+for workflow in .github/workflows/compiler-release.yml .github/workflows/publish-open-vsx.yml; do
   check_text "${workflow}" 'uses: \./\.github/actions/setup-rust-build-tools' \
     "${workflow} uses the shared Rust build tools action"
 done
+
+check_text "scripts/ci/appveyor-install.sh" 'sudo apt-get install[^[:cntrl:]]*' \
+  "AppVeyor owns native Linux tool installation in a repository script"
+check_text "scripts/ci/appveyor-install.sh" 'build-essential clang curl git jq lld llvm mold pkg-config libssl-dev' \
+  "AppVeyor Linux lanes install the mold and LLVM toolchain"
+check_text "scripts/ci/appveyor-install.sh" 'rustup toolchain install stable --profile minimal' \
+  "AppVeyor native lanes provision the Rust toolchain"
 
 check_text "compiler/justfile" 'cargo binstall cargo-sweep' \
   "cargo-sweep guidance recommends cargo binstall"

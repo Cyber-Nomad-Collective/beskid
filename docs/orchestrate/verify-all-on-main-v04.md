@@ -22,16 +22,16 @@ Evidence template mirroring v0.3 closure at [`aba4331`](https://github.com/Cyber
 | `cd beskid_tracker && bun run seed:validate` | |
 | `cd beskid_vscode && bun run test:all` | |
 
-## Workflow gates (GitHub Actions)
+## CI and publication gates
 
-| Workflow | Repo | Expected | Run URL / SHA | Notes |
+| Lane | Authority | Expected | Run URL / SHA | Notes |
 | --- | --- | --- | --- | --- |
-| `beskid-platform` | superrepo | green | | setup-environment, lockfile, dagger smoke |
-| `container-images` | superrepo | green | | site, auth, tracker, nexus, pckg matrix |
-| `compiler-rust-gate` | superrepo | green | | Dagger `compiler-rust-gate` |
-| `corelib-quality` | `compiler/corelib` | green | | 42/42 `just corelib` |
-| `beskid_web_common` publish | submodule | green / skip | | `@beskid/ui-react` with `./settings` |
-| Open VSX / VS Code | superrepo | green | | extension smoke after v0.4 VS Code tasks |
+| `linux-platform` | AppVeyor | green | | OpenSpec, platform, Corelib, web, image build and registry publication |
+| `linux-compiler` | AppVeyor | green | | Compiler and Linux ABI-v5 runtime-kit |
+| `macos-compiler` | AppVeyor | green | | macOS arm64 ABI-v5 runtime-kit |
+| `windows-compiler` | AppVeyor | green | | Windows x86-64 ABI-v5 runtime-kit |
+| Compiler release / Distribution | GitHub-native workflows | green or not requested | | Explicit publication after recording AppVeyor source/build evidence |
+| Open VSX / VS Code | GitHub-native workflows | green or skip | | Editor-marketplace publication only |
 
 ## corelib-matrix
 
@@ -54,16 +54,19 @@ Evidence template mirroring v0.3 closure at [`aba4331`](https://github.com/Cyber
 
 - CYB-130 (2026-07-21): web_common lockfile pin, pckg/tracker Docker `file:` parity, tracker-delivery submodule+Bun cache, Coolify `service_uuid` fallback — see `docs/superpowers/reports/2026-07-21-cyb-130-cicd-release-gate-parity.md`. Staging Coolify service UUID still missing.
 
-## Coolify
+## Watchtower
 
-MCP `deploy` or manual redeploy after GitHub Actions green. See [deploy matrix](../../beskid_infra/docs/deploy-matrix.md).
+AppVeyor publishes controlled `production` tags to `cr.beskid-lang.org` after
+the platform lane succeeds. Watchtower alone reconciles those tags into
+production. Record immutable `sha-*` image identity, Watchtower status, and
+public service health; do not invoke a GitHub or AppVeyor deployment job.
 
 ## Sign-off checklist
 
 - [ ] Distribution preflight confirms required secret names are configured, without disclosing values: `DISTRIB_GH_PAT` and `HOMEBREW_TAP_GIT_TOKEN`
-- [ ] GitHub Packages install proof covers the exact `@beskid/beskid-ui`, `@beskid/ui-react`, and `trudoc` versions used by the release; the associated image workflow URL is recorded
+- [ ] Package install proof covers the exact `@beskid/beskid-ui`, `@beskid/ui-react`, and `trudoc` versions used by the release; the associated AppVeyor build URL is recorded
 - [ ] Open VSX credential is configured and the extension publication run is green or records an idempotent already-published outcome
-- [ ] Coolify production evidence records immutable image digests and deployment URLs; Auth Hub OAuth pairing succeeds for every consumer
+- [ ] Watchtower production evidence records immutable `cr.beskid-lang.org` image identities and public health URLs; Auth Hub OAuth pairing succeeds for every consumer
 - [ ] Tracker webhook delivery and Nexus catalog analyze smoke both have timestamped production evidence
 - [ ] Distribution run records a completed marker only after every platform publication is green; a failed fan-out has no marker and is rerun after remediation
 - [ ] All six v0.4 deliverables closed in seed catalog

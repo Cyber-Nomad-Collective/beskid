@@ -22,7 +22,8 @@ Beskid is an AOT-only programming language, compiler/runtime, core library, pack
 | `pckg/` | Package registry service and web client; browser identity is delegated to the shared Auth Hub |
 | `beskid_vscode/`, `beskid_treesitter/`, `beskid_bsol/`, `beskid_distrib/`, `beskid_templates/` | Editor, grammar, BSOL, distribution, and template subprojects |
 | `site/auth/`, `site/learn/` | Shared GitHub OAuth hub and interactive learning application |
-| `.github/workflows/`, `scripts/ci/` | Root CI orchestration, reusable delivery contracts, and local validation |
+| `appveyor.yml`, `scripts/ci/` | AppVeyor CI orchestration, platform publication, and provider-neutral local validation |
+| `.github/workflows/` | GitHub-native releases, distribution, editor-marketplace publication, and maintenance only |
 
 Most major product directories above are Git submodules. Before editing one,
 run `git submodule status` and treat its own repository status, instructions,
@@ -39,6 +40,7 @@ tests, and changelog as separate from the superrepo root.
 | Install root web dependencies | `pnpm install` |
 | Run host-callable preflight gates | `just gate` |
 | Add static workflow-policy checks | `just gate-full` |
+| Run the AppVeyor migration contract | `bash scripts/ci/test/appveyor-migration-contract.test.sh` |
 | Rebuild the OpenSpec read catalog | `pnpm openspec:catalog` |
 | Validate OpenSpec and provenance | `pnpm openspec:validate` |
 | Build website | `pnpm --cwd site/website run build` |
@@ -48,9 +50,11 @@ tests, and changelog as separate from the superrepo root.
 | Rebuild VS Code extension | `just vscode` |
 | List root recipes | `just --list` |
 
-`just gate` deliberately does not run the compiler gate; that gate is reserved
-for Blacksmith Testbox. Use the compiler repository's own documented commands
-for focused compiler work. `just gate-full` additionally requires `actionlint`.
+`just gate` deliberately does not run the compiler gate; AppVeyor runs the
+native compiler matrix through the canonical `scripts/ci` entrypoint. Use the
+compiler repository's own documented commands for focused compiler work.
+`just gate-full` additionally requires `actionlint` for the retained
+GitHub-native publication workflows.
 Private `@beskid/*` packages may require `NODE_AUTH_TOKEN`; the preflight script
 reports applicable skips rather than treating missing package credentials as a
 successful package gate.
@@ -64,7 +68,9 @@ selects it through `clang`; macOS and Windows keep their platform linkers.
 1. Define observable behavior changes in an OpenSpec delta before implementation.
 2. Run GitNexus impact analysis before editing an existing symbol; report high or critical blast radius.
 3. Stabilize tests, add the canonical path, migrate consumers, and only then delete the legacy path.
-4. Build artifacts once by commit SHA, deploy the same digest manifest to staging, then promote through a protected production environment.
+4. Build and validate platform images by commit SHA, publish them to
+   `cr.beskid-lang.org`, and leave production reconciliation solely to
+   Watchtower.
 5. Run focused tests plus strict OpenSpec/provenance validation and GitNexus change detection before commit.
 6. Update `CHANGELOG.md`; update `GLOSSARY.md` when canonical terminology changes. Do not add `Co-authored-by` trailers.
 
@@ -80,6 +86,10 @@ selects it through `clang`; macOS and Windows keep their platform linkers.
   invariants.
 - Tracker's SQLite model is delivery authority. Its GitHub synchronization is
   limited to the supported public bug surface.
+- AppVeyor is the validation and platform-image publication authority.
+  Watchtower is the only automated production-reconciliation authority.
+  GitHub Actions remains only for GitHub-native release, distribution,
+  editor-marketplace, security, and maintenance operations.
 
 ## Agent boundaries
 

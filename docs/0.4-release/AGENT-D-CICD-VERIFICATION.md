@@ -1,5 +1,11 @@
 # Agent D - CI/CD Fixes, Verification, and Release Sign-off
 
+> Provider note (2026-09-09): the GitHub Actions/Coolify/GHCR instructions in
+> the original v0.4 evidence plan are retired. Use `appveyor.yml` for current
+> CI evidence, `cr.beskid-lang.org` for platform images, and Watchtower for
+> production reconciliation. Historical run identifiers below remain evidence
+> of the old path only.
+
 ## Scope
 Fix failing CI workflows, run fresh full-workspace verification, update tracker seed data, and assemble final release evidence for sign-off.
 
@@ -7,7 +13,7 @@ Fix failing CI workflows, run fresh full-workspace verification, update tracker 
 
 | ID | Pri | Title | Dependencies |
 |----|-----|-------|--------------|
-| (CI) | - | Fix platform-delivery.yml, reusable-image.yml, Corelib gate | - |
+| (CI) | - | Verify AppVeyor platform and native compiler lanes | - |
 | CYB-40 | Urgent | Fresh full compiler workspace verification | Agent A, C |
 | CYB-41 | Urgent | Corelib, installed-prefix, package verification | Agent B, 40 |
 | CYB-172 | Medium | Update tracker v0.4 seed data for corelib completion | - |
@@ -16,11 +22,11 @@ Fix failing CI workflows, run fresh full-workspace verification, update tracker 
 
 ## Phase 1: Fix Failing CI (immediate, parallel with other agents)
 
-### Platform Delivery failures
-- Inspect .github/workflows/platform-delivery.yml and .github/workflows/reusable-image.yml
-- Latest runs: 30137231431 (failure) and 30136890395 (failure)
-- Check for missing node-auth input, GHCR token scope, or Docker Hub login remnants
-- The reusable-image.yml was just rebased - verify the conflict resolution is correct
+### Historical platform-delivery failures
+- Runs 30137231431 and 30136890395 belong to the retired GitHub workflow.
+- Do not repair or restore `platform-delivery.yml` or its reusable workflows.
+- Prove the AppVeyor `linux-platform` lane, private-registry credentials, five
+  `sha-*` tags, five `production` tags, and Watchtower convergence instead.
 
 ### Corelib gate failure
 - Run: 30136890217 (failure)
@@ -57,7 +63,7 @@ Update beskid_tracker/data/v0.4/:
 ## Phase 4: Release Sign-off (after all phases complete)
 
 ### CYB-11 - W7: Run release gates and record sign-off
-- Run actionlint on all workflows
+- Run the AppVeyor migration contract and actionlint on retained GitHub-native workflows
 - Run documentation checks (OpenSpec validate-standard, catalog generation)
 - Run GitNexus changed-scope analysis
 - Assemble evidence bundle: exact commits, submodule pins, commands, CI runs, reports
@@ -65,14 +71,15 @@ Update beskid_tracker/data/v0.4/:
 - Confirm no waivers or compatibility fallbacks remain
 
 ## Key Files
-- .github/workflows/ - all CI workflows
+- appveyor.yml and scripts/ci/appveyor-* - CI and platform publication
+- .github/workflows/ - GitHub-native publication and maintenance only
 - scripts/ci/corelib-gate.sh - corelib gate script
 - beskid_tracker/data/v0.4/ - tracker seed data
 - openspec/catalog.json - spec catalog
 - CHANGELOG.md - release changelog
 
 ## Acceptance
-- All CI workflows green on main
+- All required AppVeyor lanes green on main
 - cargo test --workspace --all-targets passes from clean checkout
 - Corelib gate passes all test targets
 - Three-target matrix smokes pass

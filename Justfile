@@ -45,8 +45,9 @@ test-corelib-spine:
 gate args='':
     "{{root}}/scripts/local-preflight.sh" {{args}}
 
-# Full-fidelity run: host tier first (fail-fast), then act+podman for YAML and
-# container gates. Compiler gate is SKIPped (Blacksmith Testbox only).
+# Full-fidelity run: host tier first (fail-fast), then static checks for the
+# AppVeyor and retained GitHub-native publication configuration. Native compiler
+# lanes remain AppVeyor worker jobs and are not emulated locally here.
 gate-full:
     "{{root}}/scripts/local-preflight.sh" --full
 

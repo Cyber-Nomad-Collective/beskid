@@ -11,6 +11,10 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Added
 
+- Add a repository-owned four-lane AppVeyor pipeline for Linux platform and
+  compiler validation plus native macOS and Windows compiler/runtime-kit
+  evidence. Add a migration contract, provider-native entrypoints, account
+  activation questionnaire, research record, and public migration article.
 - Document the official AppVeyor capability and migration research, including
   required proof builds for native workers, Buildx/GHCR, submodules, status
   contexts, account capacity, and GitHub Actions-only semantics.
@@ -136,6 +140,14 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Move root validation and five platform-image builds from GitHub Actions and
+  Blacksmith to AppVeyor. Trusted `main` builds publish immutable `sha-*` and
+  controlled `production` tags only to `cr.beskid-lang.org`; Watchtower is the
+  sole production reconciliation authority. Keep GitHub Actions only for
+  explicit GitHub-native releases, distribution, editor-marketplace publishing,
+  security, and maintenance. Move Corelib/template publication to the trusted
+  AppVeyor platform lane, rename its pckg automation subject, and require
+  AppVeyor build evidence at compiler release dispatch.
 - Provision `mold` in every Linux CI and container build surface that consumes
   the compiler Cargo configuration, while preserving the existing macOS and
   Windows linkers. Install pinned `sccache` with `cargo-binstall` instead of a
@@ -253,6 +265,10 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Removed
 
+- Remove the superseded GitHub Compiler, Corelib, Tracker, platform-delivery,
+  reusable image/promotion/manifest, and Blacksmith handoff workflows together
+  with their uncalled platform-manifest, promotion, signing, and CI-side
+  production-polling scripts.
 - Authelia’s runtime, file-user database, asset overrides, and deployment
   contract. Browser authentication now has one Authentik implementation.
 

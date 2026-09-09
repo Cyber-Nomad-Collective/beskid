@@ -1,103 +1,50 @@
-# Workflows in this repository
+# GitHub-native workflows
 
-This repo is an **aggregate** (submodules and shared web tooling). CI is centralized here and runs on **Blacksmith / GitHub-hosted runners via `scripts/ci/*.sh`** — Dagger is no longer in the gate or publish paths.
+AppVeyor is the root CI authority for validation, compiler gates, package
+publication, and the five platform images. The canonical configuration is
+[`appveyor.yml`](../appveyor.yml), with implementation in
+[`scripts/ci/`](../scripts/ci/).
 
-## Active workflows (`.github/workflows/`)
+GitHub Actions is retained only where the operation is intrinsically tied to
+GitHub releases, distribution, editor marketplaces, or repository maintenance:
 
 | Workflow | Purpose |
 |----------|---------|
-| `platform-delivery.yml` | OpenSpec/conformance/integration/shared-ui-nexus/security quality checks (non-blocking for delivery), build-once images, manifest, Coolify staging, and automatic production promotion after successful staging |
-| `corelib.yml` | Corelib quality + test (native) + pckg publish |
-| `compiler.yml` | Compiler Rust gate, LSP contract, CLI/LSP releases (native per-OS matrix) |
-| `distribute.yml` | Ecosystem distribution of compiler release artifacts |
-| `publish-open-vsx.yml` | VS Code extension to Open VSX (native OS-runner matrix) |
-| `compiler-gate-testbox.yml` | Compiler gate on a Blacksmith Testbox (`workflow_dispatch` / PR) |
+| `compiler-handoff-cleanup.yml` | Remove expired compiler release handoffs |
+| `compiler-release.yml` | Explicitly publish CLI/LSP releases after recording a successful AppVeyor source build |
+| `distribute.yml` | Publish compiler release artifacts to GitHub-native distribution channels |
+| `publish-open-vsx.yml` | Publish the VS Code extension to Open VSX |
+| `publish-zed-extension.yml` | Publish the Zed extension |
 
-## Platform delivery contract
+## Platform boundary
 
-The platform has one publisher and one promotion path. Reusable workflows are
-implementation details of `platform-delivery.yml`, not alternate entry points:
+On a trusted `main` push, AppVeyor validates all gates and publishes these
+images to the private registry:
 
-| Workflow | Contract |
-|----------|----------|
-| `reusable-quality.yml` | One blocking, branch-protection-friendly quality gate with retained JUnit evidence |
-| `reusable-image.yml` | SHA-tagged image build with BuildKit-secret package auth, SBOM, provenance, and keyless signing |
-| `reusable-release-manifest.yml` | Aggregate image digests into one checksummed release manifest |
-| `reusable-promote.yml` | Render exact image digests and plan or deploy through protected `staging` / `production` environments |
+- `cr.beskid-lang.org/beskid/site`
+- `cr.beskid-lang.org/beskid/learn`
+- `cr.beskid-lang.org/beskid/tracker`
+- `cr.beskid-lang.org/beskid/nexus`
+- `cr.beskid-lang.org/beskid/pckg`
 
-PRs run all gates and build images without pushing. On `main`, image build/push,
-the digest manifest, and the staging Coolify apply are **decoupled from the
-quality gates**: `openspec`, `conformance`, `integration`, `shared-ui-nexus`, and
-`security` run in
-parallel as independent branch-protection checks, but they do **not** block
-publishing. Every image lane builds and pushes its signed SHA image regardless of
-gate results, the manifest is assembled from whatever lanes succeeded
-(`if: !cancelled()`, so one broken lane never blocks the rest), and that manifest
-**auto-applies** to staging Coolify. When staging's deployment, smoke checks,
-and rollback policy succeed, the same manifest is automatically promoted to
-production. Manual `workflow_dispatch` with `apply-staging` only re-applies
-staging; production is never an independent manual path.
+Every published image receives `sha-<full-commit>` and `production` tags. Pull
+requests and other untrusted events build without registry credentials and
+cannot publish. AppVeyor requires `REGISTRY_USERNAME`, `REGISTRY_PASSWORD`, and
+`BESKID_PCKG_API_KEY` as secure variables with pull-request access disabled.
 
-**pckg note:** digest-pinned promote can crash-loop when Coolify/`beskid-pckg`
-was previously running a mutable `:main` tag that drifted from the delivery
-manifest digest. Prefer promoting a manifest whose pckg digest is known-good, or
-reconcile GHCR write + digest apply; mutable tags are rejected by policy.
+CI stops after publication. It does not invoke Compose, Coolify, Watchtower, or
+any production control API. The production Compose project under
+[`beskid_sites/deploy/`](../beskid_sites/deploy/) is the runtime authority, and
+Watchtower alone reconciles its `production` tags.
 
-
-Branch protection (not the workflow graph) is the place to make any quality gate
-mandatory for merge; delivery itself intentionally never waits on them.
-
-The `beskid-pckg` GHCR package is owned by the sibling `beskid_pckg` repo. Grant
-this repo **Write** on that package, or set org/repo secret `GHCR_TOKEN` with
-`write:packages` (wired in `reusable-image.yml` as
-`password: ${{ secrets.GHCR_TOKEN || github.token }}`). Without write access the
-pckg lane fails delivery.
-
-Required environment configuration:
-
-| Name | Kind | Purpose |
-|------|------|---------|
-| `COOLIFY_ENDPOINT` | variable | Lane Coolify API endpoint |
-| `COOLIFY_SERVICE_UUID` | variable | Lane-specific Compose service |
-| `BESKID_SMOKE_URLS` | variable | Newline-separated internal/public health endpoints |
-| `OPENBAO_ADDR` | variable | Lane OpenBao endpoint |
-| `COOLIFY_API_TOKEN` | environment secret | Lane-scoped API credential |
-| `OPENBAO_TOKEN` | environment secret | Read-only token for the lane KV prefix |
-
-Production must use required reviewers. Environment credentials must be distinct;
-preview/PR jobs receive neither. Direct mutable-tag Compose deployment is rejected.
-  Private packages resolve via workspace file: links — no GitHub Packages auth needed.
-GitHub's token is used only as the public-repository fallback.
-
-Every manifest records the source commit and workflow identity. Promotion emits
-a deterministic W3C `traceparent` plus manifest SHA so CI logs, Coolify requests,
-runtime telemetry, and rollback evidence can be correlated.
-
-Replacement validation is **script-first** — see [`scripts/ci/`](../scripts/ci/) and [`scripts/README.md`](../scripts/README.md).
-
-**Compiler releases:** `compiler.yml` remains the authoritative compiler/LSP
-test workflow. The separate `compiler-release.yml` consumes its completed run:
-a successful gate selects stable, while any non-successful automatic run selects
-unstable. Stable requires all native platform CLI/LSP/bundle builds; unstable
-publishes when at least one platform produces both CLI and LSP and records all
-test/build failures in `release-state.json` and the release notes. Set repo
-secret `COMPILER_RELEASE_TOKEN` (or reuse `COMPILER_SUBMODULE_TOKEN`) with
-`contents: write` on `beskid_compiler`.
-
-Compiler, LSP, Corelib, and release build gates retain raw logs plus structured
-failure JSON. GitHub summaries and annotations include component, stage,
-platform, command, an emitted/derivable qualified identifier when available,
-source path and line/column, and a concise reason. An unavailable identifier is
-reported explicitly; opaque compiler node keys are preserved as evidence and
-are not presented as human-readable symbols.
-
-The docs site prebuild still reads the rolling `cli-stable` release. Audit the
-download site and other version consumers only after this release workflow has
-passed on GitHub Actions.
+The compiler release workflow is manual by design. Its inputs bind the release
+to the exact AppVeyor source SHA, build identity, and successful gate result.
+Set `COMPILER_RELEASE_TOKEN` (or `COMPILER_SUBMODULE_TOKEN`) with `contents: write`
+on `beskid_compiler` when publishing a release.
 
 ## Local validation
 
-- **Web / docs (aggregate):** `./validate-ci-local.sh`
-- **Gates:** the `scripts/ci/*-gate.sh` scripts run anywhere the toolchain is installed (run directly or on a Testbox)
-- **Compose:** `cd beskid_infra && just compose-config`
-- **Replacement CI/CD contracts:** `bash scripts/ci/test/run-cicd-foundation-tests.sh`
+- Full replacement contracts: `bash scripts/ci/test/run-cicd-foundation-tests.sh`
+- AppVeyor event/publish contract: `bash scripts/ci/test/appveyor-migration-contract.test.sh`
+- Production runtime contract: `bash scripts/ci/test/production-watchtower-contract.test.sh`
+- Aggregate local checks: `./validate-ci-local.sh`

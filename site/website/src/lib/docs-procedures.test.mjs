@@ -378,10 +378,10 @@ const procedurePages = [
 	{
 		path: 'docs/operations/index.md',
 		sections: {
-			prerequisites: ['Coolify lane', 'OpenBao token'],
+			prerequisites: ['AppVeyor source commit', 'production Compose host'],
 			actions: ['/docs/operations/containers/', '/docs/operations/deployment/'],
-			expectedResult: ['immutable image digests', 'healthy services'],
-			recovery: ['CI stops and reports', 'production operator'],
+			expectedResult: ['immutable `sha-*`', 'Watchtower'],
+			recovery: ['AppVeyor stops and reports', 'production operator'],
 		},
 	},
 	{
@@ -389,24 +389,24 @@ const procedurePages = [
 		sections: {
 			prerequisites: ['container engine', 'pinned Compose contract'],
 			actions: ['docker compose', 'persistent volumes'],
-			expectedResult: ['healthy', 'immutable digest'],
+			expectedResult: ['healthy', 'controlled private-registry tag'],
 			recovery: ['container logs', 'do not delete'],
 		},
 	},
 	{
 		path: 'docs/operations/deployment.md',
 		sections: {
-			prerequisites: ['protected GitHub environment', 'lane-scoped'],
-			actions: ['just seed-openbao-check', 'reusable-promote.yml'],
-			expectedResult: ['checksummed release manifest', 'Watchtower'],
-			recovery: ['production operator', 'no authority'],
+			prerequisites: ['AppVeyor build', 'Watchtower'],
+			actions: ['linux-platform', 'cr.beskid-lang.org'],
+			expectedResult: ['AppVeyor source SHA', 'Watchtower'],
+			recovery: ['production operator', 'CI has no'],
 		},
 	},
 	{
 		path: 'docs/operations/health-and-monitoring.md',
 		sections: {
-			prerequisites: ['expected image identity', 'monitoring access'],
-			actions: ['/api/v1/health', '/health/ready'],
+			prerequisites: ['expected immutable image identity', 'Obtain monitoring'],
+			actions: ['/api/health', '/health/ready'],
 			expectedResult: ['successful HTTP status', 'deployment window'],
 			recovery: ['correlation evidence', 'production operator'],
 		},
@@ -1246,22 +1246,22 @@ test('standard changes preserve the OpenSpec-to-Docs authority boundary', async 
 
 test('deployment guidance distinguishes verification from production control', async () => {
 	const deployment = await loadPage(procedurePages.find((page) => page.path === 'docs/operations/deployment.md'));
-	for (const fact of ['checksummed release manifest', 'signing workflow signs the images separately', 'reusable-promote.yml', 'Watchtower', 'cannot start, replace, or roll back production containers', 'under reconciliation']) {
+	for (const fact of ['AppVeyor', 'cr.beskid-lang.org', 'immutable `sha-*`', 'Watchtower', 'cannot start, replace, or roll back production containers']) {
 		assert.ok(deployment.body.includes(fact), `deployment guidance must explain ${fact}`);
 	}
-	assert.doesNotMatch(deployment.body, /signed release manifest|deployment path must restore/i);
+	assert.doesNotMatch(deployment.body, /Coolify|GitHub environment|deployment path must restore/i);
 	const health = await loadPage(procedurePages.find((page) => page.path === 'docs/operations/health-and-monitoring.md'));
 	assert.doesNotMatch(health.body, /same release manifest|health response[^.]*manifest identity/i);
-	assert.match(health.body, /health handler[^.]*does not expose[^.]*manifest identity/i);
-	assert.match(health.body, /separate release and deployment evidence/i);
+	assert.match(health.body, /health handler[^.]*does not expose[^.]*registry tag identity/i);
+	assert.match(health.body, /separate AppVeyor publication and Watchtower reconciliation evidence/i);
 });
 
 test('operator recovery and delivery steps stay within available ownership and evidence', async () => {
 	const operations = await loadPage(procedurePages.find((page) => page.path === 'docs/operations/index.md'));
 	const recovery = section(operations.body, 'Limits');
-	assert.match(recovery, /CI stops and reports/);
-	assert.match(recovery, /production operator owns (?:the )?(?:restore|rollback)/i);
-	assert.match(recovery, /rerun (?:production )?verification/i);
+	assert.match(recovery, /AppVeyor stops and reports/);
+	assert.match(recovery, /production\s+operator owns (?:the )?(?:restore|rollback)/i);
+	assert.match(recovery, /repeat (?:production )?verification/i);
 	assert.doesNotMatch(recovery, /delivery path restore|CI[^.]*restore/i);
 
 	const containers = await loadPage(procedurePages.find((page) => page.path === 'docs/operations/containers.md'));
@@ -1270,10 +1270,11 @@ test('operator recovery and delivery steps stay within available ownership and e
 
 	const deployment = await loadPage(procedurePages.find((page) => page.path === 'docs/operations/deployment.md'));
 	const actions = section(deployment.body, 'Actions');
-	assert.match(actions, /workflow (?:performs|owns) (?:the )?manifest (?:checksum )?validation/i);
-	assert.match(actions, /record the workflow run URL/i);
-	assert.match(actions, /record the (?:job )?status/i);
-	assert.match(actions, /record (?:the )?(?:checksum|checksum evidence)/i);
+	assert.match(actions, /successful AppVeyor build/i);
+	assert.match(actions, /record its build URL, full source SHA/i);
+	assert.match(actions, /all five immutable tags/i);
+	assert.match(actions, /Watchtower logs/i);
+	assert.match(actions, /record the immutable tag/i);
 	assert.doesNotMatch(actions, /release\/workflow-run\.json|release\/release-manifest\.json|validate-promotion-source\.sh/);
 	assert.doesNotMatch(actions, /Select its checksummed release manifest|Materialize/i);
 });

@@ -9,8 +9,11 @@ context: |
   redirect to that entry point so readers can still find the standard.
   Observable language, compiler, runtime, core-library, tooling, and conformance
   changes require an OpenSpec delta in the same change set.
-  Use Bun for sites, Rust workspace commands from compiler/, GitHub Actions for
-  orchestration, and OpenTelemetry-compatible trace propagation.
+  Use pnpm for sites and Rust workspace commands from compiler/. AppVeyor owns
+  repository CI and platform-image publication to cr.beskid-lang.org; Watchtower
+  alone reconciles platform images into production. GitHub Actions is reserved
+  for GitHub-native release, distribution, editor-marketplace, and security
+  operations. Preserve OpenTelemetry-compatible trace propagation.
 
 rules:
   proposal:

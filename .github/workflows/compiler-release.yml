@@ -1,10 +1,7 @@
-# Native CLI/LSP release publication after the authoritative Compiler workflow.
+# Explicit GitHub-native CLI/LSP release publication from AppVeyor evidence.
 name: Compiler release
 
 on:
-  workflow_run:
-    workflows: [Compiler]
-    types: [completed]
   workflow_dispatch:
     inputs:
       release_channel:
@@ -14,17 +11,30 @@ on:
         type: choice
         options: [stable, unstable]
       compiler_run_number:
-        description: Compiler workflow run number used for 0.4.<run>
+        description: AppVeyor build number used for 0.4.<run>
         required: true
         type: string
+      source_sha:
+        description: Exact superrepo commit validated by AppVeyor
+        required: true
+        type: string
+      appveyor_build_version:
+        description: AppVeyor build version or URL retained as release evidence
+        required: true
+        type: string
+      appveyor_gate_result:
+        description: Result of the cited AppVeyor build
+        required: true
+        default: success
+        type: choice
+        options: [success, failure]
 
 concurrency:
-  group: compiler-release-${{ github.event.workflow_run.head_sha || github.sha }}
+  group: compiler-release-${{ inputs.source_sha }}
   cancel-in-progress: false
 
 permissions:
   contents: read
-  actions: read
 
 env:
   COMPILER_REPO: Cyber-Nomad-Collective/beskid_compiler
@@ -32,15 +42,8 @@ env:
 jobs:
   version:
     name: Resolve release state inputs
-    if: >-
-      ${{
-        (github.event_name == 'workflow_run' && github.event.workflow_run.event == 'push' &&
-          github.event.workflow_run.head_repository.full_name == github.repository &&
-          github.event.workflow_run.head_branch == 'main' &&
-          (github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure')) ||
-        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
-      }}
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    if: ${{ github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.release.outputs.version }}
       release_channel: ${{ steps.release.outputs.channel }}
@@ -51,7 +54,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          ref: ${{ inputs.source_sha }}
           fetch-depth: 0
 
       - uses: ./.github/actions/setup-compiler-submodule
@@ -67,27 +70,18 @@ jobs:
         name: Resolve channel and version
         shell: bash
         env:
-          AUTOMATIC_CHANNEL: ${{ github.event.workflow_run.conclusion == 'success' && 'stable' || 'unstable' }}
-          AUTOMATIC_GATE_RESULT: ${{ github.event.workflow_run.conclusion || 'unknown' }}
-          AUTOMATIC_RUN_NUMBER: ${{ github.event.workflow_run.run_number }}
-          AUTOMATIC_SOURCE_SHA: ${{ github.event.workflow_run.head_sha }}
           MANUAL_CHANNEL: ${{ inputs.release_channel }}
           MANUAL_RUN_NUMBER: ${{ inputs.compiler_run_number }}
+          MANUAL_SOURCE_SHA: ${{ inputs.source_sha }}
+          MANUAL_GATE_RESULT: ${{ inputs.appveyor_gate_result }}
         run: |
           set -euo pipefail
-          if [[ "${GITHUB_EVENT_NAME}" == workflow_run ]]; then
-            channel="${AUTOMATIC_CHANNEL}"
-            gate_result="${AUTOMATIC_GATE_RESULT}"
-            run_number="${AUTOMATIC_RUN_NUMBER}"
-            source_sha="${AUTOMATIC_SOURCE_SHA}"
-          else
-            channel="${MANUAL_CHANNEL}"
-            gate_result="unknown"
-            run_number="${MANUAL_RUN_NUMBER}"
-            source_sha="${GITHUB_SHA}"
-          fi
+          channel="${MANUAL_CHANNEL}"
+          gate_result="${MANUAL_GATE_RESULT}"
+          run_number="${MANUAL_RUN_NUMBER}"
+          source_sha="${MANUAL_SOURCE_SHA}"
           if [[ "${channel}" == stable && "${gate_result}" != success ]]; then
-            echo 'A stable release requires a successful Compiler workflow result.' >&2
+            echo 'A stable release requires a successful AppVeyor gate result.' >&2
             exit 1
           fi
           version="$(GITHUB_REF=refs/heads/main GITHUB_RUN_NUMBER="${run_number}" RELEASE_CHANNEL="${channel}" bash ./scripts/ci/resolve-beskid-version.sh)"
@@ -127,7 +121,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: blacksmith-4vcpu-ubuntu-2404
+          - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
             cli_asset: beskid-linux-amd64
             lsp_asset: beskid_lsp-linux-amd64
@@ -211,7 +205,7 @@ jobs:
     name: Aggregate release state
     needs: [version, platform]
     if: ${{ always() && needs.version.result == 'success' }}
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     outputs:
       publishable: ${{ steps.state.outputs.publishable }}
     steps:
@@ -229,18 +223,18 @@ jobs:
           bash ./scripts/ci/github-release-handoff.sh download
           "${COMPILER_REPO}" "${HANDOFF_TAG}" release-assets
 
-      - name: Record triggering Compiler job outcomes
-        if: github.event_name == 'workflow_run'
+      - name: Record AppVeyor gate evidence
         shell: bash
         env:
-          GH_TOKEN: ${{ github.token }}
+          APPVEYOR_BUILD_VERSION: ${{ inputs.appveyor_build_version }}
+          APPVEYOR_GATE_RESULT: ${{ inputs.appveyor_gate_result }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
         run: |
           set -euo pipefail
           mkdir -p gate-evidence
-          gh api --paginate \
-            "repos/${GITHUB_REPOSITORY}/actions/runs/${{ github.event.workflow_run.id }}/jobs?per_page=100" \
-            --jq '.jobs' \
-            | jq -s '{jobs: add}' >gate-evidence/triggering-run-jobs.json
+          printf 'build=%s\nresult=%s\nsource_sha=%s\n' \
+            "${APPVEYOR_BUILD_VERSION}" "${APPVEYOR_GATE_RESULT}" "${SOURCE_SHA}" \
+            >gate-evidence/appveyor-build.txt
 
       - id: state
         name: Build machine-readable release state
@@ -278,7 +272,7 @@ jobs:
         run: |
           set -euo pipefail
           handoff_state=()
-          for candidate in release-assets/release-state.json release-assets/release-report.md; do
+          for candidate in release-assets/release-state.json release-assets/release-report.md release-assets/gate-evidence/appveyor-build.txt; do
             [[ -f "${candidate}" ]] && handoff_state+=("${candidate}")
           done
           [[ "${#handoff_state[@]}" -gt 0 ]] || {
@@ -302,7 +296,7 @@ jobs:
     name: Publish compiler release
     needs: [version, state]
     if: ${{ always() && needs.state.result == 'success' && needs.state.outputs.publishable == 'true' }}
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
       contents: write

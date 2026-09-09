@@ -1,44 +1,52 @@
 # staged-delivery-observability Specification
 
 ## Purpose
-Require CI gates before promotion, digest-addressed artifact promotion, distinct staging and production environments, and end-to-end delivery traceability.
+Require AppVeyor gates before platform publication, immutable image identity, Watchtower-only production reconciliation, and end-to-end delivery traceability.
 ## Requirements
 ### Requirement: CI blocks unsafe integration
-Pull-request and main-branch workflows SHALL require relevant format, type, unit, integration, conformance, OpenSpec, Compose, and security gates before artifacts may be promoted.
+Pull-request and main-branch AppVeyor builds SHALL require relevant format, type, unit, integration, conformance, OpenSpec, Compose, and security gates before platform artifacts may be published.
 
 #### Scenario: A required smoke or conformance gate fails
-- **GIVEN** an artifact was built successfully
+- **GIVEN** a platform image was built successfully
 - **WHEN** any required validation gate fails
-- **THEN** no staging or production deployment job can start
+- **THEN** no immutable image or mutable production tag is published
 
-### Requirement: Artifacts are built once and promoted by digest
-The delivery pipeline SHALL publish immutable SHA-addressed artifacts with SBOM, provenance, vulnerability results, and signatures, then SHALL deploy the exact same digest manifest to staging and production without rebuilding or substituting mutable tags.
+### Requirement: Platform images retain immutable identities
+The AppVeyor publication pipeline SHALL publish every platform image with an immutable full-commit `sha-*` tag and SHALL update its controlled `production` tag only after every platform validation and image-build gate in that publication job succeeds.
 
-#### Scenario: A release is promoted
-- **GIVEN** staging passed for a signed manifest
-- **WHEN** the staging deployment, smoke checks, and rollback policy complete successfully
-- **THEN** production receives the identical image digests verified in staging
+#### Scenario: A main build publishes the platform
+- **GIVEN** a trusted main-branch AppVeyor build passed every platform gate
+- **WHEN** the five platform images are published
+- **THEN** each image is addressable as `cr.beskid-lang.org/beskid/<lane>:sha-<full-git-sha>` and by its controlled `production` tag
 
-### Requirement: Staging and production are distinct protected environments
-The deployment system SHALL implement automatic staging deployment from main followed by automatic production promotion only after the same run's staging deployment, smoke checks, and rollback policy succeed. Production SHALL retain environment-specific secrets, URLs, policy gates, health checks, and rollback targets.
+### Requirement: Watchtower is the exclusive platform deployment authority
+Watchtower SHALL be the only automated component permitted to reconcile published platform images into production. AppVeyor and GitHub Actions MUST NOT start, replace, restart, roll back, or otherwise control production platform containers.
 
-#### Scenario: Production health check fails
-- **GIVEN** a previous healthy manifest exists
-- **WHEN** post-deployment smoke or SLO checks fail
-- **THEN** deployment is marked failed and rollback restores the previous manifest
+#### Scenario: CI publishes a new production tag
+- **GIVEN** AppVeyor published a validated platform `production` tag
+- **WHEN** production changes to that image
+- **THEN** the change is attributable to Watchtower reconciliation rather than a CI deployment action
 
 ### Requirement: Delivery is traceable end to end
-CI and deployment jobs SHALL emit a shared correlation identifier and OpenTelemetry-compatible trace context across workflow, build, registry, deployment API, service startup, smoke checks, and rollback reporting.
+CI and deployment observations SHALL preserve the AppVeyor build identity, source commit, registry image identity, Watchtower reconciliation evidence, service startup, and public health result without granting CI deployment authority.
 
 #### Scenario: Operator investigates a deployment
-- **GIVEN** a GitHub Actions run identifier
+- **GIVEN** an AppVeyor build identity and a deployed platform image
 - **WHEN** the operator follows its deployment evidence
-- **THEN** the exact commit, OpenSpec revision, artifact digests, environment, deployment status, smoke results, and trace identifier are available
+- **THEN** the exact commit, OpenSpec revision, immutable registry tag, Watchtower status, and public health result are available
 
 ### Requirement: Production failures are never suppressed
-Production secret audits, deployment API calls, status polling, smoke checks, and release gates MUST fail closed; missing credentials or non-success responses MUST NOT be converted to warnings or ignored exit codes.
+Platform validation, registry login, image builds, publication, and production health observations MUST fail closed; missing credentials or non-success responses MUST NOT be converted to warnings or ignored exit codes.
 
-#### Scenario: OpenBao credentials are unavailable
-- **GIVEN** a production deployment was requested
-- **WHEN** required secret-audit credentials are missing
-- **THEN** the workflow stops before deployment with a failing status
+#### Scenario: Registry credentials are unavailable
+- **GIVEN** a trusted main-branch publication was requested
+- **WHEN** required private-registry credentials are missing
+- **THEN** the AppVeyor job stops before publication with a failing status
+
+### Requirement: Pull requests cannot publish or deploy
+Pull-request builds MUST NOT receive registry publication credentials, publish platform images, write production tags, or invoke a deployment controller.
+
+#### Scenario: A pull request executes untrusted build code
+- **GIVEN** AppVeyor is validating a pull request
+- **WHEN** the pull request runs the platform lane
+- **THEN** validation may run but registry publication and production reconciliation remain unavailable

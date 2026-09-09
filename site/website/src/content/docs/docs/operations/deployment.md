@@ -1,6 +1,6 @@
 ---
 title: Verify Production Delivery
-description: Verify one release manifest and hand production recovery to the owning operator.
+description: Verify AppVeyor publication, Watchtower reconciliation, and production health without giving CI deployment authority.
 pageKind: task
 diagramPolicy: not-needed
 diagramOmissionReason: The numbered promotion and rollback procedure is already linear.
@@ -9,44 +9,48 @@ audience:
   - release maintainer
 authority:
   status: security-sensitive
-  sourceLabel: Pinned production Watchtower verification workflow
-  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid/blob/90c40a91fefa8150134663de120afcb1ef582f2a/.github/workflows/reusable-promote.yml
+  sourceLabel: Canonical staged-delivery and observability requirement
+  sourceHref: https://beskid-lang.org/docs/standard/staged-delivery-observability/
   limits: This page does not deploy or roll back a production container. The production operator owns those external actions.
 verified:
-  revision: 90c40a91fefa8150134663de120afcb1ef582f2a
-  date: 2026-09-08
+  revision: 1c48165332356625e6ce1e273ac8c84e46c8a195
+  date: 2026-09-09
 ---
 
-Keep the lane-scoped OpenBao and production credentials in their secret manager. Do not print, commit, copy, or put a token on a command line. Never invent `COOLIFY_SERVICE_UUID`; ask the owning operator for the configured external identifier.
-
-The root workflow and the pinned infrastructure guide conflict. The infrastructure guide describes CI-driven Coolify deployment and rollback. The current root `reusable-promote.yml` workflow says that CI cannot start, replace, or roll back production containers. It only waits for Watchtower and runs production smoke checks. This ownership conflict is under reconciliation. Follow the current root workflow for verification, and stop when a production container action is necessary.
-
-A checksummed release manifest records image digests and source identity. The signing workflow signs the images separately. Do not call the manifest itself signed.
+Keep registry and production credentials in their secret managers. Do not print,
+commit, copy, or put a token on a command line. AppVeyor may publish platform
+images, but it cannot start, replace, or roll back production containers.
+Watchtower is the sole automated reconciliation authority.
 
 ## Prerequisites
 
-Use a protected GitHub environment for production verification. Confirm that each credential is lane-scoped. Confirm that pull requests cannot read it.
+Confirm the AppVeyor build came from `main`, was not a pull request, and passed
+the complete `linux-platform` lane. Confirm the production host is authenticated
+to `cr.beskid-lang.org` and Watchtower is healthy.
 
 ## Actions
 
-1. From `beskid_infra`, run `just seed-openbao-check` to verify required key names without printing their values.
-2. Open the successful root `platform-delivery.yml` run.
-3. Record the workflow run URL.
-4. Open its `reusable-promote.yml` production verification job.
-5. Confirm in the **Verify release manifest** step that the workflow performs manifest checksum validation.
-6. Record checksum evidence only when the workflow exposes it.
-7. Confirm that the **Verify authoritative main source** step succeeded.
-8. Confirm that the **Wait for Watchtower and run production smoke** step succeeded.
-9. Record the job status.
-10. Inspect the separate image-build records for signature evidence.
+1. Open the successful AppVeyor build for the intended `main` commit.
+2. Record its build URL, full source SHA, and successful `linux-platform` job.
+3. Confirm all five immutable tags exist as `cr.beskid-lang.org/beskid/<lane>:sha-<full-sha>`.
+4. Confirm each controlled `production` tag resolves to the intended image.
+5. Inspect Watchtower logs for a successful reconciliation of `website`, `learn`, `tracker`, `nexus`, and `pckg`.
+6. Run the public health checks documented in [Health and monitoring](/docs/operations/health-and-monitoring/).
+7. Record the immutable tag, reconciliation timestamp, and public result for each service.
 
 ## Expected result
 
-The production job status shows that the workflow validated the checksummed release manifest and its source run. The same job reports successful smoke checks after its Watchtower wait window. Separate image-build records provide signature evidence.
+The recorded AppVeyor source SHA matches every immutable image tag, Watchtower
+reports the corresponding reconciliation, and each public service is healthy.
+No CI job performed a production container action.
 
 ## Recovery
 
-If manifest or smoke verification fails, stop the release workflow. Preserve the run URL, manifest checksum, deployment window, and failed endpoint status. Escalate container replacement or rollback to the production operator. CI has no authority to perform that recovery. After the operator restores the previously recorded production state, repeat the public smoke checks.
+If publication or health verification fails, preserve the AppVeyor URL, source
+SHA, image identity, Watchtower window, and failed endpoint status. Pause
+Watchtower if continued reconciliation is unsafe. The production operator can
+retag the last known-good immutable `sha-*` image as `production`; CI has no
+authority to perform that recovery. Repeat the public health checks afterward.
 
 ## Next task
 

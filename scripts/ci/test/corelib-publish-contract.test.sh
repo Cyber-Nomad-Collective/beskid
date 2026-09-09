@@ -6,29 +6,9 @@ ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 # shellcheck source=lib/assert.sh
 source "${ROOT}/scripts/ci/test/lib/assert.sh"
 
-GATE_WORKFLOW="$(cat "${ROOT}/.github/workflows/corelib.yml")"
-DELIVERY_WORKFLOW="$(cat "${ROOT}/.github/workflows/platform-delivery.yml")"
 RUNNER="$(cat "${ROOT}/scripts/ci/lib/corelib-publish-runner.mjs")"
 PUBLISHER="$(cat "${ROOT}/scripts/ci/corelib-publish.sh")"
 
-assert_contains "${GATE_WORKFLOW}" 'workflow_call:' \
-  "the corelib gate is reusable by canonical platform delivery"
-assert_contains "${DELIVERY_WORKFLOW}" "- 'beskid_templates'" \
-  "template pointer changes trigger platform delivery checks"
-assert_contains "${DELIVERY_WORKFLOW}" 'needs: [corelib, openspec, conformance' \
-  "the release manifest requires the real corelib gate"
-assert_contains "${DELIVERY_WORKFLOW}" 'needs: production' \
-  "package publication waits for protected production promotion"
-assert_contains "${DELIVERY_WORKFLOW}" 'corelib-publish.sh patch --dry-run' \
-  "delivery rehearses all package artifacts before live publication"
-assert_contains "${DELIVERY_WORKFLOW}" 'init-submodules.sh beskid_templates' \
-  "the publication job initializes the templates submodule"
-assert_contains "${DELIVERY_WORKFLOW}" 'BESKID_PCKG_BASE_URL: https://pckg.beskid-lang.org' \
-  "publication targets the public Rust registry route"
-assert_eq "absent" "$({ grep -Fq 'BESKID_PCKG_BASE_URL: https://pckg.beskid-lang.org:8082' <<<"${DELIVERY_WORKFLOW}" && echo present; } || echo absent)" \
-  "publication does not mistake Coolify's target-port selector for a public TLS listener"
-assert_eq "absent" "$({ grep -Fq "github.event_name != 'workflow_dispatch' || !inputs.unstable" <<<"${DELIVERY_WORKFLOW}" && echo present; } || echo absent)" \
-  "unstable channel selection cannot skip release quality gates"
 assert_contains "${RUNNER}" '"interop"' \
   "the interop package is part of the production corelib inventory"
 assert_contains "${RUNNER}" '"glue"' \

@@ -2,8 +2,8 @@
 # Compiler Rust gate: legacy type-system guard + corelib-tests parity + clippy
 # (deny warnings) + workspace tests.
 #
-# Runs directly on a Blacksmith runner / Testbox VM. Run from the superrepo root;
-# the compiler workspace lives in
+# Runs directly on a native CI worker or contributor machine. Run from the
+# superrepo root; the compiler workspace lives in
 # `compiler/` and resolves its `../beskid_bsol` path dependency against the sibling
 # `beskid_bsol/` submodule.
 set -euo pipefail

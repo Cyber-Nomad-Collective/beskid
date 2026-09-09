@@ -505,4 +505,5 @@ package-lock.json
 .soulforge
 podman-build-secret-*
 .gitnexus/
+.firecrawl/
 .actrc

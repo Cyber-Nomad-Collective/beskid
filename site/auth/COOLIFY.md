@@ -1,16 +1,16 @@
-# Coolify: Beskid auth hub
+# Production: Beskid authentication
 
-The auth hub runs as the **`auth`** service in the production Coolify compose stack.
+Authentik runs in the standalone production Compose stack and is the sole browser identity authority.
 
-## Delivery model (GHCR + Compose)
+## Delivery model
 
 | Layer | Responsibility |
 |-------|----------------|
-| **GitHub Actions** | Push `ghcr.io/cyber-nomad-collective/beskid-auth` |
-| **beskid_infra** | Unified compose + OpenBao env sync |
+| **Runtime** | Pinned Authentik services in `beskid_sites/deploy/docker-compose.yml` |
+| **Deployment script** | OpenBao-backed host environment sync and Compose apply |
 | **OpenBao** | `secret/beskid/production/auth` |
 
-Operator guide: [beskid_infra/docs/deploy-compose.md](../../beskid_infra/docs/deploy-compose.md) · [deploy-matrix.md](../../beskid_infra/docs/deploy-matrix.md) · [openbao-layout.md](../../beskid_infra/docs/openbao-layout.md).
+Operator guide: [`beskid_sites/deploy/README.md`](../../beskid_sites/deploy/README.md).
 
 Normative contract: [Beskid standard](https://beskid-lang.org/docs/standard/) (issuer `beskid-auth-hub`, `AUTH_HUB_*` variables).
 
@@ -18,12 +18,11 @@ Normative contract: [Beskid standard](https://beskid-lang.org/docs/standard/) (i
 
 | Mode | File |
 |------|------|
-| **Platform stack** | [`beskid_infra/compose/production/docker-compose.yml`](../../beskid_infra/compose/production/docker-compose.yml) |
-| **Single-service reference** | [`docker-compose.yml`](docker-compose.yml) |
+| **Platform stack** | [`beskid_sites/deploy/docker-compose.yml`](../../beskid_sites/deploy/docker-compose.yml) |
 
 ## Runtime secrets
 
-Managed in **OpenBao** and synced to Coolify by `coolify-sync-env-from-openbao.sh`. Do not duplicate secrets in the Coolify UI after sync is enabled.
+Managed in **OpenBao** and materialized by `beskid_sites/deploy/deploy.sh`. Do not commit or duplicate secrets in repository configuration.
 
 Required keys: `SESSION_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `AUTH_HUB_PUBLIC_URL` (`https://auth.beskid-lang.org`).
 

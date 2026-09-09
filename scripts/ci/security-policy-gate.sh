@@ -1,43 +1,27 @@
 #!/usr/bin/env bash
-# Offline CI supply-chain policy for the authoritative delivery path.
+# Offline supply-chain policy for AppVeyor publication and Watchtower delivery.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "${ROOT}"
 
-authoritative=(
-  .github/workflows/platform-delivery.yml
-  .github/workflows/reusable-image.yml
-  .github/workflows/reusable-promote.yml
-  .github/workflows/reusable-quality.yml
-  .github/workflows/reusable-release-manifest.yml
+authoritative_scripts=(
+  scripts/ci/appveyor-install.sh
+  scripts/ci/appveyor-entrypoint.sh
+  scripts/ci/appveyor-entrypoint.ps1
+  scripts/ci/appveyor-package-publish.sh
+  scripts/ci/appveyor-platform-publish.sh
+  scripts/ci/lib/appveyor-event-policy.sh
 )
 
-for workflow in "${authoritative[@]}"; do
-  [[ -f "${workflow}" ]] || { echo "missing authoritative workflow: ${workflow}" >&2; exit 1; }
+[[ -f appveyor.yml ]] || { echo "missing authoritative AppVeyor configuration" >&2; exit 1; }
+for script in "${authoritative_scripts[@]}"; do
+  [[ -f "${script}" ]] || { echo "missing authoritative CI script: ${script}" >&2; exit 1; }
 done
-
-# The delivery workflow is the only production verification caller. Its
-# workflow-level concurrency group deliberately differs from Watchtower's
-# production verification lock.
-[[ ! -e .github/workflows/promote-production.yml ]] || {
-  echo "alternate production promotion workflow is forbidden" >&2
-  exit 1
-}
-rg -Fq 'group: platform-delivery-${{ github.ref }}' .github/workflows/platform-delivery.yml || {
-  echo "platform delivery must retain its distinct workflow-level concurrency group" >&2
-  exit 1
-}
-rg -Fq 'needs: manifest' .github/workflows/platform-delivery.yml || {
-  echo "production Watchtower verification must consume the same run's manifest" >&2
-  exit 1
-}
-
 
 # Project delivery is orchestrated only from the superrepo. Inspect its tracked
 # paths rather than the working tree: initialized submodules are gitlinks here,
 # and their upstream workflow metadata is not an authoritative Beskid lane.
-# This keeps the local gate identical to the non-recursive GitHub checkout.
 nested_workflows="$(git ls-files -- \
   site beskid_tracker beskid_nexus pckg compiler/corelib beskid_bsol \
   | rg '/\.github/workflows/' \
@@ -47,32 +31,38 @@ if [[ -n "${nested_workflows}" ]]; then
   exit 1
 fi
 
-# Local workflow/action references are trusted from the checked-out commit.
-# Every third-party action must use a full commit SHA.
-if rg -n '^\s*uses:\s*[^./][^@[:space:]]+@(v[0-9]|main|master|stable|latest)([[:space:]]|$)' \
-  "${authoritative[@]}"; then
-  echo "authoritative workflows contain a floating third-party action" >&2
+if rg -n -i 'coolify|compose[[:space:]_-]*(up|apply)|watchtower[[:space:]_-]*(restart|update|control)' \
+  appveyor.yml "${authoritative_scripts[@]}"; then
+  echo "AppVeyor must not retain deployment-control behavior" >&2
   exit 1
 fi
 
-if rg -n 'NODE_AUTH_TOKEN' \
-      .github/workflows/reusable-image.yml .github/workflows/reusable-quality.yml .github/workflows/platform-delivery.yml; then
-  echo "NODE_AUTH_TOKEN must not appear in authoritative CI workflows" >&2
+if rg -n 'ghcr\.io|docker\.io' scripts/ci/appveyor-platform-publish.sh appveyor.yml; then
+  echo "platform images must use only cr.beskid-lang.org" >&2
   exit 1
 fi
 
-if rg -n -i 'coolify|staging' .github/workflows/platform-delivery.yml .github/workflows/reusable-promote.yml; then
-  echo "production delivery retains a retired Coolify or staging reference" >&2
+if ! rg -Fq 'cr.beskid-lang.org' scripts/ci/appveyor-platform-publish.sh; then
+  echo "platform publisher must target the Beskid registry" >&2
   exit 1
 fi
 
-if ! rg -Fq 'cr.beskid-lang.org/beskid/' .github/workflows/platform-delivery.yml; then
-  echo "delivery workflow must publish application images to the Beskid registry" >&2
+if rg -n '^[[:space:]]*REGISTRY_(USERNAME|PASSWORD)[[:space:]]*[:=][[:space:]]*[^$[:space:]]' \
+  appveyor.yml "${authoritative_scripts[@]}"; then
+  echo "registry credential values must never be committed" >&2
   exit 1
 fi
 
-if rg -n 'REGISTRY_(USERNAME|PASSWORD)|docker login' .github/workflows/reusable-image.yml .github/workflows/platform-delivery.yml; then
-  echo "public registry workflow must not retain registry credentials" >&2
+if rg -n '^[[:space:]]*BESKID_PCKG_API_KEY[[:space:]]*[:=][[:space:]]*[^$[:space:]]' \
+  appveyor.yml "${authoritative_scripts[@]}"; then
+  echo "package publisher credential values must never be committed" >&2
+  exit 1
+fi
+
+if ruby -e 'require "yaml"; abort unless YAML.safe_load(File.read(ARGV.fetch(0)), aliases: true)["deploy"] == false' appveyor.yml; then
+  :
+else
+  echo "AppVeyor deployment must remain disabled" >&2
   exit 1
 fi
 

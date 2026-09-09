@@ -7,13 +7,13 @@ deployment control plane.
 
 ## Release flow
 
-1. A successful `main` delivery run builds each application image.
+1. A successful AppVeyor `main` platform lane builds each application image.
 2. CI pushes `sha-<commit>` (immutable audit) and `production` (controlled
    release) tags to `cr.beskid-lang.org/beskid/<service>`.
 3. Watchtower polls every minute and restarts only services labelled
    `com.centurylinklabs.watchtower.enable=true`.
-4. CI waits through the Watchtower window and smokes the canonical production
-   endpoints.
+4. Operators observe Watchtower status and smoke the canonical production
+   endpoints independently of CI.
 
 The tagged application services are `website`, `learn`, `tracker`, `nexus`,
 and `pckg`. The shared edge, registry, Watchtower, and Postgres are
@@ -27,8 +27,8 @@ The production host is `root@bdziam.dev`; the runtime directory defaults to
 
 - DNS for `beskid-lang.org`, `auth`, `learn`, `tracker`, `nexus`, `pckg`, and
   `cr` subdomains.
-- A registry account with pull access on the host and push access stored in the
-  repository secrets `REGISTRY_USERNAME` and `REGISTRY_PASSWORD`.
+- A registry account with pull access on the host and push access stored as
+  secure AppVeyor variables `REGISTRY_USERNAME` and `REGISTRY_PASSWORD`.
 - A bcrypt registry credential file at `registry/htpasswd`. This ignored file
   is copied to the host with mode `0600`; do not commit it.
 - OpenBao production secrets, or a populated local `.env` copied from

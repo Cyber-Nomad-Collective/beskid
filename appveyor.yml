@@ -1,0 +1,43 @@
+version: 1.0.{build}
+
+clone_depth: 1
+skip_tags: true
+
+environment:
+  matrix:
+    - BESKID_CI_LANE: linux-platform
+      APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2204
+    - BESKID_CI_LANE: linux-compiler
+      APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2204
+    - BESKID_CI_LANE: macos-compiler
+      APPVEYOR_BUILD_WORKER_IMAGE: macos-sonoma
+    - BESKID_CI_LANE: windows-compiler
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
+
+matrix:
+  fast_finish: false
+
+test: false
+deploy: false
+
+for:
+  - matrix:
+      only:
+        - BESKID_CI_LANE: linux-platform
+    services:
+      - docker
+    build_script:
+      - sh: bash ./scripts/ci/appveyor-entrypoint.sh
+
+  - matrix:
+      only:
+        - BESKID_CI_LANE: linux-compiler
+        - BESKID_CI_LANE: macos-compiler
+    build_script:
+      - sh: bash ./scripts/ci/appveyor-entrypoint.sh
+
+  - matrix:
+      only:
+        - BESKID_CI_LANE: windows-compiler
+    build_script:
+      - ps: ./scripts/ci/appveyor-entrypoint.ps1

@@ -2,7 +2,7 @@
 # Corelib gate: workspace/manifest quality checks (corelibQuality) + the
 # beskid_cli corelib test suite (corelibTest).
 #
-# Runs directly on a Blacksmith runner and surfaces full per-test output.
+# Runs directly on a native CI worker and surfaces full per-test output.
 #
 # Run from the superrepo root. The compiler workspace lives in `compiler/` and the
 # corelib sources under `compiler/corelib/beskid_corelib`.

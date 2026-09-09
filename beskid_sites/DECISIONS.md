@@ -15,11 +15,12 @@ during the transition. No copy is kept under `beskid_sites/packages`.
 
 ## Single deployment authority
 
-This workspace contains no registry, proxy, Watchtower, SSH deployment, or
-Coolify mutation implementation. Root GitHub workflows build immutable GHCR
-images, promote the same checksummed six-image manifest through Coolify staging
-and production, and publish corelib/template packages only after production
-passes.
+`beskid_sites/deploy` is the sole production runtime definition. AppVeyor
+publishes the five Beskid application images to `cr.beskid-lang.org`; Watchtower
+alone reconciles their controlled `production` tags. The runtime also owns the
+private registry and joins the shared host edge, while the production operator
+owns initial Compose application, secret materialization, and rollback
+retagging. GitHub workflows have no platform deployment authority.
 
 ## Retired surfaces
 

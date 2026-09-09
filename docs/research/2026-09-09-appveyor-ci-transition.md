@@ -1,8 +1,9 @@
 # Research: AppVeyor CI transition
 
 **Date:** 2026-09-09
-**Scope:** Determine the constraints for moving Beskid CI from GitHub Actions to AppVeyor without changing CI configuration.
-**Status:** Research only. No CI, deployment, or repository settings changed.
+**Scope:** Determine the constraints for moving Beskid CI from GitHub Actions to AppVeyor.
+**Status:** Research baseline. The approved implementation is defined in
+`docs/superpowers/specs/2026-09-09-appveyor-watchtower-migration-design.md`.
 
 ## Current repository evidence
 
@@ -76,6 +77,18 @@ AppVeyor documents a 60-minute quota per build job. The number of jobs that can 
 - Separate CI migration from release migration. Evaluate AppVeyor environment deployment only after CI parity, artifact provenance, approval, and credential boundaries are demonstrated.
 - Do not translate GitHub Actions YAML mechanically. Map each gate's observable contract to AppVeyor's clone/install/build/test/artifact/finalization phases and document every unsupported semantic.
 
+## Management CLI finding
+
+AppVeyor does not publish an official general-purpose account-management CLI;
+its official `appveyor` build-worker executable controls the current worker.
+The migration workstation therefore uses the independently maintained,
+MIT-licensed `jrgcubano/appveyor-cli` 0.2.1, installed as
+`/Users/mikserek/.cargo/bin/appveyor` from its macOS arm64 release after checking
+SHA-256 `a84382f8ca24c4c2838b40d1e03a1778ada99f0afe4b895ac167c1233cef58ef`.
+No API token is stored in its plaintext user configuration. Account mutation
+remains unavailable until an administrator supplies an environment-backed API
+token.
+
 ## Official sources
 
 ### AppVeyor
@@ -102,3 +115,7 @@ AppVeyor documents a 60-minute quota per build job. The number of jobs that can 
 - [Troubleshooting required status checks](https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/troubleshooting-required-status-checks)
 - [GitHub Container Registry authentication](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry)
 - [OpenID Connect in GitHub Actions](https://docs.github.com/en/actions/concepts/security/openid-connect)
+
+### Community tooling
+
+- [`jrgcubano/appveyor-cli` repository and releases](https://github.com/jrgcubano/appveyor-cli)

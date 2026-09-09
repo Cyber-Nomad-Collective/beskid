@@ -1,13 +1,13 @@
-# Coolify: Beskid Learn
+# Production: Beskid Learn
 
-`learn` runs as the **`learn`** service in the production Coolify compose stack.
+`learn` runs as the **`learn`** service in the standalone production Compose stack.
 
 ## Delivery model
 
-- **GitHub Actions**: `platform-delivery.yml` publishes `ghcr.io/cyber-nomad-collective/beskid-learn`
-- **Infra stack**: `beskid_infra/compose/production/docker-compose.yml`
+- **AppVeyor**: the `linux-platform` lane publishes `cr.beskid-lang.org/beskid/learn`
+- **Runtime stack**: `beskid_sites/deploy/docker-compose.yml`; Watchtower owns reconciliation
 - **Runtime env**: `LEARN_PUBLIC_URL` (defaults to `https://learn.beskid-lang.org`)
-- **Domains**: `learn.beskid-lang.org` (production), `stg-learn.beskid-lang.org` (staging)
+- **Domain**: `learn.beskid-lang.org`
 
 ## Runtime model
 

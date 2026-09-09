@@ -7,7 +7,8 @@ root="$(cd "$(dirname "$0")/../../.." && pwd)"
 source "${root}/scripts/ci/test/lib/assert.sh"
 
 gate="${root}/scripts/ci/shared-ui-nexus-gate.sh"
-workflow="${root}/.github/workflows/platform-delivery.yml"
+entrypoint="${root}/scripts/ci/appveyor-entrypoint.sh"
+installer="${root}/scripts/ci/appveyor-install.sh"
 pkg="${root}/package.json"
 validate="${root}/validate-ci-local.sh"
 doc="${root}/docs/orchestrate/shared-ui-nexus-gate.md"
@@ -36,11 +37,13 @@ fi
 _TESTS_RUN=$((_TESTS_RUN + 1))
 echo "  ok   - gate is bun-free (pnpm-only)"
 
-assert_file_exists "${workflow}" "platform-delivery.yml exists"
-workflow_src="$(cat "${workflow}")"
-assert_contains "${workflow_src}" 'gate-name: shared-ui-nexus' "platform-delivery defines shared-ui-nexus quality job"
-assert_contains "${workflow_src}" 'bash scripts/ci/shared-ui-nexus-gate.sh' "platform-delivery runs shared-ui-nexus-gate.sh"
-assert_contains "${workflow_src}" 'submodules: beskid_web_common beskid_nexus' "shared-ui-nexus job initializes web_common + nexus"
+assert_file_exists "${entrypoint}" "AppVeyor entrypoint exists"
+entrypoint_src="$(cat "${entrypoint}")"
+assert_contains "${entrypoint_src}" 'bash scripts/ci/shared-ui-nexus-gate.sh' "AppVeyor runs shared-ui-nexus-gate.sh"
+assert_file_exists "${installer}" "AppVeyor installer exists"
+installer_src="$(cat "${installer}")"
+assert_contains "${installer_src}" 'beskid_distrib beskid_infra beskid_nexus beskid_tracker' "platform lane initializes Nexus and Tracker"
+assert_contains "${installer_src}" 'beskid_web_common pckg' "platform lane initializes shared web packages and pckg"
 
 assert_file_exists "${pkg}" "root package.json exists"
 pkg_src="$(cat "${pkg}")"

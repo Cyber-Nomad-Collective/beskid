@@ -9,32 +9,39 @@ audience:
   - service operator
 authority:
   status: security-sensitive
-  sourceLabel: Pinned platform deployment matrix
-  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid_infra/blob/b9c0b9318f40d3cf34197dcf0a7f59059fea6d71/docs/deploy-matrix.md
-  limits: This page does not identify a Coolify service or contain a credential. The configured lane remains authoritative.
+  sourceLabel: Standalone production deployment contract
+  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid/blob/main/beskid_sites/deploy/README.md
+  limits: This page contains no credential and cannot authorize AppVeyor or Watchtower account changes.
 verified:
-  revision: b9c0b9318f40d3cf34197dcf0a7f59059fea6d71
-  date: 2026-09-08
+  revision: 1c48165332356625e6ce1e273ac8c84e46c8a195
+  date: 2026-09-09
 ---
 
-Store runtime and deployment credentials in OpenBao or the protected GitHub environment. Do not print, commit, copy, or reuse a lane secret.
+Store runtime credentials in OpenBao and registry publication credentials in
+AppVeyor secure variables. Do not print, commit, copy, or reuse either secret.
 
 ## Orientation
 
-Select the exact Coolify lane. Obtain a lane-scoped OpenBao token and a separate Coolify token through the approved operator process.
+Identify the AppVeyor source commit and the standalone production Compose host.
+Obtain production access only through the approved operator process.
 
 ## Choose an operating procedure
 
 1. Review [Containers](/docs/operations/containers/).
 2. Identify the required images and volumes.
-3. Follow [Verify production delivery](/docs/operations/deployment/) with one immutable release manifest.
-4. Verify [Health and monitoring](/docs/operations/health-and-monitoring/) before you promote the release.
+3. Follow [Verify production delivery](/docs/operations/deployment/) with the immutable `sha-*` image identities from AppVeyor.
+4. Verify [Health and monitoring](/docs/operations/health-and-monitoring/) after Watchtower reconciles the controlled tags.
 
 ## Limits
 
-All application services run from immutable image digests. The selected lane reports healthy services, and persistent volumes remain attached.
+Application services run from controlled `production` tags while matching
+immutable `sha-*` tags provide audit and rollback identity. Persistent volumes
+remain attached across Watchtower reconciliation.
 
-If a required check fails, CI stops and reports the failure. Preserve the workflow URL, status, and exposed evidence. The production operator owns restore or rollback. After the operator completes recovery, rerun production verification.
+If a required build or publish check fails, AppVeyor stops and reports the
+failure. Preserve its URL, commit, status, and image evidence. The production
+operator owns restore or rollback by registry retagging and Watchtower control.
+After recovery, repeat production verification.
 
 ## Next steps
 

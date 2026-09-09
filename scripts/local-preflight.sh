@@ -4,13 +4,13 @@
 #   scripts/local-preflight.sh           # host tier (seconds)
 #   scripts/local-preflight.sh --full    # host tier + workflow policy checks
 #
-# Host tier runs the same scripts/ci/*.sh gates GHA runs, so the class of bug
+# Host tier runs the same scripts/ci/*.sh gates AppVeyor runs, so the class of bug
 # that broke main (stale pnpm-lock.yaml) is caught in seconds locally. --full adds
 # static workflow validation without invoking deployment jobs.
 #
 # Skip rules (non-failing):
 #   - @beskid/* / @cyber-nomad-* app gates skip if NODE_AUTH_TOKEN unset
-#   - compiler gate is never run here (Blacksmith Testbox only)
+#   - native compiler matrix is not run here (AppVeyor workers own it)
 #   - --full requires actionlint
 set -euo pipefail
 

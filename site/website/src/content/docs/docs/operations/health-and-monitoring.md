@@ -9,35 +9,38 @@ audience:
   - maintainer
 authority:
   status: informative
-  sourceLabel: Pinned platform deployment matrix
-  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid_infra/blob/b9c0b9318f40d3cf34197dcf0a7f59059fea6d71/docs/deploy-matrix.md
+  sourceLabel: Standalone production deployment checks
+  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid/blob/main/beskid_sites/deploy/deploy.sh
   limits: Endpoint success proves availability only. It does not prove complete application correctness.
 verified:
-  revision: b9c0b9318f40d3cf34197dcf0a7f59059fea6d71
-  date: 2026-09-08
+  revision: 1c48165332356625e6ce1e273ac8c84e46c8a195
+  date: 2026-09-09
 ---
 
-Use separate release and deployment evidence for image identity. A health handler does not expose release manifest identity. Use the health response and monitoring timestamp only for availability evidence. Do not include cookies, tokens, or private response bodies.
+Use separate AppVeyor publication and Watchtower reconciliation evidence for
+image identity. A health handler does not expose registry tag identity. Use the
+health response and monitoring timestamp only for availability evidence. Do
+not include cookies, tokens, or private response bodies.
 
 ## Prerequisites
 
-Record the expected image identity from the release workflow. Record the deployment time from the production operator. Obtain monitoring access for the selected lane.
+Record the expected immutable image identity from AppVeyor. Record the
+Watchtower reconciliation time from the production operator. Obtain monitoring
+access for production.
 
 ## Actions
 
-1. Check Auth at `/api/v1/health`.
+1. Check the Website at `/`.
 2. Check Learn at `/api/health`.
 3. Check Tracker at `/api/health`.
 4. Check Nexus at `/api/health`.
 5. Check pckg at `/health/ready`.
-6. Check the Website at `/`.
-7. Compare the public check times with container health.
-8. Inspect the same deployment window at `monitor.beskid-lang.org`.
+6. Compare the public check times with container and Watchtower logs.
+7. Inspect the same reconciliation window at `monitor.beskid-lang.org`.
 
 | Boundary | Healthy evidence | Next diagnostic |
 | --- | --- | --- |
 | Website | Successful HTTP status for `/`. | Site container and proxy logs. |
-| Auth | Successful HTTP status for `/api/v1/health`. | Auth volume, session configuration, and OAuth callback. |
 | Learn | Successful HTTP status for `/api/health`. | One safe lesson check and runtime-kit evidence. |
 | Tracker | Successful HTTP status for `/api/health`. | SQLite volume and Auth hub configuration. |
 | Nexus | Successful HTTP status for `/api/health`. | Proxy trust boundary and `nexus-data`. |

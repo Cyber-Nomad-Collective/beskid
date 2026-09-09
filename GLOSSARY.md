@@ -12,6 +12,13 @@ Generation-scoped results computed by Salsa for expanded AST nodes, including re
 
 An informative, checked-in conceptual map of the Beskid compiler and its direct boundaries. It resolves canonical public specification links from the OpenSpec catalog, presents implementation paths as evidence, and never replaces OpenSpec requirements as the normative authority.
 
+## AppVeyor CI authority
+
+The repository-owned AppVeyor pipeline that validates pull requests and main,
+and publishes the five platform service images from trusted main builds to
+`cr.beskid-lang.org`. It has no authority or credentials to control production
+containers; Watchtower owns that reconciliation boundary.
+
 ## AOT run
 
 The `beskid run` workflow that resolves and analyzes a program, compiles and
@@ -122,7 +129,11 @@ The project-resolution rule selected by CLI flags. `--locked` requires an existi
 
 ## Global distribution version
 
-The one release identity for all externally distributed Beskid artifacts. Compiler CI on `main` mints it exactly as `0.4.<GITHUB_RUN_NUMBER>` and emits it for downstream consumers; tags, commits, manifests, and downstream workflow run numbers cannot create an alternate value.
+The one release identity for all externally distributed Beskid artifacts. An
+explicit GitHub-native compiler release uses the AppVeyor build number exactly
+as `0.4.<build-number>` after recording the validated source commit and build
+identity; tags, commits, and downstream workflow run numbers cannot create an
+alternate value.
 
 ## Informative documentation
 
@@ -174,13 +185,12 @@ The historical name for the separately deployed standard reader. That service is
 
 ## Production verification boundary
 
-The current root workflow boundary that validates a checksummed release
-manifest, verifies its source run, waits for externally controlled Watchtower,
-and runs public smoke checks. It cannot start, replace, or roll back production
-containers; the production operator owns those actions. Operators inspect the
-workflow run and record only its status and exposed evidence. They do not
-materialize the workflow's internal validation files or repeat its internal
-validation commands.
+The operational evidence boundary joining an immutable
+`cr.beskid-lang.org/beskid/<lane>:sha-*` image, its controlled `production`
+alias, Watchtower reconciliation status, and the service's public health result.
+AppVeyor can publish and report image identity but cannot start, replace, or
+roll back production containers. Those actions belong to Watchtower and the
+production operator.
 
 ## Product-use guide
 
@@ -269,10 +279,6 @@ A `.bws` file that names a set of project-member directories. Each member direct
 ## Semantic review
 
 The process of turning preserved descriptive migration text into precise, independently testable OpenSpec requirements without inventing behavior or losing source rationale.
-
-## Staged promotion
-
-A GitHub Actions-controlled delivery process that builds an image once, publishes it to GHCR, deploys its immutable digest to Coolify staging, then automatically promotes that exact digest to production after staging succeeds, with environment-scoped secrets, smoke/SLO gates, and rollback evidence. Host-side image watchers and private-registry deployment paths are outside this process.
 
 ## Typed Markdown directive
 
