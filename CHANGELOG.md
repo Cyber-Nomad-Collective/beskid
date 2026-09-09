@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Added
 
+- Document the official AppVeyor capability and migration research, including
+  required proof builds for native workers, Buildx/GHCR, submodules, status
+  contexts, account capacity, and GitHub Actions-only semantics.
 - Add a platform-aware Rust build toolchain: `cargo-binstall` installs prebuilt
   contributor and CI tools on macOS, Linux, and Windows. Linux CI pins `mold`,
   and one shared Cargo configuration selects it for Linux builds.
