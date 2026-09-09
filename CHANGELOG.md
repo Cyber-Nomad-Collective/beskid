@@ -11,6 +11,10 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Added
 
+- VS Code extension: register standalone `.bsol` documents through the same
+  grammar, language configuration, and native LSP client used for `.bproj` and
+  `.bws`, including incremental completion, hover, diagnostics, and semantic
+  highlighting.
 - Zed extension: register standalone `.bsol` documents with the existing
   `beskid_lsp` adapter for generic diagnostics, `@schemaless` completion,
   hover help, and highlighting from the pinned nested BSOL grammar.
@@ -72,6 +76,11 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- VS Code extension: replace the manifest-key allowlist with structural BSOL
+  TextMate scopes, remove unsupported configuration formatting/comment claims,
+  and preseed extension-host tests with the exact locally built LSP before
+  activation. The Open VSX gate now runs lint, unit, smoke, and one Linux
+  extension-host lane under an explicit Node 24 runtime.
 - Compiler delivery: represent explicitly public manifest builtins with one
   typed lowering fact, while privileged Corelib services remain capability
   gated and stale ABI-v4 shapes cannot request imports. Generate exact public
