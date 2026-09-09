@@ -90,7 +90,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   dynamic TLS, runtime, application, and static-archive dependencies
   fail-closed. This unblocks the clean hosted compiler gate that publishes the
   stable LSP used by the VS Code and Zed extensions without weakening ABI
-  checks.
+  checks. Keep the legacy `ref`-modifier regression anchored to its stable
+  pre-codegen rejection instead of obsolete parser-recovery wording.
 - Use one exact stable authoring version across the Zed manifests and the VS
   Code package and lockfile, so real VSIX packaging fails closed on editor
   release drift instead of depending on a missing resolver. Restore compiler
