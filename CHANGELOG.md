@@ -106,6 +106,10 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Compiler delivery: advance the embedded compiler through the guarded-stack
   harness, recursive generic-array surface, and canonical Corelib gate fixes,
   restoring the full 67-entry Corelib matrix required by stable LSP releases.
+- Route Learn's Authentik outpost callback before the public application
+  upstream, and forward verified identity headers only when an existing proxy
+  session is present. Signed-in compiler checks no longer remain at a pending
+  request because the application receives the authenticated identity.
 - Enforce each technical Docs page structure from its declared page kind.
   Discover all task, guide, and reference pages so coverage and procedure gates
   cannot omit new routes. Give guide and reference pages distinct structures,
