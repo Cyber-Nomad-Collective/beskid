@@ -83,9 +83,11 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   arrays, atomic channels, split fiber joins, bottom-typed match arms, and
   explicit Core.Args handoff. Derive native platform exports and loader fixtures
   from their generated ABI authorities, and consolidate matrix completion
-  handling. This unblocks the clean hosted compiler gate that publishes the
-  stable LSP used by the VS Code and Zed extensions without weakening
-  fail-closed ABI checks.
+  handling. Resolve Unix process-linked externs through the platform's actual
+  `RTLD_DEFAULT`, preventing Linux JIT workers from crashing while resolving
+  standard functions such as `sched_yield`. This unblocks the clean hosted
+  compiler gate that publishes the stable LSP used by the VS Code and Zed
+  extensions without weakening fail-closed ABI checks.
 - Use one exact stable authoring version across the Zed manifests and the VS
   Code package and lockfile, so real VSIX packaging fails closed on editor
   release drift instead of depending on a missing resolver. Restore compiler
