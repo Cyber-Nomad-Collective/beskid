@@ -1,22 +1,29 @@
 // Zed tasks for the Beskid project.
 [
   {
-    "label": "Build LSP binary",
-    "command": "cd compiler && just replace",
+    "label": "Zed extension: Build package",
+    "command": "cargo build --release --target wasm32-wasip2 --manifest-path editors/zed/Cargo.toml && cp editors/zed/target/wasm32-wasip2/release/beskid_zed_extension.wasm editors/zed/extension.wasm",
     "cwd": "$ZED_WORKTREE_ROOT",
     "use_new_terminal": true,
     "reveal": "always"
   },
   {
-    "label": "Build tree-sitter WASM (needs Docker)",
-    "command": "cd beskid_treesitter && npx tree-sitter build --wasm && mkdir -p ../.zed/grammars && cp tree-sitter-beskid.wasm ../.zed/grammars/beskid.wasm",
+    "label": "Zed extension: Test package",
+    "command": "bash scripts/ci/test/zed-extension-package.test.sh",
     "cwd": "$ZED_WORKTREE_ROOT",
     "use_new_terminal": true,
     "reveal": "always"
   },
   {
-    "label": "Install dependencies (all sites)",
-    "command": "./scripts/setup-environment.sh",
+    "label": "Zed extension: Test language assets",
+    "command": "bash scripts/ci/test/zed-language-assets.test.sh",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": true,
+    "reveal": "always"
+  },
+  {
+    "label": "Zed extension: Show development install instructions",
+    "command": "printf '%s\n' 'In Zed, run zed: install dev extension and select editors/zed.'",
     "cwd": "$ZED_WORKTREE_ROOT",
     "use_new_terminal": true,
     "reveal": "always"

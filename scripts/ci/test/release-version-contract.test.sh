@@ -30,6 +30,10 @@ for tool in llvm-nm.exe llvm-readobj.exe llvm-ml.exe clang.exe; do
     fail "Windows LLVM setup does not require ${tool}"
 done
 for workflow in "${compiler_workflow}" "${release_workflow}"; do
+  grep -Fq 'blacksmith-2vcpu-windows-2025' "${workflow}" || \
+    fail "release-critical Windows work still depends on the billing-locked GitHub runner: ${workflow}"
+  grep -Fq 'blacksmith-6vcpu-macos-latest' "${workflow}" || \
+    fail "release-critical macOS work still depends on the billing-locked GitHub runner: ${workflow}"
   grep -Fq 'uses: ./.github/actions/setup-native-llvm-windows' "${workflow}" || \
     fail "Windows release path does not install the shared pinned LLVM toolchain: ${workflow}"
 done

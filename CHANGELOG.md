@@ -11,6 +11,11 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Added
 
+- Zed extension: register standalone `.bsol` documents with the existing
+  `beskid_lsp` adapter for generic diagnostics, `@schemaless` completion,
+  hover help, and highlighting from the pinned nested BSOL grammar.
+- Zed extension: add outlines, indentation and bracket queries, pinned CLI
+  runnable tasks, declaration snippets, and grammar-validated fixtures.
 - Add a checked-in documentation coverage catalogue for 52 non-compiler
   technical Docs routes. Map each public surface to one audience, source
   boundary, page kind, diagram policy, page, and navigation leaf. Add focused
@@ -67,6 +72,40 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Keep Beskid LSP member suggestions available while an imported member
+  expression is only partially typed in VS Code or Zed. The current buffer owns
+  its recoverable outline and a bounded imported-member surface keyed by exact
+  module path and alias. Same-document text synchronization stays ordered while
+  separate buffers proceed independently; debounced full diagnostics release
+  Salsa after assembly and use cache-isolated downstream analysis. Other syntax
+  facts and diagnostic publication remain exact-version guarded.
+
+- Beskid IntelliSense: preserve the prepared assembly generation when building
+  LSP syntax facts and synchronize the JSON-RPC completion test on scan-idle
+  plus versioned document diagnostics.
+- Beskid IntelliSense: advertise `@` as a completion trigger so the shared
+  standalone-BSOL provider offers `@schemaless` naturally in Zed and VS Code.
+- Zed extension: package the generated BSOL parser, ignore Zed's generated
+  grammar checkout, and require the stable LSP release assets before registry
+  publication.
+- Zed extension: reject directories, symlinks, and other non-regular cached
+  entries instead of returning them as executable language-server paths.
+- Zed extension: bind registry publication to a matching manifest tag and the
+  successful three-platform stable LSP release for the pinned compiler commit,
+  while allowing staged BSOL gitlink updates to pass their package contract.
+- Zed extension: correct the registry gitlink path, remove invalid tag-less
+  publication dispatch, and document the initial registry submission metadata.
+- Zed extension: pin the reviewed registry action source, reduce its repository
+  token to read-only contents access, and validate SDK metadata as parsed TOML.
+- Zed extension: reuse the complete canonical BSOL Tree-sitter grammar for
+  `.bsol`, `.bproj`, and `.bws`, and parse every production schema fixture in
+  the language-assets gate so highlighting cannot silently drift to a subset.
+- Beskid LSP: emit canonical-parser-backed semantic tokens for block kinds and
+  configuration keys across `.bsol`, `.bproj`, and `.bws`, while invalid BSOL
+  continues to fail closed without partial semantic facts.
+- Compiler delivery: advance the embedded compiler through the guarded-stack
+  harness, recursive generic-array surface, and canonical Corelib gate fixes,
+  restoring the full 67-entry Corelib matrix required by stable LSP releases.
 - Route Learn's Authentik outpost callback before the public application
   upstream, and forward verified identity headers only when an existing proxy
   session is present. Signed-in compiler checks no longer remain at a pending
@@ -130,6 +169,13 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Zed extension: move the complete package into the dedicated `editors/zed`
+  crate and use `zed_extension_api` 0.7.0 with `wasm32-wasip2`.
+- Run release-critical compiler and LSP Windows/macOS gates on Blacksmith so a
+  locked GitHub-hosted runner account cannot suppress stable release assets.
+- Zed extension: keep one DRY native LSP adapter for Beskid source, manifests,
+  and standalone BSOL; resolve configured/PATH servers before the guarded
+  versioned `lsp-stable` download and forward settings without reinterpretation.
 - Separate product-use guides from service-operation guides. Keep deployment
   ownership, service inventory, and authentication topology under
   reconciliation while their tracked authorities disagree.
@@ -243,6 +289,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Removed
 
+- Zed extension: remove duplicate root and `.zed` language/grammar package
+  paths; `editors/zed` is the single implementation.
 - Authelia’s runtime, file-user database, asset overrides, and deployment
   contract. Browser authentication now has one Authentik implementation.
 

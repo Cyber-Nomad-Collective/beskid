@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "8ac649f1f4093748583e6f3d775d58bbf387b8c008bcb2b256d2d2d5e32f552c",
+  "revision": "0eb2d65daa5f9f39c538078397eb83f48feefc6047e0febab2803402443d3be5",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -38963,7 +38963,7 @@
       "path": "GLOSSARY.md",
       "title": "Glossary",
       "authority": "informative",
-      "sourceHash": "4993d8c4f635ba823ecee8f00620a940b4cca42f88d2071078e3cd5011ffd952",
+      "sourceHash": "d7ace9417989b9543d1d5e2b4d7d4c9c7b5e55c15789909729cbf14c15b02312",
       "standardLinks": [
         "/platform-spec/"
       ],
@@ -38974,7 +38974,7 @@
       "path": "GUIDE.md",
       "title": "Beskid project guide",
       "authority": "informative",
-      "sourceHash": "58b57c2739d21358783629ae92b0d6be65d1edbac98cf30b6740c8ba0713cd10",
+      "sourceHash": "29235421c656b9eef07aa418ff76eab01866194f84c1143666b751a5761a798e",
       "standardLinks": [
         "/platform-spec/"
       ],
@@ -60777,7 +60777,7 @@
       "decision": null,
       "title": "IntelliSense capabilities and behavior",
       "status": "Standard",
-      "sourceHash": "e6787a387803280e3f9dbdfb1e080fcdb738f725fa5f6744143ddae4082d999f"
+      "sourceHash": "a9c657bda25edc6f28e06faa6fdcbf494d9811c250134ae7a0ecb48b6e236c05"
     },
     {
       "id": "BSP-CAP-942BDF7AAE15",

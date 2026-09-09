@@ -1,0 +1,32 @@
+{
+  "Module declaration": {
+    "prefix": "mod",
+    "body": ["mod ${1:module};"],
+    "description": "Declare a Beskid module"
+  },
+  "Function declaration": {
+    "prefix": "fn",
+    "body": ["${1:unit} ${2:Function}(${3}) {", "\t$0", "}"],
+    "description": "Declare a Beskid function"
+  },
+  "Type declaration": {
+    "prefix": "type",
+    "body": ["type ${1:Type} {", "\t${2:i32} ${3:value},", "}"],
+    "description": "Declare a Beskid type"
+  },
+  "Contract declaration": {
+    "prefix": "contract",
+    "body": ["contract ${1:Contract} {", "\t${2:unit} ${3:Method}(${4});", "}"],
+    "description": "Declare a Beskid contract"
+  },
+  "Enum declaration": {
+    "prefix": "enum",
+    "body": ["enum ${1:Enum} {", "\t${2:Variant}", "}"],
+    "description": "Declare a Beskid enum"
+  },
+  "Test declaration": {
+    "prefix": "test",
+    "body": ["test ${1:Test_name} {", "\t$0", "}"],
+    "description": "Declare a Beskid test"
+  }
+}

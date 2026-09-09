@@ -28,6 +28,15 @@ each application, and provides the canonical account and sign-out surfaces.
 
 The current normative requirements in `openspec/specs`. A text outside that directory is not part of the standard unless it is incorporated through a validated OpenSpec change.
 
+## BSOL (Beskid Structured Object Language)
+
+The generic block syntax used by `.bproj`, `.bws`, and standalone `.bsol`
+documents. In Zed, all three reuse the same pinned `beskid_bsol` Tree-sitter
+grammar for structure and the same native `beskid_lsp` for semantic editor
+features. Standalone `.bsol` remains a separate `bsol` language ID with generic
+diagnostics and `@schemaless` assistance rather than project-manifest schema
+rules.
+
 ## Beskid service licensing boundary
 
 The licensing boundary under which Beskid-owned programs designed to accept
@@ -44,6 +53,14 @@ a Beskid license on input source or generated programs. Beskid runtime,
 core-library, startup, template, or generated material incorporated into an
 output is deliberately Apache-2.0 so that output may be licensed independently,
 subject to any separately identified third-party material.
+
+## Completion dependency surface
+
+The last valid, generation-bound set of dependency symbols that an editor
+completion request may consult while the exact current Beskid buffer is
+temporarily incomplete. It is a bounded, preamble-like fallback for member
+completion only; it is never authority for diagnostics, document symbols,
+rename, formatting, semantic tokens, or compilation.
 
 ## Bug-only GitHub synchronization
 
@@ -164,6 +181,14 @@ section, limits, and next steps. A `reference` states its scope and authority
 and explains how to report a mismatch. Each numbered task step has one
 observable reader action.
 
+## Parallel Salsa handle
+
+A lightweight clone of the workspace's single `BeskidDatabase` handle. Parallel
+handles share Salsa storage and memoized facts but have independent query stacks,
+so read-only language-server requests can run concurrently without constructing
+or synchronizing a second semantic database. All input mutation remains ordered
+through the workspace writer boundary.
+
 ## Normative requirement
 
 A named OpenSpec requirement using SHALL or MUST and one or more testable scenarios. It defines behavior required for Beskid conformance.
@@ -269,6 +294,14 @@ A `.bws` file that names a set of project-member directories. Each member direct
 ## Semantic review
 
 The process of turning preserved descriptive migration text into precise, independently testable OpenSpec requirements without inventing behavior or losing source rationale.
+
+## SDK-supported parity
+
+The set of VS Code capabilities that can be reproduced through supported Zed
+registry APIs or Zed-native declarative assets. LSP semantics remain native;
+language metadata, queries, snippets, and tasks are re-expressed for Zed; UI
+surfaces with no registry SDK capability are documented as unsupported rather
+than simulated.
 
 ## Staged promotion
 

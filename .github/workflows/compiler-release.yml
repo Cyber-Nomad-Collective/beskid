@@ -132,12 +132,12 @@ jobs:
             cli_asset: beskid-linux-amd64
             lsp_asset: beskid_lsp-linux-amd64
             bundle_asset: beskid-x86_64-unknown-linux-gnu.tar.gz
-          - os: macos-latest
+          - os: blacksmith-6vcpu-macos-latest
             target: aarch64-apple-darwin
             cli_asset: beskid-darwin-arm64
             lsp_asset: beskid_lsp-darwin-arm64
             bundle_asset: beskid-aarch64-apple-darwin.tar.gz
-          - os: windows-latest
+          - os: blacksmith-2vcpu-windows-2025
             target: x86_64-pc-windows-msvc
             cli_asset: beskid-windows-amd64.exe
             lsp_asset: beskid_lsp-windows-amd64.exe

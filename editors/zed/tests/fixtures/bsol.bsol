@@ -1,0 +1,8 @@
+# Generic standalone BSOL fixture for the Zed grammar query contract.
+schema "zed" {
+  enabled = true
+  values = [default, "package"]
+  nested "child" @schemaless {
+    mode = development
+  }
+}
