@@ -77,8 +77,10 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 ### Fixed
 
 - Advance the compiler pin to the Rust 1.98-compatible strict Clippy cleanup,
-  unblocking the clean hosted compiler gate that publishes the stable LSP used
-  by the VS Code and Zed extensions.
+  then restore its exact Corelib runtime-authority implementation for typed
+  arrays, atomic channels, and split fiber joins. This unblocks the clean hosted
+  compiler gate that publishes the stable LSP used by the VS Code and Zed
+  extensions without weakening fail-closed ABI checks.
 - Use one exact stable authoring version across the Zed manifests and the VS
   Code package and lockfile, so real VSIX packaging fails closed on editor
   release drift instead of depending on a missing resolver. Restore compiler
