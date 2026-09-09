@@ -72,6 +72,14 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Keep Beskid LSP member suggestions available while an imported member
+  expression is only partially typed in VS Code or Zed. The current buffer owns
+  its recoverable outline and a bounded imported-member surface keyed by exact
+  module path and alias. Same-document text synchronization stays ordered while
+  separate buffers proceed independently; debounced full diagnostics release
+  Salsa after assembly and use cache-isolated downstream analysis. Other syntax
+  facts and diagnostic publication remain exact-version guarded.
+
 - Beskid IntelliSense: preserve the prepared assembly generation when building
   LSP syntax facts and synchronize the JSON-RPC completion test on scan-idle
   plus versioned document diagnostics.

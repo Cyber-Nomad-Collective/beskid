@@ -54,6 +54,14 @@ core-library, startup, template, or generated material incorporated into an
 output is deliberately Apache-2.0 so that output may be licensed independently,
 subject to any separately identified third-party material.
 
+## Completion dependency surface
+
+The last valid, generation-bound set of dependency symbols that an editor
+completion request may consult while the exact current Beskid buffer is
+temporarily incomplete. It is a bounded, preamble-like fallback for member
+completion only; it is never authority for diagnostics, document symbols,
+rename, formatting, semantic tokens, or compilation.
+
 ## Bug-only GitHub synchronization
 
 Tracker integration in which GitHub Issues represents public bugs and their supported status/discussion fields only. Roadmap tasks, versions, workstreams, milestones, and deliverables remain in Tracker's SQLite domain model.
@@ -172,6 +180,14 @@ a recovery path, and a next task. A `guide` has orientation, a decision or use
 section, limits, and next steps. A `reference` states its scope and authority
 and explains how to report a mismatch. Each numbered task step has one
 observable reader action.
+
+## Parallel Salsa handle
+
+A lightweight clone of the workspace's single `BeskidDatabase` handle. Parallel
+handles share Salsa storage and memoized facts but have independent query stacks,
+so read-only language-server requests can run concurrently without constructing
+or synchronizing a second semantic database. All input mutation remains ordered
+through the workspace writer boundary.
 
 ## Normative requirement
 

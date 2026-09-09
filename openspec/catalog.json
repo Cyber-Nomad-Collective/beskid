@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "e95ebab946a4caabba89ee86a7f5e35f0fe52768088d4a7e17e0fa087076ea08",
+  "revision": "0eb2d65daa5f9f39c538078397eb83f48feefc6047e0febab2803402443d3be5",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -38963,7 +38963,7 @@
       "path": "GLOSSARY.md",
       "title": "Glossary",
       "authority": "informative",
-      "sourceHash": "d2e6503e271eba987670a5697897bff7f914d4bdee03457efed6426df6694f70",
+      "sourceHash": "d7ace9417989b9543d1d5e2b4d7d4c9c7b5e55c15789909729cbf14c15b02312",
       "standardLinks": [
         "/platform-spec/"
       ],
@@ -60777,7 +60777,7 @@
       "decision": null,
       "title": "IntelliSense capabilities and behavior",
       "status": "Standard",
-      "sourceHash": "e6787a387803280e3f9dbdfb1e080fcdb738f725fa5f6744143ddae4082d999f"
+      "sourceHash": "a9c657bda25edc6f28e06faa6fdcbf494d9811c250134ae7a0ecb48b6e236c05"
     },
     {
       "id": "BSP-CAP-942BDF7AAE15",
