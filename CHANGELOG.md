@@ -72,12 +72,14 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
-- Compiler delivery: derive Dynamic Corelib service signatures and imports
-  from the generated ABI manifest, keep Win32 provenance classification exact,
-  and lower raw byte stores at one-byte width so numeric interpolation cannot
-  overwrite adjacent UTF-8 bytes. Keep `just replace` bound to Just's resolved
-  workspace root so a successful release build installs the CLI, LSP, and
-  native runtime kit instead of failing on an undefined shell variable.
+- Compiler delivery: represent explicitly public manifest builtins with one
+  typed lowering fact, while privileged Corelib services remain capability
+  gated and stale ABI-v4 shapes cannot request imports. Generate exact public
+  signatures and floating ABI slots from ABI v5, collect external callees in
+  one traversal, keep Win32 provenance classification exact, and lower raw byte
+  stores at one-byte width so numeric interpolation cannot overwrite adjacent
+  UTF-8 bytes. Keep `just replace` bound to Just's resolved workspace root so a
+  successful release build installs the CLI, LSP, and native runtime kit.
 - Keep Beskid LSP member suggestions available while an imported member
   expression is only partially typed in VS Code or Zed. The current buffer owns
   its recoverable outline and a bounded imported-member surface keyed by exact
