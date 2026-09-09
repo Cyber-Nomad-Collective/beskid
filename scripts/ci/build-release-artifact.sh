@@ -15,7 +15,7 @@
 # Usage: build-release-artifact.sh <package> <binary> <target> <asset-name> <release-version>
 #   package         beskid_cli | beskid_lsp | beskid_bundle
 #   binary          beskid_cli | beskid_lsp | ignored for beskid_bundle
-#   target          x86_64-unknown-linux-gnu | aarch64-apple-darwin | x86_64-pc-windows-msvc
+#   target          x86_64-unknown-linux-gnu | aarch64-apple-darwin | x86_64-apple-darwin | x86_64-pc-windows-msvc
 #   asset-name      output file name (e.g. beskid-linux-amd64)
 #   release-version resolved semver (from compute-cli-version.sh)
 set -euo pipefail
@@ -30,7 +30,7 @@ ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 
 case "$TARGET" in
   x86_64-unknown-linux-gnu)  runner_os="Linux" ;;
-  aarch64-apple-darwin)      runner_os="macOS" ;;
+  aarch64-apple-darwin|x86_64-apple-darwin) runner_os="macOS" ;;
   x86_64-pc-windows-msvc)    runner_os="Windows" ;;
   *) echo "unsupported release target: $TARGET" >&2; exit 1 ;;
 esac
@@ -41,6 +41,27 @@ binary_extension=""
 export RUST_MIN_STACK="${RUST_MIN_STACK:-67108864}"
 
 cd "${ROOT}/compiler"
+
+# Version stamping is a build input, not an authoring-tree edit. Restore every
+# touched manifest even when Cargo or a later package verification fails.
+release_backup="$(mktemp -d "${TMPDIR:-/tmp}/beskid-release-version.XXXXXX")"
+versioned_manifests=(
+  Cargo.lock
+  crates/beskid_cli/Cargo.toml
+  crates/beskid_lsp/Cargo.toml
+  crates/beskid_up/Cargo.toml
+)
+for manifest in "${versioned_manifests[@]}"; do
+  mkdir -p "${release_backup}/$(dirname "${manifest}")"
+  cp "${manifest}" "${release_backup}/${manifest}"
+done
+restore_release_versions() {
+  for manifest in "${versioned_manifests[@]}"; do
+    cp "${release_backup}/${manifest}" "${manifest}"
+  done
+  rm -rf "${release_backup}"
+}
+trap restore_release_versions EXIT
 
 stamp_version() {
   local cargo_toml="$1"

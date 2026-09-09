@@ -18,6 +18,7 @@ done
 
 "${root}/scripts/ci/test/run-distribute-workflow-contract-tests.sh"
 bash "${root}/scripts/ci/test/release-version-contract.test.sh"
+bash "${root}/scripts/ci/test/editor-authoring-version.test.sh"
 bash "${root}/scripts/ci/test/build-release-state.test.sh"
 bash "${root}/scripts/ci/test/build-release-platform.test.sh"
 bash "${root}/scripts/ci/test/render-ci-failure.test.sh"

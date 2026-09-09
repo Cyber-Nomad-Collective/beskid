@@ -62,6 +62,12 @@ temporarily incomplete. It is a bounded, preamble-like fallback for member
 completion only; it is never authority for diagnostics, document symbols,
 rename, formatting, semantic tokens, or compilation.
 
+## Editor authoring version
+
+The exact stable semantic version shared by the Zed extension manifest, its
+Rust package manifest, and the VS Code package and lockfile identities. Release
+packaging validates this single authority before embedding an LSP binary.
+
 ## Bug-only GitHub synchronization
 
 Tracker integration in which GitHub Issues represents public bugs and their supported status/discussion fields only. Roadmap tasks, versions, workstreams, milestones, and deliverables remain in Tracker's SQLite domain model.
