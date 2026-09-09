@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/core-library/terminal-and-console/ansi-escape-model/articles/verification-and-traceability",
+	"title": "Verification and traceability",
+	"description": "Golden tests and source anchors for ANSI escape framing.",
+	"parentSlug": "platform-spec/core-library/terminal-and-console/ansi-escape-model",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-21"
+}

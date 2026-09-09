@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/tooling/cli/api-json-contract/articles/design-model",
+	"title": "Design model",
+	"description": "Schema v4 for api.json — full resolved API surface, signatures, and navigable type references.",
+	"parentSlug": "platform-spec/tooling/cli/api-json-contract",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

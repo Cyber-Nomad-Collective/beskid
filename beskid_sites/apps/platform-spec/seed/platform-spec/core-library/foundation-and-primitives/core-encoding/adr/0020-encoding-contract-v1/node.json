@@ -1,0 +1,17 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/core-library/foundation-and-primitives/core-encoding/adr/0020-encoding-contract-v1",
+	"title": "Encoding contract v1",
+	"description": "Shared Encoder contract with Result-based decode.",
+	"parentSlug": "platform-spec/core-library/foundation-and-primitives/core-encoding",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-CORE-PRIM-0020",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-06-06",
+	"lastReviewed": "2026-06-06"
+}

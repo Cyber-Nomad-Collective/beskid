@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Compile pipeline placement\n\n```mermaid\nflowchart LR\n    parse[parse]\n    collect[collect extensions]\n    resolve[resolve target type]\n    access[check access]\n    lower[lower to HIR]\n    parse --> collect --> resolve --> access --> lower\n```\n\n## extend type algorithm (normative)\n\n1. **Parse extension block** — `extend type T { methods }` becomes `ExtendTypeDefinition` with `target_type` and `methods`.\n2. **Parse methods** — Each method is parsed with the target type as its implicit receiver type.\n3. **Resolve target type** — The extended type name must refer to an in-scope type declaration.\n4. **Index methods** — Add extension methods to the target type's member set for dispatch resolution.\n5. **Check access rules** — `ExtendTypePrivateMemberAccess` (**E1511**) prevents access to private members of the extended type.\n6. **Check visibility** — Extension sites must satisfy normal import and visibility rules.\n7. **Lower to HIR** — Methods are lowered as ordinary function definitions with the receiver type bound.\n\n## Method parsing with receiver\n\n```mermaid\nflowchart TB\n    extend[extend type T]\n    method[method definition]\n    receiver[receiver type = T]\n    body[method body]\n    extend --> method --> receiver --> body\n```\n\n## Compiler mod generation\n\nMods may emit `extend type` blocks through `Generator` contracts:\n1. Mod code constructs `ExtendTypeDefinition` nodes via the typed AST API.\n2. The host merges generated contributions into the program.\n3. Re-parse and re-resolve treat generated extensions the same as hand-authored ones.\n\n## LSP / incremental\n\nRe-run extension analysis when `extend type` blocks, target type definitions, or method signatures change."
+		}
+	]
+}

@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/community/spec-maintenance/feature-hub-article-bundle-template/adr/0005-article-minimum-payload",
+	"title": "Minimum article payload by role",
+	"description": "design-model, contracts, verification, and other bundle roles must meet normative minimums or stay Proposed.",
+	"parentSlug": "platform-spec/community/spec-maintenance/feature-hub-article-bundle-template",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-COMM-HUB-0005",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-05-05",
+	"lastReviewed": "2026-05-22"
+}

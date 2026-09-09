@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "blocks": [
+    {
+      "type": "markdownProse",
+      "bodyMd": "import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\n`ImportClosure` and `WorkspaceScan` modes were conflated in places: directory sweeps pulled unrelated `.bd` files into compile graphs, breaking determinism and parity with explicit `use` graphs.\n\n## Decision\n\nFor `AssemblyDiscovery::ImportClosure` (build, run, lower, test, LSP document snapshots):\n\n| Rule | Detail |\n| --- | --- |\n| Seeds | Entry file, prelude union seeds (D-COMP-BUILD-0022), and each `pub mod A.B` resolve **exactly one** module file before traversal |\n| Expansion | Additional units enter the queue **only** when a queued file contains a `use` import that resolves under effective roots |\n| No sweep | `ImportClosure` **must not** enumerate all `*.bd` under roots (that mode is **`WorkspaceScan`** only, for LSP workspace indexing) |\n\n`WorkspaceScan` remains capped by `max_units` with deterministic sort; it **must not** be used for `beskid build` / `beskid run` / `beskid test`.\n\n## Consequences\n\nAssembly unit count tracks the transitive `use` graph plus explicit prelude seeds. Tests assert closure size for fixture projects.\n\n## Verification anchors\n\n- `compiler/crates/beskid_analysis/src/projects/assembly/loader.rs`\n- `compiler/crates/beskid_analysis/src/projects/model.rs` (`AssemblyDiscovery`)\n- `compiler/crates/beskid_tests/src/projects/composition.rs`"
+    }
+  ]
+}

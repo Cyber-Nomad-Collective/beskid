@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Vocabulary\n\n| Construct | Role |\n| --- | --- |\n| **`MacroDefinition`** | `macro name (params) { body }` item |\n| **`MacroInvocation`** | `name!(args)` or `name! { block }` expression |\n| **`MacroRegistry`** | Maps macro names to definitions in the compilation unit |\n| **`MacroParameter`** | Fragment kind + name pair in macro definition |\n\n## Macro architecture\n\nLanguage macros are **first-class module items** expanded by the compiler before semantic analysis. Expansion is structural: the compiler substitutes captured syntax fragments for `$param` references.\n\n```mermaid\nflowchart LR\n    parse[parse macros]\n    collect[build MacroRegistry]\n    expand[macro.expand]\n    rereparse[re-parse expanded]\n    semantic[semantic analysis]\n    parse --> collect --> expand --> rereparse --> semantic\n```\n\n### Subsystem boundaries\n\n| Subsystem | Responsibility | Key file |\n| --- | --- | --- |\n| Parser | Parse `macro` and `!` invocations | `syntax/items/macro_definition.rs` |\n| AST | Store macro structure | `syntax/expressions/macro_invocation.rs` |\n| Macro registry | Collect and lookup definitions | `macros/registry.rs` |\n| Expansion | Substitute fragments and splice | `macros/match_args.rs` |\n| Semantic | Analyze expanded code | `analysis/rules/staged/` |\n\n## Fragment kinds (v1)\n\nClosed vocabulary for parameter kinds: `block`, `expression`, `statement`, `type`, `identifier`, `literal`, `pattern`, `path`, `item`, `node`.\n\n## Depth cap\n\nDefault maximum expansion depth is 32 per compilation unit. `MacroExpansionDepthExceeded` (**E1905**) fires when the cap is reached."
+		}
+	]
+}

@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/tooling/cli/repl-command",
+	"title": "REPL command",
+	"description": "Interactive snippet evaluator backed by a persistent JIT engine session.",
+	"parentSlug": "platform-spec/tooling/cli",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-06"
+}

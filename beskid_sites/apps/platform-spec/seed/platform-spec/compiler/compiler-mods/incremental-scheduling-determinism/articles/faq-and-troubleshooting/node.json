@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/articles/faq-and-troubleshooting",
+  "title": "Incremental scheduling and determinism - FAQ and troubleshooting",
+  "description": "Cache boundaries, invalidation keys, and replay guarantees for mod outputs and Mod SDK reads.",
+  "parentSlug": "platform-spec/compiler/compiler-mods/incremental-scheduling-determinism",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-04-30"
+}

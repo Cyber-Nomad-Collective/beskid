@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/composition/dependency-injection/articles/examples",
+	"title": "Native dependency injection - Examples",
+	"description": "Reference fixtures for hosts, plural inject, scope dispose, and library hosts.",
+	"parentSlug": "platform-spec/language-meta/composition/dependency-injection",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-20"
+}

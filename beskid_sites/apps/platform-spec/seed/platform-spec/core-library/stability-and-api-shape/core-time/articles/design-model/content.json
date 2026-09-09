@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Layering\n\n| Layer | Responsibility |\n| --- | --- |\n| `Core.Time.*` types | `Instant`, `Duration`, `Date`, `TimeOfDay`, `DateTime`, `TimeError` under `Core/Time/` |\n| `Core.Time` hub | Clock reads, duration helpers, UTC conversions, ISO formatting/parsing |\n| Runtime builtins | `__clock_realtime_nanos`, `__clock_monotonic_nanos` in `beskid_runtime` |\n| Concurrency package | Fiber scheduling monotonic millis via `Concurrency.NowMillis` |\n\n## Module layout\n\nTypes live one-per-file under `compiler/corelib/packages/foundation/src/Core/Time/`. Hub functions remain in `Core/Time.bd`, matching the `Core.Syscall` split pattern.\n\n## Implementation anchors\n\n- `compiler/corelib/packages/foundation/src/Core/Time.bd`\n- `compiler/corelib/packages/foundation/src/Core/Time/`\n- `compiler/corelib/beskid_corelib/tests/corelib_tests/src/core/TimeTests.bd`"
+		}
+	]
+}

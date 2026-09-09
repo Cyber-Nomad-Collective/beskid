@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/interop/c-abi-profile/articles/types-and-call-conventions",
+	"title": "C ABI profile — Types and call conventions",
+	"description": "Permitted C ABI representations for Beskid extern contract parameters and returns in the reference compiler.",
+	"parentSlug": "platform-spec/language-meta/interop/c-abi-profile",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-01"
+}

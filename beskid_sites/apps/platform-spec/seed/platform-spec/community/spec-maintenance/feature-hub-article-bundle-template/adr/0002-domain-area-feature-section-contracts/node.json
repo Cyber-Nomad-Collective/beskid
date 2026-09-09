@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/community/spec-maintenance/feature-hub-article-bundle-template/adr/0002-domain-area-feature-section-contracts",
+	"title": "Required Domain Area and Feature hub sections",
+	"description": "Ordered section contracts for domain, area, and feature hub pages including Decisions and adr/.",
+	"parentSlug": "platform-spec/community/spec-maintenance/feature-hub-article-bundle-template",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-COMM-HUB-0002",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-05-05",
+	"lastReviewed": "2026-05-22"
+}

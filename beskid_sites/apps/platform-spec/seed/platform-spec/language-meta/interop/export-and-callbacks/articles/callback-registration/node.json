@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/interop/export-and-callbacks/articles/callback-registration",
+	"title": "Callback registration",
+	"description": "Host registration table protocol for Beskid exports invoked from foreign code (v0.3).",
+	"parentSlug": "platform-spec/language-meta/interop/export-and-callbacks",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-23"
+}

@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/type-system/types/articles/examples",
+	"title": "Types - Examples",
+	"description": "Code examples showing Beskid type declarations, generics, arrays, and references.",
+	"parentSlug": "platform-spec/language-meta/type-system/types",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

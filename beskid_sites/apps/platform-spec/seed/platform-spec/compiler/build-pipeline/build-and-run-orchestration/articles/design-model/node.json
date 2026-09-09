@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/build-pipeline/build-and-run-orchestration/articles/design-model",
+  "title": "Build and run orchestration - Design model",
+  "description": "Explains the persistent concepts, entities, and boundaries this feature relies on.",
+  "parentSlug": "platform-spec/compiler/build-pipeline/build-and-run-orchestration",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-05-29"
+}

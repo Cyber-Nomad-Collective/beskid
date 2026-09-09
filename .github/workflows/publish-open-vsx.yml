@@ -141,6 +141,9 @@ jobs:
         with:
           targets: ${{ matrix.rust_target }}
 
+      - uses: ./.github/actions/setup-rust-build-tools
+        if: runner.os == 'Linux'
+
       - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
         with:
           workspaces: compiler

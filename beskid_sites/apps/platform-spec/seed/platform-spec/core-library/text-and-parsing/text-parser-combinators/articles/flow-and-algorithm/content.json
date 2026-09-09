@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Algorithm\n\n1. Construct `Cursor` from source.\n2. Run combinator or generated parser.\n3. Return `ParseResult`."
+		}
+	]
+}

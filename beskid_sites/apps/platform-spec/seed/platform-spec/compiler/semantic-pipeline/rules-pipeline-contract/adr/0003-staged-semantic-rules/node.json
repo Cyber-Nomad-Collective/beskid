@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "specLevel": "adr",
+  "slug": "platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/adr/0003-staged-semantic-rules",
+  "title": "Staged semantic rules pipeline",
+  "description": "Monolithic semantic passes blocked incremental invalidation.",
+  "parentSlug": "platform-spec/compiler/semantic-pipeline/rules-pipeline-contract",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "adrId": "D-COMP-SEM-0012",
+  "adrStatus": "Accepted",
+  "adrDate": "2026-05-05",
+  "lastReviewed": "2026-05-22"
+}

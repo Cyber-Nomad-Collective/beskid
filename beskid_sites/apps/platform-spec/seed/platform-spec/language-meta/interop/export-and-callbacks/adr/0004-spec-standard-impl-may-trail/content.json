@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nv0.3 is spec-first for interop; codegen for export is still landing.\n\n## Decision\n\nThis feature is **Standard** in v0.3 specification. Reference compiler support **may** trail; verification article records gaps until codegen lands.\n\n## Consequences\n\nContributors implement against ADRs without downgrading spec status to Proposed.\n\n## Verification anchors\n\n[verification and traceability](/platform-spec/language-meta/interop/export-and-callbacks/verification-and-traceability/)."
+		}
+	]
+}

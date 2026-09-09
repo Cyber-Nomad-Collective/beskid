@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/adr/0009-prelude-leaf-reexports",
+	"title": "Prelude leaf reexports (superseded)",
+	"description": "Aggregate and shard preludes expose leaf public API modules; assembly must not denylist re-exports.",
+	"parentSlug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution",
+	"status": "Superseded",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-CORE-COMP-0009",
+	"adrStatus": "Superseded",
+	"adrDate": "2026-05-29",
+	"lastReviewed": "2026-06-07"
+}

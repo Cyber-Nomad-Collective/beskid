@@ -1,0 +1,17 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/articles/examples",
+	"title": "Examples",
+	"description": "Workspace and lockfile examples for tooling workflows.",
+	"parentSlug": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	}
+}

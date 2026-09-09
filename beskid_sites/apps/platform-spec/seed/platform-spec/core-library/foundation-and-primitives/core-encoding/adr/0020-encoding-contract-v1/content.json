@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Decision\n\nv1 uses a Beskid `contract Encoder` with `EncodeToBytes` / `DecodeFromBytes` returning `Result`. No lossy decode in v1."
+		}
+	]
+}

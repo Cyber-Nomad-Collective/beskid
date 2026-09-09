@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape/adr/0004-single-core-namespace",
+	"title": "Single Core.* namespace",
+	"description": "All corelib modules use the Core.* prefix; System.* is removed.",
+	"parentSlug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-CORE-NS-0001",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-06-10",
+	"lastReviewed": "2026-06-10"
+}

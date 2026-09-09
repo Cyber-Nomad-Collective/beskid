@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "specLevel": "adr",
+  "slug": "platform-spec/compiler/semantic-pipeline/resolver-contract/adr/0005-package-prefixed-symbol-identity",
+  "title": "Package-prefixed symbol identity",
+  "description": "SymbolQualifier and SymbolRegistry as stable cross-unit definition identity alongside dense ItemId.",
+  "parentSlug": "platform-spec/compiler/semantic-pipeline/resolver-contract",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "adrId": "D-COMP-SEM-0016",
+  "adrStatus": "Accepted",
+  "adrDate": "2026-06-05",
+  "lastReviewed": "2026-06-05"
+}

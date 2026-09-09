@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/front-end/hir-normalization-and-legality/articles/examples",
+  "title": "HIR normalization and legality - Examples",
+  "description": "Gives concrete newcomer-friendly scenarios mapped to real compiler paths.",
+  "parentSlug": "platform-spec/compiler/front-end/hir-normalization-and-legality",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

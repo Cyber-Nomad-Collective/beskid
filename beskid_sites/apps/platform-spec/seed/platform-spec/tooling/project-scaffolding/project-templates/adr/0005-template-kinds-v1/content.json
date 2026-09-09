@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nWorkspace, project, item flows.\n\n## Decision\n\nSupport all three via tags.type.\n\n## Consequences\n\nOne engine.\n\n## Verification anchors\n\nThree beskid_tests fixtures."
+		}
+	]
+}

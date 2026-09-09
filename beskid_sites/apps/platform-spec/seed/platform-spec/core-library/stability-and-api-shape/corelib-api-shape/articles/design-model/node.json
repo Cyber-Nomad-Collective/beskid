@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape/articles/design-model",
+	"title": "Design model",
+	"description": "Conceptual model for the corelib three-tier API-shape classification and how it propagates from sources to consumers.",
+	"parentSlug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-23"
+}

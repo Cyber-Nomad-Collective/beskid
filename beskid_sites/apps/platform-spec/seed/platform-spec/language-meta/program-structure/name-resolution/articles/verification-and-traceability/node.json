@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/program-structure/name-resolution/articles/verification-and-traceability",
+	"title": "Name resolution - Verification and traceability",
+	"description": "Tests, implementation checklist, and verification matrix for Beskid name resolution.",
+	"parentSlug": "platform-spec/language-meta/program-structure/name-resolution",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/program-structure/modules-and-visibility/articles/verification-and-traceability",
+	"title": "Modules and visibility - Verification and traceability",
+	"description": "Tests, implementation checklist, and verification matrix for Beskid modules and visibility.",
+	"parentSlug": "platform-spec/language-meta/program-structure/modules-and-visibility",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/tooling/vscode-extension/workspace-project-explorer/articles/examples",
+	"title": "Examples",
+	"description": "Corelib workspace and single-application explorer scenarios.",
+	"parentSlug": "platform-spec/tooling/vscode-extension/workspace-project-explorer",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-21"
+}

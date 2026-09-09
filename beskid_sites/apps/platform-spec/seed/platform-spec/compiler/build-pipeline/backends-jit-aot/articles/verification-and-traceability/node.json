@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/build-pipeline/backends-jit-aot/articles/verification-and-traceability",
+  "title": "Backends (JIT and AOT) - Verification and traceability",
+  "description": "Crate-level anchors and tests that verify backend divergence and shared lowering contract.",
+  "parentSlug": "platform-spec/compiler/build-pipeline/backends-jit-aot",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

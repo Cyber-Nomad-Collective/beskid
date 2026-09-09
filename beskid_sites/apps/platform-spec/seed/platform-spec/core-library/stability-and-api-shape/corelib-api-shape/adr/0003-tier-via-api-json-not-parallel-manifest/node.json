@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape/adr/0003-tier-via-api-json-not-parallel-manifest",
+	"title": "Tier metadata travels via `api.json`, not a parallel manifest",
+	"description": "The corelib API-shape tier classification is serialized as a `tier` field on every `ApiDocItem` row; tooling must not consult a parallel JSON / TOML file for tiers.",
+	"parentSlug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-CORE-API-SHAPE-0003",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-05-23",
+	"lastReviewed": "2026-05-23"
+}

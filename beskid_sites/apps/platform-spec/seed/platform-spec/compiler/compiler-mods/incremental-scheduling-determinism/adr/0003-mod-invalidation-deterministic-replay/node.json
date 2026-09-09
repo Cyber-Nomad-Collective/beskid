@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "specLevel": "adr",
+  "slug": "platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/adr/0003-mod-invalidation-deterministic-replay",
+  "title": "Deterministic mod invalidation and replay",
+  "description": "Incremental mod runs produced unstable ordering.",
+  "parentSlug": "platform-spec/compiler/compiler-mods/incremental-scheduling-determinism",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "adrId": "D-COMP-MODS-0009",
+  "adrStatus": "Accepted",
+  "adrDate": "2026-05-20",
+  "lastReviewed": "2026-05-22"
+}

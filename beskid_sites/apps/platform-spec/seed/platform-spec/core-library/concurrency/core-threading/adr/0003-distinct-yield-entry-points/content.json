@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nKernel scheduling differs from cooperative fiber reschedule.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| `Thread.Yield` | OS-level yield |\n| `Concurrency.Yield` | `fiber_yield` cooperative reschedule |\n\n## Consequences\n\nNames and docs must not alias the two yields.\n\n## Verification anchors\n\nRuntime tests distinguishing syscall vs fiber_yield."
+		}
+	]
+}

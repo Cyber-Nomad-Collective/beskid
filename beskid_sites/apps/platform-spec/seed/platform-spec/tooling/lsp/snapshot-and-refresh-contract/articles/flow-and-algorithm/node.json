@@ -1,0 +1,17 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/tooling/lsp/snapshot-and-refresh-contract/articles/flow-and-algorithm",
+	"title": "Flow and algorithm",
+	"description": "End-to-end refresh flow for LSP workspace snapshots and diagnostics.",
+	"parentSlug": "platform-spec/tooling/lsp/snapshot-and-refresh-contract",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	}
+}

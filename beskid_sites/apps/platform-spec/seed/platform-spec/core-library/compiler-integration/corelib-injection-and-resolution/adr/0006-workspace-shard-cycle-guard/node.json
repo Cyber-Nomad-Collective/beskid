@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/adr/0006-workspace-shard-cycle-guard",
+	"title": "Workspace shard cycle guard",
+	"description": "Corelib member packages must not implicit-back-link to aggregate.",
+	"parentSlug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-CORE-COMP-0006",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-04-23",
+	"lastReviewed": "2026-05-22"
+}

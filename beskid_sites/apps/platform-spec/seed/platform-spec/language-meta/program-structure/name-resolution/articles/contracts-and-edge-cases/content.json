@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Hard requirements\n\n- **Single resolver graph** — Package driver and typechecker share one resolution snapshot per compilation.\n- **Contract namespaces** — Contracts may appear as path prefixes for static methods.\n- **Qualified names for tooling** — Emitted `qualifiedName` strings must be stable across compiles.\n- **No implicit `null` imports** — Resolution must not inject nullable or `optional` aliases.\n\n## Diagnostic band E11xx\n\n| Code | Condition |\n| --- | --- |\n| **E1101** | Unknown value |\n| **E1102** | Duplicate item or local |\n| **E1104** | Ambiguous import |\n| **E1105** | Unknown import path |\n| **E1106** | Use before declaration |\n| **E1107** | Private item access |\n| **E1108** | Unknown module path |\n| **W1103** | Shadowed local |\n\n## Edge cases\n\n- **Forward reference** — `use` before declaration in the same module emits **E1106** when forward reference is illegal.\n- **Generic parameter shadowing** — Generic parameters shadow type names in signature scope only for the declaring signature.\n- **Self-referential type** — A type may reference itself in its own field types; resolution handles this via deferred binding.\n- **Import cycle** — Circular `use` dependencies are allowed as long as no forward references are used.\n\n## Invariants\n\n- Resolution must respect visibility from the importer's module.\n- Every resolved symbol must have a stable `qualifiedName` for tooling.\n- Re-resolution on incremental edits must produce the same result as full compilation for unchanged sites."
+		}
+	]
+}

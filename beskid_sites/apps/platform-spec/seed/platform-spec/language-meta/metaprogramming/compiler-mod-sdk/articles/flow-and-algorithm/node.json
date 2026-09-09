@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/metaprogramming/compiler-mod-sdk/articles/flow-and-algorithm",
+	"title": "Compiler Mod SDK - Flow and algorithm",
+	"description": "Step-by-step flow of mod discovery, scheduling, and execution in the Beskid compiler.",
+	"parentSlug": "platform-spec/language-meta/metaprogramming/compiler-mod-sdk",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

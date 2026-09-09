@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Identifiers\n\n```beskid\nunit ValidIdentifiers() {\n    let foo = 1;\n    let _bar = 2;\n    let baz123 = 3;\n}\n```\n\n## Literals\n\n```beskid\nunit Literals() {\n    let n = 42;\n    let f = 3.14;\n    let s = \"hello\";\n    let c = 'a';\n    let interpolated = \"value = ${n}\";\n}\n```\n\n## Comments\n\n```beskid\n// This is an ordinary comment\n\n/// This is a documentation comment\nunit Documented() { }\n\n//// This is NOT a documentation comment\n```\n\n## Generic syntax\n\n```beskid\ntype Box<T> {\n    T value;\n}\n\nunit UseGeneric() {\n    let b = Box<i32> { value = 42 };\n}\n```\n\n## Type precedence\n\n```beskid\nunit TypePrecedence() {\n    // ref (T[]) — ref applies to array\n    let arr = ref i32[] {};\n}\n```"
+		}
+	]
+}

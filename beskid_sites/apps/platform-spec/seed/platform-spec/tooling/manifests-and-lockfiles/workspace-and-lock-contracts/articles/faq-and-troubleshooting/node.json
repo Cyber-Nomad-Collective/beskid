@@ -1,0 +1,17 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/articles/faq-and-troubleshooting",
+	"title": "FAQ and troubleshooting",
+	"description": "Workspace and lockfile troubleshooting for tooling users.",
+	"parentSlug": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	}
+}

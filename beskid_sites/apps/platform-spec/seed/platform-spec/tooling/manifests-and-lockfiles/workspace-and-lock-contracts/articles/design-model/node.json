@@ -1,0 +1,17 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/articles/design-model",
+	"title": "Design model",
+	"description": "Conceptual model for workspace manifests, lockfiles, and materialized dependency roots.",
+	"parentSlug": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	}
+}

@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Verification matrix\n\n| Scenario | Expected evidence |\n| --- | --- |\n| Lambda parsing | AST round-trip preserves structure |\n| Parameter inference | Types inferred from expected function type |\n| Body type check | Body checked with parameter types in scope |\n| Capture analysis | Captured locals identified |\n| Closure lowering | Environment object built for escaped closures |\n\n## Implementation checklist\n\n- [x] Grammar: `=>` syntax, parameter lists\n- [x] AST: `LambdaExpression`, `LambdaParameter`\n- [x] Parser: `beskid.pest` productions for lambdas\n- [x] Type checker: Parameter inference from context\n- [x] Capture analysis: Local reference tracking\n- [x] Diagnostics: **E1202**, **E1223**, **E1225**\n- [ ] Closure environment layout tests\n- [ ] Heap allocation for escaped closures\n- [ ] JIT/AOT closure parity tests\n\n## Test locations\n\n- `compiler/crates/beskid_analysis/src/syntax/expressions/lambda_expression.rs` — parser tests\n- `compiler/crates/beskid_analysis/src/types/context/expressions.rs` — lambda typing tests\n- `compiler/crates/beskid_tests` — integration tests for closures"
+		}
+	]
+}

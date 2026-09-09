@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/articles/examples",
+  "title": "Examples",
+  "description": "Practical examples of semantic rule outcomes and diagnostic generation.",
+  "parentSlug": "platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/core-library/text-and-parsing/text-parser-combinators/adr/0001-combinator-runtime-contracts",
+	"title": "Combinator runtime contracts",
+	"description": "Backtracking, zero-width guards, input caps, and rule labels for generated parsers.",
+	"parentSlug": "platform-spec/core-library/text-and-parsing/text-parser-combinators",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-CORE-TEXT-0002",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-06-08",
+	"lastReviewed": "2026-06-08"
+}

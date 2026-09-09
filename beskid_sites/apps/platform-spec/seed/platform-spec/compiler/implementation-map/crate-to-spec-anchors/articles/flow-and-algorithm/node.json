@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/implementation-map/crate-to-spec-anchors/articles/flow-and-algorithm",
+  "title": "Flow and algorithm",
+  "description": "End-to-end control flow and major algorithmic steps for `Crate-to-spec anchors`.",
+  "parentSlug": "platform-spec/compiler/implementation-map/crate-to-spec-anchors",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

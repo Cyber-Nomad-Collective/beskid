@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Locked decisions\n\n| Decision | ID | Summary |\n| --- | --- | --- |\n| Channel-only fiber sharing | D-LM-MEM-001 | No ad hoc shared mutable globals |\n| Fat-pointer arrays | D-LM-MEM-002 | Single ABI representation per target |\n| GC by default | D-LM-MEM-003 | Heap objects collector-managed |\n| No `null` addresses | D-LM-MEM-004 | `Option<T>` models absence |\n\n## FAQ\n\n### Can I use pointers?\n\nNo. User code must not expose manual `free` or untracked pointers in v0.1.\n\n### How do I declare a mutable local?\n\nUse prefix `mut` before the type (`mut i64 acc = 0`) or `let mut name = expr` when the type is inferred.\n\n### How do I share data between fibers?\n\nUse `Channel<T>` for safe cross-fiber communication. Direct alias sharing is forbidden.\n\n## Troubleshooting\n\n| Symptom | Likely cause |\n| --- | --- |\n| **E1214** | Assigning to an immutable binding |\n| **E1225** | Stack reference captured in a `spawn` closure |\n| Bounds check failure | Array index out of range |\n| GC pause | Normal behavior for concurrent mark-sweep |"
+		}
+	]
+}

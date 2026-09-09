@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Normative requirements\n\n| ID | Requirement |\n| --- | --- |\n| **PARSER-001** | `ParseResult<T>` **must** be `Ok` or `Err` with offset and rule label. |\n| **PARSER-002** | `Choice` **must** restore cursor on branch failure. |\n| **PARSER-003** | `Many` on zero-width parser **must** error. |\n| **PARSER-004** | Combinators **must not** panic on malformed input. |\n| **PARSER-005** | Generated and hand-authored parser callables **must** use **PascalCase** identifiers (`ParseDigit`, `ZeroOrMany`). Locals and parameters **must** use **camelCase** (`choice0`, `seqCur`, `manyCount`). Diagnostic `rule` label strings **may** retain Pest **snake_case** spellings (`\"digit\"`, `\"lower_run\"`)—they are string literals, not Beskid identifiers. Emitters **must not** produce snake_case Beskid callables or underscored locals (for example `Parse_digit`, `choice_0`). |\n\n### PARSER-005 examples\n\n| Surface | Normative | Rejected |\n| --- | --- | --- |\n| Rule callable | `ParseLowerRun` | `Parse_lower_run`, `Parse_lowerRun` |\n| Local | `choice0` | `choice_0` |\n| Local | `seqCur` | `seq_cur` |\n| Diagnostic label | `\"lower_run\"` | — (Pest spelling allowed in strings) |\n\nNaming authority: [code style and naming](/platform-spec/language-meta/program-structure/code-style-and-naming/). Pest codegen applies the same rules via [Pest parser generator](/platform-spec/compiler/compiler-mods/pest-parser-generator/)."
+		}
+	]
+}

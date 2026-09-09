@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "specLevel": "adr",
+  "slug": "platform-spec/compiler/codegen-and-ir/lowering-contract/adr/0003-cranelift-lowering-single-entry",
+  "title": "Cranelift lowering via lower_source",
+  "description": "Lowering was split across experimental paths.",
+  "parentSlug": "platform-spec/compiler/codegen-and-ir/lowering-contract",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "adrId": "D-COMP-IR-0009",
+  "adrStatus": "Superseded",
+  "adrDate": "2026-05-05",
+  "lastReviewed": "2026-05-22"
+}

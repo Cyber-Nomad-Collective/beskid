@@ -1,0 +1,17 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/tooling/registry-client/pckg-client-contract/articles/examples",
+	"title": "Examples",
+	"description": "Example `beskid pckg` invocations and configuration.",
+	"parentSlug": "platform-spec/tooling/registry-client/pckg-client-contract",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	}
+}

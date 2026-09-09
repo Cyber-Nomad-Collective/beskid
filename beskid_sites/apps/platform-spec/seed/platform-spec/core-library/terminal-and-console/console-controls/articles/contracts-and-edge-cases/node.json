@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/core-library/terminal-and-console/console-controls/articles/contracts-and-edge-cases",
+	"title": "Contracts and edge cases",
+	"description": "Layout and redraw requirements for console controls.",
+	"parentSlug": "platform-spec/core-library/terminal-and-console/console-controls",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-21"
+}

@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Vocabulary\n\n| Construct | Role |\n| --- | --- |\n| **`event` field** | Multicast callback slot declared on a `type` |\n| **`EventCapacity`** | Optional capacity hint for bounded subscriber lists |\n| **`TypeInvalidEventInvocationScope`** | Diagnostic for invalid event usage |\n\n## Event architecture\n\nEvents are **multicast callback slots** declared as fields on types. They are not ordinary value fields and must not be read like variables.\n\n```mermaid\nflowchart LR\n    declare[declare event field]\n    subscribe[subscribe handler]\n    raise[raise event]\n    invoke[invoke handlers in order]\n    declare --> subscribe --> raise --> invoke\n```\n\n### Subsystem boundaries\n\n| Subsystem | Responsibility | Key file |\n| --- | --- | --- |\n| Parser | Parse `event` fields on types | `syntax/items/type_definition.rs` (field parsing) |\n| AST | Store event field structure | `syntax/items/type_definition.rs` |\n| Type checker | Validate event signatures | `types/context/expressions.rs` |\n| Runtime | Manage subscriber lists | `beskid_runtime/src/builtins/events.rs` |\n\n## Declaration\n\n```beskid\ntype Button {\n    event Clicked(i32 x, i32 y);\n}\n```\n\nEvent fields are parsed as part of the `FieldList` in `TypeDefinition`. The parser distinguishes event fields from value fields by the `event` keyword.\n\n## Dynamic semantics\n\n- **Multicast** — Multiple subscribers may be registered; raise invokes subscribers in registration order.\n- **Synchronous default** — Handlers run on the raising fiber unless a host profile says otherwise.\n- **Lifetime** — Subscriptions should be detached when the owning object is disposed; leaks are host-defined."
+		}
+	]
+}

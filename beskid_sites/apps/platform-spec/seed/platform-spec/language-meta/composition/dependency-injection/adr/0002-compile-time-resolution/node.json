@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/language-meta/composition/dependency-injection/adr/0002-compile-time-resolution",
+	"title": "Composition graph resolved at compile time",
+	"description": "Backends do not perform runtime service lookup for app DI.",
+	"parentSlug": "platform-spec/language-meta/composition/dependency-injection",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-LMETA-DI-0002",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-05-20",
+	"lastReviewed": "2026-05-22"
+}

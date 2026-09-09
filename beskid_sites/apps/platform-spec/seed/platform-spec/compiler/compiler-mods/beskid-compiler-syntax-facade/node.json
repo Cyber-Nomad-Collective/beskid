@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "feature",
+  "slug": "platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade",
+  "title": "Beskid.Compiler.SyntaxMirror facade",
+  "description": "Typed, allocation-bounded syntax node API exposed to compile-time Beskid modules.",
+  "parentSlug": "platform-spec/compiler/compiler-mods",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-05-01"
+}

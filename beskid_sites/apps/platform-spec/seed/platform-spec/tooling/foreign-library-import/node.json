@@ -1,0 +1,8 @@
+{
+	"version": 1,
+	"specLevel": "area",
+	"slug": "platform-spec/tooling/foreign-library-import",
+	"title": "Foreign Library Import",
+	"parentSlug": "platform-spec/tooling",
+	"status": "published"
+}

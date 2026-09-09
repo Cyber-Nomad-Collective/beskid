@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Verification matrix\n\n| Scenario | Expected evidence |\n| --- | --- |\n| Identifier parsing | Matches `Identifier` production |\n| Keyword rejection | Reserved keywords rejected as identifiers |\n| String literal | Escapes and interpolation parsed correctly |\n| Char literal | Single quote with escape parsed |\n| Comment handling | `//`, `///`, `/* */` handled correctly |\n| Empty program | Parses to empty `Program` |\n\n## Implementation checklist\n\n- [x] Grammar: `beskid.pest` with all lexical and syntactic productions\n- [x] Parser: `parser.rs` driving pest\n- [x] AST: all syntax nodes implement `Parsable`\n- [x] Span attachment: every node carries `SpanInfo`\n- [x] Doc attachment: `ItemWithDocs` wrappers\n- [x] Diagnostics: **E1151–E1154** for early structural issues\n- [ ] Incremental parsing optimization\n- [ ] Parser error recovery for LSP\n\n## Test locations\n\n- `compiler/crates/beskid_analysis/src/beskid.pest` — grammar definition\n- `compiler/crates/beskid_analysis/src/parser.rs` — parser tests\n- `compiler/crates/beskid_analysis/src/syntax/` — AST node tests\n- `compiler/crates/beskid_tests` — integration tests for parsing"
+		}
+	]
+}

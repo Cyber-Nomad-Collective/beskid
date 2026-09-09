@@ -105,13 +105,36 @@ jq -e --arg g "${GROUP}" '.groups[$g]' "${DEPS_JSON}" >/dev/null \
 
 beskid_read_array TOOLS beskid_group_tools "${GROUP}" "${DEPS_JSON}"
 if [[ -n "${TOOL_FILTER}" ]]; then
+  jq -e --arg t "${TOOL_FILTER}" '.tools[$t]' "${DEPS_JSON}" >/dev/null \
+    || die "Unknown tool: ${TOOL_FILTER}"
   TOOLS=("${TOOL_FILTER}")
+fi
+
+SUPPORTED_TOOLS=()
+for tool in "${TOOLS[@]}"; do
+  if beskid_tool_supported_on_platform "${tool}" "${DEPS_JSON}"; then
+    SUPPORTED_TOOLS+=("${tool}")
+  else
+    note "Skip ${tool} (not supported on ${BESKID_OS})"
+  fi
+done
+if [[ ${#SUPPORTED_TOOLS[@]} -gt 0 ]]; then
+  TOOLS=("${SUPPORTED_TOOLS[@]}")
+else
+  # Bash 3.2 treats expansion of an empty array as unbound under `set -u`.
+  TOOLS=()
 fi
 
 MISSING=()
 INSTALLED=()
 
 section "Toolchain (${GROUP})"
+
+if [[ ${#TOOLS[@]} -eq 0 ]]; then
+  section "Result"
+  ok "All 0 tools available"
+  exit 0
+fi
 
 for tool in "${TOOLS[@]}"; do
   desc="$(beskid_tool_description "${tool}" "${DEPS_JSON}")"

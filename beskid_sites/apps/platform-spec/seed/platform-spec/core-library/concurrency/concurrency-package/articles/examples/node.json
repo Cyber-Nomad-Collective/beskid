@@ -1,0 +1,14 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/core-library/concurrency/concurrency-package/articles/examples",
+	"title": "Concurrency package - Examples",
+	"description": "Illustrative spawn, Channel, and Hub usage (informative).",
+	"parentSlug": "platform-spec/core-library/concurrency/concurrency-package",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-20"
+}

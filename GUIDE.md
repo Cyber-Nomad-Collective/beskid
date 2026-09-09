@@ -35,6 +35,7 @@ tests, and changelog as separate from the superrepo root.
 | Checkout/setup | `./scripts/setup-environment.sh` |
 | Initialize selected submodules only | `./scripts/setup-environment.sh --submodules <path>...` |
 | Check required contributor tools | `just deps-check` |
+| Install required contributor tools | `just deps-install` |
 | Install root web dependencies | `pnpm install` |
 | Run host-callable preflight gates | `just gate` |
 | Add static workflow-policy checks | `just gate-full` |
@@ -53,6 +54,10 @@ for focused compiler work. `just gate-full` additionally requires `actionlint`.
 Private `@beskid/*` packages may require `NODE_AUTH_TOKEN`; the preflight script
 reports applicable skips rather than treating missing package credentials as a
 successful package gate.
+
+The full contributor tool group installs `cargo-binstall` on macOS, Linux, and
+Windows. It installs `mold` only on Linux, where the compiler Cargo configuration
+selects it through `clang`; macOS and Windows keep their platform linkers.
 
 ## Processes
 

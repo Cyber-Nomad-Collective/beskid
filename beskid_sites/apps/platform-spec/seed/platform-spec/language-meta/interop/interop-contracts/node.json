@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/language-meta/interop/interop-contracts",
+	"title": "Interop.Contracts",
+	"description": "Language-agnostic primitives for foreign boundaries—symbols, call shapes, ownership, and conformance—shared by C and Rust ABI profiles.",
+	"parentSlug": "platform-spec/language-meta/interop",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-20"
+}

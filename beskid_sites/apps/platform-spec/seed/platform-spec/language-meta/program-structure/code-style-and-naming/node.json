@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/language-meta/program-structure/code-style-and-naming",
+	"title": "Code style and naming",
+	"description": "Language-level PascalCase and camelCase conventions for types, members, modules, and locals — enforceable by formatter and lint tooling.",
+	"parentSlug": "platform-spec/language-meta/program-structure",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-07"
+}

@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Decision\n\n`u8[]` with `__array_new(1, len)` is the canonical byte buffer. No separate `Bytes` heap type in v1.\n\n## Verification anchors\n\n`Core.Bytes.Slice.New`, `compiler/crates/beskid_runtime/src/builtins/arrays.rs`"
+		}
+	]
+}

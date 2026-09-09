@@ -27,10 +27,11 @@ WORKDIR /workspace
 
 # Canonical ABI-v5 runtime-kit staging compiles native context, TLS, and host shims with clang.
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends clang lld \
+  && apt-get install -y --no-install-recommends clang lld mold \
   && rm -rf /var/lib/apt/lists/*
 
 COPY compiler/Cargo.toml compiler/Cargo.lock ./compiler/
+COPY compiler/.cargo ./compiler/.cargo
 # Keep the compiler's own license metadata beside its Cargo workspace. The
 # runtime-kit build embeds these files, so the Rust stage must receive them
 # before it compiles beskid_abi.
@@ -51,6 +52,8 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
   set -e \
   && command -v clang \
   && command -v ld.lld \
+  && command -v mold \
+  && mold --version \
   && mkdir -p /workspace/runtime-output \
   && cd compiler \
   && CARGO_TARGET_DIR=/workspace/target cargo build -p beskid_cli --release \

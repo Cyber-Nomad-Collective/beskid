@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Activity bar layout\n\n| View ID | Purpose |\n| --- | --- |\n| `beskidWorkspaceView` | All `Workspace.proj` trees and members |\n| `beskidProjectView` | Focused `Project.proj` targets, dependencies, sources |\n| `beskidProjectOutlineView` | Document symbols for `.bd` under focused project |\n| `beskidPackagesView` | **This project** dependencies only (local lockfile rows) |\n\nRegistry browse and package details use a **document WebviewPanel** (`beskid.packages.open`), not the sidebar tree.\n\n## Status bar modal overlay\n\nClicking the Beskid status-bar item runs **`beskid.modal.open`**, which reveals a singleton WebviewPanel styled as a modal overlay (runtime snapshot, focused project, quick actions). There is **no** sidebar dashboard webview. See [ADR 0006](./adr/0006-status-bar-modal-overlay/).\n\n## Debug view (optional)\n\n`beskidDebugView` is contributed only when **`beskid.debug.enabled`** is `true` (default **false**). Contributors enable it for LSP/runtime inspection.\n\n## Focus model\n\n- **Focused project** — one `Project.proj` URI drives LSP `focusedProjectUri`, CLI cwd, and the **This project** package section.\n- **Auto-select** — when `beskid.project.autoSelectFromEditor` is true, the active editor selects the nearest project manifest.\n- **Override** — `beskid.selectProject` quick pick remains available.\n\n## Status bar phases\n\n| Phase | Source |\n| --- | --- |\n| `workspace_scan` | LSP notification `beskid/status` |\n| `search` / `details` | pckg HTTP |\n| `fetch` / `lock` / `build` / `test` / `analyze` | CLI runner |\n\nImplementation: `beskid_vscode/src/status/beskidStatusController.ts`, `FocusCoordinator`, slim `BeskidExtensionRuntime`."
+		}
+	]
+}

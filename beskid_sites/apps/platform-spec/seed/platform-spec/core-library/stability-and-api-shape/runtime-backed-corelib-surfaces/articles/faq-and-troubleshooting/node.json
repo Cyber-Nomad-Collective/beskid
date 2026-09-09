@@ -1,0 +1,17 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/articles/faq-and-troubleshooting",
+	"title": "FAQ and troubleshooting",
+	"description": "FAQ for runtime-backed corelib surfaces.",
+	"parentSlug": "platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	}
+}

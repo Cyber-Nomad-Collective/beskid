@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "feature",
+  "slug": "platform-spec/compiler/compiler-mods/pest-parser-generator",
+  "title": "Pest parser generator",
+  "description": "Compiler mod and host codegen that turns Pest .pest grammars into Beskid combinator parsers.",
+  "parentSlug": "platform-spec/compiler/compiler-mods",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-06-08"
+}

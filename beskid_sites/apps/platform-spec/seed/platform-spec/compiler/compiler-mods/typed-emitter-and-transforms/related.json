@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "Compiler Mods",
+      "href": "/platform-spec/compiler/compiler-mods/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Domain",
+      "title": "Compiler",
+      "href": "/platform-spec/compiler/",
+      "relation": "Parent domain hub"
+    },
+    {
+      "type": "Area",
+      "title": "Metaprogramming (language meta)",
+      "href": "/platform-spec/language-meta/metaprogramming/",
+      "relation": "Beskid-side Mod SDK contracts"
+    },
+    {
+      "type": "Feature",
+      "title": "Compiler Mod SDK",
+      "href": "/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/",
+      "relation": "Emit phase typed contributions"
+    },
+    {
+      "type": "Feature",
+      "title": "Project manifest contract",
+      "href": "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/",
+      "relation": "Mod project type"
+    },
+    {
+      "type": "Feature",
+      "title": "mod host bridge",
+      "href": "/platform-spec/compiler/compiler-mods/mod-host-bridge/",
+      "relation": "Execution context for emitters"
+    }
+  ]
+}

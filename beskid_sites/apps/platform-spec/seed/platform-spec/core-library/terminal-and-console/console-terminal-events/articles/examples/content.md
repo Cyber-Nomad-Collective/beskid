@@ -1,0 +1,40 @@
+import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Purpose
+
+Document **examples** for the **Console Terminal Events** feature: role-specific normative detail beyond the feature hub.
+
+## Canonical references
+
+- Feature hub: [Console Terminal Events](/platform-spec/core-library/terminal-and-console/console-terminal-events/)
+- Sibling articles in this bundle (design model, contracts, flow, examples, verification)
+
+## Detailed behavior
+
+### Channel loop
+
+```beskid
+Channel<ConsoleMessage> messages = Console.MessagesChannel();
+ConsoleSize last = Console.QuerySize();
+// spawn fiber: loop { Console.RunTick(messages, last); Receive and handle Resize }
+```
+
+### Same-fiber event hub
+
+```beskid
+OnResize hub = OnResize { lastSize: Console.QuerySize(), OnResize: ... };
+Console.SubscribeOnResize(hub, handler);
+Platform.Terminal.PollResizeHub(hub);
+```
+
+After `Resize`, call [Console controls](/platform-spec/core-library/terminal-and-console/console-controls/) `Frame.Render` with the new `ConsoleSize`.
+
+## Verification
+
+See the verification and traceability article in this bundle and `compiler/corelib/beskid_corelib/tests/corelib_tests/src/console/`.
+
+## Related topics
+
+- Parent [feature hub](/platform-spec/core-library/terminal-and-console/console-terminal-events/) and [Terminal and console area](/platform-spec/core-library/terminal-and-console/)

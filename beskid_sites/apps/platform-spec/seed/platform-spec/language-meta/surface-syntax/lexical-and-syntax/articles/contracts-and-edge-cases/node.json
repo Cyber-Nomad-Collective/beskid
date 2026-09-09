@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/surface-syntax/lexical-and-syntax/articles/contracts-and-edge-cases",
+	"title": "Lexical and syntax - Contracts and edge cases",
+	"description": "Normative contracts, edge cases, and invariants for Beskid lexical and syntax.",
+	"parentSlug": "platform-spec/language-meta/surface-syntax/lexical-and-syntax",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

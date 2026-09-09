@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "blocks": [
+    {
+      "type": "domainTiles",
+      "props": {
+        "pathPrefix": "platform-spec/compiler/codegen-and-ir/lowering-contract",
+        "heading": "Articles"
+      }
+    },
+    {
+      "type": "markdownProse",
+      "bodyMd": "import SpecPageHeader from '@beskid/beskid-ui/platform-spec/SpecPageHeader.astro';\nimport DomainTiles from '@beskid/beskid-ui/platform-spec/DomainTiles.astro';\nimport SpecSection from '@beskid/beskid-ui/platform-spec/SpecSection.astro';\n\n<SpecPageHeader status=\"Standard\" ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\n<SpecSection title=\"What this feature specifies\" id=\"what-this-feature-specifies\">\nThis feature explains how source text becomes a backend-ready artifact without changing language semantics late in the pipeline. It is organized into newcomer-friendly articles that move from model, to flow, to contracts, then practical verification and debugging guidance.\n</SpecSection>\n\n<SpecSection title=\"Implementation anchors\" id=\"implementation-anchors\">\n- `beskid_codegen::lower_source` in `compiler/crates/beskid_codegen`\n- `CodegenArtifact` construction in `compiler/crates/beskid_codegen`\n- `JitModule` consumption in `compiler/crates/beskid_engine/src/jit_module.rs`\n- Runtime execution coverage in `compiler/crates/beskid_tests/src/runtime/jit.rs`\n</SpecSection>\n\n## Decisions\n\nNo open decisions. Closed choices are normative ADRs under **`adr/`** (`D-COMP-IR-0007` … `D-COMP-IR-0011`; `D-COMP-IR-0009` superseded); use the reader **ADRs** tab for expandable detail."
+    }
+  ]
+}

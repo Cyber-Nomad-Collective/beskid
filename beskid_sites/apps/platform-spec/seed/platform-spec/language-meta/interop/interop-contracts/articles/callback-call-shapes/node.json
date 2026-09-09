@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/interop/interop-contracts/articles/callback-call-shapes",
+	"title": "Interop.Contracts — Callback call shapes",
+	"description": "Function-pointer parameters and host registration tables for foreign re-entry (v0.3).",
+	"parentSlug": "platform-spec/language-meta/interop/interop-contracts",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-20"
+}

@@ -1,0 +1,19 @@
+import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+Inconsistent hub shapes made navigation and CI layout validation unpredictable.
+
+## Decision
+
+**Domain** pages **must** include eight ordered sections (scope, terminology, principles, area map, guarantees, conformance, change policy, related domains). **Area** pages **must** include eight area sections (contract, boundaries, internal model, feature index, failure model, verification matrix, operations, related areas). **Feature** hubs **must** include eleven sections ending with **Decisions** plus **`adr/`** (contract, I/O, state, algorithms, edge cases, compatibility, security/performance, examples, verification, related features, decisions).
+
+## Consequences
+
+`layout.json` presets align with `SpecSection` ids; articles **must not** redefine hub-only canonical requirements.
+
+## Verification anchors
+
+`verify:platform-spec-layout`; `feature-contract-default` preset.

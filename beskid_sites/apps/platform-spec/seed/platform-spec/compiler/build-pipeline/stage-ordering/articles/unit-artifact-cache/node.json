@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/build-pipeline/stage-ordering/articles/unit-artifact-cache",
+  "title": "Unit artifact cache schema",
+  "description": "On-disk and in-process unit snapshot layout under obj/beskid/cache/salsa/units/.",
+  "parentSlug": "platform-spec/compiler/build-pipeline/stage-ordering",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-06-05"
+}

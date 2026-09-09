@@ -1,0 +1,20 @@
+import SpecPageHeader from '@beskid/beskid-ui/platform-spec/SpecPageHeader.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+This feature hub defines how the reference compiler turns a resolved **`CompilePlan`** plus **effective (materialized-first) source roots** into a **`ProgramAssembly`**: discovered `.bd` units, a shared **`ModuleIndex`** for cross-module resolution, and a single front-end spine consumed by CLI, LSP, analyze, and codegen. JIT and AOT backends consume **`CodegenArtifact`** only and do not re-run assembly.
+
+## Implementation anchors
+- `compiler/crates/beskid_analysis/src/services/front_end.rs` — program assembly entry point and spine construction
+- `compiler/crates/beskid_analysis/src/projects/assembly/` — unit discovery and `ModuleIndex` assembly
+- `compiler/crates/beskid_pipeline/src/` — pipeline integration of assembly into compile spine
+
+## Decisions
+
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-COMP-BUILD-0013` … `D-COMP-BUILD-0023`); use the reader **ADRs** tab for expandable detail.
+
+
+- [Design model](./design-model/)
+- [Flow and algorithm](./flow-and-algorithm/)
+- [Contracts and edge cases](./contracts-and-edge-cases/)
+- [Verification and traceability](./verification-and-traceability/)

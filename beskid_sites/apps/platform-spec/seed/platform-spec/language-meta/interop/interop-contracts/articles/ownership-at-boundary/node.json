@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/interop/interop-contracts/articles/ownership-at-boundary",
+	"title": "Interop.Contracts — Ownership at the boundary",
+	"description": "Borrow, transfer, and opaque-handle rules for parameters on foreign call shapes (v0.3).",
+	"parentSlug": "platform-spec/language-meta/interop/interop-contracts",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-20"
+}

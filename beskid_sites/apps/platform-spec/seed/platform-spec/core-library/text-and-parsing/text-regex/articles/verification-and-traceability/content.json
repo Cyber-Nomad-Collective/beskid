@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Conformance\n\n- `compiler/corelib/beskid_corelib/tests/corelib_tests/src/text/TextRegexTests.bd`\n- `compiler/corelib/packages/foundation/grammars/regex.pest`\n- `compiler/crates/beskid_pest_gen/` (host codegen)\n- Contract IDs: **REGEX-***"
+		}
+	]
+}

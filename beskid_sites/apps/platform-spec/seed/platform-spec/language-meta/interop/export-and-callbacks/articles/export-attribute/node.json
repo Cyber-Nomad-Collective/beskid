@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/interop/export-and-callbacks/articles/export-attribute",
+	"title": "Export attribute",
+	"description": "Normative Export metadata for pub functions exposed to foreign hosts (v0.3).",
+	"parentSlug": "platform-spec/language-meta/interop/export-and-callbacks",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-20"
+}

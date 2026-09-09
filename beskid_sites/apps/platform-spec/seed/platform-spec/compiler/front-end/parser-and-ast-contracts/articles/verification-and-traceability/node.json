@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/front-end/parser-and-ast-contracts/articles/verification-and-traceability",
+  "title": "Verification and traceability",
+  "description": "How to verify parser behavior and trace docs back to source.",
+  "parentSlug": "platform-spec/compiler/front-end/parser-and-ast-contracts",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

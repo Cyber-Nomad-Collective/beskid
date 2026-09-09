@@ -1,0 +1,14 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/core-library/foundation-and-primitives/core-optional/articles/design-model",
+	"title": "Design model",
+	"description": "Core.Optional module layout and relationship to Result and Query.",
+	"parentSlug": "platform-spec/core-library/foundation-and-primitives/core-optional",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-10"
+}

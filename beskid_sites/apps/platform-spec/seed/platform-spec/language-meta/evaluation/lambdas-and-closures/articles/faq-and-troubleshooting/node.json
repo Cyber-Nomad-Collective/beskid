@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/evaluation/lambdas-and-closures/articles/faq-and-troubleshooting",
+	"title": "Lambdas and closures - FAQ and troubleshooting",
+	"description": "Common issues, troubleshooting, and locked decisions for Beskid lambdas and closures.",
+	"parentSlug": "platform-spec/language-meta/evaluation/lambdas-and-closures",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

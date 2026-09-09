@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Inferred let\n\n```beskid\nunit Inferred() {\n    let x = 42;        // inferred: i32\n    let y = \"hello\";   // inferred: string\n    let z = true;      // inferred: bool\n}\n```\n\n## Typed let\n\n```beskid\nunit Explicit() {\n    let i64 big = 42;\n    let string name = \"hello\";\n}\n```\n\n## Lambda inference\n\n```beskid\nunit Lambdas() {\n    // Context from function parameter type\n    let add = (a, b) => a + b;   // inferred: (i32, i32) => i32 from context\n\n    // Explicit lambda parameter types when no context\n    let mul = (i32 a, i32 b) => a * b;\n}\n```\n\n## Generic inference\n\n```beskid\ntype Box<T> {\n    T value;\n}\n\nunit Generics() {\n    let b = Box { value = 42 };   // inferred: Box<i32>\n}\n```\n\n## Ambiguous inference (error)\n\n```beskid\nunit Ambiguous() {\n    // let empty = [];   // E1202 — cannot infer element type\n    let i32[] empty = [];   // OK — explicit annotation\n}\n```"
+		}
+	]
+}

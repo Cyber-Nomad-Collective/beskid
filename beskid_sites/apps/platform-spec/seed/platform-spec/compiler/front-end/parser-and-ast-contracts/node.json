@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "feature",
+  "slug": "platform-spec/compiler/front-end/parser-and-ast-contracts",
+  "title": "Parser and AST contracts",
+  "description": "Front-end contracts for grammar parsing, syntax item construction, and formatter AST consumption.",
+  "parentSlug": "platform-spec/compiler/front-end",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-04-30"
+}

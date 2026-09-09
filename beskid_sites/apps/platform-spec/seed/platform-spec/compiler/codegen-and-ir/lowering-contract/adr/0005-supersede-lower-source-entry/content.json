@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "blocks": [
+    {
+      "type": "markdownProse",
+      "bodyMd": "import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\n[D-COMP-IR-0009](./0003-cranelift-lowering-single-entry/) named `beskid_codegen::lower_source` the single lowering entry. Project-backed commands still fell through to `lower_source_single_unit_legacy`, bypassing assembly, dependency HIR, and `LinkPlan`.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Production entry | `lower_resolved_input_with_pipeline` (after `prepare_compilation` / `compile_front_end_from_resolved_input`) is the **only** production path to `CodegenArtifact` |\n| Legacy ban | `lower_source_single_unit_legacy` and pre-assembly mod/semantic scheduling **must not** run in CLI, LSP, or engine production paths |\n| Test-only `lower_source` | `lower_source` / in-memory helpers **may** remain for unit tests by constructing a minimal single-unit `ProgramAssembly` and delegating to `lower_resolved_input` |\n| Link plan | Production paths **must** satisfy [D-COMP-IR-0010](./0004-reachability-link-plan/) |\n\n## Consequences\n\n[D-COMP-IR-0009](./0003-cranelift-lowering-single-entry/) is superseded for production semantics; JIT/AOT still consume `CodegenArtifact` from the resolved-input entry only.\n\n## Verification anchors\n\n- `compiler/crates/beskid_codegen/src/services.rs`\n- `compiler/crates/beskid_cli/src/commands/`\n- `compiler/crates/beskid_engine/tests/`"
+    }
+  ]
+}

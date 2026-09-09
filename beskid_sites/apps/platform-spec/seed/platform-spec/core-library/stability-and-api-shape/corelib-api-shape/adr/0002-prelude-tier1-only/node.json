@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape/adr/0002-prelude-tier1-only",
+	"title": "Corelib prelude is Tier 1 only (superseded)",
+	"description": "The aggregate corelib prelude `Prelude.bd` must re-export Tier-1 modules only; Tier 2 / Tier 3 require explicit `use` imports.",
+	"parentSlug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape",
+	"status": "Superseded",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-CORE-API-SHAPE-0002",
+	"adrStatus": "Superseded",
+	"adrDate": "2026-05-23",
+	"lastReviewed": "2026-06-07"
+}

@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/tooling/auth-hub/design-model",
+	"title": "Design model",
+	"description": "Auth hub issuer, OAuth flow, pairing lifecycle, handoff JWT claims, and hub admin bootstrap.",
+	"parentSlug": "platform-spec/tooling/auth-hub",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-08"
+}

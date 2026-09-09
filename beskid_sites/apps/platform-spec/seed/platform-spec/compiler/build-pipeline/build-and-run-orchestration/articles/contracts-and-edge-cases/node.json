@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/build-pipeline/build-and-run-orchestration/articles/contracts-and-edge-cases",
+  "title": "Build and run orchestration - Contracts and edge cases",
+  "description": "States the normative guarantees and what happens at boundaries or failure edges.",
+  "parentSlug": "platform-spec/compiler/build-pipeline/build-and-run-orchestration",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

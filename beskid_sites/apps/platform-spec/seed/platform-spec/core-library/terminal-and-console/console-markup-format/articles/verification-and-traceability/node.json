@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/core-library/terminal-and-console/console-markup-format/articles/verification-and-traceability",
+	"title": "Verification and traceability",
+	"description": "Markup golden tests and module anchors.",
+	"parentSlug": "platform-spec/core-library/terminal-and-console/console-markup-format",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-21"
+}

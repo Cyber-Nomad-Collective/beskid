@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/build-pipeline/program-assembly/articles/flow-and-algorithm",
+  "title": "Program assembly - Flow and algorithm",
+  "description": "Ordered assembly after workspace materialize and before multi-unit parse and HIR resolution.",
+  "parentSlug": "platform-spec/compiler/build-pipeline/program-assembly",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-05-20"
+}

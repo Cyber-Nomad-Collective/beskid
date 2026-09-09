@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/core-library/foundation-and-primitives/core-collections",
+	"title": "Core.Collections",
+	"description": "Array-backed collection types, inline methods, and iterator protocol.",
+	"parentSlug": "platform-spec/core-library/foundation-and-primitives",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-10"
+}

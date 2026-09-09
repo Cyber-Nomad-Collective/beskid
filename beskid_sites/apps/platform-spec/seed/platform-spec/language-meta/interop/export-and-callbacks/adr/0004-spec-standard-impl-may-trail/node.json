@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/language-meta/interop/export-and-callbacks/adr/0004-spec-standard-impl-may-trail",
+	"title": "Standard spec implementation may trail",
+	"description": "Normative text can lead reference compiler export support.",
+	"parentSlug": "platform-spec/language-meta/interop/export-and-callbacks",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-LMETA-EXPORT-0004",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-05-20",
+	"lastReviewed": "2026-05-22"
+}

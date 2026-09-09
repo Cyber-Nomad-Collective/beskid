@@ -1,0 +1,17 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/tooling/lsp/snapshot-and-refresh-contract/articles/contracts-and-edge-cases",
+	"title": "Contracts and edge cases",
+	"description": "Strict guarantees for LSP snapshot lifecycle and refresh behavior.",
+	"parentSlug": "platform-spec/tooling/lsp/snapshot-and-refresh-contract",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	}
+}

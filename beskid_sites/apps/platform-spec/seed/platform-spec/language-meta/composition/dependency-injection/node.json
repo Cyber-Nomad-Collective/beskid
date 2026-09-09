@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/language-meta/composition/dependency-injection",
+	"title": "Native dependency injection",
+	"description": "Language-native host composition — host, registry, named scopes, with activation, inject, startup, and launch.",
+	"parentSlug": "platform-spec/language-meta/composition",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-20"
+}

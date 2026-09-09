@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "specLevel": "adr",
+  "slug": "platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/adr/0002-spec-over-implementation-notes",
+  "title": "Specification over implementation notes",
+  "description": "Platform-spec text supersedes informal crate comments for Diagnostic code registry.",
+  "parentSlug": "platform-spec/compiler/semantic-pipeline/diagnostic-code-registry",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "adrId": "D-COMP-SEM-0002",
+  "adrStatus": "Accepted",
+  "adrDate": "2026-05-11",
+  "lastReviewed": "2026-05-22"
+}

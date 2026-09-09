@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/tooling/auth-hub/contracts-and-edge-cases",
+	"title": "Contracts and edge cases",
+	"description": "AUTH_HUB_* and shared auth environment variables, OpenBao paths, pairing edge cases, and legacy AUTH_HUB_SECRET migration.",
+	"parentSlug": "platform-spec/tooling/auth-hub",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-08"
+}

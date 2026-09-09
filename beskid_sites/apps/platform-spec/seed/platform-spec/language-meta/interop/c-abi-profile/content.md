@@ -1,0 +1,40 @@
+import SpecPageHeader from '@beskid/beskid-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/beskid-ui/platform-spec/SpecSection.astro';
+import DomainTiles from '@beskid/beskid-ui/platform-spec/DomainTiles.astro';
+
+<SpecPageHeader
+	status="Standard"
+	ownerName="Piotr Mikstacki"
+	ownerEmail="pmikstacki@cybernomad.it"
+	submitterName="Piotr Mikstacki"
+	submitterEmail="pmikstacki@cybernomad.it"
+/>
+
+<SpecSection title="What this feature specifies" id="what-this-feature-specifies">
+The **C ABI profile** is the normative mapping from **[Interop.Contracts](/platform-spec/language-meta/interop/interop-contracts/)** primitives to **C-compatible** foreign libraries on tier-1 hosts. v0.3 **Standard** conformance uses **link-time** binding ([link-time linking](/platform-spec/language-meta/interop/c-abi-profile/link-time-linking/)), **interop view types** ([interop view types](/platform-spec/language-meta/interop/c-abi-profile/interop-view-types/)), and **System V AMD64** for the reference compiler path.
+
+**Dynamic resolution** (`dlopen` / `dlsym`) is a **Proposed** appendix only ([dynamic resolution profile](/platform-spec/language-meta/interop/c-abi-profile/dynamic-resolution-profile/)). **WinAPI** is **out of scope** for stdlib Standard ([platform tier matrix](/platform-spec/language-meta/interop/c-abi-profile/platform-tier-matrix/)).
+
+Lowering uses **Cranelift**; foreign libraries need only expose C ABI entrypoints compatible with emitted calls.
+</SpecSection>
+
+<SpecSection title="v0.3 delivery bands" id="v03-delivery-bands">
+| Band | Content | Status |
+| --- | --- | --- |
+| **v0.3.0** | Interop views, link-time import, symbol overrides | Standard (spec); impl may trail |
+| **v0.3.1** | `CLayout` primitive structs | Proposed |
+| **Later** | Nested FFI structs, enum ABI, foreign-thread entry | Planned after basic FFI |
+</SpecSection>
+
+<SpecSection title="Implementation anchors" id="implementation-anchors">
+- Extern import metadata: `compiler/crates/beskid_codegen/src/lowering/context.rs` (`ExternImport`)
+- Collection: `compiler/crates/beskid_codegen/src/lowering/lowerable.rs`
+- Contract calls: `compiler/crates/beskid_codegen/src/lowering/expressions/call_expression.rs`
+- Signature validation: `compiler/crates/beskid_codegen/src/cranelift_host.rs`
+- Legacy dynamic resolution: `compiler/crates/beskid_engine/src/engine.rs` (`extern_dlopen`, Proposed)
+- Stable view layouts (embedding): `compiler/crates/beskid_abi/src/types.rs`
+</SpecSection>
+
+## Decisions
+
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-LMETA-CABI-0001` … `D-LMETA-CABI-0005`); use the reader **ADRs** tab for detail.

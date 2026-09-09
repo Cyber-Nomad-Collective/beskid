@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Compile pipeline placement\n\n```mermaid\nflowchart LR\n    parse[parse]\n    typecheck[type check]\n    escape[escape analysis]\n    lower[lower to HIR]\n    codegen[codegen with barriers]\n    parse --> typecheck --> escape --> lower --> codegen\n```\n\n## Memory validation algorithm (normative)\n\n1. **Parse declarations** — prefix `mut` on `TypedLetStatement`, `InferredLetStatement`, and `Parameter` nodes.\n2. **Check immutability** — `ImmutableAssignment` (**E1214**) fires when assigning to a non-`mut` binding.\n4. **Escape analysis** — Identify reference-bearing values that escape their defining frame.\n5. **Heap allocation decision** — Escaped values must live on the GC heap.\n6. **Insert write barriers** — Pointer stores to heap objects execute write barriers when required by the active GC phase.\n7. **Bounds checks** — Array element access inserts bounds checks in safe builds unless proven safe.\n\n## GC phases\n\nThe reference implementation uses concurrent tri-color mark-sweep:\n1. **Mark** — Trace reachable objects from roots.\n2. **Sweep** — Reclaim unreachable objects.\n3. **Write barriers** — During mark, pointer stores trigger barrier logic to preserve the tri-color invariant.\n\n## Cross-fiber sharing rules\n\n1. **No alias sharing** — Values must not be shared across fibers by alias.\n2. **Immutability exception** — Immutable values may be shared without synchronization.\n3. **Channel required** — Mutable shared state must use `Channel<T>`.\n4. **Spawn closure check** — `StackReferenceEscapesSpawn` (**E1225**) prevents unsafe captures.\n\n## LSP / incremental\n\nRe-run memory analysis when local declarations, assignments, or closure captures change."
+		}
+	]
+}

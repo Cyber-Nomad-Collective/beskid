@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/community/spec-maintenance/non-normative-bridge-docs-policy/adr/0002-canonical-destination-links",
+	"title": "Bridge pages must link canonical destinations",
+	"description": "Non-normative bridges label status near the top and link superseding normative feature hubs.",
+	"parentSlug": "platform-spec/community/spec-maintenance/non-normative-bridge-docs-policy",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-COMM-BRIDGE-0002",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-05-05",
+	"lastReviewed": "2026-05-22"
+}

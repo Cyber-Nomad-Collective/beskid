@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Locked decisions\n\n| Decision | ID | Summary |\n| --- | --- | --- |\n| Language `event` keyword | D-LM-EVT-001 | Events are fields, not delegate types |\n| Fiber OnCancelled | D-LM-EVT-002 | Cancellation uses same event mechanism |\n| Synchronous default | D-LM-EVT-003 | Handlers run on raising fiber |\n| Not `Option` | D-LM-EVT-004 | Subscription state is host-managed |\n\n## FAQ\n\n### Can I read an event field like a variable?\n\nNo. Event fields are not ordinary value fields. They must not be read like variables.\n\n### Are events thread-safe?\n\nThe default is synchronous on the raising fiber. Thread safety depends on the host profile. See the execution specification for details.\n\n### Can I unsubscribe from an event?\n\nYes. Use `-=` to remove a handler delegate from the subscriber list.\n\n## Troubleshooting\n\n| Symptom | Likely cause |\n| --- | --- |\n| **E1219** | Event used outside valid scope |\n| **E1220** | Invalid capacity hint |\n| **E1221** | Subscription target is not an event |"
+		}
+	]
+}

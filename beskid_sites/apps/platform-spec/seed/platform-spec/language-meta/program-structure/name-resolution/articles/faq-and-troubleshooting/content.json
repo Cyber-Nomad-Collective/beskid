@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Locked decisions\n\n| Decision | ID | Summary |\n| --- | --- | --- |\n| Single resolver graph | D-LM-NAME-001 | Driver and typechecker share one snapshot |\n| Contract namespaces | D-LM-NAME-002 | Contracts as path prefixes for static methods |\n| Qualified names for tooling | D-LM-NAME-003 | Stable across compiles |\n| No implicit `null` imports | D-LM-NAME-004 | No nullable aliases injected |\n\n## FAQ\n\n### Why is my import not found?\n\nCheck that the path is correct and the target item is `pub`. `UnknownImportPath` (**E1105**) means the path does not resolve to any module or item.\n\n### Can I use a type before it is declared?\n\nNo. Forward references within the same module emit **E1106** unless the reference is in a type signature (which may be resolved in a second pass).\n\n### What does \"shadowed local\" mean?\n\nAn inner `let` binding has the same name as an outer one. The inner binding takes precedence. **W1103** warns about this.\n\n## Troubleshooting\n\n| Symptom | Likely cause |\n| --- | --- |\n| **E1101** | Unknown value name |\n| **E1201** | Unknown type name |\n| **E1102** | Duplicate name in same scope |\n| **E1105** | Import path does not exist |\n| **E1106** | Forward reference in same module |\n| **E1107** | Accessing private item |\n| **W1103** | Inner binding shadows outer |"
+		}
+	]
+}

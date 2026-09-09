@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Semantic pipeline stage ordering",
+      "href": "/platform-spec/compiler/semantic-pipeline/stage-ordering/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

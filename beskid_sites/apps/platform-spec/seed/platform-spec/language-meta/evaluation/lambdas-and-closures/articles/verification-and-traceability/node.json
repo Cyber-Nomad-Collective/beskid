@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/evaluation/lambdas-and-closures/articles/verification-and-traceability",
+	"title": "Lambdas and closures - Verification and traceability",
+	"description": "Tests, implementation checklist, and verification matrix for Beskid lambdas and closures.",
+	"parentSlug": "platform-spec/language-meta/evaluation/lambdas-and-closures",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Compile pipeline placement\n\n```mermaid\nflowchart LR\n    parse[parse]\n    resolve[resolve enum]\n    typecheck[type check try target]\n    lower[desugar ? to branches]\n    codegen[codegen]\n    parse --> resolve --> typecheck --> lower --> codegen\n```\n\n## Try expression algorithm (normative)\n\n1. **Parse try expression** — `expr?` becomes `TryExpression { expr }`.\n2. **Type-check operand** — The operand must be a `Result`-shaped enum (typically `Core.Results.Result<_, _>` with `Ok` / `Error` variants).\n3. **Validate try target** — `TypeInvalidTryTarget` (**E1222**) if the operand is not a Result-shaped enum.\n4. **Infer success payload** — On the `Ok` path, unwrap the success payload type into the expression context.\n5. **Infer failure path** — On the `Error` path, return or translate to the enclosing error type.\n6. **Desugar in HIR** — Lowering rewrites `?` using the resolved scrutinee enum (variant names from that enum), not hard-coded identifier strings.\n7. **Re-resolve after desugar** — The typed-HIR spine runs resolve, normalize (including `?` desugar), re-resolve, then type-check.\n\n## Lowering `?` to branches\n\n```mermaid\nflowchart TB\n    try[expr?]\n    temp[let temp = expr]\n    match[match temp]\n    ok[Ok(v) => v]\n    err[Error(e) => return Error(e)]\n    try --> temp --> match --> ok\n    match --> err\n```\n\n## LSP / incremental\n\nRe-run try expression checking when the operand expression type or the enclosing function return type changes."
+		}
+	]
+}

@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Modules\n\n| Module | Role |\n| --- | --- |\n| `Core.Encoding.EncodingError` | Shared error enum |\n| `Core.Encoding.Contract` | `Encoder` contract with encode/decode |\n| `Core.Encoding.Utf8` | Language-default UTF-8 |\n| `Core.Encoding.Hex` | Hexadecimal |\n| `Core.Encoding.Base64` | RFC 4648 standard Base64 |\n\nUtf8 uses `__bytes_from_str` / `__str_from_bytes_utf8` at the runtime boundary. Hex and Base64 are pure Beskid over `Core.Bytes`."
+		}
+	]
+}

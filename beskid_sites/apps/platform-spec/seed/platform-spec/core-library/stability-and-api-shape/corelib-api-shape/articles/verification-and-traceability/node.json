@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape/articles/verification-and-traceability",
+	"title": "Verification and traceability",
+	"description": "Matrix mapping each API-shape contract to the Rust tests, Beskid test targets, and CLI commands that pin it down.",
+	"parentSlug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-23"
+}

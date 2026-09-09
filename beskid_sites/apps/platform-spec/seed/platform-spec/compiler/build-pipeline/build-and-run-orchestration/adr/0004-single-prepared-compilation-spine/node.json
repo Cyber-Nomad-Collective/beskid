@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "specLevel": "adr",
+  "slug": "platform-spec/compiler/build-pipeline/build-and-run-orchestration/adr/0004-single-prepared-compilation-spine",
+  "title": "Single prepared compilation spine",
+  "description": "One front-end prepare path serves analyze, run, build, test, clif, LSP, and doc with mode flags only.",
+  "parentSlug": "platform-spec/compiler/build-pipeline/build-and-run-orchestration",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "adrId": "D-COMP-BUILD-0019",
+  "adrStatus": "Accepted",
+  "adrDate": "2026-05-29",
+  "lastReviewed": "2026-05-29"
+}

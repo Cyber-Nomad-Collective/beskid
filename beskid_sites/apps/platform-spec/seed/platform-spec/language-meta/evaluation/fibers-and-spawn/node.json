@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/language-meta/evaluation/fibers-and-spawn",
+	"title": "Fibers and spawn",
+	"description": "The spawn keyword, Fiber contract requirement, and cross-fiber communication rules.",
+	"parentSlug": "platform-spec/language-meta/evaluation",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-20"
+}

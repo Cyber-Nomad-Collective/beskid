@@ -1,0 +1,16 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "domainTiles",
+			"props": {
+				"pathPrefix": "platform-spec/core-library/foundation-and-primitives/core-collections",
+				"heading": "Articles"
+			}
+		},
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecPageHeader from '@beskid/beskid-ui/platform-spec/SpecPageHeader.astro';\nimport DomainTiles from '@beskid/beskid-ui/platform-spec/DomainTiles.astro';\nimport SpecSection from '@beskid/beskid-ui/platform-spec/SpecSection.astro';\n\n<SpecPageHeader status=\"Standard\" ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\n<SpecSection title=\"What this feature specifies\" id=\"what-this-feature-specifies\">\n`Collections` (`List`, `Map`, `Set`, `Queue`, `Stack`, `Array`) use **array-backed storage** with `Collections.Array` `Get<T>` / `Set<T>` / `Len` builtins. Public methods live **inline** on each `pub type` per [D-CORE-API-0002](/platform-spec/core-library/stability-and-api-shape/corelib-api-shape/adr/0005-owning-type-inline-methods/). Optional fluent wrappers are generated per [Core.Fluent](/platform-spec/core-library/foundation-and-primitives/core-fluent/).\n</SpecSection>\n\n<SpecSection title=\"Storage model (v1)\" id=\"storage-model\">\n| Type | Backing fields |\n| --- | --- |\n| `List<T>` | `T[] storage`, `i64 count` |\n| `Stack<T>` | `T[] storage`, `i64 count` |\n| `Queue<T>` | `T[] storage`, `i64 head`, `i64 count` |\n| `Set<T>` | `T[] storage`, `i64 count` (linear scan; `@tier(unstable)` until hash builtin) |\n| `Map<K,V>` | `MapEntry<K,V>[] entries`, `i64 count` |\n| `Array` | `T[]` handle + `Len` / `Get` / `Set` / `Append` / `Iterate` |\n</SpecSection>"
+		}
+	]
+}

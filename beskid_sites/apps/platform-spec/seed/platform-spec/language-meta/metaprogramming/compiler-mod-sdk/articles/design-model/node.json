@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/metaprogramming/compiler-mod-sdk/articles/design-model",
+	"title": "Compiler Mod SDK - Design model",
+	"description": "Conceptual model for Beskid-side compiler-mod contracts, Beskid.Syntax mirror, and typed AST operations.",
+	"parentSlug": "platform-spec/language-meta/metaprogramming/compiler-mod-sdk",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-10"
+}

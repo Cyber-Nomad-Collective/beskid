@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/language-meta/contracts-and-effects/contracts",
+	"title": "Contracts",
+	"description": "Structural contract declarations, conformance lists, and embedding. Distinct from compiler Mod SDK contracts and from runtime requires/ensures (not in v0.1 grammar).",
+	"parentSlug": "platform-spec/language-meta/contracts-and-effects",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-21"
+}

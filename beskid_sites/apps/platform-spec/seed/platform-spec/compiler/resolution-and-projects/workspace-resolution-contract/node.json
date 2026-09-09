@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "feature",
+  "slug": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract",
+  "title": "Workspace resolution contract",
+  "description": "Project graph discovery, manifest loading (including Mod projects), and workspace inputs for compiler and tooling commands.",
+  "parentSlug": "platform-spec/compiler/resolution-and-projects",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-05-01"
+}

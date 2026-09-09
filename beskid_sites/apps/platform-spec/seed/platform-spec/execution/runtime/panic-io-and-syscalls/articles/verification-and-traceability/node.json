@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/execution/runtime/panic-io-and-syscalls/articles/verification-and-traceability",
+	"title": "Verification and traceability",
+	"description": "panic_io implementation paths, e2e runtime cases, and IO contract cross-tests.",
+	"parentSlug": "platform-spec/execution/runtime/panic-io-and-syscalls",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-22"
+}

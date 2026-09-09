@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nDiscriminate project kinds.\n\n## Decision\n\nMay declare type Mod or Template; hosts use Host + corelib.\n\n## Consequences\n\nLinks to mods/scaffolding.\n\n## Verification anchors\n\nproject fixtures."
+		}
+	]
+}

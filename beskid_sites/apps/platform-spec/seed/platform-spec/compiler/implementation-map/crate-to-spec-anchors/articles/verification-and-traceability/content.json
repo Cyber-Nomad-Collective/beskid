@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "blocks": [
+    {
+      "type": "markdownProse",
+      "bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n## Verification strategy\n\n- Unit-level checks validate local transformations.\n- Integration tests validate crate-to-crate contracts.\n- End-to-end fixtures validate user-visible behavior.\n\n## Traceability map\n\n- Spec requirement source: `/platform-spec/compiler/implementation-map/crate-to-spec-anchors/`.\n- Core implementation anchors:\n  - `beskid_analysis` -> parser/resolution/semantic leaves\n  - `beskid_codegen` -> lowering contract leaves\n  - `beskid_abi` and `beskid_runtime` -> execution ABI/runtime leaves\n- Conformance anchor:\n  - `beskid_tests` and `beskid_e2e_tests` -> conformance leaves\n  - `beskid_tests/src/spine/` -> unified spine diagnostics parity (D-COMP-CONF-0007)\n  - `beskid_codegen/tests/array_tests_linking.rs` -> `LinkPlan` / `validate_artifact` (D-COMP-IR-0010)\n  - `compiler/corelib/ci/run_corelib_tests.py` -> full `corelib_tests` matrix via `beskid test`\n\n## Review checklist\n\n- Requirement text and test expectation describe the same boundary.\n- Crate ownership updates are reflected in spec links.\n- Newly introduced edge cases include at least one reproducible fixture."
+    }
+  ]
+}

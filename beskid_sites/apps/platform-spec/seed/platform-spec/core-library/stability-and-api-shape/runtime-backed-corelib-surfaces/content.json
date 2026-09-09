@@ -1,0 +1,16 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "domainTiles",
+			"props": {
+				"pathPrefix": "platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces",
+				"heading": "Articles"
+			}
+		},
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecPageHeader from '@beskid/beskid-ui/platform-spec/SpecPageHeader.astro';\nimport DomainTiles from '@beskid/beskid-ui/platform-spec/DomainTiles.astro';\nimport SpecSection from '@beskid/beskid-ui/platform-spec/SpecSection.astro';\n\n<SpecPageHeader status=\"Standard\" ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\n<SpecSection title=\"What this feature specifies\" id=\"what-this-feature-specifies\">\n`Core-backed surfaces` defines one operational contract that a newcomer can follow end-to-end: first the model, then execution flow, then strict guarantees, concrete examples, and verification guidance. All modules listed here use the `Core.*` prefix per [D-CORE-NS-0001](/platform-spec/core-library/stability-and-api-shape/corelib-api-shape/adr/0004-single-core-namespace/).\n</SpecSection>\n\n<SpecSection title=\"Implementation anchors\" id=\"implementation-anchors\">\n- Corelib docs in `compiler/corelib/beskid_corelib/docs/Core/`\n- Console package: `compiler/corelib/packages/console/`\n- Stream split: `Core.Input`, `Core.Output`, `Core.Error` in `compiler/corelib/packages/foundation/src/Core/`\n- Runtime builtins in `compiler/crates/beskid_runtime/src/builtins/mod.rs`\n- ABI builtin specs in `compiler/crates/beskid_abi/src/builtins.rs`\n- Corelib ABI tests in `compiler/crates/beskid_tests/src/abi/contracts.rs`\n</SpecSection>\n\n## Decisions\n\nNo open decisions. Closed choices are normative ADRs under **`adr/`** (`D-CORE-STAB-0001` … `D-CORE-STAB-0004`); use the reader **ADRs** tab for expandable detail."
+		}
+	]
+}

@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Examples\n\n```beskid\nuse Core.Text.Regex;\nuse Query.Contracts;\n\n// Prefix match at position 0\nContracts.HasValue(Regex.Match(\"[a-z]+\", \"abc123\")); // true → span 0..3\n\n// Leftmost search\nContracts.HasValue(Regex.Find(\"[0-9]+\", \"x99y\")); // true → span 1..3\n\n// Non-overlapping enumeration\n!Regex.IsFindAllEmpty(Regex.FindAll(\"[a-z]+\", \"a1bb2ccc\"));\n```\n\nImplementation anchors: `compiler/corelib/packages/foundation/src/Core/Text/Regex.bd`, generated parsers in `Core/Text/Regex/Generated.bd` (regen via `regen_grammar_parsers.sh`)."
+		}
+	]
+}

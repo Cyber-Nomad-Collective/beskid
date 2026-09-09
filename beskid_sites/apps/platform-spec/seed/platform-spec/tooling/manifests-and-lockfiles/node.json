@@ -1,0 +1,8 @@
+{
+	"version": 1,
+	"specLevel": "area",
+	"slug": "platform-spec/tooling/manifests-and-lockfiles",
+	"title": "Manifests And Lockfiles",
+	"parentSlug": "platform-spec/tooling",
+	"status": "published"
+}

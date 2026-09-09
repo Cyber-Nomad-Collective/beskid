@@ -1,0 +1,16 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "domainTiles",
+			"props": {
+				"pathPrefix": "platform-spec/tooling/manifests-and-lockfiles/bsol",
+				"heading": "Articles"
+			}
+		},
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecPageHeader from '@beskid/beskid-ui/platform-spec/SpecPageHeader.astro';\nimport DomainTiles from '@beskid/beskid-ui/platform-spec/DomainTiles.astro';\nimport SpecSection from '@beskid/beskid-ui/platform-spec/SpecSection.astro';\n\n<SpecPageHeader status=\"Standard\" ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\n<SpecSection title=\"What Bsol is\" id=\"what-bsol-is\">\n**Bsol** (Beskid Structured Object Language) is the shared meta-language for Beskid configuration documents: block-oriented assignment syntax used by **`*.bproj`** project manifests, **`*.bws`** / `workspace.proj` workspace manifests, and **`runtime_manifest.bsol`**.\n\nBsol specifies **lexical rules**, **generic surface grammar**, the **reference AST**, and **schema profiles**. Manifest **semantics** (required keys, project kinds, Mod blocks, link metadata, runtime ABI tables) remain in sibling contract features and profile-specific lowering crates.\n</SpecSection>\n\n<SpecSection title=\"Authority split\" id=\"authority-split\">\n| Layer | Owner | Artifact |\n| --- | --- | --- |\n| Surface syntax + generic AST | **`beskid_bsol` crate** | `src/bsol.pest`, `src/ast.rs`, `parse_bsol_document` |\n| Schema profiles | **`beskid_bsol` embedded profiles** | `schemas/project.v1.bsol`, `workspace.v1.bsol`, `runtime.v1.bsol` |\n| Project / workspace semantics | Project / workspace contract features | `beskid_analysis::projects::model`, `validator` |\n| Runtime ABI semantics | Runtime manifest profile + `beskid_manifest` | `runtime_manifest.bsol` → `ManifestRoot` |\n| Diagnostics | Compiler resolution feature | E1801–E1899 meta-contract band after lowering |\n</SpecSection>\n\n<SpecSection title=\"Implementation anchors\" id=\"implementation-anchors\">\n- `compiler/crates/beskid_bsol/` — grammar, generic AST, schema loader, `validate`\n- `compiler/crates/beskid_analysis/src/projects/parser.rs` — lowers `project.v1` / `workspace.v1` to typed manifests\n- `compiler/crates/beskid_manifest/` — loads `runtime_manifest.bsol` via `runtime.v1`\n- `compiler/runtime_manifest.bsol` — authoritative runtime ABI manifest\n- Unit tests: `beskid_bsol`, `beskid_analysis::projects::parser`, `beskid_manifest`\n</SpecSection>"
+		}
+	]
+}

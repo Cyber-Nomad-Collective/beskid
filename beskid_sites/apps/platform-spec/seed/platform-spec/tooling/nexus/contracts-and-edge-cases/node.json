@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/tooling/nexus/contracts-and-edge-cases",
+	"title": "Contracts and edge cases",
+	"description": "Nexus REST API contracts, CodeDocRecord rules, spec link validation, auth/me ownedRepoIds, and MCP Bearer requirements.",
+	"parentSlug": "platform-spec/tooling/nexus",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-30"
+}

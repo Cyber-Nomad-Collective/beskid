@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nLock alignment.\n\n## Decision\n\nHub owns workspace and lock rules.\n\n## Consequences\n\nCLI/IDE defer.\n\n## Verification anchors\n\nresolution tests."
+		}
+	]
+}

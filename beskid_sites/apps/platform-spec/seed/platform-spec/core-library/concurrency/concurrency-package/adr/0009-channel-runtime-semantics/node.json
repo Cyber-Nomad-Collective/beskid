@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/core-library/concurrency/concurrency-package/adr/0009-channel-runtime-semantics",
+	"title": "Channel runtime delivery semantics",
+	"description": "Multi-receiver/sender rules and close behavior.",
+	"parentSlug": "platform-spec/core-library/concurrency/concurrency-package",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-CORE-CONC-0009",
+	"adrStatus": "Accepted",
+	"adrDate": "2025-08-01",
+	"lastReviewed": "2026-05-22"
+}

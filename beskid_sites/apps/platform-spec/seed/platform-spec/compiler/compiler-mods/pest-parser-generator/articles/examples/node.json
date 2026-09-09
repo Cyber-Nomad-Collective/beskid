@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/compiler-mods/pest-parser-generator/articles/examples",
+  "title": "Examples",
+  "description": "Sample grammar and generated import.",
+  "parentSlug": "platform-spec/compiler/compiler-mods/pest-parser-generator",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-06-08"
+}

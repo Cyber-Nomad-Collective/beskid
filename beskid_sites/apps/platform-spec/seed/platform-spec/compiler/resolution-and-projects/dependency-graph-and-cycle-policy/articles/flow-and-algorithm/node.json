@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/articles/flow-and-algorithm",
+  "title": "Dependency graph and cycle policy - Flow and algorithm",
+  "description": "Walks through runtime/order-of-operations behavior in the implementation.",
+  "parentSlug": "platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

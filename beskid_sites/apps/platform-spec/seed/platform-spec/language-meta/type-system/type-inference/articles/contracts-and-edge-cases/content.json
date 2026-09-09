@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Hard requirements\n\n- **Fail on ambiguity** — Prefer errors over guessing when multiple types satisfy constraints.\n- **Public API annotations** — Exported functions should declare return types even when inference succeeds.\n- **No nullable inference** — Inference must not introduce nullable or `optional` types; use `Option<T>` explicitly.\n- **Contextual lambdas** — Untyped lambda parameters require an expected function type from the enclosing expression.\n\n## Diagnostic band E12xx\n\n| Code | Condition |\n| --- | --- |\n| **E1202** | Missing type annotation (ambiguous inference) |\n| **E1203** | Missing generic type arguments |\n| **E1206** | Type mismatch after inference |\n| **W1203** | Implicit numeric cast detected |\n\n## Edge cases\n\n- **Enum constructor inference** — Enum constructors and struct literals must have sufficient context to resolve the target type or require explicit qualification.\n- **Nested lambdas** — Inner lambdas may infer parameter types from the outer lambda's expected type.\n- **Generic recursion** — Recursive generic calls may require explicit type arguments to break ambiguity.\n- **Empty collections** — `[]` without context cannot infer element type; explicit annotation required.\n\n## Invariants\n\n- Every `let` binding must have a resolved type after `TypeChecker::finish` completes.\n- Inference does not mutate HIR; solved types are recorded in `TypeResult.node_types` and `TypeResult.local_types`.\n- Re-inference on incremental edits must produce the same result as full compilation for unchanged sites."
+		}
+	]
+}

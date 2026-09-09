@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/interop/c-abi-profile/articles/c-layout-types",
+	"title": "C ABI profile — C layout types (v0.3.1)",
+	"description": "repr(C) records for FFI after interop views ship; nested complex types deferred.",
+	"parentSlug": "platform-spec/language-meta/interop/c-abi-profile",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-20"
+}

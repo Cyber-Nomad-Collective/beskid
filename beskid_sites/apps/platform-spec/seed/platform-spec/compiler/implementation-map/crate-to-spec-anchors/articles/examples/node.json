@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/implementation-map/crate-to-spec-anchors/articles/examples",
+  "title": "Examples",
+  "description": "Practical examples that demonstrate `Crate-to-spec anchors` behavior.",
+  "parentSlug": "platform-spec/compiler/implementation-map/crate-to-spec-anchors",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

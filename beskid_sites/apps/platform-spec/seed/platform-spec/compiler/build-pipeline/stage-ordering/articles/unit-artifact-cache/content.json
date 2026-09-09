@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "blocks": [
+    {
+      "type": "markdownProse",
+      "bodyMd": "## Layout\n\nUnit artifacts live under `{project}/obj/beskid/cache/salsa/`:\n\n| Path | Content |\n|------|---------|\n| `manifest.json` | `grammar_rev`, `compiler_version`, `schema_version`, `persisted_units` |\n| `units/{content_fp}/meta.json` | `UnitArtifactMeta` (logical name, source path, source length, imports) |\n| `units/{content_fp}/ast.bin` | Postcard `Spanned<Program>` snapshot |\n| `units/{content_fp}/hir.bin` | HIR cache marker (HIR rebuilt from AST on cold load) |\n\nLegacy `obj/beskid/cache/units/*.json` records are **retired**; tooling ignores them.\n\n## Fingerprint rule\n\n`content_fp = hash(grammar_rev, source_bytes)` — **not** absolute path. Path is metadata only. `grammar_rev` is the workspace constant shared by `beskid_pipeline`, `beskid_artifacts`, and `beskid_queries`.\n\n## Invalidation\n\n1. **File edit** — `FileText` revision bump clears fingerprints for old and new content; `reverse_dependents` propagates to import closure.\n2. **Grammar bump** — `GrammarRevision` input invalidates all unit tracked queries globally.\n3. **Lockfile / manifest** — `ProjectSession.lockfile_digest` change invalidates `program_assembly` for that entry.\n\n## Hot path\n\nProduction assembly uses Salsa in-memory `unit_cache` (parse + HIR tokens). Disk artifacts are read on cold start; writes occur on direct-parse paths without the Salsa delegate. Manifest `persisted_units` is refreshed once per assembly batch, not per unit."
+    }
+  ]
+}

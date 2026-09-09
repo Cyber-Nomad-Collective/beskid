@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## FAQ\n\n### How do I register a mod entrypoint?\n\nYou do not. Discovery is artifact-driven. Implement a public Beskid type that implements an SDK contract.\n\n### Can a mod define language macros?\n\nYes. Mods may define `pub macro` items like any library. They are expanded by the compiler, not by the mod host.\n\n### Can mods mutate the host program arbitrarily?\n\nNo. Mods emit typed AST contributions through `Generator` contracts. The host validates and merges them.\n\n## Troubleshooting\n\n| Symptom | Likely cause |\n| --- | --- |\n| **E1829** | Two mods export conflicting contracts |\n| **E1884** | Mod referencing stale syntax generation |\n| **E1883** | Multiple mods modifying the same nodes |\n| Mod not discovered | Missing AOT artifact or descriptor |"
+		}
+	]
+}

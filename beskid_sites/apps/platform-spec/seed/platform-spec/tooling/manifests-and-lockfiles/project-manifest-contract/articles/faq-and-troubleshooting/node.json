@@ -1,0 +1,17 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/articles/faq-and-troubleshooting",
+	"title": "FAQ and troubleshooting",
+	"description": "Project manifest tooling FAQ.",
+	"parentSlug": "platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	}
+}

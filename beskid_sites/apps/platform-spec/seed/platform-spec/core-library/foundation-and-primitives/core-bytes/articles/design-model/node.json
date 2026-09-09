@@ -1,0 +1,14 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/core-library/foundation-and-primitives/core-bytes/articles/design-model",
+	"title": "Design model",
+	"description": "Core.Bytes module layout and runtime builtin boundaries.",
+	"parentSlug": "platform-spec/core-library/foundation-and-primitives/core-bytes",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-06"
+}

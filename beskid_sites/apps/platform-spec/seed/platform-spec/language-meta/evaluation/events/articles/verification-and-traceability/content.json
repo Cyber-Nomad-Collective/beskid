@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Verification matrix\n\n| Scenario | Expected evidence |\n| --- | --- |\n| Event field declaration | Parses; included in `TypeDefinition` fields |\n| Event raise | Compiles; invokes subscribers |\n| Invalid event scope | **E1219** emitted |\n| Invalid capacity | **E1220** emitted |\n| Invalid subscription | **E1221** emitted |\n\n## Implementation checklist\n\n- [x] Grammar: `event` fields on types\n- [x] AST: Event fields parsed in `TypeDefinition`\n- [x] Parser: `beskid.pest` productions for event fields\n- [x] Type checker: Event signature validation\n- [x] Diagnostics: **E1219**, **E1220**, **E1221**\n- [ ] Runtime subscriber list management\n- [ ] Event lowering to runtime ABI\n- [ ] Fiber cancellation event integration\n\n## Test locations\n\n- `compiler/crates/beskid_analysis/src/syntax/items/type_definition.rs` — parser tests\n- `compiler/crates/beskid_analysis/src/types/context/expressions.rs` — event typing tests\n- `compiler/crates/beskid_runtime/src/builtins/events.rs` — runtime tests"
+		}
+	]
+}

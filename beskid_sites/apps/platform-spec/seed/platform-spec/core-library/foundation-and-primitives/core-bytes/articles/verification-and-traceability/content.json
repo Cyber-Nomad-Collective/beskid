@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n| Requirement | Test anchor |\n| --- | --- |\n| **BYTES-001**, **BYTES-007** | `BytesTests.bd` — `bytes_new_has_length` |\n| **BYTES-003** | `BytesTests.bd` — `bytes_from_str_builtin_smoke` |\n| **BYTES-002** | Runtime trap on OOB `__bytes_get` / `__bytes_set` (integration) |\n| **BYTES-005** | `EncodingUtf8Tests.bd` — `utf8_from_str_builtin_round_trip` |\n\nHarness: `compiler/corelib/beskid_corelib/tests/corelib_tests/src/core/BytesTests.bd`"
+		}
+	]
+}

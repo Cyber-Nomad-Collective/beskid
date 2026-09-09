@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/interop/rust-abi-profile/articles/boundary-and-stability",
+	"title": "Rust ABI profile — Boundary and stability",
+	"description": "What is stable at the Rust runtime ↔ generated code boundary versus implementation-private Rust types.",
+	"parentSlug": "platform-spec/language-meta/interop/rust-abi-profile",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-06"
+}

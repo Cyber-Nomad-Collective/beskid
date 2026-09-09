@@ -1,0 +1,22 @@
+import SpecPageHeader from '@beskid/beskid-ui/platform-spec/SpecPageHeader.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+This feature hub defines the normative contract for **codegen artifact schema** and links newcomer-oriented reference articles.
+
+## Implementation anchors
+- `compiler/crates/beskid_engine/src/jit_module.rs` consumes generated artifact fields.
+- `compiler/crates/beskid_tests/src/runtime/jit.rs` validates runtime execution from codegen output.
+- `compiler/crates/beskid_tests/src/abi/contracts.rs` checks ABI-level schema compatibility.
+
+## Decisions
+
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-COMP-IR-0001` … `D-COMP-IR-0003`); use the reader **ADRs** tab for expandable detail.
+
+
+- [Design model](./design-model/)
+- [Flow and algorithm](./flow-and-algorithm/)
+- [Contracts and edge cases](./contracts-and-edge-cases/)
+- [Examples](./examples/)
+- [Verification and traceability](./verification-and-traceability/)
+- [FAQ and troubleshooting](./faq-and-troubleshooting/)

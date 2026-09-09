@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/community/spec-maintenance/domain-area-feature-article-frontmatter-template/adr/0001-canonical-frontmatter-templates",
+	"title": "Canonical platform-spec frontmatter templates",
+	"description": "Domain, area, feature, and article YAML shapes aligned with trudoc Zod and CI validators.",
+	"parentSlug": "platform-spec/community/spec-maintenance/domain-area-feature-article-frontmatter-template",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-COMM-META-0001",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-05-09",
+	"lastReviewed": "2026-05-22"
+}

@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Base contract — **ENC-001** … **ENC-009**\n\n| ID | Requirement |\n| --- | --- |\n| **ENC-001** | Every encoding **must** expose `EncodeToBytes` and `DecodeFromBytes` returning `Result`. |\n| **ENC-002** | Error type **must** be `EncodingError` with distinct variants. |\n| **ENC-003** | Utf8 **must** be the language-default encoding for `string` boundaries. |\n| **ENC-004** | Invalid UTF-8 decode **must** return `InvalidSequence`, not panic (corelib layer). |\n| **ENC-005** | Encoders **must not** perform I/O. |\n| **ENC-006** | Hex encode **must** use lowercase `a`–`f`. |\n| **ENC-007** | Hex decode **must** accept case-insensitive pairs. |\n| **ENC-008** | Base64 **must** use RFC 4648 standard alphabet with `=` padding on decode. |\n| **ENC-009** | Module tier **must** be `@tier(standard)` for prelude re-export. |\n\n## Per-encoding IDs\n\n| ID | Requirement |\n| --- | --- |\n| **ENC-UTF8-001** | `EncodeToBytes` copies UTF-8 code units without re-encoding. |\n| **ENC-UTF8-002** | `DecodeFromBytes` validates full buffer as UTF-8. |\n| **ENC-HEX-001** | Odd-length hex input **must** error. |\n| **ENC-B64-001** | Invalid padding or alphabet char **must** error. |\n\n## Implementation anchors\n\n- `compiler/corelib/packages/foundation/src/Core/Encoding/`"
+		}
+	]
+}

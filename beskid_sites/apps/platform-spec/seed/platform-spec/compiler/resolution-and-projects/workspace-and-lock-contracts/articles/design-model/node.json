@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/articles/design-model",
+  "title": "Workspace and lock contracts - Design model",
+  "description": "Compiler entities for workspace roots and lock materialization (workspace key prose defers to tooling).",
+  "parentSlug": "platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

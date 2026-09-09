@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/community/spec-maintenance/spec-authority-and-decisions",
+	"title": "Specification authority and embedded decisions",
+	"description": "Normative rules for language law vs implementation domains, maturity (Proposed/Standard), and embedded decision records in feature hubs and articles.",
+	"parentSlug": "platform-spec/community/spec-maintenance",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-21"
+}

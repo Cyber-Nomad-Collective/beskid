@@ -1,0 +1,17 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/articles/verification-and-traceability",
+	"title": "Verification and traceability",
+	"description": "Tests and traceability for corelib injection and resolution.",
+	"parentSlug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	}
+}

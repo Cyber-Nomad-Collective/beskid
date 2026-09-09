@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/articles/faq-and-troubleshooting",
+  "title": "Typed emitter and transforms - FAQ and troubleshooting",
+  "description": "Construction of syntax nodes and declarative transforms without raw text printing.",
+  "parentSlug": "platform-spec/compiler/compiler-mods/typed-emitter-and-transforms",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-04-30"
+}

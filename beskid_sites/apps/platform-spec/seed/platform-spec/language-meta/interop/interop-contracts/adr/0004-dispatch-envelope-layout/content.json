@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nSoft runtime ops share a small kernel export set in v3. Generated code and hosts need a stable, versioned envelope so dispatch tags, payload pointers, and return groups interoperate across JIT, AOT, and registration.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Envelope type | **`RuntimeInteropEnvelope`** is the normative tagged payload header for v3 soft dispatch |\n| Layout band | Envelope field offsets and size **must** version with `BESKID_RUNTIME_ABI_VERSION`; v3 defines the initial band |\n| Tag validity | Dispatch tags **must** be assigned from the manifest; runtime **must** reject unknown tags (bitmap or table validation) |\n| Return groups | Tags partition into `unit`, `ptr`, `usize`, and `i64` return groups; codegen **must** call the matching `interop_dispatch_*` kernel entry |\n| Conformance | Hosts claiming Interop.Contracts compatibility **must** honor envelope layout for the advertised ABI version |\n\nEnvelope offsets are realized in `beskid_runtime::interop_layout` and documented in corelib `Runtime.Abi`.\n\n## Consequences\n\nEnvelope layout changes **must** increment `BESKID_RUNTIME_ABI_VERSION` per [D-EXEC-ABI-0002](/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/adr/0002-breaking-changes-bump-version/). Tag tables are generated from `runtime_manifest.toml`.\n\n## Verification anchors\n\n`compiler/crates/beskid_runtime/src/interop_layout.rs`; `compiler/crates/beskid_tests/src/interop/`; corelib `Runtime/Abi.bd`."
+		}
+	]
+}

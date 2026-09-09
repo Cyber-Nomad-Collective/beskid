@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/community/spec-maintenance/spec-authority-and-decisions/adr/0004-adr-per-decision-files",
+	"title": "One ADR file per closed decision",
+	"description": "Standard features publish adr/ with specLevel adr, stable adrId, and Context/Decision/Consequences sections.",
+	"parentSlug": "platform-spec/community/spec-maintenance/spec-authority-and-decisions",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-COMM-AUTH-0004",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-05-21",
+	"lastReviewed": "2026-05-22"
+}

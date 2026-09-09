@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nAn earlier sidebar **Dashboard** webview (`beskidDashboardView`) occupied the top of the Beskid activity-bar container. Operators expected the Beskid status-bar item to open a lightweight **popover-style** quick panel (runtime snapshot + actions), not a persistent sidebar header.\n\nVS Code extensions have no native floating popover API. A singleton **WebviewPanel** with modal scrim styling is the supported overlay pattern.\n\n## Decision\n\n1. **Remove** `beskidDashboardView` from `contributes.views.beskidViews`.\n2. Status-bar click runs **`beskid.modal.open`**, which creates or reveals a singleton WebviewPanel with centered card UI (LSP phase, focused project, quick actions).\n3. Escape, scrim click, or close disposes the panel.\n4. **`beskid.debug.enabled`** (default `false`) gates the optional Debug tree view.\n\n## Consequences\n\n- Activity bar shows Workspaces, Project, Outline, and Packages (local deps) only.\n- Dashboard HTML moves to the modal panel module; no sidebar webview views remain.\n- Integration tests assert `beskid.modal.open` instead of `beskidDashboardView.focus`.\n\n## Verification anchors\n\n`beskid_vscode/package.json`; `beskid_vscode/src/dashboard/BeskidModalPanel.ts`; `test/viewsContract.test.ts`."
+		}
+	]
+}

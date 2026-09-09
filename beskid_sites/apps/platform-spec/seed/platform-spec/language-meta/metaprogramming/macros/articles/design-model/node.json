@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/metaprogramming/macros/articles/design-model",
+	"title": "Language macros - Design model",
+	"description": "Conceptual model for module-level macro rules, fragment parameters, and typed AST expansion in Beskid.",
+	"parentSlug": "platform-spec/language-meta/metaprogramming/macros",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

@@ -1,0 +1,14 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/core-library/stability-and-api-shape/core-time",
+	"title": "Core.Time",
+	"description": "UTC civil time types and clock helpers backed by runtime clock builtins.",
+	"parentSlug": "platform-spec/core-library/stability-and-api-shape",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-09"
+}

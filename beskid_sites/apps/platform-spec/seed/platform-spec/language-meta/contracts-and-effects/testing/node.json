@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/language-meta/contracts-and-effects/testing",
+	"title": "Testing",
+	"description": "The language-level test harness, discovery, and assertions users rely on. Corelib testing helpers extend but do not redefine these semantics.",
+	"parentSlug": "platform-spec/language-meta/contracts-and-effects",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-21"
+}

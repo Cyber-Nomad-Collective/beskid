@@ -1,0 +1,19 @@
+import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Normative requirements
+
+| ID | Requirement |
+| --- | --- |
+| **TM-001** | `NowUtc` **must** read `__clock_realtime_nanos`. |
+| **TM-002** | `MonotonicNow` **must** read `__clock_monotonic_nanos`. |
+| **TM-003** | `ToUtcDateTime` **must** only accept realtime-domain instants. |
+| **TM-004** | `ParseIso8601Date` **must** require exactly ten characters and `-` separators at indices 4 and 7. |
+| **TM-005** | `Duration` storage **must** use nanoseconds internally in v1. |
+| **TM-006** | Local timezone offsets **must not** appear in v1 corelib APIs. |
+
+## Edge cases
+
+- Pre-1970 UTC instants are supported by conversion helpers but are not required for host smoke tests.
+- Sub-second ISO output is omitted in v1; nanoseconds remain available on `TimeOfDay.nanosecond`.

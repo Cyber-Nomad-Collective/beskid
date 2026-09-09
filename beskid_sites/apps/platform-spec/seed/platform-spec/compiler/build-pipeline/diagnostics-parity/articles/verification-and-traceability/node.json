@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/build-pipeline/diagnostics-parity/articles/verification-and-traceability",
+  "title": "Diagnostics parity (CLI and LSP) - Verification and traceability",
+  "description": "Source anchors and tests used to prevent diagnostic drift between compiler surfaces.",
+  "parentSlug": "platform-spec/compiler/build-pipeline/diagnostics-parity",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

@@ -1,0 +1,43 @@
+name: Setup Rust build tools
+description: Install the pinned Linux linker and optional Rust compiler cache used by compiler builds.
+
+inputs:
+  install-sccache:
+    description: Install sccache and configure it as the Rust compiler wrapper.
+    required: false
+    default: "false"
+
+runs:
+  using: composite
+  steps:
+    - name: Install cargo-binstall
+      if: runner.os == 'Linux'
+      uses: cargo-bins/cargo-binstall@b874e25ea559687bec77e281e9b271aa1367b624 # v1.23.0
+      with:
+        version: "1.23.0"
+
+    - name: Install mold
+      if: runner.os == 'Linux'
+      uses: rui314/setup-mold@7e4f20ad28a2e8ca6fd0892ccf72e2abb706b9c3 # v1
+      with:
+        mold-version: "2.42.0"
+        make-default: false
+
+    - name: Verify Rust build tools
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        set -euo pipefail
+        cargo-binstall -V
+        mold --version
+
+    - name: Install sccache
+      if: runner.os == 'Linux' && inputs.install-sccache == 'true'
+      shell: bash
+      run: |
+        set -euo pipefail
+        SCCACHE_VERSION="0.9.1"
+        cargo binstall --version "${SCCACHE_VERSION}" --no-confirm --locked --strategies crate-meta-data,quick-install sccache
+        sccache --version
+        echo "RUSTC_WRAPPER=sccache" >> "${GITHUB_ENV}"
+        echo "SCCACHE_DIR=${RUNNER_TEMP}/sccache" >> "${GITHUB_ENV}"

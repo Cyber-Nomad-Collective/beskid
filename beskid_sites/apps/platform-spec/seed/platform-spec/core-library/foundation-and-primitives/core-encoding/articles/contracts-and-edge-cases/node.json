@@ -1,0 +1,14 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/core-library/foundation-and-primitives/core-encoding/articles/contracts-and-edge-cases",
+	"title": "Contracts and edge cases",
+	"description": "MUST rules for Core.Encoding.",
+	"parentSlug": "platform-spec/core-library/foundation-and-primitives/core-encoding",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-06"
+}

@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade/articles/faq-and-troubleshooting",
+  "title": "Beskid.Compiler.SyntaxMirror facade - FAQ and troubleshooting",
+  "description": "Typed, allocation-bounded syntax node API exposed to compile-time Beskid modules.",
+  "parentSlug": "platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-04-30"
+}

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/articles/examples",
+  "title": "Workspace resolution contract - Examples",
+  "description": "Practical examples of manifest graph resolution and target path selection.",
+  "parentSlug": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

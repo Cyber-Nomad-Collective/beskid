@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/execution/abi-and-host/builtins-and-symbols/adr/0004-runtime-c-unwind-exports",
+	"title": "Runtime builtins use C-unwind exports",
+	"description": "no_mangle extern C-unwind symbols implement the stable host surface.",
+	"parentSlug": "platform-spec/execution/abi-and-host/builtins-and-symbols",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-EXEC-ABI-0004",
+	"adrStatus": "Accepted",
+	"adrDate": "2025-10-15",
+	"lastReviewed": "2026-05-22"
+}

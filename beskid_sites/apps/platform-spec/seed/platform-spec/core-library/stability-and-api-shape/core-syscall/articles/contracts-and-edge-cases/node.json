@@ -1,0 +1,14 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/core-library/stability-and-api-shape/core-syscall/articles/contracts-and-edge-cases",
+	"title": "Contracts and edge cases",
+	"description": "MUST rules for Core.Syscall facade.",
+	"parentSlug": "platform-spec/core-library/stability-and-api-shape/core-syscall",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-06"
+}

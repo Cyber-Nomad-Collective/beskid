@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/front-end/grammar-and-parser-contract/articles/examples",
+  "title": "Grammar and parser contract - Examples",
+  "description": "Gives concrete newcomer-friendly scenarios mapped to real compiler paths.",
+  "parentSlug": "platform-spec/compiler/front-end/grammar-and-parser-contract",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

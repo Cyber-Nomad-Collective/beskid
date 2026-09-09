@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "specLevel": "adr",
+  "slug": "platform-spec/compiler/build-pipeline/backends-jit-aot/adr/0003-shared-codegen-artifact-backends",
+  "title": "Shared CodegenArtifact for JIT and AOT",
+  "description": "JIT and AOT must consume the same lowered artifact.",
+  "parentSlug": "platform-spec/compiler/build-pipeline/backends-jit-aot",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "adrId": "D-COMP-BUILD-0003",
+  "adrStatus": "Accepted",
+  "adrDate": "2026-05-05",
+  "lastReviewed": "2026-05-22"
+}

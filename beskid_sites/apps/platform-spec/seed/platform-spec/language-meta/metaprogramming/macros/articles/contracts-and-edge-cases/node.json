@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/metaprogramming/macros/articles/contracts-and-edge-cases",
+	"title": "Language macros - Contracts and edge cases",
+	"description": "Normative contracts, edge cases, and invariants for Beskid language macros.",
+	"parentSlug": "platform-spec/language-meta/metaprogramming/macros",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

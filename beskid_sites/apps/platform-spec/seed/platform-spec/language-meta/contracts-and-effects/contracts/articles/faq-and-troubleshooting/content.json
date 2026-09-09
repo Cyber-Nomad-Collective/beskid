@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Locked decisions\n\n| Decision | ID | Summary |\n| --- | --- | --- |\n| Structural contracts | D-LM-CON-001 | Nominal surfaces checked structurally |\n| Embedding | D-LM-CON-002 | Composes requirements without inheritance |\n| No `requires`/`ensures` | D-LM-CON-003 | Deferred to future version |\n| Distinct from Mod SDK | D-LM-CON-004 | Mod contracts follow SDK spec |\n\n## FAQ\n\n### Can a contract have a default method body?\n\nNo. Contract items are signatures only in v0.1. Default bodies may be added in a future version.\n\n### What is the difference between `contract` and `interface`?\n\nBeskid uses `contract` as the keyword. The concept is similar to interfaces in other languages, but checked structurally at compile time.\n\n### Can I embed multiple contracts?\n\nYes. A contract may embed multiple other contracts. Conflicting method names from embedded contracts emit **E1004**.\n\n## Troubleshooting\n\n| Symptom | Likely cause |\n| --- | --- |\n| **E1601** | Type missing a required contract method |\n| **E1602** | Contract method signature does not match implementation |\n| **E1004** | Two embedded contracts define the same method |\n| **E1607** | Conformance target is not a contract |\n| **E1003** | Duplicate method name inside one contract |"
+		}
+	]
+}

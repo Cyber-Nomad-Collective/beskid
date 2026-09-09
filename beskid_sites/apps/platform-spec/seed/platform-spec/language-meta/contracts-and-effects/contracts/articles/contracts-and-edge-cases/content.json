@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Hard requirements\n\n- **Structural contracts** — Checked structurally at compile time, not runtime interface tables.\n- **Embedding composes requirements** — Contract embedding flattens member requirements without inheritance syntax.\n- **No `requires`/`ensures` in v0.1** — Design-by-contract assertions are deferred.\n- **Distinct from Mod SDK** — Compiler mod contracts follow the Mod SDK spec, not this surface.\n\n## Diagnostic band E16xx\n\n| Code | Condition |\n| --- | --- |\n| **E1601** | Contract method missing implementation |\n| **E1602** | Contract implementation signature mismatch |\n| **E1606** | Contract method not found (resolution) |\n| **E1607** | Invalid conformance target |\n\n## Edge cases\n\n- **Empty contract** — A contract with no items is valid but useless unless used as a marker.\n- **Self-conformance** — A type does not automatically conform to a contract it defines; explicit `: Contract` is required.\n- **Generic contract** — Contracts may declare generic parameters; implementing types must match arity.\n- **Contract method default body** — Not supported in v0.1; all contract methods are signatures only.\n\n## Invariants\n\n- Every type advertising conformance must pass contract satisfaction before lowering.\n- Contract calls use static dispatch on the receiver's type after conformance is proven.\n- Embedded contract conflicts must be detected at definition time, not at use time."
+		}
+	]
+}

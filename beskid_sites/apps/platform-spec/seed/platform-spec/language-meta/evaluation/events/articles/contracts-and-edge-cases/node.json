@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/evaluation/events/articles/contracts-and-edge-cases",
+	"title": "Events - Contracts and edge cases",
+	"description": "Normative contracts, edge cases, and invariants for Beskid events.",
+	"parentSlug": "platform-spec/language-meta/evaluation/events",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

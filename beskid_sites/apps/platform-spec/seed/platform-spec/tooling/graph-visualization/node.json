@@ -1,0 +1,8 @@
+{
+	"version": 1,
+	"specLevel": "area",
+	"slug": "platform-spec/tooling/graph-visualization",
+	"title": "Graph Visualization",
+	"parentSlug": "platform-spec/tooling",
+	"status": "published"
+}

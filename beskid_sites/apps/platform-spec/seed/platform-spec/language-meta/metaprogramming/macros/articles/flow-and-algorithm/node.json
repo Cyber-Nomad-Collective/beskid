@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/metaprogramming/macros/articles/flow-and-algorithm",
+	"title": "Language macros - Flow and algorithm",
+	"description": "Step-by-step flow of macro parsing, registration, expansion, and re-analysis in the Beskid compiler.",
+	"parentSlug": "platform-spec/language-meta/metaprogramming/macros",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

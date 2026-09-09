@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/core-library/concurrency/concurrency-package/adr/0006-spawn-keyword-reserved-async",
+	"title": "spawn keyword; async and await reserved",
+	"description": "Keyword policy for fiber introduction vs deferred async syntax.",
+	"parentSlug": "platform-spec/core-library/concurrency/concurrency-package",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-CORE-CONC-0006",
+	"adrStatus": "Accepted",
+	"adrDate": "2025-08-01",
+	"lastReviewed": "2026-05-22"
+}

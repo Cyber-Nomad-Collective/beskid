@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nLegacy `rt_now_millis` and scattered clock builtins confuse package boundaries.\n\n## Decision\n\n`` `Concurrency.NowMillis() -> i64` `` in concurrency package replaces legacy `rt_now_millis`. Wall clock deferred to future `Core.Time`.\n\n## Consequences\n\nWall-clock ADR required before exposing civil time in corelib.\n\n## Verification anchors\n\nBuiltin spec table; corelib clock smoke tests."
+		}
+	]
+}

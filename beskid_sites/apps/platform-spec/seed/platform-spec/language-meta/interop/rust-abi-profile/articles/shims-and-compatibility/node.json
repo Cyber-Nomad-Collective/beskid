@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/interop/rust-abi-profile/articles/shims-and-compatibility",
+	"title": "Rust ABI profile — Shims and compatibility strategy",
+	"description": "How future Rust-native interop would layer on top of C ABI exports without breaking the stable runtime contract.",
+	"parentSlug": "platform-spec/language-meta/interop/rust-abi-profile",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-06"
+}

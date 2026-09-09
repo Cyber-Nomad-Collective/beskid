@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "specLevel": "adr",
+  "slug": "platform-spec/compiler/resolution-and-projects/project-manifest-contract/adr/0002-spec-over-implementation-notes",
+  "title": "Specification over implementation notes",
+  "description": "Platform-spec text supersedes informal crate comments for Project manifest contract.",
+  "parentSlug": "platform-spec/compiler/resolution-and-projects/project-manifest-contract",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "adrId": "D-COMP-PROJ-0005",
+  "adrStatus": "Accepted",
+  "adrDate": "2026-05-05",
+  "lastReviewed": "2026-05-22"
+}

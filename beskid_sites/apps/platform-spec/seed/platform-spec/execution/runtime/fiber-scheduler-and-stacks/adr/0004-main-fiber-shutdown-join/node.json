@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/execution/runtime/fiber-scheduler-and-stacks/adr/0004-main-fiber-shutdown-join",
+	"title": "Main fiber shutdown joins spawned children",
+	"description": "main returns after joining non-Detached fibers; Detach panics still abort.",
+	"parentSlug": "platform-spec/execution/runtime/fiber-scheduler-and-stacks",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-EXEC-RT-0004",
+	"adrStatus": "Accepted",
+	"adrDate": "2025-09-01",
+	"lastReviewed": "2026-05-22"
+}

@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "specLevel": "adr",
+  "slug": "platform-spec/compiler/build-pipeline/program-assembly/adr/0004-dependency-prelude-union-seeding",
+  "title": "Dependency prelude union seeding (superseded)",
+  "description": "include_std_prelude unions pub mod lines from every effective root Prelude.bd without string heuristics.",
+  "parentSlug": "platform-spec/compiler/build-pipeline/program-assembly",
+  "status": "Superseded",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "adrId": "D-COMP-BUILD-0022",
+  "adrStatus": "Superseded",
+  "adrDate": "2026-05-29",
+  "lastReviewed": "2026-06-07"
+}

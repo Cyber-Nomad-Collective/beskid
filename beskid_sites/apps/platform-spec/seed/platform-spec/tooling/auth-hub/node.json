@@ -1,0 +1,8 @@
+{
+	"version": 1,
+	"specLevel": "area",
+	"slug": "platform-spec/tooling/auth-hub",
+	"title": "Auth Hub",
+	"parentSlug": "platform-spec/tooling",
+	"status": "published"
+}

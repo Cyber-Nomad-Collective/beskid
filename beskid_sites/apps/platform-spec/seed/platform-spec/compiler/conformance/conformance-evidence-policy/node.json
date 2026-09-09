@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "feature",
+  "slug": "platform-spec/compiler/conformance/conformance-evidence-policy",
+  "title": "Conformance evidence policy",
+  "description": "Feature hub for the conformance evidence policy in the reference compiler.",
+  "parentSlug": "platform-spec/compiler/conformance",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-04-30"
+}

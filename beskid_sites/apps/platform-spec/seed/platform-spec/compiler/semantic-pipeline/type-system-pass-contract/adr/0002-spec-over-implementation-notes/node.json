@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "specLevel": "adr",
+  "slug": "platform-spec/compiler/semantic-pipeline/type-system-pass-contract/adr/0002-spec-over-implementation-notes",
+  "title": "Specification over implementation notes",
+  "description": "Platform-spec text supersedes informal crate comments for Type-system pass contract.",
+  "parentSlug": "platform-spec/compiler/semantic-pipeline/type-system-pass-contract",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "adrId": "D-COMP-SEM-0014",
+  "adrStatus": "Accepted",
+  "adrDate": "2026-05-05",
+  "lastReviewed": "2026-05-22"
+}

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/conformance/conformance-evidence-policy/articles/verification-and-traceability",
+  "title": "Conformance evidence policy - Verification and traceability",
+  "description": "Shows how the team proves this feature works and where evidence lives.",
+  "parentSlug": "platform-spec/compiler/conformance/conformance-evidence-policy",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

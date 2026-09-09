@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/adr/0001-hard-abi-version-check",
+	"title": "Hard ABI version check before user code",
+	"description": "Hosts reject mismatched compiler and runtime ABI integers before executing generated code.",
+	"parentSlug": "platform-spec/execution/abi-and-host/abi-versioning-and-compatibility",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-EXEC-ABI-0001",
+	"adrStatus": "Accepted",
+	"adrDate": "2025-11-01",
+	"lastReviewed": "2026-05-22"
+}

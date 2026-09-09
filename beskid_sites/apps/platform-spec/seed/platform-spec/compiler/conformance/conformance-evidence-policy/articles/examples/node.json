@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/conformance/conformance-evidence-policy/articles/examples",
+  "title": "Conformance evidence policy - Examples",
+  "description": "Gives concrete newcomer-friendly scenarios mapped to real compiler paths.",
+  "parentSlug": "platform-spec/compiler/conformance/conformance-evidence-policy",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

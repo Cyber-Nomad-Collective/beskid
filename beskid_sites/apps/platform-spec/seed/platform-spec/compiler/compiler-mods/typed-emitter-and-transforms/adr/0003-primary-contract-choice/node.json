@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "specLevel": "adr",
+  "slug": "platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/adr/0003-primary-contract-choice",
+  "title": "Primary contract for Typed emitter and transforms",
+  "description": "This feature hub defines the normative contract for **`Beskid.Compiler.Emit`** (typed emitter and transforms) and links",
+  "parentSlug": "platform-spec/compiler/compiler-mods/typed-emitter-and-transforms",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "adrId": "D-COMP-MODS-0018",
+  "adrStatus": "Accepted",
+  "adrDate": "2026-05-20",
+  "lastReviewed": "2026-05-22"
+}

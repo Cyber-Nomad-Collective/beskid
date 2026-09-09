@@ -1,0 +1,14 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/core-library/stability-and-api-shape/core-time/articles/design-model",
+	"title": "Design model",
+	"description": "UTC civil time layering over runtime clock builtins.",
+	"parentSlug": "platform-spec/core-library/stability-and-api-shape/core-time",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-09"
+}

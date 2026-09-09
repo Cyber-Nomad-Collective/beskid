@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/build-pipeline/stage-ordering/articles/verification-and-traceability",
+  "title": "Stage ordering and lowering - Verification and traceability",
+  "description": "Source and test anchors that verify lowering order and backend artifact handoff.",
+  "parentSlug": "platform-spec/compiler/build-pipeline/stage-ordering",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

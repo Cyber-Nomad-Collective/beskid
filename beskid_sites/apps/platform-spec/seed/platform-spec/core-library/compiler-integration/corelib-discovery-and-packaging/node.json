@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging",
+	"title": "Corelib discovery and packaging",
+	"description": "Compiler/runtime contracts for locating, embedding, and validating the canonical corelib package.",
+	"parentSlug": "platform-spec/core-library/compiler-integration",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-04-30"
+}

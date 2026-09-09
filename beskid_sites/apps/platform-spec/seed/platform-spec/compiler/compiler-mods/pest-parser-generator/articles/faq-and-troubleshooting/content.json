@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "blocks": [
+    {
+      "type": "markdownProse",
+      "bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## FAQ\n\n### Why host Rust for codegen?\n\n`pest_derive` is compile-time only; mods orchestrate, host emits."
+    }
+  ]
+}

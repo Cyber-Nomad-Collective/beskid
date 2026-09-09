@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nHand-rolled parsers (`Console.Format.Markdown`) and future Pest-generated parsers need one predictable combinator substrate.\n\n## Decision\n\n| ID | Rule |\n| --- | --- |\n| **D-CORE-TEXT-0002** | Backtracking **must** occur only at `Choice` boundaries; no unbounded memoization in v1. |\n| **D-CORE-TEXT-0003** | `Many`/`Many1` on a zero-width parser **must** error at runtime or be rejected at codegen. |\n| **D-CORE-TEXT-0004** | Regex and generated parsers **must** enforce a default 1 MiB input cap. |\n| **D-CORE-TEXT-0005** | Generated parsers **must** attach Pest rule names to `ParseResult::Err`. |\n\n## Consequences\n\n- Simpler runtime than Packrat parsing.\n- Grammar authors must avoid left recursion and zero-width loops (codegen **E18xx**).\n\n## Verification anchors\n\n- `compiler/corelib/packages/foundation/src/Core/Text/Parser.bd`\n- `compiler/corelib/beskid_corelib/tests/corelib_tests/src/text/`"
+		}
+	]
+}

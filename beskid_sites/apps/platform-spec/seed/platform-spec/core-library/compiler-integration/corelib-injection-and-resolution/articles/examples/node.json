@@ -1,0 +1,17 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/articles/examples",
+	"title": "Examples",
+	"description": "Observable corelib injection scenarios.",
+	"parentSlug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	}
+}

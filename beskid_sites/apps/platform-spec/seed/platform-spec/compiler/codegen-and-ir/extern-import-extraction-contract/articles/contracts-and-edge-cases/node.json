@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/articles/contracts-and-edge-cases",
+  "title": "Extern import extraction contract - Contracts and edge cases",
+  "description": "States the normative guarantees and what happens at boundaries or failure edges.",
+  "parentSlug": "platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

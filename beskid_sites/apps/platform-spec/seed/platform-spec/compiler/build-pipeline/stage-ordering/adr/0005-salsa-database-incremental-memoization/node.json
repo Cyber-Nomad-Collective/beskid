@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "specLevel": "adr",
+  "slug": "platform-spec/compiler/build-pipeline/stage-ordering/adr/0005-salsa-database-incremental-memoization",
+  "title": "Salsa database owns incremental analysis memoization",
+  "description": "BeskidDatabase in beskid_queries is the host for incremental compilation memoization across CLI, LSP, and tests.",
+  "parentSlug": "platform-spec/compiler/build-pipeline/stage-ordering",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "adrId": "D-COMP-BUILD-0021",
+  "adrStatus": "Accepted",
+  "adrDate": "2026-05-30",
+  "lastReviewed": "2026-06-05"
+}

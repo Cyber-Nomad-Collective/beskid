@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Vocabulary\n\n| Construct | Role |\n| --- | --- |\n| **`Resolver`** | Central name resolution state |\n| **`Scope`** | Hierarchical binding container |\n| **`ValuePath`** | Path resolving to functions, locals, constants, enum constructors |\n| **`TypePath`** | Path resolving to types, generics, primitives |\n\n## Resolution architecture\n\nName resolution is **single-pass** with a shared snapshot per compilation. The package driver and typechecker share one resolver graph.\n\n```mermaid\nflowchart LR\n    use[use declarations]\n    scope[Build scope chain]\n    path[Qualify path segments]\n    vis[Check visibility]\n    bind[Bind to symbol]\n    use --> scope --> path --> vis --> bind\n```\n\n### Subsystem boundaries\n\n| Subsystem | Responsibility | Key file |\n| --- | --- | --- |\n| Parser | Parse `use` and paths | `syntax/items/use_declaration.rs` |\n| Resolver | Build scope chain and bind names | `resolve/resolver.rs`, `resolve/collect.rs` |\n| Resolve refs | Walk AST and resolve references | `resolve/resolve_refs.rs` |\n| Name resolution rules | Emit resolution diagnostics | `analysis/rules/staged/name_resolution.rs` |\n\n## Scope chain\n\nResolution walks from innermost scope outward:\n1. Local scope (function/lambda parameters and `let` bindings)\n2. Module scope (items in the current module)\n3. Import scope (`use` bindings)\n4. Global scope (prelude and built-in types)\n\n## Shadowing\n\nInner scopes may shadow outer locals. `ResolveShadowedLocal` (**W1103**) warns when shadowing occurs."
+		}
+	]
+}

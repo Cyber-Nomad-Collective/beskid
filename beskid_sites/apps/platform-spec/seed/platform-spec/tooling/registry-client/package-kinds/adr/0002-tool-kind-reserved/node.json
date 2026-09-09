@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/tooling/registry-client/package-kinds/adr/0002-tool-kind-reserved",
+	"title": "tool reserved (superseded)",
+	"description": "Historical reservation of `packageKind: tool` without a normative profile; superseded by D-TOOL-PCKG-0004.",
+	"parentSlug": "platform-spec/tooling/registry-client/package-kinds",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-TOOL-PCKG-0002",
+	"adrStatus": "Superseded",
+	"adrDate": "2026-05-20",
+	"lastReviewed": "2026-05-23"
+}

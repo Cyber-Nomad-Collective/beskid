@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Vocabulary\n\n| Construct | Role |\n| --- | --- |\n| **`ContractDefinition`** | Declares required members (method signatures and embeddings) |\n| **`ContractNode`** | Either a method signature or an embedded contract reference |\n| **`ContractEmbedding`** | Flattened member requirements from another contract |\n| **`ContractMethodSignature`** | Method signature without body inside a contract |\n\n## Contract architecture\n\nContracts are **structural interfaces** checked at compile time. Types implement contracts via conformance lists (`: I, J`).\n\n```mermaid\nflowchart LR\n    parse[parse contract]\n    collect[collect definitions]\n    resolve[resolve conformances]\n    check[contracts.rs]\n    lower[lower to HIR]\n    parse --> collect --> resolve --> check --> lower\n```\n\n### Subsystem boundaries\n\n| Subsystem | Responsibility | Key file |\n| --- | --- | --- |\n| Parser | Parse `contract` and `ContractNode` | `syntax/items/contract_definition.rs` |\n| AST | Store contract structure | `syntax/items/contract_node.rs` |\n| Resolver | Bind conformance targets | `resolve/` |\n| Contract rules | Check satisfaction | `analysis/rules/staged/contracts.rs` |\n| HIR lowering | Embed contract metadata | `hir/lowering/items.rs` |\n\n## Embedding model\n\nContracts may embed other contracts (`OtherContract;` inside a contract body). This flattens member requirements without inheritance syntax. Conflicting embedded methods emit **E1004**.\n\n## Distinction from Mod SDK\n\nThis user-language `contract` surface is distinct from compiler Mod SDK contracts. Mod contracts follow the [Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/) specification."
+		}
+	]
+}

@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/metaprogramming/macros/articles/faq-and-troubleshooting",
+	"title": "Language macros - FAQ and troubleshooting",
+	"description": "Common issues, troubleshooting, and locked decisions for Beskid language macros.",
+	"parentSlug": "platform-spec/language-meta/metaprogramming/macros",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

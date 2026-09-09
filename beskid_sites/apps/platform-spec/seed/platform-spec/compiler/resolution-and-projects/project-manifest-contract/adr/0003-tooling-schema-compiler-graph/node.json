@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "specLevel": "adr",
+  "slug": "platform-spec/compiler/resolution-and-projects/project-manifest-contract/adr/0003-tooling-schema-compiler-graph",
+  "title": "Tooling owns schema; compiler owns graph",
+  "description": "Manifest key tables were duplicated between tooling and compiler specs.",
+  "parentSlug": "platform-spec/compiler/resolution-and-projects/project-manifest-contract",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "adrId": "D-COMP-PROJ-0006",
+  "adrStatus": "Accepted",
+  "adrDate": "2026-05-05",
+  "lastReviewed": "2026-05-22"
+}

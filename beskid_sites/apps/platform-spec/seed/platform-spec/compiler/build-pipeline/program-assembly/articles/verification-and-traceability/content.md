@@ -1,0 +1,12 @@
+import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+Implementation anchors:
+
+- `compiler/crates/beskid_analysis/src/projects/assembly/`
+- `compiler/crates/beskid_analysis/src/services/front_end.rs`
+- `compiler/crates/beskid_pipeline/src/phases.rs` (`program.assemble`)
+- `compiler/crates/beskid_tests/src/projects/assembly.rs`
+
+Tests **must** cover materialized root preference, import-closure loading of std modules (corelib_mvp fixture), pipeline phase order, and lowering without analyze-side diagnostic filtering.

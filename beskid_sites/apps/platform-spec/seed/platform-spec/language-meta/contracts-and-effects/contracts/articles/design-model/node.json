@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/contracts-and-effects/contracts/articles/design-model",
+	"title": "Contracts - Design model",
+	"description": "Conceptual model for structural contract declarations, conformance lists, and embedding in Beskid.",
+	"parentSlug": "platform-spec/language-meta/contracts-and-effects/contracts",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

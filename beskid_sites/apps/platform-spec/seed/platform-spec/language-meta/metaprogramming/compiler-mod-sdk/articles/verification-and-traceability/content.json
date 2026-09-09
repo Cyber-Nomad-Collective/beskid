@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Verification matrix\n\n| Scenario | Expected evidence |\n| --- | --- |\n| Mod package compilation | AOT artifact produced |\n| Descriptor generation | `mod.descriptor.json` valid |\n| Contract discovery | Host reads descriptor and schedules mods |\n| Collector execution | Targets narrowed correctly |\n| Generator execution | Typed AST contributions merged |\n| Analyzer execution | Diagnostics emitted on merged code |\n| Rewrite application | Valid typed replacements applied |\n\n## Implementation checklist\n\n- [x] Contract definitions: `Collector`, `Generator`, `Analyzer`, `Rewriter`, `AttributeGenerator`\n- [x] Mod host: load, discovery, scheduling\n- [x] AOT artifact contract\n- [x] Descriptor format\n- [x] Diagnostics: **E1829**, **E1851–E1870**, **E1880–E1884**\n- [ ] Full generator round limiting\n- [ ] Query pipeline conflict resolution\n- [ ] Incremental mod re-execution\n\n## Test locations\n\n- `compiler/crates/beskid_analysis/src/mod_host/` — mod host tests\n- `compiler/crates/beskid_tests` — integration tests for mods"
+		}
+	]
+}

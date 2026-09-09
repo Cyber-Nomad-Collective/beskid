@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/contracts-and-effects/error-handling/articles/design-model",
+	"title": "Error handling - Design model",
+	"description": "Conceptual model for recoverable failure representation and propagation in Beskid.",
+	"parentSlug": "platform-spec/language-meta/contracts-and-effects/error-handling",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

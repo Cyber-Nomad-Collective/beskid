@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Hard requirements\n\n- **No `switch` statement** — Sum-type branching uses `match` expressions only.\n- **Short-circuit booleans** — `&&` and `||` are mandatory short-circuit operators.\n- **`bool` conditions only** — `if`/`while` must not treat non-bool values as truthy.\n- **Structured transfer only** — `goto` is not in the grammar; use `break`/`continue`/`return`.\n\n## Diagnostic band E14xx\n\n| Code | Condition |\n| --- | --- |\n| **E1401** | `break` outside loop |\n| **E1402** | `continue` outside loop |\n| **W1403** | Unreachable code after unconditional transfer |\n\n## Edge cases\n\n- **Nested loops** — `break` and `continue` target the innermost enclosing loop. There is no labeled break in v0.1.\n- **Return in lambda** — `return` inside a lambda returns from the lambda, not the enclosing function.\n- **Unreachable after panic** — Code after a non-returning call (for example `panic`) is unreachable; **W1403** applies.\n- **Empty loop body** — `while (cond) { }` is valid; the condition is re-evaluated each iteration.\n\n## Invariants\n\n- Every function body must normalize to a valid control flow graph without irreducible loops.\n- `break` and `continue` must not appear in HIR after normalization unless inside a loop.\n- The compiler must preserve short-circuit semantics for `&&` and `||` through all optimization levels."
+		}
+	]
+}

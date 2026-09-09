@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Diagnostics parity (CLI and LSP)",
+      "href": "/platform-spec/compiler/build-pipeline/diagnostics-parity/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Rules and diagnostics catalog",
+      "href": "/platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/",
+      "relation": "Rule-level diagnostic definitions"
+    }
+  ]
+}

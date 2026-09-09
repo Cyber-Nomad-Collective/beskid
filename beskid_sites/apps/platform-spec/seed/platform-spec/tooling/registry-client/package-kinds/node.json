@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/tooling/registry-client/package-kinds",
+	"title": "Package kinds",
+	"description": "Registry taxonomy for `packageKind` on `beskid.package.v1` — Standard surfaces for library, template, and tool packages.",
+	"parentSlug": "platform-spec/tooling/registry-client",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-23"
+}

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/semantic-pipeline/stage-ordering/articles/verification-and-traceability",
+  "title": "Semantic pipeline stage ordering - Verification and traceability",
+  "description": "Conformance evidence for lower-spine type-check ownership and stable diagnostic codes.",
+  "parentSlug": "platform-spec/compiler/semantic-pipeline/stage-ordering",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

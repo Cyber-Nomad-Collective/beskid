@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "blocks": [
+    {
+      "type": "markdownProse",
+      "bodyMd": "import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\n`beskid_queries` exports `SharedResolution(Arc<Resolution>)` but tooling historically read raw `Resolution` from `FrontEndTypedResult` or `DocumentAnalysisSnapshot`. Callers that need symbol registry lookups duplicated `symbol_lookup` imports or skipped registry-aware paths entirely.\n\nFull `prepare_compilation` / typecheck is heavier than LSP or doc paths that only need assembly-backed entry resolve.\n\n## Decision\n\n1. **`SharedResolution`** wraps `Arc<Resolution>` and exposes thin delegates: `symbols()`, `by_symbol()`, `symbol_for_item`, `item_id_for_symbol`, `canonical_item_id`, `qualified_name` (no duplicated registry logic).\n\n2. **`entry_resolution_with_db`** in `beskid_queries::entry` runs the assembly + `ModuleIndex::resolve_entry_hir` spine and returns `SharedResolution` **without** typing the entry program.\n\n3. **`typed_entry_bundle`** remains the executable path; resolution-only callers **should** prefer `entry_resolution_with_db` when type results are not needed.\n\nIDE document analysis continues to use `DocumentAnalysisSnapshot.resolution`; registry invariants are the same `Resolution` product described in [D-COMP-SEM-0016](/platform-spec/compiler/semantic-pipeline/resolver-contract/adr/0005-package-prefixed-symbol-identity/).\n\n## Consequences\n\n- Incremental hosts can memoize entry resolution separately from typed HIR when safe.\n- Tests assert non-empty `by_symbol` on fixture projects after `entry_resolution_with_db`.\n\n## Verification anchors\n\n- `compiler/crates/beskid_queries/src/output.rs`\n- `compiler/crates/beskid_queries/src/entry.rs`\n- `compiler/crates/beskid_queries/tests/incremental.rs`"
+    }
+  ]
+}

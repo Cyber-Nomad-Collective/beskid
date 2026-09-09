@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/community/spec-maintenance/feature-hub-article-bundle-template/adr/0001-markdown-first-authoring",
+	"title": "Markdown-first platform-spec authoring",
+	"description": "Regular sections use markdown headings; arch and mermaid fences for diagrams; components are edge cases only.",
+	"parentSlug": "platform-spec/community/spec-maintenance/feature-hub-article-bundle-template",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-COMM-HUB-0001",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-05-05",
+	"lastReviewed": "2026-05-22"
+}

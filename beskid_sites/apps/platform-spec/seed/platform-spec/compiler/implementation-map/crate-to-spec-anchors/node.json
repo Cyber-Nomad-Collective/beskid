@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "feature",
+  "slug": "platform-spec/compiler/implementation-map/crate-to-spec-anchors",
+  "title": "Crate-to-spec anchors",
+  "description": "Formal mapping from compiler crates to platform-spec areas and feature leaves.",
+  "parentSlug": "platform-spec/compiler/implementation-map",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-04-30"
+}

@@ -1,0 +1,14 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/core-library/foundation-and-primitives/core-fluent/articles/design-model",
+	"title": "Design model",
+	"description": "Fluent step contracts, Beskid.Fluent attributes, and compiler-owned generation.",
+	"parentSlug": "platform-spec/core-library/foundation-and-primitives/core-fluent",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-10"
+}

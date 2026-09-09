@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "feature",
+  "slug": "platform-spec/compiler/conformance/test-harnesses-and-fixtures",
+  "title": "Test harnesses and fixtures",
+  "description": "Conformance and regression fixture contracts across compiler unit, integration, and end-to-end test crates.",
+  "parentSlug": "platform-spec/compiler/conformance",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-05-29"
+}

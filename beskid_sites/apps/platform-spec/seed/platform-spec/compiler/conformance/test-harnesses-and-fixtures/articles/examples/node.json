@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/conformance/test-harnesses-and-fixtures/articles/examples",
+  "title": "Examples",
+  "description": "Practical examples that demonstrate `Test harnesses and fixtures` behavior.",
+  "parentSlug": "platform-spec/compiler/conformance/test-harnesses-and-fixtures",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

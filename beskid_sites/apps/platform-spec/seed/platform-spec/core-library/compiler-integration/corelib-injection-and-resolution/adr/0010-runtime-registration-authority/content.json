@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nRuntime status codes and dispatch metadata lived in parallel Rust constants (`beskid_runtime::status`) and corelib modules. v3 registration moves authority to Beskid sources so the manifest, corelib, and generated tables stay aligned.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Single source | **`Runtime.Abi`** in corelib **must** own dispatch tag constants, envelope types, and runtime status codes for v3 |\n| Attributes | Corelib runtime shims **may** declare `[Runtime(DispatchTag: N, Returns: …)]` on functions; analysis merges these with manifest entries |\n| Init | **`Runtime.Init`** **must** register handlers via `__beskid_register_handlers` before user code ([D-EXEC-ABI-0008](/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/adr/0007-handler-registration-init-order/)) |\n| Rust substrate | `beskid_runtime` **must not** introduce new authoritative status or tag constants that diverge from corelib; Rust reads registration or generated tables |\n| Concurrency / IO | Domain modules (for example concurrency status enums) **must** import from `Runtime.Abi` rather than mirror Rust literals |\n\n## Consequences\n\nCorelib compile tests and ABI contract tests cross-check tag and status parity. Rust `status.rs` shrinks over time as modules migrate.\n\n## Verification anchors\n\n`compiler/corelib/packages/runtime/src/Runtime/`; `compiler/crates/beskid_tests/src/abi/contracts.rs`; `compiler/crates/beskid_analysis/src/builtins.rs`."
+		}
+	]
+}

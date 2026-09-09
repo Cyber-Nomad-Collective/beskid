@@ -1,0 +1,8 @@
+{
+	"version": 1,
+	"specLevel": "area",
+	"slug": "platform-spec/core-library/text-and-parsing",
+	"title": "Text And Parsing",
+	"parentSlug": "platform-spec/core-library",
+	"status": "published"
+}

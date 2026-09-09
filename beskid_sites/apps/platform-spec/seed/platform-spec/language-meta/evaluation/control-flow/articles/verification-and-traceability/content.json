@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Verification matrix\n\n| Scenario | Expected evidence |\n| --- | --- |\n| `if` with `bool` | Compiles; no diagnostic |\n| `if` with non-bool | **E1208** emitted |\n| `while` loop | Compiles; condition checked each iteration |\n| `for` over array | Compiles; iterator protocol used |\n| `break` inside loop | Compiles; exits innermost loop |\n| `break` outside loop | **E1401** emitted |\n| `continue` outside loop | **E1402** emitted |\n| Unreachable code | **W1403** warned |\n\n## Implementation checklist\n\n- [x] Grammar: `if`, `while`, `for`, `return`, `break`, `continue`\n- [x] AST: `IfStatement`, `WhileStatement`, `ForStatement`, `ReturnStatement`, `BreakStatement`, `ContinueStatement`\n- [x] Parser: `beskid.pest` productions for all control forms\n- [x] Type checker: `bool` condition validation\n- [x] Control flow rules: loop nesting, unreachable code\n- [x] HIR normalization: basic block conversion\n- [x] Diagnostics: **E1401**, **E1402**, **W1403**, **E1208**\n- [ ] Iterator protocol full specification\n- [ ] `for` desugar lowering tests\n\n## Test locations\n\n- `compiler/crates/beskid_analysis/src/analysis/rules/staged/control_flow.rs` — control flow tests\n- `compiler/crates/beskid_analysis/src/hir/normalize/statements/` — HIR normalization tests\n- `compiler/crates/beskid_tests` — integration tests for control flow"
+		}
+	]
+}

@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Compile pipeline placement\n\n```mermaid\nflowchart LR\n    parse[parse]\n    collect[collect modules]\n    resolve[resolve imports]\n    vis[visibility check]\n    lower[lower to HIR]\n    parse --> collect --> resolve --> vis --> lower\n```\n\n## Module graph algorithm (normative)\n\n1. **Parse module declarations** — `ModuleDeclaration` stores `path` and `visibility`. `InlineModule` stores nested `items`.\n2. **Build file-scoped modules** — If a file starts with `mod path;`, that path becomes the file's module identity. `FileScopedModuleNotFirstItem` (**E1505**) if not first. `DuplicateFileScopedModule` (**E1506**) if multiple.\n3. **Derive path modules** — Files without file-scoped `mod` derive module identity from their path relative to the source root.\n4. **Build inline modules** — `mod name { items }` creates a nested module scope.\n5. **Resolve imports** — `use Path;` and `use Path as Alias;` bind imported symbols. `UnknownImportPath` (**E1105**) for invalid paths. `AmbiguousImport` (**E1104**) for conflicts.\n6. **Check visibility** — Accessing a private item from another module emits `VisibilityViolationImportPrivate` (**E1501**) or `ResolvePrivateItemInModule` (**E1107**).\n7. **Check re-exports** — `pub use` must refer to accessible items.\n\n## Scope chain\n\n```mermaid\nflowchart TB\n    global[Global scope]\n    file[File module scope]\n    inline[Inline module scope]\n    func[Function scope]\n    global --> file --> inline --> func\n```\n\n## LSP / incremental\n\nRe-run module and visibility analysis when `mod`, `use`, or `pub` declarations change."
+		}
+	]
+}

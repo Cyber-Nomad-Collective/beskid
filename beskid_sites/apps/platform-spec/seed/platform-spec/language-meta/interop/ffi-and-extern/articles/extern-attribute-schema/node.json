@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/interop/ffi-and-extern/articles/extern-attribute-schema",
+	"title": "Extern attribute schema",
+	"description": "Normative Extern and per-method interop attributes for contract imports (v0.3).",
+	"parentSlug": "platform-spec/language-meta/interop/ffi-and-extern",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-20"
+}

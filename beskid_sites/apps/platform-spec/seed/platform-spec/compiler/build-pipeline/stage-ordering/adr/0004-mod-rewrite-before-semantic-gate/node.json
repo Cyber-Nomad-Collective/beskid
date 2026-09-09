@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "specLevel": "adr",
+  "slug": "platform-spec/compiler/build-pipeline/stage-ordering/adr/0004-mod-rewrite-before-semantic-gate",
+  "title": "Mod rewrite before semantic gate",
+  "description": "MOD_REWRITE must complete before SEMANTIC and LOWER in every host path.",
+  "parentSlug": "platform-spec/compiler/build-pipeline/stage-ordering",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "adrId": "D-COMP-BUILD-0020",
+  "adrStatus": "Accepted",
+  "adrDate": "2026-05-29",
+  "lastReviewed": "2026-05-29"
+}

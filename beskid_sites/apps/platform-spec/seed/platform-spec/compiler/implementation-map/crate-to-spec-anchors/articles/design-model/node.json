@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/implementation-map/crate-to-spec-anchors/articles/design-model",
+  "title": "Design model",
+  "description": "Conceptual model for `Crate-to-spec anchors` and its subsystem boundaries.",
+  "parentSlug": "platform-spec/compiler/implementation-map/crate-to-spec-anchors",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

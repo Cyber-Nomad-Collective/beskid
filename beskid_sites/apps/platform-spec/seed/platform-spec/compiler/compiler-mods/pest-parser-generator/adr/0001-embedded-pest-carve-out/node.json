@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "specLevel": "adr",
+  "slug": "platform-spec/compiler/compiler-mods/pest-parser-generator/adr/0001-embedded-pest-carve-out",
+  "title": "Embedded Pest grammars carve-out",
+  "description": "Mod-local .pest files do not alter host Beskid surface parser.",
+  "parentSlug": "platform-spec/compiler/compiler-mods/pest-parser-generator",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "adrId": "D-COMP-MODS-0020",
+  "adrStatus": "Accepted",
+  "adrDate": "2026-06-08",
+  "lastReviewed": "2026-06-08"
+}

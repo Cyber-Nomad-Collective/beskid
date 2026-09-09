@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/adr/0005-host-corelib-no-opt-out",
+	"title": "Host projects cannot opt out of corelib",
+	"description": "Parser rejects noCorelib and useCorelib false.",
+	"parentSlug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-CORE-COMP-0005",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-04-23",
+	"lastReviewed": "2026-05-22"
+}

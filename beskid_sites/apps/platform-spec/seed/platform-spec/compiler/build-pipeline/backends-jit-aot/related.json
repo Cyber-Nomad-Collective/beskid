@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "Build pipeline",
+      "href": "/platform-spec/compiler/build-pipeline/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Feature",
+      "title": "Stage ordering and lowering",
+      "href": "/platform-spec/compiler/build-pipeline/stage-ordering/",
+      "relation": "Shared artifact prerequisite"
+    }
+  ]
+}

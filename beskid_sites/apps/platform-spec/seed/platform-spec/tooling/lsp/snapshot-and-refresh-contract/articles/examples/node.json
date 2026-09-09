@@ -1,0 +1,17 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/tooling/lsp/snapshot-and-refresh-contract/articles/examples",
+	"title": "Examples",
+	"description": "Observable LSP refresh scenarios for snapshots and diagnostics.",
+	"parentSlug": "platform-spec/tooling/lsp/snapshot-and-refresh-contract",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	}
+}

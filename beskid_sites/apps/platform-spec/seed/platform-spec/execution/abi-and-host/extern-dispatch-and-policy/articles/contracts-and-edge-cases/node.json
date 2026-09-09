@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/execution/abi-and-host/extern-dispatch-and-policy/articles/contracts-and-edge-cases",
+	"title": "Contracts and edge cases",
+	"description": "MUST rules for extern validation, dynamic linking policy, and interop dispatch layout.",
+	"parentSlug": "platform-spec/execution/abi-and-host/extern-dispatch-and-policy",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-22"
+}

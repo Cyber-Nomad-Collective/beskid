@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/tooling/lsp/intellisense-capabilities-and-behavior",
+	"title": "IntelliSense capabilities and behavior",
+	"description": "Normative LSP IntelliSense feature contract for Beskid editors.",
+	"parentSlug": "platform-spec/tooling/lsp",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

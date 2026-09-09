@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Verification matrix\n\n| Scenario | Expected evidence |\n| --- | --- |\n| `expr?` on Result | Compiles; desugars to branches |\n| `expr?` on non-Result | **E1222** emitted |\n| `?` in lambda | Failure returns from lambda |\n| Manual `match` on Result | Compiles; all arms type-checked |\n\n## Implementation checklist\n\n- [x] Grammar: postfix `?` operator\n- [x] AST: `TryExpression`\n- [x] Parser: `beskid.pest` production for try\n- [x] Type checker: `TypeInvalidTryTarget` (**E1222**)\n- [x] HIR lowering: `?` desugar to branch sequences\n- [ ] Full `Result` corelib integration\n- [ ] FFI error envelope mapping\n\n## Test locations\n\n- `compiler/crates/beskid_analysis/src/syntax/expressions/try_expression.rs` — parser tests\n- `compiler/crates/beskid_analysis/src/types/context/expressions.rs` — try typing tests\n- `compiler/crates/beskid_tests` — integration tests for error handling"
+		}
+	]
+}

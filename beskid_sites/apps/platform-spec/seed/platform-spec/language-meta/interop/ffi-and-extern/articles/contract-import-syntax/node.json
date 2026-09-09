@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/interop/ffi-and-extern/articles/contract-import-syntax",
+	"title": "Contract import syntax",
+	"description": "How extern contracts declare foreign imports and map to symbols and call shapes.",
+	"parentSlug": "platform-spec/language-meta/interop/ffi-and-extern",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-20"
+}

@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/tooling/graph-visualization/design-model",
+	"title": "Design model",
+	"description": "GraphSpec IR, GraphKind, GraphPayload, and revision fingerprints.",
+	"parentSlug": "platform-spec/tooling/graph-visualization",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-30"
+}

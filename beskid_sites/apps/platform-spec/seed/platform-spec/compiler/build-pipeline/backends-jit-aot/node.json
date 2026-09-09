@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "feature",
+  "slug": "platform-spec/compiler/build-pipeline/backends-jit-aot",
+  "title": "Backends (JIT and AOT)",
+  "description": "Contracts for JIT execution and AOT object/link flows that consume a shared lowering artifact.",
+  "parentSlug": "platform-spec/compiler/build-pipeline",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-04-30"
+}

@@ -54,9 +54,12 @@ for requirement in \
   'COPY beskid_web_common ./beskid_web_common' \
   'pnpm install --frozen-lockfile --filter beskid-learn...' \
   'COPY compiler/scripts ./compiler/scripts' \
-  'apt-get install -y --no-install-recommends clang lld' \
+  'apt-get install -y --no-install-recommends clang lld mold' \
   'command -v clang' \
   'command -v ld.lld' \
+  'command -v mold' \
+  'mold --version' \
+  'COPY compiler/.cargo ./compiler/.cargo' \
   'CARGO_TARGET_DIR=/workspace/target cargo build -p beskid_cli --release' \
   'CARGO_TARGET_DIR=/workspace/target cargo build -p beskid_lsp --release' \
   'BESKID_RUNTIME_PREFIX=/workspace/target/native-runtime-kit' \

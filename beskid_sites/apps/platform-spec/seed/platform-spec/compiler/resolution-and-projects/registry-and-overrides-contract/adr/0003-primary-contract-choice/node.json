@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "specLevel": "adr",
+  "slug": "platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract/adr/0003-primary-contract-choice",
+  "title": "Primary contract for Registry and overrides contract",
+  "description": "This feature hub defines the normative contract for **registry and overrides contract** and links newcomer-oriented refe",
+  "parentSlug": "platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "adrId": "D-COMP-PROJ-0009",
+  "adrStatus": "Accepted",
+  "adrDate": "2026-05-05",
+  "lastReviewed": "2026-05-22"
+}

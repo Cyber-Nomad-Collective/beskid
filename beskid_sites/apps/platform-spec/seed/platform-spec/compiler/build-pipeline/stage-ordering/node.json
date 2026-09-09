@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "feature",
+  "slug": "platform-spec/compiler/build-pipeline/stage-ordering",
+  "title": "Stage ordering and lowering",
+  "description": "Canonical ordering from resolved source through lowering into a backend-ready CodegenArtifact.",
+  "parentSlug": "platform-spec/compiler/build-pipeline",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-05-29"
+}

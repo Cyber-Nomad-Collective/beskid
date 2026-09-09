@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/core-library/concurrency/concurrency-package",
+	"title": "Concurrency package",
+	"description": "Normative corelib shapes for Fiber, Channel, Hub, Mutex, and WaitGroup—thin builtins wrappers only.",
+	"parentSlug": "platform-spec/core-library/concurrency",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-20"
+}

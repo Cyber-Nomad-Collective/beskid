@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/core-library/terminal-and-console/ansi-escape-model/articles/contracts-and-edge-cases",
+	"title": "Contracts and edge cases",
+	"description": "MUST/SHOULD rules for escape emission and supported sequence subsets.",
+	"parentSlug": "platform-spec/core-library/terminal-and-console/ansi-escape-model",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-21"
+}

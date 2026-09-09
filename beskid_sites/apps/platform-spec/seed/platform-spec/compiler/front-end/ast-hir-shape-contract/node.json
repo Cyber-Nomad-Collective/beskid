@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "feature",
+  "slug": "platform-spec/compiler/front-end/ast-hir-shape-contract",
+  "title": "AST and HIR shape contract",
+  "description": "Feature hub for the ast and hir shape contract in the reference compiler.",
+  "parentSlug": "platform-spec/compiler/front-end",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-04-30"
+}

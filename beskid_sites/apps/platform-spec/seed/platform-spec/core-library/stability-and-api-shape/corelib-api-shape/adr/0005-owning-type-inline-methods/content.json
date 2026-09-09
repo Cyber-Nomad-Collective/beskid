@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nCorelib types such as `Collections.List` and `Concurrency.Mutex` historically exposed free functions and `extend type` blocks for methods defined outside the owning type file. That scatters the public API, complicates `api.json` tier stamping, and conflicts with the hub-plus-type-directory layout used by [Core.Time](/platform-spec/core-library/stability-and-api-shape/core-time/).\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Owning methods | Methods on corelib-owned `pub type` **must** be declared inside the type's `pub type { }` block in the owning module file |\n| `extend type` | `extend type` **must not** add members to types defined in corelib packages (`foundation`, `concurrency`, `console`, `runtime`) |\n| Free functions | Module-level free functions **may** remain for constructors and namespace helpers that do not take a receiver |\n| Foreign types | `extend type` for types defined outside corelib (user code, mods) remains governed by [extend type](/platform-spec/language-meta/program-structure/extend-type/) |\n\n## Consequences\n\n- Existing `extend type` usage (for example on `Mutex`) migrates to inline methods before the refactor closes.\n- [Core.Collections](/platform-spec/core-library/foundation-and-primitives/core-collections/) and concurrency hubs document per-type inline method sets.\n- Tier directives on methods inherit from the owning type module unless overridden per item.\n\n## Verification anchors\n\n- `compiler/corelib/packages/**` — no `extend type` targeting corelib-owned types after migration\n- `compiler/crates/beskid_tests/src/projects/corelib/layout.rs` structure gates"
+		}
+	]
+}

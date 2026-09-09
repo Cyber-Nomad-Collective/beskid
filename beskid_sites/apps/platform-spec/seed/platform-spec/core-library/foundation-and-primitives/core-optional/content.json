@@ -1,0 +1,16 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "domainTiles",
+			"props": {
+				"pathPrefix": "platform-spec/core-library/foundation-and-primitives/core-optional",
+				"heading": "Articles"
+			}
+		},
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecPageHeader from '@beskid/beskid-ui/platform-spec/SpecPageHeader.astro';\nimport DomainTiles from '@beskid/beskid-ui/platform-spec/DomainTiles.astro';\nimport SpecSection from '@beskid/beskid-ui/platform-spec/SpecSection.astro';\n\n<SpecPageHeader status=\"Standard\" ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\n<SpecSection title=\"What this feature specifies\" id=\"what-this-feature-specifies\">\n`Core.Optional` defines the sole normative optional-value surface for corelib: `Option<T>` with `Some` and `None` variants, plus helpers (`HasValue`, `Map`, `UnwrapOr`). API boundaries that represent presence or absence **must** use `Core.Optional.Option<T>` or an explicit `enum` with a dedicated absent variant—not deprecated query shims or language sugar.\n</SpecSection>\n\n<SpecSection title=\"Scope\" id=\"scope\">\n- **In scope:** `Option<T>` enum, presence helpers, and migration of collection, concurrency, environment, and query APIs to import `Core.Optional` directly.\n- **Out of scope:** Nullable reference types, `?T` syntax, and error-bearing absence (`Result` remains the failure channel).\n</SpecSection>\n\n<SpecSection title=\"Implementation anchors\" id=\"implementation-anchors\">\n- `compiler/corelib/packages/foundation/src/Core/Optional.bd`\n- `compiler/corelib/packages/foundation/src/Core/Optional/Option.bd`\n- Corelib tests: `compiler/corelib/beskid_corelib/tests/corelib_tests/src/core/OptionalTests.bd`\n</SpecSection>\n\n<SpecSection title=\"Contract statement\" id=\"contract-statement\">\n| Surface | Rule |\n| --- | --- |\n| Canonical type | `Core.Optional.Option<T>` |\n| Variants | `Some(T value)` and `None` only in v1 |\n| `Result` interaction | `Result` signals failure; `Option` signals absence without error detail—do not conflate at public API boundaries |\n| Deprecation | Legacy `Query.Contracts` shim **must** be removed after consumers migrate to `Core.Optional` |\n</SpecSection>\n\n## Decisions\n\nClosed choices are normative ADRs under **`adr/`** — see [Core.Optional canonical](./adr/0001-core-optional-canonical/)."
+		}
+	]
+}

@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/language-meta/metaprogramming/macros",
+	"title": "Language macros",
+	"description": "Module-level macro rules with fragment parameters, `name!` invocation, and typed AST expansion in any project kind.",
+	"parentSlug": "platform-spec/language-meta/metaprogramming",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-20"
+}

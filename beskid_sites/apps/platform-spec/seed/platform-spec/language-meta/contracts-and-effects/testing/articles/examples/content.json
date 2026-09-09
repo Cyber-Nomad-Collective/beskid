@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Basic test\n\n```beskid\ntest AdditionWorks {\n    let result = 2 + 2;\n    Assert.Equal(4, result);\n}\n```\n\n## Test with metadata\n\n```beskid\ntest SlowDatabaseQuery {\n    meta { timeout = 30; }\n    let rows = Database.Query(\"SELECT * FROM users\");\n    Assert.GreaterThan(0, rows.Length);\n}\n```\n\n## Conditional skip\n\n```beskid\ntest WindowsOnlyFeature {\n    skip { platform = \"windows\"; }\n    let handle = WinApi.CreateWindow();\n    Assert.NotNull(handle);\n}\n```\n\n## Multiple tests in one file\n\n```beskid\ntest EmptyArray {\n    let arr = i32[] {};\n    Assert.Equal(0, arr.Length);\n}\n\ntest ArrayAppend {\n    let arr = i32[] { 1, 2 };\n    // arr.Append(3);\n    // Assert.Equal(3, arr.Length);\n}\n```"
+		}
+	]
+}

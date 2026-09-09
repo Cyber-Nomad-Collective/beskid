@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/adr/0001-canonical-corelib-identity",
+	"title": "Canonical corelib package identity",
+	"description": "Published and resolved identity is corelib, not ad-hoc forks.",
+	"parentSlug": "platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-CORE-COMP-0001",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-04-23",
+	"lastReviewed": "2026-05-22"
+}

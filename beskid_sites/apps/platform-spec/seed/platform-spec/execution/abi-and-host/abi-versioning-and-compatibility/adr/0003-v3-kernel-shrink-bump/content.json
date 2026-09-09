@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nABI v2 exported every runtime builtin as a direct linker symbol (~80 entries). v3 introduces manifest-driven classification and dispatch envelopes — a breaking shrink of the stable export surface.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Version | `BESKID_RUNTIME_ABI_VERSION` **must** increment **2 → 3** at the v3 cutover |\n| Kernel only | `RUNTIME_EXPORT_SYMBOLS` in v3 lists **kernel** exports and dispatch entrypoints only |\n| Soft ops | Legacy direct symbols (for example `str_len`, `channel_send`) **must not** appear in v3 export lists |\n| Archives | Prebuilt runtime archives **must** publish under `lib/beskid-runtime/abi-3/` |\n| Rejection | Loaders **must** reject v2 artifacts when the compiler advertises ABI v3 |\n| User C extern | User `Extern` C ABI plane **unchanged** per [D-LMETA-FFI-0004](/platform-spec/language-meta/interop/ffi-and-extern/adr/0004-user-cabi-vs-runtime-rustabi/) |\n\nEnvelope layout changes after v3 follow [D-EXEC-ABI-0002](/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/adr/0002-breaking-changes-bump-version/).\n\n## Consequences\n\nRelease notes **must** document v3 migration, rebuilt archives, and removed direct soft symbols. Conformance tests freeze the v3 kernel allowlist.\n\n## Verification anchors\n\n`compiler/crates/beskid_abi/src/version.rs`; `compiler/crates/beskid_aot/src/bundled.rs`; `compiler/crates/beskid_tests/src/abi/contracts.rs`."
+		}
+	]
+}

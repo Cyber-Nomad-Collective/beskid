@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Compile pipeline placement\n\n```mermaid\nflowchart LR\n    parse[parse type with event fields]\n    typecheck[type check event signatures]\n    lower[lower to HIR]\n    runtime[runtime subscriber list]\n    parse --> typecheck --> lower --> runtime\n```\n\n## Event parsing algorithm (normative)\n\n1. **Parse type definition** — `TypeDefinition` collects fields via `FieldList`.\n2. **Distinguish event fields** — Fields starting with `event` are parsed as event declarations with parameter lists.\n3. **Validate event signatures** — Event signatures must use parameter lists compatible with delegate lowering. `TypeInvalidEventCapacity` (**E1220**) for invalid capacity hints.\n4. **Check invocation scope** — Raising or subscribing must target an in-scope event member on a value or `this`-equivalent receiver. `TypeInvalidEventInvocationScope` (**E1219**) otherwise.\n5. **Check subscription target** — `TypeInvalidEventSubscriptionTarget` (**E1221**) for invalid subscription targets.\n\n## Runtime subscriber management\n\nThe runtime maintains a subscriber list per event instance:\n1. **Subscribe** — Add a handler delegate to the list.\n2. **Raise** — Iterate the list and invoke each handler with the provided arguments.\n3. **Unsubscribe** — Remove a handler delegate from the list.\n\n## Fiber cancellation events\n\nFiber cancellation uses the same `event` mechanism on `Fiber<T>`. See [Fibers and spawn](/platform-spec/language-meta/evaluation/fibers-and-spawn/) for details.\n\n## LSP / incremental\n\nRe-run event checking when type definitions with event fields or event usage expressions change."
+		}
+	]
+}

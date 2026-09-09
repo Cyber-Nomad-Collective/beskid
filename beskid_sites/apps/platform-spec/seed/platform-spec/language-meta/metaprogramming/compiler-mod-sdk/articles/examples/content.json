@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Collector contract\n\n```beskid\ncontract Collector {\n    unit Collect(Beskid.Syntax.Nodes.Node root);\n}\n```\n\n## Generator contract\n\n```beskid\ncontract Generator {\n    Beskid.Syntax.Nodes.Node[] Generate(Beskid.Syntax.Nodes.Node target);\n}\n```\n\n## Analyzer contract\n\n```beskid\ncontract Analyzer {\n    Beskid.Compiler.Diagnostic[] Analyze(Beskid.Syntax.Nodes.Node target);\n}\n```\n\n## Rewriter contract\n\n```beskid\ncontract Rewriter<TSource, TTarget> {\n    Core.Results.Result<TTarget, FixError> Rewrite(TSource sourceNode);\n}\n```\n\n## AttributeGenerator contract\n\n```beskid\ncontract AttributeGenerator {\n    string[] SupportedTargets();\n    unit GenerateAttribute(string target, Beskid.Syntax.Nodes.Node node);\n}\n```"
+		}
+	]
+}

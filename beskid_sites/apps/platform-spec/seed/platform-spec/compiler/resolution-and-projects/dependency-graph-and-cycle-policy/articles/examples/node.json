@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/articles/examples",
+  "title": "Dependency graph and cycle policy - Examples",
+  "description": "Gives concrete newcomer-friendly scenarios mapped to real compiler paths.",
+  "parentSlug": "platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "specLevel": "area",
+  "slug": "platform-spec/compiler/build-pipeline",
+  "title": "Build Pipeline",
+  "parentSlug": "platform-spec/compiler",
+  "status": "published"
+}

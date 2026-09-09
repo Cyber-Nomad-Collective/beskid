@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "blocks": [
+    {
+      "type": "markdownProse",
+      "bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nThis article documents **flow and algorithm** for **conformance evidence policy** in the reference compiler.\n\n## What this covers\nThe conformance evidence pipeline follows a fixed phase order. Every Mod project passes through the same sequence, and tests must record phases to assert they fire in the documented order.\n\n## Pipeline phase ordering\n\n```\nparse → mod.load → mod.collect → mod.generate → [semantic gate] → mod.analyze → mod.rewrite → lowering\n```\n\nThe `PipelineObserver` trait (in `beskid_analysis::mod_host`) records each phase transition. Tests assert that:\n- Phases never appear out of order.\n- No phase is skipped unless the semantic gate rejects the program.\n- Lowering always follows rewrite, never precedes it.\n\n## Key test entrypoints\n- `compiler/crates/beskid_tests/src/mods/contract_dispatch.rs` — End-to-end dispatch through the full Mod pipeline, asserting canonical phase ordering per `PipelineObserver`.\n- `compiler/crates/beskid_engine/tests/jit_pipeline_observer.rs` — JIT-specific observer that validates phase order during engine execution.\n- `compiler/crates/beskid_tests/src/analysis/pipeline/mod_phases.rs` — Unit-level phase ordering for the analysis layer.\n\n## Practical notes\n- Prefer tracing from CLI/test entry points into analysis/codegen crates before changing internals.\n- Treat diagnostics and tests as part of the contract, not optional implementation details.\n- If behavior changes, update this article and add/adjust tests in `compiler/crates/beskid_tests` or `compiler/crates/beskid_e2e_tests`."
+    }
+  ]
+}

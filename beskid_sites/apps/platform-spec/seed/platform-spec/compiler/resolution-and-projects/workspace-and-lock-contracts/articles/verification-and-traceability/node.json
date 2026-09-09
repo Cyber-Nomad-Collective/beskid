@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/articles/verification-and-traceability",
+  "title": "Workspace and lock contracts - Verification and traceability",
+  "description": "Shows how the team proves this feature works and where evidence lives.",
+  "parentSlug": "platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

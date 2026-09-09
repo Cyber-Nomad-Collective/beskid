@@ -1,0 +1,16 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "domainTiles",
+			"props": {
+				"pathPrefix": "platform-spec/core-library/terminal-and-console/console-io-streams",
+				"heading": "Articles"
+			}
+		},
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecPageHeader from '@beskid/beskid-ui/platform-spec/SpecPageHeader.astro';\nimport DomainTiles from '@beskid/beskid-ui/platform-spec/DomainTiles.astro';\nimport SpecSection from '@beskid/beskid-ui/platform-spec/SpecSection.astro';\n\n<SpecPageHeader status=\"Standard\" ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\n<SpecSection title=\"What this feature specifies\" id=\"what-this-feature-specifies\">\nSplit **standard stream helpers** in `corelib_foundation` (`Core.*`): `Core.Input` (stdin), `Core.Output` (stdout), and `Core.Error` (stderr). All traffic uses **`Core.Syscall.ReadWith`** / **`WriteWith`** with typed `Descriptor::Standard(StandardStream::*)` selectors—no direct fd integers in user code.\n</SpecSection>\n\n<SpecSection title=\"Contract statement\" id=\"contract-statement\">\n| Stream | Module | Syscall descriptor | Read | Write |\n| --- | --- | --- | --- | --- |\n| stdin | `Core.Input` | `Stdin` | `Read`, `ReadLine` → `Result<string, SyscallError>` | **Not supported** |\n| stdout | `Core.Output` | `Stdout` | **Not supported** | `Write`, `WriteLine` |\n| stderr | `Core.Error` | `Stderr` | **Not supported** | `Write`, `WriteLine` |\n\n- Encoding at the boundary is UTF-8 bytes of the Beskid **`string`** type.\n- `WriteLine` **must** write the text then a single **`\"\\n\"`** line feed (corelib policy; not CRLF unless host translates).\n- `Write` / `WriteLine` failures from `WriteWith` **must** panic with `__panic_str(\"Core.Output.Write failed\")` or the stderr equivalent—there is no `Result` on write helpers in v1.\n- ANSI and markup **must not** be interpreted in these modules; escape bytes are ordinary string contents (see [ANSI escape model](/platform-spec/core-library/terminal-and-console/ansi-escape-model/)).\n</SpecSection>\n\n<SpecSection title=\"Implementation anchors\" id=\"implementation-anchors\">\n- `compiler/corelib/packages/foundation/src/Core/Input/Input.bd`, `Output/Output.bd`, `Error/Error.bd`\n- `compiler/corelib/packages/foundation/src/Core/Syscall/`\n- Informative module docs: `compiler/corelib/beskid_corelib/docs/Core/Input.md`, `Output.md`, `Error.md`\n</SpecSection>\n\n## Decisions\n\nNo open decisions. Closed choices are normative ADRs under **`adr/`** (`D-CORE-TERM-0010` … `D-CORE-TERM-0012`); use the reader **ADRs** tab for expandable detail."
+		}
+	]
+}

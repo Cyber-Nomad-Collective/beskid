@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/build-pipeline/dependency-workspace/articles/verification-and-traceability",
+  "title": "Dependency workspace and lockfile - Verification and traceability",
+  "description": "Source anchors and test evidence for compile-plan and lockfile behavior.",
+  "parentSlug": "platform-spec/compiler/build-pipeline/dependency-workspace",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

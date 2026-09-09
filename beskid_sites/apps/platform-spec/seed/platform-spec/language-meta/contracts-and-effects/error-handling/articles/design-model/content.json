@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Vocabulary\n\n| Construct | Role |\n| --- | --- |\n| **`TryExpression`** | Postfix `expr?` operator for error propagation |\n| **`Result<TValue, TError>`** | Corelib generic enum with `Ok` and `Error` variants |\n| **`Option<T>`** | Corelib generic enum for absence (not failure) |\n\n## Error propagation architecture\n\n```mermaid\nflowchart LR\n    expr[expr with Result]\n    tryOp[postfix ?]\n    ok[unwrap Ok variant]\n    err[return Err variant]\n    expr --> tryOp -->|Ok| ok\n    tryOp -->|Error| err\n```\n\nBeskid uses **explicit sum types** for recoverable errors. There is no `throw` keyword or exception mechanism in v0.1.\n\n### Subsystem boundaries\n\n| Subsystem | Responsibility | Key file |\n| --- | --- | --- |\n| Parser | Parse `expr?` as `TryExpression` | `syntax/expressions/try_expression.rs` |\n| AST | Store try operator structure | `syntax/expressions/expression.rs` |\n| Type checker | Validate try target is Result-shaped | `types/context/expressions.rs` |\n| HIR lowering | Desugar `?` to branch sequences | `hir/normalize/expressions.rs` |\n| Codegen | Emit branch instructions | `beskid_codegen` |\n\n## `Result` vs `Option`\n\n- `Result<TValue, TError>` models **recoverable failure**.\n- `Option<T>` models **absence of value** (not failure).\n- Do not conflate them.\n\n## Postfix `?` only\n\nError propagation uses `expr?` only. There is no `try` statement form in v0.1."
+		}
+	]
+}

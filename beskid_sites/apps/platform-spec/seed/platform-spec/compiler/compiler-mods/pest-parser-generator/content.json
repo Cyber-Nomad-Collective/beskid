@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "blocks": [
+    {
+      "type": "domainTiles",
+      "props": {
+        "pathPrefix": "platform-spec/compiler/compiler-mods/pest-parser-generator",
+        "heading": "Articles"
+      }
+    },
+    {
+      "type": "markdownProse",
+      "bodyMd": "import SpecPageHeader from '@beskid/beskid-ui/platform-spec/SpecPageHeader.astro';\nimport DomainTiles from '@beskid/beskid-ui/platform-spec/DomainTiles.astro';\nimport SpecSection from '@beskid/beskid-ui/platform-spec/SpecSection.astro';\n\n<SpecPageHeader status=\"Standard\" ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\n<SpecSection title=\"Contract statement\" id=\"contract-statement\">\nProjects with `type = Mod` **may** register a **`GrammarGenerator`** contract. At `beskid mod rebuild`, the host schedules **`corelib_pest_gen`** (or another grammar mod), which uses **`Core.Text.Pest`** to read `grammars/**/*.pest` and emit Beskid combinator parsers via [Core.Text.Parser](/platform-spec/core-library/text-and-parsing/text-parser-combinators/) (**PARSER-005** naming). Legacy Rust **`beskid_pest_gen`** remains a temporary golden bridge until Beskid emit is AOT-ready. Embedded grammars **must not** modify host [`beskid.pest`](/platform-spec/compiler/front-end/parser-and-ast-contracts/) (see ADR carve-out).\n</SpecSection>\n\n<SpecSection title=\"Implementation anchors\" id=\"implementation-anchors\">\n- `compiler/corelib/mods/corelib_pest_gen/`\n- `compiler/corelib/packages/foundation/src/Core/Text/Pest/`\n- `compiler/crates/beskid_pest_gen/` (temporary bridge; retire per design model)\n- `compiler/crates/beskid_tests/fixtures/mods/pest_gen_mod/`\n</SpecSection>"
+    }
+  ]
+}

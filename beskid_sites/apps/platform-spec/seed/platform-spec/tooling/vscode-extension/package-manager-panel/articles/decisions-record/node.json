@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/tooling/vscode-extension/package-manager-panel/articles/decisions-record",
+	"title": "Decisions record (legacy index)",
+	"description": "Migration index for package manager panel ADRs.",
+	"parentSlug": "platform-spec/tooling/vscode-extension/package-manager-panel",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-22"
+}

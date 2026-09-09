@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nABI v2 required parallel edits to `beskid_abi`, analysis builtins, JIT registration, and runtime bridge whenever a runtime symbol changed. Drift between registries caused link failures and silent analysis gaps.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Source | `compiler/runtime_manifest.toml` is the **sole** input for registry generation |\n| Outputs | `BUILTIN_SPECS`, `RUNTIME_EXPORT_SYMBOLS`, analysis `define_builtins!`, JIT `register_runtime_symbols`, and bridge link anchors **must** be **generated** |\n| v3 scope | Generated `BUILTIN_SPECS` lists **kernel exports plus dispatch entrypoints** only; soft legacy symbols are absent |\n| CLIF authority | [D-EXEC-ABI-0003](/platform-spec/execution/abi-and-host/builtins-and-symbols/adr/0003-builtin-specs-sole-clif-source/) remains valid — generated `BUILTIN_SPECS` is still the sole Cranelift import source |\n| Parity | Generator **must** enforce symbol-string parity between specs and export lists |\n\n## Consequences\n\nAdding or reclassifying a runtime builtin **must** change the manifest and regenerate — not hand-edit Rust tables. Supersedes manual dual-registry maintenance for v3 onward.\n\n## Verification anchors\n\n`compiler/crates/beskid_manifest/`; `compiler/crates/beskid_abi/build.rs`; `compiler/crates/beskid_tests/src/abi/contracts.rs`."
+		}
+	]
+}

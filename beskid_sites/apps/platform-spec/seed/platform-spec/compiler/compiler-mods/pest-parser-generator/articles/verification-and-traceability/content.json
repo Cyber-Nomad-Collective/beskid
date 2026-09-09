@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "blocks": [
+    {
+      "type": "markdownProse",
+      "bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Anchors\n\n- `compiler/crates/beskid_tests/fixtures/mods/pest_gen_mod/`\n- `compiler/crates/beskid_pest_gen/tests/`"
+    }
+  ]
+}

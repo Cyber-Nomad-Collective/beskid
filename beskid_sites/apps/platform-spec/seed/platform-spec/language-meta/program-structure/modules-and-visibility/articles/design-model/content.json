@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Vocabulary\n\n| Construct | Role |\n| --- | --- |\n| **`ModuleDeclaration`** | Out-of-line module declaration (`mod path;`) |\n| **`InlineModule`** | Inline nested module (`mod name { items }`) |\n| **`UseDeclaration`** | Import with optional alias (`use Path as Alias;`) |\n| **`Visibility`** | `pub` or private (default) |\n\n## Module architecture\n\nThe module graph is built from file paths and explicit `mod` declarations. The driver and package manager use the same module graph the typechecker sees.\n\n```mermaid\nflowchart LR\n    file[File path]\n    mod[mod declaration]\n    inline[inline mod]\n    use[use imports]\n    vis[visibility check]\n    file --> mod --> inline --> use --> vis\n```\n\n### Subsystem boundaries\n\n| Subsystem | Responsibility | Key file |\n| --- | --- | --- |\n| Parser | Parse `mod`, `use`, `pub` | `syntax/items/module_declaration.rs`, `use_declaration.rs` |\n| AST | Store module structure | `syntax/items/` |\n| Resolver | Build scope chain | `resolve/collect.rs` |\n| Visibility rules | Check access | `analysis/rules/staged/visibility.rs` |\n\n## Module forms\n\n| Form | Rule |\n| --- | --- |\n| **Path `mod`** | `mod a.b;` declares the file's module path; must be the first top-level item when used |\n| **Inline `mod`** | `mod name { items }` nests a submodule in the current file |\n| **File path** | Without file-scoped `mod`, module identity derives from file path relative to project source root |\n\n## Visibility\n\n- Items default to private to their module.\n- `pub` on an item exports it to importers of the containing module.\n- `pub use path` re-exports symbols; re-exported names must refer to accessible items."
+		}
+	]
+}

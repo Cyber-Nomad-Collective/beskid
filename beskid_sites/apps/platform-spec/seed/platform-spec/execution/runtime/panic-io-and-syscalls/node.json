@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/execution/runtime/panic-io-and-syscalls",
+	"title": "Panic, IO, and syscalls",
+	"description": "Runtime panic behavior and syscall read/write contracts exposed by the Beskid runtime.",
+	"parentSlug": "platform-spec/execution/runtime",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-04-30"
+}

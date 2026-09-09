@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Basic try propagation\n\n```beskid\nunit ReadFile(string path) -> Core.Results.Result<string, string> {\n    let content = File.ReadAllText(path)?;\n    return Core.Results.Ok(content);\n}\n```\n\n## Manual match (without `?`)\n\n```beskid\nunit ReadFileManual(string path) -> Core.Results.Result<string, string> {\n    let result = File.ReadAllText(path);\n    match result {\n        Core.Results.Ok(v) => return Core.Results.Ok(v);\n        Core.Results.Error(e) => return Core.Results.Error(e);\n    }\n}\n```\n\n## Option for absence\n\n```beskid\nunit Find(i32[] values, i32 target) -> Core.Results.Option<i32> {\n    for v in values {\n        if (v == target) {\n            return Core.Results.Some(v);\n        }\n    }\n    return Core.Results.None;\n}\n```\n\n## Chained `?`\n\n```beskid\nunit LoadConfig(string path) -> Core.Results.Result<Config, string> {\n    let text = File.ReadAllText(path)?;\n    let parsed = Parser.Parse(text)?;\n    return Core.Results.Ok(parsed);\n}\n```"
+		}
+	]
+}

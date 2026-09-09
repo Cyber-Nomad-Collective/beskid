@@ -1,0 +1,17 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/articles/verification-and-traceability",
+	"title": "Verification and traceability",
+	"description": "Tests and traceability for workspace and lock tooling contracts.",
+	"parentSlug": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	}
+}

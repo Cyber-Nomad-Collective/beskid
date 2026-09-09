@@ -1,0 +1,16 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "domainTiles",
+			"props": {
+				"pathPrefix": "platform-spec/core-library/stability-and-api-shape/core-time",
+				"heading": "Articles"
+			}
+		},
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecPageHeader from '@beskid/beskid-ui/platform-spec/SpecPageHeader.astro';\nimport DomainTiles from '@beskid/beskid-ui/platform-spec/DomainTiles.astro';\nimport SpecSection from '@beskid/beskid-ui/platform-spec/SpecSection.astro';\n\n<SpecPageHeader status=\"Standard\" ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\n<SpecSection title=\"What this feature specifies\" id=\"what-this-feature-specifies\">\n`Core.Time` exposes **realtime** and **monotonic** instants plus **UTC civil** date/time types for corelib `@tier(supported)` callers. Realtime reads use `__clock_realtime_nanos`; monotonic reads use `__clock_monotonic_nanos`. Cooperative scheduling clocks remain in **`Concurrency.NowMillis`**.\n</SpecSection>\n\n<SpecSection title=\"Scope\" id=\"scope\">\n- **In scope:** `Instant`, `Duration`, UTC civil types (`Date`, `TimeOfDay`, `DateTime`), clock reads, duration math, ISO-8601 UTC formatting/parsing, and `TimeError` for invalid civil input.\n- **Out of scope:** Local timezone offsets, sub-second ISO output in v1, and fiber scheduling monotonic millis (`Concurrency.NowMillis`).\n</SpecSection>\n\n<SpecSection title=\"Implementation anchors\" id=\"implementation-anchors\">\n- `compiler/corelib/packages/foundation/src/Core/Time.bd`\n- `compiler/corelib/packages/foundation/src/Core/Time/`\n- `compiler/crates/beskid_runtime/src/builtins/clock.rs`\n- Corelib tests: `compiler/corelib/beskid_corelib/tests/corelib_tests/src/core/TimeTests.bd`\n</SpecSection>\n\n<SpecSection title=\"Contract statement\" id=\"contract-statement\">\n| Surface | Rule |\n| --- | --- |\n| Clock domains | Realtime and monotonic instants **must not** be mixed in subtraction or civil conversion. |\n| UTC scope | v1 civil helpers operate in **UTC** only; local offsets are out of scope. |\n| Formatting | `FormatIso8601Utc` **must** emit second-precision `YYYY-MM-DDTHH:MM:SSZ`. |\n| Parsing | `ParseIso8601Date` **must** accept strict `YYYY-MM-DD` and reject other shapes. |\n</SpecSection>\n\n## Decisions\n\nNo open decisions. Closed choices are normative ADRs under **`adr/`** when present; see child articles for TM-* requirement detail."
+		}
+	]
+}

@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Verification matrix\n\n| Scenario | Expected evidence |\n| --- | --- |\n| `mut i64` local | Parses; reassignment allowed |\n| `let mut` inferred local | Parses; reassignment allowed |\n| `mut T` parameter | Parses; callee may reassign parameter binding |\n| Immutable assignment | **E1214** emitted |\n| Array bounds check | Inserted in safe builds |\n| Escape to heap | GC-traced when pointers escape |\n| Spawn capture | **E1225** for unsafe stack reference capture |\n\n## Implementation checklist\n\n- [x] Grammar: prefix `mut` on bindings\n- [x] Parser: `beskid.pest` productions for `mut`\n- [x] Type checker: `mut` reassignment validation\n- [x] Immutable check: **E1214**\n- [x] Runtime: GC in `beskid_runtime/src/gc.rs`\n- [x] Diagnostics: **E1214**, **E1225**\n- [ ] Escape analysis full implementation\n- [ ] Write barrier insertion in codegen\n- [ ] Bounds check elimination optimization\n\n## Test locations\n\n- `compiler/crates/beskid_analysis/src/analysis/rules/staged/` — immutability and escape tests\n- `compiler/crates/beskid_runtime/src/gc.rs` — GC unit tests\n- `compiler/crates/beskid_tests` — integration tests for memory"
+		}
+	]
+}

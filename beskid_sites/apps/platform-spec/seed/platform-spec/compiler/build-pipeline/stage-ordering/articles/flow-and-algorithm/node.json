@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/build-pipeline/stage-ordering/articles/flow-and-algorithm",
+  "title": "Stage ordering and lowering - Flow and algorithm",
+  "description": "Ordered lowering algorithm used by build and run command paths.",
+  "parentSlug": "platform-spec/compiler/build-pipeline/stage-ordering",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

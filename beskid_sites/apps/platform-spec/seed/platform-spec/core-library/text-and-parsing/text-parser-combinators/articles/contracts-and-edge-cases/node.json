@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/core-library/text-and-parsing/text-parser-combinators/articles/contracts-and-edge-cases",
+	"title": "Contracts and edge cases",
+	"description": "MUST rules for Core.Text.Parser.",
+	"parentSlug": "platform-spec/core-library/text-and-parsing/text-parser-combinators",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-10"
+}

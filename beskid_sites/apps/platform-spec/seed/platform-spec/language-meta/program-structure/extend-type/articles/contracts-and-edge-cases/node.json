@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/program-structure/extend-type/articles/contracts-and-edge-cases",
+	"title": "extend type - Contracts and edge cases",
+	"description": "Normative contracts, edge cases, and invariants for Beskid extend type.",
+	"parentSlug": "platform-spec/language-meta/program-structure/extend-type",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

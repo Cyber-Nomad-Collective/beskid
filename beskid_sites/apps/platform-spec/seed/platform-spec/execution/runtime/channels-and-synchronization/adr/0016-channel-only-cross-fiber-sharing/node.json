@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/execution/runtime/channels-and-synchronization/adr/0016-channel-only-cross-fiber-sharing",
+	"title": "Channels are the only cross-fiber data path",
+	"description": "Runtime enforces queue transfer; stack pointers must not cross fibers.",
+	"parentSlug": "platform-spec/execution/runtime/channels-and-synchronization",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-EXEC-RT-0016",
+	"adrStatus": "Accepted",
+	"adrDate": "2025-09-01",
+	"lastReviewed": "2026-06-06"
+}

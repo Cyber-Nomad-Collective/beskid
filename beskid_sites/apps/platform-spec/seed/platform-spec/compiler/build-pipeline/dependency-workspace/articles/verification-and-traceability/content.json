@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "blocks": [
+    {
+      "type": "markdownProse",
+      "bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nImplementation anchors:\n\n- `compiler/crates/beskid_analysis/src/projects/compile_plan.rs`\n- `compiler/crates/beskid_analysis/src/projects/workflow.rs`\n- `compiler/crates/beskid_cli/src/commands/fetch.rs`\n- `compiler/crates/beskid_cli/src/commands/lock.rs`\n\nTraceability expectation: each lock policy branch is covered by fixture-based tests."
+    }
+  ]
+}

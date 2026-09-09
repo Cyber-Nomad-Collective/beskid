@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Hard requirements\n\n- **Public members only** — `extend type` may access public members of the extended type only.\n- **No visibility bypass** — Extension sites must satisfy normal import and visibility rules.\n- **Compiler mod compatible** — Generated extensions follow the same rules as hand-authored ones.\n\n## Diagnostic band\n\n| Code | Condition |\n| --- | --- |\n| **E1511** | `extend type` private member access |\n\n## Edge cases\n\n- **Extension of external type** — `extend type` on a type from another module requires the type to be imported and public.\n- **Duplicate extension methods** — Two `extend type` blocks on the same type defining the same method name cause ambiguity.\n- **Extension of generic type** — `extend type Box<T>` is not supported in v0.1; extensions target concrete types only.\n- **Self-referential extension** — An `extend type` method may call other methods on `this` including those from other extensions.\n\n## Invariants\n\n- Every `extend type` method must have a resolved receiver type after parsing.\n- Extension methods participate in dispatch with the same rules as declared methods.\n- Generated extensions must pass the same validation as hand-authored extensions."
+		}
+	]
+}

@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/tooling/project-scaffolding/project-templates",
+	"title": "Project templates",
+	"description": "Beskid template engine (`beskid.template.v1`), project and item templates, workspace scaffolds, and instantiation semantics.",
+	"parentSlug": "platform-spec/tooling/project-scaffolding",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-21"
+}

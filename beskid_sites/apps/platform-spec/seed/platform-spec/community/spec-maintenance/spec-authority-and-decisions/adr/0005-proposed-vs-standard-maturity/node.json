@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/community/spec-maintenance/spec-authority-and-decisions/adr/0005-proposed-vs-standard-maturity",
+	"title": "Proposed vs Standard maturity gates",
+	"description": "Standard pages are enforceable contracts; Proposed pages must not be cited as language law.",
+	"parentSlug": "platform-spec/community/spec-maintenance/spec-authority-and-decisions",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-COMM-AUTH-0005",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-05-21",
+	"lastReviewed": "2026-05-22"
+}

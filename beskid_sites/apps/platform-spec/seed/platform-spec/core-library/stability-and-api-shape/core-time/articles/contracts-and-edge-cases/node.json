@@ -1,0 +1,14 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/core-library/stability-and-api-shape/core-time/articles/contracts-and-edge-cases",
+	"title": "Contracts and edge cases",
+	"description": "Normative rules for Core.Time clock and UTC civil helpers.",
+	"parentSlug": "platform-spec/core-library/stability-and-api-shape/core-time",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-09"
+}

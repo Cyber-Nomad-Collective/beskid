@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/core-library/terminal-and-console/console-markup-format",
+	"title": "Console markup format",
+	"description": "Beskid console markup parsing and rendering to ANSI-styled strings.",
+	"parentSlug": "platform-spec/core-library/terminal-and-console",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-21"
+}

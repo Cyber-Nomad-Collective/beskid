@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Basic extension\n\n```beskid\ntype Point {\n    f32 x;\n    f32 y;\n}\n\nextend type Point {\n    pub f32 DistanceTo(Point other) {\n        let dx = x - other.x;\n        let dy = y - other.y;\n        return dx * dx + dy * dy;\n    }\n}\n```\n\n## Multiple extensions\n\n```beskid\nextend type Point {\n    pub unit Translate(f32 dx, f32 dy) {\n        x += dx;\n        y += dy;\n    }\n}\n\nextend type Point {\n    pub string ToString() {\n        return \"(\" + x + \", \" + y + \")\";\n    }\n}\n```\n\n## Extension with access to public members\n\n```beskid\ntype Counter {\n    i32 value;\n\n    pub i32 GetValue() {\n        return value;\n    }\n}\n\nextend type Counter {\n    pub unit Reset() {\n        value = 0;   // OK — value is public\n    }\n}\n```"
+		}
+	]
+}

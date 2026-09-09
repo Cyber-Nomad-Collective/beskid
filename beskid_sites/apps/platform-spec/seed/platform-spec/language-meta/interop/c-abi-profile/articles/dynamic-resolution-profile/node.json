@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/interop/c-abi-profile/articles/dynamic-resolution-profile",
+	"title": "C ABI profile — Dynamic resolution profile",
+	"description": "Non-Standard appendix for runtime dlopen/dlsym extern resolution (legacy v0.1 path).",
+	"parentSlug": "platform-spec/language-meta/interop/c-abi-profile",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-20"
+}

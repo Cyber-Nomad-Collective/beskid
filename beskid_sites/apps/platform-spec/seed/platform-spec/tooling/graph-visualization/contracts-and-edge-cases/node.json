@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/tooling/graph-visualization/contracts-and-edge-cases",
+	"title": "Contracts and edge cases",
+	"description": "LSP beskid.getGraph payload, CLI flags, and graph edge-case policy.",
+	"parentSlug": "platform-spec/tooling/graph-visualization",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-30"
+}

@@ -1,0 +1,8 @@
+{
+	"version": 1,
+	"specLevel": "area",
+	"slug": "platform-spec/tooling/formatter",
+	"title": "Formatter",
+	"parentSlug": "platform-spec/tooling",
+	"status": "published"
+}

@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Module layout\n\n| Module | Role |\n| --- | --- |\n| `Core.Bytes` | Re-export hub |\n| `Core.Bytes.Errors` | `BytesError` variants |\n| `Core.Bytes.Slice` | `Len`, `Get`, `Set`, `Copy`, `Compare`, `Fill`, `SubSlice`, `New` |\n| `Core.Bytes.Convert` | Thin helpers delegating to `Core.Encoding.Utf8` |\n\n## Layering\n\n```mermaid\nflowchart TB\n  app[Application]\n  bytes[Core.Bytes]\n  array[Collections.Array]\n  builtins[__array_* __bytes_*]\n  app --> bytes --> array --> builtins\n```\n\n## Related topics\n\n- [Contracts and edge cases](./contracts-and-edge-cases/)\n- [Core.Encoding](/platform-spec/core-library/foundation-and-primitives/core-encoding/)"
+		}
+	]
+}

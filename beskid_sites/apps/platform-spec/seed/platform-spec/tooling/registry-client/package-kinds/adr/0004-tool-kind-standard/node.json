@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/tooling/registry-client/package-kinds/adr/0004-tool-kind-standard",
+	"title": "tool kind lifted to Standard",
+	"description": "Normative validator profile, CLI routing, and dashboard surface for packageKind tool.",
+	"parentSlug": "platform-spec/tooling/registry-client/package-kinds",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-TOOL-PCKG-0004",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-05-23",
+	"lastReviewed": "2026-05-23"
+}

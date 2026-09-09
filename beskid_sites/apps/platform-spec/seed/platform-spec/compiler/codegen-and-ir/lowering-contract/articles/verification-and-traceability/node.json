@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/codegen-and-ir/lowering-contract/articles/verification-and-traceability",
+  "title": "Verification and traceability",
+  "description": "How `Lowering contract` requirements map to tests and implementation anchors.",
+  "parentSlug": "platform-spec/compiler/codegen-and-ir/lowering-contract",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

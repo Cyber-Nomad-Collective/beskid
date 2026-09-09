@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/contracts-and-effects/testing/articles/verification-and-traceability",
+	"title": "Testing - Verification and traceability",
+	"description": "Tests, implementation checklist, and verification matrix for Beskid testing.",
+	"parentSlug": "platform-spec/language-meta/contracts-and-effects/testing",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

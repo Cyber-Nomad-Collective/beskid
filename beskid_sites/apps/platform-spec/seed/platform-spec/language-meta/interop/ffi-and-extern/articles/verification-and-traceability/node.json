@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/interop/ffi-and-extern/articles/verification-and-traceability",
+	"title": "FFI and extern — Verification and traceability",
+	"description": "Conformance strategy for v0.3 FFI spec (fixtures, diagnostics, ignored runtime tests).",
+	"parentSlug": "platform-spec/language-meta/interop/ffi-and-extern",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-20"
+}

@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/tooling/project-scaffolding/template-packages/articles/contracts-and-edge-cases",
+	"title": "Contracts and edge cases",
+	"description": "Publish-time and UI rules for template packages on pckg.",
+	"parentSlug": "platform-spec/tooling/project-scaffolding/template-packages",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-21"
+}

@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Basic contract\n\n```beskid\ncontract Named {\n    string Name();\n}\n\ntype Person : Named {\n    string name;\n\n    pub string Name() {\n        return name;\n    }\n}\n```\n\n## Contract embedding\n\n```beskid\ncontract HasId {\n    i32 Id();\n}\n\ncontract Entity : HasId {\n    string Name();\n}\n\ntype Product : Entity {\n    i32 id;\n    string name;\n\n    pub i32 Id() { return id; }\n    pub string Name() { return name; }\n}\n```\n\n## Conformance error\n\n```beskid\ncontract Drawable {\n    unit Draw();\n}\n\n// Missing Draw() — E1601\ntype Circle : Drawable {\n    f32 radius;\n}\n```\n\n## Signature mismatch\n\n```beskid\ncontract Comparable {\n    i32 CompareTo(other);\n}\n\n// Wrong return type — E1602\ntype Item : Comparable {\n    pub bool CompareTo(Item other) {\n        return false;\n    }\n}\n```"
+		}
+	]
+}

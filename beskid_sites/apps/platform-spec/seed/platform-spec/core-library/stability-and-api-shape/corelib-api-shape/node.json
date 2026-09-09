@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape",
+	"title": "Corelib API shape",
+	"description": "Normative API tiering for corelib modules — three stability tiers, prelude rules, and the `api.json` contract that surfaces them to consumers.",
+	"parentSlug": "platform-spec/core-library/stability-and-api-shape",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-23"
+}

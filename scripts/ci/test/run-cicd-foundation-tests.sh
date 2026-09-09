@@ -28,6 +28,7 @@ bash "${root}/scripts/ci/test/platform-delivery-fail-closed.test.sh"
 bash "${root}/scripts/ci/test/release-manifest-active-lanes.test.sh"
 bash "${root}/scripts/ci/test/github-release-handoff.test.sh"
 bash "${root}/scripts/ci/test/image-preparation-contract.test.sh"
+bash "${root}/scripts/ci/test/rust-linker-toolchain-contract.test.sh"
 
 # CoreLib workspace member aliases intentionally differ from registry package
 # names; the quality gate must validate each member's package declaration.

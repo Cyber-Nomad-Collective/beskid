@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "specLevel": "adr",
+  "slug": "platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/adr/0003-primary-contract-choice",
+  "title": "Primary contract for Analysis, query, and diagnostics facades",
+  "description": "This feature hub defines the normative contract for **`Beskid.Compiler.Query`** and **`Beskid.Compiler.Diagnostics`** (a",
+  "parentSlug": "platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "adrId": "D-COMP-MODS-0003",
+  "adrStatus": "Accepted",
+  "adrDate": "2026-05-20",
+  "lastReviewed": "2026-05-22"
+}

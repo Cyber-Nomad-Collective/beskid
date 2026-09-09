@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/language-meta/surface-syntax/documentation-comments",
+	"title": "Documentation comments",
+	"description": "Structured comments attach human-readable contracts to declarations. Tooling must preserve them through formatting and refactors without changing semantics.",
+	"parentSlug": "platform-spec/language-meta/surface-syntax",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-21"
+}

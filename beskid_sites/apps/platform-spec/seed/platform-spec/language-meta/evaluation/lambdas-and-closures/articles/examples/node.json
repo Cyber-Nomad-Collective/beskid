@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/evaluation/lambdas-and-closures/articles/examples",
+	"title": "Lambdas and closures - Examples",
+	"description": "Code examples showing lambda expressions and closures in Beskid.",
+	"parentSlug": "platform-spec/language-meta/evaluation/lambdas-and-closures",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

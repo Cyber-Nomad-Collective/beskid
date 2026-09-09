@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "feature",
+  "slug": "platform-spec/compiler/build-pipeline/program-assembly",
+  "title": "Program assembly",
+  "description": "Multi-module program composition from CompilePlan and materialized source roots, shared by analyze, lowering, LSP, and backend-agnostic front-end paths.",
+  "parentSlug": "platform-spec/compiler/build-pipeline",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-05-29"
+}

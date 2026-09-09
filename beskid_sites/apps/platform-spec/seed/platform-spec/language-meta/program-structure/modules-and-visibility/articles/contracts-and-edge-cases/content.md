@@ -1,0 +1,35 @@
+import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Hard requirements
+
+- **File-scoped precedence** — Explicit `mod path;` wins over path-derived module identity when present.
+- **No `internal` keyword** — v0.1 uses private-by-default plus `pub`; assembly-internal friends are deferred.
+- **Package graph is external** — Cross-package edges come from manifests; this chapter defines symbol visibility only.
+- **`pub use` re-export** — Re-exports must preserve the underlying symbol's accessibility rules.
+
+## Diagnostic band E15xx
+
+| Code | Condition |
+| --- | --- |
+| **E1501** | Visibility violation (private item imported) |
+| **E1502** | Module not found |
+| **E1505** | File-scoped module not first item |
+| **E1506** | Duplicate file-scoped module |
+| **E1507** | Module declaration forbidden in file-scoped module |
+| **W1503** | Unused import |
+| **W1504** | Unused private item |
+
+## Edge cases
+
+- **Nested `mod` in file-scoped file** — `ModuleDeclarationForbiddenInFileScopedModule` (**E1507**) prevents nested `mod` declarations inside a file-scoped module file.
+- **Circular imports** — Circular `use` dependencies are allowed as long as forward references are not used.
+- **Re-export of private** — `pub use` of a private item from another module is rejected.
+- **Self-import** — `use self::Name;` is not supported in v0.1.
+
+## Invariants
+
+- Every item must have a resolved module scope after collection.
+- Visibility checks must respect the importer's module, not the exporter's.
+- Package boundaries must align with project manifests.

@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "feature",
+  "slug": "platform-spec/compiler/build-pipeline/diagnostics-parity",
+  "title": "Diagnostics parity (CLI and LSP)",
+  "description": "Contracts for diagnostic provenance and parity across CLI parse, lowering, and LSP analysis paths.",
+  "parentSlug": "platform-spec/compiler/build-pipeline",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-05-29"
+}

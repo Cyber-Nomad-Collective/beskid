@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "Build pipeline",
+      "href": "/platform-spec/compiler/build-pipeline/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Domain",
+      "title": "Tooling",
+      "href": "/platform-spec/tooling/",
+      "relation": "LSP and CLI user surfaces"
+    }
+  ]
+}

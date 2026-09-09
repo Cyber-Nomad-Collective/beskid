@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Normative requirements\n\n| ID | Requirement |\n| --- | --- |\n| **SC-001** | `ReadWith` / `WriteWith` **must** route via typed `Descriptor`, not raw fd integers in stream modules. |\n| **SC-002** | `ReadBytes` **must** support arbitrary non-negative fds via `Descriptor::Raw`. |\n| **SC-003** | `WriteBytes` **must** accept `u8[]` payloads for arbitrary fds. |\n| **SC-004** | `Core.Input` / `Output` / `Error` **must** use `Descriptor::Standard` only (**IO-001**, **IO-002**). |\n| **SC-005** | `SyscallError` mapping **must** be stable across JIT/AOT. |\n| **SC-006** | Linux write path **must** loop partial writes; read returns short buffers on EOF. |\n| **SC-007** | Text `Read` **must** validate UTF-8 when building `string`. |\n| **SC-008** | Binary `ReadBytes` **must not** validate UTF-8. |\n| **SC-009** | Negative fd **must** return `InvalidFd` before syscall. |\n| **SC-010** | `maxBytes < 1` **must** return `InvalidReadLimit`. |\n\n## Implementation anchors\n\n- `compiler/corelib/packages/foundation/src/Core/Syscall.bd`\n- `compiler/corelib/packages/foundation/src/Core/Syscall/`"
+		}
+	]
+}

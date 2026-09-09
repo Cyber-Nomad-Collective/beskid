@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "blocks": [
+    {
+      "type": "markdownProse",
+      "bodyMd": "import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nCLI analyze gates, LSP document analysis, and execute paths (`run`, `build`, `test`) previously scheduled mod host, rewrite, semantic, and typed HIR through parallel entry points. That allowed diagnostic and AST drift between “check only” and “compile and run.”\n\n## Decision\n\nThe reference compiler **must** expose one production front-end—`prepare_compilation` (or the existing `compile_front_end_from_resolved_input` name until renamed)—that returns a **`PreparedCompilation`** artifact (typed HIR, resolution, assembly cache, mod session metadata).\n\n| Rule | Detail |\n| --- | --- |\n| Sole spine | Analyze, run, build, test, clif, LSP project diagnostics, and doc export **must** call this function; mode flags (`DiagnosticsOnly` vs `Executable`) select early exit only—**not** alternate pipelines |\n| No parallel analyze | `analyze_program_with_options_and_plan` and paths that run semantic rules on pre-rewrite AST **must not** remain production gates |\n| Cached assembly | `ResolvedInput.assembly` **must** be populated once at resolve and reused; re-assembly on every consumer is forbidden |\n\n## Consequences\n\nCommand and LSP refactors converge on `beskid_analysis::services::prepare_compilation`. New surfaces add `PrepareMode` flags instead of duplicating mod/semantic/HIR scheduling.\n\n## Verification anchors\n\n- `compiler/crates/beskid_analysis/src/services/front_end.rs`\n- `compiler/crates/beskid_analysis/src/services/analyze.rs`\n- `compiler/crates/beskid_cli/src/frontend.rs`\n- `compiler/crates/beskid_analysis/src/services/input.rs`"
+    }
+  ]
+}

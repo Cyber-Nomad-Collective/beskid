@@ -1,0 +1,14 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/execution/runtime/fiber-scheduler-and-stacks/articles/design-model",
+	"title": "Fiber scheduler and stacks - Design model",
+	"description": "Scheduler loops, parking, and stack switching implementation expectations.",
+	"parentSlug": "platform-spec/execution/runtime/fiber-scheduler-and-stacks",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-20"
+}

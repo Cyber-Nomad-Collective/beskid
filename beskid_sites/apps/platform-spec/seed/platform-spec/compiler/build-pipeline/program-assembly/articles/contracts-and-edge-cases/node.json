@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/build-pipeline/program-assembly/articles/contracts-and-edge-cases",
+  "title": "Program assembly - Contracts and edge cases",
+  "description": "Materialized-first roots, discovery caps, and parity across CLI and LSP.",
+  "parentSlug": "platform-spec/compiler/build-pipeline/program-assembly",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-05-20"
+}

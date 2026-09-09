@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nYank policy.\n\n## Decision\n\nWarn on yanked; optional continue flag.\n\n## Consequences\n\nRegistry alignment.\n\n## Verification anchors\n\nYank API test."
+		}
+	]
+}

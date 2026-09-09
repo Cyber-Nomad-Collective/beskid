@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/language-meta/interop/ffi-and-extern",
+	"title": "FFI and extern",
+	"description": "v0.3 normative language surface for foreign import (Extern), interop views, and links to export/callback features.",
+	"parentSlug": "platform-spec/language-meta/interop",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-23"
+}

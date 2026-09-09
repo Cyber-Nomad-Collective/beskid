@@ -1,0 +1,8 @@
+{
+	"version": 1,
+	"specLevel": "area",
+	"slug": "platform-spec/tooling/registry-client",
+	"title": "Registry Client",
+	"parentSlug": "platform-spec/tooling",
+	"status": "published"
+}

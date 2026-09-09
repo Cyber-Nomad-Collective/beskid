@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract/articles/examples",
+  "title": "Registry and overrides contract - Examples",
+  "description": "Gives concrete newcomer-friendly scenarios mapped to real compiler paths.",
+  "parentSlug": "platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

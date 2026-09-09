@@ -1,0 +1,17 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/tooling/cli/api-json-contract",
+	"title": "api.json contract",
+	"description": "Normative schema for machine-readable package API documentation emitted by `beskid doc` and consumed by pckg.",
+	"parentSlug": "platform-spec/tooling/cli",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	}
+}

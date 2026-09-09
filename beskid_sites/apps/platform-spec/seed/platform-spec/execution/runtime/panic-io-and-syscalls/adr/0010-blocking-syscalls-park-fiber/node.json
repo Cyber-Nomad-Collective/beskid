@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/execution/runtime/panic-io-and-syscalls/adr/0010-blocking-syscalls-park-fiber",
+	"title": "Blocking syscalls park the calling fiber",
+	"description": "Scheduler run_blocking offloads host work without stalling other fibers.",
+	"parentSlug": "platform-spec/execution/runtime/panic-io-and-syscalls",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-EXEC-RT-0010",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-04-01",
+	"lastReviewed": "2026-05-22"
+}

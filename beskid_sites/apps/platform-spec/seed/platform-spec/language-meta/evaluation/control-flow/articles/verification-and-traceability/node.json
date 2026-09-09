@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/evaluation/control-flow/articles/verification-and-traceability",
+	"title": "Control flow - Verification and traceability",
+	"description": "Tests, implementation checklist, and verification matrix for Beskid control flow.",
+	"parentSlug": "platform-spec/language-meta/evaluation/control-flow",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

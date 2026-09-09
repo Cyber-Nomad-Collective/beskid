@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/conformance/test-harnesses-and-fixtures/articles/faq-and-troubleshooting",
+  "title": "FAQ and troubleshooting",
+  "description": "Common questions and debugging guidance for `Test harnesses and fixtures`.",
+  "parentSlug": "platform-spec/compiler/conformance/test-harnesses-and-fixtures",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

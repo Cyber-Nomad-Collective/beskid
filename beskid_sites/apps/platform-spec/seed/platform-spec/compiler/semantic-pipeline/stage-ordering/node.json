@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "feature",
+  "slug": "platform-spec/compiler/semantic-pipeline/stage-ordering",
+  "title": "Semantic pipeline stage ordering",
+  "description": "How semantic rule stages relate to lower-spine type checking in the reference compiler.",
+  "parentSlug": "platform-spec/compiler/semantic-pipeline",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-06-16"
+}

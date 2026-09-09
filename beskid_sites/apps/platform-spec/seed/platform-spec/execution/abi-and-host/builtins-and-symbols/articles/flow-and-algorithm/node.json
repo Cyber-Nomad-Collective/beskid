@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/execution/abi-and-host/builtins-and-symbols/articles/flow-and-algorithm",
+	"title": "Flow and algorithm",
+	"description": "From lowering call sites through BUILTIN_SPECS to runtime C exports.",
+	"parentSlug": "platform-spec/execution/abi-and-host/builtins-and-symbols",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-22"
+}

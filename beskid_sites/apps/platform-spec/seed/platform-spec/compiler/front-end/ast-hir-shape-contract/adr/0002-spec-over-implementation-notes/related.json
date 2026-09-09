@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "AST and HIR shape contract",
+      "href": "/platform-spec/compiler/front-end/ast-hir-shape-contract/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

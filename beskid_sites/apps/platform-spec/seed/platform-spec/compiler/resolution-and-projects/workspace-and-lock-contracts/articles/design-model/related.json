@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Workspace and lock contracts",
+      "href": "/platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Workspace and lock contracts (tooling)",
+      "href": "/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/design-model/",
+      "relation": "defers-to — reserved/forbidden workspace keys and lockfile semantics"
+    }
+  ]
+}

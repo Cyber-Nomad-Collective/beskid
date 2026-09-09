@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Locked decisions\n\n| Decision | ID | Summary |\n| --- | --- | --- |\n| No `switch` | D-LM-CF-001 | Use `match` expressions for sum-type branching |\n| Short-circuit booleans | D-LM-CF-002 | `&&` and `||` are mandatory short-circuit |\n| `bool` conditions only | D-LM-CF-003 | No C-style truthiness |\n| Structured transfer only | D-LM-CF-004 | No `goto`; use `break`/`continue`/`return` |\n\n## FAQ\n\n### Why no `switch`?\n\nBeskid uses `match` expressions for sum-type branching, which are exhaustive and type-safe. A separate `switch` statement would duplicate functionality.\n\n### Can I use `break` in a `for` loop?\n\nYes. `break` exits the innermost enclosing loop, whether `while` or `for`.\n\n### Is there a `do...while` loop?\n\nNo. Use `while` or `for` only.\n\n## Troubleshooting\n\n| Symptom | Likely cause |\n| --- | --- |\n| **E1208** | `if` or `while` condition is not `bool` |\n| **E1401** | `break` outside any loop |\n| **E1402** | `continue` outside any loop |\n| **W1403** | Code after `return`, `break`, or `continue` |\n| **E1215** | `for` target is not iterable |"
+		}
+	]
+}

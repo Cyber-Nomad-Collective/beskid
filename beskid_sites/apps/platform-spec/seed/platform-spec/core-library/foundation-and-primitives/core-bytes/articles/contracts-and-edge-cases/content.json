@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Normative requirements\n\n| ID | Requirement |\n| --- | --- |\n| **BYTES-001** | `u8[]` **must** be the canonical byte buffer type; allocation uses `__array_new(1, len)`. |\n| **BYTES-002** | Out-of-bounds index on `Get`/`Set` **must** trap (same policy as `string[index]`). |\n| **BYTES-003** | `Core.Bytes` **must not** embed OS or syscall semantics. |\n| **BYTES-004** | `Copy`, `Compare`, and `Fill` **must** be deterministic; allocation for `SubSlice` **must** be explicit. |\n| **BYTES-005** | String ↔ bytes conversion **must** route through `Core.Encoding` (not ad-hoc UTF-8 in `Core.Bytes`). |\n| **BYTES-006** | Empty buffers **must** be representable with length zero. |\n| **BYTES-007** | `Len` **must** delegate to `__array_len`. |\n| **BYTES-008** | Hot paths **may** use `__bytes_copy` / `__bytes_compare` builtins when registered. |\n| **BYTES-009** | Module tier **must** be `@tier(standard)` for prelude re-export. |\n\n## Edge cases\n\n| Case | Behavior |\n| --- | --- |\n| Zero-length copy | No-op; returns without error |\n| `SubSlice` past end | Clamps to buffer end per runtime contract |\n| Null backing (test builds) | `Len` returns 0; indexed access traps |\n\n## Implementation anchors\n\n- `compiler/corelib/packages/foundation/src/Core/Bytes/`\n- `compiler/corelib/beskid_corelib/tests/corelib_tests/src/core/BytesTests.bd`"
+		}
+	]
+}

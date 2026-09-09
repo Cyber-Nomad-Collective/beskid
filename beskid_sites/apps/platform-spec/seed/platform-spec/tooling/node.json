@@ -1,0 +1,8 @@
+{
+	"version": 1,
+	"specLevel": "domain",
+	"slug": "platform-spec/tooling",
+	"title": "Tooling",
+	"parentSlug": "platform-spec",
+	"status": "published"
+}

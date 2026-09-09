@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Simple lambda\n\n```beskid\nunit Simple() {\n    let add = (a, b) => a + b;\n    let result = add(2, 3);\n}\n```\n\n## Typed parameters\n\n```beskid\nunit Typed() {\n    let mul = (i32 a, i32 b) => a * b;\n}\n```\n\n## Block body\n\n```beskid\nunit BlockBody() {\n    let max = (i32 a, i32 b) => {\n        if (a > b) {\n            return a;\n        }\n        return b;\n    };\n}\n```\n\n## Capture\n\n```beskid\nunit Capture() {\n    let offset = 10;\n    let addOffset = (i32 x) => x + offset;\n    let result = addOffset(5);   // 15\n}\n```\n\n## Lambda as argument\n\n```beskid\nunit Apply(i32[] values, (i32) => i32 transform) {\n    for v in values {\n        let transformed = transform(v);\n        Console.WriteLine(transformed);\n    }\n}\n\nunit UseApply() {\n    let values = i32[] { 1, 2, 3 };\n    Apply(values, x => x * 2);\n}\n```"
+		}
+	]
+}

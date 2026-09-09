@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/language-meta/interop/c-abi-profile/adr/0002-link-time-standard-tier1",
+	"title": "Link-time binding Standard tier-1",
+	"description": "dlopen is not Standard conformance for tier-1.",
+	"parentSlug": "platform-spec/language-meta/interop/c-abi-profile",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-LMETA-CABI-0002",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-05-20",
+	"lastReviewed": "2026-05-22"
+}

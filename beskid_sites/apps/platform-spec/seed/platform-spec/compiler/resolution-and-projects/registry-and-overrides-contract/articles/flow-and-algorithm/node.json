@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract/articles/flow-and-algorithm",
+  "title": "Registry and overrides contract - Flow and algorithm",
+  "description": "Walks through runtime/order-of-operations behavior in the implementation.",
+  "parentSlug": "platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

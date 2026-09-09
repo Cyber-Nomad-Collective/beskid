@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/program-structure/modules-and-visibility/articles/flow-and-algorithm",
+	"title": "Modules and visibility - Flow and algorithm",
+	"description": "Step-by-step flow of module parsing, scope building, and visibility checking in the Beskid compiler.",
+	"parentSlug": "platform-spec/language-meta/program-structure/modules-and-visibility",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

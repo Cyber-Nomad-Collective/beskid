@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/community/spec-maintenance/non-normative-bridge-docs-policy",
+	"title": "Non-normative bridge docs policy",
+	"description": "Policy for migration and bridge documents, including mandatory canonical destination links for non-normative mapping pages.",
+	"parentSlug": "platform-spec/community/spec-maintenance",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-04-30"
+}

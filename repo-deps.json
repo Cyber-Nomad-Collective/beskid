@@ -23,6 +23,8 @@
 				"bao",
 				"bun",
 				"rust",
+				"cargo-binstall",
+				"mold",
 				"dotnet"
 			]
 		},
@@ -38,6 +40,8 @@
 				"bao",
 				"bun",
 				"rust",
+				"cargo-binstall",
+				"mold",
 				"dotnet"
 			]
 		}
@@ -186,6 +190,58 @@
 				"darwin": [{ "method": "rustup" }],
 				"linux": [{ "method": "rustup" }],
 				"windows": [{ "method": "rustup" }]
+			}
+		},
+		"cargo-binstall": {
+			"description": "Prebuilt Cargo binary installer",
+			"bins": ["cargo-binstall"],
+			"version_cmd": ["cargo-binstall", "-V"],
+			"supported_platforms": ["darwin", "linux", "windows"],
+			"install": {
+				"darwin": [
+					{
+						"method": "cargo_binstall_bootstrap",
+						"version": "1.23.0",
+						"assets": {
+							"amd64": { "target": "x86_64-apple-darwin", "sha256": "5b4d6cd99651318e17a26ed9bab7505de0f496d88793a7735a0fc6e2079efe83" },
+							"arm64": { "target": "aarch64-apple-darwin", "sha256": "0f679c0bc992c6b84fdcbb0f65492588447d26596ef387cb6cb1ba41ad8ceb33" }
+						}
+					}
+				],
+				"linux": [
+					{
+						"method": "cargo_binstall_bootstrap",
+						"version": "1.23.0",
+						"assets": {
+							"amd64": { "target": "x86_64-unknown-linux-musl", "sha256": "64bf954c68bb558431deeabecaec7687edd5541c2189ee263bb8bc18bc4fdf55" },
+							"arm64": { "target": "aarch64-unknown-linux-musl", "sha256": "ba9b7bf426c7b7375825cd3fa367c3f8a632ca7c6c546fdcb738114b167f4103" }
+						}
+					}
+				],
+				"windows": [
+					{
+						"method": "cargo_binstall_bootstrap",
+						"version": "1.23.0",
+						"assets": {
+							"amd64": { "target": "x86_64-pc-windows-msvc", "sha256": "f4641479477aca40387e88297e3813fab8e44a8d21f25faa44e0ff33e2bc1726" },
+							"arm64": { "target": "aarch64-pc-windows-msvc", "sha256": "a3996cbd0c7fa2be599bd52eaf70ccd8c0dce4cce8d01345d486f47b0e0ee0f9" }
+						}
+					}
+				]
+			}
+		},
+		"mold": {
+			"description": "Fast linker for Linux Rust builds",
+			"bins": ["mold"],
+			"version_cmd": ["mold", "--version"],
+			"supported_platforms": ["linux"],
+			"install": {
+				"linux": [
+					{ "method": "apt", "packages": ["mold"] },
+					{ "method": "dnf", "packages": ["mold"] },
+					{ "method": "pacman", "packages": ["mold"] },
+					{ "method": "homebrew", "formula": "mold" }
+				]
 			}
 		},
 		"dotnet": {

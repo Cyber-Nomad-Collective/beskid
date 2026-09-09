@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/language-meta/interop/export-and-callbacks/adr/0003-export-pub-functions-v03",
+	"title": "Export on pub functions v0.3",
+	"description": "Contract vtables as Standard export remain out of scope.",
+	"parentSlug": "platform-spec/language-meta/interop/export-and-callbacks",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-LMETA-EXPORT-0003",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-05-20",
+	"lastReviewed": "2026-05-22"
+}

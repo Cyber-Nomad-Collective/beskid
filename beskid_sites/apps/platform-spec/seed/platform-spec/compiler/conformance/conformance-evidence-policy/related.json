@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "Conformance",
+      "href": "/platform-spec/compiler/conformance/",
+      "relation": "Parent area"
+    }
+  ]
+}

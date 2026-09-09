@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/core-library/text-and-parsing/text-regex/articles/verification-and-traceability",
+	"title": "Verification",
+	"description": "Test anchors for Core.Text.Regex.",
+	"parentSlug": "platform-spec/core-library/text-and-parsing/text-regex",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-08"
+}

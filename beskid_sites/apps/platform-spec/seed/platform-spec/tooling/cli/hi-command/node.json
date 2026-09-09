@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/tooling/cli/hi-command",
+	"title": "Hi command",
+	"description": "Pluggable terminal dashboard shell with BSOL board layouts and a command palette.",
+	"parentSlug": "platform-spec/tooling/cli",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-09"
+}

@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/core-library/terminal-and-console/ansi-escape-model/adr/0004-osc-bel-termination-v1",
+	"title": "OSC BEL termination in v1",
+	"description": "OSC payloads terminate with BEL, not ST.",
+	"parentSlug": "platform-spec/core-library/terminal-and-console/ansi-escape-model",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-CORE-TERM-0004",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-05-20",
+	"lastReviewed": "2026-05-22"
+}

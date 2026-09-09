@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "specLevel": "adr",
+  "slug": "platform-spec/compiler/build-pipeline/program-assembly/adr/0003-primary-contract-choice",
+  "title": "Primary contract for Program assembly",
+  "description": "This feature hub defines how the reference compiler turns a resolved **`CompilePlan`** plus **effective (materialized-fi",
+  "parentSlug": "platform-spec/compiler/build-pipeline/program-assembly",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "adrId": "D-COMP-BUILD-0015",
+  "adrStatus": "Accepted",
+  "adrDate": "2026-05-20",
+  "lastReviewed": "2026-05-22"
+}

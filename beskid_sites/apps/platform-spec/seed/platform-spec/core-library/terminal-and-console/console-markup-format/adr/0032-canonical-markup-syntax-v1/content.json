@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nSpec, ADR-0031, and implementation disagree on color syntax (`[red]text[/]` vs `&[fg=red](text)`). Hyperlinks exist in code but not in contracts.\n\n## Decision\n\n| Construct | v1 canonical | Notes |\n| --- | --- | --- |\n| Palette foreground | `[red]text[/]` | Named palette from `Attributes`; **FMT-002** on unknown names |\n| Rich attributes | `&[fg=red, bg=blue](text)` | Supports named, `#hex`, `rgb(r,g,b)` — supersedes ADR-0031 RGB ban |\n| Hyperlink | `[label](url)` | OSC hyperlink when styled; **FMT-006** |\n| Precedence | escape > bold/italic/underline/strike > attribute span > bracket tag > link > literal | Encoded in `console_markup.pest` |\n\nBracket palette tags and attribute spans **may** both appear in the same document. Attribute spans are preferred for multi-attribute styling.\n\n## Consequences\n\n- `console_markup.pest` is the single grammar authority.\n- `FormatMarkdownTests.bd` gains bracket-tag cases; ADR-0031 palette-only RGB rule is relaxed for `&[fg=](…)` form.\n- Hand-rolled `RenderInner` is retired after generated parser lands.\n\n## Verification anchors\n\n- `compiler/corelib/packages/console/grammars/console_markup.pest`\n- `compiler/corelib/beskid_corelib/tests/corelib_tests/src/console/FormatMarkdownTests.bd`"
+		}
+	]
+}

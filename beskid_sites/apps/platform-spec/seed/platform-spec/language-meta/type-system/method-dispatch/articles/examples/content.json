@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Instance method call\n\n```beskid\ntype Counter {\n    i32 value;\n\n    pub unit Increment() {\n        value += 1;\n    }\n}\n\nunit UseCounter() {\n    let c = Counter { value = 0 };\n    c.Increment();\n}\n```\n\n## extend type\n\n```beskid\ntype Point {\n    f32 x;\n    f32 y;\n}\n\nextend type Point {\n    pub f32 DistanceTo(Point other) {\n        let dx = x - other.x;\n        let dy = y - other.y;\n        return dx * dx + dy * dy;\n    }\n}\n\nunit UseExtension() {\n    let a = Point { x = 0.0, y = 0.0 };\n    let b = Point { x = 3.0, y = 4.0 };\n    let d = a.DistanceTo(b);\n}\n```\n\n## Contract namespace call\n\n```beskid\ncontract Math {\n    i32 Abs(i32 value);\n}\n\nunit UseContractNamespace() {\n    let n = Math.Abs(-5);   // static-style contract namespace call\n}\n```\n\n## Generic method\n\n```beskid\ntype Container<T> {\n    T item;\n\n    pub T Get() {\n        return item;\n    }\n}\n\nunit UseGeneric() {\n    let c = Container<i32> { item = 42 };\n    let v = c.Get();   // inferred return type: i32\n}\n```"
+		}
+	]
+}

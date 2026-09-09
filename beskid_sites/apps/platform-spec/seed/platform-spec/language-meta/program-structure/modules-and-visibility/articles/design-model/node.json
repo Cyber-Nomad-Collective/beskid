@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/program-structure/modules-and-visibility/articles/design-model",
+	"title": "Modules and visibility - Design model",
+	"description": "Conceptual model for the module graph, file-scoped modules, and pub visibility rules in Beskid.",
+	"parentSlug": "platform-spec/language-meta/program-structure/modules-and-visibility",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

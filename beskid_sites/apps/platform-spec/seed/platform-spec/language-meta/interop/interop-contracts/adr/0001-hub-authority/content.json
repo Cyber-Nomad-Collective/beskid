@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nC and Rust profiles previously duplicated primitive definitions.\n\n## Decision\n\nThis feature hub **must** own the language-agnostic **Interop.Contracts** vocabulary. Profile features **must** bind these primitives, not redefine them.\n\n## Consequences\n\nArticles under C/Rust ABI cite ownership, call shapes, and conformance from here.\n\n## Verification anchors\n\n/platform-spec/language-meta/interop/interop-contracts/"
+		}
+	]
+}

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/front-end/parser-and-ast-contracts/articles/examples",
+  "title": "Examples",
+  "description": "Concrete examples that show parser contracts in daily compiler work.",
+  "parentSlug": "platform-spec/compiler/front-end/parser-and-ast-contracts",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

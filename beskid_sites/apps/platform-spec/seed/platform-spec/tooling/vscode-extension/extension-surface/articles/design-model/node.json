@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/tooling/vscode-extension/extension-surface/articles/design-model",
+	"title": "Design model",
+	"description": "Extension layout, focus model, and status-bar phases for the Beskid VS Code extension.",
+	"parentSlug": "platform-spec/tooling/vscode-extension/extension-surface",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-30"
+}

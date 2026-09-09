@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Mutable local\n\n```beskid\nunit Counter() {\n    mut i64 count = 0;\n    count = count + 1;\n}\n```\n\n## Inferred mutable local\n\n```beskid\nunit InferredMut() {\n    let mut total = 0;\n    total = total + 10;\n}\n```\n\n## Mutable parameter\n\n```beskid\nunit Bump(mut i64 value) {\n    value = value + 1;\n}\n```\n\n## Array allocation\n\n```beskid\nunit Arrays() {\n    u8[] buf = __array_new(1, 4);\n    buf[0] = 1;\n}\n```\n\n## Cross-fiber channel\n\n```beskid\nunit FiberShare() {\n    let ch = Channel.New<i64>();\n    spawn {\n        ch.Send(42);\n    };\n    let value = ch.Receive();\n}\n```"
+		}
+	]
+}

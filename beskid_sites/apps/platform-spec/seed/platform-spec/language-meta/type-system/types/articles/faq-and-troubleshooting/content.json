@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Locked decisions\n\n| Decision | ID | Summary |\n| --- | --- | --- |\n| Nominal types | D-LM-TYP-001 | Path-resolved names; no structural equivalence |\n| `Option<T>` only | D-LM-TYP-002 | No `null` or `optional` keyword |\n| Fat-pointer arrays | D-LM-TYP-003 | Single runtime representation per target |\n| Single type system | D-LM-TYP-004 | `ref` is passing mode, not type class |\n\n## FAQ\n\n### Why no `null`?\n\nBeskid forbids `null` at the language level. Use `Option<T>` or an explicit enum with an absent variant. This eliminates an entire class of runtime errors.\n\n### Can I make a type alias?\n\nType aliases are not in v0.1. Use `extend type` to add behavior, or declare a wrapper struct.\n\n### What is `unit`?\n\n`unit` is the statement-result type, similar to `void` in other languages. Functions without an explicit return type default to `unit`.\n\n### Are arrays reference types?\n\n`T[]` values use a fat-pointer layout (`BeskidArray`). They are passed by value (the fat pointer is copied), but the elements live on the GC heap.\n\n## Troubleshooting\n\n| Symptom | Likely cause |\n| --- | --- |\n| **E1201** | Type name typo or missing import |\n| **E1203** | Generic arguments omitted at use site |\n| **E1204** | Wrong number of generic arguments |\n| **E1213** | Accessing a member that does not exist on the receiver type |\n| **E1005** | Field type refers to an undefined name |\n| **E1006** | Two types with the same name in one scope |"
+		}
+	]
+}

@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/core-library/foundation-and-primitives/core-fluent",
+	"title": "Core.Fluent",
+	"description": "Self-returning step contracts and generated fluent facades for corelib types.",
+	"parentSlug": "platform-spec/core-library/foundation-and-primitives",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-10"
+}

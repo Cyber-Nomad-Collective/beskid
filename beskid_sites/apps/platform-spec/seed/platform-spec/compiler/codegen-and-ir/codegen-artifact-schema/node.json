@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "feature",
+  "slug": "platform-spec/compiler/codegen-and-ir/codegen-artifact-schema",
+  "title": "Codegen artifact schema",
+  "description": "Feature hub for the codegen artifact schema in the reference compiler.",
+  "parentSlug": "platform-spec/compiler/codegen-and-ir",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-04-30"
+}

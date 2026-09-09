@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/codegen-and-ir/codegen-artifact-schema/articles/verification-and-traceability",
+  "title": "Codegen artifact schema - Verification and traceability",
+  "description": "Shows how the team proves this feature works and where evidence lives.",
+  "parentSlug": "platform-spec/compiler/codegen-and-ir/codegen-artifact-schema",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

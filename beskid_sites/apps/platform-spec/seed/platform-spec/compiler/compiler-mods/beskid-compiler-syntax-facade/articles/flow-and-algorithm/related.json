@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Beskid.Compiler.SyntaxMirror facade",
+      "href": "/platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "blocks": [
+    {
+      "type": "markdownProse",
+      "bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Example manifest\n\n```\nmod {\n  capabilities = [read_project_sources, emit_syntax]\n  grammarRoots = [\"grammars\"]\n}\n```"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/execution/runtime/memory-and-gc-runtime-contract",
+	"title": "Memory and GC runtime contract",
+	"description": "Allocation, object lifetime, and garbage-collection responsibilities shared across compiler and runtime.",
+	"parentSlug": "platform-spec/execution/runtime",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-04-30"
+}

@@ -1,0 +1,8 @@
+{
+	"version": 1,
+	"specLevel": "area",
+	"slug": "platform-spec/core-library/foundation-and-primitives",
+	"title": "Foundation And Primitives",
+	"parentSlug": "platform-spec/core-library",
+	"status": "published"
+}

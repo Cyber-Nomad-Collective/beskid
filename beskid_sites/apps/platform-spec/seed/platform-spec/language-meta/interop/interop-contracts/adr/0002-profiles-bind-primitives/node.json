@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/language-meta/interop/interop-contracts/adr/0002-profiles-bind-primitives",
+	"title": "Profiles instantiate abstract primitives",
+	"description": "C ABI and Rust ABI profiles map Interop.Contracts.",
+	"parentSlug": "platform-spec/language-meta/interop/interop-contracts",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-LMETA-IC-0002",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-05-20",
+	"lastReviewed": "2026-05-22"
+}

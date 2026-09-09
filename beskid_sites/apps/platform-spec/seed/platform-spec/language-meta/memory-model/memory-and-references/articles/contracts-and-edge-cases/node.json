@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/memory-model/memory-and-references/articles/contracts-and-edge-cases",
+	"title": "Memory and references - Contracts and edge cases",
+	"description": "Normative contracts, edge cases, and invariants for Beskid memory and references.",
+	"parentSlug": "platform-spec/language-meta/memory-model/memory-and-references",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

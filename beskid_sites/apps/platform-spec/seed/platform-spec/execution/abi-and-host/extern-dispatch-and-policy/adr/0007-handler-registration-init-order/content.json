@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nv3 soft ops resolve through a handler table populated at process start. If user static initializers run before registration, dispatch calls observe empty or bootstrap-only tables.\n\n## Decision\n\n| Host | Rule |\n| --- | --- |\n| **AOT** | Emitted `runtime_init` **must** call corelib handler registration **before** user `main` and before user static init |\n| **JIT** | Engine session **must** invoke registration once per process before executing user code |\n| **Corelib** | `Runtime.Init` **must** call `beskid_register_handlers(version, table, count)` with manifest-aligned tags |\n| **Version gate** | Registration **must** reject mismatched handler-table version bands (same policy as `beskid_register_callbacks`) |\n| **Bootstrap** | Kernel exports may install static handlers for tags required before corelib init; corelib registration **must** supersede or complete the table |\n\nUser code **must not** rely on soft dispatch builtins before registration completes.\n\n## Consequences\n\nCodegen and link hosts emit an explicit init hook. Conformance tests assert handler registration precedes first soft dispatch from user code.\n\n## Verification anchors\n\n`compiler/crates/beskid_aot/src/run.rs`; `compiler/crates/beskid_engine/src/engine.rs`; `compiler/corelib/packages/runtime/src/Runtime/Init.bd`; `compiler/crates/beskid_runtime/src/interop/register.rs`."
+		}
+	]
+}

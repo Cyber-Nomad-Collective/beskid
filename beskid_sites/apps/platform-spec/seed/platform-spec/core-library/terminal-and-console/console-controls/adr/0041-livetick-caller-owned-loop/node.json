@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/core-library/terminal-and-console/console-controls/adr/0041-livetick-caller-owned-loop",
+	"title": "LiveTick caller-owned redraw loop",
+	"description": "Periodic redraw uses LiveTick; callers own fiber/channel loops.",
+	"parentSlug": "platform-spec/core-library/terminal-and-console/console-controls",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-CORE-TERM-0041",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-05-20",
+	"lastReviewed": "2026-05-22"
+}

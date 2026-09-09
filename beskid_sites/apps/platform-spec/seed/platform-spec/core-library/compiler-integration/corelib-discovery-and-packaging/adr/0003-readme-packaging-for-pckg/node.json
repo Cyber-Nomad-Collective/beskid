@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/adr/0003-readme-packaging-for-pckg",
+	"title": "Readme packaging for pckg artifacts",
+	"description": "Pack copies declared readme into README.md for registry docs.",
+	"parentSlug": "platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-CORE-COMP-0003",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-04-23",
+	"lastReviewed": "2026-05-22"
+}

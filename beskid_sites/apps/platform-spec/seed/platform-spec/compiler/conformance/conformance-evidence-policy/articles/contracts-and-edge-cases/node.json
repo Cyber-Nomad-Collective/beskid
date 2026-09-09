@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/conformance/conformance-evidence-policy/articles/contracts-and-edge-cases",
+  "title": "Conformance evidence policy - Contracts and edge cases",
+  "description": "States the normative guarantees and what happens at boundaries or failure edges.",
+  "parentSlug": "platform-spec/compiler/conformance/conformance-evidence-policy",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

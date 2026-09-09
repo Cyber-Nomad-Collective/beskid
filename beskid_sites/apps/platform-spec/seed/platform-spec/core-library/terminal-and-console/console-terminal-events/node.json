@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/core-library/terminal-and-console/console-terminal-events",
+	"title": "Console terminal events",
+	"description": "Terminal resize detection and ConsoleMessage delivery over channels and events.",
+	"parentSlug": "platform-spec/core-library/terminal-and-console",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-21"
+}

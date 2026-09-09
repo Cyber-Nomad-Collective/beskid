@@ -1,0 +1,14 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/execution/runtime/channels-and-synchronization/articles/contracts-and-edge-cases",
+	"title": "Channels and synchronization - Contracts and edge cases",
+	"description": "Runtime-level Send, Receive, Hub, and cancellation contracts.",
+	"parentSlug": "platform-spec/execution/runtime/channels-and-synchronization",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-20"
+}

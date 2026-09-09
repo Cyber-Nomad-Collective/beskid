@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/language-meta/interop/rust-abi-profile/adr/0005-kernel-vs-dispatch-registration",
+	"title": "Kernel exports vs handler registration",
+	"description": "v3 separates frozen kernel symbols from soft ops registered at init.",
+	"parentSlug": "platform-spec/language-meta/interop/rust-abi-profile",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-LMETA-RUSTABI-0005",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-06-06",
+	"lastReviewed": "2026-06-06"
+}

@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/tooling/vscode-extension/extension-surface/articles/faq-and-troubleshooting",
+	"title": "FAQ and troubleshooting",
+	"description": "Common questions about focus, private registries, offline mode, and LSP restarts.",
+	"parentSlug": "platform-spec/tooling/vscode-extension/extension-surface",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-30"
+}

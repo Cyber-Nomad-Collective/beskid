@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "feature",
+  "slug": "platform-spec/compiler/codegen-and-ir/dynamic-types-and-mapping",
+  "title": "Dynamic types and mapping (v0.3 scope)",
+  "description": "Normative dynamic cell representation, AOT object-to-object mapping, and runtime fallback for serializable types.",
+  "parentSlug": "platform-spec/compiler/codegen-and-ir",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-05-23"
+}

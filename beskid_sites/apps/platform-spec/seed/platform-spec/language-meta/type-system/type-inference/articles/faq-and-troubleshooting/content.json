@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Locked decisions\n\n| Decision | ID | Summary |\n| --- | --- | --- |\n| Fail on ambiguity | D-LM-INF-001 | Prefer errors over guessing |\n| Public API annotations | D-LM-INF-002 | Exported functions should declare return types |\n| No nullable inference | D-LM-INF-003 | Inference must not introduce nullable types |\n| Contextual lambdas | D-LM-INF-004 | Untyped parameters need expected function type |\n\n## FAQ\n\n### Why does `let x = []` fail?\n\nThe compiler cannot infer the element type of an empty array without context. Add an explicit type: `let i32[] x = [];`.\n\n### Do I need to annotate every variable?\n\nNo. Simple literals and expressions with unambiguous types infer automatically. Annotate when the type is not obvious from the initializer.\n\n### Can inference fail across function boundaries?\n\nReturn type inference works within a single function body. Cross-function inference is not supported; function signatures must be self-contained.\n\n## Troubleshooting\n\n| Symptom | Likely cause |\n| --- | --- |\n| **E1202** | Ambiguous type — add explicit annotation |\n| **E1203** | Missing generic arguments at call site |\n| **W1203** | Implicit numeric narrowing — add explicit cast |\n| Lambda parameter error | No expected function type in context |"
+		}
+	]
+}

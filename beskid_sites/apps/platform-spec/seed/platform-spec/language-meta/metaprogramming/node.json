@@ -1,0 +1,8 @@
+{
+	"version": 1,
+	"specLevel": "area",
+	"slug": "platform-spec/language-meta/metaprogramming",
+	"title": "Metaprogramming",
+	"parentSlug": "platform-spec/language-meta",
+	"status": "published"
+}

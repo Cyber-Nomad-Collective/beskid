@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/type-system/types/articles/flow-and-algorithm",
+	"title": "Types - Flow and algorithm",
+	"description": "Step-by-step flow of type parsing, declaration collection, and type checking in the compiler pipeline.",
+	"parentSlug": "platform-spec/language-meta/type-system/types",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-16"
+}

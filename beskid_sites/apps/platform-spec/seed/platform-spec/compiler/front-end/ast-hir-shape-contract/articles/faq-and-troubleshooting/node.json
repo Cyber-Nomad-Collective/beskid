@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/front-end/ast-hir-shape-contract/articles/faq-and-troubleshooting",
+  "title": "AST and HIR shape contract - FAQ and troubleshooting",
+  "description": "Answers common operator and contributor questions with practical next checks.",
+  "parentSlug": "platform-spec/compiler/front-end/ast-hir-shape-contract",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

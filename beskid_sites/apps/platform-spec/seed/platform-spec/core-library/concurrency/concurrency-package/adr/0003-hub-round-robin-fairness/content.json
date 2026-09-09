@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nFIFO registration order starves late channels when an early channel is always ready.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Algorithm | **Round-robin** among channels with a ready **Receive** |\n| Cursor | Per-`Hub` index advanced after each successful **WaitReceive** |\n| v1 scope | **WaitReceive** only — no **WaitSend** |\n\n## Consequences\n\nConsole hubs should keep registration count small (under 16 typical).\n\n## Verification anchors\n\nHub integration tests in runtime and corelib suites."
+		}
+	]
+}

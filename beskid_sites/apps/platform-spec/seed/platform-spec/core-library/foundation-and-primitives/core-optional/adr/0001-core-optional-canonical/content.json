@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\n`Query.Contracts` historically hosted `Option<T>` because query iterators were the primary consumer. Optional presence is now a cross-cutting primitive used by collections, concurrency, environment probes, and language-meta type rules.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Canonical module | `Core.Optional.Option<T>` under `Core/Optional/` |\n| Deprecation | `Query.Contracts` **must** be deprecated; it **may** re-export `Core.Optional` for one release only |\n| API boundaries | Public corelib signatures **must** spell `Core.Optional.Option<T>` (or unqualified `Option<T>` after `use Core.Optional`) |\n| Language spec | Glossary and [Types](/platform-spec/language-meta/type-system/types/) **must** reference `Core.Optional`, not `Query.Contracts` |\n\n## Consequences\n\n- Iterator `First()` and map `TryGet` return `Core.Optional.Option<T>`.\n- Book and platform-spec examples migrate off `use Query.Contracts` for `Option`.\n- `Query.Contracts.bd` is removed after the shim window.\n\n## Verification anchors\n\n- `compiler/corelib/packages/foundation/src/Core/Optional/`\n- `OptionalTests.bd` under `beskid_corelib/tests/corelib_tests/`"
+		}
+	]
+}

@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/core-library/text-and-parsing/text-cursor/articles/design-model",
+	"title": "Design model",
+	"description": "Core.Text.Cursor module layout.",
+	"parentSlug": "platform-spec/core-library/text-and-parsing/text-cursor",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-08"
+}

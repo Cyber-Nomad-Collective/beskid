@@ -1,0 +1,33 @@
+import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+Informative sketches (syntax may evolve with `spawn` lowering):
+
+```beskid
+use Concurrency.Channel;
+use Concurrency.Fiber;
+use Core.Results.Result;
+
+// spawn keyword lowers to Fiber handle; Join for result
+Fiber<i64> worker = spawn Compute();
+Result<i64, FiberError> outcome = worker.Join();
+
+Channel<string> log = Channel(ChannelOptions.Bounded(64));
+log.Send("ready");
+Result<string, ChannelError> line = log.Receive();
+```
+
+**Hub** (homogeneous multichannel wait):
+
+```beskid
+`Hub<ConsoleMessage>` hub = `Hub<ConsoleMessage>`.Create();
+hub.Register(0, resizeChannel);
+hub.Register(1, inputChannel);
+Result<HubReceiveResult, HubError> ready = hub.WaitReceive();
+// ready.value.index + ready.value.value
+```
+
+Unlike payload types: use `enum ConsoleMessage { Resize(ConsoleSize), Key(KeyEvent) }` and `Channel<ConsoleMessage>`, or separate hubs per type.
+
+Console resize path should **Send** into a channel consumed by the UI fiber rather than invoking **event** handlers on arbitrary fibers.

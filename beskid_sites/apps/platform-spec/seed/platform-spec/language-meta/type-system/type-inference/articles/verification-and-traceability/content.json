@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Verification matrix\n\n| Scenario | Expected evidence |\n| --- | --- |\n| `let x = 42` | Inferred as `i32`; no diagnostic |\n| `let x = []` | **E1202** emitted |\n| Lambda with context | Parameters inferred from expected function type |\n| Lambda without context | **E1202** if parameters lack types |\n| Generic call omission | Arguments inferred from parameter types |\n| Public function without return type | Warning or recommendation to annotate |\n\n## Implementation checklist\n\n- [x] Grammar: `let` with and without type annotation\n- [x] AST: `TypedLet` vs `ExplicitLet` distinction\n- [x] Type context: `try_infer.rs` local inference\n- [x] Lambda parameter inference from expected type\n- [x] Generic call-site argument inference\n- [x] Diagnostics: **E1202**, **E1203**, **W1203**\n- [ ] Return type inference for all function forms\n- [ ] Enum constructor context inference\n- [ ] Integration tests for nested lambda inference\n\n## Test locations\n\n- `compiler/crates/beskid_analysis/src/types/context/try_infer.rs` — inference unit tests\n- `compiler/crates/beskid_analysis/src/types/context/expressions.rs` — expression typing tests\n- `compiler/crates/beskid_tests` — integration tests for inference scenarios"
+		}
+	]
+}

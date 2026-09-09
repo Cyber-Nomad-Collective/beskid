@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "specLevel": "domain",
+  "slug": "platform-spec/compiler",
+  "title": "Compiler",
+  "parentSlug": "platform-spec",
+  "status": "published"
+}

@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/tooling/project-scaffolding/decisions-record",
+	"title": "Project scaffolding - Decisions record (legacy index)",
+	"description": "Migration index for ADRs under project-scaffolding features—normative text lives in adr/ files.",
+	"parentSlug": "platform-spec/tooling/project-scaffolding",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-22"
+}

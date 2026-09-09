@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape/adr/0005-owning-type-inline-methods",
+	"title": "Owning-type inline methods",
+	"description": "Corelib-owned types declare methods inside pub type blocks; extend type is forbidden.",
+	"parentSlug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-CORE-API-0002",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-06-10",
+	"lastReviewed": "2026-06-10"
+}

@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/memory-model/memory-and-references/articles/flow-and-algorithm",
+	"title": "Memory and references - Flow and algorithm",
+	"description": "Step-by-step flow of memory validation, escape analysis, and GC management in the Beskid compiler and runtime.",
+	"parentSlug": "platform-spec/language-meta/memory-model/memory-and-references",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/community/spec-maintenance/last-reviewed-policy/adr/0001-last-reviewed-metadata",
+	"title": "lastReviewed on high-churn platform-spec pages",
+	"description": "ISO lastReviewed dates track review freshness when implementation anchors change.",
+	"parentSlug": "platform-spec/community/spec-maintenance/last-reviewed-policy",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-COMM-REV-0001",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-05-05",
+	"lastReviewed": "2026-05-22"
+}

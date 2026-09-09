@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Hard requirements\n\n- **Expression lambdas** — Statement lambdas use block bodies; no separate `fn` literal syntax.\n- **No async lambdas** — `async`/`await` are not closure modifiers; use `spawn` instead.\n- **Capture extends lifetime** — Closures must keep captured locals alive for the closure value's lifetime.\n- **GC for escaped captures** — Captured reference-bearing values must be heap-traced when they escape.\n\n## Diagnostic band\n\n| Code | Condition |\n| --- | --- |\n| **E1202** | Missing type annotation (lambda parameter inference fails) |\n| **E1223** | Spawn target not fiber compatible |\n| **E1225** | Stack reference escapes spawn |\n\n## Edge cases\n\n- **Zero-parameter lambda** — `() => body` is valid; the parameter list is empty.\n- **Lambda as statement** — A lambda expression used as a statement is valid but usually pointless unless assigned.\n- **Recursive lambda** — A lambda cannot directly reference itself unless bound to a named variable first.\n- **Capture of `this`** — Instance lambdas capture `this` implicitly; the closure environment holds a reference to the enclosing object.\n\n## Invariants\n\n- Lambda type must be inferable from expected type or parameter annotations.\n- Captured locals must be definitely assigned before capture.\n- Closures passed to `spawn` must be compatible with fiber entry signatures.\n- JIT and AOT must agree on closure calling conventions."
+		}
+	]
+}

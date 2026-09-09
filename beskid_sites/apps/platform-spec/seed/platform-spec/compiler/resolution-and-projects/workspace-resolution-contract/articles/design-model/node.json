@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/articles/design-model",
+  "title": "Workspace resolution contract - Design model",
+  "description": "Actors, data model, and boundaries for project/workspace discovery in compiler services.",
+  "parentSlug": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-05-20"
+}

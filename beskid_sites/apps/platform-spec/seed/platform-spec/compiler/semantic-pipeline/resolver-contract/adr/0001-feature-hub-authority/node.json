@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "specLevel": "adr",
+  "slug": "platform-spec/compiler/semantic-pipeline/resolver-contract/adr/0001-feature-hub-authority",
+  "title": "Feature hub authority",
+  "description": "This feature hub owns normative MUST/SHOULD contract text for Resolver contract.",
+  "parentSlug": "platform-spec/compiler/semantic-pipeline/resolver-contract",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "adrId": "D-COMP-SEM-0004",
+  "adrStatus": "Accepted",
+  "adrDate": "2026-05-05",
+  "lastReviewed": "2026-05-22"
+}

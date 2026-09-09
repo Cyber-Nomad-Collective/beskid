@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/execution/runtime/memory-and-gc-runtime-contract/adr/0005-phase-a-before-phase-b",
+	"title": "Ship Phase A GC before parallel mutators",
+	"description": "v0.2 targets single mutator; Phase B requires spec and barrier completion first.",
+	"parentSlug": "platform-spec/execution/runtime/memory-and-gc-runtime-contract",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-EXEC-RT-0005",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-01-15",
+	"lastReviewed": "2026-05-22"
+}

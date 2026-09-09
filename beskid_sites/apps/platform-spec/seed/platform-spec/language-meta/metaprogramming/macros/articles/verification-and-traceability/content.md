@@ -1,0 +1,32 @@
+import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Verification matrix
+
+| Scenario | Expected evidence |
+| --- | --- |
+| Macro definition | Parsed; registered in `MacroRegistry` |
+| Macro invocation | Expanded; re-parsed |
+| Unknown macro | **E1901** emitted |
+| Arity mismatch | **E1902** emitted |
+| Kind mismatch | **E1903** emitted |
+| Depth exceeded | **E1905** emitted |
+
+## Implementation checklist
+
+- [x] Grammar: `macro`, `!` invocation, fragment kinds
+- [x] AST: `MacroDefinition`, `MacroInvocation`, `MacroParameter`
+- [x] Parser: `beskid.pest` productions for macros
+- [x] Registry: `MacroRegistry` with duplicate detection
+- [x] Expansion: fragment substitution and splicing
+- [x] Diagnostics: **E1901–E1905**, **E1907**, **E1908**
+- [ ] Item-position macro expansion tests
+- [ ] Mod-generated macro invocation expansion
+
+## Test locations
+
+- `compiler/crates/beskid_analysis/src/syntax/items/macro_definition.rs` — parser tests
+- `compiler/crates/beskid_analysis/src/macros/registry.rs` — registry tests
+- `compiler/crates/beskid_analysis/src/macros/match_args.rs` — expansion tests
+- `compiler/crates/beskid_tests` — integration tests for macros

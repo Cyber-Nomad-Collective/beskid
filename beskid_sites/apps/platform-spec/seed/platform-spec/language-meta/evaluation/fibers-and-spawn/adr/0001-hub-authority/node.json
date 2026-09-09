@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/language-meta/evaluation/fibers-and-spawn/adr/0001-hub-authority",
+	"title": "Feature hub owns normative contract",
+	"description": "Sibling articles defer to this hub for MUST/SHOULD authority.",
+	"parentSlug": "platform-spec/language-meta/evaluation/fibers-and-spawn",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-LMETA-FIBERS-0001",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-05-20",
+	"lastReviewed": "2026-05-22"
+}

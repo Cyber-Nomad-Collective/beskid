@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "specLevel": "adr",
+  "slug": "platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/adr/0003-cycles-reported-at-graph-build",
+  "title": "Dependency cycles reported at graph build",
+  "description": "Silent cycle handling broke workspace diagnostics parity.",
+  "parentSlug": "platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "adrId": "D-COMP-PROJ-0003",
+  "adrStatus": "Accepted",
+  "adrDate": "2026-05-05",
+  "lastReviewed": "2026-05-22"
+}

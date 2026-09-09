@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Block wrapper\n\n```beskid\nmacro logged (block body) {\n    Console.WriteLine(\"enter\");\n    $body\n    Console.WriteLine(\"leave\");\n}\n\nunit Main() {\n    logged! {\n        Console.WriteLine(\"work\");\n    }\n}\n```\n\n## Expression passthrough\n\n```beskid\nmacro identity (expression value) {\n    $value\n}\n\nunit UseIdentity() {\n    let x = identity!(1 + 2);\n}\n```\n\n## Item macro\n\n```beskid\nmacro defineType (identifier name, block body) {\n    type $name {\n        $body\n    }\n}\n\ndefineType!(Point, {\n    f32 x;\n    f32 y;\n})\n```\n\n## Multiple parameters\n\n```beskid\nmacro repeat (expression value, literal count) {\n    for i in 0..$count {\n        $value;\n    }\n}\n\nunit UseRepeat() {\n    repeat!(Console.WriteLine(\"hello\"), 3);\n}\n```"
+		}
+	]
+}

@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "blocks": [
+    {
+      "type": "domainTiles",
+      "props": {
+        "pathPrefix": "platform-spec/compiler/implementation-map/crate-to-spec-anchors",
+        "heading": "Articles"
+      }
+    },
+    {
+      "type": "markdownProse",
+      "bodyMd": "import SpecPageHeader from '@beskid/beskid-ui/platform-spec/SpecPageHeader.astro';\nimport DomainTiles from '@beskid/beskid-ui/platform-spec/DomainTiles.astro';\nimport SpecSection from '@beskid/beskid-ui/platform-spec/SpecSection.astro';\n\n<SpecPageHeader status=\"Standard\" ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\n<SpecSection title=\"What this feature specifies\" id=\"what-this-feature-specifies\">\nThis feature explains how maintainers trace each normative statement to a concrete crate boundary. It is organized into newcomer-friendly articles that move from model, to flow, to contracts, then practical verification and debugging guidance.\n</SpecSection>\n\n<SpecSection title=\"Implementation anchors\" id=\"implementation-anchors\">\n- `beskid_analysis` -> parser/resolution/semantic leaves\n- `beskid_codegen` -> lowering contract leaves\n- `beskid_abi` and `beskid_runtime` -> execution ABI/runtime leaves\n- `beskid_engine` -> JIT execution of CodegenArtifact\n- `beskid_aot` -> AOT compilation and object emission\n- `beskid_pipeline` -> stable pipeline phase ordering and composition\n- `beskid_graph` -> project graph model\n- `beskid_queries` -> Salsa incremental query engine\n- `beskid_cli` -> command surface and build/run orchestration\n- `beskid_lsp` -> language server and diagnostics parity\n- `beskid_pckg` -> package registry client\n- `beskid_runtime_bridge` -> arch/OS interop (extern dispatch)\n- `beskid_template` -> project scaffolding templates\n- `abfall` -> garbage-collector allocator (Sweep, Mark, Compact)\n- `beskid_tests` and `beskid_e2e_tests` -> conformance leaves\n- `beskid_ast_derive`, `beskid_ast_reflect_gen` -> internal code-generation utilities (no normative spec surface)\n</SpecSection>\n\n## Decisions\n\nNo open decisions. Closed choices are normative ADRs under **`adr/`** (`D-COMP-MAP-0001` … `D-COMP-MAP-0003`); use the reader **ADRs** tab for expandable detail."
+    }
+  ]
+}

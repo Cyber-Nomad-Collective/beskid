@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/tooling/cli/api-json-contract/adr/0003-symbol-key-field",
+	"title": "symbolKey stable identity field",
+	"description": "Additive api.json field for registry-backed package-prefixed symbol keys.",
+	"parentSlug": "platform-spec/tooling/cli/api-json-contract",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-TOOL-CLI-0003",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-06-05",
+	"lastReviewed": "2026-06-05"
+}

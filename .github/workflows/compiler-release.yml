@@ -158,6 +158,9 @@ jobs:
         with:
           targets: ${{ matrix.target }}
 
+      - uses: ./.github/actions/setup-rust-build-tools
+        if: runner.os == 'Linux'
+
       - uses: ./.github/actions/setup-native-llvm-windows
         if: runner.os == 'Windows'
 

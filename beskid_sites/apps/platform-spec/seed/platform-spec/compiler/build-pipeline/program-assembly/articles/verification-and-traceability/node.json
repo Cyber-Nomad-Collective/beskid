@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/build-pipeline/program-assembly/articles/verification-and-traceability",
+  "title": "Program assembly - Verification and traceability",
+  "description": "Test and source anchors for ProgramAssembly and effective roots.",
+  "parentSlug": "platform-spec/compiler/build-pipeline/program-assembly",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-05-20"
+}

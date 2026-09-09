@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Primitive types\n\n```beskid\nunit Primitives() {\n    let b = true;\n    let n = 42;\n    let big = 9007199254740992i64;\n    let byte = 0u8;\n    let pi = 3.14;\n    let c = 'a';\n    let s = \"hello\";\n}\n```\n\n## Nominal record type\n\n```beskid\ntype Person {\n    string name;\n    i32 age;\n}\n\ntype Team {\n    string name;\n    Person[] members;\n}\n```\n\n## Generic type\n\n```beskid\ntype Box<T> {\n    T value;\n}\n\ntype Pair<T, U> {\n    T first;\n    U second;\n}\n```\n\n## Enum with payloads\n\n```beskid\nenum Option<T> {\n    Some(T);\n    None;\n}\n\nenum Result<TValue, TError> {\n    Ok(TValue);\n    Error(TError);\n}\n```\n\n## Conformance list\n\n```beskid\ncontract Named {\n    string Name();\n}\n\ntype Product : Named {\n    string name;\n    f32 price;\n\n    pub string Name() {\n        return name;\n    }\n}\n```\n\n## Array and reference\n\n```beskid\nunit Process(ref i32[] values) {\n    for v in values {\n        // v is i32 by value from iteration\n    }\n}\n```\n\n## Function type\n\n```beskid\ntype Calculator {\n    (i32, i32) => i32 add;\n}\n```"
+		}
+	]
+}

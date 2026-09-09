@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "mod host bridge",
+      "href": "/platform-spec/compiler/compiler-mods/mod-host-bridge/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

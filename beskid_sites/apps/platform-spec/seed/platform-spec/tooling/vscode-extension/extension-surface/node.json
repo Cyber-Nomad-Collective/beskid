@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/tooling/vscode-extension/extension-surface",
+	"title": "Extension surface",
+	"description": "VS Code extension views, focus model, LSP initialization, status-bar phases, and cross-feature command wiring.",
+	"parentSlug": "platform-spec/tooling/vscode-extension",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-21"
+}

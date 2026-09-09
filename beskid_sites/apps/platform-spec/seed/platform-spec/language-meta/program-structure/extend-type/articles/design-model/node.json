@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/program-structure/extend-type/articles/design-model",
+	"title": "extend type - Design model",
+	"description": "Conceptual model for type extension syntax, access rules, and compiler mod integration in Beskid.",
+	"parentSlug": "platform-spec/language-meta/program-structure/extend-type",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

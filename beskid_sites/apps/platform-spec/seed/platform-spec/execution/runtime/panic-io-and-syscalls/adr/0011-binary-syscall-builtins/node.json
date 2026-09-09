@@ -1,0 +1,17 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/execution/runtime/panic-io-and-syscalls/adr/0011-binary-syscall-builtins",
+	"title": "Binary syscall builtins",
+	"description": "syscall_read_bytes and syscall_write_bytes for u8[] I/O.",
+	"parentSlug": "platform-spec/execution/runtime/panic-io-and-syscalls",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-EXEC-RT-0011",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-06-06",
+	"lastReviewed": "2026-06-06"
+}

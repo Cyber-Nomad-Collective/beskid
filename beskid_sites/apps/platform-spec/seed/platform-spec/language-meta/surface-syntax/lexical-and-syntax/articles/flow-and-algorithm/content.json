@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Compile pipeline placement\n\n```mermaid\nflowchart LR\n    source[source text]\n    lex[lexical analysis]\n    parse[pest parse]\n    ast[AST construction]\n    hir[HIR lowering]\n    source --> lex --> parse --> ast --> hir\n```\n\n## Parsing algorithm (normative)\n\n1. **Read source** — Load source text from file or editor buffer.\n2. **Tokenize** — Pest grammar `beskid.pest` drives implicit tokenization.\n3. **Parse program** — `Program = ItemList` matches top-level items.\n4. **Construct AST** — Each pest rule maps to an AST node via `Parsable` trait implementations.\n5. **Attach spans** — Every AST node carries a `SpanInfo` for diagnostic reporting.\n6. **Attach docs** — Leading `///` runs are attached to items via `ItemWithDocs` wrappers.\n7. **Report parse errors** — Malformed input emits parser diagnostics (no stable `E####` band in v0.1).\n8. **Early structural checks** — HIR construction discovers issues like invalid nesting; **E1151–E1154**.\n\n## Type syntax precedence\n\nType syntax order of precedence (highest to lowest):\n1. `ArrowFunctionType`\n2. `FunctionType`\n3. `T[]`\n4. `TypeName`\n\n## Generic parameter lists\n\nUse angle brackets: `<T, U>`. Generic parameters shadow type names in signature scope only.\n\n## LSP / incremental\n\nRe-parse when source text changes. Incremental parsing may be optimized by tracking changed regions."
+		}
+	]
+}

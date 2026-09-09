@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/articles/contracts-and-edge-cases",
+  "title": "Workspace resolution contract - Contracts and edge cases",
+  "description": "Normative guarantees and failure behavior for manifests, graph resolution, and root selection.",
+  "parentSlug": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

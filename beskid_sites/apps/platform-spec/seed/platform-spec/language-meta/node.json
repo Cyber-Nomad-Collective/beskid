@@ -1,0 +1,8 @@
+{
+	"version": 1,
+	"specLevel": "domain",
+	"slug": "platform-spec/language-meta",
+	"title": "Language Meta",
+	"parentSlug": "platform-spec",
+	"status": "published"
+}

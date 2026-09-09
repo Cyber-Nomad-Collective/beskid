@@ -1,0 +1,14 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/core-library/foundation-and-primitives/core-encoding",
+	"title": "Core.Encoding",
+	"description": "Encoding contracts and Utf8, Hex, Base64 implementations.",
+	"parentSlug": "platform-spec/core-library/foundation-and-primitives",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-06"
+}

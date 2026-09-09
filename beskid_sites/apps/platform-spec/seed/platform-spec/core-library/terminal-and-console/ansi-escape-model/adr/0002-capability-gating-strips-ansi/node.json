@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/core-library/terminal-and-console/ansi-escape-model/adr/0002-capability-gating-strips-ansi",
+	"title": "Capability gating strips ANSI",
+	"description": "Styled emission must respect ShouldEmitAnsi and non-TTY hosts.",
+	"parentSlug": "platform-spec/core-library/terminal-and-console/ansi-escape-model",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-CORE-TERM-0002",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-05-20",
+	"lastReviewed": "2026-05-22"
+}

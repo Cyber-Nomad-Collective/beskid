@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nRegistry taxonomy.\n\n## Decision\n\ntemplate kind must not require api.json.\n\n## Consequences\n\npckg validators.\n\n## Verification anchors\n\nValidator tests."
+		}
+	]
+}

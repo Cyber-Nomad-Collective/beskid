@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Vocabulary\n\n| Construct | Role |\n| --- | --- |\n| **`ExtendTypeDefinition`** | `extend type T { methods }` block |\n| **`MethodDefinition`** | Callable member with optional receiver type |\n| **`ReceiverType`** | Type parsed as the extension target |\n\n## Extension architecture\n\n`extend type` is the normative mechanism for adding members to an existing type. It replaces prior `impl` block patterns.\n\n```mermaid\nflowchart LR\n    parse[parse extend type]\n    collect[collect methods]\n    resolve[resolve target type]\n    access[check access rules]\n    lower[lower to HIR]\n    parse --> collect --> resolve --> access --> lower\n```\n\n### Subsystem boundaries\n\n| Subsystem | Responsibility | Key file |\n| --- | --- | --- |\n| Parser | Parse `extend type` and methods | `syntax/items/extend_type.rs` |\n| AST | Store extension structure | `syntax/items/extend_type.rs` |\n| Resolver | Index extended methods under target type | `resolve/member_items.rs` |\n| Visibility | Check private member access | `analysis/rules/staged/visibility.rs` |\n| HIR lowering | Normalize method definitions | `hir/lowering/items.rs` |\n\n## Access rules\n\n- Members inside `extend type` may access public members of the extended type only.\n- Private member access is forbidden inside `extend type` bodies.\n- `extend type` does not bypass module visibility; extension sites must satisfy normal import and visibility rules.\n\n## Compiler mod integration\n\n`Generator` contracts may emit `extend type` blocks as typed AST contributions. Generated extensions follow the same access and visibility rules as hand-authored extensions."
+		}
+	]
+}

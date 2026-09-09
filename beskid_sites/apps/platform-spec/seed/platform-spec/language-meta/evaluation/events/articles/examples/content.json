@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Event declaration\n\n```beskid\ntype Button {\n    event Clicked(i32 x, i32 y);\n}\n```\n\n## Subscription and raising\n\n```beskid\nunit UseButton() {\n    let btn = Button {};\n    btn.Clicked += (x, y) => {\n        Console.WriteLine(\"clicked at \" + x + \", \" + y);\n    };\n    btn.Clicked(10, 20);\n}\n```\n\n## Capacity hint\n\n```beskid\ntype LimitedButton {\n    event {5} Clicked(i32 x, i32 y);\n}\n```\n\n## Event in type with other fields\n\n```beskid\ntype DataSource {\n    string name;\n    event Changed();\n\n    pub unit Update() {\n        Changed();\n    }\n}\n```"
+		}
+	]
+}

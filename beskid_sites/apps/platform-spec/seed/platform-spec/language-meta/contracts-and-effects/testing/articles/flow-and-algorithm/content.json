@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Compile pipeline placement\n\n```mermaid\nflowchart LR\n    parse[parse]\n    collect[collect test items]\n    semantic[semantic analysis]\n    discover[discover tests]\n    run[run tests]\n    parse --> collect --> semantic --> discover --> run\n```\n\n## Test parsing algorithm (normative)\n\n1. **Parse test item** — `test Name { body }` becomes `TestDefinition` with `name`, `meta`, `skip`, and `statements`.\n2. **Parse meta section** — `meta { timeout = 30; }` becomes `TestMetaSection` with `TestMetadataEntry` items.\n3. **Parse skip section** — `skip { condition = expr; }` becomes `TestSkipSection` with `TestMetadataEntry` items.\n4. **Parse body statements** — Remaining items in the test body are parsed as `Statement` nodes with optional leading docs.\n5. **Collect definitions** — `TestDefinition` nodes are collected alongside other items in the module.\n\n## Discovery algorithm\n\n1. **Filter by project kind** — `beskid test` scopes discovery to `Test` projects unless manifest policy allows otherwise.\n2. **Walk module items** — Collect all `TestDefinition` nodes from parsed programs.\n3. **Evaluate skip predicates** — For each test with a `skip` section, evaluate the predicate expression. If true, skip the test.\n4. **Invoke in isolation** — The test runner invokes each discovered test entrypoint in isolation unless `meta` specifies shared fixtures (future).\n\n## Execution model\n\n- Failed assertions report as test failures without undefined behavior.\n- Skipped tests do not count as failures when skip predicates evaluate true.\n- Corelib testing helpers extend but do not redefine language-level `test` syntax."
+		}
+	]
+}

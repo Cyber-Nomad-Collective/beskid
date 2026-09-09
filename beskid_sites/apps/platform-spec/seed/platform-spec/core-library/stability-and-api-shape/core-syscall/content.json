@@ -1,0 +1,16 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "domainTiles",
+			"props": {
+				"pathPrefix": "platform-spec/core-library/stability-and-api-shape/core-syscall",
+				"heading": "Articles"
+			}
+		},
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecPageHeader from '@beskid/beskid-ui/platform-spec/SpecPageHeader.astro';\nimport DomainTiles from '@beskid/beskid-ui/platform-spec/DomainTiles.astro';\nimport SpecSection from '@beskid/beskid-ui/platform-spec/SpecSection.astro';\n\n<SpecPageHeader status=\"Standard\" ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\n<SpecSection title=\"What this feature specifies\" id=\"what-this-feature-specifies\">\n`Core.Syscall` exposes typed `ReadWith` / `WriteWith` and binary `ReadBytes` / `WriteBytes` for arbitrary descriptors via `Descriptor::Raw`. Standard stream modules remain a restricted profile (**SC-004**, **IO-001** / **IO-002**).\n</SpecSection>\n\n<SpecSection title=\"Scope\" id=\"scope\">\n- **In scope:** Typed descriptor facade (`Descriptor`, `ReadRequest`, `WriteRequest`, `SyscallError`), text and binary read/write for arbitrary fds, and stable error mapping across JIT/AOT.\n- **Out of scope:** Console markup, terminal controls, and std-stream-only modules (`Core.Input`, `Core.Output`, `Core.Error`) which **must** use `Descriptor::Standard` only.\n</SpecSection>\n\n<SpecSection title=\"Implementation anchors\" id=\"implementation-anchors\">\n- `compiler/corelib/packages/foundation/src/Core/Syscall.bd`\n- `compiler/corelib/packages/foundation/src/Core/Syscall/`\n- Runtime builtins: `compiler/crates/beskid_runtime/src/builtins/io.rs`\n- Corelib tests: `compiler/corelib/beskid_corelib/tests/corelib_tests/src/system/Syscall*Tests.bd`\n</SpecSection>\n\n<SpecSection title=\"Contract statement\" id=\"contract-statement\">\n| Surface | Rule |\n| --- | --- |\n| **SC-001** | `ReadWith` / `WriteWith` **must** route via typed `Descriptor`, not raw fd integers in stream modules. |\n| **SC-004** | `Core.Input` / `Output` / `Error` **must** use `Descriptor::Standard` only (**IO-001**, **IO-002**). |\n| **SC-005** | `SyscallError` mapping **must** be stable across JIT/AOT. |\n</SpecSection>\n\n## Decisions\n\nNo open decisions. Normative syscall rules (**SC-001** … **SC-010**) live in [contracts and edge cases](./contracts-and-edge-cases/)."
+		}
+	]
+}

@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/execution/runtime/memory-and-gc-runtime-contract/articles/design-model",
+	"title": "Design model",
+	"description": "Heap ownership, tri-color GC, Phase A mutator rules, and compiler/runtime split.",
+	"parentSlug": "platform-spec/execution/runtime/memory-and-gc-runtime-contract",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-22"
+}

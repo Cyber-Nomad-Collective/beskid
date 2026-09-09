@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/tooling/vscode-extension/package-manager-panel",
+	"title": "Package manager panel",
+	"description": "VS Code Packages view — local project dependencies and registry search via pckg HTTP and CLI mutations.",
+	"parentSlug": "platform-spec/tooling/vscode-extension",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-21"
+}

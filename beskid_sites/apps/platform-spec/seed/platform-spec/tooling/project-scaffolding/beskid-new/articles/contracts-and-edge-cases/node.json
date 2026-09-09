@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/tooling/project-scaffolding/beskid-new/articles/contracts-and-edge-cases",
+	"title": "Contracts and edge cases",
+	"description": "Flags, interactive behavior, and edge cases for `beskid new`.",
+	"parentSlug": "platform-spec/tooling/project-scaffolding/beskid-new",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-21"
+}

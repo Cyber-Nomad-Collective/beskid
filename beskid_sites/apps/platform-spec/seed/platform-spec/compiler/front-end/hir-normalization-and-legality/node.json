@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "feature",
+  "slug": "platform-spec/compiler/front-end/hir-normalization-and-legality",
+  "title": "HIR normalization and legality",
+  "description": "Feature hub for the hir normalization and legality in the reference compiler.",
+  "parentSlug": "platform-spec/compiler/front-end",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-04-30"
+}

@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/community/spec-maintenance/release-and-versioning-policy",
+	"title": "Release and versioning policy",
+	"description": "Git as the canonical version axis; v0.x bands label delivery scope, not alternate documentation URLs or parallel normative trees.",
+	"parentSlug": "platform-spec/community/spec-maintenance",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-21"
+}

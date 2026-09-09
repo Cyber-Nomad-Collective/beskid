@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/execution/runtime/runtime-feature-flags/articles/examples",
+	"title": "Examples",
+	"description": "Building runtime with features, array backing expectations, and engine extern_dlopen.",
+	"parentSlug": "platform-spec/execution/runtime/runtime-feature-flags",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-22"
+}

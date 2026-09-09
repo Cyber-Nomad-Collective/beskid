@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/execution/runtime/panic-io-and-syscalls/articles/flow-and-algorithm",
+	"title": "Flow and algorithm",
+	"description": "Panic emission, syscall_write chunking, and blocking IO on fibers.",
+	"parentSlug": "platform-spec/execution/runtime/panic-io-and-syscalls",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-22"
+}

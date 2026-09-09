@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/articles/design-model",
+  "title": "Extern import extraction contract - Design model",
+  "description": "Explains the persistent concepts, entities, and boundaries this feature relies on.",
+  "parentSlug": "platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

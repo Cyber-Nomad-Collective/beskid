@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/language-meta/interop/interop-contracts/adr/0004-dispatch-envelope-layout",
+	"title": "Dispatch envelope layout",
+	"description": "Normative RuntimeInteropEnvelope layout and tag validity rules for v3 dispatch.",
+	"parentSlug": "platform-spec/language-meta/interop/interop-contracts",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-LMETA-IC-0004",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-06-06",
+	"lastReviewed": "2026-06-06"
+}

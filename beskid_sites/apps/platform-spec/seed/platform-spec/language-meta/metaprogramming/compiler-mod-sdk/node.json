@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/language-meta/metaprogramming/compiler-mod-sdk",
+	"title": "Compiler Mod SDK",
+	"description": "Beskid-side compiler-mod contracts, Beskid.Syntax mirror, declarative query, and typed AST operations.",
+	"parentSlug": "platform-spec/language-meta/metaprogramming",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-20"
+}

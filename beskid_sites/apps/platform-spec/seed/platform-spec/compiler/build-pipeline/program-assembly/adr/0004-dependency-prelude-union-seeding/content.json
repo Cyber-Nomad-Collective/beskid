@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "blocks": [
+    {
+      "type": "markdownProse",
+      "bodyMd": "import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Status\n\n**Superseded by [D-TOOL-MAN-0006 — Explicit use, no prelude](/platform-spec/tooling/manifests-and-lockfiles/adr/0006-explicit-use-no-prelude/)** on 2026-06-07.\n\nAutomatic prelude union seeding is retired. Implementations **must not** harvest `pub mod` lines from `Prelude.bd` during assembly.\n\n## Context (historical)\n\nAssembly seeding used `host ConsoleHost` text markers and a `Console` module denylist to avoid pulling invalid shard units. That heuristic diverged from manifest-declared preludes and blocked legitimate `pub mod` re-exports.\n\n## Decision (historical)\n\nWhen `AssemblyOptions.include_std_prelude` is true and `CompilePlan.has_std_dependency`:\n\n1. For **each** effective module root containing `Prelude.bd` (aggregate `beskid_corelib` and workspace shards), parse all `pub mod Path.Segment;` lines and enqueue the resolved module file for each path.\n2. **Union** seeds across roots, then **dedupe** by canonical file path (deterministic sort order).\n3. **Must not** filter modules by substring markers (`ConsoleHost`, etc.) or ad-hoc denylists in the loader.\n4. `is_compiler_mod_sdk_source_root` skip remains only for compiler Mod SDK trees documented in implementation-map anchors.\n\nInvalid standalone units **must** be fixed in corelib packaging (see D-CORE-COMP-0009), not suppressed in assembly.\n\n## Consequences (historical)\n\n`loader.rs` prelude seeding became declarative. Corelib ensured every seeded `pub mod` resolved to a valid compilation unit until prelude retirement.\n\n## Verification anchors (historical)\n\nVerification responsibility transferred to D-TOOL-MAN-0006."
+    }
+  ]
+}

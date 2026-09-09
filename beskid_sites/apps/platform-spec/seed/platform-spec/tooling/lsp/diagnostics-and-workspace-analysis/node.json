@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/tooling/lsp/diagnostics-and-workspace-analysis",
+	"title": "Diagnostics and workspace analysis",
+	"description": "LSP diagnostic and workspace analysis contracts for Beskid editor integrations.",
+	"parentSlug": "platform-spec/tooling/lsp",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-09"
+}

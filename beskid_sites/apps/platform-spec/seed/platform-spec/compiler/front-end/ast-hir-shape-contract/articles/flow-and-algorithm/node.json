@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/front-end/ast-hir-shape-contract/articles/flow-and-algorithm",
+  "title": "AST and HIR shape contract - Flow and algorithm",
+  "description": "Walks through runtime/order-of-operations behavior in the implementation.",
+  "parentSlug": "platform-spec/compiler/front-end/ast-hir-shape-contract",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

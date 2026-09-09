@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/conformance/test-harnesses-and-fixtures/articles/design-model",
+  "title": "Design model",
+  "description": "Conceptual model for `Test harnesses and fixtures` and its subsystem boundaries.",
+  "parentSlug": "platform-spec/compiler/conformance/test-harnesses-and-fixtures",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

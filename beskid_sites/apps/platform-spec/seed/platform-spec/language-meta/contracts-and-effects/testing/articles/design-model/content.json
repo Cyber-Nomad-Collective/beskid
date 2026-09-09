@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Vocabulary\n\n| Construct | Role |\n| --- | --- |\n| **`TestDefinition`** | `test Name { body }` item with optional meta/skip |\n| **`TestMetaSection`** | `meta { key = expr; }` inside test body |\n| **`TestSkipSection`** | `skip { key = expr; }` conditional skip predicates |\n| **`TestMetadataEntry`** | Single `name = expr` entry in meta or skip |\n\n## Test architecture\n\nTests are **first-class module items**, not attributes on functions. The compiler parses them into dedicated AST nodes.\n\n```mermaid\nflowchart LR\n    parse[parse test item]\n    collect[collect test defs]\n    discover[discover in Test projects]\n    run[test runner invokes]\n    parse --> collect --> discover --> run\n```\n\n### Subsystem boundaries\n\n| Subsystem | Responsibility | Key file |\n| --- | --- | --- |\n| Parser | Parse `test`, `meta`, `skip` | `syntax/items/test_definition.rs` |\n| AST | Store test structure | `syntax/items/test_definition.rs` |\n| Formatter | Emit test items | `format/items/tests_emit.rs` |\n| Tooling | Discover and run tests | `beskid test` CLI |\n\n## Test project kind\n\nTests should appear in `Test` projects. Placement in `App`/`Lib` projects may warn per manifest policy.\n\n## Meta and skip sections\n\n- `meta { timeout = 30; }` attaches metadata parsed as `TestMetaSection`.\n- `skip { condition = expr; }` marks conditional skip predicates.\n- Both use `TestMetadataEntry` nodes with `Identifier` name and `Expression` value."
+		}
+	]
+}

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/articles/verification-and-traceability",
+  "title": "Workspace resolution contract - Verification and traceability",
+  "description": "Tests and source anchors used to validate project graph and workspace resolution behavior.",
+  "parentSlug": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Basic resolution\n\n```beskid\nunit Main() {\n    let x = 42;\n    Console.WriteLine(x);   // resolves local x\n}\n```\n\n## Import and alias\n\n```beskid\nuse MyApp.Models.User;\nuse MyApp.Services.UserService as Service;\n\nunit UseImports() {\n    let u = User {};\n    let s = Service {};\n}\n```\n\n## Shadowing\n\n```beskid\nunit Shadow() {\n    let x = 10;\n    {\n        let x = 20;   // shadows outer x; W1103 warned\n        Console.WriteLine(x);   // 20\n    }\n    Console.WriteLine(x);   // 10\n}\n```\n\n## Contract namespace\n\n```beskid\ncontract Math {\n    i32 Abs(i32 value);\n}\n\nunit UseNamespace() {\n    let n = Math.Abs(-5);   // resolves through contract namespace\n}\n```\n\n## Qualified path\n\n```beskid\nunit Qualified() {\n    let u = MyApp.Models.User {};   // fully qualified path\n}\n```"
+		}
+	]
+}

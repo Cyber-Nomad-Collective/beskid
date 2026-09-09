@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/type-system/types/articles/design-model",
+	"title": "Types - Design model",
+	"description": "Conceptual model for Beskid's type grammar, nominal type declarations, and the static type system backbone.",
+	"parentSlug": "platform-spec/language-meta/type-system/types",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-16"
+}

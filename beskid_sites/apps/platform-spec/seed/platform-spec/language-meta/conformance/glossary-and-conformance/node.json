@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/language-meta/conformance/glossary-and-conformance",
+	"title": "Glossary and conformance",
+	"description": "Defines MUST / SHOULD / MAY usage across all Beskid specifications. Every diagnostic and platform RFC should reference this vocabulary consistently.",
+	"parentSlug": "platform-spec/language-meta/conformance",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-21"
+}

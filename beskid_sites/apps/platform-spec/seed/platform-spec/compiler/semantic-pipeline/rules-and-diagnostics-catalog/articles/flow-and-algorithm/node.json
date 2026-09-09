@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/articles/flow-and-algorithm",
+  "title": "Flow and algorithm",
+  "description": "End-to-end semantic rule flow from resolved items to user-facing diagnostics.",
+  "parentSlug": "platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

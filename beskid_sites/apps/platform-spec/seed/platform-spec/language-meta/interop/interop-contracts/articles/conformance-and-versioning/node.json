@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/interop/interop-contracts/articles/conformance-and-versioning",
+	"title": "Interop.Contracts — Conformance and versioning",
+	"description": "ABI version gates, forward compatibility, and how artifacts claim Interop.Contracts conformance.",
+	"parentSlug": "platform-spec/language-meta/interop/interop-contracts",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-01"
+}

@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/execution/runtime/runtime-feature-flags/articles/design-model",
+	"title": "Design model",
+	"description": "Cargo feature gates, runtime build capabilities, and compiler alignment expectations.",
+	"parentSlug": "platform-spec/execution/runtime/runtime-feature-flags",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-22"
+}

@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/articles/project-link-libraries",
+	"title": "Project link libraries",
+	"description": "Normative project.link block for Extern library resolution at link time (v0.3).",
+	"parentSlug": "platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-20"
+}

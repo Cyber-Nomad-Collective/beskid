@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/execution/runtime/fiber-scheduler-and-stacks/adr/0003-phase-a-single-mutator",
+	"title": "Phase A single GC mutator on scheduler threads",
+	"description": "Only one thread holds Beskid mutator role for allocation at a time.",
+	"parentSlug": "platform-spec/execution/runtime/fiber-scheduler-and-stacks",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-EXEC-RT-0003",
+	"adrStatus": "Accepted",
+	"adrDate": "2025-11-15",
+	"lastReviewed": "2026-05-22"
+}

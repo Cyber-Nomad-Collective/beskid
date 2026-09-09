@@ -1,0 +1,17 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/articles/contracts-and-edge-cases",
+	"title": "Contracts and edge cases",
+	"description": "Workspace and lockfile guarantees for tooling operators.",
+	"parentSlug": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	}
+}

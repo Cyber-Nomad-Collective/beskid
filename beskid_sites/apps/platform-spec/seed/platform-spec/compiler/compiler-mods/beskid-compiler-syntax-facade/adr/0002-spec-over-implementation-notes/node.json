@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "specLevel": "adr",
+  "slug": "platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade/adr/0002-spec-over-implementation-notes",
+  "title": "Specification over implementation notes",
+  "description": "Platform-spec text supersedes informal crate comments for Beskid.Compiler.SyntaxMirror facade.",
+  "parentSlug": "platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "adrId": "D-COMP-MODS-0005",
+  "adrStatus": "Accepted",
+  "adrDate": "2026-05-20",
+  "lastReviewed": "2026-05-22"
+}

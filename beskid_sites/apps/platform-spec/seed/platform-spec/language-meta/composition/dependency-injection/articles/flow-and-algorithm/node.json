@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/composition/dependency-injection/articles/flow-and-algorithm",
+	"title": "Native dependency injection - Flow and algorithm",
+	"description": "Host-chain merge, global scope, composition.resolve, plural inject lowering.",
+	"parentSlug": "platform-spec/language-meta/composition/dependency-injection",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-20"
+}

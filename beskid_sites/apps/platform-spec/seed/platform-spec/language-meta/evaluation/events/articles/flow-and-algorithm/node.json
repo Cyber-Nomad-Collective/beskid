@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/evaluation/events/articles/flow-and-algorithm",
+	"title": "Events - Flow and algorithm",
+	"description": "Step-by-step flow of event parsing, type checking, and runtime management in Beskid.",
+	"parentSlug": "platform-spec/language-meta/evaluation/events",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

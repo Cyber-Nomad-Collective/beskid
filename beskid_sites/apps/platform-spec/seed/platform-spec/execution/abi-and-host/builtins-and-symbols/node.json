@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/execution/abi-and-host/builtins-and-symbols",
+	"title": "Builtins and symbols",
+	"description": "ABI builtin function signatures, return kinds, and runtime export symbol compatibility.",
+	"parentSlug": "platform-spec/execution/abi-and-host",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-04-30"
+}

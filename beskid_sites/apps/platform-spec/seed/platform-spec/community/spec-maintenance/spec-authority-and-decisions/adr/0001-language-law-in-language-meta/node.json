@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/community/spec-maintenance/spec-authority-and-decisions/adr/0001-language-law-in-language-meta",
+	"title": "Language law lives only in language-meta",
+	"description": "User-visible semantics are normative only under language-meta unless a documented cross-domain exception applies.",
+	"parentSlug": "platform-spec/community/spec-maintenance/spec-authority-and-decisions",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-COMM-AUTH-0001",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-05-21",
+	"lastReviewed": "2026-05-22"
+}

@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "specLevel": "adr",
+  "slug": "platform-spec/compiler/front-end/parser-and-ast-contracts/adr/0003-pest-grammar-single-surface",
+  "title": "Single pest grammar surface",
+  "description": "Multiple parser entrypoints caused span drift.",
+  "parentSlug": "platform-spec/compiler/front-end/parser-and-ast-contracts",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "adrId": "D-COMP-FRONT-0012",
+  "adrStatus": "Accepted",
+  "adrDate": "2026-05-05",
+  "lastReviewed": "2026-05-22"
+}

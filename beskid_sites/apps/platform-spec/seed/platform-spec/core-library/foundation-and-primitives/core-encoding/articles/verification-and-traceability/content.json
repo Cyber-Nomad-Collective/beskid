@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n| Requirement | Test anchor |\n| --- | --- |\n| **ENC-001**, **ENC-UTF8-001** | `EncodingUtf8Tests.bd` (source fixture; enable target when direct `__bytes_*` JIT resolves) |\n| **ENC-HEX-001**, **ENC-B64-001** | `Core.Encoding.Hex` / `Base64` modules + `EncodingUtf8Tests.bd` hex round-trip |\n| **ENC-005** | `System.FS` `ReadAllText` / `WriteAllText` UTF-8 paths |\n\nHarness: `compiler/corelib/beskid_corelib/tests/corelib_tests/src/core/EncodingUtf8Tests.bd`"
+		}
+	]
+}

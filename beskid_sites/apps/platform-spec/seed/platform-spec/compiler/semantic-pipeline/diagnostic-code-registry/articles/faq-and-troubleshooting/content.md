@@ -1,0 +1,17 @@
+import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+### A new rule compiles, but docs sync fails. Why?
+
+The rule likely emits a kind not represented in the documented registry mapping. Update both source and docs references together.
+
+### Can I rename an existing diagnostic code?
+
+Treat code renames as migrations, not inline edits. Preserve compatibility notes and update downstream filters before removing old identifiers.
+
+### Where do I debug code mismatch between CLI and editor?
+
+Start with `diagnostic_kinds.rs`, then check conversion in analysis services and LSP diagnostics adapters to ensure code strings are passed through unchanged.

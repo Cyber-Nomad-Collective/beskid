@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "blocks": [
+    {
+      "type": "markdownProse",
+      "bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n## Why did lock command update files unexpectedly?\nRun with `--frozen` to prevent lockfile writes; normal mode allows synchronization.\n\n## Why does locked mode fail in CI but not locally?\nLocal dependency graph or manifest may differ from committed lockfile.\n\n## Where are dependency sources materialized?\nUnder the workspace object tree (for example `obj/beskid/deps/src`) managed by workflow services."
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nA single Console IO type obscures direction and syscall descriptors.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Modules | `Core.Input`, `Core.Output`, `Core.Error` |\n| Forbidden | Monolithic console IO type for standard streams |\n\n## Consequences\n\nEach module binds one `StandardStream` descriptor; cross-stream APIs stay separate.\n\n## Verification anchors\n\n`packages/foundation/src/Core/Input/Input.bd`, `Output/Output.bd`, `Error/Error.bd`."
+		}
+	]
+}

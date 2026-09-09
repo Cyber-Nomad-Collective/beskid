@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/language-meta/memory-model/memory-and-references",
+	"title": "Memory and references",
+	"description": "Locals, mut bindings, heap objects under a concurrent GC, and fiber sharing rules. Runtime write barriers and collector phases defer to execution specs; /execution/ is a non-normative legacy bridge.",
+	"parentSlug": "platform-spec/language-meta/memory-model",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-21"
+}

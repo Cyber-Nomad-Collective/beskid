@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "specLevel": "adr",
+  "slug": "platform-spec/compiler/build-pipeline/build-and-run-orchestration/adr/0003-primary-contract-choice",
+  "title": "Primary contract for Build and run orchestration",
+  "description": "This feature hub defines the normative contract for **build and run orchestration** and links newcomer-oriented referenc",
+  "parentSlug": "platform-spec/compiler/build-pipeline/build-and-run-orchestration",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "adrId": "D-COMP-BUILD-0006",
+  "adrStatus": "Accepted",
+  "adrDate": "2026-05-05",
+  "lastReviewed": "2026-05-22"
+}

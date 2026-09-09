@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/execution/runtime/channels-and-synchronization/adr/0012-hub-round-robin-fairness",
+	"title": "Hub WaitReceive uses round-robin fairness",
+	"description": "Per-hub cursor scans registered channels to avoid starvation.",
+	"parentSlug": "platform-spec/execution/runtime/channels-and-synchronization",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-EXEC-RT-0012",
+	"adrStatus": "Accepted",
+	"adrDate": "2025-09-15",
+	"lastReviewed": "2026-05-22"
+}

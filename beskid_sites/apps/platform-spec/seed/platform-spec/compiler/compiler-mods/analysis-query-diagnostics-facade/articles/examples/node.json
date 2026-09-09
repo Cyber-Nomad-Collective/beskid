@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/articles/examples",
+  "title": "Analysis, query, and diagnostics facades - Examples",
+  "description": "Semantic queries, symbol handles, and diagnostic transport available inside meta execution.",
+  "parentSlug": "platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-05-20"
+}

@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/build-pipeline/program-assembly/articles/design-model",
+  "title": "Program assembly - Design model",
+  "description": "EffectiveCompilationRoots, ProgramAssembly, ModuleIndex, and hybrid discovery modes.",
+  "parentSlug": "platform-spec/compiler/build-pipeline/program-assembly",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-05-29"
+}

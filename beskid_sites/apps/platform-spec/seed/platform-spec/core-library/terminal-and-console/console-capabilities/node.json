@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/core-library/terminal-and-console/console-capabilities",
+	"title": "Console capabilities",
+	"description": "TTY detection, NO_COLOR and FORCE_COLOR policy, and color-model downgrade for styled output.",
+	"parentSlug": "platform-spec/core-library/terminal-and-console",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-21"
+}

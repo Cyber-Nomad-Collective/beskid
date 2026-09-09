@@ -1,0 +1,17 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/tooling/registry-client/pckg-client-contract/articles/verification-and-traceability",
+	"title": "Verification and traceability",
+	"description": "Tests and traceability for the pckg client contract.",
+	"parentSlug": "platform-spec/tooling/registry-client/pckg-client-contract",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	}
+}

@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/core-library/terminal-and-console/ansi-escape-model",
+	"title": "ANSI escape model",
+	"description": "Normative ESC/CSI/OSC framing and sequence tables for corelib_console Ansi modules.",
+	"parentSlug": "platform-spec/core-library/terminal-and-console",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-21"
+}

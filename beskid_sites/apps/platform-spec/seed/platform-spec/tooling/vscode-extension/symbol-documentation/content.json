@@ -1,0 +1,16 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "domainTiles",
+			"props": {
+				"pathPrefix": "platform-spec/tooling/vscode-extension/symbol-documentation",
+				"heading": "Articles"
+			}
+		},
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecPageHeader from '@beskid/beskid-ui/platform-spec/SpecPageHeader.astro';\nimport SpecSection from '@beskid/beskid-ui/platform-spec/SpecSection.astro';\nimport DomainTiles from '@beskid/beskid-ui/platform-spec/DomainTiles.astro';\n\n<SpecPageHeader\n\tstatus=\"Standard\"\n\townerName=\"Piotr Mikstacki\"\n\townerEmail=\"pmikstacki@cybernomad.it\"\n\tsubmitterName=\"Piotr Mikstacki\"\n\tsubmitterEmail=\"pmikstacki@cybernomad.it\"\n/>\n\n<SpecSection title=\"What this feature specifies\" id=\"what-this-feature-specifies\">\nThe extension and LSP **must** resolve a documentation URL for a symbol at a cursor position and open it in the system browser. Registry packages link to pckg docs; unknown symbols fall back to the Beskid book.\n</SpecSection>\n\n<SpecSection title=\"LSP executeCommand\" id=\"lsp-executecommand\">\n| Command | Arguments | Response |\n| --- | --- | --- |\n| `beskid.symbol.getDocumentationUri` | `{ uri: string, offset: number }` | `{ url?: string }` |\n\nResolution rules:\n\n1. When the symbol belongs to a locked registry dependency, `{registryBase}/docs/{package}@{version}` (fragment optional for symbol anchor).\n2. When the symbol source is corelib or a builtin, return a site-relative `/platform-spec/...` path (extension joins with `beskid.docs.specBaseUrl`).\n3. Otherwise `{bookBase}/book/?q={symbolName}` or `{bookBase}/book/`.\n4. Empty response when no documentation target exists.\n\nHover **should** append `[View documentation](url)` when `url` is present (modifier-click opens in browser).\n</SpecSection>\n\n<SpecSection title=\"Extension commands\" id=\"extension-commands\">\n| Command | Rule |\n| --- | --- |\n| `beskid.openSymbolDocumentation` | Uses active editor URI + selection offset; calls LSP command; `vscode.env.openExternal` when URL returned |\n\nEditor context menu **should** expose this command for `beskid` and `beskid-proj` resources.\n</SpecSection>\n\n## Decisions\n\nNo open decisions."
+		}
+	]
+}

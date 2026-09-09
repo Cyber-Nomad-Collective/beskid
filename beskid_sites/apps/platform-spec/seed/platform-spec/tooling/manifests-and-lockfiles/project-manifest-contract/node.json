@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract",
+	"title": "Project manifest contract",
+	"description": "Project manifest schema including Mod project type, resolution inputs, and mod orchestration wiring.",
+	"parentSlug": "platform-spec/tooling/manifests-and-lockfiles",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-01"
+}

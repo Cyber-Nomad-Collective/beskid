@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## File-scoped module\n\n```beskid\nmod MyApp.Services;\n\npub type UserService {\n    // ...\n}\n```\n\n## Inline module\n\n```beskid\nmod Internal {\n    type Helper {\n        // private by default\n    }\n}\n```\n\n## Import with alias\n\n```beskid\nuse MyApp.Services.UserService as Service;\n\nunit UseService() {\n    let s = Service {};\n}\n```\n\n## Re-export\n\n```beskid\nmod PublicApi {\n    pub use MyApp.Services.UserService;\n    pub use MyApp.Models.User;\n}\n```\n\n## Visibility\n\n```beskid\nmod Library {\n    type InternalHelper { }          // private\n    pub type PublicApi { }           // public\n}\n```"
+		}
+	]
+}

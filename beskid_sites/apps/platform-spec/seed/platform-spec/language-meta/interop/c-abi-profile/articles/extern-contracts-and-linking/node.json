@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/interop/c-abi-profile/articles/extern-contracts-and-linking",
+	"title": "C ABI profile — Extern contracts and linking",
+	"description": "Library and symbol metadata, JIT dlopen resolution, and policy gates for user extern contracts.",
+	"parentSlug": "platform-spec/language-meta/interop/c-abi-profile",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-01"
+}

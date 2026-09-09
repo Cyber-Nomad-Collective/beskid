@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/build-pipeline/dependency-workspace/articles/examples",
+  "title": "Dependency workspace and lockfile - Examples",
+  "description": "Concrete examples for frozen and locked workflows with project dependencies.",
+  "parentSlug": "platform-spec/compiler/build-pipeline/dependency-workspace",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

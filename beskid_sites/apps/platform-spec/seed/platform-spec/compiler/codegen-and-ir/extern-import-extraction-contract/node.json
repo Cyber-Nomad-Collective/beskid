@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "feature",
+  "slug": "platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract",
+  "title": "Extern import extraction contract",
+  "description": "Feature hub for the extern import extraction contract in the reference compiler.",
+  "parentSlug": "platform-spec/compiler/codegen-and-ir",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-04-30"
+}

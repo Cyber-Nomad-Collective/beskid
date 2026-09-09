@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/tooling/vscode-extension/decisions-record",
+	"title": "VS Code extension - Decisions record (legacy index)",
+	"description": "Migration index for ADRs under vscode-extension features.",
+	"parentSlug": "platform-spec/tooling/vscode-extension",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-22"
+}

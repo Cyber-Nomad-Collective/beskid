@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import PlatformSpecHome from '@beskid/beskid-ui/platform-spec/PlatformSpecHome.astro';\n\n<PlatformSpecHome />"
+		}
+	]
+}

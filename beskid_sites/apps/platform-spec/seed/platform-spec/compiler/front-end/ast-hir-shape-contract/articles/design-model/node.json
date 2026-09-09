@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/front-end/ast-hir-shape-contract/articles/design-model",
+  "title": "AST and HIR shape contract - Design model",
+  "description": "Explains the persistent concepts, entities, and boundaries this feature relies on.",
+  "parentSlug": "platform-spec/compiler/front-end/ast-hir-shape-contract",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

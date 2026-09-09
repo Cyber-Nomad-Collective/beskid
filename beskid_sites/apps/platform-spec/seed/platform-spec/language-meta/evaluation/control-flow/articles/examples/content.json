@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Conditional\n\n```beskid\nunit Check(i32 value) {\n    if (value > 0) {\n        Console.WriteLine(\"positive\");\n    } else {\n        Console.WriteLine(\"non-positive\");\n    }\n}\n```\n\n## While loop\n\n```beskid\nunit Countdown(i32 start) {\n    while (start > 0) {\n        Console.WriteLine(start);\n        start -= 1;\n    }\n}\n```\n\n## For loop\n\n```beskid\nunit Sum(i32[] values) {\n    let total = 0;\n    for v in values {\n        total += v;\n    }\n    Console.WriteLine(total);\n}\n```\n\n## Break and continue\n\n```beskid\nunit Find(i32[] values, i32 target) {\n    for v in values {\n        if (v == target) {\n            Console.WriteLine(\"found\");\n            break;\n        }\n        if (v < 0) {\n            continue;\n        }\n        Console.WriteLine(v);\n    }\n}\n```\n\n## Return\n\n```beskid\nunit Max(i32 a, i32 b) -> i32 {\n    if (a > b) {\n        return a;\n    }\n    return b;\n}\n```"
+		}
+	]
+}

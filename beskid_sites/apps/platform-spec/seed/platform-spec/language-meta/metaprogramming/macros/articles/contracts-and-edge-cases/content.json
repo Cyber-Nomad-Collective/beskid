@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Hard requirements\n\n- **Macros before mods** — Expansion runs before mod phases on each syntax generation.\n- **Structural expansion only** — No string formatting or source-text emission.\n- **Depth cap** — Default 32 per compilation unit.\n- **Well-formedness** — Expanded trees must pass structural checks before semantic analysis.\n\n## Diagnostic band E19xx\n\n| Code | Condition |\n| --- | --- |\n| **E1901** | Unknown macro |\n| **E1902** | Macro argument arity mismatch |\n| **E1903** | Macro argument kind mismatch |\n| **E1904** | Macro metavariable outside body |\n| **E1905** | Macro expansion depth exceeded |\n| **E1907** | Ambiguous macro name |\n| **E1908** | Duplicate macro parameter |\n\n## Edge cases\n\n- **Metavariable outside macro** — `$name` outside a macro body emits **E1904**.\n- **Empty macro body** — A macro with an empty body expands to nothing (valid but usually pointless).\n- **Macro in macro** — A macro invocation inside another macro body is expanded in the next iteration.\n- **Item-position macros** — When a parameter is `item`, the invocation may appear at module item position.\n\n## Invariants\n\n- Expanded trees must have fresh node identities; diagnostic spans trace to expansion sites.\n- Mod-emitted code containing macro invocations is expanded after re-parse.\n- Language macros do not register in `mod.descriptor.json`."
+		}
+	]
+}

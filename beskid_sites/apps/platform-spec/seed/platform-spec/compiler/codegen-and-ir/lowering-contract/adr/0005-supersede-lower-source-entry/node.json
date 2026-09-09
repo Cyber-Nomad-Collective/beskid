@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "specLevel": "adr",
+  "slug": "platform-spec/compiler/codegen-and-ir/lowering-contract/adr/0005-supersede-lower-source-entry",
+  "title": "Supersede lower_source production entry",
+  "description": "Production codegen enters through lower_resolved_input_with_pipeline; lower_source is test-only.",
+  "parentSlug": "platform-spec/compiler/codegen-and-ir/lowering-contract",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "adrId": "D-COMP-IR-0011",
+  "adrStatus": "Accepted",
+  "adrDate": "2026-05-29",
+  "lastReviewed": "2026-05-29"
+}

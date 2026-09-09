@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/front-end/parser-and-ast-contracts/articles/flow-and-algorithm",
+  "title": "Flow and algorithm",
+  "description": "Step-by-step parse flow from source text to syntax structures.",
+  "parentSlug": "platform-spec/compiler/front-end/parser-and-ast-contracts",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

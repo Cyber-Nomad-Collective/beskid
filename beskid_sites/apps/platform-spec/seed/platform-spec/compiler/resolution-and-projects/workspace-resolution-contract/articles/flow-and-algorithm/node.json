@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/articles/flow-and-algorithm",
+  "title": "Workspace resolution contract - Flow and algorithm",
+  "description": "End-to-end algorithm from manifest discovery to resolved compile input.",
+  "parentSlug": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Stage ordering and lowering",
+      "href": "/platform-spec/compiler/build-pipeline/stage-ordering/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Backends (JIT and AOT)",
+      "href": "/platform-spec/compiler/build-pipeline/backends-jit-aot/",
+      "relation": "Next stage"
+    }
+  ]
+}

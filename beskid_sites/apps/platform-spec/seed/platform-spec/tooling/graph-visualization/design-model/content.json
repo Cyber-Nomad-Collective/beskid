@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## GraphSpec IR\n\nDomain graphs (`ProjectGraph`, `ModuleGraph`, `RegistrationDag`) remain in `beskid_analysis` for correctness. Presentation flows through a domain-agnostic intermediate representation:\n\n| Field | Meaning |\n| --- | --- |\n| `kind` | `GraphKind` discriminator |\n| `nodes` | Stable id, label, shape, style class, optional URI metadata |\n| `edges` | Directed links with optional labels |\n| `subgraphs` | Workspace members, module paths, DI scopes |\n| `warnings` | Cycles, unresolved deps, empty host |\n\n## GraphDocument\n\n| Field | Meaning |\n| --- | --- |\n| `spec` | Populated `GraphSpec` |\n| `mermaid` | Rendered flowchart string from `mermaid-builder` |\n| `revision` | Fingerprint for client cache invalidation |\n\n## Salsa memoization\n\n`beskid_queries::graph_mermaid` is the single cache host. Invalidation keys:\n\n| Kind | Inputs |\n| --- | --- |\n| `projectDeps` / `workspace` | `ProjectSession`, `ManifestGenerationId` |\n| `moduleTree` / `importClosure` | `FileText`, `unit_imports`, assembly fingerprint |\n| `hostComposition` | Entry text, syntax generation, composition snapshot |\n\n## Presentation policy\n\n- **Mermaid flowchart** is the only supported output format.\n- CLI renders via `graphs-tui`; VS Code renders via bundled `mermaid.min.js`.\n- Internal `daggy` graphs are never serialized directly to tooling."
+		}
+	]
+}

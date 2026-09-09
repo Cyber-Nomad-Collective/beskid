@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/build-pipeline/diagnostics-parity/articles/flow-and-algorithm",
+  "title": "Diagnostics parity (CLI and LSP) - Flow and algorithm",
+  "description": "Diagnostic generation flow for CLI frontend, lowering, and LSP analysis paths.",
+  "parentSlug": "platform-spec/compiler/build-pipeline/diagnostics-parity",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

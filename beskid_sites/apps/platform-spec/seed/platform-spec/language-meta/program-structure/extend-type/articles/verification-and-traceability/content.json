@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Verification matrix\n\n| Scenario | Expected evidence |\n| --- | --- |\n| `extend type` parsing | AST round-trip preserves structure |\n| Method with receiver | Receiver type bound to extended type |\n| Public member access | Compiles; no diagnostic |\n| Private member access | **E1511** emitted |\n| Dispatch to extension | Resolves to extension method |\n\n## Implementation checklist\n\n- [x] Grammar: `extend type`, method definitions\n- [x] AST: `ExtendTypeDefinition`, `MethodDefinition`\n- [x] Parser: `beskid.pest` productions for extend type\n- [x] Resolver: extension methods indexed under target type\n- [x] Visibility: `ExtendTypePrivateMemberAccess` (**E1511**)\n- [x] HIR lowering: methods lowered with receiver type\n- [ ] Generic type extensions (deferred)\n- [ ] Mod-generated extension validation\n\n## Test locations\n\n- `compiler/crates/beskid_analysis/src/syntax/items/extend_type.rs` — parser tests\n- `compiler/crates/beskid_analysis/src/resolve/member_items.rs` — dispatch tests\n- `compiler/crates/beskid_analysis/src/analysis/rules/staged/visibility.rs` — access tests\n- `compiler/crates/beskid_tests` — integration tests for extensions"
+		}
+	]
+}

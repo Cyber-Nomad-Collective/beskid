@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/core-library/foundation-and-primitives/core-optional/adr/0001-core-optional-canonical",
+	"title": "Core.Optional.Option canonical",
+	"description": "Core.Optional replaces Query.Contracts for optional values.",
+	"parentSlug": "platform-spec/core-library/foundation-and-primitives/core-optional",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-CORE-OPT-0003",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-06-10",
+	"lastReviewed": "2026-06-10"
+}

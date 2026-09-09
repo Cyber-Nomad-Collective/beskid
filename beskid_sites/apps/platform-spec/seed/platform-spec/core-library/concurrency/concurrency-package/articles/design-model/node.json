@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/core-library/concurrency/concurrency-package/articles/design-model",
+	"title": "Concurrency package - Design model",
+	"description": "Package layout, module map, and thin-wrapper rule for Fiber and Channel structs.",
+	"parentSlug": "platform-spec/core-library/concurrency/concurrency-package",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-20"
+}

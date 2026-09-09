@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Module layout\n\n| Module | Role |\n| --- | --- |\n| `Core.Optional` | Hub re-exporting helpers |\n| `Core.Optional.Option` | `pub enum Option<T> { Some, None }` |\n\n## Helpers (v1)\n\n| Function | Behavior |\n| --- | --- |\n| `HasValue<T>(Option<T>)` | `true` when variant is `Some` |\n| `Map<T, U>(Option<T>, fn)` | Functor map; `None` propagates |\n| `UnwrapOr<T>(Option<T>, T default)` | Returns `Some` value or `default` |\n\n## Layering\n\n```mermaid\nflowchart TB\n  api[Public corelib APIs]\n  opt[Core.Optional.Option]\n  query[Query pipeline First/TryGet]\n  api --> opt\n  query --> opt\n```\n\n## Migration\n\n`Query.Contracts.Option` moved to `Core.Optional.Option` per [D-CORE-OPT-0003](./adr/0001-core-optional-canonical/). The deprecated `Query.Contracts` shim is removed; consumers (`Concurrency.Mutex`, `Concurrency.Channel`, `Core.Environment`, collections `Get`/`TryGet`, query `First`) **must** import `Core.Optional`.\n\n## Implementation anchors\n\n- `compiler/corelib/packages/foundation/src/Core/Optional/Option.bd`\n- `compiler/corelib/packages/foundation/src/Core/Optional.bd`"
+		}
+	]
+}

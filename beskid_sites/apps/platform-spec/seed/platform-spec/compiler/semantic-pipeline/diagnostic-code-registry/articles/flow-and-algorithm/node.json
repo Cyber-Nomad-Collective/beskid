@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/articles/flow-and-algorithm",
+  "title": "Flow and algorithm",
+  "description": "Lifecycle of a semantic diagnostic code from definition to surfaced output.",
+  "parentSlug": "platform-spec/compiler/semantic-pipeline/diagnostic-code-registry",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

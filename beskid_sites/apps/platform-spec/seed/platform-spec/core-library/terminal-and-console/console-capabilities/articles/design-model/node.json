@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/core-library/terminal-and-console/console-capabilities/articles/design-model",
+	"title": "Design model",
+	"description": "Capability record, color models, and environment-driven probing.",
+	"parentSlug": "platform-spec/core-library/terminal-and-console/console-capabilities",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-21"
+}

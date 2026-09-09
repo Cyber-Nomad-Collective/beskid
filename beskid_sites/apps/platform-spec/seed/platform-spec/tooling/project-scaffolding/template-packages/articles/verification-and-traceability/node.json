@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/tooling/project-scaffolding/template-packages/articles/verification-and-traceability",
+	"title": "Verification and traceability",
+	"description": "Server and CLI tests for template package profile.",
+	"parentSlug": "platform-spec/tooling/project-scaffolding/template-packages",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-21"
+}

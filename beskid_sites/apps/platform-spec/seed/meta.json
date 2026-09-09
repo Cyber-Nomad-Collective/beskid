@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "revision": "working-tree",
+  "counts": {
+    "domains": 0,
+    "areas": 0,
+    "features": 0,
+    "documents": 0,
+    "capabilities": 0,
+    "requirements": 0
+  },
+  "layout": {
+    "checked": 0,
+    "conforming": 0,
+    "violations": 0
+  }
+}

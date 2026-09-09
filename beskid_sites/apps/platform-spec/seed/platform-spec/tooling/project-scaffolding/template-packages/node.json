@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/tooling/project-scaffolding/template-packages",
+	"title": "Template packages",
+	"description": "Registry package kind `template`, `.bpk` artifact layout, validation profile, and pckg UI behavior.",
+	"parentSlug": "platform-spec/tooling/project-scaffolding",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-21"
+}

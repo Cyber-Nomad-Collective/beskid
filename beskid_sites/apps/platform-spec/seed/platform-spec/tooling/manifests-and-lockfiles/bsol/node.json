@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/tooling/manifests-and-lockfiles/bsol",
+	"title": "Bsol (Beskid Structured Object Language)",
+	"description": "Normative surface grammar, generic AST, and schema profiles for Beskid manifest files.",
+	"parentSlug": "platform-spec/tooling/manifests-and-lockfiles",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-07"
+}

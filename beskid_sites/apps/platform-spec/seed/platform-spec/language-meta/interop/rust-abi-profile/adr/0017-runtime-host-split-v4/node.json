@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/language-meta/interop/rust-abi-profile/adr/0017-runtime-host-split-v4",
+	"title": "ABI v4 runtime/host split",
+	"description": "FS, env, process, and TTY dispatch handlers move from beskid_runtime to beskid_host while syscall and clock handlers remain in the language runtime.",
+	"parentSlug": "platform-spec/language-meta/interop/rust-abi-profile",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-EXEC-RT-0017",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-06-06",
+	"lastReviewed": "2026-06-06"
+}

@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces",
+	"title": "Core-backed surfaces",
+	"description": "Corelib APIs backed by runtime builtins, host dispatch, and syscall facades under the unified Core.* namespace.",
+	"parentSlug": "platform-spec/core-library/stability-and-api-shape",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-04-30"
+}

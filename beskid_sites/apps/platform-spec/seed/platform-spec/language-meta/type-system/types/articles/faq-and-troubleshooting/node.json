@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/type-system/types/articles/faq-and-troubleshooting",
+	"title": "Types - FAQ and troubleshooting",
+	"description": "Common issues, troubleshooting, and locked decisions for the Beskid type system.",
+	"parentSlug": "platform-spec/language-meta/type-system/types",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Dependency workspace and lockfile",
+      "href": "/platform-spec/compiler/build-pipeline/dependency-workspace/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Workspace resolution contract",
+      "href": "/platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/",
+      "relation": "Manifest and graph prerequisites"
+    }
+  ]
+}

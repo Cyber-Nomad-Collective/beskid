@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Verification matrix\n\n| Scenario | Expected evidence |\n| --- | --- |\n| `test` item parsing | AST round-trip preserves structure |\n| `meta` section | Parsed as `TestMetaSection` |\n| `skip` section | Parsed as `TestSkipSection` |\n| Test discovery | `beskid test` finds all tests in Test project |\n| Skip predicate true | Test skipped; not counted as failure |\n\n## Implementation checklist\n\n- [x] Grammar: `test`, `meta`, `skip`\n- [x] AST: `TestDefinition`, `TestMetaSection`, `TestSkipSection`, `TestMetadataEntry`\n- [x] Parser: `beskid.pest` productions for test items\n- [x] Formatter: `tests_emit.rs` for pretty-printing tests\n- [x] Diagnostics: **E1508–E1510** for attribute issues\n- [ ] Test runner integration with `beskid test`\n- [ ] Skip predicate evaluation at runtime\n- [ ] Timeout enforcement from `meta`\n\n## Test locations\n\n- `compiler/crates/beskid_analysis/src/syntax/items/test_definition.rs` — parser tests\n- `compiler/crates/beskid_analysis/src/format/items/tests_emit.rs` — formatter tests\n- `compiler/crates/beskid_tests` — integration tests for test syntax"
+		}
+	]
+}

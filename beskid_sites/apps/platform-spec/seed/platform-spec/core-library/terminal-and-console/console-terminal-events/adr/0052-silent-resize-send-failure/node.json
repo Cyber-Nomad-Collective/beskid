@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/core-library/terminal-and-console/console-terminal-events/adr/0052-silent-resize-send-failure",
+	"title": "Silent resize Send failure",
+	"description": "Failed resize Channel Send is silent in v1 poll loops.",
+	"parentSlug": "platform-spec/core-library/terminal-and-console/console-terminal-events",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-CORE-TERM-0052",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-05-20",
+	"lastReviewed": "2026-05-22"
+}

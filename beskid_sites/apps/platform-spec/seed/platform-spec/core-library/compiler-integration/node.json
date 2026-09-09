@@ -1,0 +1,8 @@
+{
+	"version": 1,
+	"specLevel": "area",
+	"slug": "platform-spec/core-library/compiler-integration",
+	"title": "Compiler Integration",
+	"parentSlug": "platform-spec/core-library",
+	"status": "published"
+}

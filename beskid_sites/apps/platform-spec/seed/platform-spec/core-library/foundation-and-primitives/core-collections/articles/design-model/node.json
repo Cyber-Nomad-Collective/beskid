@@ -1,0 +1,14 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/core-library/foundation-and-primitives/core-collections/articles/design-model",
+	"title": "Design model",
+	"description": "Array-backed collections, iterator protocol, and Query pipeline integration.",
+	"parentSlug": "platform-spec/core-library/foundation-and-primitives/core-collections",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-10"
+}

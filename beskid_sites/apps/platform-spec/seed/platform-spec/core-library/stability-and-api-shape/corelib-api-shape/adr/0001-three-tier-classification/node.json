@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape/adr/0001-three-tier-classification",
+	"title": "Three-tier classification with default `supported`",
+	"description": "Public corelib items classify as Tier 1 (Standard), Tier 2 (Supported), or Tier 3 (Unstable); missing directives default to `supported`.",
+	"parentSlug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-CORE-API-SHAPE-0001",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-05-23",
+	"lastReviewed": "2026-05-23"
+}

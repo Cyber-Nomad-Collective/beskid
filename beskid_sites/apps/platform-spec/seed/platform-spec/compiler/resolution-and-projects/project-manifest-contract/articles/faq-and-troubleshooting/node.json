@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/resolution-and-projects/project-manifest-contract/articles/faq-and-troubleshooting",
+  "title": "Project manifest contract - FAQ and troubleshooting",
+  "description": "Answers common operator and contributor questions with practical next checks.",
+  "parentSlug": "platform-spec/compiler/resolution-and-projects/project-manifest-contract",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

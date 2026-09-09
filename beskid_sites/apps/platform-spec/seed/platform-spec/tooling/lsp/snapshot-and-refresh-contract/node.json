@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/tooling/lsp/snapshot-and-refresh-contract",
+	"title": "Snapshot and refresh contract",
+	"description": "LSP workspace snapshot lifecycle and refresh guarantees for diagnostics and symbol services.",
+	"parentSlug": "platform-spec/tooling/lsp",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-04-30"
+}

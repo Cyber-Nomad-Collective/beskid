@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "specLevel": "adr",
+  "slug": "platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/adr/0004-shared-resolution-query-bundle",
+  "title": "SharedResolution entry query bundle",
+  "description": "Arc-backed Resolution snapshot with symbol registry helpers for tooling queries.",
+  "parentSlug": "platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "adrId": "D-COMP-MODS-0019",
+  "adrStatus": "Accepted",
+  "adrDate": "2026-06-05",
+  "lastReviewed": "2026-06-05"
+}

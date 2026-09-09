@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/build-pipeline/dependency-workspace/articles/contracts-and-edge-cases",
+  "title": "Dependency workspace and lockfile - Contracts and edge cases",
+  "description": "Normative behavior for lock mismatch, missing registry artifacts, and policy flags.",
+  "parentSlug": "platform-spec/compiler/build-pipeline/dependency-workspace",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Locked decisions\n\n| Decision | ID | Summary |\n| --- | --- | --- |\n| Enum-first errors | D-LM-ERR-001 | Explicit sum types over magic results |\n| No exceptions keyword | D-LM-ERR-002 | Interop-scoped unwinding only |\n| `Option` vs `Result` | D-LM-ERR-003 | Separate absence and failure |\n| Postfix `?` only | D-LM-ERR-004 | No `try` statement form |\n\n## FAQ\n\n### Why no `try`/`catch`?\n\nBeskid prefers explicit sum types. The `?` operator provides ergonomic propagation without hidden control flow. Cross-language unwinding is handled at FFI boundaries.\n\n### Can I use `?` on `Option<T>`?\n\nIn v0.1, `?` expects a Result-shaped enum. Using it on `Option<T>` emits **E1222** unless `Option` is made Result-compatible.\n\n### What happens on `?` in a `unit` function?\n\nThe desugared `return` must match the function's return type. If the function returns `unit`, `?` on a Result type fails type checking.\n\n## Troubleshooting\n\n| Symptom | Likely cause |\n| --- | --- |\n| **E1222** | `?` applied to non-Result expression |\n| Type mismatch after `?` | Enclosing return type incompatible with Error variant |\n| `?` in `unit` function | Cannot return Error from `unit` function |"
+		}
+	]
+}

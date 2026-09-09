@@ -1,0 +1,8 @@
+{
+	"version": 1,
+	"specLevel": "domain",
+	"slug": "platform-spec/core-library",
+	"title": "Core Library",
+	"parentSlug": "platform-spec",
+	"status": "published"
+}

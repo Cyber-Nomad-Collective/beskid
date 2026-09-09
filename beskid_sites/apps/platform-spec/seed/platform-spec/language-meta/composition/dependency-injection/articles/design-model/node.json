@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/composition/dependency-injection/articles/design-model",
+	"title": "Native dependency injection - Design model",
+	"description": "host, registry, scope hierarchy, global scope, field inject, array inject, dispose, and launch.",
+	"parentSlug": "platform-spec/language-meta/composition/dependency-injection",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-20"
+}

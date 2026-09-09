@@ -139,6 +139,55 @@ beskid_install_bun() {
   fi
 }
 
+beskid_sha256_file() {
+  local path="$1"
+  if command -v sha256sum >/dev/null 2>&1; then
+    sha256sum "${path}" | awk '{print $1}'
+  elif command -v shasum >/dev/null 2>&1; then
+    shasum -a 256 "${path}" | awk '{print $1}'
+  else
+    die "sha256sum or shasum is required to verify downloaded tools"
+  fi
+}
+
+beskid_install_cargo_binstall_bootstrap() {
+  local version="$1"
+  local target="$2"
+  local expected_sha256="$3"
+  [[ "${version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || die "Invalid cargo-binstall version: ${version}"
+  [[ "${target}" =~ ^[A-Za-z0-9_-]+$ ]] || die "Invalid cargo-binstall target: ${target}"
+  [[ "${expected_sha256}" =~ ^[0-9a-f]{64}$ ]] || die "Invalid cargo-binstall sha256"
+
+  local extension="tgz"
+  [[ "${BESKID_OS}" == "darwin" || "${BESKID_OS}" == "windows" ]] && extension="zip"
+  local asset="cargo-binstall-${target}.${extension}"
+  local url="https://github.com/cargo-bins/cargo-binstall/releases/download/v${version}/${asset}"
+  local tmp archive actual_sha256 bin_name found
+  tmp="$(mktemp -d)"
+  archive="${tmp}/${asset}"
+
+  note "cargo-binstall ${version} verified prebuilt asset (${target})"
+  curl --proto '=https' --tlsv1.2 -fsSL -o "${archive}" "${url}"
+  actual_sha256="$(beskid_sha256_file "${archive}")"
+  [[ "${actual_sha256}" == "${expected_sha256}" ]] \
+    || die "cargo-binstall checksum mismatch: expected ${expected_sha256}, got ${actual_sha256}"
+
+  if [[ "${extension}" == "zip" ]]; then
+    unzip -q -o "${archive}" -d "${tmp}"
+  else
+    tar -xzf "${archive}" -C "${tmp}"
+  fi
+
+  bin_name="cargo-binstall"
+  [[ "${BESKID_OS}" == "windows" ]] && bin_name="cargo-binstall.exe"
+  found="$(find "${tmp}" -type f -name "${bin_name}" 2>/dev/null | head -n1)"
+  [[ -n "${found}" ]] || die "Binary ${bin_name} not found in ${asset}"
+  beskid_ensure_local_bin
+  install -m 0755 "${found}" "${BESKID_LOCAL_BIN}/${bin_name}"
+  rm -rf "${tmp}"
+  ok "Installed ${bin_name} -> ${BESKID_LOCAL_BIN}/${bin_name}"
+}
+
 beskid_install_github_release() {
   local repo="$1"
   local asset_glob="$2"
@@ -193,14 +242,17 @@ beskid_run_install_method() {
       beskid_install_homebrew_cask "$(jq -r '.cask' <<<"$1")"
       ;;
     apt)
+      local -a pkgs=()
       beskid_read_array pkgs jq -r '.packages[]' <<<"$1"
       beskid_install_apt "${pkgs[@]}"
       ;;
     dnf)
+      local -a pkgs=()
       beskid_read_array pkgs jq -r '.packages[]' <<<"$1"
       beskid_install_dnf "${pkgs[@]}"
       ;;
     pacman)
+      local -a pkgs=()
       beskid_read_array pkgs jq -r '.packages[]' <<<"$1"
       beskid_install_pacman "${pkgs[@]}"
       ;;
@@ -217,7 +269,8 @@ beskid_run_install_method() {
       beskid_install_choco "$(jq -r '.package' <<<"$1")"
       ;;
     script)
-      local url args_line
+      local url
+      local -a script_args=()
       url="$(jq -r '.url' <<<"$1")"
       beskid_read_array script_args jq -r '.args[]? // empty' <<<"$1"
       # Expand ~ in args
@@ -233,6 +286,15 @@ beskid_run_install_method() {
       ;;
     bun_installer)
       beskid_install_bun
+      ;;
+    cargo_binstall_bootstrap)
+      local asset_target asset_sha256
+      asset_target="$(jq -r --arg arch "${BESKID_ARCH}" '.assets[$arch].target // empty' <<<"$1")"
+      asset_sha256="$(jq -r --arg arch "${BESKID_ARCH}" '.assets[$arch].sha256 // empty' <<<"$1")"
+      [[ -n "${asset_target}" && -n "${asset_sha256}" ]] \
+        || die "No cargo-binstall asset for ${BESKID_OS}/${BESKID_ARCH}"
+      beskid_install_cargo_binstall_bootstrap \
+        "$(jq -r '.version' <<<"$1")" "${asset_target}" "${asset_sha256}"
       ;;
     github_release)
       beskid_install_github_release \
@@ -258,6 +320,10 @@ beskid_method_available() {
     scoop) command -v scoop >/dev/null 2>&1 ;;
     choco) command -v choco >/dev/null 2>&1 ;;
     script | rustup | bun_installer | github_release) command -v curl >/dev/null 2>&1 ;;
+    cargo_binstall_bootstrap)
+      command -v curl >/dev/null 2>&1 \
+        && { command -v sha256sum >/dev/null 2>&1 || command -v shasum >/dev/null 2>&1; }
+      ;;
     *) return 1 ;;
   esac
 }

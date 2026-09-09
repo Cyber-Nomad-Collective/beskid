@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/language-meta/interop/rust-abi-profile",
+	"title": "Rust ABI profile",
+	"description": "Rust-hosted runtime surface—exported symbols, unwind at the boundary, and stability rules distinct from user C extern libraries.",
+	"parentSlug": "platform-spec/language-meta/interop",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-01"
+}

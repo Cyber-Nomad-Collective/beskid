@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/tooling/foreign-library-import/cli-import-lib-command",
+	"title": "beskid import lib command",
+	"description": "CLI workflow for mapping foreign libraries into Project.proj link metadata (v0.3).",
+	"parentSlug": "platform-spec/tooling/foreign-library-import",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-20"
+}

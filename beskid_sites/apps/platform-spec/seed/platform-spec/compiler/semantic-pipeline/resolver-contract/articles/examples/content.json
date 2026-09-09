@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "blocks": [
+    {
+      "type": "markdownProse",
+      "bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Prefetch dependency symbol\n\n`Main.bd` calls `Output.WriteLine` from a dependency unit collected into `ModuleIndex`:\n\n| Identity | Example |\n| --- | --- |\n| `ItemId` | Dense index into merged `items` (stable for prefetch rows) |\n| `SymbolId` | Interned key for export |\n| **`symbolKey`** (api.json) | `corelib_mvp::Std::System::IO::Output::WriteLine` (exact package prefix from materialized project) |\n| **`qualifiedName`** | May use module-relative display; prefer **`symbolKey`** for cross-package links |\n\nWorkspace find-references on the `WriteLine` use site **must** include references in `Output.bd` when assembly is available.\n\n## Entry-defined symbol referenced elsewhere\n\n`helper()` declared in the entry unit and called from a dependency file:\n\n- Entry merged resolution assigns `helper` a registry symbol under the host **`project_name`**.\n- Per-unit resolve of the dependency file may assign a **different dense `ItemId`** to the same logical import target.\n- IDE reference matching **must** still succeed via equal **`SymbolId`**, not `ItemId` equality.\n\n## `@ref` by full symbol key\n\nDocumentation comment:\n\n```beskid\n/// See also @ref(corelib::Std::Console::Esc)\n```\n\nResolution **must** locate the target item by exact registry string before falling back to `qualifiedName` suffix heuristics (`doc/refs.rs`).\n\n## Non-exportable rows\n\nParameters and other synthetics have **`ItemInfo.symbol: None`**. They omit **`symbolKey`** in `api.json` and use **`ItemId`** / local identity in IDE queries.\n\n## Anchored fixtures\n\n- `compiler/crates/beskid_e2e_tests/fixtures/corelib_mvp/` — assembly-backed document tests\n- `compiler/corelib/beskid_corelib/tests/corelib_tests/` — corelib integration surfaces"
+    }
+  ]
+}

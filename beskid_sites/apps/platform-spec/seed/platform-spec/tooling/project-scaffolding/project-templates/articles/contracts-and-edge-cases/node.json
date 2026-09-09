@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/tooling/project-scaffolding/project-templates/articles/contracts-and-edge-cases",
+	"title": "Contracts and edge cases",
+	"description": "Normative MUST/SHOULD rules for template instantiation, updates, yanked packages, and post-actions.",
+	"parentSlug": "platform-spec/tooling/project-scaffolding/project-templates",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-21"
+}

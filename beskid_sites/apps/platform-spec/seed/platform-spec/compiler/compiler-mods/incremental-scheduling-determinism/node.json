@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "feature",
+  "slug": "platform-spec/compiler/compiler-mods/incremental-scheduling-determinism",
+  "title": "Incremental scheduling and determinism",
+  "description": "Cache boundaries, invalidation keys, and replay guarantees for mod outputs and Mod SDK reads.",
+  "parentSlug": "platform-spec/compiler/compiler-mods",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-05-01"
+}

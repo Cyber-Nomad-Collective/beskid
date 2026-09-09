@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Module layout\n\n```\nCollections/\n  Collections.bd       # hub re-exports\n  Array/Array.bd       # Len, Get, Set, Append, Iterate\n  List/List.bd\n  Map/Map.bd, Map/MapEntry.bd\n  Set/Set.bd\n  Queue/Queue.bd\n  Stack/Stack.bd\n```\n\nEach collection type file uses hub-plus-type-directory layout; methods are **inline** on `pub type`.\n\n## Iterator protocol\n\n`Array.Iterate<T>` yields index advancement over `T[]`. `Query.QueryState<T>` holds `source`, `index`, `length`, and optional cached `first`—see Query operators (`Where`, `Select`, `Take`, `Skip`, `First`, `ToList`, `Any`, `All`, `OrderBy`, `CollectArray`, `Count`).\n\n## Fluent relationship\n\nUnderlying types expose inline methods. Optional `{Type}Fluent` wrappers delegate to the same semantics; they do not introduce new storage or error models.\n\n## Grow policy\n\n`Array.Append` uses copy-on-grow until a runtime grow builtin exists; list capacity growth is `@tier(unstable)` where documented.\n\n## Implementation anchors\n\n- `compiler/corelib/packages/foundation/src/Collections/`\n- `compiler/corelib/beskid_corelib/tests/corelib_tests/src/collections/`"
+		}
+	]
+}

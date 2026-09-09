@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution",
+	"title": "Corelib injection and resolution",
+	"description": "How the compiler discovers, injects, and resolves corelib symbols across analysis and build stages.",
+	"parentSlug": "platform-spec/core-library/compiler-integration",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-29"
+}

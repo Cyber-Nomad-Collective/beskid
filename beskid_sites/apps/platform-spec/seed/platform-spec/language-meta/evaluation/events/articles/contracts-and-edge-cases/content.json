@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Hard requirements\n\n- **Language `event` keyword** — Events are fields, not separate delegate types.\n- **Fiber OnCancelled** — Cancellation uses the same `event` mechanism on `Fiber<T>`.\n- **Synchronous default** — Handlers run on the raising fiber unless a host profile says otherwise.\n- **Not `Option`** — Subscription state is host-managed; absence is not `Option<T>`.\n\n## Diagnostic band\n\n| Code | Condition |\n| --- | --- |\n| **E1219** | Invalid event invocation scope |\n| **E1220** | Invalid event capacity |\n| **E1221** | Invalid event subscription target |\n\n## Edge cases\n\n- **Empty subscriber list** — Raising an event with no subscribers is a no-op.\n- **Handler exception** — If a handler panics, the behavior is host-defined (continue vs abort).\n- **Re-entrant raise** — A handler that raises the same event may cause re-entrancy; the runtime handles this per host policy.\n- **Event field in struct literal** — Event fields must not appear in struct literal initializers.\n\n## Invariants\n\n- Event fields are not ordinary value fields; they must not be read like variables.\n- Event signatures must use parameter lists compatible with delegate lowering.\n- Types with `event` fields must lower to the same calling convention in AOT and JIT."
+		}
+	]
+}

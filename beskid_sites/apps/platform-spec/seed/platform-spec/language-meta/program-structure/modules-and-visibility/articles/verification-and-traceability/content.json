@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Verification matrix\n\n| Scenario | Expected evidence |\n| --- | --- |\n| File-scoped `mod` | Parsed as first item; module identity set |\n| Inline `mod` | Nested scope created |\n| `use` import | Symbol bound in current scope |\n| `pub` export | Accessible from importers |\n| Private access | **E1501** or **E1107** emitted |\n| Unused import | **W1503** warned |\n\n## Implementation checklist\n\n- [x] Grammar: `mod`, `use`, `pub`\n- [x] AST: `ModuleDeclaration`, `InlineModule`, `UseDeclaration`\n- [x] Parser: `beskid.pest` productions for modules\n- [x] Resolver: module scope building in `resolve/collect.rs`\n- [x] Visibility rules: `visibility.rs` with **E1501–E1507**\n- [x] Diagnostics: **E1501–E1507**, **W1503**, **W1504**\n- [ ] Cross-package visibility rules\n- [ ] Assembly-internal friends (deferred)\n\n## Test locations\n\n- `compiler/crates/beskid_analysis/src/syntax/items/module_declaration.rs` — parser tests\n- `compiler/crates/beskid_analysis/src/syntax/items/use_declaration.rs` — parser tests\n- `compiler/crates/beskid_analysis/src/analysis/rules/staged/visibility.rs` — visibility tests\n- `compiler/crates/beskid_tests` — integration tests for modules"
+		}
+	]
+}

@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Locked decisions\n\n| Decision | ID | Summary |\n| --- | --- | --- |\n| First-class `test` item | D-LM-TST-001 | Tests are module items |\n| Meta/skip blocks | D-LM-TST-002 | Structured sections replace comments |\n| Test project kind | D-LM-TST-003 | Discovery scopes to `Test` projects |\n| Corelib helpers additive | D-LM-TST-004 | Corelib does not redefine `test` syntax |\n\n## FAQ\n\n### Can I put tests in a Lib project?\n\nIt may warn depending on manifest policy. Use a `Test` project for dedicated test code.\n\n### What assertion library should I use?\n\nCorelib provides assertion helpers. The language-level `test` syntax is independent of any specific assertion library.\n\n### How do I skip a test conditionally?\n\nUse the `skip` section with a predicate expression:\n```beskid\ntest WindowsOnly {\n    skip { platform = \"windows\"; }\n    // ...\n}\n```\n\n## Troubleshooting\n\n| Symptom | Likely cause |\n| --- | --- |\n| Test not discovered | Project kind is not `Test` |\n| **E1508–E1510** | Invalid attribute on test item |\n| Skip not working | Predicate expression evaluation failure |"
+		}
+	]
+}

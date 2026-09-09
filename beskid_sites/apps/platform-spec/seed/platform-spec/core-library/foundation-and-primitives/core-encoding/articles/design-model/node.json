@@ -1,0 +1,14 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/core-library/foundation-and-primitives/core-encoding/articles/design-model",
+	"title": "Design model",
+	"description": "Encoding contract and algorithm modules.",
+	"parentSlug": "platform-spec/core-library/foundation-and-primitives/core-encoding",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-06"
+}

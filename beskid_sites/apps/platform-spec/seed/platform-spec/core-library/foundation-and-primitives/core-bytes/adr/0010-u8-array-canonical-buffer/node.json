@@ -1,0 +1,17 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/core-library/foundation-and-primitives/core-bytes/adr/0010-u8-array-canonical-buffer",
+	"title": "u8 array canonical buffer",
+	"description": "Core.Bytes uses u8[] backed by BeskidArray.",
+	"parentSlug": "platform-spec/core-library/foundation-and-primitives/core-bytes",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-CORE-PRIM-0010",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-06-06",
+	"lastReviewed": "2026-06-06"
+}

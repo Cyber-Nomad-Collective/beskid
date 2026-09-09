@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/core-library/terminal-and-console/console-terminal-events/articles/flow-and-algorithm",
+	"title": "Flow and algorithm",
+	"description": "PollResize and RunTick integration.",
+	"parentSlug": "platform-spec/core-library/terminal-and-console/console-terminal-events",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-21"
+}

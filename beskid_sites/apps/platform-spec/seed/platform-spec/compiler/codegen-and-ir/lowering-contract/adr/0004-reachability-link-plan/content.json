@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "blocks": [
+    {
+      "type": "markdownProse",
+      "bodyMd": "import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nCodegen lowered entry functions on demand from span tables, emitting callees that JIT link could not resolve. A reachability `LinkPlan` exists for tests but was not required for run/build entrypoints.\n\n## Decision\n\nProduction lowering **must**:\n\n1. Build `FunctionDefIndex` from `Resolution` and `assembly.hir_units` (all units in the assembly cache).\n2. Construct `LinkPlan` for declared entry symbols (tests, `main`, qualified run/build entrypoints) including transitive callees and monomorphized instances.\n3. Lower only symbols listed in the plan (no on-demand span-global fallback in release paths).\n4. Run `beskid_codegen::validate_artifact` before `beskid_engine` / `beskid_aot` consume the artifact.\n\n## Consequences\n\n`lower_program_with_assembly` and linking modules own completeness. Undefined callees fail at validate time with deterministic diagnostics.\n\n## Verification anchors\n\n- `compiler/crates/beskid_codegen/src/linking/plan.rs`\n- `compiler/crates/beskid_codegen/src/linking/def_index.rs`\n- `compiler/crates/beskid_codegen/src/linking/validate.rs`\n- `compiler/crates/beskid_codegen/src/lowering/lowerable.rs`\n- `compiler/crates/beskid_codegen/tests/array_tests_linking.rs`\n- `compiler/crates/beskid_engine/src/engine.rs`"
+    }
+  ]
+}

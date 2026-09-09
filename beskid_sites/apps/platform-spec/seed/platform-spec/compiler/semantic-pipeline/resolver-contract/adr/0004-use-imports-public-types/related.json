@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Resolver contract",
+      "href": "/platform-spec/compiler/semantic-pipeline/resolver-contract/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Program assembly",
+      "href": "/platform-spec/compiler/build-pipeline/program-assembly/",
+      "relation": "Cross-module paths for use targets"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/contracts-and-effects/contracts/articles/flow-and-algorithm",
+	"title": "Contracts - Flow and algorithm",
+	"description": "Step-by-step flow of contract parsing, conformance checking, and satisfaction validation.",
+	"parentSlug": "platform-spec/language-meta/contracts-and-effects/contracts",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

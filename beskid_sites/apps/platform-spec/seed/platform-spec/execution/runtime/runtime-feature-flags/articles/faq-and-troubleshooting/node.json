@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/execution/runtime/runtime-feature-flags/articles/faq-and-troubleshooting",
+	"title": "FAQ and troubleshooting",
+	"description": "Optional runtime features vs ABI version, array backing surprises, and CI alignment.",
+	"parentSlug": "platform-spec/execution/runtime/runtime-feature-flags",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-22"
+}

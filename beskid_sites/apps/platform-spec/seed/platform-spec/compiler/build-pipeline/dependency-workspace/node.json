@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "feature",
+  "slug": "platform-spec/compiler/build-pipeline/dependency-workspace",
+  "title": "Dependency workspace and lockfile",
+  "description": "Canonical compiler contract for compile plans, workspace materialization, lockfile policy, and dependency source trees.",
+  "parentSlug": "platform-spec/compiler/build-pipeline",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-04-30"
+}

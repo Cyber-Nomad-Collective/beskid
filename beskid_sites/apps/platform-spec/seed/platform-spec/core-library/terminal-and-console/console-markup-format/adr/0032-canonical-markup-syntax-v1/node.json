@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/core-library/terminal-and-console/console-markup-format/adr/0032-canonical-markup-syntax-v1",
+	"title": "Canonical console markup syntax v1",
+	"description": "Locks bracket palette tags, attribute spans, and hyperlinks for v1.",
+	"parentSlug": "platform-spec/core-library/terminal-and-console/console-markup-format",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-CORE-TEXT-0001",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-06-08",
+	"lastReviewed": "2026-06-08"
+}

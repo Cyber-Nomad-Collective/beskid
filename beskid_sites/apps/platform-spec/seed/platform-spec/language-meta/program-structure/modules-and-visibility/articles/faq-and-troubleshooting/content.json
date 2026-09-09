@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Locked decisions\n\n| Decision | ID | Summary |\n| --- | --- | --- |\n| File-scoped precedence | D-LM-MOD-001 | Explicit `mod` wins over path-derived identity |\n| No `internal` keyword | D-LM-MOD-002 | Private-by-default plus `pub` only |\n| Package graph external | D-LM-MOD-003 | Cross-package edges from manifests |\n| `pub use` re-export | D-LM-MOD-004 | Preserves underlying accessibility |\n\n## FAQ\n\n### Do I need `mod` in every file?\n\nNo. Without an explicit `mod`, the module identity derives from the file path.\n\n### Can I nest modules infinitely?\n\nYes, but readability degrades. Inline modules and file-scoped modules can be nested arbitrarily.\n\n### What is the difference between `use` and `import`?\n\nBeskid uses `use` for imports. There is no `import` keyword.\n\n## Troubleshooting\n\n| Symptom | Likely cause |\n| --- | --- |\n| **E1505** | `mod` is not the first item in the file |\n| **E1506** | Multiple file-scoped `mod` declarations |\n| **E1507** | Nested `mod` inside a file-scoped module file |\n| **E1501** | Accessing a private item from another module |\n| **E1105** | Import path does not exist |\n| **W1503** | Import is never used |"
+		}
+	]
+}

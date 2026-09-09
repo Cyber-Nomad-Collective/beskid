@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "Use these templates when creating new platform-spec nodes. They match current CI validators and `trudoc` Zod contracts.\n\n## Domain template\n\n```yaml\n---\ntitle: <Domain title>\ndescription: <Domain summary>\nspecLevel: domain\nowner:\n  name: <Owner name>\n  email: <owner@example.com>\nsubmitter:\n  name: <Submitter name>\n  email: <submitter@example.com>\nrelatedTopics: []\n---\n```\n\n## Area template\n\n```yaml\n---\ntitle: <Area title>\ndescription: <Area summary>\nspecLevel: area\nowner:\n  name: <Owner name>\n  email: <owner@example.com>\nsubmitter:\n  name: <Submitter name>\n  email: <submitter@example.com>\nrelatedTopics: []\n---\n```\n\n## Feature hub template\n\n```yaml\n---\ntitle: <Feature title>\ndescription: <Feature summary>\nspecLevel: feature\nstatus: Standard\nowner:\n  name: <Owner name>\n  email: <owner@example.com>\nsubmitter:\n  name: <Submitter name>\n  email: <submitter@example.com>\nrelatedTopics: []\n---\n```\n\n## Article template\n\n```yaml\n---\ntitle: <Article title>\ndescription: <Article summary>\nspecLevel: article\nstatus: Standard\nowner:\n  name: <Owner name>\n  email: <owner@example.com>\nsubmitter:\n  name: <Submitter name>\n  email: <submitter@example.com>\nrelatedTopics: []\n---\n```\n\n## Validation notes\n\n- `status` is required for `feature` and `article`.\n- `status` is not allowed on `domain` or `area`.\n- `owner` and `submitter` must include non-empty `name` and valid `email`.\n- Use `layout.json` for every domain/area/feature hub directory.\n\n## Decisions\n\nNo open decisions. Closed maintenance ADR under **`adr/`** — `D-COMM-META-0001` (reader **ADRs** tab)."
+		}
+	]
+}

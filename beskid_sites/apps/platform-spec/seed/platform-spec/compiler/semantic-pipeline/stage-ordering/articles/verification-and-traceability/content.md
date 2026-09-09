@@ -1,0 +1,22 @@
+import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Conformance tests
+
+| Evidence | Location | What it proves |
+| --- | --- | --- |
+| Lower-spine type codes via prepare | `compiler/crates/beskid_tests/src/analysis/type_check_diagnostics.rs` | `prepare_compilation_diagnostics` still emits stable `E12xx` codes after type-check consolidation |
+| Issue kind → code mapping | `compiler/crates/beskid_tests/src/analysis/diagnostics.rs` | `SemanticIssueKind::code()` strings unchanged |
+| Lower integration typing | `compiler/crates/beskid_tests/src/analysis/types.rs` | `TypeError` shapes and lower helper behavior |
+| Semantic structural rules | `compiler/crates/beskid_tests/src/analysis/pipeline/core.rs` | Non-type semantic diagnostics (resolve, control flow, visibility) |
+
+Tests in **`type_check_diagnostics.rs`** assert **diagnostic code sets only**. They **must not** assert relative ordering of `semantic.*` vs `lower.*` observer phases—ordering may change when mods run or when diagnostics are collected during prepare.
+
+## Manual verification
+
+```bash
+cd compiler && CARGO_INCREMENTAL=0 cargo test -p beskid_tests analysis::type_check_diagnostics
+```
+
+With pipeline tracing enabled, observers **should** show `lower.type_check` during prepare; they **must not** treat a nested `semantic.type_check` observation (if still emitted for structural work) as a second authoritative type pass.

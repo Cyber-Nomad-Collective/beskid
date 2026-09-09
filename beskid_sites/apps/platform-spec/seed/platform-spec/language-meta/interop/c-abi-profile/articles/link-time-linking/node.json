@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/interop/c-abi-profile/articles/link-time-linking",
+	"title": "C ABI profile — Link-time linking",
+	"description": "Normative link-time binding for user Extern libraries (v0.3 Standard).",
+	"parentSlug": "platform-spec/language-meta/interop/c-abi-profile",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-23"
+}

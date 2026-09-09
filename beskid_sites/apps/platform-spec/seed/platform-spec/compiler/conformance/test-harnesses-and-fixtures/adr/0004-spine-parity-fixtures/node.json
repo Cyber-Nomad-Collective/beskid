@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "specLevel": "adr",
+  "slug": "platform-spec/compiler/conformance/test-harnesses-and-fixtures/adr/0004-spine-parity-fixtures",
+  "title": "Spine parity fixtures",
+  "description": "Mandatory conformance fixtures lock analyze vs execute diagnostics and link-plan completeness.",
+  "parentSlug": "platform-spec/compiler/conformance/test-harnesses-and-fixtures",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "adrId": "D-COMP-CONF-0007",
+  "adrStatus": "Accepted",
+  "adrDate": "2026-05-29",
+  "lastReviewed": "2026-05-29"
+}

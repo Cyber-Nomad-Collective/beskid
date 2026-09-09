@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/language-meta/interop/c-abi-profile",
+	"title": "C ABI profile",
+	"description": "System V-style C ABI binding for user extern contracts—types, calling conventions, libraries, and engine resolution policy.",
+	"parentSlug": "platform-spec/language-meta/interop",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-20"
+}

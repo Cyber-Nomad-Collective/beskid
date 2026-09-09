@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Dependency workspace and lockfile",
+      "href": "/platform-spec/compiler/build-pipeline/dependency-workspace/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Diagnostics parity (CLI and LSP)",
+      "href": "/platform-spec/compiler/build-pipeline/diagnostics-parity/",
+      "relation": "Error reporting across surfaces"
+    }
+  ]
+}

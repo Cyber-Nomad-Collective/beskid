@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/tooling/nexus/design-model",
+	"title": "Design model",
+	"description": "Graph-first landing, navbar shell, global registry, code-doc vs platform-spec separation, and MCP connect surface.",
+	"parentSlug": "platform-spec/tooling/nexus",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-30"
+}

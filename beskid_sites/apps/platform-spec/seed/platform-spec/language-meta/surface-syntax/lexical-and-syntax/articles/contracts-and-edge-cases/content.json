@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Hard requirements\n\n- **Pest as grammar source** — The checked-in pest file is the single syntactic truth.\n- **`///` documentation** — Triple-slash doc lines attach only via `ItemWithDocs`; four-or-more slashes are never doc comments.\n- **Reserved async/await** — Tokens exist for forward compatibility; semantic use is forbidden.\n\n## Diagnostic band E11xx\n\n| Code | Condition |\n| --- | --- |\n| **E1151** | Invalid HIR span |\n| **E1152** | Unresolved HIR value path |\n| **E1153** | Unresolved HIR type path |\n| **E1154** | Non-normalized HIR control flow |\n\n## Edge cases\n\n- **Empty file** — A file with no items is valid; it produces an empty `Program`.\n- **BOM** — UTF-8 BOM at file start is accepted and skipped.\n- **Invalid escape** — Unrecognized string escapes are parse errors.\n- **Unclosed string** — Missing closing quote is a parse error.\n- **Keyword as identifier** — Reserved keywords cannot be used as identifiers unless escaped (not supported in v0.1).\n\n## Invariants\n\n- Lexical and syntactic validity does not imply semantic validity.\n- Phases after parsing must reject programs that parse but violate module, type, or contract rules.\n- A tool claiming L0 conformance must accept the same token stream as `beskid.pest`."
+		}
+	]
+}

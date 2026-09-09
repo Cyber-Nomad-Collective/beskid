@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/execution/abi-and-host/extern-dispatch-and-policy/adr/0007-handler-registration-init-order",
+	"title": "Handler registration before user init",
+	"description": "Corelib registers dispatch handlers before user static initialization in AOT and JIT.",
+	"parentSlug": "platform-spec/execution/abi-and-host/extern-dispatch-and-policy",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-EXEC-ABI-0008",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-06-06",
+	"lastReviewed": "2026-06-06"
+}

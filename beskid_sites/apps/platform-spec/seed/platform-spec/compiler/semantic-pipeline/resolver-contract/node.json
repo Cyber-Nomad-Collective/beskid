@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "feature",
+  "slug": "platform-spec/compiler/semantic-pipeline/resolver-contract",
+  "title": "Resolver contract",
+  "description": "Feature hub for the resolver contract in the reference compiler.",
+  "parentSlug": "platform-spec/compiler/semantic-pipeline",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-06-05"
+}

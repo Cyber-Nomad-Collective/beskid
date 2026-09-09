@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/articles/contracts-and-edge-cases",
+  "title": "Rules pipeline contract - Contracts and edge cases",
+  "description": "States the normative guarantees and what happens at boundaries or failure edges.",
+  "parentSlug": "platform-spec/compiler/semantic-pipeline/rules-pipeline-contract",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

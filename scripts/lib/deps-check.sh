@@ -42,6 +42,16 @@ beskid_list_groups() {
   jq -r '.groups | keys[]' "${json}"
 }
 
+beskid_tool_supported_on_platform() {
+  local tool="$1"
+  local json="$2"
+  local platform="${3:-${BESKID_OS}}"
+  jq -e --arg t "${tool}" --arg platform "${platform}" '
+    .tools[$t].supported_platforms as $supported
+    | $supported == null or ($supported | index($platform) != null)
+  ' "${json}" >/dev/null
+}
+
 beskid_tool_installed() {
   local tool="$1"
   local json="$2"
@@ -89,6 +99,10 @@ beskid_install_tool() {
   local tool="$1"
   local json="$2"
   local os="${BESKID_OS}"
+
+  if ! beskid_tool_supported_on_platform "${tool}" "${json}" "${os}"; then
+    die "${tool} is not supported on ${os}"
+  fi
 
   local methods_count
   methods_count="$(jq -r --arg t "${tool}" --arg os "${os}" '.tools[$t].install[$os] | length' "${json}")"

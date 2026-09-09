@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/core-library/foundation-and-primitives/core-fluent/adr/0001-fluent-step-contract",
+	"title": "Self-returning fluent step contract",
+	"description": "pub contract XxxStep with terminal method; generated facades Tier 2.",
+	"parentSlug": "platform-spec/core-library/foundation-and-primitives/core-fluent",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-CORE-FLUENT-0004",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-06-10",
+	"lastReviewed": "2026-06-10"
+}

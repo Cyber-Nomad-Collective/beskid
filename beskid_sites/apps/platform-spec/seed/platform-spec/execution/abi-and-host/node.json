@@ -1,0 +1,8 @@
+{
+	"version": 1,
+	"specLevel": "area",
+	"slug": "platform-spec/execution/abi-and-host",
+	"title": "Abi And Host",
+	"parentSlug": "platform-spec/execution",
+	"status": "published"
+}

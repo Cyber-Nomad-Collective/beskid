@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/tooling/formatter/design-model",
+	"title": "Formatter design model",
+	"description": "Emit/EmitCtx/Emitter architecture, policy split, and the layout invariants the formatter exposes.",
+	"parentSlug": "platform-spec/tooling/formatter",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-23"
+}

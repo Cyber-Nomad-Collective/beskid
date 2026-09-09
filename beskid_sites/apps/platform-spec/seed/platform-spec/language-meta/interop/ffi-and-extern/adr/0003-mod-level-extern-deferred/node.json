@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/language-meta/interop/ffi-and-extern/adr/0003-mod-level-extern-deferred",
+	"title": "Mod-level Extern not Standard v0.3",
+	"description": "Bulk import uses contract blocks with method signatures.",
+	"parentSlug": "platform-spec/language-meta/interop/ffi-and-extern",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-LMETA-FFI-0003",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-05-20",
+	"lastReviewed": "2026-05-22"
+}

@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/semantic-pipeline/stage-ordering/articles/design-model",
+  "title": "Semantic pipeline stage ordering - Design model",
+  "description": "Type-check authority on the lower spine and semantic structural checks only.",
+  "parentSlug": "platform-spec/compiler/semantic-pipeline/stage-ordering",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-06-16"
+}

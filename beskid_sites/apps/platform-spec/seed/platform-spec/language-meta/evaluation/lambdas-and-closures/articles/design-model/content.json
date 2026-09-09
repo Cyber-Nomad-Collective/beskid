@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Vocabulary\n\n| Construct | Role |\n| --- | --- |\n| **`LambdaExpression`** | Anonymous function `params => body` |\n| **`LambdaParameter`** | Single parameter with optional explicit type |\n| **`LambdaParameters`** | Parameter list (single identifier or parenthesized list) |\n\n## Lambda architecture\n\nLambdas are **expression-level anonymous functions** with optional parameter types. They may appear anywhere an `Expression` is allowed.\n\n```mermaid\nflowchart LR\n    parse[parse lambda]\n    infer[infer parameter types]\n    capture[analyze captures]\n    typecheck[type check body]\n    lower[lower to closure]\n    parse --> infer --> capture --> typecheck --> lower\n```\n\n### Subsystem boundaries\n\n| Subsystem | Responsibility | Key file |\n| --- | --- | --- |\n| Parser | Parse `=>` syntax | `syntax/expressions/lambda_expression.rs` |\n| AST | Store lambda structure | `syntax/expressions/expression.rs` |\n| Type checker | Infer parameter types from context | `types/context/expressions.rs` |\n| Capture analysis | Track captured locals | `analysis/rules/staged/` |\n| HIR lowering | Build closure environment | `hir/lowering/expressions.rs` |\n\n## Capture model\n\n- Captured locals must be definitely assigned before capture.\n- Lambdas must not capture `mut` bindings unless the implementation explicitly allows it.\n- A closure extends the lifetime of captured storage to at least the closure value's lifetime.\n- Captured reference-bearing values must be heap-traced when they escape the frame."
+		}
+	]
+}

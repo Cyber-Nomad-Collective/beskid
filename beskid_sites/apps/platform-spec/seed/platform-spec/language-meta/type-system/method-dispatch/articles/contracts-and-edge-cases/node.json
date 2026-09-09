@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/type-system/method-dispatch/articles/contracts-and-edge-cases",
+	"title": "Method dispatch - Contracts and edge cases",
+	"description": "Normative contracts, edge cases, and invariants for Beskid method dispatch.",
+	"parentSlug": "platform-spec/language-meta/type-system/method-dispatch",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

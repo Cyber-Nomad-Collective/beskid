@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/core-library/foundation-and-primitives/core-optional",
+	"title": "Core.Optional",
+	"description": "Canonical optional-value type for corelib APIs and query iterators.",
+	"parentSlug": "platform-spec/core-library/foundation-and-primitives",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-10"
+}

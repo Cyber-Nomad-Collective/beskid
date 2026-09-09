@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/tooling/project-scaffolding/project-templates/articles/decisions-record",
+	"title": "Decisions record (legacy index)",
+	"description": "Migration index pointing to per-decision ADR files under adr/.",
+	"parentSlug": "platform-spec/tooling/project-scaffolding/project-templates",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-22"
+}

@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/execution/runtime/runtime-feature-flags",
+	"title": "Runtime feature flags",
+	"description": "Feature-gate and capability signaling contract between runtime builds and compiler/tooling expectations.",
+	"parentSlug": "platform-spec/execution/runtime",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-04-30"
+}

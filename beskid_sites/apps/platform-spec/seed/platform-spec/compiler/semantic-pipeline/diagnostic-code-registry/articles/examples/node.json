@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/articles/examples",
+  "title": "Examples",
+  "description": "Representative registry update scenarios and expected outcomes.",
+  "parentSlug": "platform-spec/compiler/semantic-pipeline/diagnostic-code-registry",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/tooling/project-scaffolding/template-packages/adr/0001-explicit-package-kind",
+	"title": "Explicit packageKind",
+	"description": "Explicit packageKind",
+	"parentSlug": "platform-spec/tooling/project-scaffolding/template-packages",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-TOOL-SCAFF-0001",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-05-21",
+	"lastReviewed": "2026-05-22"
+}

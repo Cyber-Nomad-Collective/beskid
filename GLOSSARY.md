@@ -351,6 +351,18 @@ An `OpaqueHandle`-shaped, Beskid.Glue-typed handle representing one imported for
 
 A fail-closed glue contract, modeled on the ABI-v5 runtime-kit validation pattern, that discovers and verifies external tools (rustc, cargo, dotnet, linkers) by exact path, sha256, version, and capability, and rejects drift before link or load.
 
+## cargo-binstall
+
+The contributor and CI bootstrap tool for Rust command-line binaries. It prefers
+prebuilt release artifacts over compiling tools from source; it does not change
+how Cargo resolves or compiles project dependencies.
+
+## mold linker
+
+The fast ELF linker used for Beskid's Linux Rust builds through the `clang`
+linker driver. Beskid's macOS and Windows builds retain their platform-specific
+linkers because this configuration is Linux-only.
+
 ## Glue contracts cutoff (0.4)
 
 The 0.4 delivery obligation for Beskid.Glue: the normative OpenSpec contract, the `Interop.Contracts` typed model, the `Backend` trait with three variants (`CraneliftClif` wired, `RustSource` and `DotnetProject` declared), the seven glue contracts declared as Beskid contracts and attributes, the stdio bridge fiber design, and the `ToolchainProbe` contract scaffold. No language-specific emission code ships in 0.4.

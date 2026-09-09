@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/tooling/cli/build-analyze-run-contract",
+	"title": "Build, analyze, and run contract",
+	"description": "Expected CLI behavior and outputs across build, analysis, and runtime execution commands.",
+	"parentSlug": "platform-spec/tooling/cli",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-04-30"
+}

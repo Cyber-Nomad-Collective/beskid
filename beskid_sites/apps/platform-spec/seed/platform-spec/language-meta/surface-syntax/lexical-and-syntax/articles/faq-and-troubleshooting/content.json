@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Locked decisions\n\n| Decision | ID | Summary |\n| --- | --- | --- |\n| Pest as grammar source | D-LM-LEX-001 | Checked-in pest file is single syntactic truth |\n| `///` documentation | D-LM-LEX-002 | Triple-slash only; four+ slashes never doc |\n| Reserved async/await | D-LM-LEX-003 | Tokens exist; semantic use forbidden |\n\n## FAQ\n\n### Can I use a keyword as an identifier?\n\nNo. Reserved keywords cannot be used as identifiers in v0.1.\n\n### Does Beskid support raw string literals?\n\nNo. String literals use `\"...\"` with standard escapes only.\n\n### What is the difference between `//` and `///`?\n\n`//` is an ordinary comment. `///` is a documentation comment attached to the following item.\n\n## Troubleshooting\n\n| Symptom | Likely cause |\n| --- | --- |\n| Parse error | Syntax does not match `beskid.pest` |\n| Invalid identifier | Name spells a reserved keyword |\n| Unclosed string | Missing closing `\"` or `'` |\n| Invalid escape | Unrecognized escape sequence |\n| Doc not attached | `///` not immediately before item |"
+		}
+	]
+}

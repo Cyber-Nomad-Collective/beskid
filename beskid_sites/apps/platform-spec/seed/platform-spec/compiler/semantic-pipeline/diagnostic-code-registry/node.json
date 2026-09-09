@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "feature",
+  "slug": "platform-spec/compiler/semantic-pipeline/diagnostic-code-registry",
+  "title": "Diagnostic code registry",
+  "description": "Registry contract for semantic diagnostic code ownership and synchronization with compiler sources.",
+  "parentSlug": "platform-spec/compiler/semantic-pipeline",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-04-29"
+}

@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/language-meta/interop/rust-abi-profile/adr/0003-user-extern-not-rust-crates",
+	"title": "User Extern not arbitrary Rust crates",
+	"description": "User foreign code uses C ABI profile until a future spec promotes Rust-native interop.",
+	"parentSlug": "platform-spec/language-meta/interop/rust-abi-profile",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-LMETA-RUSTABI-0003",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-05-09",
+	"lastReviewed": "2026-05-22"
+}

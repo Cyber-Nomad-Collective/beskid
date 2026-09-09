@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/execution/runtime/memory-and-gc-runtime-contract/adr/0007-heap-type-descriptors",
+	"title": "Heap objects carry type descriptors for scanning",
+	"description": "alloc attaches descriptors; roots include stacks, globals, and handles.",
+	"parentSlug": "platform-spec/execution/runtime/memory-and-gc-runtime-contract",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-EXEC-RT-0007",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-02-01",
+	"lastReviewed": "2026-05-22"
+}

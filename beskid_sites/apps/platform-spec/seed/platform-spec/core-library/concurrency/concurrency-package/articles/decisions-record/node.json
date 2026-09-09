@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/core-library/concurrency/concurrency-package/articles/decisions-record",
+	"title": "Concurrency package - Decisions record (legacy index)",
+	"description": "Migration index pointing to per-decision ADR files under adr/—normative text lives in ADRs, not this page.",
+	"parentSlug": "platform-spec/core-library/concurrency/concurrency-package",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-22"
+}

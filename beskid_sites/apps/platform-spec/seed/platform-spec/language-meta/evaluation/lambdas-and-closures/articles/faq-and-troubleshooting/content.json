@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Locked decisions\n\n| Decision | ID | Summary |\n| --- | --- | --- |\n| Expression lambdas | D-LM-LAM-001 | Block bodies; no `fn` literal syntax |\n| No async lambdas | D-LM-LAM-002 | Use `spawn` instead |\n| Capture extends lifetime | D-LM-LAM-003 | Captured locals kept alive |\n| GC for escaped captures | D-LM-LAM-004 | Heap-traced when escaping |\n\n## FAQ\n\n### Can a lambda reference itself recursively?\n\nNot directly. Bind the lambda to a `let` first, then reference the variable name.\n\n### Why can't I capture `mut` bindings?\n\nMutability capture is restricted to prevent data races. This may be relaxed in future versions with explicit capture modifiers.\n\n### Do lambdas allocate?\n\nStack closures do not allocate. Heap closures allocate only when the closure escapes the defining frame.\n\n## Troubleshooting\n\n| Symptom | Likely cause |\n| --- | --- |\n| **E1202** | Lambda parameter type cannot be inferred |\n| **E1223** | Lambda passed to `spawn` is not fiber-compatible |\n| **E1225** | Stack reference captured in a `spawn` closure |"
+		}
+	]
+}

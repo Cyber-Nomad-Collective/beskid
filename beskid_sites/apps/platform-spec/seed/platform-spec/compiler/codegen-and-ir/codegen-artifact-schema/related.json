@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "Codegen and IR",
+      "href": "/platform-spec/compiler/codegen-and-ir/",
+      "relation": "Parent area"
+    }
+  ]
+}

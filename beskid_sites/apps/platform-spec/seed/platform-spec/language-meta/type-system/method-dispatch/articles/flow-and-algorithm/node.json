@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/type-system/method-dispatch/articles/flow-and-algorithm",
+	"title": "Method dispatch - Flow and algorithm",
+	"description": "Step-by-step flow of method resolution and dispatch lowering in the Beskid compiler.",
+	"parentSlug": "platform-spec/language-meta/type-system/method-dispatch",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

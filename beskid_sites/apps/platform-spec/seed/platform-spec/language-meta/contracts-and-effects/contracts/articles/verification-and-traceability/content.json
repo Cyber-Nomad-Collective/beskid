@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Verification matrix\n\n| Scenario | Expected evidence |\n| --- | --- |\n| Contract with method signatures | Parses; AST round-trip correct |\n| Type conforms to contract | Compiles; no diagnostic |\n| Missing implementation | **E1601** emitted |\n| Signature mismatch | **E1602** emitted |\n| Embedding conflict | **E1004** emitted |\n| Invalid conformance target | **E1607** emitted |\n\n## Implementation checklist\n\n- [x] Grammar: `contract`, method signatures, embeddings\n- [x] AST: `ContractDefinition`, `ContractNode`, `ContractMethodSignature`\n- [x] Parser: `beskid.pest` productions for contract items\n- [x] Resolver: conformance target resolution\n- [x] Contract rules: satisfaction checking in `contracts.rs`\n- [x] Diagnostics: **E1601**, **E1602**, **E1606**, **E1607**, **E1003**, **E1004**\n- [ ] Generic contract conformance\n- [ ] Contract method default bodies (deferred)\n\n## Test locations\n\n- `compiler/crates/beskid_analysis/src/syntax/items/contract_definition.rs` — parser tests\n- `compiler/crates/beskid_analysis/src/analysis/rules/staged/contracts.rs` — satisfaction tests\n- `compiler/crates/beskid_tests` — integration tests for contracts"
+		}
+	]
+}

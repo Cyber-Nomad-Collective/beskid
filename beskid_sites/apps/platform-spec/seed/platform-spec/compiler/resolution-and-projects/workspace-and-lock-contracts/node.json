@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "feature",
+  "slug": "platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts",
+  "title": "Workspace and lock contracts",
+  "description": "Compiler workspace graph, lock materialization, and resolution diagnostics (schema defers to tooling).",
+  "parentSlug": "platform-spec/compiler/resolution-and-projects",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-05-21"
+}

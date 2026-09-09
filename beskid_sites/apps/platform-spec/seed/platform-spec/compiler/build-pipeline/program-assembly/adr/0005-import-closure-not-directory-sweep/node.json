@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "specLevel": "adr",
+  "slug": "platform-spec/compiler/build-pipeline/program-assembly/adr/0005-import-closure-not-directory-sweep",
+  "title": "Import closure not directory sweep",
+  "description": "Build and run discovery enqueue one file per pub mod seed; further units enter only via use edges.",
+  "parentSlug": "platform-spec/compiler/build-pipeline/program-assembly",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "adrId": "D-COMP-BUILD-0023",
+  "adrStatus": "Accepted",
+  "adrDate": "2026-05-29",
+  "lastReviewed": "2026-05-29"
+}

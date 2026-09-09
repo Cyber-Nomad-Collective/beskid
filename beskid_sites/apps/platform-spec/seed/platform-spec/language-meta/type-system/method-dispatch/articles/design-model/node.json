@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/type-system/method-dispatch/articles/design-model",
+	"title": "Method dispatch - Design model",
+	"description": "Conceptual model for static method dispatch, receiver rules, and member resolution in Beskid.",
+	"parentSlug": "platform-spec/language-meta/type-system/method-dispatch",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

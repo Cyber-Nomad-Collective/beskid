@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/build-pipeline/backends-jit-aot/articles/design-model",
+  "title": "Backends (JIT and AOT) - Design model",
+  "description": "Backend responsibility split and shared artifact model for run and build commands.",
+  "parentSlug": "platform-spec/compiler/build-pipeline/backends-jit-aot",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

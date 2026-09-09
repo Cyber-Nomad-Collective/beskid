@@ -1,0 +1,8 @@
+{
+	"version": 1,
+	"specLevel": "area",
+	"slug": "platform-spec/tooling/project-scaffolding",
+	"title": "Project Scaffolding",
+	"parentSlug": "platform-spec/tooling",
+	"status": "published"
+}

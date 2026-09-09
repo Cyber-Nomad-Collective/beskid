@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Verification matrix\n\n| Scenario | Expected evidence |\n| --- | --- |\n| Instance method call | Resolves to declared method; compiles |\n| `extend type` method | Included in member set; compiles |\n| Private member access | **E1107** or **E1511** emitted |\n| Arity mismatch | **E1204** emitted |\n| Argument type mismatch | **E1205** emitted |\n| Unknown member | **E1101** or **E1213** emitted |\n\n## Implementation checklist\n\n- [x] Grammar: member expressions, method definitions\n- [x] AST: `MemberExpression`, `MethodDefinition`, `ExtendTypeDefinition`\n- [x] Resolver: member item collection in `resolve/member_items.rs`\n- [x] Type checker: call arity and argument checking\n- [x] Visibility: private member rejection\n- [x] Diagnostics: **E1101**, **E1107**, **E1204**, **E1205**, **E1213**, **E1511**\n- [ ] Dynamic dispatch (deferred to post-v0.1)\n- [ ] Virtual table lowering for interface calls\n\n## Test locations\n\n- `compiler/crates/beskid_analysis/src/resolve/member_items.rs` — member resolution tests\n- `compiler/crates/beskid_analysis/src/types/context/expressions.rs` — call type checking tests\n- `compiler/crates/beskid_tests` — integration tests for dispatch"
+		}
+	]
+}

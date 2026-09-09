@@ -1,0 +1,14 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/execution/runtime/fiber-scheduler-and-stacks/articles/verification-and-traceability",
+	"title": "Fiber scheduler and stacks - Verification and traceability",
+	"description": "Tests and ABI anchors for fiber scheduler work.",
+	"parentSlug": "platform-spec/execution/runtime/fiber-scheduler-and-stacks",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-20"
+}

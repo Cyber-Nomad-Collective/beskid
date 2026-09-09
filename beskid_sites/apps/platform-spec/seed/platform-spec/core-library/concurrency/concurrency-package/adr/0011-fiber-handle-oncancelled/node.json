@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/core-library/concurrency/concurrency-package/adr/0011-fiber-handle-oncancelled",
+	"title": "OnCancelled on Fiber handle only",
+	"description": "Spawn entry types vs fiber handle contract surface.",
+	"parentSlug": "platform-spec/core-library/concurrency/concurrency-package",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-CORE-CONC-0011",
+	"adrStatus": "Accepted",
+	"adrDate": "2025-08-01",
+	"lastReviewed": "2026-05-22"
+}

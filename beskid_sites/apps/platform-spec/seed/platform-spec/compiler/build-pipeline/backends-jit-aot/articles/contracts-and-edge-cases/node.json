@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/build-pipeline/backends-jit-aot/articles/contracts-and-edge-cases",
+  "title": "Backends (JIT and AOT) - Contracts and edge cases",
+  "description": "Required backend guarantees for output kinds, entrypoints, and shared lowering semantics.",
+  "parentSlug": "platform-spec/compiler/build-pipeline/backends-jit-aot",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

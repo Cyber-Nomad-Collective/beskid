@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Parser and AST contracts",
+      "href": "/platform-spec/compiler/front-end/parser-and-ast-contracts/",
+      "relation": "Parent feature"
+    },
+    {
+      "type": "Feature",
+      "title": "Diagnostic code registry",
+      "href": "/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/",
+      "relation": "Parse and semantic failures are surfaced through shared diagnostic contracts"
+    }
+  ]
+}

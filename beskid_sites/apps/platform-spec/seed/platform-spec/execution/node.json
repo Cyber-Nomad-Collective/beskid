@@ -1,0 +1,8 @@
+{
+	"version": 1,
+	"specLevel": "domain",
+	"slug": "platform-spec/execution",
+	"title": "Execution",
+	"parentSlug": "platform-spec",
+	"status": "published"
+}

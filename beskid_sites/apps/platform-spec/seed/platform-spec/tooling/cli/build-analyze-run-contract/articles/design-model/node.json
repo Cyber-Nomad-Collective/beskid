@@ -1,0 +1,17 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/tooling/cli/build-analyze-run-contract/articles/design-model",
+	"title": "Design model",
+	"description": "Conceptual model for `Build, analyze, and run contract` and its subsystem boundaries.",
+	"parentSlug": "platform-spec/tooling/cli/build-analyze-run-contract",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	}
+}

@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "specLevel": "area",
+  "slug": "platform-spec/compiler/front-end",
+  "title": "Front End",
+  "parentSlug": "platform-spec/compiler",
+  "status": "published"
+}

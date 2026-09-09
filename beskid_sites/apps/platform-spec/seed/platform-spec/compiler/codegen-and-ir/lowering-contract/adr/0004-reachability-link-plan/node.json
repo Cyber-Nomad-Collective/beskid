@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "specLevel": "adr",
+  "slug": "platform-spec/compiler/codegen-and-ir/lowering-contract/adr/0004-reachability-link-plan",
+  "title": "Reachability link plan",
+  "description": "Production lowering must build FunctionDefIndex, LinkPlan, and validate_artifact before JIT or AOT.",
+  "parentSlug": "platform-spec/compiler/codegen-and-ir/lowering-contract",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "adrId": "D-COMP-IR-0010",
+  "adrStatus": "Accepted",
+  "adrDate": "2026-05-29",
+  "lastReviewed": "2026-05-29"
+}

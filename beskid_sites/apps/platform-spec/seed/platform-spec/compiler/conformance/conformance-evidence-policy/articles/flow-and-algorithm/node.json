@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/conformance/conformance-evidence-policy/articles/flow-and-algorithm",
+  "title": "Conformance evidence policy - Flow and algorithm",
+  "description": "Walks through runtime/order-of-operations behavior in the implementation.",
+  "parentSlug": "platform-spec/compiler/conformance/conformance-evidence-policy",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}

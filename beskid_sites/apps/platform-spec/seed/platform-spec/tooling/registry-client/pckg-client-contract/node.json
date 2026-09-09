@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "feature",
+	"slug": "platform-spec/tooling/registry-client/pckg-client-contract",
+	"title": "pckg client contract",
+	"description": "Contract surface for the Beskid package registry client crate used by tooling workflows.",
+	"parentSlug": "platform-spec/tooling/registry-client",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-04-30"
+}

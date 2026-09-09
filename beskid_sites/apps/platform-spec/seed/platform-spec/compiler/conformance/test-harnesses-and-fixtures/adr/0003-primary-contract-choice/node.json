@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "specLevel": "adr",
+  "slug": "platform-spec/compiler/conformance/test-harnesses-and-fixtures/adr/0003-primary-contract-choice",
+  "title": "Primary contract for Test harnesses and fixtures",
+  "description": "This feature explains how the project proves that implemented behavior remains stable release over release. It is organi",
+  "parentSlug": "platform-spec/compiler/conformance/test-harnesses-and-fixtures",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "adrId": "D-COMP-CONF-0006",
+  "adrStatus": "Accepted",
+  "adrDate": "2026-05-05",
+  "lastReviewed": "2026-05-22"
+}

@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/community/spec-maintenance/release-and-versioning-policy/adr/0001-git-version-axis",
+	"title": "Git is the canonical specification version axis",
+	"description": "Contract truth is the platform-spec tree at a commit; no parallel normative URL version hierarchy.",
+	"parentSlug": "platform-spec/community/spec-maintenance/release-and-versioning-policy",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-COMM-VERS-0001",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-05-05",
+	"lastReviewed": "2026-05-22"
+}

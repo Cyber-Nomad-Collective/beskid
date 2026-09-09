@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/metaprogramming/compiler-mod-sdk/articles/contracts-and-edge-cases",
+	"title": "Compiler Mod SDK - Contracts and edge cases",
+	"description": "Normative contracts, edge cases, and invariants for the Beskid Compiler Mod SDK.",
+	"parentSlug": "platform-spec/language-meta/metaprogramming/compiler-mod-sdk",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-05"
+}

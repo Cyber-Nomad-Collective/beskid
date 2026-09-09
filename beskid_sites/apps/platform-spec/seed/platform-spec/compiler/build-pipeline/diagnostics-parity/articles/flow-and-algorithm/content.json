@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "blocks": [
+    {
+      "type": "markdownProse",
+      "bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n1. CLI parse path converts parser errors using file-path source labels.\n2. Lowering path parses and can emit diagnostics with `\"<memory>\"` labels.\n3. Lowering runs semantic rules when diagnostics are enabled and aborts on errors.\n4. LSP cold path parses, maps parse errors, then runs semantic rules.\n5. LSP warm path reuses analyzed snapshots and reruns rule checks without reparsing."
+    }
+  ]
+}

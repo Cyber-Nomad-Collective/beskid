@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "blocks": [
+    {
+      "type": "markdownProse",
+      "bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n## Normative requirements\n\n| ID | Requirement |\n| --- | --- |\n| **GRAM-001** | Output **must** use `Core.Text.Parser` combinators only. |\n| **GRAM-002** | Generated modules **must** land under `.beskid/obj/mods/<id>/generated/`. |\n| **GRAM-003** | Host `beskid.pest` **must not** be modified by mod grammars. |\n| **GRAM-004** | Unsupported Pest constructs **must** emit **E18xx** with actionable messages. |\n| **GRAM-005** | Canonical grammars `regex.pest` and `console_markup.pest` **must** ship with corelib/console packages. |"
+    }
+  ]
+}

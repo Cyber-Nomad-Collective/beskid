@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/compiler-mods/syntax-domain-model-generation/articles/verification-and-traceability",
+  "title": "Syntax domain model generation - Verification and traceability",
+  "description": "Contract for generating the immutable Beskid syntax domain model consumed by Mod SDK facades and meta discovery.",
+  "parentSlug": "platform-spec/compiler/compiler-mods/syntax-domain-model-generation",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "lastReviewed": "2026-04-30"
+}

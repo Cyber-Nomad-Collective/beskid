@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "ADR",
+      "title": "Single pest grammar surface",
+      "href": "/platform-spec/compiler/front-end/parser-and-ast-contracts/adr/0003-pest-grammar-single-surface/",
+      "relation": "Host surface unchanged"
+    },
+    {
+      "type": "Feature",
+      "title": "Pest parser generator",
+      "href": "/platform-spec/compiler/compiler-mods/pest-parser-generator/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

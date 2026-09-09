@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/interop/export-and-callbacks/articles/verification-and-traceability",
+	"title": "Export and callbacks — Verification and traceability",
+	"description": "Conformance fixtures for Export and callback registration (v0.3).",
+	"parentSlug": "platform-spec/language-meta/interop/export-and-callbacks",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-05-23"
+}

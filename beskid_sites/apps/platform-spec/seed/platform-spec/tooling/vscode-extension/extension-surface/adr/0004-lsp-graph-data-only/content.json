@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nExtension UX.\n\n## Decision\n\nGraph data via LSP executeCommand only — **superseded in part** by [Graph visualization ADR D-TOOL-GRAPH-0001](/platform-spec/tooling/graph-visualization/adr/0001-mermaid-single-format/).\n\nLSP **must** remain the authority for graph content. Payloads **may** include Mermaid strings and revision fingerprints from `beskid.getGraph`. The extension **must not** rebuild domain graphs locally.\n\n## Consequences\n\nbeskid_vscode runtime; Graph Explorer panel renders LSP-supplied Mermaid.\n\n## Verification anchors\n\npackage.json; runtime tests."
+		}
+	]
+}

@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Module layout\n\n| Symbol | Role |\n| --- | --- |\n| `Core.Text.Cursor` | Public API hub |"
+		}
+	]
+}

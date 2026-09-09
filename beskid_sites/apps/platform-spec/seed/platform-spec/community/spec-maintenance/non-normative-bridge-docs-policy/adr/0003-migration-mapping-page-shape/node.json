@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/community/spec-maintenance/non-normative-bridge-docs-policy/adr/0003-migration-mapping-page-shape",
+	"title": "Migration mapping page required sections",
+	"description": "Mapping pages include scope, canonical destinations grouped by domain, and retirement notes.",
+	"parentSlug": "platform-spec/community/spec-maintenance/non-normative-bridge-docs-policy",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-COMM-BRIDGE-0003",
+	"adrStatus": "Accepted",
+	"adrDate": "2026-05-05",
+	"lastReviewed": "2026-05-22"
+}

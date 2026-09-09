@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "blocks": [
+    {
+      "type": "markdownProse",
+      "bodyMd": "import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nImplementation anchors:\n\n- `compiler/crates/beskid_cli/src/frontend.rs`\n- `compiler/crates/beskid_codegen/src/services.rs`\n- `compiler/crates/beskid_lsp/src/diagnostics.rs`\n- `compiler/crates/beskid_analysis/src/services/`\n\nVerification strategy should compare fixture diagnostics across CLI and LSP cold/warm paths."
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/tooling/cli/api-json-contract/articles/registry-api-reference-ui",
+	"title": "Registry API reference UI",
+	"description": "Normative layout and navigation for pckg package API documentation driven by api.json.",
+	"parentSlug": "platform-spec/tooling/cli/api-json-contract",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	}
+}

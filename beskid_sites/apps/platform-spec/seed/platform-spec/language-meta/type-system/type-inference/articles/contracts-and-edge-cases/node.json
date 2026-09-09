@@ -1,0 +1,18 @@
+{
+	"version": 1,
+	"specLevel": "article",
+	"slug": "platform-spec/language-meta/type-system/type-inference/articles/contracts-and-edge-cases",
+	"title": "Type inference - Contracts and edge cases",
+	"description": "Normative contracts, edge cases, and invariants for Beskid type inference.",
+	"parentSlug": "platform-spec/language-meta/type-system/type-inference",
+	"status": "Proposed",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"lastReviewed": "2026-06-16"
+}

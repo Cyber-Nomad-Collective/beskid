@@ -1,0 +1,20 @@
+import SpecPageHeader from '@beskid/beskid-ui/platform-spec/SpecPageHeader.astro';
+import DomainTiles from '@beskid/beskid-ui/platform-spec/DomainTiles.astro';
+import SpecSection from '@beskid/beskid-ui/platform-spec/SpecSection.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+<SpecSection title="What this feature specifies" id="what-this-feature-specifies">
+`Snapshot and refresh contract` defines one operational contract that a newcomer can follow end-to-end: first the model, then execution flow, then strict guarantees, concrete examples, and verification guidance.
+</SpecSection>
+
+<SpecSection title="Implementation anchors" id="implementation-anchors">
+- LSP diagnostics in `compiler/crates/beskid_lsp/src/diagnostics.rs`
+- Analysis services in `compiler/crates/beskid_analysis/src/services/`
+- Resolver implementation in `compiler/crates/beskid_analysis/src/resolve/resolver.rs`
+- LSP tests in `compiler/crates/beskid_tests/src/analysis/resolve.rs`
+</SpecSection>
+
+<SpecSection title="Decisions" id="decisions">
+No open decisions. **`D-TOOL-LSP-0001`** (hub authority), **`0002`** (invalidation on focus and manifest)—see **`adr/`** and the **ADRs** tab.
+</SpecSection>

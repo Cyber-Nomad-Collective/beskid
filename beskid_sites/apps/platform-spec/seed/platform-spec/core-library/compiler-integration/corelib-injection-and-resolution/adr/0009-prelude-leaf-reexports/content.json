@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"blocks": [
+		{
+			"type": "markdownProse",
+			"bodyMd": "import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Status\n\n**Superseded by [D-TOOL-MAN-0006 — Explicit use, no prelude](/platform-spec/tooling/manifests-and-lockfiles/adr/0006-explicit-use-no-prelude/)** on 2026-06-07.\n\nAggregate corelib no longer ships `Prelude.bd`; shard modules are consumed via explicit dependencies and `use` imports.\n\n## Context (historical)\n\nShard preludes partially overlapped the aggregate `beskid_corelib` prelude. Loader-side denylists (for example skipping `Console`) papered over units that were not valid standalone compilation files.\n\n## Decision (historical)\n\n1. Aggregate and shard `Prelude.bd` files **must** list **leaf** public API surfaces via `pub mod` (for example `Ansi`, `Console` submodules re-exported as documented paths—not opaque marker comments).\n2. Every `pub mod` line in a prelude **must** resolve to a `.bd` unit that parses and lowers as a standalone module (fix packaging when closure seeding pulls a file).\n3. The compiler **must not** maintain loader-side module denylists to compensate for prelude or packaging mistakes.\n\n## Consequences (historical)\n\nCorelib packaging changes preceded assembly union seeding (D-COMP-BUILD-0022). Console and other terminal modules shipped as valid standalone units or were removed from prelude `pub mod` lists until prelude retirement.\n\n## Verification anchors (historical)\n\nVerification responsibility transferred to D-TOOL-MAN-0006."
+		}
+	]
+}

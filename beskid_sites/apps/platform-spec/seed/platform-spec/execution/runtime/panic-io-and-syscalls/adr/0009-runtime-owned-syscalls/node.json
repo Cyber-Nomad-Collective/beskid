@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"specLevel": "adr",
+	"slug": "platform-spec/execution/runtime/panic-io-and-syscalls/adr/0009-runtime-owned-syscalls",
+	"title": "Syscalls centralized in runtime builtins",
+	"description": "Lowering and corelib route IO through syscall_read/write, not embedded OS code.",
+	"parentSlug": "platform-spec/execution/runtime/panic-io-and-syscalls",
+	"status": "Standard",
+	"owner": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"submitter": {
+		"name": "Piotr Mikstacki",
+		"email": "pmikstacki@cybernomad.it"
+	},
+	"adrId": "D-EXEC-RT-0009",
+	"adrStatus": "Accepted",
+	"adrDate": "2025-10-01",
+	"lastReviewed": "2026-05-22"
+}

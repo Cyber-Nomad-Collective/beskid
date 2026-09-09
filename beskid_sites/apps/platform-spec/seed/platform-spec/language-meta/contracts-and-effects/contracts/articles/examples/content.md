@@ -1,0 +1,67 @@
+import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Basic contract
+
+```beskid
+contract Named {
+    string Name();
+}
+
+type Person : Named {
+    string name;
+
+    pub string Name() {
+        return name;
+    }
+}
+```
+
+## Contract embedding
+
+```beskid
+contract HasId {
+    i32 Id();
+}
+
+contract Entity : HasId {
+    string Name();
+}
+
+type Product : Entity {
+    i32 id;
+    string name;
+
+    pub i32 Id() { return id; }
+    pub string Name() { return name; }
+}
+```
+
+## Conformance error
+
+```beskid
+contract Drawable {
+    unit Draw();
+}
+
+// Missing Draw() — E1601
+type Circle : Drawable {
+    f32 radius;
+}
+```
+
+## Signature mismatch
+
+```beskid
+contract Comparable {
+    i32 CompareTo(other);
+}
+
+// Wrong return type — E1602
+type Item : Comparable {
+    pub bool CompareTo(Item other) {
+        return false;
+    }
+}
+```

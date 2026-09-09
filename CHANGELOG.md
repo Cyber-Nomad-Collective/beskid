@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Added
 
+- Add a platform-aware Rust build toolchain: `cargo-binstall` installs prebuilt
+  contributor and CI tools on macOS, Linux, and Windows. Linux CI pins `mold`,
+  and one shared Cargo configuration selects it for Linux builds.
 - Add a checked-in documentation coverage catalogue for 52 non-compiler
   technical Docs routes. Map each public surface to one audience, source
   boundary, page kind, diagram policy, page, and navigation leaf. Add focused
@@ -130,6 +133,10 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Provision `mold` in every Linux CI and container build surface that consumes
+  the compiler Cargo configuration, while preserving the existing macOS and
+  Windows linkers. Install pinned `sccache` with `cargo-binstall` instead of a
+  bespoke archive download.
 - Separate product-use guides from service-operation guides. Keep deployment
   ownership, service inventory, and authentication topology under
   reconciliation while their tracked authorities disagree.

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "specLevel": "article",
+  "slug": "platform-spec/compiler/front-end/hir-normalization-and-legality/articles/faq-and-troubleshooting",
+  "title": "HIR normalization and legality - FAQ and troubleshooting",
+  "description": "Answers common operator and contributor questions with practical next checks.",
+  "parentSlug": "platform-spec/compiler/front-end/hir-normalization-and-legality",
+  "status": "Standard",
+  "owner": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  },
+  "submitter": {
+    "name": "Piotr Mikstacki",
+    "email": "pmikstacki@cybernomad.it"
+  }
+}
