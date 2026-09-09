@@ -45,6 +45,7 @@ cd "${ROOT}/compiler"
 # Version stamping is a build input, not an authoring-tree edit. Restore every
 # touched manifest even when Cargo or a later package verification fails.
 release_backup="$(mktemp -d "${TMPDIR:-/tmp}/beskid-release-version.XXXXXX")"
+release_stage=""
 versioned_manifests=(
   Cargo.lock
   crates/beskid_cli/Cargo.toml
@@ -59,6 +60,7 @@ restore_release_versions() {
   for manifest in "${versioned_manifests[@]}"; do
     cp "${release_backup}/${manifest}" "${manifest}"
   done
+  [[ -z "${release_stage}" ]] || rm -rf "${release_stage}"
   rm -rf "${release_backup}"
 }
 trap restore_release_versions EXIT
@@ -98,9 +100,8 @@ if [[ "$PACKAGE" == "beskid_bundle" ]]; then
     BESKID_CLI_BIN="${ROOT}/compiler/target/${TARGET}/release/beskid_cli${binary_extension}" \
     bash ./scripts/stage-native-runtime-kit.sh
 
-  stage="$(mktemp -d)"
-  trap 'rm -rf "$stage"' EXIT
-  bundle_dir="${stage}/beskid-${RELEASE_VERSION}-${TARGET}"
+  release_stage="$(mktemp -d)"
+  bundle_dir="${release_stage}/beskid-${RELEASE_VERSION}-${TARGET}"
   mkdir -p "$bundle_dir"
   for bundle_binary in beskid_cli beskid_lsp beskid-up; do
       built_binary="target/${TARGET}/release/${bundle_binary}${binary_extension}"
@@ -108,7 +109,7 @@ if [[ "$PACKAGE" == "beskid_bundle" ]]; then
     cp -f "$built_binary" "$bundle_dir/"
   done
   cp -a "${runtime_prefix}/lib" "${bundle_dir}/native-runtime-kit"
-  tar -C "$stage" -czf "${ROOT}/${ASSET_NAME}" "$(basename "$bundle_dir")"
+  tar -C "${release_stage}" -czf "${ROOT}/${ASSET_NAME}" "$(basename "$bundle_dir")"
   echo "built ${ASSET_NAME} (Beskid ${RELEASE_VERSION} bundle for ${TARGET})"
   exit 0
 fi
