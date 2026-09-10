@@ -11,6 +11,10 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Added
 
+- Document the AppVeyor-native fit for Beskid's private-registry and
+  Watchtower deployment model, including release-blocking fan-in and rebuild
+  protections, project settings, private-submodule policy, evidence retention,
+  hosted-worker limits, and the required live-proof checklist.
 - Add a repository-owned four-lane AppVeyor pipeline for Linux platform and
   compiler validation plus native macOS and Windows compiler/runtime-kit
   evidence. Add a migration contract, provider-native entrypoints, account
