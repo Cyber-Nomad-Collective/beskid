@@ -100,7 +100,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   use it instead of assuming it exists on native workers. Give the Linux
   compiler lane a 60-minute Clippy phase budget so a cold native worker can
   complete the required full-workspace lint gate instead of timing out while
-  compiling dependencies.
+  compiling dependencies. Run lint and native runtime/tests as separate
+  AppVeyor jobs through the same phase-selectable Rust gate, keeping each
+  workload within the worker's per-job ceiling without duplicating checks.
 - Advance the compiler pin to complete x86-64 Linux fibers through generated
   tail transfers, preserving CET shadow-stack state while keeping scheduler
   completion and the manifest-owned context switch as single authorities.
