@@ -183,7 +183,7 @@ initial registry pull request must add the root Beskid repository as the
 [beskid]
 submodule = "extensions/beskid"
 path = "editors/zed"
-version = "0.4.598"
+version = "0.4.0"
 ```
 
 Run `pnpm sort-extensions` in the registry checkout before opening the pull
