@@ -11,9 +11,11 @@ API documentation, build-image catalogue, or AppVeyor-hosted project status.
 AppVeyor fits beskid well as the **validation and publication authority**, but
 it should not be configured as a production deployment environment. The
 repository implementation now expresses the intended authority boundary: the
-three compiler jobs form `compiler-validation`, `linux-platform` fans in after
-their success, `deploy` stays off, immutable images are published before
-packages and mutable tags, and Watchtower alone changes production containers.
+project-level `max_jobs: 1` cap serializes builds through AppVeyor's FIFO queue;
+the three compiler jobs remain separate required members of
+`compiler-validation`; `linux-platform` fans in after their success; `deploy`
+stays off; immutable images are published before packages and mutable tags;
+and Watchtower alone changes production containers.
 The shared event predicate denies rebuilds and incomplete-job reruns as well as
 pull requests, tags, forced/manual/API builds, schedules, and non-`main`
 events. ([Job workflows](https://www.appveyor.com/docs/job-workflows/),
@@ -28,8 +30,10 @@ reachability, and the actual AppVeyor status context remain activation checks.
 | Fact | Repository evidence | Consequence |
 |---|---|---|
 | Root AppVeyor configuration owns four native lanes | `appveyor.yml` | One AppVeyor project can publish a single aggregate status. |
+| Project concurrency is capped at one job | `max_jobs: 1` in `appveyor.yml` | AppVeyor's FIFO project queue sequences builds so an older build cannot promote after a newer build. |
 | `linux-platform` depends on the compiler-validation job group | `appveyor.yml` | No platform publication starts before all three required compiler jobs succeed. |
 | The platform lane orders rehearsal, immutable images, live packages, promotion, then final manifest | `scripts/ci/appveyor-entrypoint.sh` | A live package failure stops before `production` movement. |
+| One library defines the registry, namespace, five lanes, and tag refs | `scripts/ci/lib/appveyor-platform-images.sh` | Publisher, promoter, and manifest cannot drift to different image identities. |
 | Immutable publication records each registry digest; promotion pulls and retags without rebuilding | `scripts/ci/appveyor-platform-publish.sh`, `scripts/ci/appveyor-platform-promote.sh`, `scripts/ci/appveyor-image-manifest.sh` | Exactly five digest-backed records bind the AppVeyor artifact to one source SHA. |
 | Publication is limited by a shared event predicate | `scripts/ci/lib/appveyor-event-policy.sh` | Fresh trusted `main` pushes only; rebuilds and incomplete reruns are denied. |
 | AppVeyor's deployment phase is disabled | `deploy: false` in `appveyor.yml` | Correct for Watchtower-only production ownership. |
@@ -57,7 +61,10 @@ rows `job_group: compiler-validation`, and set
 `job_depends_on: compiler-validation` on `linux-platform`. Keep
 `matrix.fast_finish: false` if the desired diagnostic policy is to finish and
 report every native failure; no job should appear under `allow_failures`.
-AppVeyor supports fan-in dependencies directly in the environment matrix.
+Set project-level `max_jobs: 1`: the three compiler members still form the
+fan-in but execute one at a time, and later builds remain in AppVeyor's FIFO
+project queue until the active build finishes. AppVeyor supports fan-in
+dependencies directly in the environment matrix.
 ([Job workflows](https://www.appveyor.com/docs/job-workflows/))
 
 This topology deliberately keeps the platform job intact. AppVeyor caches are
@@ -75,7 +82,10 @@ Within `linux-platform`, the implemented mutation order is:
 6. move all five `production` tags to the already-pushed immutable images;
 7. finalize and upload a manifest containing AppVeyor build/job IDs, source SHA,
    image names, immutable tags, and registry digests;
-8. log out in a trap/finalizer.
+8. use fresh restrictive temporary Docker configurations for publisher and
+   promoter authentication, then log out and remove each configuration in a
+   trap/finalizer; cleanup failure fails success but never replaces an earlier
+   failure.
 
 The live package result deliberately precedes mutable-tag promotion. A missing
 or rejected `BESKID_PCKG_API_KEY` therefore stops the shell before Watchtower
@@ -115,14 +125,16 @@ with YAML, and the listed General-tab security/event settings remain active.
 | Hosted job timeout | 60 minutes; AppVeyor does not allow a hosted increase |
 | Build priority | Normal unless the account has a documented shared-queue policy |
 | Custom commit status context | `ci/appveyor/beskid`; require this exact observed context only after a green proof build |
-| `max_jobs` | `3` in YAML, matching the three compiler jobs that may run concurrently before `linux-platform` |
+| `max_jobs` | `1` in YAML, using the FIFO project queue as the release sequencer |
 
 AppVeyor documents a 60-minute quota per hosted build **job**, account-level
-concurrency, and `max_jobs` as a per-project cap. The present `linux-platform`
-job serializes many gates and five image builds, so it must be timed in a live
-build. If it exceeds 60 minutes, use a private/BYOC worker or reduce/repartition
-the work without breaking the fan-in publication barrier. Hosted timeout cannot
-be increased; private-cloud timeout can. ([Build pipeline and queue](https://www.appveyor.com/docs/build-configuration/#build-queue),
+concurrency, a FIFO project queue, and `max_jobs` as a per-project cap. Choosing
+one trades longer end-to-end builds for the no-rollback ordering guarantee. The
+present `linux-platform` job serializes many gates and five image builds, so it
+must be timed in a live build. Every hosted job retains its own 60-minute limit;
+if one exceeds it, use a private/BYOC worker or reduce/repartition the work
+without breaking the fan-in and cross-build publication barriers. Hosted
+timeout cannot be increased; private-cloud timeout can. ([Build pipeline and queue](https://www.appveyor.com/docs/build-configuration/#build-queue),
 [BYOC](https://www.appveyor.com/docs/byoc/))
 
 Before relying on `ci/appveyor/beskid` in GitHub rules, verify the precise
@@ -163,12 +175,17 @@ or a named environment promotion. beskid instead publishes versioned container
 artifacts, after which Watchtower independently reconciles production.
 ([Deployment overview](https://www.appveyor.com/docs/deployment/))
 
-The existing scripted `docker login cr.beskid-lang.org --password-stdin`, pushes,
-logout trap, and hard-coded namespace are appropriate. AppVeyor does not need a
-named deployment environment, Deployment Agent, Compose access, server SSH
-key, Watchtower token, or production host credentials. The registry account
-should be scoped to push only `cr.beskid-lang.org/beskid/{site,learn,tracker,nexus,pckg}`;
-Watchtower receives separate read-only credentials outside AppVeyor.
+The scripted `docker login cr.beskid-lang.org --password-stdin` and pushes are
+appropriate. One sourced library owns the exact registry, namespace, five
+lanes, immutable refs, and production refs. Each publisher creates a fresh
+mode-`0700` temporary `DOCKER_CONFIG` under a `077` umask, logs out, and removes
+the configuration deterministically. Logout or removal failure fails an
+otherwise successful script, while an earlier push/pull failure remains the
+reported status. AppVeyor does not need a named deployment environment,
+Deployment Agent, Compose access, server SSH key, Watchtower token, or
+production host credentials. The registry account should be scoped to push
+only `cr.beskid-lang.org/beskid/{site,learn,tracker,nexus,pckg}`; Watchtower
+receives separate read-only credentials outside AppVeyor.
 
 If the registry firewall restricts ingress, allow the official AppVeyor hosted
 worker egress ranges or route only the Linux platform lane to a BYOC worker with
@@ -273,8 +290,9 @@ enable publication or branch protection until they are observed:
 1. Authenticated project settings show the canonical repository, `main`, root
    YAML enabled, no schedule, no rolling cancellation, and every PR security
    override disabled.
-2. The account exposes all three named worker images and at least three
-   concurrent jobs, or the expected queueing is accepted.
+2. The account exposes all three named worker images, and a live queue proof
+   confirms `max_jobs: 1` admits jobs/builds in release-safe FIFO order; the
+   intentionally longer end-to-end duration is accepted.
 3. A fork PR proves that registry/package/submodule credentials are absent and
    no mutation command is reached.
 4. A same-repository PR proves the same secret isolation policy.
@@ -294,8 +312,9 @@ enable publication or branch protection until they are observed:
     builds all prove zero mutation.
 11. Watchtower converges all five services to the same source SHA without CI
     receiving any production-control credential.
-12. The full Linux platform lane finishes within the hosted 60-minute job cap;
-    otherwise route it to a suitably sized BYOC worker.
+12. Every job in the serialized build, especially the full Linux platform lane,
+    finishes within the hosted 60-minute per-job cap; otherwise route it to a
+    suitably sized BYOC worker.
 
 After those proofs, make the observed `ci/appveyor/beskid` context required and
 retain GitHub Actions only for GitHub Releases, distribution channels, editor

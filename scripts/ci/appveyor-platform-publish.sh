@@ -3,15 +3,15 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-REGISTRY="cr.beskid-lang.org"
-NAMESPACE="${REGISTRY}/beskid"
 COMMIT_SHA="${APPVEYOR_REPO_COMMIT:-$(git -C "${ROOT}" rev-parse HEAD)}"
 PUBLISH=false
-LOGGED_IN=false
 
 # shellcheck source-path=SCRIPTDIR
 # shellcheck source=lib/appveyor-event-policy.sh
 source "${ROOT}/scripts/ci/lib/appveyor-event-policy.sh"
+# shellcheck source-path=SCRIPTDIR
+# shellcheck source=lib/appveyor-platform-images.sh
+source "${ROOT}/scripts/ci/lib/appveyor-platform-images.sh"
 
 if appveyor_is_trusted_main_push; then
   PUBLISH=true
@@ -21,15 +21,6 @@ fi
   echo "APPVEYOR_REPO_COMMIT must be a full lowercase Git commit SHA" >&2
   exit 2
 }
-
-cleanup_registry_session() {
-  local status=$?
-  if [[ "${LOGGED_IN}" == "true" ]]; then
-    docker logout "${REGISTRY}" >/dev/null 2>&1 || true
-  fi
-  return "${status}"
-}
-trap cleanup_registry_session EXIT
 
 build_image() {
   local lane="$1"
@@ -41,7 +32,7 @@ build_image() {
     --provenance=mode=min \
     --sbom=true \
     --file "${dockerfile}" \
-    --tag "${NAMESPACE}/${lane}:sha-${COMMIT_SHA}" \
+    --tag "$(beskid_platform_immutable_ref "${lane}" "${COMMIT_SHA}")" \
     "$@" \
     "${context}"
 }
@@ -69,12 +60,11 @@ if [[ -z "${REGISTRY_USERNAME:-}" ]] || [[ -z "${REGISTRY_PASSWORD:-}" ]]; then
   exit 3
 fi
 
-printf '%s' "${REGISTRY_PASSWORD}" | \
-  docker login "${REGISTRY}" --username "${REGISTRY_USERNAME}" --password-stdin
-LOGGED_IN=true
+beskid_registry_session_install_traps
+beskid_registry_login "${REGISTRY_USERNAME}" "${REGISTRY_PASSWORD}"
 
-for lane in site learn tracker nexus pckg; do
-  immutable_ref="${NAMESPACE}/${lane}:sha-${COMMIT_SHA}"
+for lane in "${BESKID_PLATFORM_LANES[@]}"; do
+  immutable_ref="$(beskid_platform_immutable_ref "${lane}" "${COMMIT_SHA}")"
   docker push "${immutable_ref}"
   immutable_digest="$(docker image inspect --format '{{index .RepoDigests 0}}' "${immutable_ref}")"
   bash "${ROOT}/scripts/ci/appveyor-image-manifest.sh" record \

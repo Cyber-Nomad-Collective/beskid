@@ -68,10 +68,12 @@ selects it through `clang`; macOS and Windows keep their platform linkers.
 1. Define observable behavior changes in an OpenSpec delta before implementation.
 2. Run GitNexus impact analysis before editing an existing symbol; report high or critical blast radius.
 3. Stabilize tests, add the canonical path, migrate consumers, and only then delete the legacy path.
-4. Complete the three native compiler jobs before the platform lane. Build and
-   publish five immutable `sha-<commit>` images with registry digests, publish
-   packages successfully, then retag those exact images as `production`; leave
-   production reconciliation solely to Watchtower.
+4. Let AppVeyor's `max_jobs: 1` project cap serialize builds through its FIFO
+   queue. Within a build, complete all three required compiler jobs before the
+   platform lane. Build and publish five immutable `sha-<commit>` images with
+   registry digests, publish packages successfully, then retag those exact
+   images as `production`; leave production reconciliation solely to
+   Watchtower.
 5. Run focused tests plus strict OpenSpec/provenance validation and GitNexus change detection before commit.
 6. Update `CHANGELOG.md`; update `GLOSSARY.md` when canonical terminology changes. Do not add `Co-authored-by` trailers.
 
@@ -88,6 +90,9 @@ selects it through `clang`; macOS and Windows keep their platform linkers.
 - Tracker's SQLite model is delivery authority. Its GitHub synchronization is
   limited to the supported public bug surface.
 - AppVeyor is the validation and platform-image publication authority. Its
+  project queue serializes release-capable builds to prevent an older build
+  from advancing mutable tags after a newer build. This intentionally trades
+  build duration for release ordering. Its
   shared event policy rejects pull requests, tags, manual/API and scheduled
   builds, rebuilds, and incomplete reruns from mutation. Watchtower is the only
   automated production-reconciliation authority; its asynchronous convergence
@@ -131,8 +136,9 @@ Parallel agents must use disjoint write scopes. Knowledge files live outside the
   preflight, especially for compiler work that root preflight excludes?
 - Does the task require private package access, deployment credentials, or
   another external authority that must fail closed when unavailable?
-- Has a live AppVeyor proof shown that the hosted platform lane stays within 60
-  minutes, or is a private/BYOC worker required?
+- Has a live AppVeyor proof shown that every serialized hosted job, especially
+  the platform lane, stays within the 60-minute per-job limit, or is a
+  private/BYOC worker required?
 - Can private nested submodules be checked out at their pinned commits on every
   native worker without exposing reusable credentials to pull-request code?
 

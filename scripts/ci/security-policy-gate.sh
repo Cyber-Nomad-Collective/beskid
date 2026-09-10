@@ -14,6 +14,7 @@ authoritative_scripts=(
   scripts/ci/appveyor-platform-promote.sh
   scripts/ci/appveyor-image-manifest.sh
   scripts/ci/lib/appveyor-event-policy.sh
+  scripts/ci/lib/appveyor-platform-images.sh
 )
 
 [[ -f appveyor.yml ]] || { echo "missing authoritative AppVeyor configuration" >&2; exit 1; }
@@ -40,6 +41,7 @@ if rg -n -i 'coolify|compose[[:space:]_-]*(up|apply)|watchtower[[:space:]_-]*(re
 fi
 
 if rg -n 'ghcr\.io|docker\.io' \
+  scripts/ci/lib/appveyor-platform-images.sh \
   scripts/ci/appveyor-platform-publish.sh \
   scripts/ci/appveyor-platform-promote.sh \
   scripts/ci/appveyor-image-manifest.sh \
@@ -48,9 +50,16 @@ if rg -n 'ghcr\.io|docker\.io' \
   exit 1
 fi
 
-if ! rg -Fq 'cr.beskid-lang.org' scripts/ci/appveyor-platform-publish.sh ||
-   ! rg -Fq 'cr.beskid-lang.org' scripts/ci/appveyor-platform-promote.sh; then
+if ! rg -Fq 'cr.beskid-lang.org' scripts/ci/lib/appveyor-platform-images.sh; then
   echo "platform publisher must target the Beskid registry" >&2
+  exit 1
+fi
+
+if rg -n 'cr\.beskid-lang\.org' \
+  scripts/ci/appveyor-platform-publish.sh \
+  scripts/ci/appveyor-platform-promote.sh \
+  scripts/ci/appveyor-image-manifest.sh; then
+  echo "platform registry definitions must remain centralized" >&2
   exit 1
 fi
 

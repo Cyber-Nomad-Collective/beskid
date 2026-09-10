@@ -7,8 +7,11 @@ deployment control plane.
 
 ## Release flow
 
-1. AppVeyor completes the Linux, macOS, and Windows compiler jobs in its
-   `compiler-validation` group before the `main` platform lane can run.
+1. AppVeyor admits one project job at a time (`max_jobs: 1`), so its FIFO queue
+   serializes builds and prevents an older build from promoting after a newer
+   one. The Linux, macOS, and Windows compiler jobs remain separate required
+   members of `compiler-validation` and complete one at a time before the
+   `main` platform lane can run.
 2. The platform lane completes its gates, pushes all five
    `sha-<commit>` immutable images, and retains exactly five registry-digest
    records in its build artifact.
@@ -108,10 +111,12 @@ rollback candidate.
 
 ## AppVeyor activation proof
 
-The checked-in pipeline is not proof of provider-account readiness. Before
-making it a required publishing check, an operator must record a live proof
-that the complete hosted platform lane finishes within AppVeyor's fixed
-60-minute job limit; use a private/BYOC worker if it does not. The operator must
+The checked-in pipeline is not proof of provider-account readiness.
+Serialization deliberately increases the total build duration to preserve
+release order. Before making it a required publishing check, an operator must
+record a live proof that every hosted job, especially the complete platform
+lane, finishes within AppVeyor's fixed 60-minute per-job limit; use a
+private/BYOC worker if it does not. The operator must
 also prove private nested submodules initialize at their pinned commits on
 Linux, macOS, and Windows without granting a reusable credential to pull
 request code. Until those proofs exist, publication activation remains blocked.

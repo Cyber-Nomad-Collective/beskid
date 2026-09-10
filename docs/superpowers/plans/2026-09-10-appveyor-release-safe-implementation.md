@@ -4,7 +4,7 @@
 
 **Goal:** Make AppVeyor the release-safe validation and publication authority for compiler, CLI/runtime-kit, platform images, and packages while Watchtower remains the only production reconciler.
 
-**Architecture:** Three native compiler/CLI jobs form an AppVeyor validation group. The Linux platform job fans in after that group, completes the remaining platform gates, pushes immutable image tags, publishes packages, then advances Watchtower-visible `production` tags and retains a digest manifest. One shared event-policy function authorizes every mutation and denies PRs, tags, manual/API builds, schedules, rebuilds, and incomplete reruns.
+**Architecture:** AppVeyor's project-level `max_jobs: 1` cap uses its FIFO queue as the cross-build release sequencer. Three separate native compiler/CLI jobs form a serialized AppVeyor validation group. The Linux platform job fans in after that group, completes the remaining platform gates, pushes immutable image tags, publishes packages, then advances Watchtower-visible `production` tags and retains a digest manifest. One shared event-policy function authorizes every mutation and denies PRs, tags, manual/API builds, schedules, rebuilds, and incomplete reruns.
 
 **Tech Stack:** AppVeyor YAML, Bash, PowerShell, Docker Buildx, pnpm, Rust/Cargo, shell contract tests.
 
@@ -18,7 +18,7 @@
 - CI never invokes Compose, Coolify, Watchtower, or the production host.
 - Watchtower observes only the five mutable `production` tags; immutable `sha-<full-commit>` tags remain the audit and rollback identities.
 - Package publication must succeed before any `production` tag advances.
-- No failing native job is optional, and no replay operation can roll production backward.
+- No failing native job is optional; builds are serialized so neither overlap nor replay can roll production backward.
 - Tests exercise script behavior with controlled fake commands; they do not merely assert source text where observable behavior is available.
 
 ---
@@ -71,11 +71,11 @@
 
 - [ ] **Step 2: Express AppVeyor fan-in**
 
-  Add `job_name` to every row, `job_group: compiler-validation` to Linux/macOS/Windows compiler rows, `job_depends_on: compiler-validation` to Linux platform, and `max_jobs: 3`. Keep `matrix.fast_finish: false`, `test: false`, and `deploy: false`.
+  Add `job_name` to every row, `job_group: compiler-validation` to Linux/macOS/Windows compiler rows, `job_depends_on: compiler-validation` to Linux platform, and project-level `max_jobs: 1` so AppVeyor's FIFO queue sequences release-capable builds. Keep all three compiler jobs, `matrix.fast_finish: false`, `test: false`, and `deploy: false`. Accept the longer build in exchange for cross-build ordering; retain the live 60-minute per-job/BYOC proof.
 
 - [ ] **Step 3: Separate immutable publication from mutable promotion**
 
-  Change `appveyor-platform-publish.sh` to build all five images, push only their `sha-*` tags on a trusted push, and write digest evidence. Add `appveyor-platform-promote.sh` that authenticates independently, pulls each immutable tag, retags it as `production`, pushes it, and logs out through a trap. Both scripts must call the shared event predicate and fail closed without credentials.
+  Change `appveyor-platform-publish.sh` to build all five images, push only their `sha-*` tags on a trusted push, and write digest evidence. Add `appveyor-platform-promote.sh` that authenticates independently, pulls each immutable tag, retags it as `production`, and pushes it. Source one production library for the exact registry, namespace, five lanes, ref construction, and isolated temporary Docker credential lifecycle. Both scripts must call the shared event predicate, fail closed without credentials, and fail success on logout/removal failure without masking an earlier error or cleaning twice on signals.
 
 - [ ] **Step 4: Put package publication before promotion**
 

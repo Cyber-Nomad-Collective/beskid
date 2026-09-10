@@ -3,8 +3,6 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-REGISTRY="cr.beskid-lang.org"
-NAMESPACE="${REGISTRY}/beskid"
 REPORT_ROOT="${APPVEYOR_BUILD_FOLDER:-${ROOT}}/.appveyor-reports"
 RECORDS_PATH="${REPORT_ROOT}/platform-image-digests.tsv"
 MANIFEST_PATH="${REPORT_ROOT}/platform-images.json"
@@ -13,6 +11,9 @@ COMMIT_SHA="${APPVEYOR_REPO_COMMIT:-$(git -C "${ROOT}" rev-parse HEAD)}"
 # shellcheck source-path=SCRIPTDIR
 # shellcheck source=lib/appveyor-event-policy.sh
 source "${ROOT}/scripts/ci/lib/appveyor-event-policy.sh"
+# shellcheck source-path=SCRIPTDIR
+# shellcheck source=lib/appveyor-platform-images.sh
+source "${ROOT}/scripts/ci/lib/appveyor-platform-images.sh"
 
 require_commit_sha() {
   [[ "${COMMIT_SHA}" =~ ^[0-9a-f]{40}$ ]] || {
@@ -25,14 +26,16 @@ record_immutable_image() {
   local lane="$1"
   local immutable_ref="$2"
   local immutable_digest="$3"
-  local expected_ref="${NAMESPACE}/${lane}:sha-${COMMIT_SHA}"
-  local expected_digest_prefix="${NAMESPACE}/${lane}@sha256:"
+  local expected_ref
+  local expected_digest_prefix
   local digest_hash
 
-  [[ "${lane}" =~ ^(site|learn|tracker|nexus|pckg)$ ]] || {
+  beskid_platform_lane_is_known "${lane}" || {
     echo "Unknown platform image lane: ${lane}" >&2
     exit 2
   }
+  expected_ref="$(beskid_platform_immutable_ref "${lane}" "${COMMIT_SHA}")"
+  expected_digest_prefix="$(beskid_platform_digest_prefix "${lane}")"
   [[ "${immutable_ref}" == "${expected_ref}" ]] || {
     echo "Immutable image reference does not match ${lane} source identity" >&2
     exit 2
@@ -72,7 +75,7 @@ finalize_manifest() {
     echo "Immutable image evidence must contain exactly five records" >&2
     exit 2
   }
-  for lane in site learn tracker nexus pckg; do
+  for lane in "${BESKID_PLATFORM_LANES[@]}"; do
     [[ "$(awk -F '\t' -v lane="${lane}" '$1 == lane { count += 1 } END { print count + 0 }' "${RECORDS_PATH}")" == "1" ]] || {
       echo "Immutable image evidence must contain one ${lane} record" >&2
       exit 2
@@ -84,7 +87,7 @@ finalize_manifest() {
     --arg buildId "${APPVEYOR_BUILD_ID}" \
     --arg buildVersion "${APPVEYOR_BUILD_VERSION}" \
     --arg jobId "${APPVEYOR_JOB_ID}" \
-    --arg namespace "${NAMESPACE}" \
+    --arg namespace "${BESKID_PLATFORM_NAMESPACE}" \
     --rawfile records "${RECORDS_PATH}" \
     '{
       source: { sha: $sourceSha },

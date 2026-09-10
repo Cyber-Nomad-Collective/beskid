@@ -16,6 +16,10 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   production retagging, replay-event denial, and Watchtower-only eventual
   production reconciliation. Record the pending hosted-timeout and private
   nested-submodule activation proofs.
+- Serialize AppVeyor jobs and builds through the project FIFO queue to prevent
+  cross-build production rollback, retaining the three required compiler jobs
+  and the 60-minute per-job/BYOC activation proof. Centralize the exact five
+  platform image identities and tag construction in one sourced library.
 
 ### Added
 
@@ -82,6 +86,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Security
 
+- Isolate AppVeyor registry authentication in temporary restrictive Docker
+  configurations. Treat logout/removal failure as a failed successful run,
+  preserve earlier publication failures, and clean only once on signals.
 - Require native htpasswd authentication at the production OCI registry and
   deploy its ignored credential separately with restrictive host permissions.
   Keep Authentik as the sole browser-authentication path and remove the retired

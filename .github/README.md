@@ -18,9 +18,12 @@ GitHub releases, distribution, editor marketplaces, or repository maintenance:
 
 ## Platform boundary
 
-On a fresh trusted push to `main`, the three native compiler jobs must first
-complete the `compiler-validation` fan-in. Only then does `linux-platform`
-run the remaining gates and publish these images to the private registry:
+AppVeyor's project-level `max_jobs: 1` cap makes its FIFO project queue the
+release sequencer: builds cannot overlap and roll the mutable tags backward.
+Within each fresh trusted push to `main`, the three native compiler jobs remain
+separate required members of the `compiler-validation` fan-in and run one at a
+time. Only then does `linux-platform` run the remaining gates and publish these
+images to the private registry:
 
 - `cr.beskid-lang.org/beskid/site`
 - `cr.beskid-lang.org/beskid/learn`
@@ -36,7 +39,10 @@ image records plus the source, build, and job identities. Pull requests, tags,
 manual/API and scheduled builds, rebuilds, and incomplete-job reruns cannot
 mutate either registry. AppVeyor requires `REGISTRY_USERNAME`,
 `REGISTRY_PASSWORD`, and `BESKID_PCKG_API_KEY` as secure variables with
-pull-request access disabled.
+pull-request access disabled. The immutable publisher and promoter each
+authenticate through a fresh restrictive temporary Docker configuration,
+logout, and remove it deterministically; logout or removal failure fails an
+otherwise successful job without replacing an earlier publication failure.
 
 CI stops after publication. It does not invoke Compose, Coolify, Watchtower, or
 any production control API. The production Compose project under
@@ -46,9 +52,11 @@ repositories cannot be promoted atomically, so the digest manifest establishes
 the intended common source SHA; operator observation establishes eventual
 production convergence.
 
-The repository behavior is contract-tested, but activation remains pending a
-live AppVeyor account proof: the complete hosted `linux-platform` job must fit
-within the fixed 60-minute limit or move to a private/BYOC worker. Private
+Serialization intentionally lengthens end-to-end builds in exchange for
+release ordering. The repository behavior is contract-tested, but activation
+remains pending a live AppVeyor account proof: every hosted job, including the
+complete `linux-platform` job, must fit within the fixed 60-minute per-job limit
+or move to a private/BYOC worker. Private
 nested-submodule checkout also needs a pinned-commit, no-secret-PR proof on all
 three native workers (or a deliberately redesigned PR gate) before AppVeyor is
 made a required publishing authority.

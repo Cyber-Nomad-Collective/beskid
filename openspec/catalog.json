@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "201cb773cb4eafc36102f2a96830f2baa3fa3a66db6c1b039636016c2d2b66af",
+  "revision": "b62c82101854fd978b9da95e7d10ad33f7b1e430e8ea59ebe617ee22063fb332",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -38974,7 +38974,7 @@
       "path": "GLOSSARY.md",
       "title": "Glossary",
       "authority": "informative",
-      "sourceHash": "08a8f8460db3d9661734de532c0193049645db1a220abcf39bf090353d3b0b25",
+      "sourceHash": "a6a5182cd61d336c95f421d974ce4fd98ca91f1f88ef4e380d9832f70fff898e",
       "standardLinks": [
         "/platform-spec/"
       ],
@@ -38985,7 +38985,7 @@
       "path": "GUIDE.md",
       "title": "Beskid project guide",
       "authority": "informative",
-      "sourceHash": "f99deb9dc39400761e121ceeca9efbef157fdc55051c1ad747243c50165ce6e4",
+      "sourceHash": "4338180a3934d3b50a1c4dbc845b2abbe251d0180e617ad3375038cc89370232",
       "standardLinks": [
         "/platform-spec/"
       ],

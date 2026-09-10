@@ -10,10 +10,42 @@ PROMOTER="${ROOT}/scripts/ci/appveyor-platform-promote.sh"
 MANIFEST="${ROOT}/scripts/ci/appveyor-image-manifest.sh"
 PACKAGE_PUBLISHER="${ROOT}/scripts/ci/appveyor-package-publish.sh"
 EVENT_POLICY="${ROOT}/scripts/ci/lib/appveyor-event-policy.sh"
+PLATFORM_IMAGES="${ROOT}/scripts/ci/lib/appveyor-platform-images.sh"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
   exit 1
+}
+
+run_isolated_appveyor_event() {
+  local branch="$1"
+  local pull_request_number="$2"
+  local repo_tag="$3"
+  local forced_build="$4"
+  local scheduled_build="$5"
+  local rebuild="$6"
+  local rerun_incomplete="$7"
+  shift 7
+
+  env \
+    -u REGISTRY_USERNAME \
+    -u REGISTRY_PASSWORD \
+    -u BESKID_PCKG_API_KEY \
+    -u APPVEYOR_REPO_BRANCH \
+    -u APPVEYOR_PULL_REQUEST_NUMBER \
+    -u APPVEYOR_REPO_TAG \
+    -u APPVEYOR_FORCED_BUILD \
+    -u APPVEYOR_SCHEDULED_BUILD \
+    -u APPVEYOR_RE_BUILD \
+    -u APPVEYOR_RE_RUN_INCOMPLETE \
+    APPVEYOR_REPO_BRANCH="${branch}" \
+    APPVEYOR_PULL_REQUEST_NUMBER="${pull_request_number}" \
+    APPVEYOR_REPO_TAG="${repo_tag}" \
+    APPVEYOR_FORCED_BUILD="${forced_build}" \
+    APPVEYOR_SCHEDULED_BUILD="${scheduled_build}" \
+    APPVEYOR_RE_BUILD="${rebuild}" \
+    APPVEYOR_RE_RUN_INCOMPLETE="${rerun_incomplete}" \
+    "$@"
 }
 
 [[ -f "${APPVEYOR_CONFIG}" ]] || fail "root appveyor.yml is missing"
@@ -25,6 +57,33 @@ fail() {
 [[ -x "${MANIFEST}" ]] || fail "platform image manifest writer is missing or not executable"
 [[ -x "${PACKAGE_PUBLISHER}" ]] || fail "AppVeyor package publisher is missing or not executable"
 [[ -f "${EVENT_POLICY}" ]] || fail "shared AppVeyor event policy is missing"
+[[ -f "${PLATFORM_IMAGES}" ]] || fail "shared AppVeyor platform image catalog is missing"
+
+platform_contract="$(PLATFORM_IMAGES_UNDER_TEST="${PLATFORM_IMAGES}" bash -c '
+  # shellcheck disable=SC1090
+  source "${PLATFORM_IMAGES_UNDER_TEST}"
+  printf "registry=%s\nnamespace=%s\n" "${BESKID_PLATFORM_REGISTRY}" "${BESKID_PLATFORM_NAMESPACE}"
+  for lane in "${BESKID_PLATFORM_LANES[@]}"; do
+    printf "%s|%s|%s\n" \
+      "${lane}" \
+      "$(beskid_platform_immutable_ref "${lane}" 0123456789abcdef0123456789abcdef01234567)" \
+      "$(beskid_platform_production_ref "${lane}")"
+  done
+')"
+expected_platform_contract='registry=cr.beskid-lang.org
+namespace=cr.beskid-lang.org/beskid
+site|cr.beskid-lang.org/beskid/site:sha-0123456789abcdef0123456789abcdef01234567|cr.beskid-lang.org/beskid/site:production
+learn|cr.beskid-lang.org/beskid/learn:sha-0123456789abcdef0123456789abcdef01234567|cr.beskid-lang.org/beskid/learn:production
+tracker|cr.beskid-lang.org/beskid/tracker:sha-0123456789abcdef0123456789abcdef01234567|cr.beskid-lang.org/beskid/tracker:production
+nexus|cr.beskid-lang.org/beskid/nexus:sha-0123456789abcdef0123456789abcdef01234567|cr.beskid-lang.org/beskid/nexus:production
+pckg|cr.beskid-lang.org/beskid/pckg:sha-0123456789abcdef0123456789abcdef01234567|cr.beskid-lang.org/beskid/pckg:production'
+[[ "${platform_contract}" == "${expected_platform_contract}" ]] || \
+  fail "shared platform image catalog does not define the exact registry, lanes, and refs"
+
+if rg -n 'cr\.beskid-lang\.org|for lane in site learn tracker nexus pckg|\^\(site\|learn\|tracker\|nexus\|pckg\)' \
+  "${PUBLISHER}" "${PROMOTER}" "${MANIFEST}"; then
+  fail "platform image definitions are duplicated outside the shared library"
+fi
 
 ruby -e '
   require "yaml"
@@ -36,7 +95,7 @@ ruby -e '
   abort "unexpected AppVeyor lane matrix: #{lanes.inspect}" unless lanes.sort == expected.sort
   abort "AppVeyor deployment must be disabled" unless config["deploy"] == false
   abort "required jobs may not be allowed to fail" if config.dig("matrix", "allow_failures")
-  abort "AppVeyor must cap compiler fan-out at three jobs" unless config["max_jobs"] == 3
+  abort "AppVeyor must serialize project builds through the FIFO queue" unless config["max_jobs"] == 1
   expected_jobs = {
     "linux-platform" => "linux-platform",
     "linux-compiler" => "linux-compiler",
@@ -124,18 +183,43 @@ fi
 
 run_publisher() {
   local scenario="$1"
-  local fake_bin log status
+  local fake_bin log config_log mode_log rm_log status
   fake_bin="$(mktemp -d "${TMPDIR:-/tmp}/appveyor-publish-test.XXXXXX")"
   log="${fake_bin}/docker.log"
+  config_log="${fake_bin}/docker-config.log"
+  mode_log="${fake_bin}/docker-mode.log"
+  rm_log="${fake_bin}/rm.log"
+  mkdir -p "${fake_bin}/tmp" "${fake_bin}/ambient-docker-config"
   cat >"${fake_bin}/docker" <<'EOF'
 #!/usr/bin/env bash
 printf '%s\n' "$*" >>"${DOCKER_TEST_LOG}"
+printf '%s|%s\n' "${DOCKER_CONFIG:-unset}" "$*" >>"${DOCKER_CONFIG_TEST_LOG}"
 case "${1:-}" in
   buildx)
     [[ "${2:-}" == "version" ]] && exit 0
     [[ "${2:-}" == "build" ]] && exit 0
     ;;
-  login|push|logout) exit 0 ;;
+  login)
+    printf '{}\n' >"${DOCKER_CONFIG}/config.json"
+    directory_mode="$(stat -f '%Lp' "${DOCKER_CONFIG}" 2>/dev/null || stat -c '%a' "${DOCKER_CONFIG}")"
+    file_mode="$(stat -f '%Lp' "${DOCKER_CONFIG}/config.json" 2>/dev/null || stat -c '%a' "${DOCKER_CONFIG}/config.json")"
+    printf '%s|%s\n' "${directory_mode}" "${file_mode}" >>"${DOCKER_MODE_TEST_LOG}"
+    [[ "${DOCKER_FAIL_LOGIN:-false}" != "true" ]] || exit 77
+    exit 0
+    ;;
+  push)
+    if [[ "${DOCKER_SIGNAL_ON_PUSH:-false}" == "true" && ! -f "${DOCKER_SIGNAL_MARKER}" ]]; then
+      : >"${DOCKER_SIGNAL_MARKER}"
+      kill -TERM "${PPID}"
+      exit 143
+    fi
+    [[ "${DOCKER_FAIL_PUSH:-false}" != "true" ]] || exit 79
+    exit 0
+    ;;
+  logout)
+    [[ "${DOCKER_FAIL_LOGOUT:-false}" != "true" ]] || exit 83
+    exit 0
+    ;;
   image)
     [[ "${2:-}" == "inspect" ]] || exit 1
     immutable_ref="${!#}"
@@ -144,38 +228,60 @@ case "${1:-}" in
 esac
 exit 0
 EOF
+  cat >"${fake_bin}/rm" <<'EOF'
+#!/usr/bin/env bash
+printf '%s\n' "$*" >>"${RM_TEST_LOG}"
+[[ "${DOCKER_FAIL_REMOVE:-false}" != "true" ]] || exit 86
+exec /bin/rm "$@"
+EOF
   chmod +x "${fake_bin}/docker"
+  chmod +x "${fake_bin}/rm"
 
   set +e
   case "${scenario}" in
     pull-request)
-      PATH="${fake_bin}:${PATH}" DOCKER_TEST_LOG="${log}" \
-        APPVEYOR_REPO_BRANCH=main APPVEYOR_PULL_REQUEST_NUMBER=42 \
+      run_isolated_appveyor_event main 42 false false false false false \
+        PATH="${fake_bin}:${PATH}" TMPDIR="${fake_bin}/tmp" DOCKER_CONFIG="${fake_bin}/ambient-docker-config" \
+        DOCKER_TEST_LOG="${log}" DOCKER_CONFIG_TEST_LOG="${config_log}" DOCKER_MODE_TEST_LOG="${mode_log}" RM_TEST_LOG="${rm_log}" \
         APPVEYOR_REPO_COMMIT=0123456789abcdef0123456789abcdef01234567 \
         APPVEYOR_BUILD_FOLDER="${fake_bin}/build" \
         bash "${PUBLISHER}" >/dev/null 2>&1
       ;;
     main-without-credentials)
-      PATH="${fake_bin}:${PATH}" DOCKER_TEST_LOG="${log}" \
-        APPVEYOR_REPO_BRANCH=main APPVEYOR_PULL_REQUEST_NUMBER='' \
-        APPVEYOR_REPO_TAG=false \
+      run_isolated_appveyor_event main '' false false false false false \
+        PATH="${fake_bin}:${PATH}" TMPDIR="${fake_bin}/tmp" DOCKER_CONFIG="${fake_bin}/ambient-docker-config" \
+        DOCKER_TEST_LOG="${log}" DOCKER_CONFIG_TEST_LOG="${config_log}" DOCKER_MODE_TEST_LOG="${mode_log}" RM_TEST_LOG="${rm_log}" \
         APPVEYOR_REPO_COMMIT=0123456789abcdef0123456789abcdef01234567 \
         APPVEYOR_BUILD_FOLDER="${fake_bin}/build" \
         bash "${PUBLISHER}" >/dev/null 2>&1
       ;;
-    main)
-      PATH="${fake_bin}:${PATH}" DOCKER_TEST_LOG="${log}" \
-        APPVEYOR_REPO_BRANCH=main APPVEYOR_PULL_REQUEST_NUMBER='' \
-        APPVEYOR_REPO_TAG=false \
+    main|login-failure|logout-failure|cleanup-failure|push-and-cleanup-failure|signal)
+      docker_fail_login=false
+      docker_fail_logout=false
+      docker_fail_remove=false
+      docker_fail_push=false
+      docker_signal_on_push=false
+      [[ "${scenario}" != "login-failure" ]] || docker_fail_login=true
+      [[ "${scenario}" != "logout-failure" ]] || docker_fail_logout=true
+      [[ "${scenario}" != "cleanup-failure" && "${scenario}" != "push-and-cleanup-failure" ]] || docker_fail_remove=true
+      [[ "${scenario}" != "push-and-cleanup-failure" ]] || docker_fail_push=true
+      [[ "${scenario}" != "signal" ]] || docker_signal_on_push=true
+      run_isolated_appveyor_event main '' false false false false false \
+        PATH="${fake_bin}:${PATH}" TMPDIR="${fake_bin}/tmp" DOCKER_CONFIG="${fake_bin}/ambient-docker-config" \
+        DOCKER_TEST_LOG="${log}" DOCKER_CONFIG_TEST_LOG="${config_log}" DOCKER_MODE_TEST_LOG="${mode_log}" RM_TEST_LOG="${rm_log}" \
+        DOCKER_FAIL_LOGIN="${docker_fail_login}" \
+        DOCKER_FAIL_LOGOUT="${docker_fail_logout}" DOCKER_FAIL_REMOVE="${docker_fail_remove}" \
+        DOCKER_FAIL_PUSH="${docker_fail_push}" DOCKER_SIGNAL_ON_PUSH="${docker_signal_on_push}" \
+        DOCKER_SIGNAL_MARKER="${fake_bin}/signal-sent" \
         APPVEYOR_REPO_COMMIT=0123456789abcdef0123456789abcdef01234567 \
         APPVEYOR_BUILD_FOLDER="${fake_bin}/build" \
         REGISTRY_USERNAME=test-user REGISTRY_PASSWORD=test-password \
         bash "${PUBLISHER}" >/dev/null 2>&1
       ;;
     forced-main)
-      PATH="${fake_bin}:${PATH}" DOCKER_TEST_LOG="${log}" \
-        APPVEYOR_REPO_BRANCH=main APPVEYOR_PULL_REQUEST_NUMBER='' \
-        APPVEYOR_REPO_TAG=False APPVEYOR_FORCED_BUILD=True \
+      run_isolated_appveyor_event main '' false true false false false \
+        PATH="${fake_bin}:${PATH}" TMPDIR="${fake_bin}/tmp" DOCKER_CONFIG="${fake_bin}/ambient-docker-config" \
+        DOCKER_TEST_LOG="${log}" DOCKER_CONFIG_TEST_LOG="${config_log}" DOCKER_MODE_TEST_LOG="${mode_log}" RM_TEST_LOG="${rm_log}" \
         APPVEYOR_REPO_COMMIT=0123456789abcdef0123456789abcdef01234567 \
         APPVEYOR_BUILD_FOLDER="${fake_bin}/build" \
         REGISTRY_USERNAME=test-user REGISTRY_PASSWORD=test-password \
@@ -188,6 +294,36 @@ EOF
 
   PUBLISHER_STATUS="${status}"
   PUBLISHER_LOG="${log}"
+  PUBLISHER_CONFIG_LOG="${config_log}"
+  PUBLISHER_MODE_LOG="${mode_log}"
+  PUBLISHER_RM_LOG="${rm_log}"
+  PUBLISHER_FAKE_BIN="${fake_bin}"
+}
+
+assert_isolated_registry_session() {
+  local scenario="$1"
+  local command_log="$2"
+  local config_log="$3"
+  local mode_log="$4"
+  local rm_log="$5"
+  local fake_bin="$6"
+  local registry_configs registry_config
+
+  registry_configs="$(awk -F '|' '$2 ~ /^(login|push|logout) / { print $1 }' "${config_log}" | LC_ALL=C sort -u)"
+  [[ "$(wc -l <<<"${registry_configs}" | tr -d ' ')" -eq 1 ]] || \
+    fail "${scenario} did not use one isolated Docker config for login, push, and logout"
+  registry_config="${registry_configs}"
+  [[ "${registry_config}" == "${fake_bin}/tmp/"* ]] || \
+    fail "${scenario} used the ambient Docker config"
+  [[ "$(<"${mode_log}")" == '700|600' ]] || \
+    fail "${scenario} Docker config directory/file defaults were not restrictive"
+  [[ "$(wc -l <"${rm_log}" | tr -d ' ')" -eq 1 ]] || \
+    fail "${scenario} did not attempt Docker config removal exactly once"
+  [[ ! -e "${registry_config}" ]] || fail "${scenario} left the isolated Docker config behind"
+  rg -q '^login cr\.beskid-lang\.org --username test-user --password-stdin$' "${command_log}" || \
+    fail "${scenario} did not authenticate to the platform registry"
+  rg -q '^logout cr\.beskid-lang\.org$' "${command_log}" || \
+    fail "${scenario} did not log out of the platform registry"
 }
 
 run_publisher pull-request
@@ -210,6 +346,8 @@ fi
 
 run_publisher main
 [[ "${PUBLISHER_STATUS}" -eq 0 ]] || fail "trusted main publication failed with credentials"
+assert_isolated_registry_session main-publisher "${PUBLISHER_LOG}" "${PUBLISHER_CONFIG_LOG}" \
+  "${PUBLISHER_MODE_LOG}" "${PUBLISHER_RM_LOG}" "${PUBLISHER_FAKE_BIN}"
 [[ "$(rg -c '^push cr\.beskid-lang\.org/beskid/(site|learn|tracker|nexus|pckg):sha-0123456789abcdef0123456789abcdef01234567$' "${PUBLISHER_LOG}")" -eq 5 ]] || \
   fail "trusted main publication did not push all five immutable tags"
 if rg -q '^push .*:production$' "${PUBLISHER_LOG}"; then
@@ -219,44 +357,96 @@ if rg -n '(^|/)(ghcr\.io|docker\.io)(/|$)' "${PUBLISHER_LOG}"; then
   fail "platform publisher used a registry other than cr.beskid-lang.org"
 fi
 
+run_publisher logout-failure
+[[ "${PUBLISHER_STATUS}" -eq 83 ]] || fail "logout failure did not fail an otherwise successful publisher"
+[[ "$(rg -c '^logout cr\.beskid-lang\.org$' "${PUBLISHER_LOG}")" -eq 1 ]] || \
+  fail "logout failure was not attempted exactly once"
+[[ "$(wc -l <"${PUBLISHER_RM_LOG}" | tr -d ' ')" -eq 1 ]] || \
+  fail "logout failure prevented Docker config removal"
+
+run_publisher login-failure
+[[ "${PUBLISHER_STATUS}" -eq 77 ]] || fail "registry login failure did not remain the publisher result"
+if rg -q '^(push|logout) ' "${PUBLISHER_LOG}"; then
+  fail "registry login failure reached push or logout"
+fi
+[[ "$(wc -l <"${PUBLISHER_RM_LOG}" | tr -d ' ')" -eq 1 ]] || \
+  fail "registry login failure did not remove its Docker config exactly once"
+
+run_publisher cleanup-failure
+[[ "${PUBLISHER_STATUS}" -eq 86 ]] || fail "Docker config removal failure did not fail an otherwise successful publisher"
+cleanup_failure_config="$(awk -F '|' '$2 ~ /^login / { print $1; exit }' "${PUBLISHER_CONFIG_LOG}")"
+[[ -d "${cleanup_failure_config}" ]] || fail "cleanup failure test did not leave its target for inspection"
+/bin/rm -rf -- "${cleanup_failure_config}"
+
+run_publisher push-and-cleanup-failure
+[[ "${PUBLISHER_STATUS}" -eq 79 ]] || fail "cleanup failure replaced the original publisher failure"
+original_failure_config="$(awk -F '|' '$2 ~ /^login / { print $1; exit }' "${PUBLISHER_CONFIG_LOG}")"
+/bin/rm -rf -- "${original_failure_config}"
+
+run_publisher signal
+[[ "${PUBLISHER_STATUS}" -eq 143 ]] || fail "publisher signal path did not preserve the signal status"
+[[ "$(rg -c '^logout cr\.beskid-lang\.org$' "${PUBLISHER_LOG}")" -eq 1 ]] || \
+  fail "publisher signal path performed duplicate logout cleanup"
+[[ "$(wc -l <"${PUBLISHER_RM_LOG}" | tr -d ' ')" -eq 1 ]] || \
+  fail "publisher signal path performed duplicate Docker config cleanup"
+
 run_promoter() {
   local scenario="$1"
-  local fake_bin log status
+  local fake_bin log config_log mode_log rm_log status
   fake_bin="$(mktemp -d "${TMPDIR:-/tmp}/appveyor-promote-test.XXXXXX")"
   log="${fake_bin}/docker.log"
+  config_log="${fake_bin}/docker-config.log"
+  mode_log="${fake_bin}/docker-mode.log"
+  rm_log="${fake_bin}/rm.log"
+  mkdir -p "${fake_bin}/tmp" "${fake_bin}/ambient-docker-config"
   : >"${log}"
   cat >"${fake_bin}/docker" <<'EOF'
 #!/usr/bin/env bash
 printf '%s\n' "$*" >>"${DOCKER_TEST_LOG}"
+printf '%s|%s\n' "${DOCKER_CONFIG:-unset}" "$*" >>"${DOCKER_CONFIG_TEST_LOG}"
 case "${1:-}" in
-  login|pull|push|logout) exit 0 ;;
+  login)
+    printf '{}\n' >"${DOCKER_CONFIG}/config.json"
+    directory_mode="$(stat -f '%Lp' "${DOCKER_CONFIG}" 2>/dev/null || stat -c '%a' "${DOCKER_CONFIG}")"
+    file_mode="$(stat -f '%Lp' "${DOCKER_CONFIG}/config.json" 2>/dev/null || stat -c '%a' "${DOCKER_CONFIG}/config.json")"
+    printf '%s|%s\n' "${directory_mode}" "${file_mode}" >>"${DOCKER_MODE_TEST_LOG}"
+    exit 0
+    ;;
+  pull|push|logout) exit 0 ;;
   image) [[ "${2:-}" == "tag" ]] && exit 0 ;;
   buildx) exit 97 ;;
 esac
 exit 1
 EOF
+  cat >"${fake_bin}/rm" <<'EOF'
+#!/usr/bin/env bash
+printf '%s\n' "$*" >>"${RM_TEST_LOG}"
+exec /bin/rm "$@"
+EOF
   chmod +x "${fake_bin}/docker"
+  chmod +x "${fake_bin}/rm"
 
   set +e
   case "${scenario}" in
     main)
-      PATH="${fake_bin}:${PATH}" DOCKER_TEST_LOG="${log}" \
-        APPVEYOR_REPO_BRANCH=main APPVEYOR_PULL_REQUEST_NUMBER='' APPVEYOR_REPO_TAG=false \
+      run_isolated_appveyor_event main '' false false false false false \
+        PATH="${fake_bin}:${PATH}" TMPDIR="${fake_bin}/tmp" DOCKER_CONFIG="${fake_bin}/ambient-docker-config" \
+        DOCKER_TEST_LOG="${log}" DOCKER_CONFIG_TEST_LOG="${config_log}" DOCKER_MODE_TEST_LOG="${mode_log}" RM_TEST_LOG="${rm_log}" \
         APPVEYOR_REPO_COMMIT=0123456789abcdef0123456789abcdef01234567 \
         REGISTRY_USERNAME=test-user REGISTRY_PASSWORD=test-password \
         bash "${PROMOTER}" >/dev/null 2>&1
       ;;
     pull-request)
-      env -u REGISTRY_USERNAME -u REGISTRY_PASSWORD \
-        PATH="${fake_bin}:${PATH}" DOCKER_TEST_LOG="${log}" \
-        APPVEYOR_REPO_BRANCH=main APPVEYOR_PULL_REQUEST_NUMBER=42 APPVEYOR_REPO_TAG=false \
+      run_isolated_appveyor_event main 42 false false false false false \
+        PATH="${fake_bin}:${PATH}" TMPDIR="${fake_bin}/tmp" DOCKER_CONFIG="${fake_bin}/ambient-docker-config" \
+        DOCKER_TEST_LOG="${log}" DOCKER_CONFIG_TEST_LOG="${config_log}" DOCKER_MODE_TEST_LOG="${mode_log}" RM_TEST_LOG="${rm_log}" \
         APPVEYOR_REPO_COMMIT=0123456789abcdef0123456789abcdef01234567 \
         bash "${PROMOTER}" >/dev/null 2>&1
       ;;
     main-without-credentials)
-      env -u REGISTRY_USERNAME -u REGISTRY_PASSWORD \
-        PATH="${fake_bin}:${PATH}" DOCKER_TEST_LOG="${log}" \
-        APPVEYOR_REPO_BRANCH=main APPVEYOR_PULL_REQUEST_NUMBER='' APPVEYOR_REPO_TAG=false \
+      run_isolated_appveyor_event main '' false false false false false \
+        PATH="${fake_bin}:${PATH}" TMPDIR="${fake_bin}/tmp" DOCKER_CONFIG="${fake_bin}/ambient-docker-config" \
+        DOCKER_TEST_LOG="${log}" DOCKER_CONFIG_TEST_LOG="${config_log}" DOCKER_MODE_TEST_LOG="${mode_log}" RM_TEST_LOG="${rm_log}" \
         APPVEYOR_REPO_COMMIT=0123456789abcdef0123456789abcdef01234567 \
         bash "${PROMOTER}" >/dev/null 2>&1
       ;;
@@ -266,14 +456,30 @@ EOF
   set -e
   PROMOTER_STATUS="${status}"
   PROMOTER_LOG="${log}"
+  PROMOTER_CONFIG_LOG="${config_log}"
+  PROMOTER_MODE_LOG="${mode_log}"
+  PROMOTER_RM_LOG="${rm_log}"
+  PROMOTER_FAKE_BIN="${fake_bin}"
 }
 
 run_promoter main
 [[ "${PROMOTER_STATUS}" -eq 0 ]] || fail "trusted main production promotion failed"
+assert_isolated_registry_session main-promoter "${PROMOTER_LOG}" "${PROMOTER_CONFIG_LOG}" \
+  "${PROMOTER_MODE_LOG}" "${PROMOTER_RM_LOG}" "${PROMOTER_FAKE_BIN}"
 [[ "$(rg -c '^pull cr\.beskid-lang\.org/beskid/(site|learn|tracker|nexus|pckg):sha-0123456789abcdef0123456789abcdef01234567$' "${PROMOTER_LOG}")" -eq 5 ]] || \
   fail "promotion did not consume all immutable tags"
-[[ "$(rg -c '^image tag cr\.beskid-lang\.org/beskid/(site|learn|tracker|nexus|pckg):sha-0123456789abcdef0123456789abcdef01234567 cr\.beskid-lang\.org/beskid/(site|learn|tracker|nexus|pckg):production$' "${PROMOTER_LOG}")" -eq 5 ]] || \
-  fail "promotion did not advance all production tags from immutable images"
+actual_tag_commands="$(mktemp "${TMPDIR:-/tmp}/appveyor-actual-tags.XXXXXX")"
+expected_tag_commands="$(mktemp "${TMPDIR:-/tmp}/appveyor-expected-tags.XXXXXX")"
+rg '^image tag ' "${PROMOTER_LOG}" | LC_ALL=C sort >"${actual_tag_commands}"
+cat >"${expected_tag_commands}" <<'EOF'
+image tag cr.beskid-lang.org/beskid/learn:sha-0123456789abcdef0123456789abcdef01234567 cr.beskid-lang.org/beskid/learn:production
+image tag cr.beskid-lang.org/beskid/nexus:sha-0123456789abcdef0123456789abcdef01234567 cr.beskid-lang.org/beskid/nexus:production
+image tag cr.beskid-lang.org/beskid/pckg:sha-0123456789abcdef0123456789abcdef01234567 cr.beskid-lang.org/beskid/pckg:production
+image tag cr.beskid-lang.org/beskid/site:sha-0123456789abcdef0123456789abcdef01234567 cr.beskid-lang.org/beskid/site:production
+image tag cr.beskid-lang.org/beskid/tracker:sha-0123456789abcdef0123456789abcdef01234567 cr.beskid-lang.org/beskid/tracker:production
+EOF
+cmp -s "${expected_tag_commands}" "${actual_tag_commands}" || \
+  fail "promotion tag commands are not the exact one-to-one immutable-to-production mapping"
 [[ "$(rg -c '^push cr\.beskid-lang\.org/beskid/(site|learn|tracker|nexus|pckg):production$' "${PROMOTER_LOG}")" -eq 5 ]] || \
   fail "promotion did not push all production tags"
 if rg -q '^buildx ' "${PROMOTER_LOG}"; then
@@ -305,7 +511,7 @@ assert_manifest_record_rejected() {
   invalid_manifest_root="$(mktemp -d "${TMPDIR:-/tmp}/appveyor-invalid-manifest-test.XXXXXX")"
 
   set +e
-  APPVEYOR_REPO_BRANCH=main APPVEYOR_PULL_REQUEST_NUMBER='' APPVEYOR_REPO_TAG=false \
+  run_isolated_appveyor_event main '' false false false false false \
     APPVEYOR_REPO_COMMIT=0123456789abcdef0123456789abcdef01234567 \
     APPVEYOR_BUILD_FOLDER="${invalid_manifest_root}" \
     bash "${MANIFEST}" record site "cr.beskid-lang.org/beskid/site:sha-0123456789abcdef0123456789abcdef01234567" "${immutable_digest}" >/dev/null 2>&1
@@ -320,19 +526,19 @@ assert_manifest_record_rejected short "cr.beskid-lang.org/beskid/site@sha256:${s
 assert_manifest_record_rejected trailing-garbage "cr.beskid-lang.org/beskid/site@sha256:${valid_digest_hash}-trailing"
 
 manifest_root="$(mktemp -d "${TMPDIR:-/tmp}/appveyor-manifest-test.XXXXXX")"
-APPVEYOR_REPO_BRANCH=main APPVEYOR_PULL_REQUEST_NUMBER='' APPVEYOR_REPO_TAG=false \
+run_isolated_appveyor_event main '' false false false false false \
   APPVEYOR_REPO_COMMIT=0123456789abcdef0123456789abcdef01234567 \
   APPVEYOR_BUILD_ID=42 APPVEYOR_BUILD_VERSION=1.0.42 APPVEYOR_JOB_ID=job-42 \
   APPVEYOR_BUILD_FOLDER="${manifest_root}" \
   bash "${MANIFEST}" record site "cr.beskid-lang.org/beskid/site:sha-0123456789abcdef0123456789abcdef01234567" "cr.beskid-lang.org/beskid/site@sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
 for lane in learn tracker nexus pckg; do
-  APPVEYOR_REPO_BRANCH=main APPVEYOR_PULL_REQUEST_NUMBER='' APPVEYOR_REPO_TAG=false \
+  run_isolated_appveyor_event main '' false false false false false \
     APPVEYOR_REPO_COMMIT=0123456789abcdef0123456789abcdef01234567 \
     APPVEYOR_BUILD_ID=42 APPVEYOR_BUILD_VERSION=1.0.42 APPVEYOR_JOB_ID=job-42 \
     APPVEYOR_BUILD_FOLDER="${manifest_root}" \
     bash "${MANIFEST}" record "${lane}" "cr.beskid-lang.org/beskid/${lane}:sha-0123456789abcdef0123456789abcdef01234567" "cr.beskid-lang.org/beskid/${lane}@sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
 done
-APPVEYOR_REPO_BRANCH=main APPVEYOR_PULL_REQUEST_NUMBER='' APPVEYOR_REPO_TAG=false \
+run_isolated_appveyor_event main '' false false false false false \
   APPVEYOR_REPO_COMMIT=0123456789abcdef0123456789abcdef01234567 \
   APPVEYOR_BUILD_ID=42 APPVEYOR_BUILD_VERSION=1.0.42 APPVEYOR_JOB_ID=job-42 \
   APPVEYOR_BUILD_FOLDER="${manifest_root}" \
@@ -363,50 +569,40 @@ EOF
   set +e
   case "${scenario}" in
     pull-request)
-      PATH="${fake_bin}:${PATH}" PACKAGE_TEST_LOG="${log}" \
-        APPVEYOR_REPO_BRANCH=main APPVEYOR_PULL_REQUEST_NUMBER=42 \
-        APPVEYOR_REPO_TAG=False APPVEYOR_FORCED_BUILD=False APPVEYOR_SCHEDULED_BUILD=False \
+      run_isolated_appveyor_event main 42 false false false false false \
+        PATH="${fake_bin}:${PATH}" PACKAGE_TEST_LOG="${log}" \
         BESKID_PCKG_API_KEY=bpk_test \
         /bin/bash "${PACKAGE_PUBLISHER}" rehearse >/dev/null 2>&1 &&
-      PATH="${fake_bin}:${PATH}" PACKAGE_TEST_LOG="${log}" \
-        APPVEYOR_REPO_BRANCH=main APPVEYOR_PULL_REQUEST_NUMBER=42 \
-        APPVEYOR_REPO_TAG=False APPVEYOR_FORCED_BUILD=False APPVEYOR_SCHEDULED_BUILD=False \
+      run_isolated_appveyor_event main 42 false false false false false \
+        PATH="${fake_bin}:${PATH}" PACKAGE_TEST_LOG="${log}" \
         BESKID_PCKG_API_KEY=bpk_test \
         /bin/bash "${PACKAGE_PUBLISHER}" publish >/dev/null 2>&1
       ;;
     non-main)
-      PATH="${fake_bin}:${PATH}" PACKAGE_TEST_LOG="${log}" \
-        APPVEYOR_REPO_BRANCH=feature APPVEYOR_PULL_REQUEST_NUMBER='' \
-        APPVEYOR_REPO_TAG=False APPVEYOR_FORCED_BUILD=False APPVEYOR_SCHEDULED_BUILD=False \
+      run_isolated_appveyor_event feature '' false false false false false \
+        PATH="${fake_bin}:${PATH}" PACKAGE_TEST_LOG="${log}" \
         BESKID_PCKG_API_KEY=bpk_test \
         /bin/bash "${PACKAGE_PUBLISHER}" rehearse >/dev/null 2>&1 &&
-      PATH="${fake_bin}:${PATH}" PACKAGE_TEST_LOG="${log}" \
-        APPVEYOR_REPO_BRANCH=feature APPVEYOR_PULL_REQUEST_NUMBER='' \
-        APPVEYOR_REPO_TAG=False APPVEYOR_FORCED_BUILD=False APPVEYOR_SCHEDULED_BUILD=False \
+      run_isolated_appveyor_event feature '' false false false false false \
+        PATH="${fake_bin}:${PATH}" PACKAGE_TEST_LOG="${log}" \
         BESKID_PCKG_API_KEY=bpk_test \
         /bin/bash "${PACKAGE_PUBLISHER}" publish >/dev/null 2>&1
       ;;
     main-without-key)
-      env -u BESKID_PCKG_API_KEY \
+      run_isolated_appveyor_event main '' false false false false false \
         PATH="${fake_bin}:${PATH}" PACKAGE_TEST_LOG="${log}" \
-        APPVEYOR_REPO_BRANCH=main APPVEYOR_PULL_REQUEST_NUMBER='' \
-        APPVEYOR_REPO_TAG=False APPVEYOR_FORCED_BUILD=False APPVEYOR_SCHEDULED_BUILD=False \
         /bin/bash "${PACKAGE_PUBLISHER}" rehearse >/dev/null 2>&1 &&
-      env -u BESKID_PCKG_API_KEY \
+      run_isolated_appveyor_event main '' false false false false false \
         PATH="${fake_bin}:${PATH}" PACKAGE_TEST_LOG="${log}" \
-        APPVEYOR_REPO_BRANCH=main APPVEYOR_PULL_REQUEST_NUMBER='' \
-        APPVEYOR_REPO_TAG=False APPVEYOR_FORCED_BUILD=False APPVEYOR_SCHEDULED_BUILD=False \
         /bin/bash "${PACKAGE_PUBLISHER}" publish >/dev/null 2>&1
       ;;
     main)
-      PATH="${fake_bin}:${PATH}" PACKAGE_TEST_LOG="${log}" \
-        APPVEYOR_REPO_BRANCH=main APPVEYOR_PULL_REQUEST_NUMBER='' \
-        APPVEYOR_REPO_TAG=False APPVEYOR_FORCED_BUILD=False APPVEYOR_SCHEDULED_BUILD=False \
+      run_isolated_appveyor_event main '' false false false false false \
+        PATH="${fake_bin}:${PATH}" PACKAGE_TEST_LOG="${log}" \
         BESKID_PCKG_API_KEY=bpk_test \
         /bin/bash "${PACKAGE_PUBLISHER}" rehearse >/dev/null 2>&1 &&
-      PATH="${fake_bin}:${PATH}" PACKAGE_TEST_LOG="${log}" \
-        APPVEYOR_REPO_BRANCH=main APPVEYOR_PULL_REQUEST_NUMBER='' \
-        APPVEYOR_REPO_TAG=False APPVEYOR_FORCED_BUILD=False APPVEYOR_SCHEDULED_BUILD=False \
+      run_isolated_appveyor_event main '' false false false false false \
+        PATH="${fake_bin}:${PATH}" PACKAGE_TEST_LOG="${log}" \
         BESKID_PCKG_API_KEY=bpk_test \
         /bin/bash "${PACKAGE_PUBLISHER}" publish >/dev/null 2>&1
       ;;

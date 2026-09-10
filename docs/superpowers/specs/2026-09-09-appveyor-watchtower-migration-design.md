@@ -46,7 +46,10 @@ The initial matrix contains:
 
 Every job starts from pinned submodule commits and installs its toolchain through
 repository scripts. AppVeyor cache entries are performance-only and never carry
-release evidence between jobs.
+release evidence between jobs. Project-level `max_jobs: 1` makes AppVeyor's FIFO
+queue the release sequencer: compiler members and separate builds run one at a
+time, preventing an older build from advancing mutable tags after a newer build.
+This release-order guarantee deliberately lengthens end-to-end builds.
 
 ## Image identity and publication
 
@@ -58,9 +61,14 @@ Each build produces:
   and image build succeed on a trusted `main` push.
 
 Pull requests, tags, forks, and non-main branches never receive registry
-credentials and never push. Login is performed from environment-provided
-credentials and the worker logs out before finalization. Missing registry
-credentials fail the main publish lane closed.
+credentials and never push. Publisher and promoter login from
+environment-provided credentials through separate restrictive temporary Docker
+configurations; each logs out and removes its configuration before
+finalization. Logout or removal failure fails an otherwise successful script,
+while cleanup never replaces an earlier failure. Missing registry credentials
+fail the main publish lane closed. One sourced production library defines the
+registry, namespace, five lanes, and immutable/production refs consumed by the
+publisher, promoter, and manifest.
 
 The current implementation publishes lanes independently inside one
 `linux-platform` job so no mutable production tag appears until all platform
@@ -114,9 +122,10 @@ live required/publishing authority:
 4. Are `REGISTRY_USERNAME`, `REGISTRY_PASSWORD`, and
    `BESKID_PCKG_API_KEY` configured as secure AppVeyor variables with
    pull-request access disabled?
-5. Does the account plan provide enough concurrent jobs and more than the
-   documented 60-minute platform-lane budget, or should the platform lane move
-   to a private worker?
+5. Does a live queue proof confirm release-safe FIFO ordering with
+   `max_jobs: 1`, and does every hosted job—including the complete platform
+   lane—fit its documented 60-minute per-job budget, or should the affected job
+   move to a private/BYOC worker?
 6. What retention policy is required for AppVeyor logs/artifacts and private
    registry immutable `sha-*` tags?
 
