@@ -23,7 +23,9 @@ environment:
     - BESKID_CI_LANE: macos-compiler
       job_name: macos-compiler
       job_group: compiler-validation
-      APPVEYOR_BUILD_WORKER_IMAGE: macos-sonoma
+      # Ventura has the same supported toolchain surface but avoids the
+      # Sonoma image's first-boot Homebrew PowerShell rebuild timeout.
+      APPVEYOR_BUILD_WORKER_IMAGE: macos-ventura
     - BESKID_CI_LANE: windows-compiler
       job_name: windows-compiler
       job_group: compiler-validation
