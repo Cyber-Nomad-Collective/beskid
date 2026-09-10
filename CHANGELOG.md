@@ -79,6 +79,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Initialize the VS Code extension submodule in the platform integration gate
   before enforcing the shared editor authoring-version contract, and assert
   that membership without duplicating the workflow's ordered submodule list.
+- Package the compiled standalone BSOL Tree-sitter grammar alongside the
+  Beskid grammar so clean Zed loads can activate `.bsol`, `.bproj`, and `.bws`
+  language modes before the shared LSP adds semantic features.
 - Advance the compiler pin to the Rust 1.98-compatible strict Clippy cleanup,
   then restore its exact Corelib runtime-authority implementation for typed
   arrays, atomic channels, split fiber joins, bottom-typed match arms, and
