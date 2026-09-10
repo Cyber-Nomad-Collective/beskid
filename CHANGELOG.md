@@ -97,7 +97,10 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   plus the runtime-owned `FiberDone` transition instead of duplicating scheduler
   record layout and source-enum representation in generated trampolines. Keep
   the executable canonical-runtime JIT fixture aligned with that dependency
-  closure by resolving the manifest-owned, non-returning trap intrinsic.
+  closure by resolving the manifest-owned, non-returning trap intrinsic. Read
+  linked-image export and import directories through the shared symbol inventory
+  so stripped PE DLLs retain exact ABI-v5 provenance instead of appearing to
+  have no symbols.
 - Use one exact stable authoring version across the Zed manifests and the VS
   Code package and lockfile, so real VSIX packaging fails closed on editor
   release drift instead of depending on a missing resolver. Restore compiler
