@@ -102,7 +102,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   so stripped PE DLLs retain exact ABI-v5 provenance instead of appearing to
   have no symbols. Return completed generated fibers through the ABI-installed
   scheduler return trampoline so current-fiber clearing and context switching
-  have one architecture-owned path on macOS and Linux.
+  have one architecture-owned path on macOS and Linux. Make ABI-v5 builtin
+  generation idempotent across LF and CRLF checkouts so Windows builds cannot
+  append the 49 manifest-owned declarations twice.
 - Use one exact stable authoring version across the Zed manifests and the VS
   Code package and lockfile, so real VSIX packaging fails closed on editor
   release drift instead of depending on a missing resolver. Restore compiler
