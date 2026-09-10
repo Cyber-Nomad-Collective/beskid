@@ -87,6 +87,15 @@ run_runtime_phase() {
   return "${status}"
 }
 
+run_runtime_kit_phase() {
+  # AppVeyor's native worker cap is one hour; the cold native kit build can
+  # consume most of it, so keep the platform lane focused on kit validation.
+  export BESKID_RUNTIME_PREFIX="${BESKID_RUNTIME_PREFIX:-${CARGO_TARGET_DIR:-${ROOT}/compiler/target}/native-runtime-kit}"
+  export BESKID_RUNTIME_KIT_PROFILE=debug
+  run_bounded_phase "Native ABI-v5 runtime-kit staging and verification" "${BESKID_RUNTIME_KIT_TIMEOUT:-600}" \
+    bash scripts/stage-native-runtime-kit.sh
+}
+
 case "${gate_phase}" in
   all)
     run_lint_phase
@@ -97,6 +106,9 @@ case "${gate_phase}" in
     ;;
   runtime)
     run_runtime_phase
+    ;;
+  runtime-kit)
+    run_runtime_kit_phase
     ;;
   *)
     echo "unsupported compiler Rust gate phase: ${gate_phase}" >&2

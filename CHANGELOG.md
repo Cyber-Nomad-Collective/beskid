@@ -9,6 +9,10 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ## [Unreleased]
 
+### Changed
+
+- Keep AppVeyor's native compiler runtime lane within the one-hour worker cap by isolating runtime-kit staging from the full local workspace-test phase.
+
 ### Added
 
 - AppVeyor: add dedicated Linux validation lanes for the VS Code and Zed

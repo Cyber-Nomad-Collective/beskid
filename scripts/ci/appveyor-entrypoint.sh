@@ -38,7 +38,7 @@ run_appveyor_lane() {
       bash scripts/ci/compiler-rust-gate.sh lint
       ;;
     linux-compiler-runtime)
-      bash scripts/ci/compiler-rust-gate.sh runtime
+      bash scripts/ci/compiler-rust-gate.sh runtime-kit
       bash scripts/ci/lsp-command-contract-gate.sh
       BESKID_RUNTIME_PREFIX="${ROOT}/compiler/target/native-runtime-kit-linux-matrix" \
         bash compiler/scripts/stage-native-runtime-kit-matrix.sh

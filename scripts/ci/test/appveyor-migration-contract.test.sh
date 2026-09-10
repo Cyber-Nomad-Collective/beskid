@@ -124,7 +124,7 @@ ruby -e '
   abort "linux compiler lint lane needs a cold-worker Clippy budget" unless linux_lint["BESKID_CLIPPY_TIMEOUT"].to_i >= 3600
   abort "linux compiler runtime lane needs a runtime-kit budget" unless linux_runtime["BESKID_RUNTIME_KIT_TIMEOUT"].to_i >= 3600
   abort "linux compiler lint lane does not select the shared lint phase" unless entrypoint.include?("bash scripts/ci/compiler-rust-gate.sh lint")
-  abort "linux compiler runtime lane does not select the shared runtime phase" unless entrypoint.include?("bash scripts/ci/compiler-rust-gate.sh runtime")
+  abort "linux compiler runtime lane does not select the bounded runtime-kit phase" unless entrypoint.include?("bash scripts/ci/compiler-rust-gate.sh runtime-kit")
   editor_lanes = %w[vscode-extension zed-extension]
   editor_lanes.each do |lane|
     row = matrix.find { |candidate| candidate.fetch("BESKID_CI_LANE") == lane }
