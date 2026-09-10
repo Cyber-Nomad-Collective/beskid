@@ -144,9 +144,11 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   restoring hosted Linux scheduler execution and Windows REPL evaluation.
 - Use one exact stable authoring version across the Zed manifests and the VS
   Code package and lockfile, so real VSIX packaging fails closed on editor
-  release drift instead of depending on a missing resolver. Restore compiler
-  manifests after binary stamping and support the declared Intel macOS VSIX
-  target so packaging does not mutate source or fail that release lane.
+  release drift instead of depending on a missing resolver. Refresh the
+  checked-in Zed WebAssembly module with that authoring version so the package
+  gate cannot ship stale crate metadata. Restore compiler manifests after
+  binary stamping and support the declared Intel macOS VSIX target so
+  packaging does not mutate source or fail that release lane.
 - VS Code extension: replace the manifest-key allowlist with structural BSOL
   TextMate scopes, remove unsupported configuration formatting/comment claims,
   and preseed extension-host tests with the exact locally built LSP before
