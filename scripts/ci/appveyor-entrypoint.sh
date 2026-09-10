@@ -24,6 +24,12 @@ run_linux_platform_lane() {
   bash scripts/ci/appveyor-platform-promote.sh
 }
 
+run_linux_runtime_followup() {
+  bash scripts/ci/lsp-command-contract-gate.sh
+  BESKID_RUNTIME_PREFIX="${ROOT}/compiler/target/native-runtime-kit-linux-matrix" \
+    bash compiler/scripts/stage-native-runtime-kit-matrix.sh
+}
+
 run_appveyor_lane() {
   # Source installation so nvm/toolchain exports remain active for the gate.
   # shellcheck disable=SC1091

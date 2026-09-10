@@ -5,6 +5,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 APPVEYOR_CONFIG="${ROOT}/appveyor.yml"
 ENTRYPOINT="${ROOT}/scripts/ci/appveyor-entrypoint.sh"
+INSTALLER="${ROOT}/scripts/ci/appveyor-install.sh"
 PUBLISHER="${ROOT}/scripts/ci/appveyor-platform-publish.sh"
 PROMOTER="${ROOT}/scripts/ci/appveyor-platform-promote.sh"
 MANIFEST="${ROOT}/scripts/ci/appveyor-image-manifest.sh"
@@ -52,9 +53,6 @@ run_isolated_appveyor_event() {
 [[ -x "${ROOT}/scripts/ci/appveyor-install.sh" ]] || fail "AppVeyor installer is missing or not executable"
 [[ -x "${ROOT}/scripts/ci/appveyor-entrypoint.sh" ]] || fail "POSIX AppVeyor entrypoint is missing or not executable"
 [[ -f "${ROOT}/scripts/ci/appveyor-entrypoint.ps1" ]] || fail "Windows AppVeyor entrypoint is missing"
-install_content="$(<"${ROOT}/scripts/ci/appveyor-install.sh")"
-grep -q 'linux-compiler|linux-compiler-lint|linux-compiler-runtime' <<<"${install_content}" || \
-  fail "AppVeyor installer does not provision both split Linux compiler lanes"
 [[ -x "${PUBLISHER}" ]] || fail "platform publisher is missing or not executable"
 [[ -x "${PROMOTER}" ]] || fail "platform promoter is missing or not executable"
 [[ -x "${MANIFEST}" ]] || fail "platform image manifest writer is missing or not executable"
@@ -92,10 +90,13 @@ ruby -e '
   require "yaml"
   config = YAML.safe_load(File.read(ARGV.fetch(0)), aliases: true)
   entrypoint = File.read(ARGV.fetch(1))
+  installer = File.read(ARGV.fetch(2))
+  compiler_gate = File.read(ARGV.fetch(3))
+  artifact_module = File.read(ARGV.fetch(4))
   matrix = config.dig("environment", "matrix")
   abort "AppVeyor environment matrix is missing" unless matrix.is_a?(Array)
   lanes = matrix.map { |row| row.fetch("BESKID_CI_LANE") }
-  expected = %w[linux-platform linux-compiler-lint linux-compiler-runtime macos-compiler windows-compiler vscode-extension zed-extension]
+  expected = %w[linux-platform linux-compiler-lint linux-runtime-kit-build linux-runtime-kit-verify macos-compiler windows-compiler vscode-extension zed-extension]
   abort "unexpected AppVeyor lane matrix: #{lanes.inspect}" unless lanes.sort == expected.sort
   abort "AppVeyor deployment must be disabled" unless config["deploy"] == false
   abort "required jobs may not be allowed to fail" if config.dig("matrix", "allow_failures")
@@ -104,7 +105,8 @@ ruby -e '
   expected_jobs = {
     "linux-platform" => "linux-platform",
     "linux-compiler-lint" => "linux-compiler-lint",
-    "linux-compiler-runtime" => "linux-compiler-runtime",
+    "linux-runtime-kit-build" => "linux-runtime-kit-build",
+    "linux-runtime-kit-verify" => "linux-runtime-kit-verify",
     "macos-compiler" => "macos-compiler",
     "windows-compiler" => "windows-compiler",
     "vscode-extension" => "vscode-extension",
@@ -114,17 +116,39 @@ ruby -e '
     lane = row.fetch("BESKID_CI_LANE")
     abort "AppVeyor lane #{lane} has no stable job name" unless row["job_name"] == expected_jobs.fetch(lane)
   end
-  compiler_lanes = %w[linux-compiler-lint linux-compiler-runtime macos-compiler windows-compiler]
+  compiler_lanes = %w[linux-compiler-lint linux-runtime-kit-build linux-runtime-kit-verify macos-compiler windows-compiler]
   compiler_lanes.each do |lane|
     row = matrix.find { |candidate| candidate.fetch("BESKID_CI_LANE") == lane }
     abort "compiler lane #{lane} is outside compiler-validation" unless row["job_group"] == "compiler-validation"
   end
   linux_lint = matrix.find { |row| row.fetch("BESKID_CI_LANE") == "linux-compiler-lint" }
-  linux_runtime = matrix.find { |row| row.fetch("BESKID_CI_LANE") == "linux-compiler-runtime" }
+  linux_build = matrix.find { |row| row.fetch("BESKID_CI_LANE") == "linux-runtime-kit-build" }
+  linux_verify = matrix.find { |row| row.fetch("BESKID_CI_LANE") == "linux-runtime-kit-verify" }
   abort "linux compiler lint lane needs a cold-worker Clippy budget" unless linux_lint["BESKID_CLIPPY_TIMEOUT"].to_i >= 3600
-  abort "linux compiler runtime lane needs a runtime-kit budget" unless linux_runtime["BESKID_RUNTIME_KIT_TIMEOUT"].to_i >= 3600
+  abort "runtime-kit verifier must depend on the exact producer job" unless linux_verify["job_depends_on"] == "linux-runtime-kit-build"
+  abort "native runtime-kit build must use the AppVeyor worker limit, not an internal timeout" unless linux_build["BESKID_RUNTIME_KIT_TIMEOUT"].to_i == 0
   abort "linux compiler lint lane does not select the shared lint phase" unless entrypoint.include?("bash scripts/ci/compiler-rust-gate.sh lint")
-  abort "linux compiler runtime lane does not select the bounded runtime-kit phase" unless entrypoint.include?("bash scripts/ci/compiler-rust-gate.sh runtime-kit")
+  abort "producer does not select the shared runtime-kit build phase" unless entrypoint.include?("bash scripts/ci/compiler-rust-gate.sh runtime-kit-build")
+  abort "consumer does not select the shared runtime-kit verify phase" unless entrypoint.include?("bash scripts/ci/compiler-rust-gate.sh runtime-kit-verify")
+  abort "producer does not publish through the runtime-kit artifact module" unless entrypoint.include?("appveyor-runtime-kit-artifact.sh publish")
+  abort "consumer does not restore through the runtime-kit artifact module" unless entrypoint.include?("appveyor-runtime-kit-artifact.sh restore")
+  abort "Linux compiler lanes do not share the compiler installer" unless installer.include?("linux-compiler-lint|linux-compiler-runtime|linux-runtime-kit-build|linux-runtime-kit-verify")
+  abort "full runtime validation does not reuse split runtime-kit phases" unless compiler_gate.include?("run_runtime_kit_build_phase") && compiler_gate.include?("run_runtime_kit_verify_phase")
+  abort "full runtime validation does not reuse build then verify phases" unless compiler_gate.match?(/run_runtime_phase\(\).*?run_runtime_kit_build_phase.*?run_runtime_kit_verify_phase/m)
+  abort "artifact module permits previous-build fallback" if artifact_module.include?("last successful")
+  producer_job = config.fetch("for").find do |job|
+    job.dig("matrix", "only") == [{ "BESKID_CI_LANE" => "linux-runtime-kit-build" }]
+  end
+  producer_artifacts = producer_job&.fetch("artifacts", [])&.map { |artifact| artifact.fetch("path") }
+  expected_runtime_artifacts = %w[.appveyor-artifacts/native-runtime-kit.tar.gz .appveyor-artifacts/native-runtime-kit-manifest.json]
+  abort "runtime-kit producer does not retain the exact archive and manifest" unless producer_artifacts&.sort == expected_runtime_artifacts.sort
+  probe = entrypoint.index("cargo test -p beskid_engine --test spawn_scheduler")
+  build = entrypoint.index("bash scripts/ci/compiler-rust-gate.sh runtime-kit-build")
+  publish = entrypoint.index("appveyor-runtime-kit-artifact.sh publish")
+  restore = entrypoint.index("appveyor-runtime-kit-artifact.sh restore")
+  verify = entrypoint.index("bash scripts/ci/compiler-rust-gate.sh runtime-kit-verify")
+  abort "temporary native fiber probe must precede producer build and publication" unless probe && build && publish && probe < build && build < publish
+  abort "consumer must restore the exact artifact before verification" unless restore && verify && restore < verify
   editor_lanes = %w[vscode-extension zed-extension]
   editor_lanes.each do |lane|
     row = matrix.find { |candidate| candidate.fetch("BESKID_CI_LANE") == lane }
@@ -140,10 +164,10 @@ ruby -e '
   artifacts = platform_job&.fetch("artifacts", [])
   abort "linux platform job must retain AppVeyor release evidence" unless artifacts.any? { |artifact| artifact["path"] == ".appveyor-reports/**" }
   images = matrix.to_h { |row| [row.fetch("BESKID_CI_LANE"), row.fetch("APPVEYOR_BUILD_WORKER_IMAGE")] }
-  abort "linux lanes must use Linux workers" unless images.fetch("linux-platform").downcase.include?("ubuntu") && images.fetch("linux-compiler-lint").downcase.include?("ubuntu") && images.fetch("linux-compiler-runtime").downcase.include?("ubuntu")
+  abort "linux lanes must use Linux workers" unless images.fetch("linux-platform").downcase.include?("ubuntu") && images.fetch("linux-compiler-lint").downcase.include?("ubuntu") && images.fetch("linux-runtime-kit-build").downcase.include?("ubuntu") && images.fetch("linux-runtime-kit-verify").downcase.include?("ubuntu")
   abort "macOS compiler lane must use a macOS worker" unless images.fetch("macos-compiler").downcase.include?("macos")
   abort "Windows compiler lane must use a Visual Studio worker" unless images.fetch("windows-compiler").downcase.include?("visual studio")
-' "${APPVEYOR_CONFIG}" "${ENTRYPOINT}"
+' "${APPVEYOR_CONFIG}" "${ENTRYPOINT}" "${INSTALLER}" "${ROOT}/scripts/ci/compiler-rust-gate.sh" "${ROOT}/scripts/ci/appveyor-runtime-kit-artifact.sh"
 
 retired_workflows=(
   compiler-gate-testbox.yml

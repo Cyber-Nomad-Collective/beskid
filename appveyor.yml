@@ -10,11 +10,18 @@ environment:
       job_name: linux-platform
       job_depends_on: compiler-validation
       APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2204
-    - BESKID_CI_LANE: linux-compiler-runtime
-      job_name: linux-compiler-runtime
+    - BESKID_CI_LANE: linux-runtime-kit-build
+      job_name: linux-runtime-kit-build
       job_group: compiler-validation
       APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2204
-      BESKID_RUNTIME_KIT_TIMEOUT: 3600
+      BESKID_RUNTIME_KIT_TIMEOUT: 0
+      BESKID_NATIVE_FIBER_PROBE: 1
+    - BESKID_CI_LANE: linux-runtime-kit-verify
+      job_name: linux-runtime-kit-verify
+      job_group: compiler-validation
+      job_depends_on: linux-runtime-kit-build
+      APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2204
+      BESKID_RUNTIME_KIT_VERIFY_TIMEOUT: 1800
     - BESKID_CI_LANE: linux-compiler-lint
       job_name: linux-compiler-lint
       job_group: compiler-validation
@@ -61,8 +68,17 @@ for:
 
   - matrix:
       only:
+        - BESKID_CI_LANE: linux-runtime-kit-build
+    artifacts:
+      - path: .appveyor-artifacts/native-runtime-kit.tar.gz
+      - path: .appveyor-artifacts/native-runtime-kit-manifest.json
+    build_script:
+      - sh: bash ./scripts/ci/appveyor-entrypoint.sh
+
+  - matrix:
+      only:
         - BESKID_CI_LANE: linux-compiler-lint
-        - BESKID_CI_LANE: linux-compiler-runtime
+        - BESKID_CI_LANE: linux-runtime-kit-verify
         - BESKID_CI_LANE: macos-compiler
     build_script:
       - sh: bash ./scripts/ci/appveyor-entrypoint.sh

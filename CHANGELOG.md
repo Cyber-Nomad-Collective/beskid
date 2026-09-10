@@ -11,6 +11,17 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Isolate AppVeyor native runtime-kit validation from the full local workspace
+  test phase and reuse one staging implementation for both paths.
+- Add a Buildkite validation pipeline that reuses the canonical AppVeyor lane scripts without publication authority.
+- Keep Buildkite's provider-neutral full Linux runtime lane wired through the
+  shared installer and dispatcher while AppVeyor uses split producer/consumer jobs.
+- Split AppVeyor ABI-v5 runtime-kit construction and verification into exact-build
+  producer and consumer jobs, with fail-closed provenance, checksum, and archive
+  validation at the artifact boundary. Resolve downloads from the producer's
+  exact artifact listing so AppVeyor-preserved directory prefixes are handled
+  without basename URL assumptions, while preserving URL path separators for
+  AppVeyor routing.
 - Use AppVeyor's Monterey macOS worker for the compiler lane; the newer macOS
   images spent the worker budget rebuilding Homebrew PowerShell dependencies
   before the repository gate could start.
@@ -93,6 +104,10 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Share the native compiler installation path between AppVeyor's split Linux
+  lint and runtime lanes so both jobs reach their selected compiler gate.
+- Let native runtime-kit staging use the AppVeyor worker limit instead of an
+  internal timeout after a measured cold build required nearly 53 minutes.
 - Cross-validate the shipped `aarch64-apple-darwin` compiler and LSP artifacts
   from AppVeyor's Intel Sonoma worker without misreporting arm64 runtime smoke
   coverage, requiring an unsupported x86-64 macOS runtime manifest, or
@@ -102,7 +117,12 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   failure authority so ordinary Git progress on stderr does not abort setup.
   Suppress duplicate branch builds when the same commit is already covered by
   a pull-request build, and install ripgrep wherever compiler/editor contracts
-  use it instead of assuming it exists on native workers.
+  use it instead of assuming it exists on native workers. Give the Linux
+  compiler lane a 60-minute Clippy phase budget so a cold native worker can
+  complete the required full-workspace lint gate instead of timing out while
+  compiling dependencies. Run lint and native runtime/tests as separate
+  AppVeyor jobs through the same phase-selectable Rust gate, keeping each
+  workload within the worker's per-job ceiling without duplicating checks.
 - Advance the compiler pin to complete x86-64 Linux fibers through generated
   tail transfers, preserving CET shadow-stack state while keeping scheduler
   completion and the manifest-owned context switch as single authorities.
@@ -146,9 +166,11 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   restoring hosted Linux scheduler execution and Windows REPL evaluation.
 - Use one exact stable authoring version across the Zed manifests and the VS
   Code package and lockfile, so real VSIX packaging fails closed on editor
-  release drift instead of depending on a missing resolver. Restore compiler
-  manifests after binary stamping and support the declared Intel macOS VSIX
-  target so packaging does not mutate source or fail that release lane.
+  release drift instead of depending on a missing resolver. Refresh the
+  checked-in Zed WebAssembly module with that authoring version so the package
+  gate cannot ship stale crate metadata. Restore compiler manifests after
+  binary stamping and support the declared Intel macOS VSIX target so
+  packaging does not mutate source or fail that release lane.
 - VS Code extension: replace the manifest-key allowlist with structural BSOL
   TextMate scopes, remove unsupported configuration formatting/comment claims,
   and preseed extension-host tests with the exact locally built LSP before
