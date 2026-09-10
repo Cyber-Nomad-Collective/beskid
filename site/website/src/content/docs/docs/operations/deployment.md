@@ -32,11 +32,12 @@ to `cr.beskid-lang.org` and Watchtower is healthy.
 
 1. Open the successful AppVeyor build for the intended `main` commit.
 2. Record its build URL, full source SHA, and successful `linux-platform` job.
-3. Confirm all five immutable tags exist as `cr.beskid-lang.org/beskid/<lane>:sha-<full-sha>`.
-4. Confirm each controlled `production` tag resolves to the intended image.
-5. Inspect Watchtower logs for a successful reconciliation of `website`, `learn`, `tracker`, `nexus`, and `pckg`.
-6. Run the public health checks documented in [Health and monitoring](/docs/operations/health-and-monitoring/).
-7. Record the immutable tag, reconciliation timestamp, and public result for each service.
+3. Verify that `.appveyor-reports/platform-images.json` contains five immutable digest records matching the source SHA.
+4. Confirm all five immutable tags exist as `cr.beskid-lang.org/beskid/<lane>:sha-<full-sha>`.
+5. Confirm each controlled `production` tag resolves to the intended image.
+6. Inspect Watchtower logs for a successful reconciliation of `website`, `learn`, `tracker`, `nexus`, and `pckg`.
+7. Run the public health checks documented in [Health and monitoring](/docs/operations/health-and-monitoring/).
+8. Record the immutable tag, reconciliation timestamp, and public result for each service.
 
 ## Expected result
 
@@ -47,9 +48,11 @@ No CI job performed a production container action.
 ## Recovery
 
 If publication or health verification fails, preserve the AppVeyor URL, source
-SHA, image identity, Watchtower window, and failed endpoint status. Pause
-Watchtower if continued reconciliation is unsafe. The production operator can
-retag the last known-good immutable `sha-*` image as `production`; CI has no
+SHA, finalized image manifest when present, Watchtower window, and failed
+endpoint status. Promotion and promoter-cleanup failures occur after manifest
+finalization, so use that artifact to identify any partially advanced tag set.
+Pause Watchtower if continued reconciliation is unsafe. The production operator
+can retag the last known-good immutable `sha-*` image as `production`; CI has no
 authority to perform that recovery. Repeat the public health checks afterward.
 
 ## Next task

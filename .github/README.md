@@ -32,10 +32,12 @@ images to the private registry:
 - `cr.beskid-lang.org/beskid/pckg`
 
 The platform lane first pushes only `sha-<full-commit>` identities and records
-their registry digests. After live package publication succeeds, it pulls those
-immutable images and advances the five `production` tags; it never rebuilds for
-promotion. The resulting AppVeyor artifact contains exactly five digest-backed
-image records plus the source, build, and job identities. Pull requests, tags,
+their registry digests. After live package publication succeeds, it finalizes
+the AppVeyor artifact with exactly five digest-backed image records plus the
+source, build, and job identities. It then pulls those immutable images and
+advances the five `production` tags; it never rebuilds for promotion. A
+promotion or promoter-cleanup failure still fails the job, while the finalized
+artifact remains available for upload. Pull requests, tags,
 manual/API and scheduled builds, rebuilds, and incomplete-job reruns cannot
 mutate either registry. AppVeyor requires `REGISTRY_USERNAME`,
 `REGISTRY_PASSWORD`, and `BESKID_PCKG_API_KEY` as secure variables with

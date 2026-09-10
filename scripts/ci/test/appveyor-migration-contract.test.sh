@@ -145,23 +145,15 @@ if rg -n 'workflows:[[:space:]]*\[(Compiler|Platform delivery|Corelib and templa
 fi
 
 entrypoint_content="$(<"${ENTRYPOINT}")"
-rehearse_line="$(rg -n 'appveyor-package-publish\.sh rehearse' <<<"${entrypoint_content}" | cut -d: -f1)"
-images_line="$(rg -n 'appveyor-platform-publish\.sh' <<<"${entrypoint_content}" | cut -d: -f1)"
-packages_line="$(rg -n 'appveyor-package-publish\.sh publish' <<<"${entrypoint_content}" | cut -d: -f1)"
-promote_line="$(rg -n 'appveyor-platform-promote\.sh' <<<"${entrypoint_content}" | cut -d: -f1)"
-manifest_line="$(rg -n 'appveyor-image-manifest\.sh finalize' <<<"${entrypoint_content}" | cut -d: -f1)"
-if [[ -z "${rehearse_line}" ]] || [[ -z "${images_line}" ]] || [[ -z "${packages_line}" ]] ||
-   [[ -z "${promote_line}" ]] || [[ -z "${manifest_line}" ]] ||
-   (( rehearse_line >= images_line || images_line >= packages_line || packages_line >= promote_line || promote_line >= manifest_line )); then
-  fail "platform lane must publish immutable images, packages, then production tags and evidence"
-fi
 if ! rg -q '^set -euo pipefail$' <<<"${entrypoint_content}"; then
   fail "platform lane must fail before promotion when package publication fails"
 fi
 
 entrypoint_log="$(mktemp "${TMPDIR:-/tmp}/appveyor-entrypoint-test.XXXXXX")"
+package_failure_root="$(mktemp -d "${TMPDIR:-/tmp}/appveyor-package-failure-test.XXXXXX")"
 set +e
-ENTRYPOINT_UNDER_TEST="${ENTRYPOINT}" ENTRYPOINT_TEST_LOG="${entrypoint_log}" bash -c '
+ENTRYPOINT_UNDER_TEST="${ENTRYPOINT}" ENTRYPOINT_TEST_LOG="${entrypoint_log}" \
+  APPVEYOR_BUILD_FOLDER="${package_failure_root}" bash -c '
   source "${ENTRYPOINT_UNDER_TEST}"
   bash() {
     printf "%s\\n" "$*" >>"${ENTRYPOINT_TEST_LOG}"
@@ -179,6 +171,66 @@ rg -q '^scripts/ci/appveyor-package-publish\.sh publish$' "${entrypoint_log}" ||
   fail "package failure scenario did not reach live publication"
 if rg -q '^scripts/ci/appveyor-platform-promote\.sh$' "${entrypoint_log}"; then
   fail "package failure reached mutable image promotion"
+fi
+if [[ -f "${package_failure_root}/.appveyor-reports/platform-images.json" ]]; then
+  fail "package failure reached platform manifest finalization"
+fi
+
+promotion_failure_root="$(mktemp -d "${TMPDIR:-/tmp}/appveyor-promotion-failure-test.XXXXXX")"
+mkdir -p "${promotion_failure_root}/.appveyor-reports"
+cat >"${promotion_failure_root}/.appveyor-reports/platform-image-digests.tsv" <<'EOF'
+site	cr.beskid-lang.org/beskid/site:sha-0123456789abcdef0123456789abcdef01234567	cr.beskid-lang.org/beskid/site@sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+learn	cr.beskid-lang.org/beskid/learn:sha-0123456789abcdef0123456789abcdef01234567	cr.beskid-lang.org/beskid/learn@sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+tracker	cr.beskid-lang.org/beskid/tracker:sha-0123456789abcdef0123456789abcdef01234567	cr.beskid-lang.org/beskid/tracker@sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+nexus	cr.beskid-lang.org/beskid/nexus:sha-0123456789abcdef0123456789abcdef01234567	cr.beskid-lang.org/beskid/nexus@sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+pckg	cr.beskid-lang.org/beskid/pckg:sha-0123456789abcdef0123456789abcdef01234567	cr.beskid-lang.org/beskid/pckg@sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+EOF
+promotion_failure_log="${promotion_failure_root}/entrypoint.log"
+set +e
+# The inner shell expands the entrypoint harness variables.
+# shellcheck disable=SC2016
+run_isolated_appveyor_event main '' false false false false false \
+  ENTRYPOINT_UNDER_TEST="${ENTRYPOINT}" ENTRYPOINT_TEST_LOG="${promotion_failure_log}" \
+  APPVEYOR_REPO_COMMIT=0123456789abcdef0123456789abcdef01234567 \
+  APPVEYOR_BUILD_ID=42 APPVEYOR_BUILD_VERSION=1.0.42 APPVEYOR_JOB_ID=job-42 \
+  APPVEYOR_BUILD_FOLDER="${promotion_failure_root}" bash -c '
+  source "${ENTRYPOINT_UNDER_TEST}"
+  bash() {
+    printf "%s\\n" "$*" >>"${ENTRYPOINT_TEST_LOG}"
+    case "$*" in
+      "scripts/ci/appveyor-image-manifest.sh finalize")
+        command /bin/bash "$@"
+        ;;
+      "scripts/ci/appveyor-platform-promote.sh")
+        return 86
+        ;;
+    esac
+  }
+  pnpm() {
+    printf "pnpm %s\\n" "$*" >>"${ENTRYPOINT_TEST_LOG}"
+  }
+  run_linux_platform_lane
+' >/dev/null 2>&1
+promotion_failure_status=$?
+set -e
+[[ "${promotion_failure_status}" -eq 86 ]] || fail "cleanup-only promotion failure did not remain the platform lane result"
+promotion_failure_manifest="${promotion_failure_root}/.appveyor-reports/platform-images.json"
+[[ -f "${promotion_failure_manifest}" ]] || fail "cleanup-only promotion failure prevented platform manifest finalization"
+jq -e '
+  .source.sha == "0123456789abcdef0123456789abcdef01234567" and
+  .build.id == "42" and .build.version == "1.0.42" and .job.id == "job-42" and
+  ([.images[].lane] | sort) == ["learn", "nexus", "pckg", "site", "tracker"]
+' "${promotion_failure_manifest}" >/dev/null || fail "pre-promotion manifest does not retain the five immutable image records"
+
+rehearse_line="$(rg -n 'appveyor-package-publish\.sh rehearse' <<<"${entrypoint_content}" | cut -d: -f1)"
+images_line="$(rg -n 'appveyor-platform-publish\.sh' <<<"${entrypoint_content}" | cut -d: -f1)"
+packages_line="$(rg -n 'appveyor-package-publish\.sh publish' <<<"${entrypoint_content}" | cut -d: -f1)"
+promote_line="$(rg -n 'appveyor-platform-promote\.sh' <<<"${entrypoint_content}" | cut -d: -f1)"
+manifest_line="$(rg -n 'appveyor-image-manifest\.sh finalize' <<<"${entrypoint_content}" | cut -d: -f1)"
+if [[ -z "${rehearse_line}" ]] || [[ -z "${images_line}" ]] || [[ -z "${packages_line}" ]] ||
+   [[ -z "${promote_line}" ]] || [[ -z "${manifest_line}" ]] ||
+   (( rehearse_line >= images_line || images_line >= packages_line || packages_line >= manifest_line || manifest_line >= promote_line )); then
+  fail "platform lane must publish immutable images and packages, finalize evidence, then promote production tags"
 fi
 
 run_publisher() {
@@ -421,6 +473,7 @@ EOF
   cat >"${fake_bin}/rm" <<'EOF'
 #!/usr/bin/env bash
 printf '%s\n' "$*" >>"${RM_TEST_LOG}"
+[[ "${DOCKER_FAIL_REMOVE:-false}" != "true" ]] || exit 86
 exec /bin/rm "$@"
 EOF
   chmod +x "${fake_bin}/docker"
@@ -428,10 +481,13 @@ EOF
 
   set +e
   case "${scenario}" in
-    main)
+    main|cleanup-failure)
+      docker_fail_remove=false
+      [[ "${scenario}" != "cleanup-failure" ]] || docker_fail_remove=true
       run_isolated_appveyor_event main '' false false false false false \
         PATH="${fake_bin}:${PATH}" TMPDIR="${fake_bin}/tmp" DOCKER_CONFIG="${fake_bin}/ambient-docker-config" \
         DOCKER_TEST_LOG="${log}" DOCKER_CONFIG_TEST_LOG="${config_log}" DOCKER_MODE_TEST_LOG="${mode_log}" RM_TEST_LOG="${rm_log}" \
+        DOCKER_FAIL_REMOVE="${docker_fail_remove}" \
         APPVEYOR_REPO_COMMIT=0123456789abcdef0123456789abcdef01234567 \
         REGISTRY_USERNAME=test-user REGISTRY_PASSWORD=test-password \
         bash "${PROMOTER}" >/dev/null 2>&1
@@ -486,6 +542,18 @@ if rg -q '^buildx ' "${PROMOTER_LOG}"; then
   fail "promotion rebuilt images instead of consuming immutable tags"
 fi
 rg -q '^logout cr\.beskid-lang\.org$' "${PROMOTER_LOG}" || fail "promotion did not log out of the registry"
+
+run_promoter cleanup-failure
+[[ "${PROMOTER_STATUS}" -eq 86 ]] || fail "Docker config removal failure did not fail an otherwise successful promoter"
+[[ "$(rg -c '^push cr\.beskid-lang\.org/beskid/(site|learn|tracker|nexus|pckg):production$' "${PROMOTER_LOG}")" -eq 5 ]] || \
+  fail "cleanup-only promoter failure occurred before all five production pushes"
+[[ "$(rg -c '^logout cr\.beskid-lang\.org$' "${PROMOTER_LOG}")" -eq 1 ]] || \
+  fail "cleanup-only promoter failure did not log out exactly once"
+[[ "$(wc -l <"${PROMOTER_RM_LOG}" | tr -d ' ')" -eq 1 ]] || \
+  fail "cleanup-only promoter failure did not attempt Docker config removal exactly once"
+cleanup_failure_config="$(awk -F '|' '$2 ~ /^login / { print $1; exit }' "${PROMOTER_CONFIG_LOG}")"
+[[ -d "${cleanup_failure_config}" ]] || fail "cleanup-only promoter failure did not leave its target for inspection"
+/bin/rm -rf -- "${cleanup_failure_config}"
 
 assert_promotion_did_not_mutate() {
   local scenario="$1"

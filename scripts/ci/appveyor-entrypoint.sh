@@ -20,8 +20,8 @@ run_linux_platform_lane() {
   bash scripts/ci/appveyor-package-publish.sh rehearse
   bash scripts/ci/appveyor-platform-publish.sh
   bash scripts/ci/appveyor-package-publish.sh publish
-  bash scripts/ci/appveyor-platform-promote.sh
   bash scripts/ci/appveyor-image-manifest.sh finalize
+  bash scripts/ci/appveyor-platform-promote.sh
 }
 
 run_appveyor_lane() {

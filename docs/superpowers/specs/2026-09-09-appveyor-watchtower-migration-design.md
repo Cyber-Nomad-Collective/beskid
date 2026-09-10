@@ -63,12 +63,15 @@ Each build produces:
 Pull requests, tags, forks, and non-main branches never receive registry
 credentials and never push. Publisher and promoter login from
 environment-provided credentials through separate restrictive temporary Docker
-configurations; each logs out and removes its configuration before
-finalization. Logout or removal failure fails an otherwise successful script,
-while cleanup never replaces an earlier failure. Missing registry credentials
-fail the main publish lane closed. One sourced production library defines the
-registry, namespace, five lanes, and immutable/production refs consumed by the
-publisher, promoter, and manifest.
+configurations. The publisher logs out before live package publication. After
+that publication succeeds, AppVeyor finalizes the five immutable digest records
+before starting mutable promotion, so a promoter or promoter-cleanup failure
+cannot remove the evidence needed for artifact upload. Each registry script
+removes its configuration; logout or removal failure fails an otherwise
+successful script, while cleanup never replaces an earlier failure. Missing
+registry credentials fail the main publish lane closed. One sourced production
+library defines the registry, namespace, five lanes, and immutable/production
+refs consumed by the publisher, promoter, and manifest.
 
 The current implementation publishes lanes independently inside one
 `linux-platform` job so no mutable production tag appears until all platform

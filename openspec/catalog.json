@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "b62c82101854fd978b9da95e7d10ad33f7b1e430e8ea59ebe617ee22063fb332",
+  "revision": "516995a95ab3b3cd034ca081d88ec35908edeb1d737a1391b363a391ec0b137e",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
     "nodes": 1042,
     "capabilities": 198,
-    "requirements": 572,
+    "requirements": 573,
     "normativeSources": 304,
     "provisionalCapabilities": 52,
     "legacyArtifacts": 3189,
@@ -30247,6 +30247,17 @@
           "anchor": "requirement-platform-images-retain-immutable-identities"
         },
         {
+          "id": "BSP-REQ-A42726B27789",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/staged-delivery-observability/spec.md",
+          "sourceHash": "165036b26999130cbd6c72d156f669f7d0b7cf838544eae41316d91dc8cc072d",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Publication preserves source-build order",
+          "anchor": "requirement-publication-preserves-source-build-order"
+        },
+        {
           "id": "BSP-REQ-5FCBE0D9FF1D",
           "legacySlug": null,
           "sourcePath": "openspec/specs/staged-delivery-observability/spec.md",
@@ -38974,7 +38985,7 @@
       "path": "GLOSSARY.md",
       "title": "Glossary",
       "authority": "informative",
-      "sourceHash": "a6a5182cd61d336c95f421d974ce4fd98ca91f1f88ef4e380d9832f70fff898e",
+      "sourceHash": "d198403a34b5a115076ef9175cbbb108ef681e1748f692c9c2d6f78c659ada35",
       "standardLinks": [
         "/platform-spec/"
       ],
@@ -38985,7 +38996,7 @@
       "path": "GUIDE.md",
       "title": "Beskid project guide",
       "authority": "informative",
-      "sourceHash": "4338180a3934d3b50a1c4dbc845b2abbe251d0180e617ad3375038cc89370232",
+      "sourceHash": "e90fea7fea2b8a288266b055f5a41c88731535ad3d73e193447c1d2d6e88e94a",
       "standardLinks": [
         "/platform-spec/"
       ],

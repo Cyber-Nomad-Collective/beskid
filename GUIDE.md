@@ -71,9 +71,9 @@ selects it through `clang`; macOS and Windows keep their platform linkers.
 4. Let AppVeyor's `max_jobs: 1` project cap serialize builds through its FIFO
    queue. Within a build, complete all three required compiler jobs before the
    platform lane. Build and publish five immutable `sha-<commit>` images with
-   registry digests, publish packages successfully, then retag those exact
-   images as `production`; leave production reconciliation solely to
-   Watchtower.
+   registry digests, publish packages successfully, finalize the five-image
+   evidence, then retag those exact images as `production`; leave production
+   reconciliation solely to Watchtower.
 5. Run focused tests plus strict OpenSpec/provenance validation and GitNexus change detection before commit.
 6. Update `CHANGELOG.md`; update `GLOSSARY.md` when canonical terminology changes. Do not add `Co-authored-by` trailers.
 

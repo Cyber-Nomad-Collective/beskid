@@ -4,7 +4,7 @@
 
 **Goal:** Make AppVeyor the release-safe validation and publication authority for compiler, CLI/runtime-kit, platform images, and packages while Watchtower remains the only production reconciler.
 
-**Architecture:** AppVeyor's project-level `max_jobs: 1` cap uses its FIFO queue as the cross-build release sequencer. Three separate native compiler/CLI jobs form a serialized AppVeyor validation group. The Linux platform job fans in after that group, completes the remaining platform gates, pushes immutable image tags, publishes packages, then advances Watchtower-visible `production` tags and retains a digest manifest. One shared event-policy function authorizes every mutation and denies PRs, tags, manual/API builds, schedules, rebuilds, and incomplete reruns.
+**Architecture:** AppVeyor's project-level `max_jobs: 1` cap uses its FIFO queue as the cross-build release sequencer. Three separate native compiler/CLI jobs form a serialized AppVeyor validation group. The Linux platform job fans in after that group, completes the remaining platform gates, pushes immutable image tags, publishes packages, finalizes their digest manifest, and then advances Watchtower-visible `production` tags. One shared event-policy function authorizes every mutation and denies PRs, tags, manual/API builds, schedules, rebuilds, and incomplete reruns.
 
 **Tech Stack:** AppVeyor YAML, Bash, PowerShell, Docker Buildx, pnpm, Rust/Cargo, shell contract tests.
 
@@ -77,13 +77,13 @@
 
   Change `appveyor-platform-publish.sh` to build all five images, push only their `sha-*` tags on a trusted push, and write digest evidence. Add `appveyor-platform-promote.sh` that authenticates independently, pulls each immutable tag, retags it as `production`, and pushes it. Source one production library for the exact registry, namespace, five lanes, ref construction, and isolated temporary Docker credential lifecycle. Both scripts must call the shared event predicate, fail closed without credentials, and fail success on logout/removal failure without masking an earlier error or cleaning twice on signals.
 
-- [ ] **Step 4: Put package publication before promotion**
+- [ ] **Step 4: Put package publication and evidence before promotion**
 
-  Make the Linux platform entrypoint run: gates, package rehearsal, immutable image publication, live package publication, mutable image promotion, manifest finalization. A non-zero package result must stop the shell before promotion.
+  Make the Linux platform entrypoint run: gates, package rehearsal, immutable image publication, live package publication, manifest finalization, mutable image promotion. A non-zero package result must stop the shell before both manifest finalization and promotion. A promotion or promoter-cleanup failure must fail the job without preventing the already-finalized manifest from being uploaded as AppVeyor evidence.
 
 - [ ] **Step 5: Retain AppVeyor evidence**
 
-  Generate `.appveyor-reports/platform-images.json` with `APPVEYOR_BUILD_ID`, `APPVEYOR_BUILD_VERSION`, `APPVEYOR_JOB_ID`, full source SHA, registry namespace, and five digest-backed immutable image entries. Declare `.appveyor-reports/**` as an AppVeyor artifact for the Linux platform job. Do not treat AppVeyor artifacts as the durable image store.
+  Generate `.appveyor-reports/platform-images.json` after live package publication and before mutable promotion, with `APPVEYOR_BUILD_ID`, `APPVEYOR_BUILD_VERSION`, `APPVEYOR_JOB_ID`, full source SHA, registry namespace, and five digest-backed immutable image entries. Declare `.appveyor-reports/**` as an AppVeyor artifact for the Linux platform job. Do not treat AppVeyor artifacts as the durable image store.
 
 - [ ] **Step 6: Verify the slice**
 

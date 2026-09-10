@@ -96,6 +96,12 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Finalize the five-image AppVeyor digest manifest after live package
+  publication and before mutable-tag promotion, preserving artifact evidence
+  when promotion or promoter cleanup fails while keeping package failures ahead
+  of both finalization and promotion. Make FIFO project serialization a
+  normative delivery requirement so stale builds cannot move `production`
+  backward.
 - Route Learn's Authentik outpost callback before the public application
   upstream, and forward verified identity headers only when an existing proxy
   session is present. Signed-in compiler checks no longer remain at a pending

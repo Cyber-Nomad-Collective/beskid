@@ -13,14 +13,16 @@ deployment control plane.
    members of `compiler-validation` and complete one at a time before the
    `main` platform lane can run.
 2. The platform lane completes its gates, pushes all five
-   `sha-<commit>` immutable images, and retains exactly five registry-digest
-   records in its build artifact.
-3. CI publishes the live package release. Only a successful package result
-   permits it to pull those immutable images and advance their matching
-   `production` tags; promotion never rebuilds images.
-4. Watchtower polls every minute and restarts only services labelled
+   `sha-<commit>` immutable images, and records exactly five registry digests.
+3. CI publishes the live package release and finalizes those five digest records
+   as its build artifact. Package failure prevents both evidence finalization
+   and production promotion.
+4. CI pulls the immutable images and advances their matching `production` tags;
+   promotion never rebuilds images. Promotion or promoter-cleanup failure fails
+   the job but cannot remove the already-finalized artifact.
+5. Watchtower polls every minute and restarts only services labelled
    `com.centurylinklabs.watchtower.enable=true`.
-5. Operators observe Watchtower status and smoke the canonical production
+6. Operators observe Watchtower status and smoke the canonical production
    endpoints independently of CI.
 
 Only a new trusted `main` push has mutation authority. Pull requests, tags,

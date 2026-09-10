@@ -32,7 +32,7 @@ reachability, and the actual AppVeyor status context remain activation checks.
 | Root AppVeyor configuration owns four native lanes | `appveyor.yml` | One AppVeyor project can publish a single aggregate status. |
 | Project concurrency is capped at one job | `max_jobs: 1` in `appveyor.yml` | AppVeyor's FIFO project queue sequences builds so an older build cannot promote after a newer build. |
 | `linux-platform` depends on the compiler-validation job group | `appveyor.yml` | No platform publication starts before all three required compiler jobs succeed. |
-| The platform lane orders rehearsal, immutable images, live packages, promotion, then final manifest | `scripts/ci/appveyor-entrypoint.sh` | A live package failure stops before `production` movement. |
+| The platform lane orders rehearsal, immutable images, live packages, final manifest, then promotion | `scripts/ci/appveyor-entrypoint.sh` | Package failure prevents evidence finalization and `production` movement; promotion failure leaves finalized evidence for artifact upload. |
 | One library defines the registry, namespace, five lanes, and tag refs | `scripts/ci/lib/appveyor-platform-images.sh` | Publisher, promoter, and manifest cannot drift to different image identities. |
 | Immutable publication records each registry digest; promotion pulls and retags without rebuilding | `scripts/ci/appveyor-platform-publish.sh`, `scripts/ci/appveyor-platform-promote.sh`, `scripts/ci/appveyor-image-manifest.sh` | Exactly five digest-backed records bind the AppVeyor artifact to one source SHA. |
 | Publication is limited by a shared event predicate | `scripts/ci/lib/appveyor-event-policy.sh` | Fresh trusted `main` pushes only; rebuilds and incomplete reruns are denied. |
@@ -53,6 +53,7 @@ windows-compiler ┘                                  gates
                                                      build all five images
                                                      publish immutable tags
                                                      publish packages
+                                                     finalize digest evidence
                                                      advance production tags
 ```
 
@@ -79,17 +80,22 @@ Within `linux-platform`, the implemented mutation order is:
 3. authenticate to `cr.beskid-lang.org`;
 4. push all five immutable `sha-<full-commit>` tags;
 5. publish the corelib/templates package;
-6. move all five `production` tags to the already-pushed immutable images;
-7. finalize and upload a manifest containing AppVeyor build/job IDs, source SHA,
+6. finalize a manifest containing AppVeyor build/job IDs, source SHA,
    image names, immutable tags, and registry digests;
-8. use fresh restrictive temporary Docker configurations for publisher and
+7. move all five `production` tags to the already-pushed immutable images;
+8. upload the already-finalized manifest as an AppVeyor artifact even when
+   promotion or promoter cleanup fails; and
+9. use fresh restrictive temporary Docker configurations for publisher and
    promoter authentication, then log out and remove each configuration in a
    trap/finalizer; cleanup failure fails success but never replaces an earlier
    failure.
 
 The live package result deliberately precedes mutable-tag promotion. A missing
 or rejected `BESKID_PCKG_API_KEY` therefore stops the shell before Watchtower
-can observe a new `production` tag.
+can observe a new `production` tag and before the manifest claims package
+success. Finalizing the five immutable digest records before promotion preserves
+the intended-source evidence if promotion or promoter cleanup fails; the job
+still reports that failure.
 
 There is no atomic transaction spanning five independent image repositories.
 Watchtower can observe a partially advanced tag set if the worker stops during
@@ -307,7 +313,9 @@ enable publication or branch protection until they are observed:
    aggregate fan-in behavior.
 9. A trusted `main` proof shows compiler group success before the platform job,
    all immutable tags before package publication, package success before
-   `production` promotion, a complete digest manifest, and registry logout.
+   complete digest-manifest finalization, that manifest before `production`
+   promotion, artifact retention after a simulated promotion failure, and
+   registry logout.
 10. Rebuild, incomplete rerun, manual/API, scheduled, tag, non-main, and PR
     builds all prove zero mutation.
 11. Watchtower converges all five services to the same source SHA without CI
