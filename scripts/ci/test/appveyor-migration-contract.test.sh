@@ -116,7 +116,7 @@ ruby -e '
   end
   linux_compiler = matrix.find { |row| row.fetch("BESKID_CI_LANE") == "linux-compiler" }
   abort "linux compiler lane needs a cold-worker Clippy budget" unless linux_compiler["BESKID_CLIPPY_TIMEOUT"].to_i >= 3600
-  abort "linux compiler lane needs a runtime-kit budget" unless linux_compiler["BESKID_RUNTIME_KIT_TIMEOUT"].to_i >= 1200
+  abort "linux compiler lane needs a runtime-kit budget" unless linux_compiler["BESKID_RUNTIME_KIT_TIMEOUT"].to_i >= 3600
   editor_lanes = %w[vscode-extension zed-extension]
   editor_lanes.each do |lane|
     row = matrix.find { |candidate| candidate.fetch("BESKID_CI_LANE") == lane }
