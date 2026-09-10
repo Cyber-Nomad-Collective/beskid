@@ -76,11 +76,44 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Initialize the VS Code extension submodule in the platform integration gate
+  before enforcing the shared editor authoring-version contract, and assert
+  that membership without duplicating the workflow's ordered submodule list.
+- Package the compiled standalone BSOL Tree-sitter grammar alongside the
+  Beskid grammar so clean Zed loads can activate `.bsol`, `.bproj`, and `.bws`
+  language modes before the shared LSP adds semantic features.
 - Advance the compiler pin to the Rust 1.98-compatible strict Clippy cleanup,
   then restore its exact Corelib runtime-authority implementation for typed
-  arrays, atomic channels, and split fiber joins. This unblocks the clean hosted
-  compiler gate that publishes the stable LSP used by the VS Code and Zed
-  extensions without weakening fail-closed ABI checks.
+  arrays, atomic channels, split fiber joins, bottom-typed match arms, and
+  explicit Core.Args handoff. Derive native platform exports and loader fixtures
+  from their generated ABI authorities, and consolidate matrix completion
+  handling. Resolve Unix process-linked externs through the platform's actual
+  `RTLD_DEFAULT`, preventing Linux JIT workers from crashing while resolving
+  standard functions such as `sched_yield`. Admit only the four standard ELF
+  shared-linker startup imports for exact Linux context libraries while keeping
+  dynamic TLS, runtime, application, and static-archive dependencies
+  fail-closed. This unblocks the clean hosted compiler gate that publishes the
+  stable LSP used by the VS Code and Zed extensions without weakening ABI
+  checks. Keep the legacy `ref`-modifier regression anchored to its stable
+  pre-codegen rejection instead of obsolete parser-recovery wording. Declare
+  the Windows environment adapter's intentional `SetLastError` import in the
+  canonical BSOL runtime manifest, and use one raw-word fiber-state authority
+  plus the runtime-owned `FiberDone` transition instead of duplicating scheduler
+  record layout and source-enum representation in generated trampolines. Keep
+  the executable canonical-runtime JIT fixture aligned with that dependency
+  closure by resolving the manifest-owned, non-returning trap intrinsic. Read
+  linked-image export and import directories through the shared symbol inventory
+  so stripped PE DLLs retain exact ABI-v5 provenance instead of appearing to
+  have no symbols. Return completed generated fibers through the ABI-installed
+  scheduler return trampoline so current-fiber clearing and context switching
+  have one architecture-owned path on macOS and Linux. Make ABI-v5 builtin
+  generation idempotent across LF and CRLF checkouts so Windows builds cannot
+  append the 49 manifest-owned declarations twice. Isolate each synthetic
+  codegen source in its own scan root so workspace discovery cannot ingest
+  stale sources materialized by another lowering call or process. Re-enter
+  x86-64 fiber return trampolines through the ABI-specific alignment bridge,
+  and materialize virtual labels such as `<repl>` under a portable `.bd` leaf,
+  restoring hosted Linux scheduler execution and Windows REPL evaluation.
 - Use one exact stable authoring version across the Zed manifests and the VS
   Code package and lockfile, so real VSIX packaging fails closed on editor
   release drift instead of depending on a missing resolver. Restore compiler

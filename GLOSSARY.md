@@ -68,6 +68,13 @@ The exact stable semantic version shared by the Zed extension manifest, its
 Rust package manifest, and the VS Code package and lockfile identities. Release
 packaging validates this single authority before embedding an LSP binary.
 
+## Explicit JIT argument authority
+
+The one host-owned argument vector handed to an ABI-v5 JIT engine before it
+compiles code that uses `Core.Args`. The selected runtime kit copies the vector
+once through its generated UTF-8 or UTF-16 adapter; ambient process arguments,
+per-target reconstruction, and replacement after initialization are rejected.
+
 ## Bug-only GitHub synchronization
 
 Tracker integration in which GitHub Issues represents public bugs and their supported status/discussion fields only. Roadmap tasks, versions, workstreams, milestones, and deliverables remain in Tracker's SQLite domain model.
@@ -171,6 +178,13 @@ The ABI-v5 operation that validates a descriptor-backed `BeskidAllocationRequest
 ## Native runtime kit
 
 The installed ABI-v5 target/profile directory containing `abi.json` and matching static and shared artifacts for the single hosted Beskid runtime. A kit is usable only when its ABI, target, profile, layouts, sources, symbols, and hashes exactly match the compiled program.
+
+## Never / bottom type
+
+The semantic type of an expression that cannot return normally. During type
+joining, a `Never` branch contributes no value and therefore yields to any
+concrete sibling type; lowering terminates that control-flow path without
+inventing a merge value.
 
 ## Node SQLite adapter
 

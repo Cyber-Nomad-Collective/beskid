@@ -63,6 +63,8 @@ grep -Fxq '/grammars/bsol/' "${extension_gitignore}" || \
 [[ ! -e "${root}/.zed/languages/bsol/config.toml" ]] || fail 'duplicate .zed BSOL language configuration remains'
 [[ -f "${extension_root}/grammars/beskid.wasm" ]] || fail 'Zed package is missing grammars/beskid.wasm'
 [[ -s "${extension_root}/grammars/beskid.wasm" ]] || fail 'Zed grammar artifact is empty'
+[[ -f "${extension_root}/grammars/bsol.wasm" ]] || fail 'Zed package is missing grammars/bsol.wasm'
+[[ -s "${extension_root}/grammars/bsol.wasm" ]] || fail 'Zed BSOL grammar artifact is empty'
 [[ -s "${extension_root}/extension.wasm" ]] || fail 'Zed package is missing extension.wasm'
 [[ -f "${extension_root}/languages/beskid/config.toml" ]] || fail 'Zed package is missing the Beskid language configuration'
 [[ -f "${extension_root}/languages/bsol/config.toml" ]] || fail 'Zed package is missing the standalone BSOL language configuration'
