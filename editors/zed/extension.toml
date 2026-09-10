@@ -1,0 +1,44 @@
+id = "beskid"
+name = "Beskid"
+version = "0.4.598"
+schema_version = 1
+authors = [
+    "Beskid Maintainers",
+]
+description = "Beskid language support with LSP for the Zed editor."
+repository = "https://github.com/Cyber-Nomad-Collective/beskid"
+snippets = ["./snippets/beskid.json"]
+
+[lib]
+kind = "Rust"
+version = "0.7.0"
+
+[grammars.beskid]
+repository = "https://github.com/Cyber-Nomad-Collective/beskid_treesitter"
+commit = "d27b6f966f1d841de57f622804211a6dd9f9c64e"
+
+[grammars.bsol]
+repository = "https://github.com/Cyber-Nomad-Collective/beskid_bsol"
+commit = "f227b51ec3352fb449a8b9ffc3d1f07a74159bb9"
+path = "grammars/tree-sitter-bsol"
+
+[language_servers.beskid-lsp]
+name = "Beskid Language Server"
+languages = ["Beskid", "Beskid Manifest", "Beskid BSOL"]
+
+[language_servers.beskid-lsp.language_ids]
+"Beskid" = "beskid"
+"Beskid Manifest" = "beskid-manifest"
+"Beskid BSOL" = "bsol"
+
+[[capabilities]]
+kind = "process:exec"
+# Zed must match trusted configured paths and user-supplied arguments, which
+# cannot be enumerated for explicit overrides or versioned cached downloads.
+command = "*"
+args = ["**"]
+
+[[capabilities]]
+kind = "download_file"
+host = "github.com"
+path = ["Cyber-Nomad-Collective", "beskid_compiler", "releases", "download", "lsp-stable", "**"]

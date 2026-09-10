@@ -20,6 +20,7 @@ Beskid is an AOT-only programming language, compiler/runtime, core library, pack
 | `beskid_web_common/` | Published shared TypeScript packages shared by web applications |
 | `beskid_infra/` | Coolify Compose, OpenBao, monitoring, deployment helpers, and infrastructure docs |
 | `pckg/` | Package registry service and web client; browser identity is delegated to the shared Auth Hub |
+| `editors/zed/` | Registry-compatible Zed extension package, official Rust SDK adapter, language assets, snippets, and packaged grammar |
 | `beskid_vscode/`, `beskid_treesitter/`, `beskid_bsol/`, `beskid_distrib/`, `beskid_templates/` | Editor, grammar, BSOL, distribution, and template subprojects |
 | `site/auth/`, `site/learn/` | Shared GitHub OAuth hub and interactive learning application |
 | `appveyor.yml`, `scripts/ci/` | AppVeyor compiler fan-in, immutable-first platform publication, digest evidence, and provider-neutral local validation |
@@ -48,6 +49,9 @@ tests, and changelog as separate from the superrepo root.
 | Run the focused Corelib spine test | `BESKID_CORELIB_SPINE_SMOKE=1 just test-corelib-spine` |
 | Install compiler tools | `just replace` |
 | Rebuild VS Code extension | `just vscode` |
+| Build Zed extension component | `cargo build --release --target wasm32-wasip2 --manifest-path editors/zed/Cargo.toml` |
+| Verify Zed extension package | `bash scripts/ci/test/zed-extension-package.test.sh` |
+| Verify Zed language assets | `bash scripts/ci/test/zed-language-assets.test.sh` |
 | List root recipes | `just --list` |
 
 `just gate` deliberately does not run the compiler gate; AppVeyor runs the
@@ -87,6 +91,9 @@ selects it through `clang`; macOS and Windows keep their platform linkers.
 - Compiler implementation and Corelib sources live under `compiler/`; consult
   that nested repository before relying on release-specific implementation
   invariants.
+- `editors/zed/` is the single Zed registry package root. Root `.zed/` files
+  are repository editing preferences and developer tasks only; they must not
+  duplicate extension language manifests, queries, or grammar artifacts.
 - Tracker's SQLite model is delivery authority. Its GitHub synchronization is
   limited to the supported public bug surface.
 - AppVeyor is the validation and platform-image publication authority. Its

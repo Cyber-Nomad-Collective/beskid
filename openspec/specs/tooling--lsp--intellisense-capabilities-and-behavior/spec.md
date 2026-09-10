@@ -8,15 +8,30 @@ Normative LSP IntelliSense feature contract for Beskid editors.
 ## Requirements
 
 ### Requirement: Completion and project-aware IntelliSense
-Completion SHALL be provided for `.bd` and `.proj` documents. `.bd` candidates SHALL come from `beskid_analysis::services::completion_candidates`; `.proj` completion SHALL include manifest keywords and enum-like value suggestions. When `CompilationContext` resolves a `Project.proj` for the buffer path, `build_document_analysis_with_context` SHALL assemble via `ProgramAssembly`, resolve the entry unit with `ModuleIndex::resolve_entry_hir`, and expose `Resolution.module_imports` plus `ItemInfo.source_path` for cross-unit symbols. After a trailing `.` following a registered `use` alias, completion SHALL list public members from the aliased module path. On a `use` line, completion SHALL offer next path segments from assembly-known logical module paths.
+Completion SHALL be provided for `.bd`, `.bproj`, and `.bws` documents. `.bd` candidates SHALL come from `beskid_queries::completion_candidates`; `.bproj` and `.bws` completion SHALL include manifest keywords and enum-like value suggestions. Project-backed `.bd` IntelliSense SHALL assemble the current in-memory entry buffer through the shared `ProgramAssembly` prepare spine and expose generation-bound syntax facts for the resolved project. After a trailing `.` following a registered `use` alias, completion SHALL list public members from the aliased module path. While the member identifier is only partially typed, matching members SHALL remain available from a bounded owned dependency surface even when semantic lowering reports the expression as incomplete. A retained surface SHALL match both the current import's exact logical module path and its local binding; changing an import target while retaining its alias SHALL NOT expose members from the former target. The fallback surface SHALL be used only for imported-member completion; document symbols SHALL come from the recoverable current buffer, and diagnostics, rename, formatting, semantic tokens, navigation, and compilation SHALL NOT treat the fallback surface as current semantic authority. On a `use` line, completion SHALL offer next path segments from assembly-known logical module paths.
 
 #### Scenario: Member completion after use alias
 - **GIVEN** a `.bd` buffer with `use Std.System.IO` and a `CompilationContext` that resolves the project
 - **WHEN** the user requests completion after `IO.`
 - **THEN** candidates include public members from the aliased module path in the assembly `ModuleGraph`
 
+#### Scenario: Partial imported member keeps current-generation suggestions
+- **GIVEN** a `.bd` buffer where `Output.WriteLine` was edited to `Output.Wri`
+- **WHEN** the client publishes the changed document and requests completion after `Wri`
+- **THEN** candidates include `WriteLine`, document symbols reflect the changed buffer, and no stale dependency fallback is published as diagnostics or other semantic authority
+
+#### Scenario: Editing one open buffer preserves sibling completion
+- **GIVEN** two open `.bd` buffers import the same module and one already contains a partial member expression
+- **WHEN** the other buffer advances the shared workspace Salsa generation
+- **THEN** completion in the partial sibling still lists matching imported members from its owned dependency surface
+
+#### Scenario: Retargeted alias rejects former members
+- **GIVEN** a `.bd` buffer previously imported `Old.Tools as Api`
+- **WHEN** the current buffer changes the declaration to `New.Tools as Api` while semantic preparation is incomplete
+- **THEN** completion after `Api.` does not list members retained from `Old.Tools`
+
 ### Requirement: Hover, navigation, and references
-Hover SHALL return Markdown for resolved `.bd` symbols and `.proj` manifest tokens; hover ranges SHALL map through `SymbolLocation` and the declaring unit source when `ItemInfo.source_path` differs from the buffer path. Go to definition SHALL resolve to the declaration span for resolved `.bd` symbols (using `ItemInfo.source_path` for dependency units and canonicalizing via `Resolution.by_symbol`) and SHALL navigate `.proj` `path = "..."` dependencies to the target `Project.proj`. Go to declaration SHALL follow the same target resolution contract. Find references SHALL support resolved `.bd` symbols and `.proj` tokens; with `ProgramAssembly`, workspace references SHALL include non-entry units via `references_at_offset_workspace`, using shared `SymbolId` equality when available, and SHALL honor `includeDeclaration`.
+Hover SHALL return Markdown for resolved `.bd` symbols and `.bproj`/`.bws` manifest tokens; hover ranges SHALL map through generation-bound syntax locations and the declaring unit source. Go to definition SHALL resolve to the declaration span for resolved `.bd` symbols and SHALL navigate manifest `path = "..."` dependencies to the target `.bproj`. Go to declaration SHALL follow the same target resolution contract. Find references SHALL support resolved `.bd` symbols and manifest tokens; with `ProgramAssembly`, workspace references SHALL include non-entry units and SHALL honor `includeDeclaration`.
 
 #### Scenario: Cross-unit go-to-definition
 - **GIVEN** a resolved symbol whose `ItemInfo.source_path` points at a dependency unit
@@ -24,7 +39,7 @@ Hover SHALL return Markdown for resolved `.bd` symbols and `.proj` manifest toke
 - **THEN** the LSP returns a `file://` location for the dependency unit declaration span
 
 ### Requirement: Rename, signature help, symbols, and tokens
-Rename and prepare rename SHALL be supported for resolved symbols and manifest tokens with identifier validation (`[A-Za-z_][A-Za-z0-9_]*`); invalid identifiers SHALL return no rename edit. Rename remains single-document per request. Signature help SHALL be supported for `.bd` call sites with one active signature derived from the callable hover payload. Document symbols SHALL be supported for `.bd` and `.proj` with stable symbol-kind mapping. Workspace symbols SHALL be supported for indexed `.bd` documents from open buffers plus closed-file workspace snapshots. Semantic tokens SHALL be supported in full-document mode with declaration tagging.
+Rename and prepare rename SHALL be supported for resolved symbols and manifest tokens with identifier validation (`[A-Za-z_][A-Za-z0-9_]*`); invalid identifiers SHALL return no rename edit. Rename remains single-document per request. Signature help SHALL be supported for `.bd` call sites with one active signature derived from the callable hover payload. Document symbols SHALL be supported for `.bd`, `.bproj`, and `.bws` with stable symbol-kind mapping. Workspace symbols SHALL be supported for indexed `.bd` documents from open buffers plus closed-file workspace snapshots. Semantic tokens SHALL be supported in full-document mode with declaration tagging.
 
 #### Scenario: Invalid rename identifier rejected
 - **GIVEN** a resolved symbol at the cursor
@@ -64,21 +79,21 @@ The records below preserve migration history and are not normative except where 
 ``````markdown
 ## What this covers
 
-This page defines the concrete IntelliSense behavior exposed by Beskid LSP to editors for `.bd` and `.proj` files. The contract is implementation-grounded and describes current supported behavior, limits, and compatibility expectations.
+This page defines the concrete IntelliSense behavior exposed by Beskid LSP to editors for `.bd`, `.bproj`, and `.bws` files. The contract is implementation-grounded and describes current supported behavior, limits, and compatibility expectations.
 
 ## Normative feature surface
 
-1. **Completion** shall be provided for `.bd` and `.proj` documents. `.bd` completion candidates come from `beskid_analysis::services::completion_candidates(snapshot, source_text, offset)`; `.proj` completion includes manifest keywords and enum-like value suggestions.
-2. **Project-aware `.bd` IntelliSense** — When `CompilationContext` resolves a `Project.proj` for the buffer path, `build_document_analysis_with_context` **shall** assemble via `ProgramAssembly`, resolve the entry unit with `ModuleIndex::resolve_entry_hir`, and expose `Resolution.module_imports` plus `ItemInfo.source_path` for cross-unit symbols.
+1. **Completion** shall be provided for `.bd`, `.bproj`, and `.bws` documents. `.bd` completion candidates come from `beskid_queries::completion_candidates`; manifest completion includes keywords and enum-like value suggestions.
+2. **Project-aware `.bd` IntelliSense** — When `CompilationContext` resolves a `.bproj` for the buffer path, the LSP **shall** assemble the exact open-buffer input via `ProgramAssembly`, register one current syntax generation in the shared Salsa database, and expose generation-bound cross-unit facts.
 3. **Member completion after import aliases** — After a trailing `.` following a registered `use` alias (for example `IO.` after `use Std.System.IO`), completion **shall** list public members from the aliased module path in the assembly `ModuleGraph`.
 4. **`use` path completion** — On a `use` line, completion **shall** offer next path segments from assembly-known logical module paths (`assembly_module_paths` / `ModuleGraph`).
-5. **Hover** shall return Markdown content for resolved `.bd` symbols and manifest tokens in `.proj`. The hover **range** shall use [`SymbolLocation`](compiler/crates/beskid_analysis/src/services/document.rs) and the declaring unit's source text when `ItemInfo.source_path` differs from the buffer path (same cross-file mapping as go-to-definition). Hover ranges **shall** map through `SymbolLocation` and the target unit source when `ItemInfo.source_path` differs from the buffer path (same cross-file range contract as go-to-definition).
-6. **Go to definition** shall resolve to the declaration span for resolved symbols in `.bd`, using `ItemInfo.source_path` when set so the LSP returns a `file://` URI for dependency units; item targets **shall** be canonicalized through `Resolution.by_symbol` (`canonical_item_id`) before locating `ItemInfo`. In `.proj`, `path = "..."` dependency values shall navigate to the target `Project.proj`.
+5. **Hover** shall return Markdown content for resolved `.bd` symbols and manifest tokens in `.bproj`/`.bws`. Hover ranges **shall** use the declaring unit's generation-bound syntax span and source path.
+6. **Go to definition** shall resolve to the declaration span for resolved symbols in `.bd`, returning a `file://` URI for dependency units. In `.bproj`/`.bws`, `path = "..."` dependency values shall navigate to the target manifest.
 7. **Go to declaration** shall be supported and shall follow the same target resolution contract as go-to-definition.
-8. **Find references** shall be supported for resolved `.bd` symbols and manifest tokens in `.proj`; when `CompilationContext` provides `ProgramAssembly`, workspace references **shall** include matches from non-entry units via `references_at_offset_workspace` (dependency units resolved with `ModuleIndex::resolve_unit_hir`); reference equality for exportable symbols **shall** use shared **`SymbolId`** from `SymbolRegistry` when available, not raw **`ItemId`** equality across per-unit resolutions; declaration inclusion shall follow the `includeDeclaration` request flag.
+8. **Find references** shall be supported for resolved `.bd` symbols and manifest tokens in `.bproj`/`.bws`; when `CompilationContext` provides `ProgramAssembly`, workspace references **shall** include matches from non-entry units; declaration inclusion shall follow the `includeDeclaration` request flag.
 9. **Rename + prepare rename** shall be supported for resolved symbols and manifest tokens with identifier validation (`[A-Za-z_][A-Za-z0-9_]*`); invalid identifiers shall return no rename edit. Rename remains **single-document** per request even when workspace references span multiple files.
 10. **Signature help** shall be supported for `.bd` call sites and return one active signature derived from the callable hover payload.
-11. **Document symbols** shall be supported for `.bd` and `.proj` with stable symbol-kind mapping.
+11. **Document symbols** shall be supported for `.bd`, `.bproj`, and `.bws` with stable symbol-kind mapping.
 12. **Workspace symbols** shall be supported for indexed `.bd` documents from open buffers plus closed-file workspace snapshots.
 13. **Code actions** shall include source formatting for `.bd`, a quick-fix for unused imports (`W1503`) when diagnostic context is present, and documentation actions (generate / update `///` stubs with `@arg` / `@returns` / `@variant` / `@par` where applicable, plus quick fixes tied to documentation warnings **W1610–W1615** and **W1620–W1625**) implemented in `beskid_lsp::features::code_actions::handler` using `beskid_analysis::doc::doc_comment_edit_for_offset`.
 14. **Semantic tokens** shall be supported (full-document mode) with declaration tagging for symbol declarations.

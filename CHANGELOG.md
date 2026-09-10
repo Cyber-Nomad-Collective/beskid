@@ -9,40 +9,17 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ## [Unreleased]
 
-### Security
-
-- Authenticate Watchtower to the private Beskid registry through a generated,
-  administrator-only Docker client configuration sourced from OpenBao or the
-  ignored production environment.
-
-### Changed
-
-- Document the release-safe AppVeyor authority model: compiler-validation fan-in,
-  immutable digest-backed image publication, live package success before
-  production retagging, replay-event denial, and Watchtower-only eventual
-  production reconciliation. Record the pending hosted-timeout and private
-  nested-submodule activation proofs.
-- Serialize AppVeyor jobs and builds through the project FIFO queue to prevent
-  cross-build production rollback, retaining the three required compiler jobs
-  and the 60-minute per-job/BYOC activation proof. Centralize the exact five
-  platform image identities and tag construction in one sourced library.
-
 ### Added
 
-- Document the AppVeyor-native fit for Beskid's private-registry and
-  Watchtower deployment model, including release-blocking fan-in and rebuild
-  protections, project settings, private-submodule policy, evidence retention,
-  hosted-worker limits, and the required live-proof checklist.
-- Add a repository-owned four-lane AppVeyor pipeline for Linux platform and
-  compiler validation plus native macOS and Windows compiler/runtime-kit
-  evidence. Add a migration contract, provider-native entrypoints, account
-  activation questionnaire, research record, and public migration article.
-- Document the official AppVeyor capability and migration research, including
-  required proof builds for native workers, Buildx/GHCR, submodules, status
-  contexts, account capacity, and GitHub Actions-only semantics.
-- Add a platform-aware Rust build toolchain: `cargo-binstall` installs prebuilt
-  contributor and CI tools on macOS, Linux, and Windows. Linux CI pins `mold`,
-  and one shared Cargo configuration selects it for Linux builds.
+- VS Code extension: register standalone `.bsol` documents through the same
+  grammar, language configuration, and native LSP client used for `.bproj` and
+  `.bws`, including incremental completion, hover, diagnostics, and semantic
+  highlighting.
+- Zed extension: register standalone `.bsol` documents with the existing
+  `beskid_lsp` adapter for generic diagnostics, `@schemaless` completion,
+  hover help, and highlighting from the pinned nested BSOL grammar.
+- Zed extension: add outlines, indentation and bracket queries, pinned CLI
+  runnable tasks, declaration snippets, and grammar-validated fixtures.
 - Add a checked-in documentation coverage catalogue for 52 non-compiler
   technical Docs routes. Map each public surface to one audience, source
   boundary, page kind, diagram policy, page, and navigation leaf. Add focused
@@ -92,9 +69,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Security
 
-- Isolate AppVeyor registry authentication in temporary restrictive Docker
-  configurations. Treat logout/removal failure as a failed successful run,
-  preserve earlier publication failures, and clean only once on signals.
+- Authenticate Watchtower to the private Beskid registry through a generated,
+  administrator-only Docker client configuration sourced from OpenBao or the
+  ignored production environment.
 - Require native htpasswd authentication at the production OCI registry and
   deploy its ignored credential separately with restrictive host permissions.
   Keep Authentik as the sole browser-authentication path and remove the retired
@@ -102,12 +79,99 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
-- Finalize the five-image AppVeyor digest manifest after live package
-  publication and before mutable-tag promotion, preserving artifact evidence
-  when promotion or promoter cleanup fails while keeping package failures ahead
-  of both finalization and promotion. Make FIFO project serialization a
-  normative delivery requirement so stale builds cannot move `production`
-  backward.
+- Advance the compiler pin to complete x86-64 Linux fibers through generated
+  tail transfers, preserving CET shadow-stack state while keeping scheduler
+  completion and the manifest-owned context switch as single authorities.
+- Initialize the VS Code extension submodule in the platform integration gate
+  before enforcing the shared editor authoring-version contract, and assert
+  that membership without duplicating the workflow's ordered submodule list.
+- Package the compiled standalone BSOL Tree-sitter grammar alongside the
+  Beskid grammar so clean Zed loads can activate `.bsol`, `.bproj`, and `.bws`
+  language modes before the shared LSP adds semantic features.
+- Advance the compiler pin to the Rust 1.98-compatible strict Clippy cleanup,
+  then restore its exact Corelib runtime-authority implementation for typed
+  arrays, atomic channels, split fiber joins, bottom-typed match arms, and
+  explicit Core.Args handoff. Derive native platform exports and loader fixtures
+  from their generated ABI authorities, and consolidate matrix completion
+  handling. Resolve Unix process-linked externs through the platform's actual
+  `RTLD_DEFAULT`, preventing Linux JIT workers from crashing while resolving
+  standard functions such as `sched_yield`. Admit only the four standard ELF
+  shared-linker startup imports for exact Linux context libraries while keeping
+  dynamic TLS, runtime, application, and static-archive dependencies
+  fail-closed. This unblocks the clean hosted compiler gate that publishes the
+  stable LSP used by the VS Code and Zed extensions without weakening ABI
+  checks. Keep the legacy `ref`-modifier regression anchored to its stable
+  pre-codegen rejection instead of obsolete parser-recovery wording. Declare
+  the Windows environment adapter's intentional `SetLastError` import in the
+  canonical BSOL runtime manifest, and use one raw-word fiber-state authority
+  plus the runtime-owned `FiberDone` transition instead of duplicating scheduler
+  record layout and source-enum representation in generated trampolines. Keep
+  the executable canonical-runtime JIT fixture aligned with that dependency
+  closure by resolving the manifest-owned, non-returning trap intrinsic. Read
+  linked-image export and import directories through the shared symbol inventory
+  so stripped PE DLLs retain exact ABI-v5 provenance instead of appearing to
+  have no symbols. Return completed generated fibers through the ABI-installed
+  scheduler return trampoline so current-fiber clearing and context switching
+  have one architecture-owned path on macOS and Linux. Make ABI-v5 builtin
+  generation idempotent across LF and CRLF checkouts so Windows builds cannot
+  append the 49 manifest-owned declarations twice. Isolate each synthetic
+  codegen source in its own scan root so workspace discovery cannot ingest
+  stale sources materialized by another lowering call or process. Re-enter
+  x86-64 fiber return trampolines through the ABI-specific alignment bridge,
+  and materialize virtual labels such as `<repl>` under a portable `.bd` leaf,
+  restoring hosted Linux scheduler execution and Windows REPL evaluation.
+- Use one exact stable authoring version across the Zed manifests and the VS
+  Code package and lockfile, so real VSIX packaging fails closed on editor
+  release drift instead of depending on a missing resolver. Restore compiler
+  manifests after binary stamping and support the declared Intel macOS VSIX
+  target so packaging does not mutate source or fail that release lane.
+- VS Code extension: replace the manifest-key allowlist with structural BSOL
+  TextMate scopes, remove unsupported configuration formatting/comment claims,
+  and preseed extension-host tests with the exact locally built LSP before
+  activation. The Open VSX gate now runs lint, unit, smoke, and one Linux
+  extension-host lane under an explicit Node 24 runtime.
+- Compiler delivery: represent explicitly public manifest builtins with one
+  typed lowering fact, while privileged Corelib services remain capability
+  gated and stale ABI-v4 shapes cannot request imports. Generate exact public
+  signatures and floating ABI slots from ABI v5, collect external callees in
+  one traversal, keep Win32 provenance classification exact, and lower raw byte
+  stores at one-byte width so numeric interpolation cannot overwrite adjacent
+  UTF-8 bytes. Keep `just replace` bound to Just's resolved workspace root so a
+  successful release build installs the CLI, LSP, and native runtime kit.
+- Keep Beskid LSP member suggestions available while an imported member
+  expression is only partially typed in VS Code or Zed. The current buffer owns
+  its recoverable outline and a bounded imported-member surface keyed by exact
+  module path and alias. Same-document text synchronization stays ordered while
+  separate buffers proceed independently; debounced full diagnostics release
+  Salsa after assembly and use cache-isolated downstream analysis. Other syntax
+  facts and diagnostic publication remain exact-version guarded.
+
+- Beskid IntelliSense: preserve the prepared assembly generation when building
+  LSP syntax facts and synchronize the JSON-RPC completion test on scan-idle
+  plus versioned document diagnostics.
+- Beskid IntelliSense: advertise `@` as a completion trigger so the shared
+  standalone-BSOL provider offers `@schemaless` naturally in Zed and VS Code.
+- Zed extension: package the generated BSOL parser, ignore Zed's generated
+  grammar checkout, and require the stable LSP release assets before registry
+  publication.
+- Zed extension: reject directories, symlinks, and other non-regular cached
+  entries instead of returning them as executable language-server paths.
+- Zed extension: bind registry publication to a matching manifest tag and the
+  successful three-platform stable LSP release for the pinned compiler commit,
+  while allowing staged BSOL gitlink updates to pass their package contract.
+- Zed extension: correct the registry gitlink path, remove invalid tag-less
+  publication dispatch, and document the initial registry submission metadata.
+- Zed extension: pin the reviewed registry action source, reduce its repository
+  token to read-only contents access, and validate SDK metadata as parsed TOML.
+- Zed extension: reuse the complete canonical BSOL Tree-sitter grammar for
+  `.bsol`, `.bproj`, and `.bws`, and parse every production schema fixture in
+  the language-assets gate so highlighting cannot silently drift to a subset.
+- Beskid LSP: emit canonical-parser-backed semantic tokens for block kinds and
+  configuration keys across `.bsol`, `.bproj`, and `.bws`, while invalid BSOL
+  continues to fail closed without partial semantic facts.
+- Compiler delivery: advance the embedded compiler through the guarded-stack
+  harness, recursive generic-array surface, and canonical Corelib gate fixes,
+  restoring the full 67-entry Corelib matrix required by stable LSP releases.
 - Route Learn's Authentik outpost callback before the public application
   upstream, and forward verified identity headers only when an existing proxy
   session is present. Signed-in compiler checks no longer remain at a pending
@@ -173,16 +237,15 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 - Move root validation and five platform-image builds from GitHub Actions and
   Blacksmith to AppVeyor. Trusted `main` builds publish immutable `sha-*` and
-  controlled `production` tags only to `cr.beskid-lang.org`; Watchtower is the
-  sole production reconciliation authority. Keep GitHub Actions only for
-  explicit GitHub-native releases, distribution, editor-marketplace publishing,
-  security, and maintenance. Move Corelib/template publication to the trusted
-  AppVeyor platform lane, rename its pckg automation subject, and require
-  AppVeyor build evidence at compiler release dispatch.
-- Provision `mold` in every Linux CI and container build surface that consumes
-  the compiler Cargo configuration, while preserving the existing macOS and
-  Windows linkers. Install pinned `sccache` with `cargo-binstall` instead of a
-  bespoke archive download.
+  controlled `production` tags only to `cr.beskid-lang.org`; Watchtower remains
+  the sole production reconciliation authority.
+- Zed extension: move the complete package into the dedicated `editors/zed`
+  crate and use `zed_extension_api` 0.7.0 with `wasm32-wasip2`.
+- Run release-critical compiler and LSP Windows/macOS gates on Blacksmith so a
+  locked GitHub-hosted runner account cannot suppress stable release assets.
+- Zed extension: keep one DRY native LSP adapter for Beskid source, manifests,
+  and standalone BSOL; resolve configured/PATH servers before the guarded
+  versioned `lsp-stable` download and forward settings without reinterpretation.
 - Separate product-use guides from service-operation guides. Keep deployment
   ownership, service inventory, and authentication topology under
   reconciliation while their tracked authorities disagree.
@@ -296,10 +359,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Removed
 
-- Remove the superseded GitHub Compiler, Corelib, Tracker, platform-delivery,
-  reusable image/promotion/manifest, and Blacksmith handoff workflows together
-  with their uncalled platform-manifest, promotion, signing, and CI-side
-  production-polling scripts.
+- Zed extension: remove duplicate root and `.zed` language/grammar package
+  paths; `editors/zed` is the single implementation.
 - Authelia’s runtime, file-user database, asset overrides, and deployment
   contract. Browser authentication now has one Authentik implementation.
 

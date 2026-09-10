@@ -35,7 +35,7 @@ jobs:
     if: >-
       github.event.workflow_run.conclusion == 'success' &&
       github.event.workflow_run.head_branch == 'main'
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     outputs:
       enabled: ${{ steps.check.outputs.enabled }}
     steps:
@@ -94,7 +94,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-latest
+          - os: blacksmith-4vcpu-ubuntu-2404
             label: linux-x64
             platform: linux-x64
             bin_name: beskid_lsp
@@ -141,6 +141,10 @@ jobs:
         with:
           targets: ${{ matrix.rust_target }}
 
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: "24"
+
       - uses: ./.github/actions/setup-rust-build-tools
         if: runner.os == 'Linux'
 
@@ -168,6 +172,8 @@ jobs:
       # Native gates — output streams directly to the job log.
       - name: VS Code extension gate
         shell: bash
+        env:
+          BESKID_VSCODE_RUN_EXTENSION_HOST: ${{ matrix.platform == 'linux-x64' && '1' || '0' }}
         run: bash ./scripts/ci/vscode-gate.sh
 
       - name: Compiler Rust gate
