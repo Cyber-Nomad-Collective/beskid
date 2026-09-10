@@ -14,6 +14,7 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Keep AppVeyor's native compiler runtime lane within the one-hour worker cap by isolating runtime-kit staging from the full local workspace-test phase.
 - Add a Buildkite validation pipeline that reuses the canonical AppVeyor lane scripts without publication authority.
 - Keep Linux runtime validation within the hosted worker budget by avoiding a duplicate matrix rebuild after canonical host-kit staging.
+- Run the LSP command contract in the editor lane only, avoiding a second full Rust dependency build in Linux runtime validation.
 
 ### Added
 

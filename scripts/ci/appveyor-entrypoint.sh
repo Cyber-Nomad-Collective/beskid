@@ -39,7 +39,6 @@ run_appveyor_lane() {
       ;;
     linux-compiler-runtime)
       bash scripts/ci/compiler-rust-gate.sh runtime-kit
-      bash scripts/ci/lsp-command-contract-gate.sh
       ;;
     macos-compiler)
       bash scripts/ci/appveyor-macos-cross-gate.sh
