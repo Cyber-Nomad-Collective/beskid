@@ -10,47 +10,36 @@ API documentation, build-image catalogue, or AppVeyor-hosted project status.
 
 AppVeyor fits beskid well as the **validation and publication authority**, but
 it should not be configured as a production deployment environment. The
-checked-in design is directionally correct: native workers run the gates,
-trusted `main` builds push images to `cr.beskid-lang.org`, `deploy` stays off,
-and Watchtower is the only component that changes production containers.
+repository implementation now expresses the intended authority boundary: the
+three compiler jobs form `compiler-validation`, `linux-platform` fans in after
+their success, `deploy` stays off, immutable images are published before
+packages and mutable tags, and Watchtower alone changes production containers.
+The shared event predicate denies rebuilds and incomplete-job reruns as well as
+pull requests, tags, forced/manual/API builds, schedules, and non-`main`
+events. ([Job workflows](https://www.appveyor.com/docs/job-workflows/),
+[Environment variables](https://www.appveyor.com/docs/environment-variables/))
 
-There are two release-blocking gaps in the current implementation:
-
-1. The four matrix jobs are independent. `linux-platform` can push the five
-   mutable `production` tags before the Linux compiler, macOS compiler, and
-   Windows compiler jobs have passed. AppVeyor explicitly provides
-   `job_group`/`job_depends_on` fan-in for the case “deploy once all tests
-   running in parallel are finished.” The three compiler jobs should form a
-   `compiler-validation` group and `linux-platform` should depend on that
-   group. ([Job workflows](https://www.appveyor.com/docs/job-workflows/))
-2. The repository trust predicate excludes pull requests, tags, forced builds,
-   and scheduled builds, but AppVeyor separately identifies rebuilds and
-   incomplete-job reruns through `APPVEYOR_RE_BUILD` and
-   `APPVEYOR_RE_RUN_INCOMPLETE`. Exclude both before any registry or package
-   mutation if the contract is literally “a new trusted push to `main` only.”
-   ([Environment variables](https://www.appveyor.com/docs/environment-variables/))
-
-The first gap is especially important: AppVeyor considers the build successful
-only when its required jobs succeed, but that aggregate result does not defer a
-side effect performed inside one independent matrix job. AppVeyor's job
-workflow must express the ordering. ([Build matrix](https://www.appveyor.com/docs/build-configuration/#build-matrix),
-[job workflows](https://www.appveyor.com/docs/job-workflows/))
+This is repository evidence, not a live account proof. Hosted timeout,
+worker-image availability, private nested-submodule authentication, registry
+reachability, and the actual AppVeyor status context remain activation checks.
 
 ## Codebase facts
 
 | Fact | Repository evidence | Consequence |
 |---|---|---|
 | Root AppVeyor configuration owns four native lanes | `appveyor.yml` | One AppVeyor project can publish a single aggregate status. |
-| `linux-platform` currently validates, builds five images, pushes both tag classes, then publishes packages | `scripts/ci/appveyor-entrypoint.sh`, `scripts/ci/appveyor-platform-publish.sh` | Publication can precede success of the other native jobs. |
-| Publication is limited by a shared event predicate | `scripts/ci/lib/appveyor-event-policy.sh` | Good single policy seam, but it needs the two rebuild variables. |
+| `linux-platform` depends on the compiler-validation job group | `appveyor.yml` | No platform publication starts before all three required compiler jobs succeed. |
+| The platform lane orders rehearsal, immutable images, live packages, promotion, then final manifest | `scripts/ci/appveyor-entrypoint.sh` | A live package failure stops before `production` movement. |
+| Immutable publication records each registry digest; promotion pulls and retags without rebuilding | `scripts/ci/appveyor-platform-publish.sh`, `scripts/ci/appveyor-platform-promote.sh`, `scripts/ci/appveyor-image-manifest.sh` | Exactly five digest-backed records bind the AppVeyor artifact to one source SHA. |
+| Publication is limited by a shared event predicate | `scripts/ci/lib/appveyor-event-policy.sh` | Fresh trusted `main` pushes only; rebuilds and incomplete reruns are denied. |
 | AppVeyor's deployment phase is disabled | `deploy: false` in `appveyor.yml` | Correct for Watchtower-only production ownership. |
 | Private submodules are initialized from build scripts | `scripts/ci/appveyor-install.sh`, `.gitmodules` | Authentication must work after AppVeyor's root clone on every OS. |
-| No AppVeyor artifact or cache declaration exists | `appveyor.yml` | Logs are the only AppVeyor-native evidence today; no durable digest manifest is uploaded. |
+| Linux platform artifacts include `.appveyor-reports/**` | `appveyor.yml`, `scripts/ci/appveyor-image-manifest.sh` | The build retains five digest-backed image records; the registry remains the durable artifact store. |
 | The public AppVeyor badge currently reports `failing` | [AppVeyor-hosted badge](https://ci.appveyor.com/api/projects/status/github/Cyber-Nomad-Collective/beskid?svg=true) | A project is connected, but a green proof build and authenticated settings audit are still required. |
 
-## Recommended AppVeyor job topology
+## Implemented AppVeyor job topology
 
-Use one project and one repository-owned `appveyor.yml`:
+The repository uses one project and one repository-owned `appveyor.yml`:
 
 ```text
 linux-compiler  ─┐
@@ -76,7 +65,7 @@ isolated per matrix job, so splitting “build images” and “publish images�
 different hosted VM jobs would require an explicit artifact/registry handoff,
 not a cache. ([Build cache](https://www.appveyor.com/docs/build-cache/))
 
-Within `linux-platform`, the safest mutation order is:
+Within `linux-platform`, the implemented mutation order is:
 
 1. complete every platform gate and package dry run;
 2. build all five images locally;
@@ -84,20 +73,21 @@ Within `linux-platform`, the safest mutation order is:
 4. push all five immutable `sha-<full-commit>` tags;
 5. publish the corelib/templates package;
 6. move all five `production` tags to the already-pushed immutable images;
-7. write and upload a manifest containing AppVeyor build/job IDs, source SHA,
-   package version, image names, immutable tags, and registry digests;
+7. finalize and upload a manifest containing AppVeyor build/job IDs, source SHA,
+   image names, immutable tags, and registry digests;
 8. log out in a trap/finalizer.
 
-Step 5 should precede mutable-tag promotion. In the current order, production
-tags can move and Watchtower can deploy them before a missing or rejected
-`BESKID_PCKG_API_KEY` makes the AppVeyor job fail.
+The live package result deliberately precedes mutable-tag promotion. A missing
+or rejected `BESKID_PCKG_API_KEY` therefore stops the shell before Watchtower
+can observe a new `production` tag.
 
 There is no atomic transaction spanning five independent image repositories.
 Watchtower can observe a partially advanced tag set if the worker stops during
 step 6. AppVeyor cannot remove this registry/Watchtower limitation. The practical
 contract is **eventual convergence with one immutable source SHA**, proved by
-the digest manifest and an idempotent rerun procedure; do not give CI control of
-Watchtower merely to hide this limitation.
+the digest manifest and operator observation; CI must not gain Watchtower
+control merely to hide this limitation. Rebuild and incomplete-rerun events are
+denied mutation authority rather than being used as a convergence mechanism.
 
 ## Exact project and account settings
 

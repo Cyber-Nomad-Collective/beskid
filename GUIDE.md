@@ -22,7 +22,7 @@ Beskid is an AOT-only programming language, compiler/runtime, core library, pack
 | `pckg/` | Package registry service and web client; browser identity is delegated to the shared Auth Hub |
 | `beskid_vscode/`, `beskid_treesitter/`, `beskid_bsol/`, `beskid_distrib/`, `beskid_templates/` | Editor, grammar, BSOL, distribution, and template subprojects |
 | `site/auth/`, `site/learn/` | Shared GitHub OAuth hub and interactive learning application |
-| `appveyor.yml`, `scripts/ci/` | AppVeyor CI orchestration, platform publication, and provider-neutral local validation |
+| `appveyor.yml`, `scripts/ci/` | AppVeyor compiler fan-in, immutable-first platform publication, digest evidence, and provider-neutral local validation |
 | `.github/workflows/` | GitHub-native releases, distribution, editor-marketplace publication, and maintenance only |
 
 Most major product directories above are Git submodules. Before editing one,
@@ -68,9 +68,10 @@ selects it through `clang`; macOS and Windows keep their platform linkers.
 1. Define observable behavior changes in an OpenSpec delta before implementation.
 2. Run GitNexus impact analysis before editing an existing symbol; report high or critical blast radius.
 3. Stabilize tests, add the canonical path, migrate consumers, and only then delete the legacy path.
-4. Build and validate platform images by commit SHA, publish them to
-   `cr.beskid-lang.org`, and leave production reconciliation solely to
-   Watchtower.
+4. Complete the three native compiler jobs before the platform lane. Build and
+   publish five immutable `sha-<commit>` images with registry digests, publish
+   packages successfully, then retag those exact images as `production`; leave
+   production reconciliation solely to Watchtower.
 5. Run focused tests plus strict OpenSpec/provenance validation and GitNexus change detection before commit.
 6. Update `CHANGELOG.md`; update `GLOSSARY.md` when canonical terminology changes. Do not add `Co-authored-by` trailers.
 
@@ -86,8 +87,11 @@ selects it through `clang`; macOS and Windows keep their platform linkers.
   invariants.
 - Tracker's SQLite model is delivery authority. Its GitHub synchronization is
   limited to the supported public bug surface.
-- AppVeyor is the validation and platform-image publication authority.
-  Watchtower is the only automated production-reconciliation authority.
+- AppVeyor is the validation and platform-image publication authority. Its
+  shared event policy rejects pull requests, tags, manual/API and scheduled
+  builds, rebuilds, and incomplete reruns from mutation. Watchtower is the only
+  automated production-reconciliation authority; its asynchronous convergence
+  is observed by operators, not controlled by CI.
   GitHub Actions remains only for GitHub-native release, distribution,
   editor-marketplace, security, and maintenance operations.
 
@@ -127,6 +131,10 @@ Parallel agents must use disjoint write scopes. Knowledge files live outside the
   preflight, especially for compiler work that root preflight excludes?
 - Does the task require private package access, deployment credentials, or
   another external authority that must fail closed when unavailable?
+- Has a live AppVeyor proof shown that the hosted platform lane stays within 60
+  minutes, or is a private/BYOC worker required?
+- Can private nested submodules be checked out at their pinned commits on every
+  native worker without exposing reusable credentials to pull-request code?
 
 ## Related docs
 

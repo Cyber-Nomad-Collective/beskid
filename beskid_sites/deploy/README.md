@@ -7,13 +7,30 @@ deployment control plane.
 
 ## Release flow
 
-1. A successful AppVeyor `main` platform lane builds each application image.
-2. CI pushes `sha-<commit>` (immutable audit) and `production` (controlled
-   release) tags to `cr.beskid-lang.org/beskid/<service>`.
-3. Watchtower polls every minute and restarts only services labelled
+1. AppVeyor completes the Linux, macOS, and Windows compiler jobs in its
+   `compiler-validation` group before the `main` platform lane can run.
+2. The platform lane completes its gates, pushes all five
+   `sha-<commit>` immutable images, and retains exactly five registry-digest
+   records in its build artifact.
+3. CI publishes the live package release. Only a successful package result
+   permits it to pull those immutable images and advance their matching
+   `production` tags; promotion never rebuilds images.
+4. Watchtower polls every minute and restarts only services labelled
    `com.centurylinklabs.watchtower.enable=true`.
-4. Operators observe Watchtower status and smoke the canonical production
+5. Operators observe Watchtower status and smoke the canonical production
    endpoints independently of CI.
+
+Only a new trusted `main` push has mutation authority. Pull requests, tags,
+manual/API and scheduled builds, rebuilds, and incomplete-job reruns do not
+publish images, packages, or production tags. CI has no Compose, production
+host, or Watchtower-control credential and must not be used to force rollout,
+rollback, or a health check.
+
+The five registry repositories have no cross-repository atomic promotion.
+Watchtower can therefore observe a mixed set during tag movement; the five
+digest-backed immutable records prove the intended common source SHA, and
+operator checks establish eventual convergence. AppVeyor artifacts are evidence
+only, not the durable image store.
 
 The tagged application services are `website`, `learn`, `tracker`, `nexus`,
 and `pckg`. The shared edge, registry, Watchtower, and Postgres are
@@ -88,6 +105,16 @@ SHA image as `production` in the private registry; Watchtower picks it up on
 its next poll. Do not edit a running container or use a second deployment
 path. Keep retained SHA tags until the corresponding release is no longer a
 rollback candidate.
+
+## AppVeyor activation proof
+
+The checked-in pipeline is not proof of provider-account readiness. Before
+making it a required publishing check, an operator must record a live proof
+that the complete hosted platform lane finishes within AppVeyor's fixed
+60-minute job limit; use a private/BYOC worker if it does not. The operator must
+also prove private nested submodules initialize at their pinned commits on
+Linux, macOS, and Windows without granting a reusable credential to pull
+request code. Until those proofs exist, publication activation remains blocked.
 
 ## Local validation
 

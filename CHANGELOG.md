@@ -9,6 +9,14 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ## [Unreleased]
 
+### Changed
+
+- Document the release-safe AppVeyor authority model: compiler-validation fan-in,
+  immutable digest-backed image publication, live package success before
+  production retagging, replay-event denial, and Watchtower-only eventual
+  production reconciliation. Record the pending hosted-timeout and private
+  nested-submodule activation proofs.
+
 ### Added
 
 - Document the AppVeyor-native fit for Beskid's private-registry and

@@ -14,10 +14,15 @@ An informative, checked-in conceptual map of the Beskid compiler and its direct 
 
 ## AppVeyor CI authority
 
-The repository-owned AppVeyor pipeline that validates pull requests and main,
-and publishes the five platform service images from trusted main builds to
-`cr.beskid-lang.org`. It has no authority or credentials to control production
-containers; Watchtower owns that reconciliation boundary.
+The repository-owned pipeline that validates pull requests and `main`. A fresh
+trusted `main` push first waits for the three-job `compiler-validation` fan-in,
+then publishes five immutable `sha-<full-commit>` platform images to
+`cr.beskid-lang.org`, publishes packages, and only then advances the matching
+`production` tags without rebuilding. Its AppVeyor artifact records exactly
+five digest-backed image identities. Pull requests, tags, manual/API and
+scheduled builds, rebuilds, and incomplete reruns have no mutation authority.
+It has no authority or credentials to control production containers; Watchtower
+asynchronously owns that reconciliation boundary.
 
 ## AOT run
 

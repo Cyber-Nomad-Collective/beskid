@@ -18,8 +18,9 @@ GitHub releases, distribution, editor marketplaces, or repository maintenance:
 
 ## Platform boundary
 
-On a trusted `main` push, AppVeyor validates all gates and publishes these
-images to the private registry:
+On a fresh trusted push to `main`, the three native compiler jobs must first
+complete the `compiler-validation` fan-in. Only then does `linux-platform`
+run the remaining gates and publish these images to the private registry:
 
 - `cr.beskid-lang.org/beskid/site`
 - `cr.beskid-lang.org/beskid/learn`
@@ -27,15 +28,30 @@ images to the private registry:
 - `cr.beskid-lang.org/beskid/nexus`
 - `cr.beskid-lang.org/beskid/pckg`
 
-Every published image receives `sha-<full-commit>` and `production` tags. Pull
-requests and other untrusted events build without registry credentials and
-cannot publish. AppVeyor requires `REGISTRY_USERNAME`, `REGISTRY_PASSWORD`, and
-`BESKID_PCKG_API_KEY` as secure variables with pull-request access disabled.
+The platform lane first pushes only `sha-<full-commit>` identities and records
+their registry digests. After live package publication succeeds, it pulls those
+immutable images and advances the five `production` tags; it never rebuilds for
+promotion. The resulting AppVeyor artifact contains exactly five digest-backed
+image records plus the source, build, and job identities. Pull requests, tags,
+manual/API and scheduled builds, rebuilds, and incomplete-job reruns cannot
+mutate either registry. AppVeyor requires `REGISTRY_USERNAME`,
+`REGISTRY_PASSWORD`, and `BESKID_PCKG_API_KEY` as secure variables with
+pull-request access disabled.
 
 CI stops after publication. It does not invoke Compose, Coolify, Watchtower, or
 any production control API. The production Compose project under
 [`beskid_sites/deploy/`](../beskid_sites/deploy/) is the runtime authority, and
-Watchtower alone reconciles its `production` tags.
+Watchtower alone reconciles its `production` tags asynchronously. Five registry
+repositories cannot be promoted atomically, so the digest manifest establishes
+the intended common source SHA; operator observation establishes eventual
+production convergence.
+
+The repository behavior is contract-tested, but activation remains pending a
+live AppVeyor account proof: the complete hosted `linux-platform` job must fit
+within the fixed 60-minute limit or move to a private/BYOC worker. Private
+nested-submodule checkout also needs a pinned-commit, no-secret-PR proof on all
+three native workers (or a deliberately redesigned PR gate) before AppVeyor is
+made a required publishing authority.
 
 The compiler release workflow is manual by design. Its inputs bind the release
 to the exact AppVeyor source SHA, build identity, and successful gate result.
