@@ -20,6 +20,12 @@ run_bounded_phase() {
   local timeout_seconds="$2"
   shift 2
 
+  if [[ "${timeout_seconds}" == "0" ]]; then
+    echo "==> ${label} (internal timeout disabled; worker limit applies)"
+    "$@"
+    return
+  fi
+
   echo "==> ${label} (timeout: ${timeout_seconds}s)"
   set +e
   timeout --kill-after=60s "${timeout_seconds}" "$@"
@@ -62,12 +68,7 @@ run_lint_phase() {
 }
 
 run_runtime_phase() {
-  # Build a fresh canonical runtime kit for this exact native host, then run workspace tests.
-  # Debug tests resolve only the debug profile; cross-target publication remains a separate gate.
-  export BESKID_RUNTIME_PREFIX="${BESKID_RUNTIME_PREFIX:-${CARGO_TARGET_DIR:-${ROOT}/compiler/target}/native-runtime-kit}"
-  export BESKID_RUNTIME_KIT_PROFILE=debug
-  run_bounded_phase "Native ABI-v5 runtime-kit staging and verification" "${BESKID_RUNTIME_KIT_TIMEOUT:-600}" \
-    bash scripts/stage-native-runtime-kit.sh
+  run_runtime_kit_phase
 
   # Tests run serially, so a deadlocked lowering test cannot consume the whole job.
   local test_timeout="${BESKID_TEST_TIMEOUT:-1800}"
@@ -88,8 +89,8 @@ run_runtime_phase() {
 }
 
 run_runtime_kit_phase() {
-  # AppVeyor's native worker cap is one hour; the cold native kit build can
-  # consume most of it, so keep the platform lane focused on kit validation.
+  # Build a fresh canonical runtime kit for this exact native host. AppVeyor
+  # selects this phase alone; full local validation reuses it before tests.
   export BESKID_RUNTIME_PREFIX="${BESKID_RUNTIME_PREFIX:-${CARGO_TARGET_DIR:-${ROOT}/compiler/target}/native-runtime-kit}"
   export BESKID_RUNTIME_KIT_PROFILE=debug
   run_bounded_phase "Native ABI-v5 runtime-kit staging and verification" "${BESKID_RUNTIME_KIT_TIMEOUT:-600}" \

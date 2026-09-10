@@ -91,6 +91,7 @@ ruby -e '
   config = YAML.safe_load(File.read(ARGV.fetch(0)), aliases: true)
   entrypoint = File.read(ARGV.fetch(1))
   installer = File.read(ARGV.fetch(2))
+  compiler_gate = File.read(ARGV.fetch(3))
   matrix = config.dig("environment", "matrix")
   abort "AppVeyor environment matrix is missing" unless matrix.is_a?(Array)
   lanes = matrix.map { |row| row.fetch("BESKID_CI_LANE") }
@@ -121,10 +122,12 @@ ruby -e '
   linux_lint = matrix.find { |row| row.fetch("BESKID_CI_LANE") == "linux-compiler-lint" }
   linux_runtime = matrix.find { |row| row.fetch("BESKID_CI_LANE") == "linux-compiler-runtime" }
   abort "linux compiler lint lane needs a cold-worker Clippy budget" unless linux_lint["BESKID_CLIPPY_TIMEOUT"].to_i >= 3600
-  abort "linux compiler runtime lane needs a runtime-kit budget" unless linux_runtime["BESKID_RUNTIME_KIT_TIMEOUT"].to_i >= 3600
+  abort "native runtime-kit staging must use the AppVeyor worker limit, not an internal timeout" unless linux_runtime["BESKID_RUNTIME_KIT_TIMEOUT"].to_i == 0
   abort "linux compiler lint lane does not select the shared lint phase" unless entrypoint.include?("bash scripts/ci/compiler-rust-gate.sh lint")
   abort "linux compiler runtime lane does not select the bounded runtime-kit phase" unless entrypoint.include?("bash scripts/ci/compiler-rust-gate.sh runtime-kit")
   abort "split Linux compiler lanes do not share the compiler installer" unless installer.include?("linux-compiler-lint|linux-compiler-runtime)")
+  abort "native runtime-kit staging is duplicated across compiler phases" unless compiler_gate.scan("Native ABI-v5 runtime-kit staging and verification").length == 1
+  abort "full runtime validation does not reuse the runtime-kit phase" unless compiler_gate.match?(/run_runtime_phase\(\).*?run_runtime_kit_phase/m)
   editor_lanes = %w[vscode-extension zed-extension]
   editor_lanes.each do |lane|
     row = matrix.find { |candidate| candidate.fetch("BESKID_CI_LANE") == lane }
@@ -143,7 +146,7 @@ ruby -e '
   abort "linux lanes must use Linux workers" unless images.fetch("linux-platform").downcase.include?("ubuntu") && images.fetch("linux-compiler-lint").downcase.include?("ubuntu") && images.fetch("linux-compiler-runtime").downcase.include?("ubuntu")
   abort "macOS compiler lane must use a macOS worker" unless images.fetch("macos-compiler").downcase.include?("macos")
   abort "Windows compiler lane must use a Visual Studio worker" unless images.fetch("windows-compiler").downcase.include?("visual studio")
-' "${APPVEYOR_CONFIG}" "${ENTRYPOINT}" "${INSTALLER}"
+' "${APPVEYOR_CONFIG}" "${ENTRYPOINT}" "${INSTALLER}" "${ROOT}/scripts/ci/compiler-rust-gate.sh"
 
 retired_workflows=(
   compiler-gate-testbox.yml

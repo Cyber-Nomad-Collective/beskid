@@ -11,7 +11,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
-- Keep AppVeyor's native compiler runtime lane within the one-hour worker cap by isolating runtime-kit staging from the full local workspace-test phase.
+- Isolate AppVeyor native runtime-kit validation from the full local workspace
+  test phase and reuse one staging implementation for both paths.
 - Add a Buildkite validation pipeline that reuses the canonical AppVeyor lane scripts without publication authority.
 
 ### Added
@@ -90,6 +91,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 - Share the native compiler installation path between AppVeyor's split Linux
   lint and runtime lanes so both jobs reach their selected compiler gate.
+- Let native runtime-kit staging use the AppVeyor worker limit instead of an
+  internal timeout after a measured cold build required nearly 53 minutes.
 - Cross-validate the shipped `aarch64-apple-darwin` compiler and LSP artifacts
   from AppVeyor's Intel Sonoma worker without misreporting arm64 runtime smoke
   coverage, requiring an unsupported x86-64 macOS runtime manifest, or
