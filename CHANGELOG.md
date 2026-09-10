@@ -12,6 +12,7 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 ### Changed
 
 - Keep AppVeyor's native compiler runtime lane within the one-hour worker cap by isolating runtime-kit staging from the full local workspace-test phase.
+- Add a Buildkite validation pipeline that reuses the canonical AppVeyor lane scripts without publication authority.
 
 ### Added
 

@@ -1,0 +1,51 @@
+# Buildkite validation reuses the canonical native lane scripts used by
+# AppVeyor. Buildkite does not receive publication credentials; registry/image
+# promotion remains AppVeyor's trusted-main responsibility.
+steps:
+  - label: ":rust: Linux compiler lint"
+    key: "linux-compiler-lint"
+    agents:
+      os: "linux"
+    command: |
+      export BESKID_CI_LANE=linux-compiler-lint
+      bash scripts/ci/appveyor-entrypoint.sh
+
+  - label: ":gear: Linux compiler runtime kit"
+    key: "linux-compiler-runtime"
+    agents:
+      os: "linux"
+    command: |
+      export BESKID_CI_LANE=linux-compiler-runtime
+      bash scripts/ci/appveyor-entrypoint.sh
+
+  - label: ":apple: macOS compiler"
+    key: "macos-compiler"
+    agents:
+      os: "macos"
+    command: |
+      export BESKID_CI_LANE=macos-compiler
+      bash scripts/ci/appveyor-entrypoint.sh
+
+  - label: ":windows: Windows compiler"
+    key: "windows-compiler"
+    agents:
+      os: "windows"
+    command:
+      - '$env:BESKID_CI_LANE = "windows-compiler"'
+      - '& powershell -NoProfile -ExecutionPolicy Bypass -File scripts/ci/appveyor-entrypoint.ps1'
+
+  - label: ": vscode: VS Code extension"
+    key: "vscode-extension"
+    agents:
+      os: "linux"
+    command: |
+      export BESKID_CI_LANE=vscode-extension
+      bash scripts/ci/appveyor-entrypoint.sh
+
+  - label: ":zed: Zed extension"
+    key: "zed-extension"
+    agents:
+      os: "linux"
+    command: |
+      export BESKID_CI_LANE=zed-extension
+      bash scripts/ci/appveyor-entrypoint.sh
