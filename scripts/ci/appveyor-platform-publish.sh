@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build all platform images, then publish only from a trusted main push.
+# Build all platform images, then publish immutable tags only from a trusted main push.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
@@ -42,7 +42,6 @@ build_image() {
     --sbom=true \
     --file "${dockerfile}" \
     --tag "${NAMESPACE}/${lane}:sha-${COMMIT_SHA}" \
-    --tag "${NAMESPACE}/${lane}:production" \
     "$@" \
     "${context}"
 }
@@ -75,10 +74,11 @@ printf '%s' "${REGISTRY_PASSWORD}" | \
 LOGGED_IN=true
 
 for lane in site learn tracker nexus pckg; do
-  docker push "${NAMESPACE}/${lane}:sha-${COMMIT_SHA}"
-done
-for lane in site learn tracker nexus pckg; do
-  docker push "${NAMESPACE}/${lane}:production"
+  immutable_ref="${NAMESPACE}/${lane}:sha-${COMMIT_SHA}"
+  docker push "${immutable_ref}"
+  immutable_digest="$(docker image inspect --format '{{index .RepoDigests 0}}' "${immutable_ref}")"
+  bash "${ROOT}/scripts/ci/appveyor-image-manifest.sh" record \
+    "${lane}" "${immutable_ref}" "${immutable_digest}"
 done
 
-echo "Published platform images for ${COMMIT_SHA}; Watchtower owns deployment reconciliation."
+echo "Published immutable platform images for ${COMMIT_SHA}; Watchtower owns deployment reconciliation."

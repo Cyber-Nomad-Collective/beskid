@@ -11,6 +11,8 @@ authoritative_scripts=(
   scripts/ci/appveyor-entrypoint.ps1
   scripts/ci/appveyor-package-publish.sh
   scripts/ci/appveyor-platform-publish.sh
+  scripts/ci/appveyor-platform-promote.sh
+  scripts/ci/appveyor-image-manifest.sh
   scripts/ci/lib/appveyor-event-policy.sh
 )
 
@@ -37,12 +39,17 @@ if rg -n -i 'coolify|compose[[:space:]_-]*(up|apply)|watchtower[[:space:]_-]*(re
   exit 1
 fi
 
-if rg -n 'ghcr\.io|docker\.io' scripts/ci/appveyor-platform-publish.sh appveyor.yml; then
+if rg -n 'ghcr\.io|docker\.io' \
+  scripts/ci/appveyor-platform-publish.sh \
+  scripts/ci/appveyor-platform-promote.sh \
+  scripts/ci/appveyor-image-manifest.sh \
+  appveyor.yml; then
   echo "platform images must use only cr.beskid-lang.org" >&2
   exit 1
 fi
 
-if ! rg -Fq 'cr.beskid-lang.org' scripts/ci/appveyor-platform-publish.sh; then
+if ! rg -Fq 'cr.beskid-lang.org' scripts/ci/appveyor-platform-publish.sh ||
+   ! rg -Fq 'cr.beskid-lang.org' scripts/ci/appveyor-platform-promote.sh; then
   echo "platform publisher must target the Beskid registry" >&2
   exit 1
 fi

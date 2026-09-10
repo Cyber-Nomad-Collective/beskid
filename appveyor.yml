@@ -6,13 +6,23 @@ skip_tags: true
 environment:
   matrix:
     - BESKID_CI_LANE: linux-platform
+      job_name: linux-platform
+      job_depends_on: compiler-validation
       APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2204
     - BESKID_CI_LANE: linux-compiler
+      job_name: linux-compiler
+      job_group: compiler-validation
       APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2204
     - BESKID_CI_LANE: macos-compiler
+      job_name: macos-compiler
+      job_group: compiler-validation
       APPVEYOR_BUILD_WORKER_IMAGE: macos-sonoma
     - BESKID_CI_LANE: windows-compiler
+      job_name: windows-compiler
+      job_group: compiler-validation
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
+
+max_jobs: 3
 
 matrix:
   fast_finish: false
@@ -26,6 +36,9 @@ for:
         - BESKID_CI_LANE: linux-platform
     services:
       - docker
+    artifacts:
+      - path: .appveyor-reports/**
+        name: platform-release-evidence
     build_script:
       - sh: bash ./scripts/ci/appveyor-entrypoint.sh
 

@@ -4,7 +4,10 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 APPVEYOR_CONFIG="${ROOT}/appveyor.yml"
+ENTRYPOINT="${ROOT}/scripts/ci/appveyor-entrypoint.sh"
 PUBLISHER="${ROOT}/scripts/ci/appveyor-platform-publish.sh"
+PROMOTER="${ROOT}/scripts/ci/appveyor-platform-promote.sh"
+MANIFEST="${ROOT}/scripts/ci/appveyor-image-manifest.sh"
 PACKAGE_PUBLISHER="${ROOT}/scripts/ci/appveyor-package-publish.sh"
 EVENT_POLICY="${ROOT}/scripts/ci/lib/appveyor-event-policy.sh"
 
@@ -18,6 +21,8 @@ fail() {
 [[ -x "${ROOT}/scripts/ci/appveyor-entrypoint.sh" ]] || fail "POSIX AppVeyor entrypoint is missing or not executable"
 [[ -f "${ROOT}/scripts/ci/appveyor-entrypoint.ps1" ]] || fail "Windows AppVeyor entrypoint is missing"
 [[ -x "${PUBLISHER}" ]] || fail "platform publisher is missing or not executable"
+[[ -x "${PROMOTER}" ]] || fail "platform promoter is missing or not executable"
+[[ -x "${MANIFEST}" ]] || fail "platform image manifest writer is missing or not executable"
 [[ -x "${PACKAGE_PUBLISHER}" ]] || fail "AppVeyor package publisher is missing or not executable"
 [[ -f "${EVENT_POLICY}" ]] || fail "shared AppVeyor event policy is missing"
 
@@ -31,6 +36,29 @@ ruby -e '
   abort "unexpected AppVeyor lane matrix: #{lanes.inspect}" unless lanes.sort == expected.sort
   abort "AppVeyor deployment must be disabled" unless config["deploy"] == false
   abort "required jobs may not be allowed to fail" if config.dig("matrix", "allow_failures")
+  abort "AppVeyor must cap compiler fan-out at three jobs" unless config["max_jobs"] == 3
+  expected_jobs = {
+    "linux-platform" => "linux-platform",
+    "linux-compiler" => "linux-compiler",
+    "macos-compiler" => "macos-compiler",
+    "windows-compiler" => "windows-compiler"
+  }
+  matrix.each do |row|
+    lane = row.fetch("BESKID_CI_LANE")
+    abort "AppVeyor lane #{lane} has no stable job name" unless row["job_name"] == expected_jobs.fetch(lane)
+  end
+  compiler_lanes = %w[linux-compiler macos-compiler windows-compiler]
+  compiler_lanes.each do |lane|
+    row = matrix.find { |candidate| candidate.fetch("BESKID_CI_LANE") == lane }
+    abort "compiler lane #{lane} is outside compiler-validation" unless row["job_group"] == "compiler-validation"
+  end
+  platform = matrix.find { |row| row.fetch("BESKID_CI_LANE") == "linux-platform" }
+  abort "linux platform job must depend on compiler-validation" unless platform["job_depends_on"] == "compiler-validation"
+  platform_job = config.fetch("for").find do |job|
+    job.dig("matrix", "only") == [{ "BESKID_CI_LANE" => "linux-platform" }]
+  end
+  artifacts = platform_job&.fetch("artifacts", [])
+  abort "linux platform job must retain AppVeyor release evidence" unless artifacts.any? { |artifact| artifact["path"] == ".appveyor-reports/**" }
   images = matrix.to_h { |row| [row.fetch("BESKID_CI_LANE"), row.fetch("APPVEYOR_BUILD_WORKER_IMAGE")] }
   abort "linux lanes must use Linux workers" unless images.fetch("linux-platform").downcase.include?("ubuntu") && images.fetch("linux-compiler").downcase.include?("ubuntu")
   abort "macOS compiler lane must use a macOS worker" unless images.fetch("macos-compiler").downcase.include?("macos")
@@ -57,13 +85,41 @@ if rg -n 'workflows:[[:space:]]*\[(Compiler|Platform delivery|Corelib and templa
   fail "retained GitHub workflow depends on a retired CI workflow"
 fi
 
-entrypoint_content="$(<"${ROOT}/scripts/ci/appveyor-entrypoint.sh")"
+entrypoint_content="$(<"${ENTRYPOINT}")"
 rehearse_line="$(rg -n 'appveyor-package-publish\.sh rehearse' <<<"${entrypoint_content}" | cut -d: -f1)"
 images_line="$(rg -n 'appveyor-platform-publish\.sh' <<<"${entrypoint_content}" | cut -d: -f1)"
 packages_line="$(rg -n 'appveyor-package-publish\.sh publish' <<<"${entrypoint_content}" | cut -d: -f1)"
+promote_line="$(rg -n 'appveyor-platform-promote\.sh' <<<"${entrypoint_content}" | cut -d: -f1)"
+manifest_line="$(rg -n 'appveyor-image-manifest\.sh finalize' <<<"${entrypoint_content}" | cut -d: -f1)"
 if [[ -z "${rehearse_line}" ]] || [[ -z "${images_line}" ]] || [[ -z "${packages_line}" ]] ||
-   (( rehearse_line >= images_line || images_line >= packages_line )); then
-  fail "platform lane must rehearse packages before images and publish packages only after all image pushes"
+   [[ -z "${promote_line}" ]] || [[ -z "${manifest_line}" ]] ||
+   (( rehearse_line >= images_line || images_line >= packages_line || packages_line >= promote_line || promote_line >= manifest_line )); then
+  fail "platform lane must publish immutable images, packages, then production tags and evidence"
+fi
+if ! rg -q '^set -euo pipefail$' <<<"${entrypoint_content}"; then
+  fail "platform lane must fail before promotion when package publication fails"
+fi
+
+entrypoint_log="$(mktemp "${TMPDIR:-/tmp}/appveyor-entrypoint-test.XXXXXX")"
+set +e
+ENTRYPOINT_UNDER_TEST="${ENTRYPOINT}" ENTRYPOINT_TEST_LOG="${entrypoint_log}" bash -c '
+  source "${ENTRYPOINT_UNDER_TEST}"
+  bash() {
+    printf "%s\\n" "$*" >>"${ENTRYPOINT_TEST_LOG}"
+    [[ "$*" != "scripts/ci/appveyor-package-publish.sh publish" ]] || return 71
+  }
+  pnpm() {
+    printf "pnpm %s\\n" "$*" >>"${ENTRYPOINT_TEST_LOG}"
+  }
+  run_linux_platform_lane
+' >/dev/null 2>&1
+entrypoint_status=$?
+set -e
+[[ "${entrypoint_status}" -ne 0 ]] || fail "platform lane continued after live package publication failed"
+rg -q '^scripts/ci/appveyor-package-publish\.sh publish$' "${entrypoint_log}" || \
+  fail "package failure scenario did not reach live publication"
+if rg -q '^scripts/ci/appveyor-platform-promote\.sh$' "${entrypoint_log}"; then
+  fail "package failure reached mutable image promotion"
 fi
 
 run_publisher() {
@@ -80,6 +136,11 @@ case "${1:-}" in
     [[ "${2:-}" == "build" ]] && exit 0
     ;;
   login|push|logout) exit 0 ;;
+  image)
+    [[ "${2:-}" == "inspect" ]] || exit 1
+    immutable_ref="${!#}"
+    printf '%s@sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef\n' "${immutable_ref%:*}"
+    ;;
 esac
 exit 0
 EOF
@@ -91,6 +152,7 @@ EOF
       PATH="${fake_bin}:${PATH}" DOCKER_TEST_LOG="${log}" \
         APPVEYOR_REPO_BRANCH=main APPVEYOR_PULL_REQUEST_NUMBER=42 \
         APPVEYOR_REPO_COMMIT=0123456789abcdef0123456789abcdef01234567 \
+        APPVEYOR_BUILD_FOLDER="${fake_bin}/build" \
         bash "${PUBLISHER}" >/dev/null 2>&1
       ;;
     main-without-credentials)
@@ -98,6 +160,7 @@ EOF
         APPVEYOR_REPO_BRANCH=main APPVEYOR_PULL_REQUEST_NUMBER='' \
         APPVEYOR_REPO_TAG=false \
         APPVEYOR_REPO_COMMIT=0123456789abcdef0123456789abcdef01234567 \
+        APPVEYOR_BUILD_FOLDER="${fake_bin}/build" \
         bash "${PUBLISHER}" >/dev/null 2>&1
       ;;
     main)
@@ -105,6 +168,7 @@ EOF
         APPVEYOR_REPO_BRANCH=main APPVEYOR_PULL_REQUEST_NUMBER='' \
         APPVEYOR_REPO_TAG=false \
         APPVEYOR_REPO_COMMIT=0123456789abcdef0123456789abcdef01234567 \
+        APPVEYOR_BUILD_FOLDER="${fake_bin}/build" \
         REGISTRY_USERNAME=test-user REGISTRY_PASSWORD=test-password \
         bash "${PUBLISHER}" >/dev/null 2>&1
       ;;
@@ -113,6 +177,7 @@ EOF
         APPVEYOR_REPO_BRANCH=main APPVEYOR_PULL_REQUEST_NUMBER='' \
         APPVEYOR_REPO_TAG=False APPVEYOR_FORCED_BUILD=True \
         APPVEYOR_REPO_COMMIT=0123456789abcdef0123456789abcdef01234567 \
+        APPVEYOR_BUILD_FOLDER="${fake_bin}/build" \
         REGISTRY_USERNAME=test-user REGISTRY_PASSWORD=test-password \
         bash "${PUBLISHER}" >/dev/null 2>&1
       ;;
@@ -145,11 +210,89 @@ fi
 
 run_publisher main
 [[ "${PUBLISHER_STATUS}" -eq 0 ]] || fail "trusted main publication failed with credentials"
-[[ "$(rg -c '^push cr\.beskid-lang\.org/beskid/(site|learn|tracker|nexus|pckg):(sha-0123456789abcdef0123456789abcdef01234567|production)$' "${PUBLISHER_LOG}")" -eq 10 ]] || \
-  fail "trusted main publication did not push both required tags for all five lanes"
+[[ "$(rg -c '^push cr\.beskid-lang\.org/beskid/(site|learn|tracker|nexus|pckg):sha-0123456789abcdef0123456789abcdef01234567$' "${PUBLISHER_LOG}")" -eq 5 ]] || \
+  fail "trusted main publication did not push all five immutable tags"
+if rg -q '^push .*:production$' "${PUBLISHER_LOG}"; then
+  fail "immutable publisher pushed a mutable production tag"
+fi
 if rg -n '(^|/)(ghcr\.io|docker\.io)(/|$)' "${PUBLISHER_LOG}"; then
   fail "platform publisher used a registry other than cr.beskid-lang.org"
 fi
+
+run_promoter() {
+  local scenario="$1"
+  local fake_bin log status
+  fake_bin="$(mktemp -d "${TMPDIR:-/tmp}/appveyor-promote-test.XXXXXX")"
+  log="${fake_bin}/docker.log"
+  cat >"${fake_bin}/docker" <<'EOF'
+#!/usr/bin/env bash
+printf '%s\n' "$*" >>"${DOCKER_TEST_LOG}"
+case "${1:-}" in
+  login|pull|push|logout) exit 0 ;;
+  image) [[ "${2:-}" == "tag" ]] && exit 0 ;;
+  buildx) exit 97 ;;
+esac
+exit 1
+EOF
+  chmod +x "${fake_bin}/docker"
+
+  set +e
+  case "${scenario}" in
+    main)
+      PATH="${fake_bin}:${PATH}" DOCKER_TEST_LOG="${log}" \
+        APPVEYOR_REPO_BRANCH=main APPVEYOR_PULL_REQUEST_NUMBER='' APPVEYOR_REPO_TAG=false \
+        APPVEYOR_REPO_COMMIT=0123456789abcdef0123456789abcdef01234567 \
+        REGISTRY_USERNAME=test-user REGISTRY_PASSWORD=test-password \
+        bash "${PROMOTER}" >/dev/null 2>&1
+      ;;
+    *) fail "unknown promoter test scenario: ${scenario}" ;;
+  esac
+  status=$?
+  set -e
+  PROMOTER_STATUS="${status}"
+  PROMOTER_LOG="${log}"
+}
+
+run_promoter main
+[[ "${PROMOTER_STATUS}" -eq 0 ]] || fail "trusted main production promotion failed"
+[[ "$(rg -c '^pull cr\.beskid-lang\.org/beskid/(site|learn|tracker|nexus|pckg):sha-0123456789abcdef0123456789abcdef01234567$' "${PROMOTER_LOG}")" -eq 5 ]] || \
+  fail "promotion did not consume all immutable tags"
+[[ "$(rg -c '^image tag cr\.beskid-lang\.org/beskid/(site|learn|tracker|nexus|pckg):sha-0123456789abcdef0123456789abcdef01234567 cr\.beskid-lang\.org/beskid/(site|learn|tracker|nexus|pckg):production$' "${PROMOTER_LOG}")" -eq 5 ]] || \
+  fail "promotion did not advance all production tags from immutable images"
+[[ "$(rg -c '^push cr\.beskid-lang\.org/beskid/(site|learn|tracker|nexus|pckg):production$' "${PROMOTER_LOG}")" -eq 5 ]] || \
+  fail "promotion did not push all production tags"
+if rg -q '^buildx ' "${PROMOTER_LOG}"; then
+  fail "promotion rebuilt images instead of consuming immutable tags"
+fi
+rg -q '^logout cr\.beskid-lang\.org$' "${PROMOTER_LOG}" || fail "promotion did not log out of the registry"
+
+manifest_root="$(mktemp -d "${TMPDIR:-/tmp}/appveyor-manifest-test.XXXXXX")"
+APPVEYOR_REPO_BRANCH=main APPVEYOR_PULL_REQUEST_NUMBER='' APPVEYOR_REPO_TAG=false \
+  APPVEYOR_REPO_COMMIT=0123456789abcdef0123456789abcdef01234567 \
+  APPVEYOR_BUILD_ID=42 APPVEYOR_BUILD_VERSION=1.0.42 APPVEYOR_JOB_ID=job-42 \
+  APPVEYOR_BUILD_FOLDER="${manifest_root}" \
+  bash "${MANIFEST}" record site "cr.beskid-lang.org/beskid/site:sha-0123456789abcdef0123456789abcdef01234567" "cr.beskid-lang.org/beskid/site@sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+for lane in learn tracker nexus pckg; do
+  APPVEYOR_REPO_BRANCH=main APPVEYOR_PULL_REQUEST_NUMBER='' APPVEYOR_REPO_TAG=false \
+    APPVEYOR_REPO_COMMIT=0123456789abcdef0123456789abcdef01234567 \
+    APPVEYOR_BUILD_ID=42 APPVEYOR_BUILD_VERSION=1.0.42 APPVEYOR_JOB_ID=job-42 \
+    APPVEYOR_BUILD_FOLDER="${manifest_root}" \
+    bash "${MANIFEST}" record "${lane}" "cr.beskid-lang.org/beskid/${lane}:sha-0123456789abcdef0123456789abcdef01234567" "cr.beskid-lang.org/beskid/${lane}@sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+done
+APPVEYOR_REPO_BRANCH=main APPVEYOR_PULL_REQUEST_NUMBER='' APPVEYOR_REPO_TAG=false \
+  APPVEYOR_REPO_COMMIT=0123456789abcdef0123456789abcdef01234567 \
+  APPVEYOR_BUILD_ID=42 APPVEYOR_BUILD_VERSION=1.0.42 APPVEYOR_JOB_ID=job-42 \
+  APPVEYOR_BUILD_FOLDER="${manifest_root}" \
+  bash "${MANIFEST}" finalize
+manifest_path="${manifest_root}/.appveyor-reports/platform-images.json"
+[[ -f "${manifest_path}" ]] || fail "platform image manifest was not written"
+jq -e '
+  .source.sha == "0123456789abcdef0123456789abcdef01234567" and
+  .build.id == "42" and .build.version == "1.0.42" and .job.id == "job-42" and
+  .registry.namespace == "cr.beskid-lang.org/beskid" and
+  ([.images[] | select(.immutable.tag == "sha-0123456789abcdef0123456789abcdef01234567" and (.immutable.digest | startswith("cr.beskid-lang.org/beskid/")))] | length) == 5 and
+  ([.images[].lane] | sort) == ["learn", "nexus", "pckg", "site", "tracker"]
+' "${manifest_path}" >/dev/null || fail "platform image manifest lacks five digest-backed immutable records"
 
 run_package_publisher() {
   local scenario="$1"
