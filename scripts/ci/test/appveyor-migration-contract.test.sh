@@ -224,6 +224,7 @@ run_promoter() {
   local fake_bin log status
   fake_bin="$(mktemp -d "${TMPDIR:-/tmp}/appveyor-promote-test.XXXXXX")"
   log="${fake_bin}/docker.log"
+  : >"${log}"
   cat >"${fake_bin}/docker" <<'EOF'
 #!/usr/bin/env bash
 printf '%s\n' "$*" >>"${DOCKER_TEST_LOG}"
@@ -243,6 +244,20 @@ EOF
         APPVEYOR_REPO_BRANCH=main APPVEYOR_PULL_REQUEST_NUMBER='' APPVEYOR_REPO_TAG=false \
         APPVEYOR_REPO_COMMIT=0123456789abcdef0123456789abcdef01234567 \
         REGISTRY_USERNAME=test-user REGISTRY_PASSWORD=test-password \
+        bash "${PROMOTER}" >/dev/null 2>&1
+      ;;
+    pull-request)
+      env -u REGISTRY_USERNAME -u REGISTRY_PASSWORD \
+        PATH="${fake_bin}:${PATH}" DOCKER_TEST_LOG="${log}" \
+        APPVEYOR_REPO_BRANCH=main APPVEYOR_PULL_REQUEST_NUMBER=42 APPVEYOR_REPO_TAG=false \
+        APPVEYOR_REPO_COMMIT=0123456789abcdef0123456789abcdef01234567 \
+        bash "${PROMOTER}" >/dev/null 2>&1
+      ;;
+    main-without-credentials)
+      env -u REGISTRY_USERNAME -u REGISTRY_PASSWORD \
+        PATH="${fake_bin}:${PATH}" DOCKER_TEST_LOG="${log}" \
+        APPVEYOR_REPO_BRANCH=main APPVEYOR_PULL_REQUEST_NUMBER='' APPVEYOR_REPO_TAG=false \
+        APPVEYOR_REPO_COMMIT=0123456789abcdef0123456789abcdef01234567 \
         bash "${PROMOTER}" >/dev/null 2>&1
       ;;
     *) fail "unknown promoter test scenario: ${scenario}" ;;
@@ -265,6 +280,44 @@ if rg -q '^buildx ' "${PROMOTER_LOG}"; then
   fail "promotion rebuilt images instead of consuming immutable tags"
 fi
 rg -q '^logout cr\.beskid-lang\.org$' "${PROMOTER_LOG}" || fail "promotion did not log out of the registry"
+
+assert_promotion_did_not_mutate() {
+  local scenario="$1"
+  if rg -q '^(login|image tag|push) ' "${PROMOTER_LOG}"; then
+    fail "${scenario} promotion reached a registry mutation command"
+  fi
+}
+
+run_promoter pull-request
+[[ "${PROMOTER_STATUS}" -eq 0 ]] || fail "pull-request promotion did not exit cleanly"
+assert_promotion_did_not_mutate pull-request
+
+run_promoter main-without-credentials
+[[ "${PROMOTER_STATUS}" -ne 0 ]] || fail "trusted main promotion did not fail closed without credentials"
+assert_promotion_did_not_mutate main-without-credentials
+
+valid_digest_hash="$(printf '%064d' 0 | tr 0 a)"
+short_digest_hash="$(printf '%063d' 0 | tr 0 a)"
+assert_manifest_record_rejected() {
+  local scenario="$1"
+  local immutable_digest="$2"
+  local invalid_manifest_root status
+  invalid_manifest_root="$(mktemp -d "${TMPDIR:-/tmp}/appveyor-invalid-manifest-test.XXXXXX")"
+
+  set +e
+  APPVEYOR_REPO_BRANCH=main APPVEYOR_PULL_REQUEST_NUMBER='' APPVEYOR_REPO_TAG=false \
+    APPVEYOR_REPO_COMMIT=0123456789abcdef0123456789abcdef01234567 \
+    APPVEYOR_BUILD_FOLDER="${invalid_manifest_root}" \
+    bash "${MANIFEST}" record site "cr.beskid-lang.org/beskid/site:sha-0123456789abcdef0123456789abcdef01234567" "${immutable_digest}" >/dev/null 2>&1
+  status=$?
+  set -e
+
+  [[ "${status}" -ne 0 ]] || fail "manifest accepted ${scenario} digest evidence"
+}
+
+assert_manifest_record_rejected malformed "cr.beskid-lang.org/beskid/site@sha256:aa-not-a-digest"
+assert_manifest_record_rejected short "cr.beskid-lang.org/beskid/site@sha256:${short_digest_hash}"
+assert_manifest_record_rejected trailing-garbage "cr.beskid-lang.org/beskid/site@sha256:${valid_digest_hash}-trailing"
 
 manifest_root="$(mktemp -d "${TMPDIR:-/tmp}/appveyor-manifest-test.XXXXXX")"
 APPVEYOR_REPO_BRANCH=main APPVEYOR_PULL_REQUEST_NUMBER='' APPVEYOR_REPO_TAG=false \

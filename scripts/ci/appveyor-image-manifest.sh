@@ -27,6 +27,7 @@ record_immutable_image() {
   local immutable_digest="$3"
   local expected_ref="${NAMESPACE}/${lane}:sha-${COMMIT_SHA}"
   local expected_digest_prefix="${NAMESPACE}/${lane}@sha256:"
+  local digest_hash
 
   [[ "${lane}" =~ ^(site|learn|tracker|nexus|pckg)$ ]] || {
     echo "Unknown platform image lane: ${lane}" >&2
@@ -36,8 +37,13 @@ record_immutable_image() {
     echo "Immutable image reference does not match ${lane} source identity" >&2
     exit 2
   }
-  [[ "${immutable_digest}" == "${expected_digest_prefix}"[0-9a-f][0-9a-f]* ]] || {
+  [[ "${immutable_digest}" == "${expected_digest_prefix}"* ]] || {
     echo "Immutable image digest does not match ${lane} registry identity" >&2
+    exit 2
+  }
+  digest_hash="${immutable_digest#"${expected_digest_prefix}"}"
+  [[ "${digest_hash}" =~ ^[0-9a-f]{64}$ ]] || {
+    echo "Immutable image digest must be a lowercase SHA-256 for ${lane}" >&2
     exit 2
   }
 
