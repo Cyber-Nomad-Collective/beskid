@@ -100,7 +100,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   closure by resolving the manifest-owned, non-returning trap intrinsic. Read
   linked-image export and import directories through the shared symbol inventory
   so stripped PE DLLs retain exact ABI-v5 provenance instead of appearing to
-  have no symbols.
+  have no symbols. Return completed generated fibers through the ABI-installed
+  scheduler return trampoline so current-fiber clearing and context switching
+  have one architecture-owned path on macOS and Linux.
 - Use one exact stable authoring version across the Zed manifests and the VS
   Code package and lockfile, so real VSIX packaging fails closed on editor
   release drift instead of depending on a missing resolver. Restore compiler
