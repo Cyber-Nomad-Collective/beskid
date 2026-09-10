@@ -180,7 +180,7 @@ check_text "scripts/ci/appveyor-install.sh" 'sudo apt-get install[^[:cntrl:]]*' 
   "AppVeyor owns native Linux tool installation in a repository script"
 check_text "scripts/ci/appveyor-install.sh" 'build-essential clang curl git jq lld llvm mold pkg-config libssl-dev' \
   "AppVeyor Linux lanes install the mold and LLVM toolchain"
-check_text "scripts/ci/appveyor-install.sh" 'rustup toolchain install stable --profile minimal' \
+check_text "scripts/ci/lib/appveyor-rust-toolchain.sh" 'rustup toolchain install stable --profile minimal' \
   "AppVeyor native lanes provision the Rust toolchain"
 
 check_text "compiler/justfile" 'cargo binstall cargo-sweep' \

@@ -8,14 +8,10 @@ if ($lane -ne 'windows-compiler') {
 }
 
 Set-Location $root
-bash ./scripts/ci/init-compiler-submodule.sh
+. (Join-Path $root 'scripts/ci/lib/AppVeyorRustToolchain.ps1')
+Invoke-AppVeyorNativeCommand -Command bash -Arguments @('./scripts/ci/init-compiler-submodule.sh')
 
-if (-not (Get-Command rustup -ErrorAction SilentlyContinue)) {
-    throw 'rustup is required on the Windows AppVeyor worker'
-}
-rustup toolchain install stable --profile minimal
-rustup default stable
-rustup target add x86_64-pc-windows-msvc
+Enable-AppVeyorRustToolchain
 
 $llvmVersion = '20.1.8'
 choco install llvm --version=$llvmVersion --yes --no-progress --limit-output --allow-downgrade

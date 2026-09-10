@@ -6,6 +6,9 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 LANE="${BESKID_CI_LANE:-}"
 PNPM_VERSION="10.17.1"
 
+# shellcheck source=lib/appveyor-rust-toolchain.sh
+source "${ROOT}/scripts/ci/lib/appveyor-rust-toolchain.sh"
+
 require_command() {
   local command_name="$1"
   command -v "${command_name}" >/dev/null 2>&1 || {
@@ -47,17 +50,6 @@ activate_node() {
   [[ "$(pnpm --version)" == "${PNPM_VERSION}" ]]
 }
 
-activate_rust() {
-  if [[ -s "${HOME}/.cargo/env" ]]; then
-    # shellcheck disable=SC1091
-    source "${HOME}/.cargo/env"
-  fi
-  require_command rustup
-  rustup toolchain install stable --profile minimal
-  rustup default stable
-  rustup component add clippy
-}
-
 install_linux_native_tools() {
   require_command sudo
   sudo apt-get update
@@ -88,7 +80,7 @@ case "${LANE}" in
       beskid_templates \
       beskid_web_common pckg
     activate_node
-    activate_rust
+    activate_appveyor_rust_toolchain
     install_linux_native_tools
     pnpm install --frozen-lockfile
     require_command docker
@@ -99,7 +91,7 @@ case "${LANE}" in
     init_compiler_tree
     bash scripts/ci/init-submodules.sh beskid_vscode
     activate_node
-    activate_rust
+    activate_appveyor_rust_toolchain
     install_linux_native_tools
     if ! command -v bun >/dev/null 2>&1; then
       npm install --global bun@1.3.14
@@ -109,7 +101,7 @@ case "${LANE}" in
   macos-compiler)
     require_native_lane macos
     init_compiler_tree
-    activate_rust
+    activate_appveyor_rust_toolchain
     rustup target add aarch64-apple-darwin
     install_macos_native_tools
     ;;
@@ -118,7 +110,7 @@ case "${LANE}" in
     init_compiler_tree
     bash scripts/ci/init-submodules.sh beskid_vscode
     activate_node
-    activate_rust
+    activate_appveyor_rust_toolchain
     install_linux_native_tools
     if ! command -v bun >/dev/null 2>&1; then
       npm install --global bun@1.3.14
@@ -129,7 +121,7 @@ case "${LANE}" in
     require_native_lane linux
     bash scripts/ci/init-submodules.sh beskid_bsol beskid_treesitter
     activate_node
-    activate_rust
+    activate_appveyor_rust_toolchain
     install_linux_native_tools
     rustup target add wasm32-wasip2
     ;;

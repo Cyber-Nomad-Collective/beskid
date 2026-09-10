@@ -7,6 +7,7 @@ node --test "${root}/scripts/ci/test/license-policy.test.mjs"
 node "${root}/scripts/ci/check-license-policy.mjs" --root "${root}"
 
 bash "${root}/scripts/ci/test/appveyor-migration-contract.test.sh"
+bash "${root}/scripts/ci/test/appveyor-rustup-bootstrap.test.sh"
 bash "${root}/scripts/ci/test/appveyor-migration-isolation.test.sh"
 bash "${root}/scripts/ci/test/appveyor-event-policy.test.sh"
 
@@ -20,6 +21,7 @@ for script in \
 done
 bash -n "${root}/scripts/ci/lib/appveyor-event-policy.sh"
 bash -n "${root}/scripts/ci/lib/appveyor-platform-images.sh"
+bash -n "${root}/scripts/ci/lib/appveyor-rust-toolchain.sh"
 
 "${root}/scripts/ci/test/run-distribute-workflow-contract-tests.sh"
 bash "${root}/scripts/ci/test/release-version-contract.test.sh"
