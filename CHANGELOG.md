@@ -95,7 +95,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   the Windows environment adapter's intentional `SetLastError` import in the
   canonical BSOL runtime manifest, and use one raw-word fiber-state authority
   plus the runtime-owned `FiberDone` transition instead of duplicating scheduler
-  record layout and source-enum representation in generated trampolines.
+  record layout and source-enum representation in generated trampolines. Keep
+  the executable canonical-runtime JIT fixture aligned with that dependency
+  closure by resolving the manifest-owned, non-returning trap intrinsic.
 - Use one exact stable authoring version across the Zed manifests and the VS
   Code package and lockfile, so real VSIX packaging fails closed on editor
   release drift instead of depending on a missing resolver. Restore compiler
