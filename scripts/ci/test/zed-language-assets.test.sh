@@ -16,13 +16,15 @@ bsol_grammar_checkout="${bsol_checkout}/grammars/tree-sitter-bsol"
 tree_sitter_config="${scratch_dir}/tree-sitter-config.json"
 grammar_worktree_added=false
 bsol_worktree_added=false
+grammar_repo="${root}/beskid_treesitter"
+bsol_repo="${root}/beskid_bsol"
 
 cleanup() {
   if [[ "${grammar_worktree_added}" == true ]]; then
-    git --git-dir="${grammar_git_dir}" worktree remove --force "${grammar_checkout}" >/dev/null 2>&1 || true
+    git -C "${grammar_repo}" worktree remove --force "${grammar_checkout}" >/dev/null 2>&1 || true
   fi
   if [[ "${bsol_worktree_added}" == true ]]; then
-    git --git-dir="${bsol_git_dir}" worktree remove --force "${bsol_checkout}" >/dev/null 2>&1 || true
+    git -C "${bsol_repo}" worktree remove --force "${bsol_checkout}" >/dev/null 2>&1 || true
   fi
   rm -rf "${scratch_dir}"
 }
@@ -80,11 +82,10 @@ if (!commit) process.exit(1);
 process.stdout.write(commit);
 NODE
 )" || fail 'extension.toml has no immutable Beskid grammar commit'
-grammar_git_dir="$(git -C "${root}/beskid_treesitter" rev-parse --git-common-dir)"
-git --git-dir="${grammar_git_dir}" cat-file -e "${grammar_commit}^{commit}" || \
+git -C "${grammar_repo}" cat-file -e "${grammar_commit}^{commit}" || \
   fail "manifest-pinned grammar commit ${grammar_commit} is unavailable"
 mkdir -p "${parser_directory}"
-git --git-dir="${grammar_git_dir}" worktree add --detach "${grammar_checkout}" "${grammar_commit}" >/dev/null
+git -C "${grammar_repo}" worktree add --detach "${grammar_checkout}" "${grammar_commit}" >/dev/null
 grammar_worktree_added=true
 
 bsol_grammar_commit="$(node - "${extension_root}/extension.toml" <<'NODE'
@@ -102,10 +103,9 @@ if (repository !== 'https://github.com/Cyber-Nomad-Collective/beskid_bsol' ||
 process.stdout.write(commit);
 NODE
 )" || fail 'extension.toml has no canonical immutable standalone BSOL grammar declaration'
-bsol_git_dir="$(git -C "${root}/beskid_bsol" rev-parse --git-common-dir)"
-git --git-dir="${bsol_git_dir}" cat-file -e "${bsol_grammar_commit}^{commit}" || \
+git -C "${bsol_repo}" cat-file -e "${bsol_grammar_commit}^{commit}" || \
   fail "manifest-pinned BSOL grammar commit ${bsol_grammar_commit} is unavailable"
-git --git-dir="${bsol_git_dir}" worktree add --detach "${bsol_checkout}" "${bsol_grammar_commit}" >/dev/null
+git -C "${bsol_repo}" worktree add --detach "${bsol_checkout}" "${bsol_grammar_commit}" >/dev/null
 bsol_worktree_added=true
 [[ -s "${bsol_grammar_checkout}/src/parser.c" ]] || \
   fail "manifest-pinned BSOL grammar ${bsol_grammar_commit} is missing committed src/parser.c"

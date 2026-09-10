@@ -21,6 +21,14 @@ environment:
       job_name: windows-compiler
       job_group: compiler-validation
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
+    - BESKID_CI_LANE: vscode-extension
+      job_name: vscode-extension
+      job_group: editor-validation
+      APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2204
+    - BESKID_CI_LANE: zed-extension
+      job_name: zed-extension
+      job_group: editor-validation
+      APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2204
 
 max_jobs: 1
 
@@ -54,3 +62,10 @@ for:
         - BESKID_CI_LANE: windows-compiler
     build_script:
       - ps: ./scripts/ci/appveyor-entrypoint.ps1
+
+  - matrix:
+      only:
+        - BESKID_CI_LANE: vscode-extension
+        - BESKID_CI_LANE: zed-extension
+    build_script:
+      - sh: bash ./scripts/ci/appveyor-entrypoint.sh

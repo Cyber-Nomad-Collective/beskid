@@ -11,6 +11,10 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Added
 
+- AppVeyor: add dedicated Linux validation lanes for the VS Code and Zed
+  extensions, including their editor-authoring, package, language-asset, and
+  LSP command-contract gates; marketplace and registry publication remains in
+  the GitHub-native release workflows.
 - VS Code extension: register standalone `.bsol` documents through the same
   grammar, language configuration, and native LSP client used for `.bproj` and
   `.bws`, including incremental completion, hover, diagnostics, and semantic

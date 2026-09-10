@@ -91,7 +91,7 @@ ruby -e '
   matrix = config.dig("environment", "matrix")
   abort "AppVeyor environment matrix is missing" unless matrix.is_a?(Array)
   lanes = matrix.map { |row| row.fetch("BESKID_CI_LANE") }
-  expected = %w[linux-platform linux-compiler macos-compiler windows-compiler]
+  expected = %w[linux-platform linux-compiler macos-compiler windows-compiler vscode-extension zed-extension]
   abort "unexpected AppVeyor lane matrix: #{lanes.inspect}" unless lanes.sort == expected.sort
   abort "AppVeyor deployment must be disabled" unless config["deploy"] == false
   abort "required jobs may not be allowed to fail" if config.dig("matrix", "allow_failures")
@@ -100,7 +100,9 @@ ruby -e '
     "linux-platform" => "linux-platform",
     "linux-compiler" => "linux-compiler",
     "macos-compiler" => "macos-compiler",
-    "windows-compiler" => "windows-compiler"
+    "windows-compiler" => "windows-compiler",
+    "vscode-extension" => "vscode-extension",
+    "zed-extension" => "zed-extension"
   }
   matrix.each do |row|
     lane = row.fetch("BESKID_CI_LANE")
@@ -110,6 +112,13 @@ ruby -e '
   compiler_lanes.each do |lane|
     row = matrix.find { |candidate| candidate.fetch("BESKID_CI_LANE") == lane }
     abort "compiler lane #{lane} is outside compiler-validation" unless row["job_group"] == "compiler-validation"
+  end
+  editor_lanes = %w[vscode-extension zed-extension]
+  editor_lanes.each do |lane|
+    row = matrix.find { |candidate| candidate.fetch("BESKID_CI_LANE") == lane }
+    abort "editor lane #{lane} is outside editor-validation" unless row["job_group"] == "editor-validation"
+    abort "editor lane #{lane} has no stable job name" unless row["job_name"] == lane
+    abort "editor lane #{lane} must use a Linux worker" unless row.fetch("APPVEYOR_BUILD_WORKER_IMAGE").downcase.include?("ubuntu")
   end
   platform = matrix.find { |row| row.fetch("BESKID_CI_LANE") == "linux-platform" }
   abort "linux platform job must depend on compiler-validation" unless platform["job_depends_on"] == "compiler-validation"

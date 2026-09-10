@@ -44,6 +44,15 @@ run_appveyor_lane() {
       BESKID_RUNTIME_PREFIX="${ROOT}/compiler/target/native-runtime-kit-macos-matrix" \
         bash compiler/scripts/stage-native-runtime-kit-matrix.sh
       ;;
+    vscode-extension)
+      bash scripts/ci/lsp-command-contract-gate.sh
+      BESKID_VSCODE_RUN_EXTENSION_HOST=0 bash scripts/ci/vscode-gate.sh
+      ;;
+    zed-extension)
+      bash scripts/ci/test/editor-authoring-version.test.sh
+      bash scripts/ci/test/zed-extension-package.test.sh
+      bash scripts/ci/test/zed-language-assets.test.sh
+      ;;
     *)
       echo "Unsupported Bash AppVeyor lane: ${LANE:-unset}" >&2
       exit 2

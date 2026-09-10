@@ -113,6 +113,26 @@ case "${LANE}" in
     rustup target add aarch64-apple-darwin
     install_macos_native_tools
     ;;
+  vscode-extension)
+    require_native_lane linux
+    init_compiler_tree
+    bash scripts/ci/init-submodules.sh beskid_vscode
+    activate_node
+    activate_rust
+    install_linux_native_tools
+    if ! command -v bun >/dev/null 2>&1; then
+      npm install --global bun@1.3.14
+    fi
+    [[ "$(bun --version)" == "1.3.14" ]]
+    ;;
+  zed-extension)
+    require_native_lane linux
+    bash scripts/ci/init-submodules.sh beskid_bsol beskid_treesitter
+    activate_node
+    activate_rust
+    install_linux_native_tools
+    rustup target add wasm32-wasip2
+    ;;
   *)
     echo "Unsupported Bash AppVeyor lane: ${LANE:-unset}" >&2
     exit 2
