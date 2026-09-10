@@ -83,6 +83,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Cross-validate the shipped `aarch64-apple-darwin` compiler and LSP artifacts
+  from AppVeyor's Intel Sonoma worker without misreporting arm64 runtime smoke
+  coverage or requiring an unsupported x86-64 macOS runtime manifest.
 - Bootstrap rustup idempotently on native AppVeyor workers before configuring
   the stable minimal toolchain, and make Windows native-command exit status the
   failure authority so ordinary Git progress on stderr does not abort setup.

@@ -41,8 +41,7 @@ run_appveyor_lane() {
         bash compiler/scripts/stage-native-runtime-kit-matrix.sh
       ;;
     macos-compiler)
-      BESKID_RUNTIME_PREFIX="${ROOT}/compiler/target/native-runtime-kit-macos-matrix" \
-        bash compiler/scripts/stage-native-runtime-kit-matrix.sh
+      bash scripts/ci/appveyor-macos-cross-gate.sh
       ;;
     vscode-extension)
       bash scripts/ci/lsp-command-contract-gate.sh
