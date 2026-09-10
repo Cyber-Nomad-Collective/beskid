@@ -14,6 +14,8 @@ environment:
       job_name: linux-compiler
       job_group: compiler-validation
       APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2204
+      BESKID_CLIPPY_TIMEOUT: 1800
+      BESKID_RUNTIME_KIT_TIMEOUT: 1200
     - BESKID_CI_LANE: macos-compiler
       job_name: macos-compiler
       job_group: compiler-validation
