@@ -8,12 +8,14 @@ node "${root}/scripts/ci/check-license-policy.mjs" --root "${root}"
 
 bash "${root}/scripts/ci/test/appveyor-migration-contract.test.sh"
 bash "${root}/scripts/ci/test/appveyor-rustup-bootstrap.test.sh"
+bash "${root}/scripts/ci/test/appveyor-macos-cross-gate.test.sh"
 bash "${root}/scripts/ci/test/appveyor-migration-isolation.test.sh"
 bash "${root}/scripts/ci/test/appveyor-event-policy.test.sh"
 
 for script in \
   appveyor-install.sh \
   appveyor-entrypoint.sh \
+  appveyor-macos-cross-gate.sh \
   appveyor-package-publish.sh \
   appveyor-platform-publish.sh \
   security-policy-gate.sh; do
