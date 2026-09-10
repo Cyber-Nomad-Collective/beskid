@@ -13,5 +13,7 @@ appveyor_is_trusted_main_push() {
     [[ -z "${APPVEYOR_PULL_REQUEST_NUMBER:-}" ]] &&
     ! appveyor_flag_is_true "${APPVEYOR_REPO_TAG:-}" &&
     ! appveyor_flag_is_true "${APPVEYOR_FORCED_BUILD:-}" &&
-    ! appveyor_flag_is_true "${APPVEYOR_SCHEDULED_BUILD:-}"
+    ! appveyor_flag_is_true "${APPVEYOR_SCHEDULED_BUILD:-}" &&
+    ! appveyor_flag_is_true "${APPVEYOR_RE_BUILD:-}" &&
+    ! appveyor_flag_is_true "${APPVEYOR_RE_RUN_INCOMPLETE:-}"
 }

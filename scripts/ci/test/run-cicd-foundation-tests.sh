@@ -7,6 +7,7 @@ node --test "${root}/scripts/ci/test/license-policy.test.mjs"
 node "${root}/scripts/ci/check-license-policy.mjs" --root "${root}"
 
 bash "${root}/scripts/ci/test/appveyor-migration-contract.test.sh"
+bash "${root}/scripts/ci/test/appveyor-event-policy.test.sh"
 
 for script in \
   appveyor-install.sh \
