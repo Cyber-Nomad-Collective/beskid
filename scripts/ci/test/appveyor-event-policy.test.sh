@@ -5,6 +5,7 @@ set -euo pipefail
 root="$(cd "$(dirname "$0")/../../.." && pwd)"
 policy="${root}/scripts/ci/lib/appveyor-event-policy.sh"
 
+# shellcheck source=scripts/ci/lib/appveyor-event-policy.sh
 source "${policy}"
 
 run_case() {
@@ -18,6 +19,9 @@ run_case() {
   APPVEYOR_SCHEDULED_BUILD="${scheduled}"
   APPVEYOR_RE_BUILD="${rebuild}"
   APPVEYOR_RE_RUN_INCOMPLETE="${rerun_incomplete}"
+  export APPVEYOR_REPO_BRANCH APPVEYOR_PULL_REQUEST_NUMBER APPVEYOR_REPO_TAG
+  export APPVEYOR_FORCED_BUILD APPVEYOR_SCHEDULED_BUILD APPVEYOR_RE_BUILD
+  export APPVEYOR_RE_RUN_INCOMPLETE
   appveyor_is_trusted_main_push
 }
 
