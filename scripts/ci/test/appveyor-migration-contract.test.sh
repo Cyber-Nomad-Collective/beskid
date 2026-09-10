@@ -52,6 +52,9 @@ run_isolated_appveyor_event() {
 [[ -x "${ROOT}/scripts/ci/appveyor-install.sh" ]] || fail "AppVeyor installer is missing or not executable"
 [[ -x "${ROOT}/scripts/ci/appveyor-entrypoint.sh" ]] || fail "POSIX AppVeyor entrypoint is missing or not executable"
 [[ -f "${ROOT}/scripts/ci/appveyor-entrypoint.ps1" ]] || fail "Windows AppVeyor entrypoint is missing"
+install_content="$(<"${ROOT}/scripts/ci/appveyor-install.sh")"
+grep -q 'linux-compiler|linux-compiler-lint|linux-compiler-runtime' <<<"${install_content}" || \
+  fail "AppVeyor installer does not provision both split Linux compiler lanes"
 [[ -x "${PUBLISHER}" ]] || fail "platform publisher is missing or not executable"
 [[ -x "${PROMOTER}" ]] || fail "platform promoter is missing or not executable"
 [[ -x "${MANIFEST}" ]] || fail "platform image manifest writer is missing or not executable"
