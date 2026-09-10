@@ -44,28 +44,7 @@ run_appveyor_lane() {
       bash scripts/ci/compiler-rust-gate.sh lint
       ;;
     linux-compiler-runtime)
-      bash scripts/ci/compiler-rust-gate.sh runtime
-      run_linux_runtime_followup
-      ;;
-    linux-runtime-kit-build)
-      # TEMP: remove with the native Linux scheduler signal probe.
-      if [[ "${BESKID_NATIVE_FIBER_PROBE:-0}" == "1" ]]; then
-        (
-          cd compiler
-          cargo test -p beskid_engine --test spawn_scheduler \
-            jit_runs_zero_capture_lambda_spawn_under_fiber_scheduler -- \
-          --exact --test-threads=1 --nocapture
-        )
-      fi
-      bash scripts/ci/compiler-rust-gate.sh runtime-kit-build
-      BESKID_RUNTIME_KIT_SOURCE="${ROOT}/compiler/target/native-runtime-kit" \
-        bash scripts/ci/appveyor-runtime-kit-artifact.sh publish
-      ;;
-    linux-runtime-kit-verify)
-      BESKID_RUNTIME_KIT_DESTINATION="${ROOT}/compiler/target/native-runtime-kit" \
-        bash scripts/ci/appveyor-runtime-kit-artifact.sh restore
-      bash scripts/ci/compiler-rust-gate.sh runtime-kit-verify
-      run_linux_runtime_followup
+      bash scripts/ci/compiler-rust-gate.sh runtime-kit
       ;;
     macos-compiler)
       bash scripts/ci/appveyor-macos-cross-gate.sh
