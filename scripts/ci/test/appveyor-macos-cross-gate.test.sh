@@ -4,6 +4,7 @@ set -euo pipefail
 root="$(cd "$(dirname "$0")/../../.." && pwd)"
 gate="${root}/scripts/ci/appveyor-macos-cross-gate.sh"
 entrypoint="${root}/scripts/ci/appveyor-entrypoint.sh"
+installer="${root}/scripts/ci/appveyor-install.sh"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -17,6 +18,13 @@ rg -q 'bash scripts/ci/appveyor-macos-cross-gate\.sh' <<<"${entrypoint_source}" 
   fail "macOS AppVeyor lane does not use the cross-validation gate"
 if rg -n 'native-runtime-kit-macos-matrix' <<<"${entrypoint_source}"; then
   fail "Intel macOS lane still claims native runtime-kit coverage"
+fi
+
+installer_source="$(<"${installer}")"
+rg -q 'install_brew_formula ripgrep' <<<"${installer_source}" || \
+  fail "macOS cross-validation does not provision ripgrep"
+if rg -q 'install_brew_formula llvm' <<<"${installer_source}"; then
+  fail "cross-only macOS lane still provisions the native LLVM symbol toolchain"
 fi
 
 scratch="$(mktemp -d "${TMPDIR:-/tmp}/beskid-macos-cross-gate.XXXXXX")"

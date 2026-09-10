@@ -64,14 +64,6 @@ install_brew_formula() {
   brew list "${formula}" >/dev/null 2>&1 || brew install "${formula}"
 }
 
-install_macos_native_tools() {
-  require_command brew
-  install_brew_formula llvm
-  install_brew_formula ripgrep
-  LLVM_NM="$(brew --prefix llvm)/bin/llvm-nm"
-  export LLVM_NM
-}
-
 init_compiler_tree() {
   bash "${ROOT}/scripts/ci/init-compiler-submodule.sh"
 }
@@ -109,7 +101,8 @@ case "${LANE}" in
     init_compiler_tree
     activate_appveyor_rust_toolchain
     rustup target add aarch64-apple-darwin
-    install_macos_native_tools
+    require_command brew
+    install_brew_formula ripgrep
     ;;
   vscode-extension)
     require_native_lane linux
