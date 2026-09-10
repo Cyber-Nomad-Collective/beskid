@@ -96,6 +96,7 @@ ruby -e '
   abort "AppVeyor deployment must be disabled" unless config["deploy"] == false
   abort "required jobs may not be allowed to fail" if config.dig("matrix", "allow_failures")
   abort "AppVeyor must serialize project builds through the FIFO queue" unless config["max_jobs"] == 1
+  abort "AppVeyor must suppress duplicate branch builds when a PR exists" unless config["skip_branch_with_pr"] == true
   expected_jobs = {
     "linux-platform" => "linux-platform",
     "linux-compiler" => "linux-compiler",
