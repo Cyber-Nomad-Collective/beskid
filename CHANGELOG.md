@@ -76,6 +76,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Advance the compiler pin to complete x86-64 Linux fibers through generated
+  tail transfers, preserving CET shadow-stack state while keeping scheduler
+  completion and the manifest-owned context switch as single authorities.
 - Initialize the VS Code extension submodule in the platform integration gate
   before enforcing the shared editor authoring-version contract, and assert
   that membership without duplicating the workflow's ordered submodule list.
