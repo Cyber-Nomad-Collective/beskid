@@ -24,6 +24,12 @@ run_linux_platform_lane() {
   bash scripts/ci/appveyor-platform-promote.sh
 }
 
+run_linux_runtime_followup() {
+  bash scripts/ci/lsp-command-contract-gate.sh
+  BESKID_RUNTIME_PREFIX="${ROOT}/compiler/target/native-runtime-kit-linux-matrix" \
+    bash compiler/scripts/stage-native-runtime-kit-matrix.sh
+}
+
 run_appveyor_lane() {
   # Source installation so nvm/toolchain exports remain active for the gate.
   # shellcheck disable=SC1091
@@ -36,6 +42,10 @@ run_appveyor_lane() {
       ;;
     linux-compiler-lint)
       bash scripts/ci/compiler-rust-gate.sh lint
+      ;;
+    linux-compiler-runtime)
+      bash scripts/ci/compiler-rust-gate.sh runtime
+      run_linux_runtime_followup
       ;;
     linux-runtime-kit-build)
       # TEMP: remove with the native Linux scheduler signal probe.
@@ -55,9 +65,7 @@ run_appveyor_lane() {
       BESKID_RUNTIME_KIT_DESTINATION="${ROOT}/compiler/target/native-runtime-kit" \
         bash scripts/ci/appveyor-runtime-kit-artifact.sh restore
       bash scripts/ci/compiler-rust-gate.sh runtime-kit-verify
-      bash scripts/ci/lsp-command-contract-gate.sh
-      BESKID_RUNTIME_PREFIX="${ROOT}/compiler/target/native-runtime-kit-linux-matrix" \
-        bash compiler/scripts/stage-native-runtime-kit-matrix.sh
+      run_linux_runtime_followup
       ;;
     macos-compiler)
       bash scripts/ci/appveyor-macos-cross-gate.sh

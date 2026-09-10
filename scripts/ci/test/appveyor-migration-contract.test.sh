@@ -132,7 +132,7 @@ ruby -e '
   abort "consumer does not select the shared runtime-kit verify phase" unless entrypoint.include?("bash scripts/ci/compiler-rust-gate.sh runtime-kit-verify")
   abort "producer does not publish through the runtime-kit artifact module" unless entrypoint.include?("appveyor-runtime-kit-artifact.sh publish")
   abort "consumer does not restore through the runtime-kit artifact module" unless entrypoint.include?("appveyor-runtime-kit-artifact.sh restore")
-  abort "split Linux runtime-kit lanes do not share the compiler installer" unless installer.include?("linux-compiler-lint|linux-runtime-kit-build|linux-runtime-kit-verify")
+  abort "Linux compiler lanes do not share the compiler installer" unless installer.include?("linux-compiler-lint|linux-compiler-runtime|linux-runtime-kit-build|linux-runtime-kit-verify")
   abort "full runtime validation does not reuse split runtime-kit phases" unless compiler_gate.include?("run_runtime_kit_build_phase") && compiler_gate.include?("run_runtime_kit_verify_phase")
   abort "full runtime validation does not reuse build then verify phases" unless compiler_gate.match?(/run_runtime_phase\(\).*?run_runtime_kit_build_phase.*?run_runtime_kit_verify_phase/m)
   abort "artifact module permits previous-build fallback" if artifact_module.include?("last successful")
