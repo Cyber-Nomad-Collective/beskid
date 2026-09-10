@@ -14,6 +14,12 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Isolate AppVeyor native runtime-kit validation from the full local workspace
   test phase and reuse one staging implementation for both paths.
 - Add a Buildkite validation pipeline that reuses the canonical AppVeyor lane scripts without publication authority.
+- Split AppVeyor ABI-v5 runtime-kit construction and verification into exact-build
+  producer and consumer jobs, with fail-closed provenance, checksum, and archive
+  validation at the artifact boundary. Resolve downloads from the producer's
+  exact artifact listing so AppVeyor-preserved directory prefixes are handled
+  without basename URL assumptions, while preserving URL path separators for
+  AppVeyor routing.
 
 ### Added
 

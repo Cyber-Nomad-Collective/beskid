@@ -68,7 +68,8 @@ run_lint_phase() {
 }
 
 run_runtime_phase() {
-  run_runtime_kit_phase
+  run_runtime_kit_build_phase
+  run_runtime_kit_verify_phase
 
   # Tests run serially, so a deadlocked lowering test cannot consume the whole job.
   local test_timeout="${BESKID_TEST_TIMEOUT:-1800}"
@@ -88,13 +89,20 @@ run_runtime_phase() {
   return "${status}"
 }
 
-run_runtime_kit_phase() {
-  # Build a fresh canonical runtime kit for this exact native host. AppVeyor
-  # selects this phase alone; full local validation reuses it before tests.
+run_runtime_kit_build_phase() {
+  # Build a fresh canonical runtime kit for this exact native host. Hosted CI can hand the
+  # immutable result to a separate verifier job without duplicating the canonical builder.
   export BESKID_RUNTIME_PREFIX="${BESKID_RUNTIME_PREFIX:-${CARGO_TARGET_DIR:-${ROOT}/compiler/target}/native-runtime-kit}"
   export BESKID_RUNTIME_KIT_PROFILE=debug
-  run_bounded_phase "Native ABI-v5 runtime-kit staging and verification" "${BESKID_RUNTIME_KIT_TIMEOUT:-600}" \
-    bash scripts/stage-native-runtime-kit.sh
+  run_bounded_phase "Native ABI-v5 runtime-kit build" "${BESKID_RUNTIME_KIT_TIMEOUT:-600}" \
+    bash scripts/stage-native-runtime-kit.sh build
+}
+
+run_runtime_kit_verify_phase() {
+  export BESKID_RUNTIME_PREFIX="${BESKID_RUNTIME_PREFIX:-${CARGO_TARGET_DIR:-${ROOT}/compiler/target}/native-runtime-kit}"
+  export BESKID_RUNTIME_KIT_PROFILE=debug
+  run_bounded_phase "Native ABI-v5 runtime-kit verification" "${BESKID_RUNTIME_KIT_VERIFY_TIMEOUT:-1800}" \
+    bash scripts/stage-native-runtime-kit.sh verify
 }
 
 case "${gate_phase}" in
@@ -108,8 +116,11 @@ case "${gate_phase}" in
   runtime)
     run_runtime_phase
     ;;
-  runtime-kit)
-    run_runtime_kit_phase
+  runtime-kit-build)
+    run_runtime_kit_build_phase
+    ;;
+  runtime-kit-verify)
+    run_runtime_kit_verify_phase
     ;;
   *)
     echo "unsupported compiler Rust gate phase: ${gate_phase}" >&2

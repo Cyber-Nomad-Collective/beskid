@@ -37,7 +37,7 @@ run_appveyor_lane() {
     linux-compiler-lint)
       bash scripts/ci/compiler-rust-gate.sh lint
       ;;
-    linux-compiler-runtime)
+    linux-runtime-kit-build)
       # TEMP: remove with the native Linux scheduler signal probe.
       if [[ "${BESKID_NATIVE_FIBER_PROBE:-0}" == "1" ]]; then
         (
@@ -47,7 +47,14 @@ run_appveyor_lane() {
           --exact --test-threads=1 --nocapture
         )
       fi
-      bash scripts/ci/compiler-rust-gate.sh runtime-kit
+      bash scripts/ci/compiler-rust-gate.sh runtime-kit-build
+      BESKID_RUNTIME_KIT_SOURCE="${ROOT}/compiler/target/native-runtime-kit" \
+        bash scripts/ci/appveyor-runtime-kit-artifact.sh publish
+      ;;
+    linux-runtime-kit-verify)
+      BESKID_RUNTIME_KIT_DESTINATION="${ROOT}/compiler/target/native-runtime-kit" \
+        bash scripts/ci/appveyor-runtime-kit-artifact.sh restore
+      bash scripts/ci/compiler-rust-gate.sh runtime-kit-verify
       bash scripts/ci/lsp-command-contract-gate.sh
       BESKID_RUNTIME_PREFIX="${ROOT}/compiler/target/native-runtime-kit-linux-matrix" \
         bash compiler/scripts/stage-native-runtime-kit-matrix.sh
