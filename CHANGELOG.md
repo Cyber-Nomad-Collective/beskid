@@ -87,7 +87,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   the stable minimal toolchain, and make Windows native-command exit status the
   failure authority so ordinary Git progress on stderr does not abort setup.
   Suppress duplicate branch builds when the same commit is already covered by
-  a pull-request build.
+  a pull-request build, and install ripgrep wherever compiler/editor contracts
+  use it instead of assuming it exists on native workers.
 - Advance the compiler pin to complete x86-64 Linux fibers through generated
   tail transfers, preserving CET shadow-stack state while keeping scheduler
   completion and the manifest-owned context switch as single authorities.
