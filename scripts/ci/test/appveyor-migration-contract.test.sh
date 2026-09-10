@@ -88,10 +88,11 @@ fi
 ruby -e '
   require "yaml"
   config = YAML.safe_load(File.read(ARGV.fetch(0)), aliases: true)
+  entrypoint = File.read(ARGV.fetch(1))
   matrix = config.dig("environment", "matrix")
   abort "AppVeyor environment matrix is missing" unless matrix.is_a?(Array)
   lanes = matrix.map { |row| row.fetch("BESKID_CI_LANE") }
-  expected = %w[linux-platform linux-compiler macos-compiler windows-compiler vscode-extension zed-extension]
+  expected = %w[linux-platform linux-compiler-lint linux-compiler-runtime macos-compiler windows-compiler vscode-extension zed-extension]
   abort "unexpected AppVeyor lane matrix: #{lanes.inspect}" unless lanes.sort == expected.sort
   abort "AppVeyor deployment must be disabled" unless config["deploy"] == false
   abort "required jobs may not be allowed to fail" if config.dig("matrix", "allow_failures")
@@ -99,7 +100,8 @@ ruby -e '
   abort "AppVeyor must suppress duplicate branch builds when a PR exists" unless config["skip_branch_with_pr"] == true
   expected_jobs = {
     "linux-platform" => "linux-platform",
-    "linux-compiler" => "linux-compiler",
+    "linux-compiler-lint" => "linux-compiler-lint",
+    "linux-compiler-runtime" => "linux-compiler-runtime",
     "macos-compiler" => "macos-compiler",
     "windows-compiler" => "windows-compiler",
     "vscode-extension" => "vscode-extension",
@@ -109,14 +111,17 @@ ruby -e '
     lane = row.fetch("BESKID_CI_LANE")
     abort "AppVeyor lane #{lane} has no stable job name" unless row["job_name"] == expected_jobs.fetch(lane)
   end
-  compiler_lanes = %w[linux-compiler macos-compiler windows-compiler]
+  compiler_lanes = %w[linux-compiler-lint linux-compiler-runtime macos-compiler windows-compiler]
   compiler_lanes.each do |lane|
     row = matrix.find { |candidate| candidate.fetch("BESKID_CI_LANE") == lane }
     abort "compiler lane #{lane} is outside compiler-validation" unless row["job_group"] == "compiler-validation"
   end
-  linux_compiler = matrix.find { |row| row.fetch("BESKID_CI_LANE") == "linux-compiler" }
-  abort "linux compiler lane needs a cold-worker Clippy budget" unless linux_compiler["BESKID_CLIPPY_TIMEOUT"].to_i >= 3600
-  abort "linux compiler lane needs a runtime-kit budget" unless linux_compiler["BESKID_RUNTIME_KIT_TIMEOUT"].to_i >= 3600
+  linux_lint = matrix.find { |row| row.fetch("BESKID_CI_LANE") == "linux-compiler-lint" }
+  linux_runtime = matrix.find { |row| row.fetch("BESKID_CI_LANE") == "linux-compiler-runtime" }
+  abort "linux compiler lint lane needs a cold-worker Clippy budget" unless linux_lint["BESKID_CLIPPY_TIMEOUT"].to_i >= 3600
+  abort "linux compiler runtime lane needs a runtime-kit budget" unless linux_runtime["BESKID_RUNTIME_KIT_TIMEOUT"].to_i >= 1200
+  abort "linux compiler lint lane does not select the shared lint phase" unless entrypoint.include?("bash scripts/ci/compiler-rust-gate.sh lint")
+  abort "linux compiler runtime lane does not select the shared runtime phase" unless entrypoint.include?("bash scripts/ci/compiler-rust-gate.sh runtime")
   editor_lanes = %w[vscode-extension zed-extension]
   editor_lanes.each do |lane|
     row = matrix.find { |candidate| candidate.fetch("BESKID_CI_LANE") == lane }
@@ -132,10 +137,10 @@ ruby -e '
   artifacts = platform_job&.fetch("artifacts", [])
   abort "linux platform job must retain AppVeyor release evidence" unless artifacts.any? { |artifact| artifact["path"] == ".appveyor-reports/**" }
   images = matrix.to_h { |row| [row.fetch("BESKID_CI_LANE"), row.fetch("APPVEYOR_BUILD_WORKER_IMAGE")] }
-  abort "linux lanes must use Linux workers" unless images.fetch("linux-platform").downcase.include?("ubuntu") && images.fetch("linux-compiler").downcase.include?("ubuntu")
+  abort "linux lanes must use Linux workers" unless images.fetch("linux-platform").downcase.include?("ubuntu") && images.fetch("linux-compiler-lint").downcase.include?("ubuntu") && images.fetch("linux-compiler-runtime").downcase.include?("ubuntu")
   abort "macOS compiler lane must use a macOS worker" unless images.fetch("macos-compiler").downcase.include?("macos")
   abort "Windows compiler lane must use a Visual Studio worker" unless images.fetch("windows-compiler").downcase.include?("visual studio")
-' "${APPVEYOR_CONFIG}"
+' "${APPVEYOR_CONFIG}" "${ENTRYPOINT}"
 
 retired_workflows=(
   compiler-gate-testbox.yml
