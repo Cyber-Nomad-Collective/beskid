@@ -88,6 +88,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Share the native compiler installation path between AppVeyor's split Linux
+  lint and runtime lanes so both jobs reach their selected compiler gate.
 - Cross-validate the shipped `aarch64-apple-darwin` compiler and LSP artifacts
   from AppVeyor's Intel Sonoma worker without misreporting arm64 runtime smoke
   coverage, requiring an unsupported x86-64 macOS runtime manifest, or

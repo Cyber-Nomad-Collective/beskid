@@ -5,6 +5,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 APPVEYOR_CONFIG="${ROOT}/appveyor.yml"
 ENTRYPOINT="${ROOT}/scripts/ci/appveyor-entrypoint.sh"
+INSTALLER="${ROOT}/scripts/ci/appveyor-install.sh"
 PUBLISHER="${ROOT}/scripts/ci/appveyor-platform-publish.sh"
 PROMOTER="${ROOT}/scripts/ci/appveyor-platform-promote.sh"
 MANIFEST="${ROOT}/scripts/ci/appveyor-image-manifest.sh"
@@ -52,9 +53,6 @@ run_isolated_appveyor_event() {
 [[ -x "${ROOT}/scripts/ci/appveyor-install.sh" ]] || fail "AppVeyor installer is missing or not executable"
 [[ -x "${ROOT}/scripts/ci/appveyor-entrypoint.sh" ]] || fail "POSIX AppVeyor entrypoint is missing or not executable"
 [[ -f "${ROOT}/scripts/ci/appveyor-entrypoint.ps1" ]] || fail "Windows AppVeyor entrypoint is missing"
-install_content="$(<"${ROOT}/scripts/ci/appveyor-install.sh")"
-grep -q 'linux-compiler|linux-compiler-lint|linux-compiler-runtime' <<<"${install_content}" || \
-  fail "AppVeyor installer does not provision both split Linux compiler lanes"
 [[ -x "${PUBLISHER}" ]] || fail "platform publisher is missing or not executable"
 [[ -x "${PROMOTER}" ]] || fail "platform promoter is missing or not executable"
 [[ -x "${MANIFEST}" ]] || fail "platform image manifest writer is missing or not executable"
@@ -92,6 +90,7 @@ ruby -e '
   require "yaml"
   config = YAML.safe_load(File.read(ARGV.fetch(0)), aliases: true)
   entrypoint = File.read(ARGV.fetch(1))
+  installer = File.read(ARGV.fetch(2))
   matrix = config.dig("environment", "matrix")
   abort "AppVeyor environment matrix is missing" unless matrix.is_a?(Array)
   lanes = matrix.map { |row| row.fetch("BESKID_CI_LANE") }
@@ -125,6 +124,7 @@ ruby -e '
   abort "linux compiler runtime lane needs a runtime-kit budget" unless linux_runtime["BESKID_RUNTIME_KIT_TIMEOUT"].to_i >= 3600
   abort "linux compiler lint lane does not select the shared lint phase" unless entrypoint.include?("bash scripts/ci/compiler-rust-gate.sh lint")
   abort "linux compiler runtime lane does not select the bounded runtime-kit phase" unless entrypoint.include?("bash scripts/ci/compiler-rust-gate.sh runtime-kit")
+  abort "split Linux compiler lanes do not share the compiler installer" unless installer.include?("linux-compiler-lint|linux-compiler-runtime)")
   editor_lanes = %w[vscode-extension zed-extension]
   editor_lanes.each do |lane|
     row = matrix.find { |candidate| candidate.fetch("BESKID_CI_LANE") == lane }
@@ -143,7 +143,7 @@ ruby -e '
   abort "linux lanes must use Linux workers" unless images.fetch("linux-platform").downcase.include?("ubuntu") && images.fetch("linux-compiler-lint").downcase.include?("ubuntu") && images.fetch("linux-compiler-runtime").downcase.include?("ubuntu")
   abort "macOS compiler lane must use a macOS worker" unless images.fetch("macos-compiler").downcase.include?("macos")
   abort "Windows compiler lane must use a Visual Studio worker" unless images.fetch("windows-compiler").downcase.include?("visual studio")
-' "${APPVEYOR_CONFIG}" "${ENTRYPOINT}"
+' "${APPVEYOR_CONFIG}" "${ENTRYPOINT}" "${INSTALLER}"
 
 retired_workflows=(
   compiler-gate-testbox.yml

@@ -84,7 +84,7 @@ case "${LANE}" in
     require_command docker
     docker buildx version
     ;;
-  linux-compiler|linux-compiler-lint|linux-compiler-runtime)
+  linux-compiler-lint|linux-compiler-runtime)
     require_native_lane linux
     init_compiler_tree
     bash scripts/ci/init-submodules.sh beskid_vscode
