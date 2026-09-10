@@ -99,7 +99,7 @@ still reports that failure.
 
 There is no atomic transaction spanning five independent image repositories.
 Watchtower can observe a partially advanced tag set if the worker stops during
-step 6. AppVeyor cannot remove this registry/Watchtower limitation. The practical
+step 7. AppVeyor cannot remove this registry/Watchtower limitation. The practical
 contract is **eventual convergence with one immutable source SHA**, proved by
 the digest manifest and operator observation; CI must not gain Watchtower
 control merely to hide this limitation. Rebuild and incomplete-rerun events are
