@@ -54,14 +54,20 @@ install_linux_native_tools() {
   require_command sudo
   sudo apt-get update
   sudo apt-get install -y --no-install-recommends \
-    build-essential clang curl git jq lld llvm mold pkg-config libssl-dev
+    build-essential clang curl git jq lld llvm mold pkg-config libssl-dev ripgrep
   LLVM_NM="$(command -v llvm-nm)"
   export LLVM_NM
 }
 
+install_brew_formula() {
+  local formula="$1"
+  brew list "${formula}" >/dev/null 2>&1 || brew install "${formula}"
+}
+
 install_macos_native_tools() {
   require_command brew
-  brew list llvm >/dev/null 2>&1 || brew install llvm
+  install_brew_formula llvm
+  install_brew_formula ripgrep
   LLVM_NM="$(brew --prefix llvm)/bin/llvm-nm"
   export LLVM_NM
 }
