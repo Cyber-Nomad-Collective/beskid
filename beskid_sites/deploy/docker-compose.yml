@@ -397,4 +397,5 @@ services:
       WATCHTOWER_CLEANUP: "true"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - ./watchtower/config.json:/config.json:ro
     logging: *default-logging

@@ -137,6 +137,7 @@ if [ "$FROM_OPENBAO" -eq 1 ]; then
   for svc in postgres tracker nexus pckg learn authentik; do
     read_secrets "$svc" >> "${ENV_FILE}" || true
   done
+  read_secrets registry >> "${ENV_FILE}" || true
   log "  .env populated from OpenBao (review before deploy)"
 else
   if [ ! -f "${ENV_FILE}" ]; then
@@ -154,6 +155,8 @@ need BESKID_EDGE_NETWORK "shared host edge network name"
   err "BESKID_EDGE_NETWORK must name an existing shared host edge network"
   exit 1
 }
+need REGISTRY_USERNAME "registry account used by AppVeyor and Watchtower"
+need REGISTRY_PASSWORD "registry password used by AppVeyor and Watchtower"
 need POSTGRES_PASSWORD "shared Postgres password"
 need SITE_IMAGE_TAG "website image tag (production)"
 need TRACKER_IMAGE_TAG "tracker image tag (production)"
@@ -172,17 +175,26 @@ done
 # ---------------------------------------------------------------------------
 # 3. Ship files to the deploy host
 # ---------------------------------------------------------------------------
+WATCHTOWER_CONFIG="$(mktemp)"
+trap 'rm -f "${WATCHTOWER_CONFIG}"' EXIT
+REGISTRY_AUTH="$(printf '%s:%s' "${REGISTRY_USERNAME}" "${REGISTRY_PASSWORD}" | base64 | tr -d '\n')"
+jq -n --arg auth "${REGISTRY_AUTH}" \
+  '{auths: {"cr.beskid-lang.org": {auth: $auth}}}' > "${WATCHTOWER_CONFIG}"
+chmod 600 "${WATCHTOWER_CONFIG}"
+
 log "shipping files to ${DEPLOY_HOST}:${REMOTE_DIR}"
 remote "docker network inspect ${BESKID_EDGE_NETWORK} >/dev/null" || {
   err "BESKID_EDGE_NETWORK does not exist on ${DEPLOY_HOST}: ${BESKID_EDGE_NETWORK}"
   exit 1
 }
-remote "mkdir -p ${REMOTE_DIR}/registry"
+remote "mkdir -p ${REMOTE_DIR}/registry ${REMOTE_DIR}/watchtower"
 
 scp -q "${SCRIPT_DIR}/docker-compose.yml" "${DEPLOY_HOST}:${REMOTE_DIR}/docker-compose.yml"
 scp -q "${SCRIPT_DIR}/registry/config.yml" "${DEPLOY_HOST}:${REMOTE_DIR}/registry/config.yml"
 scp -q "${SCRIPT_DIR}/registry/htpasswd" "${DEPLOY_HOST}:${REMOTE_DIR}/registry/htpasswd"
 remote "chmod 600 ${REMOTE_DIR}/registry/htpasswd"
+scp -q "${WATCHTOWER_CONFIG}" "${DEPLOY_HOST}:${REMOTE_DIR}/watchtower/config.json"
+remote "chmod 600 ${REMOTE_DIR}/watchtower/config.json"
 # Ship .env with restricted perms.
 scp -q "${ENV_FILE}" "${DEPLOY_HOST}:${REMOTE_DIR}/.env"
 remote "chmod 600 ${REMOTE_DIR}/.env"

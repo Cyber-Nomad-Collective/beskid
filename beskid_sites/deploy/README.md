@@ -49,8 +49,9 @@ The production host is `root@bdziam.dev`; the runtime directory defaults to
 
 - DNS for `beskid-lang.org`, `auth`, `learn`, `tracker`, `nexus`, `pckg`, and
   `cr` subdomains.
-- A registry account with pull access on the host and push access stored as
-  secure AppVeyor variables `REGISTRY_USERNAME` and `REGISTRY_PASSWORD`.
+- A registry account whose `REGISTRY_USERNAME` and `REGISTRY_PASSWORD` are
+  stored in OpenBao under the production `registry` path, or in the ignored
+  deployment `.env`. Store the same values as secure AppVeyor variables.
 - A bcrypt registry credential file at `registry/htpasswd`. This ignored file
   is copied to the host with mode `0600`; do not commit it.
 - OpenBao production secrets, or a populated local `.env` copied from
@@ -99,9 +100,11 @@ htpasswd -Bbn <registry-user> <registry-password> > registry/htpasswd
 Use the same username and password for the repository secrets
 `REGISTRY_USERNAME` and `REGISTRY_PASSWORD`, then rerun `deploy.sh`. The script
 fails closed if the credential file is missing or empty, copies it separately
-from `.env`, restricts it to the host administrator, and restarts the registry
-through Compose. Validate rotation with `docker login cr.beskid-lang.org`; an
-unauthenticated `GET /v2/` must return `401 Unauthorized`.
+from `.env`, generates Watchtower's ignored Docker client configuration, and
+restricts both files to the host administrator before restarting through
+Compose. Watchtower mounts that configuration read-only at `/config.json`.
+Validate rotation with `docker login cr.beskid-lang.org`; an unauthenticated
+`GET /v2/` must return `401 Unauthorized`.
 
 ## Rollback
 

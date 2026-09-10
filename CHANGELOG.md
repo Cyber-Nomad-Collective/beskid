@@ -9,6 +9,12 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ## [Unreleased]
 
+### Security
+
+- Authenticate Watchtower to the private Beskid registry through a generated,
+  administrator-only Docker client configuration sourced from OpenBao or the
+  ignored production environment.
+
 ### Changed
 
 - Document the release-safe AppVeyor authority model: compiler-validation fan-in,
