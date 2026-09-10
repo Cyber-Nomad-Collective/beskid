@@ -77,7 +77,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 ### Fixed
 
 - Initialize the VS Code extension submodule in the platform integration gate
-  before enforcing the shared editor authoring-version contract.
+  before enforcing the shared editor authoring-version contract, and assert
+  that membership without duplicating the workflow's ordered submodule list.
 - Advance the compiler pin to the Rust 1.98-compatible strict Clippy cleanup,
   then restore its exact Corelib runtime-authority implementation for typed
   arrays, atomic channels, split fiber joins, bottom-typed match arms, and
