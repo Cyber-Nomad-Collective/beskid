@@ -366,7 +366,7 @@ After applying a fix, add or update a focused fixture in the nearest test crate 
 <summary>Migrated source text</summary>
 
 ``````markdown
-## Why did a change pass locally but fail in CI?
+## Why did a focused check pass while the full conformance suite fails?
 
 Most often, one crate boundary changed but the corresponding fixture or downstream consumer was not updated. Re-run the nearest conformance suite and inspect cross-crate handoff points.
 
@@ -446,7 +446,6 @@ Document the new contract in the relevant article, update implementation in the 
   - `beskid_tests` and `beskid_e2e_tests` -> conformance leaves
   - `beskid_tests/src/spine/` -> unified spine diagnostics parity (D-COMP-CONF-0007)
   - `beskid_codegen/tests/array_tests_linking.rs` -> `LinkPlan` / `validate_artifact` (D-COMP-IR-0010)
-  - `compiler/corelib/ci/run_corelib_tests.py` -> full `corelib_tests` matrix via `beskid test`
 
 ## Review checklist
 

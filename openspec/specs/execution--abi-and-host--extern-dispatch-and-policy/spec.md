@@ -413,7 +413,7 @@ Legacy harness references:
 
 No for production **Standard** flows—use [link-time linking](/platform-spec/language-meta/interop/c-abi-profile/link-time-linking/). `extern_dlopen` remains documented for legacy engine tests and **Proposed** dynamic profiles.
 
-### Why do externs fail on macOS CI?
+### Why do externs fail on one macOS host?
 
 Dynamic resolution tests target Linux x86_64. macOS agents should skip or use link-time externs; `dlopen` policy is not portable in the legacy feature.
 

@@ -34,7 +34,7 @@ change and adds no alternate socket path.
 - The portable public API is identical on Linux, macOS, and Windows. Each
   target uses its required native readiness backend; a test-only fallback MUST
   NOT become a production backend.
-- No legacy URL migration, catalog generation, site publication, or deployment
+- No legacy URL migration, catalog generation, or site publication
   occurs in this change. The HTTP release change owns release-wide catalog and
   delivery evidence after both prerequisites validate.
 

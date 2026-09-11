@@ -541,7 +541,7 @@ After applying a fix, add or update a focused fixture in the nearest test crate 
 <summary>Migrated source text</summary>
 
 ``````markdown
-## Why did a change pass locally but fail in CI?
+## Why did a focused check pass while the full conformance suite fails?
 
 Most often, one crate boundary changed but the corresponding fixture or downstream consumer was not updated. Re-run the nearest conformance suite and inspect cross-crate handoff points.
 

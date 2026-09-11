@@ -42,6 +42,6 @@
   semantic pipeline.
 - [ ] 5.2 Run the FFI and export verification suites and assert no
   regression for single-surface declarations.
-- [ ] 5.3 Run full OpenSpec, compiler workspace, and release gates;
+- [ ] 5.3 Run full OpenSpec, compiler workspace, and distribution conformance checks;
   update catalog/changelog/traceability evidence and run GitNexus
   changed-scope analysis before integration.

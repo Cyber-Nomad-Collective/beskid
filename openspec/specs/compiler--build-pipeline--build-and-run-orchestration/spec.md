@@ -293,7 +293,6 @@ Corelib and workspace test matrices exercise the same spine as production run/bu
 
 - `compiler/crates/beskid_cli/src/commands/test.rs`
 - `compiler/crates/beskid_codegen/src/linking/plan.rs`
-- `compiler/corelib/ci/run_corelib_tests.py`
 ``````
 
 </details>

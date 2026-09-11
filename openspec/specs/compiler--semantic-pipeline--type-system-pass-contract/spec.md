@@ -691,7 +691,7 @@ Evidence: `compiler/crates/beskid_codegen/tests/`, `compiler/crates/beskid_tests
 
 ## Workspace gate
 
-After contract changes, run full `cargo test --workspace` in `compiler/` per platform CI policy.
+After contract changes, run full `cargo test --workspace` in `compiler/` on each supported platform.
 ``````
 
 </details>

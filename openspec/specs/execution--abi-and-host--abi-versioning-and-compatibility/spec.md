@@ -219,7 +219,7 @@ Release notes **should** list bumped versions and removed symbols. Renaming with
 
 ## Verification anchors
 
-`beskid_abi` symbol tables; `RUNTIME_EXPORT_SYMBOLS` parity checks in CI.
+`beskid_abi` symbol tables; `RUNTIME_EXPORT_SYMBOLS` parity checks in the conformance suite.
 ``````
 
 </details>
@@ -475,7 +475,7 @@ Only when `beskid_runtime_abi_version()` is still equal to the compiler's expect
 | `missing function 'alloc'` at JIT finalize | Runtime library not linked or stripped exports | Ensure `beskid_runtime` built with default features; verify `RUNTIME_EXPORT_SYMBOLS` |
 | Segfault on first builtin call | Wrong function pointer type registered | Check `BUILTIN_SPECS` vs runtime `extern "C-unwind"` signature |
 | Works in debug CLI, fails in VSIX | Stale extension runtime | Rebuild Open VSX matrix with matching `beskid_abi` |
-| AOT binary crashes, JIT OK | Old runtime .so bundled in deploy | Re-link AOT with current `beskid_runtime` |
+| AOT binary crashes, JIT OK | Old runtime .so bundled in the distribution | Re-link AOT with current `beskid_runtime` |
 
 ## Related topics
 
@@ -583,12 +583,12 @@ Missing symbols surface as **`JitError::MissingFunction`** at finalize time rath
 | **ABI-003** | Host/version gate tests in JIT and CLI startup (add when missing) |
 | **ABI-006** | Same `beskid_abi` path dependency in `beskid_engine`, `beskid_codegen`, and `beskid_runtime` workspace `Cargo.toml` |
 
-## CI expectations
+## Conformance expectations
 
-Compiler workspace CI **must** run runtime JIT tests on Linux x86_64 agents. ABI-breaking PRs **must** include spec updates under this feature and a version constant bump when **ABI-004** applies.
+Runtime JIT conformance tests **must** run on a supported Linux x86_64 host. ABI-breaking PRs **must** include spec updates under this feature and a version constant bump when **ABI-004** applies.
 
 ## Implementation anchors
-- `compiler/crates/beskid_abi/src/version.rs` — ABI version constant for CI assertions
+- `compiler/crates/beskid_abi/src/version.rs` — ABI version constant for conformance assertions
 - `compiler/crates/beskid_abi/src/symbols.rs` — symbol list parity checks
 - `compiler/crates/beskid_tests/src/abi/` — ABI conformance fixtures
 

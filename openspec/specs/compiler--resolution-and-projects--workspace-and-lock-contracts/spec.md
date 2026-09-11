@@ -65,7 +65,7 @@ The records below preserve migration history and are not normative except where 
 
 ``````markdown
 <SpecSection title="Authority split" id="authority-split">
-**Tooling** owns **`Workspace.proj` / lockfile** schema, update commands, and author-facing reserved-key tables. **This feature** owns how the compiler **materializes** the dependency graph from locks, **rejects** inconsistent workspace layouts, and **diagnoses** resolution failures during analysis and CI builds.
+**Tooling** owns **`Workspace.proj` / lockfile** schema, update commands, and author-facing reserved-key tables. **This feature** owns how the compiler **materializes** the dependency graph from locks, **rejects** inconsistent workspace layouts, and **diagnoses** resolution failures during analysis and locked builds.
 </SpecSection>
 
 <SpecSection title="Implementation anchors" id="implementation-anchors">
@@ -176,7 +176,7 @@ Workspace resolution **must** honor lockfile pins from `beskid_analysis::resolve
 
 ## Consequences
 
-Lock update commands are explicit; silent refresh is forbidden in CI modes.
+Lock update commands are explicit; silent refresh is forbidden under `--locked`.
 
 ## Verification anchors
 
@@ -201,7 +201,7 @@ Lock update commands are explicit; silent refresh is forbidden in CI modes.
 
 - **Deterministic graph** — Given the same lock snapshot and workspace layout, resolution produces the same member DAG.
 - **Layout invariants** — Folder layout under workspace members must match what lock materialization expects; violations fail before semantic analysis.
-- **No silent lock ignore** — When CI or `--locked` policy is active, missing or stale locks are errors, not warnings-only, unless tooling explicitly defines a warning mode for that command.
+- **No silent lock ignore** — When `--locked` policy is active, missing or stale locks are errors, not warnings-only, unless tooling explicitly defines a warning mode for that command.
 
 ## Edge cases (resolution)
 
@@ -239,7 +239,7 @@ Workspace key forbiddances and reserved names are specified in **[tooling / desi
 | Lock snapshot | Pinned dependency versions consumed when building the graph |
 | Materialized package root | On-disk layout the resolver uses after lock apply |
 
-The compiler **must** treat lock-backed roots as authoritative for reproducible CI graphs. Ad-hoc workspace toggles that alter Mod policy without a spec bump are rejected at parse time in tooling; the compiler enforces the resulting graph only.
+The compiler **must** treat lock-backed roots as authoritative for reproducible locked graphs. Ad-hoc workspace toggles that alter Mod policy without a spec bump are rejected at parse time in tooling; the compiler enforces the resulting graph only.
 
 ## Schema authority
 

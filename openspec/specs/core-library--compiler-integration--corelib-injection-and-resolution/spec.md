@@ -370,7 +370,7 @@ Corelib compile tests and ABI contract tests cross-check tag and status parity. 
 | Explicit `Std` dependency | Used instead of fallback path when `path` provided |
 | `beskid_corelib` building itself | `is_std_project` / manifest path checks avoid self-cycle |
 | Shard under `packages/runtime` | No implicit back-link to aggregate |
-| Missing `BESKID_CORELIB_ROOT` in CI | Repo discovery or bundled CLI corelib materialization |
+| Missing `BESKID_CORELIB_ROOT` | Repo discovery or bundled CLI corelib materialization |
 | Legacy `standard_library` paths | Tooling may accept aliases; canonical identity remains **`corelib`** |
 
 ## Relationship to discovery feature
@@ -469,7 +469,7 @@ dependency {
 
 Used in compiler dogfood projects; must point at aggregate `Project.proj`.
 
-## CI environment
+## Non-bundled environment
 
 ```bash
 export BESKID_CORELIB_ROOT=/path/to/compiler/corelib
@@ -603,7 +603,7 @@ sequenceDiagram
 
 Changes to `ENV_CORELIB_ROOT`, discovery walk, or shard cycle guards **must** update this bundle and **[Corelib discovery and packaging](/platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/)** together.
 
-## CI
+## Verification
 
 Compiler pipeline publishes **`corelib`** to pckg using the same aggregate tree injection relies on—publish failures often indicate layout drift before host apps break.
 ``````

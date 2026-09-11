@@ -47,7 +47,7 @@ imports and produces `GlueTag` records, not `ExternImport` rows. 0.4
 declares the contract; 0.5 implements the glue emission. No public
 standard URL or legacy URL changes.
 
-## Rollback and staged deployment
+## Compatibility and reversion
 
 This contract is staged before 0.5 glue generation. 0.4 ships the
 contract; the glue extraction path fails closed with

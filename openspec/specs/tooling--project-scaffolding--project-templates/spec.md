@@ -289,7 +289,7 @@ Single parser and validator in tooling; template docs stay in-repo.
 
 ## Verification anchors
 
-CI grep excluding foreign schema identifiers under `compiler/` and platform-spec tooling tree.
+static analysis excluding foreign schema identifiers under `compiler/` and platform-spec tooling tree.
 ``````
 
 </details>
@@ -345,11 +345,11 @@ Template packages **need not** compile at the template project root. Tooling **m
 
 ## Consequences
 
-Faster template iteration; CI runs instantiate-then-build on consumer output.
+Faster template iteration; consumer conformance tests instantiate then build on consumer output.
 
 ## Verification anchors
 
-`beskid.templates.*` CI pipeline; planned `beskid_tests` template fixtures.
+`beskid.templates.*` package conformance; planned `beskid_tests` template fixtures.
 ``````
 
 </details>
@@ -1202,7 +1202,7 @@ How implementers prove template engine and first-party package compliance.
 | `beskid.templates.lib` | `lib` | `project` |
 | `beskid.templates.project` | `template` | `project` |
 
-CI **must** pack and publish these under the **`beskid.templates.*`** namespace when registry credentials are available, matching [corelib publish](/platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/) workflow patterns.
+Publishers **must** pack these under the **`beskid.templates.*`** namespace, matching [corelib packaging](/platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/) semantics.
 
 ## pckg server
 

@@ -16,7 +16,7 @@ Beskid MUST provide two metaprogramming planes: language macros (`macro` items, 
 - **THEN** language macros expand via `macro.expand` and mods run via the Mod SDK pipeline as separate planes
 
 ### Requirement: Phase scheduling order
-The reference compiler MUST schedule: parse and build HIR; `macro.expand` (**E1901–E1908**); re-run resolution and types on the expanded surface; then `mod.load` / `mod.collect` / generators; then continue semantic analysis, composition (if host), and codegen. Mods MUST NOT run before macro expansion completes on the same compilation unit unless a future decision explicitly orders otherwise. Tooling MUST invoke the same phase order for CI and IDE builds on a given project kind.
+The reference compiler MUST schedule: parse and build HIR; `macro.expand` (**E1901–E1908**); re-run resolution and types on the expanded surface; then `mod.load` / `mod.collect` / generators; then continue semantic analysis, composition (if host), and codegen. Mods MUST NOT run before macro expansion completes on the same compilation unit unless a future decision explicitly orders otherwise. Tooling MUST invoke the same phase order for CLI and IDE builds on a given project kind.
 
 #### Scenario: Macros before mods
 - **GIVEN** a compilation unit containing both language macro invocations and Mod dependencies
@@ -84,7 +84,7 @@ Macro band **E1901+**; mod band **E1829**, **E1851–E1870**; attribute **E1508+
 
 ### Conformance
 
-Tooling **must** invoke the same phase order for CI and IDE builds on a given project kind.
+Tooling **must** invoke the same phase order for CLI and IDE builds on a given project kind.
 
 ## Decisions
 <!-- spec:generate:adr-index -->

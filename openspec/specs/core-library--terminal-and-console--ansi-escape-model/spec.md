@@ -726,7 +726,7 @@ Tests live under `compiler/corelib/beskid_corelib/tests/corelib_tests/src/consol
 
 ### Traceability rule
 
-Any change to **ANSI-001** through **ANSI-008** in [contracts and edge cases](./contracts-and-edge-cases/) **must** update or add a golden test in the same change. Informative `ANSI.md` updates are recommended but not CI-gated.
+Any change to **ANSI-001** through **ANSI-008** in [contracts and edge cases](./contracts-and-edge-cases/) **must** update or add a golden test in the same change. Informative `ANSI.md` updates are recommended but not normative.
 
 ## Verification
 

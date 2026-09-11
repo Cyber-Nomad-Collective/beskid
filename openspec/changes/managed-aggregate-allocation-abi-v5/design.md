@@ -128,7 +128,7 @@ Rust-runtime fallback.
   bindings and verifier inputs from the manifest; require artifact hash,
   allowlist, layout, and empty-prefix smoke gates.
 - [Partial migration accidentally loads Rust runtime] → Keep provenance scans
-  and Cargo dependency inspection as blocking release gates; delete fallback
+  and Cargo dependency inspection as blocking distribution conformance checks; delete fallback
   paths only after every consumer has migrated.
 
 ## Migration Plan

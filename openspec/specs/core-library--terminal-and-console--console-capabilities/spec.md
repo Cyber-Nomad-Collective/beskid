@@ -120,7 +120,7 @@ No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-CORE-T
 ``````markdown
 ## Context
 
-Users and CI expect no-color.org semantics for accessibility and logs.
+Users and noninteractive consumers expect no-color.org semantics for accessibility and logs.
 
 ## Decision
 
@@ -252,7 +252,7 @@ Document **contracts and edge cases** for the **Console Capabilities** feature: 
 
 - **Empty vs unset env**: `EnvFlagSet` treats any non-empty value as set; `NO_COLOR=` may still disable per CAP-001.
 - **stderr styling**: v1 probes **stdout only** for `ShouldEmitAnsi`; stderr diagnostics use the same predicate today.
-- **CI logs**: Piped stdout suppresses escapes unless `FORCE_COLOR=1` in job env.
+- **Noninteractive logs**: Piped stdout suppresses escapes unless `FORCE_COLOR=1` in the process environment.
 
 ## Verification
 

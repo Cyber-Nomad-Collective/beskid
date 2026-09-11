@@ -167,7 +167,7 @@ pckg publish, resolver, and docs use the same identity string.
 ``````markdown
 ## Context
 
-Developers run from superrepo, installed CLI, or CI without divergent roots.
+Developers run from a source checkout or installed CLI without divergent roots.
 
 ## Decision
 
@@ -246,11 +246,11 @@ Console/ANSI must ship with the aggregate package, not as an orphan.
 
 ## Consequences
 
-Publish CI packs the full workspace graph for registry corelib.
+Corelib packaging includes the full workspace graph.
 
 ## Verification anchors
 
-`Workspace.proj`; corelib CI publish job.
+`Workspace.proj`; corelib package conformance tests.
 ``````
 
 </details>
@@ -298,7 +298,7 @@ When contract checks fail, diagnostics should point contributors to the responsi
 ``````markdown
 ## Purpose
 
-One canonical **corelib** package identity (`corelib`, sources under `compiler/corelib/beskid_corelib`) must be discoverable by CLI, LSP, CI publish, and local superrepo layouts. This feature covers **where** that tree lives on disk and **how** it is packed for pckg—not symbol injection (see **[Corelib injection and resolution](/platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/)**).
+One canonical **corelib** package identity (`corelib`, sources under `compiler/corelib/beskid_corelib`) must be discoverable by CLI, LSP, package tooling, and local source layouts. This feature covers **where** that tree lives on disk and **how** it is packed for pckg—not symbol injection (see **[Corelib injection and resolution](/platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/)**).
 
 ## Discovery and packaging topology
 
@@ -333,7 +333,7 @@ flowchart TB
 | **Aggregate package** | `beskid_corelib` — declares dependencies on workspace member packages |
 | **Workspace** | `compiler/corelib/Workspace.proj` lists shards including `corelib_console` |
 | **Toolchain** | `resolver.rs` + `beskid_cli` `corelib_runtime` locate roots |
-| **Registry** | CI publishes **`corelib`** via `beskid pckg` + `BESKID_PCKG_KEY` |
+| **Registry** | Stores the **`corelib`** artifact produced by `beskid pckg pack` |
 
 ## Package readme
 
@@ -399,7 +399,7 @@ After applying a fix, add or update a focused fixture in the nearest test crate 
 <summary>Migrated source text</summary>
 
 ``````markdown
-## Why did a change pass locally but fail in CI?
+## Why did a focused check pass while the full conformance suite fails?
 
 Most often, one crate boundary changed but the corresponding fixture or downstream consumer was not updated. Re-run the nearest conformance suite and inspect cross-crate handoff points.
 
@@ -445,9 +445,9 @@ sequenceDiagram
 3. If CLI startup runs `ensure_corelib_ready`, bundled template materialization may populate install dir before step 2.
 4. Aggregate manifest pulls workspace members into the compile plan.
 
-## CI publish flow
+## Package publication flow
 
-1. Build / verify corelib workspace in `compiler` CI.
+1. Build and verify the corelib workspace.
 2. `beskid doc` (when enabled) writes `.beskid/docs/api.json` + markdown.
 3. `beskid pckg pack` on `beskid_corelib/Project.proj` with publisher credentials.
 4. pckg server validates artifact (`PackageArtifactValidator`) and ingests docs for the package browser.
@@ -497,11 +497,6 @@ When resolving manifests under `compiler/corelib/packages/*`, `is_corelib_worksp
   - CLI embedding/install support in `compiler/crates/beskid_cli/build.rs` and `compiler/crates/beskid_cli/src/corelib_runtime.rs`
 - Conformance anchor:
   - Integration checks in `compiler/crates/beskid_tests/src/projects/corelib`
-
-CI anchors:
-
-- Compiler corelib quality gate in `compiler/.github/workflows/ci.yml` (`corelib-quality`).
-- Corelib publish authority and quality checks in `compiler/corelib/.github/workflows/ci.yml`.
 
 ## Review checklist
 
