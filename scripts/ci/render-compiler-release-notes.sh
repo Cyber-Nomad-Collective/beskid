@@ -59,7 +59,7 @@ if [[ "$(jq '.diagnostics | length' "${state}")" -eq 0 ]]; then
 else
   jq -r '.diagnostics[] |
     (if (.log_path | startswith("http://") or startswith("https://"))
-     then "[GitHub Actions log](\(.log_path))"
+     then "[retained log](\(.log_path))"
      else "`\(.log_path)`" end) as $log |
     "- `\(.identifier)` — \(.location.file):\(.location.line):\(.location.column) — \(.reason) (log: \($log))"' "${state}"
 fi

@@ -4,7 +4,7 @@
 
 ## Delivery model
 
-- **AppVeyor**: the `linux-platform` lane publishes `cr.beskid-lang.org/beskid/learn`
+- **Woodpecker**: the trusted `publish` pipeline publishes `cr.beskid-lang.org/beskid/learn`
 - **Runtime stack**: `beskid_sites/deploy/docker-compose.yml`; Watchtower owns reconciliation
 - **Runtime env**: `LEARN_PUBLIC_URL` (defaults to `https://learn.beskid-lang.org`)
 - **Domain**: `learn.beskid-lang.org`

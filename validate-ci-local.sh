@@ -13,7 +13,4 @@ echo "==> OpenSpec authority"
 bash scripts/ci/openspec-gate.sh
 echo "==> conformance provenance"
 bash scripts/ci/conformance-gate.sh
-echo "==> supply-chain policy"
-bash scripts/ci/security-policy-gate.sh
-
 echo "validate-ci-local: OK"

@@ -6,7 +6,7 @@ The documentation site runs as the **`website`** service in the standalone produ
 
 | Layer | Responsibility |
 |-------|----------------|
-| **AppVeyor** (`linux-platform`) | Build and push `cr.beskid-lang.org/beskid/site` |
+| **Woodpecker** (`publish`) | Build and push `cr.beskid-lang.org/beskid/site` |
 | **Watchtower runtime** | [`beskid_sites/deploy/docker-compose.yml`](../beskid_sites/deploy/docker-compose.yml) |
 | **OpenBao** | Optional keys under `secret/beskid/production/site` |
 

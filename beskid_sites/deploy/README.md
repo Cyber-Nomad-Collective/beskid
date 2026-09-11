@@ -7,12 +7,10 @@ deployment control plane.
 
 ## Release flow
 
-1. AppVeyor admits one project job at a time (`max_jobs: 1`), so its FIFO queue
-   serializes builds and prevents an older build from promoting after a newer
-   one. The Linux, macOS, and Windows compiler jobs remain separate required
-   members of `compiler-validation` and complete one at a time before the
-   `main` platform lane can run.
-2. The platform lane completes its gates, pushes all five
+1. Woodpecker runs separate Linux, macOS, and Windows native pipelines for the
+   exact source commit. The publication pipeline accepts only a complete,
+   trusted `main` result and serializes promotion.
+2. The publication path completes its platform gates, pushes all five
    `sha-<commit>` immutable images, and records exactly five registry digests.
 3. CI publishes the live package release and finalizes those five digest records
    as its build artifact. Package failure prevents both evidence finalization
@@ -34,7 +32,7 @@ rollback, or a health check.
 The five registry repositories have no cross-repository atomic promotion.
 Watchtower can therefore observe a mixed set during tag movement; the five
 digest-backed immutable records prove the intended common source SHA, and
-operator checks establish eventual convergence. AppVeyor artifacts are evidence
+operator checks establish eventual convergence. Build artifacts are evidence
 only, not the durable image store.
 
 The tagged application services are `website`, `learn`, `tracker`, `nexus`,
@@ -51,7 +49,7 @@ The production host is `root@bdziam.dev`; the runtime directory defaults to
   `cr` subdomains.
 - A registry account whose `REGISTRY_USERNAME` and `REGISTRY_PASSWORD` are
   stored in OpenBao under the production `registry` path, or in the ignored
-  deployment `.env`. Store the same values as secure AppVeyor variables.
+  deployment `.env`. Store the same values as protected Woodpecker secrets.
 - A bcrypt registry credential file at `registry/htpasswd`. This ignored file
   is copied to the host with mode `0600`; do not commit it.
 - OpenBao production secrets, or a populated local `.env` copied from
@@ -97,7 +95,7 @@ authentication. Generate or rotate the deployment credential outside Git:
 htpasswd -Bbn <registry-user> <registry-password> > registry/htpasswd
 ```
 
-Use the same username and password for the repository secrets
+Use the same username and password for the protected build secrets
 `REGISTRY_USERNAME` and `REGISTRY_PASSWORD`, then rerun `deploy.sh`. The script
 fails closed if the credential file is missing or empty, copies it separately
 from `.env`, generates Watchtower's ignored Docker client configuration, and
@@ -114,17 +112,14 @@ its next poll. Do not edit a running container or use a second deployment
 path. Keep retained SHA tags until the corresponding release is no longer a
 rollback candidate.
 
-## AppVeyor activation proof
+## Woodpecker activation proof
 
-The checked-in pipeline is not proof of provider-account readiness.
-Serialization deliberately increases the total build duration to preserve
-release order. Before making it a required publishing check, an operator must
-record a live proof that every hosted job, especially the complete platform
-lane, finishes within AppVeyor's fixed 60-minute per-job limit; use a
-private/BYOC worker if it does not. The operator must
-also prove private nested submodules initialize at their pinned commits on
-Linux, macOS, and Windows without granting a reusable credential to pull
-request code. Until those proofs exist, publication activation remains blocked.
+Checked-in pipelines are not proof of agent or credential readiness. Before
+enabling publication, record a live proof that the Linux, macOS, and Windows
+agents build the pinned source and transfer their exact artifacts into the
+trusted publication pipeline. Also prove that private nested submodules resolve
+to their pinned commits without exposing reusable credentials to pull-request
+code. Until those proofs exist, publication activation remains blocked.
 
 ## Local validation
 

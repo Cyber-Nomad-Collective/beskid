@@ -19,7 +19,7 @@ Use `--json` when a bot needs to summarize failures without reading ANSI colors.
 
 ## In the compiler repository
 
-GitHub Actions on `compiler/` runs Rust tests that embed or drive Beskid fixtures—**not** a substitute for your app tests, but the authority on whether `E1601` still means what the spec says.
+Woodpecker runs the compiler Rust tests that embed or drive Beskid fixtures—**not** a substitute for your app tests, but the authority on whether `E1601` still means what the spec says.
 
 Workspace members tied to verification (from `compiler/Cargo.toml`):
 

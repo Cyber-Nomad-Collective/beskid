@@ -2,7 +2,7 @@
 
 This standalone pnpm workspace contains the consolidated TanStack Start website,
 its reusable shell, and the canonical production runtime under `deploy/`.
-AppVeyor publishes the five Beskid application images to
+Woodpecker publishes the five Beskid application images to
 `cr.beskid-lang.org`; Watchtower alone reconciles their controlled production
 tags.
 

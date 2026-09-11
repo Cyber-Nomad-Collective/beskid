@@ -17,14 +17,14 @@ verified:
   date: 2026-09-09
 ---
 
-Use separate AppVeyor publication and Watchtower reconciliation evidence for
+Use separate Woodpecker publication and Watchtower reconciliation evidence for
 image identity. A health handler does not expose registry tag identity. Use the
 health response and monitoring timestamp only for availability evidence. Do
 not include cookies, tokens, or private response bodies.
 
 ## Prerequisites
 
-Record the expected immutable image identity from AppVeyor. Record the
+Record the expected immutable image identity from Woodpecker. Record the
 Watchtower reconciliation time from the production operator. Obtain monitoring
 access for production.
 

@@ -17,7 +17,7 @@
 #   binary          beskid_cli | beskid_lsp | ignored for beskid_bundle
 #   target          x86_64-unknown-linux-gnu | aarch64-apple-darwin | x86_64-apple-darwin | x86_64-pc-windows-msvc
 #   asset-name      output file name (e.g. beskid-linux-amd64)
-#   release-version resolved semver (from compute-cli-version.sh)
+#   release-version resolved semantic version
 set -euo pipefail
 
 PACKAGE="${1:?package (beskid_cli | beskid_lsp | beskid_bundle)}"

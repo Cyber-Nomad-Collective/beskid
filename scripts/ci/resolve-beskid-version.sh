@@ -1,28 +1,27 @@
 #!/usr/bin/env bash
 # Mint the canonical globally distributed Beskid release SemVer.
 #
-# Only the Compiler workflow running on main may mint this value. The GitHub
-# run number is the sole build identity, making the emitted version exactly
-# 0.4.<GITHUB_RUN_NUMBER>; tags, commit counts, and crate manifests never
+# Only a release build of main may mint this value. The supplied build number
+# is the sole build identity, making the emitted version exactly
+# 0.4.<build-number>; tags, commit counts, and crate manifests never
 # influence a distributed version.
 #
-# Usage: resolve-beskid-version.sh
-# Env: GITHUB_REF, GITHUB_RUN_NUMBER
-# Env: RELEASE_CHANNEL (stable by default, or unstable)
+# Usage: resolve-beskid-version.sh <build-number> [stable|unstable]
+# Env fallback: RELEASE_BUILD_NUMBER, RELEASE_CHANNEL, RELEASE_SOURCE_REF
 # Prints MAJOR.MINOR.PATCH for stable or MAJOR.MINOR.PATCH-unstable.
 set -euo pipefail
 
-github_ref="${GITHUB_REF:-}"
-github_run_number="${GITHUB_RUN_NUMBER:-}"
-release_channel="${RELEASE_CHANNEL:-stable}"
+build_number="${1:-${RELEASE_BUILD_NUMBER:-}}"
+release_channel="${2:-${RELEASE_CHANNEL:-stable}}"
+source_ref="${RELEASE_SOURCE_REF:-refs/heads/main}"
 
-if [[ "${github_ref}" != "refs/heads/main" ]]; then
-  echo "Global release version may only be minted from refs/heads/main (got ${github_ref:-<empty>})" >&2
+if [[ "${source_ref}" != "refs/heads/main" ]]; then
+  echo "Global release version may only be minted from refs/heads/main (got ${source_ref:-<empty>})" >&2
   exit 1
 fi
 
-if [[ ! "${github_run_number}" =~ ^(0|[1-9][0-9]*)$ ]]; then
-  echo "GITHUB_RUN_NUMBER must be a canonical non-negative integer for the global release version" >&2
+if [[ ! "${build_number}" =~ ^(0|[1-9][0-9]*)$ ]]; then
+  echo "build number must be a canonical non-negative integer for the global release version" >&2
   exit 1
 fi
 
@@ -35,4 +34,4 @@ case "${release_channel}" in
     ;;
 esac
 
-printf '0.4.%s%s' "${github_run_number}" "${suffix}"
+printf '0.4.%s%s' "${build_number}" "${suffix}"

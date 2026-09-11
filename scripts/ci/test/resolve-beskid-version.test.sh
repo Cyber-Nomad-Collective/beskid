@@ -3,7 +3,6 @@ set -euo pipefail
 
 root="$(cd "$(dirname "$0")/../../.." && pwd)"
 resolver="${root}/scripts/ci/resolve-beskid-version.sh"
-legacy_resolver="${root}/scripts/ci/compute-cli-version.sh"
 
 assert_equals() {
   local expected="$1"
@@ -29,43 +28,36 @@ assert_fails() {
 
 assert_equals \
   '0.4.481' \
-  "$(GITHUB_REF=refs/heads/main GITHUB_RUN_NUMBER=481 RELEASE_CHANNEL=stable bash "${resolver}")" \
-  'main mints the global version directly from its GitHub run number'
+  "$(bash "${resolver}" 481 stable)" \
+  'main mints the global version directly from its supplied build number'
 
 assert_equals \
   '0.4.481-unstable' \
-  "$(GITHUB_REF=refs/heads/main GITHUB_RUN_NUMBER=481 RELEASE_CHANNEL=unstable bash "${resolver}")" \
+  "$(bash "${resolver}" 481 unstable)" \
   'unstable appends exactly the channel prerelease suffix'
 
-assert_equals \
-  '0.4.481' \
-  "$(GITHUB_REF=refs/heads/main GITHUB_RUN_NUMBER=481 bash "${legacy_resolver}")" \
-  'the legacy CLI resolver delegates to the canonical global resolver'
-
-# Unset ambient GITHUB_RUN_NUMBER (always present in GitHub Actions jobs) so
-# the missing-run-number contract is exercised instead of inheriting CI's value.
 assert_fails \
-  'main requires a GitHub run number' \
-  env -u GITHUB_RUN_NUMBER GITHUB_REF=refs/heads/main bash "${resolver}"
+  'main requires a build number' \
+  env -u RELEASE_BUILD_NUMBER bash "${resolver}"
 
 assert_fails \
-  'a non-numeric GitHub run number is rejected' \
-  env GITHUB_REF=refs/heads/main GITHUB_RUN_NUMBER=481a bash "${resolver}"
+  'a non-numeric build number is rejected' \
+  bash "${resolver}" 481a
 
 assert_fails \
-  'a leading-zero GitHub run number is rejected to preserve SemVer validity' \
-  env GITHUB_REF=refs/heads/main GITHUB_RUN_NUMBER=00 bash "${resolver}"
+  'a leading-zero build number is rejected to preserve SemVer validity' \
+  bash "${resolver}" 00
 
 assert_fails \
   'a tag cannot mint a distributed version' \
-  env GITHUB_REF=refs/tags/v0.4.481 GITHUB_REF_NAME=v0.4.481 GITHUB_RUN_NUMBER=481 bash "${resolver}"
+  env RELEASE_SOURCE_REF=refs/tags/v0.4.481 bash "${resolver}" 481
 
 assert_fails \
   'a feature branch cannot mint a distributed version' \
-  env GITHUB_REF=refs/heads/feature GITHUB_RUN_NUMBER=481 bash "${resolver}"
+  env RELEASE_SOURCE_REF=refs/heads/feature bash "${resolver}" 481
 
 assert_fails \
   'an unsupported release channel is rejected' \
-  env GITHUB_REF=refs/heads/main GITHUB_RUN_NUMBER=481 RELEASE_CHANNEL=preview bash "${resolver}"
+  bash "${resolver}" 481 preview
 
 printf 'Beskid version resolver tests OK\n'
