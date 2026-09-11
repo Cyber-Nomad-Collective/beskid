@@ -92,6 +92,6 @@
 - [ ] 8.3 Run the LSP diagnostic and code-action tests and assert mod
   diagnostics and code actions surface with correct ranges and
   `diagnostics` linkage.
-- [ ] 8.4 Run full OpenSpec, compiler workspace, and release gates;
+- [ ] 8.4 Run full OpenSpec, compiler workspace, and distribution conformance checks;
   update catalog/changelog/traceability evidence and run GitNexus
   changed-scope analysis before integration.

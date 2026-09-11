@@ -182,7 +182,7 @@ Cranelift lowering and foreign library import tooling align to this profile.
 ``````markdown
 ## Context
 
-Dynamic resolution complicates reproducible builds and CI conformance.
+Dynamic resolution complicates reproducible builds and target conformance.
 
 ## Decision
 
@@ -284,7 +284,7 @@ Implementers need a spec-first schedule when codegen trails text.
 
 ## Consequences
 
-Articles tag Proposed vs Standard explicitly; CI strict mode can gate premature Standard claims.
+Articles tag Proposed vs Standard explicitly; strict validation can gate premature Standard claims.
 
 ## Verification anchors
 

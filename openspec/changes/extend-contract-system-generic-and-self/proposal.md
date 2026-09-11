@@ -60,7 +60,7 @@ it to a normative requirement alongside the other three gaps.
 - Bare-identifier ad-hoc associated-type stand-ins in `Collect.bd`
   (`TSourceNode`, `TTargetNode`) MUST migrate to declared contract type
   parameters or associated types.
-- No catalog regeneration or deployment occurs in this change. Catalog
+- No catalog regeneration occurs in this change. Catalog
   generation, site publication, and implementation rollout follow only after
   the compiler evidence gate is green.
 

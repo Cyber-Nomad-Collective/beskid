@@ -18,7 +18,7 @@ CYB-60 establishes the Foundation gate before CYB-61 networking and CYB-62 HTTP.
 - TLS-local external wake delivery is replaced by owner-scheduler inbound commands and a wake primitive; no worker-local completion route remains.
 - `use` is a new scoped-binding form. It has no `using` alias and MUST NOT be interpreted as an import.
 - Existing source that discards a non-detached spawn handle becomes a diagnostic; callers explicitly retaining fire-and-forget behavior MUST call `Detach`.
-- No catalog regeneration or deployment occurs in this change. Catalog generation, site publication, and implementation rollout follow only after the Foundation evidence gate is green.
+- No catalog regeneration occurs in this change. Catalog generation, site publication, and implementation rollout follow only after the Foundation evidence gate is green.
 - Native-handle representation, network address and type contracts, TCP, UDP, and DNS belong exclusively to CYB-61. HTTP framing, routing, server, and HTTP API contracts belong exclusively to CYB-62.
 
 ## Rollback

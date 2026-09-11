@@ -4,7 +4,7 @@
 This specification defines stable typed identifiers for OpenSpec entities. It defines how Nexus and other consumers index, invalidate, and present normative, informative, and evidence relations.
 ## Requirements
 ### Requirement: Standard entities have stable typed identifiers
-Every canonical capability and requirement SHALL have a stable identifier. Book pages, implementation anchors, conformance tests, Tracker bugs, Nexus nodes, and CI evidence can reference the identifier.
+Every canonical capability and requirement SHALL have a stable identifier. Book pages, implementation anchors, conformance tests, Tracker bugs, Nexus nodes, and validator evidence can reference the identifier.
 
 #### Scenario: A capability is renamed
 - **GIVEN** external consumers reference its stable identifier
@@ -26,4 +26,3 @@ Traceability views SHALL label OpenSpec requirements as normative. The views SHA
 - **GIVEN** the topic has standard, Book, code, test, and bug relations
 - **WHEN** Nexus renders the relation graph
 - **THEN** each relation shows its authority type and canonical destination
-

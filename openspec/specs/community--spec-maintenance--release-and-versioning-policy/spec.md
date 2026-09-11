@@ -136,7 +136,7 @@ The platform specification under [/platform-spec/](/platform-spec/) is versioned
 
 ## Consequences
 
-Site deploy and release policy track `main`; `lastReviewed` records alignment dates.
+Normative content tracks Git revisions; `lastReviewed` records alignment dates.
 
 ## Verification anchors
 

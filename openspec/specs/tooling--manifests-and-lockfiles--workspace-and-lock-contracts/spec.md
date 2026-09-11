@@ -333,7 +333,7 @@ dependency {
 
 Exact paths depend on fetch layout; treat materialized roots as opaque but stable for a given lock revision.
 
-## CI sequence
+## Verification sequence
 
 ```bash
 beskid fetch --project apps/demo/Project.proj
@@ -418,7 +418,7 @@ sequenceDiagram
 - **`fetch`** resolves registry aliases to URLs (`registry_urls`), downloads packages via **`beskid_pckg`**, and lays out materialized roots referenced by future lock lines.
 - **`update`** reapplies resolution with a stricter unresolved policy (typically failing on drift) and refreshes materialized trees.
 
-Both commands **must** share graph construction with `lock` so CI and local machines produce comparable `materialized_root` paths.
+Both commands **must** share graph construction with `lock` so locked and unlocked executions produce comparable `materialized_root` paths.
 
 ## LSP lock replay
 
@@ -470,9 +470,9 @@ While walking the DAG, host projects without explicit `Std` receive implicit cor
 
 Tooling articles describe operator-visible contracts; compiler feature pages own diagnostic code bands for lock parse failures. Changes to `Project.lock` v1 **must** update both sides and bump any fixture locks in tests.
 
-## CI
+## Verification
 
-Superrepo and `compiler` CI run workspace tests on every graph change. Website spec verify: `cd site/website && bun run verify:trudoc -- --preset ci` after MDX edits.
+Workspace graph changes require the superrepo and `compiler` workspace tests. Standard changes require `pnpm run openspec:validate`.
 ``````
 
 </details>

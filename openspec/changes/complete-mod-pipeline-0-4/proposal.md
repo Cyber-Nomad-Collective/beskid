@@ -90,7 +90,7 @@ update. `NativeContractInvoker` keeps its stub fallback so a missing or
 un-linkable artifact does not hard-fail the build. No public standard
 URL or legacy URL changes.
 
-## Rollback and staged deployment
+## Compatibility and reversion
 
 This contract is staged before compiler, ABI, and LSP implementation.
 If a target linker cannot produce a loadable shared library from a

@@ -571,7 +571,7 @@ Step-by-step algorithms for panic and syscall builtins. Layering diagram: [desig
 | **IO-ABI-005** | Code review: no CLIF syscall intrinsics in `beskid_codegen` for stdio |
 | Console **IO-004** | `corelib_tests` console paths |
 
-## CI
+## Verification
 
 Compiler workspace runs `beskid_e2e_tests` runtime cases on Linux agents. Platform spec edits **should** trigger `bun run verify:trudoc` under `site/website` when frontmatter changes.
 

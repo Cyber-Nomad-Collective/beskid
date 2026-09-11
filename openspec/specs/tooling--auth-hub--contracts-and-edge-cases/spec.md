@@ -3,15 +3,15 @@
 
 ## Purpose
 
-AUTH_HUB_* and shared auth environment variables, OpenBao paths, pairing edge cases, and legacy AUTH_HUB_SECRET migration.
+AUTH_HUB_* and shared auth environment variables, pairing edge cases, and legacy AUTH_HUB_SECRET migration.
 
 ## Requirements
 
 ### Requirement: Auth hub and consumer environment contract
-Auth hub deployments SHALL set `AUTH_HUB_PUBLIC_URL` (public origin, no trailing slash) and `SESSION_SECRET` (≥32 chars). Consumer apps (tracker, nexus, pckg) SHALL set the same `AUTH_HUB_PUBLIC_URL` value pointing at the hub, a per-service `SESSION_SECRET` distinct from the hub secret, and a per-app service token from pairing. Consumers MUST NOT receive hub `GITHUB_CLIENT_*` secrets. New deployments MUST NOT use legacy `AUTH_HUB_SECRET` as the shared handoff secret.
+Auth hub instances SHALL set `AUTH_HUB_PUBLIC_URL` (public origin, no trailing slash) and `SESSION_SECRET` (≥32 chars). Consumer apps (tracker, nexus, pckg) SHALL set the same `AUTH_HUB_PUBLIC_URL` value pointing at the hub, a per-service `SESSION_SECRET` distinct from the hub secret, and a per-app service token from pairing. Consumers MUST NOT receive hub `GITHUB_CLIENT_*` secrets. Configured instances MUST NOT use legacy `AUTH_HUB_SECRET` as the shared handoff secret.
 
 #### Scenario: Consumer env excludes hub GitHub secrets
-- **GIVEN** a paired tracker, nexus, or pckg consumer deployment
+- **GIVEN** a paired tracker, nexus, or pckg consumer instance
 - **WHEN** runtime environment variables are inspected
 - **THEN** `AUTH_HUB_PUBLIC_URL` matches the hub origin, `SESSION_SECRET` is a per-service secret ≥32 characters, and hub `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` are absent
 
@@ -24,7 +24,7 @@ Handoff JWTs SHALL include `iss` equal to `beskid-auth-hub`, `app` equal to `tra
 - **THEN** verification rejects the token
 
 ### Requirement: Pairing and handoff edge cases
-`AUTH_HUB_PUBLIC_URL` on the hub MUST match the Coolify TLS domain used for OAuth redirects. Expired pairing codes SHALL expire after 24 hours and require a new admin request. Unpaired consumers SHALL fail hub-finish sign-in with 401 until pairing completes. Consumers MUST set a pre-login redirect cookie and hub-finish MUST restore it. Calls to `/api/v1/github/*` MUST include `Authorization: Bearer <hubUserToken>`.
+`AUTH_HUB_PUBLIC_URL` on the hub MUST match the externally visible origin used for OAuth redirects. Expired pairing codes SHALL expire after 24 hours and require a new admin request. Unpaired consumers SHALL fail hub-finish sign-in with 401 until pairing completes. Consumers MUST set a pre-login redirect cookie and hub-finish MUST restore it. Calls to `/api/v1/github/*` MUST include `Authorization: Bearer <hubUserToken>`.
 
 #### Scenario: Unpaired consumer cannot finish sign-in
 - **GIVEN** a consumer app that has not completed hub pairing
@@ -57,10 +57,8 @@ The records below preserve migration history and are not normative except where 
 | `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | yes* | Set after `/onboarding` (stored in hub SQLite) |
 | `GITHUB_OAUTH_CALLBACK_URL` | no | Defaults to `{AUTH_HUB_PUBLIC_URL}/callback` |
 | `AUTH_SETUP_TOKEN` | no | Protects re-onboarding when already configured |
-| `AUTH_HUB_SECRET` | deprecated | Legacy shared handoff secret; **must not** be used for new deployments |
+| `AUTH_HUB_SECRET` | deprecated | Legacy shared handoff secret; **must not** be used for configured instances |
 | `TRACKER_PUBLIC_URL`, `NEXUS_PUBLIC_URL`, `PCKG_PUBLIC_URL` | no | Informative defaults for pairing UI |
-
-OpenBao path: `secret/beskid/production/auth`. See [openbao-layout.md](https://github.com/Cyber-Nomad-Collective/beskid_infra/blob/main/docs/openbao-layout.md).
 
 ### Consumer apps (tracker, nexus, pckg)
 
@@ -81,8 +79,6 @@ Consumers **must not** receive hub `GITHUB_CLIENT_*` secrets.
 | `TRACKER_PAIRING_APPROVER_LOGIN` | recommended | Autopair without sync token |
 | `GITHUB_WEBHOOK_SECRET` | optional | Verifies `POST /api/webhooks/github` |
 
-OpenBao path: `secret/beskid/production/tracker`.
-
 ### Nexus-specific
 
 | Variable | Required | Notes |
@@ -90,8 +86,6 @@ OpenBao path: `secret/beskid/production/tracker`.
 | `GITNEXUS_HOME` | yes | `/data/gitnexus` volume |
 | `NEXUS_SETUP_TOKEN` | recommended | Protects setup before hub pairing |
 | `GITHUB_WEBHOOK_SECRET` | optional | Push webhook HMAC for re-index |
-
-OpenBao path: `secret/beskid/production/nexus`.
 
 ### pckg-specific
 
@@ -101,8 +95,6 @@ OpenBao path: `secret/beskid/production/nexus`.
 | `POSTGRES_PASSWORD` | yes | Database credential |
 | `GITHUB_SYNC_TOKEN` | recommended | Pairing approver via GitHub API |
 | `PCKG_PAIRING_APPROVER_LOGIN` | recommended | Autopair without sync token |
-
-OpenBao path: `secret/beskid/production/pckg`.
 
 ## Handoff JWT claims
 
@@ -122,26 +114,12 @@ Verification **must** reject tokens when `expectedApp` does not match `app`.
 
 | Case | Policy |
 | --- | --- |
-| OAuth redirect mismatch | `AUTH_HUB_PUBLIC_URL` on the hub **must** match the Coolify TLS domain |
+| OAuth redirect mismatch | `AUTH_HUB_PUBLIC_URL` on the hub **must** match the externally visible OAuth origin |
 | Expired pairing code | Codes expire after 24h; admin issues a new request |
 | Consumer not paired | Sign-in redirects fail at hub-finish with 401 until pairing completes |
 | Legacy `AUTH_HUB_SECRET` | Hub may read for migration; consumers should use per-app service tokens only |
 | Return path loss | Consumer **must** set pre-login redirect cookie; hub-finish **must** restore it |
 | GitHub proxy | Calls to `/api/v1/github/*` **must** include `Authorization: Bearer <hubUserToken>` |
-
-## Production URLs (reference)
-
-Coolify target URLs include explicit container ports. Public browser and API
-origins terminate TLS on the standard HTTPS port and omit the target-port suffix.
-
-| Service | Coolify URL | `*_PUBLIC_URL` |
-| --- | --- | --- |
-| auth | `https://auth.beskid-lang.org:8090` | `AUTH_HUB_PUBLIC_URL` |
-| tracker | `https://tracker.beskid-lang.org:3000` | `TRACKER_PUBLIC_URL` |
-| nexus | `https://nexus.beskid-lang.org:8452` | (pairing `publicUrl`) |
-| pckg | `https://pckg.beskid-lang.org:8082` | `PCKG_PUBLIC_URL=https://pckg.beskid-lang.org` |
-
-Canonical matrix: [beskid_infra/docs/deploy-matrix.md](https://github.com/Cyber-Nomad-Collective/beskid_infra/blob/main/docs/deploy-matrix.md).
 
 ## Decisions
 <!-- spec:generate:adr-index -->

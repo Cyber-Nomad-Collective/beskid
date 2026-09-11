@@ -40,6 +40,6 @@
   codegen pipeline.
 - [ ] 5.2 Run the extern import extraction verification suite and
   assert no regression for the CLIF `ExternImport` path.
-- [ ] 5.3 Run full OpenSpec, compiler workspace, and release gates;
+- [ ] 5.3 Run full OpenSpec, compiler workspace, and distribution conformance checks;
   update catalog/changelog/traceability evidence and run GitNexus
   changed-scope analysis before integration.

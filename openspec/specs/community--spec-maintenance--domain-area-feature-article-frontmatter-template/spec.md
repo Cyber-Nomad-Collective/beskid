@@ -36,7 +36,7 @@ The records below preserve migration history. They are not normative except wher
 <summary>Migrated source text</summary>
 
 ``````markdown
-Use these templates when creating new platform-spec nodes. They match current CI validators and `trudoc` Zod contracts.
+Use these templates when creating new platform-spec nodes. They match current validators and `trudoc` Zod contracts.
 
 ## Domain template
 
@@ -140,7 +140,7 @@ _No articles in this bundle yet._
 ``````markdown
 ## Context
 
-Hand-written frontmatter drifted from `platformSpecNodeSchema` and layout scanners, causing PR failures late in CI.
+Hand-written frontmatter drifted from `platformSpecNodeSchema` and layout scanners, causing conformance failures late in review.
 
 ## Decision
 

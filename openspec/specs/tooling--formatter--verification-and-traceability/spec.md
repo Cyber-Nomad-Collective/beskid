@@ -3,15 +3,15 @@
 
 ## Purpose
 
-Concrete tests, CI hooks, and code anchors that demonstrate formatter contract conformance.
+Concrete tests, validation hooks, and code anchors that demonstrate formatter contract conformance.
 
 ## Requirements
 
 ### Requirement: Formatter automated verification gates
-Before any change to the formatter is merged, the following MUST pass: `cargo test -p beskid_analysis format::`, `cargo test -p beskid_cli format`, and `bun run verify:trudoc -- --preset ci` from `site/website`. Future format-specific CLI tests MUST match the `format` filter so they run automatically.
+Formatter conformance SHALL be demonstrated by `cargo test -p beskid_analysis format::`, `cargo test -p beskid_cli format`, and `pnpm run openspec:validate`. Future format-specific CLI tests MUST match the `format` filter so they are selected by that command.
 
 #### Scenario: Analysis format tests required
-- **GIVEN** a pull request that modifies `beskid_analysis::format` or `beskid_cli::commands::format`
+- **GIVEN** a change to `beskid_analysis::format` or `beskid_cli::commands::format`
 - **WHEN** merge gates run
 - **THEN** `cargo test -p beskid_analysis format::` and `cargo test -p beskid_cli format` are required to pass
 
@@ -23,13 +23,13 @@ The formatter contract SHALL require `format_program(parse(format_program(parse(
 - **WHEN** `format_program` is applied after parse twice in succession
 - **THEN** the second formatted output equals the first formatted output
 
-### Requirement: Format check CI drift gate
-The Beskid CI pipeline MUST include a `beskid format --check` step against the workspace source tree. A drift hit MUST fail the PR.
+### Requirement: Format check detects source drift
+`beskid format --check` MUST compare the workspace source tree with canonical formatter output and MUST return failure when they differ.
 
-#### Scenario: Unformatted source fails PR
-- **GIVEN** a pull request whose workspace sources diverge from formatter output
-- **WHEN** CI runs `beskid format --check`
-- **THEN** the check fails and the PR cannot merge on that gate alone
+#### Scenario: Unformatted source fails the check
+- **GIVEN** workspace sources that diverge from formatter output
+- **WHEN** `beskid format --check` runs
+- **THEN** the command fails and identifies the drift
 
 ## Informative Source Provenance
 
@@ -48,7 +48,7 @@ The records below preserve migration history and are not normative except where 
 ``````markdown
 ## Purpose and scope
 
-This article enumerates the **concrete artifacts that demonstrate formatter conformance** — test paths, CI commands, code anchors — so that anyone modifying `beskid_analysis::format` or `beskid_cli::commands::format` can verify they have not regressed the parent **[hub](/platform-spec/tooling/formatter/)** contract.
+This article enumerates the **concrete artifacts that demonstrate formatter conformance** — test paths, validation commands, code anchors — so that anyone modifying `beskid_analysis::format` or `beskid_cli::commands::format` can verify they have not regressed the parent **[hub](/platform-spec/tooling/formatter/)** contract.
 
 It complements the **[design model](../design-model/)** which explains *how* the formatter is built; this article focuses on *how it is verified*.
 
@@ -83,7 +83,7 @@ The following commands **must** pass before any change to the formatter is merge
    The filter currently matches no test names, so this acts as a compile gate; future format-specific CLI tests **must** match this filter so they run automatically.
 3. **Strict platform-spec verification (covers this hub + the parent feature):**
    ```bash
-   cd site/website && bun run verify:trudoc -- --preset ci
+   pnpm run openspec:validate
    ```
 
 ## Idempotency and round-trip guarantees
@@ -98,10 +98,10 @@ This **must** be enforced by at least one test in `beskid_analysis` that feeds a
 
 Any change to `format/policy.rs` or `format/emit.rs::EmitCtx` **must** be accompanied by a test run that demonstrates the idempotency property still holds after fixtures are regenerated.
 
-## CI hooks
+## Conformance hooks
 
-- **PR drift check** — the Beskid CI pipeline **must** include a `beskid format --check` step against the workspace source tree. A drift hit **must** fail the PR.
-- **Spec verification** — the `verify:trudoc -- --preset ci` step covers PSC003 (Standard feature hubs require ## Decisions
+- **Source drift check** — `beskid format --check` compares the workspace source tree with canonical formatter output and fails on drift.
+- **Spec verification** — `pnpm run openspec:validate` covers PSC003 (Standard feature hubs require ## Decisions
 <!-- spec:generate:adr-index -->
 No ADRs published under **`adr/`** yet.
 <!-- /spec:generate:adr-index -->

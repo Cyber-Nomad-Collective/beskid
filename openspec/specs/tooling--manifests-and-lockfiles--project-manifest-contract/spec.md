@@ -653,9 +653,9 @@ Until host tables are implemented, platform packages (console, threading) carry 
 
 Manifest vocabulary changes **must** update: tooling **[design model](./design-model/)**, compiler project-manifest feature, **[Diagnostic code registry](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/)**, and any template scaffolds under `beskid_templates/`.
 
-## CI
+## Verification
 
-Run `cd site/website && bun run verify:trudoc -- --preset ci` after MDX edits; compiler `cargo test` for touched parser/graph modules.
+Run `pnpm run openspec:validate` after standard edits and compiler `cargo test` for touched parser/graph modules.
 ``````
 
 </details>

@@ -58,7 +58,7 @@ Source that annotates a single declaration with both surfaces is
 already non-deterministic and becomes a hard diagnostic. No public
 standard URL or legacy URL changes.
 
-## Rollback and staged deployment
+## Compatibility and reversion
 
 This contract is staged before 0.5 glue generation. Reverting a later
 implementation restores the prior release as a unit; it does not

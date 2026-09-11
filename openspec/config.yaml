@@ -9,16 +9,13 @@ context: |
   redirect to that entry point so readers can still find the standard.
   Observable language, compiler, runtime, core-library, tooling, and conformance
   changes require an OpenSpec delta in the same change set.
-  Use pnpm for sites and Rust workspace commands from compiler/. AppVeyor owns
-  repository CI and platform-image publication to cr.beskid-lang.org; Watchtower
-  alone reconciles platform images into production. GitHub Actions is reserved
-  for GitHub-native release, distribution, editor-marketplace, and security
-  operations. Preserve OpenTelemetry-compatible trace propagation.
+  Use pnpm for sites and Rust workspace commands from compiler/. Preserve
+  OpenTelemetry-compatible trace propagation.
 
 rules:
   proposal:
     - Identify normative compatibility and legacy URL migration impact.
-    - Include rollback and staged deployment implications.
+    - Include compatibility, migration, and reversion implications.
   specs:
     - Use SHALL or MUST for every normative requirement.
     - Use GIVEN, WHEN, THEN, and optional AND bullets for every scenario.

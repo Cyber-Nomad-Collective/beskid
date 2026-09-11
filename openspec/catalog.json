@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "516995a95ab3b3cd034ca081d88ec35908edeb1d737a1391b363a391ec0b137e",
+  "revision": "61cab33e3440c9281a9b1bd36a83924b11a5a3d52393a5df958a32f734b57137",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
     "nodes": 1042,
-    "capabilities": 198,
-    "requirements": 573,
+    "capabilities": 197,
+    "requirements": 566,
     "normativeSources": 304,
     "provisionalCapabilities": 52,
     "legacyArtifacts": 3189,
-    "informativeDocuments": 193,
+    "informativeDocuments": 185,
     "documentsWithNormativeKeywords": 10,
     "specDocuments": 189
   },
@@ -1123,7 +1123,6 @@
         "/book/12-the-normative-bible/proposed-vs-standard/",
         "/book/12-the-normative-bible/spec-leads-code/",
         "/book/13-reading-the-law/platform-spec-home/",
-        "/book/20-doc-comments-that-are-not-lies/verify-docs/",
         "/book/appendix-spec-map/"
       ]
     },
@@ -28838,7 +28837,6 @@
         "/book/20-doc-comments-that-are-not-lies/",
         "/book/20-doc-comments-that-are-not-lies/arg-and-cross-links/",
         "/book/20-doc-comments-that-are-not-lies/doc-comment-syntax/",
-        "/book/20-doc-comments-that-are-not-lies/verify-docs/",
         "/book/appendix-spec-map/"
       ]
     },
@@ -30211,101 +30209,6 @@
       ]
     },
     {
-      "id": "BSP-CAP-1F2DAE1FE333",
-      "capability": "staged-delivery-observability",
-      "specPath": "openspec/specs/staged-delivery-observability/spec.md",
-      "path": "/platform-spec/capabilities/staged-delivery-observability/",
-      "title": "Staged Delivery Observability",
-      "description": "Canonical OpenSpec capability for Staged Delivery Observability.",
-      "status": "Standard",
-      "domain": "staged-delivery-observability",
-      "area": null,
-      "feature": "staged-delivery-observability",
-      "legacySlugs": [],
-      "aliases": [],
-      "requirements": [
-        {
-          "id": "BSP-REQ-8EFCD5A21781",
-          "legacySlug": null,
-          "sourcePath": "openspec/specs/staged-delivery-observability/spec.md",
-          "sourceHash": "35e9da575a795d2b4c3bf9cc5476f69fc6024f8a89fd97ccc199f07094de0a15",
-          "status": "Standard",
-          "normative": true,
-          "migrationStatus": "extracted",
-          "title": "CI blocks unsafe integration",
-          "anchor": "requirement-ci-blocks-unsafe-integration"
-        },
-        {
-          "id": "BSP-REQ-82799F40E758",
-          "legacySlug": null,
-          "sourcePath": "openspec/specs/staged-delivery-observability/spec.md",
-          "sourceHash": "722eea0cfb87b8c145e9fbd9cd051c67ed25f9736b740e628f64c75ee6be4a66",
-          "status": "Standard",
-          "normative": true,
-          "migrationStatus": "extracted",
-          "title": "Platform images retain immutable identities",
-          "anchor": "requirement-platform-images-retain-immutable-identities"
-        },
-        {
-          "id": "BSP-REQ-A42726B27789",
-          "legacySlug": null,
-          "sourcePath": "openspec/specs/staged-delivery-observability/spec.md",
-          "sourceHash": "165036b26999130cbd6c72d156f669f7d0b7cf838544eae41316d91dc8cc072d",
-          "status": "Standard",
-          "normative": true,
-          "migrationStatus": "extracted",
-          "title": "Publication preserves source-build order",
-          "anchor": "requirement-publication-preserves-source-build-order"
-        },
-        {
-          "id": "BSP-REQ-5FCBE0D9FF1D",
-          "legacySlug": null,
-          "sourcePath": "openspec/specs/staged-delivery-observability/spec.md",
-          "sourceHash": "722eea0cfb87b8c145e9fbd9cd051c67ed25f9736b740e628f64c75ee6be4a66",
-          "status": "Standard",
-          "normative": true,
-          "migrationStatus": "extracted",
-          "title": "Watchtower is the exclusive platform deployment authority",
-          "anchor": "requirement-watchtower-is-the-exclusive-platform-deployment-authority"
-        },
-        {
-          "id": "BSP-REQ-B61836781840",
-          "legacySlug": null,
-          "sourcePath": "openspec/specs/staged-delivery-observability/spec.md",
-          "sourceHash": "35e9da575a795d2b4c3bf9cc5476f69fc6024f8a89fd97ccc199f07094de0a15",
-          "status": "Standard",
-          "normative": true,
-          "migrationStatus": "extracted",
-          "title": "Delivery is traceable end to end",
-          "anchor": "requirement-delivery-is-traceable-end-to-end"
-        },
-        {
-          "id": "BSP-REQ-BD2A3ABA9E65",
-          "legacySlug": null,
-          "sourcePath": "openspec/specs/staged-delivery-observability/spec.md",
-          "sourceHash": "35e9da575a795d2b4c3bf9cc5476f69fc6024f8a89fd97ccc199f07094de0a15",
-          "status": "Standard",
-          "normative": true,
-          "migrationStatus": "extracted",
-          "title": "Production failures are never suppressed",
-          "anchor": "requirement-production-failures-are-never-suppressed"
-        },
-        {
-          "id": "BSP-REQ-9770555C8D0E",
-          "legacySlug": null,
-          "sourcePath": "openspec/specs/staged-delivery-observability/spec.md",
-          "sourceHash": "722eea0cfb87b8c145e9fbd9cd051c67ed25f9736b740e628f64c75ee6be4a66",
-          "status": "Standard",
-          "normative": true,
-          "migrationStatus": "extracted",
-          "title": "Pull requests cannot publish or deploy",
-          "anchor": "requirement-pull-requests-cannot-publish-or-deploy"
-        }
-      ],
-      "records": [],
-      "bookLinks": []
-    },
-    {
       "id": "BSP-CAP-63A4E8674CFC",
       "capability": "standard-content-authority",
       "specPath": "openspec/specs/standard-content-authority/spec.md",
@@ -31065,7 +30968,6 @@
       "relations": [],
       "bookLinks": [
         "/book/08-green-tests-red-production/",
-        "/book/08-green-tests-red-production/ci-testing/",
         "/book/08-green-tests-red-production/conformance-vs-unit/",
         "/book/13-reading-the-law/compiler-domain-map/",
         "/book/17-execution-abi-host-runtime/conformance-evidence/",
@@ -32836,7 +32738,7 @@
       "specPath": "openspec/specs/tooling--auth-hub--contracts-and-edge-cases/spec.md",
       "path": "/platform-spec/capabilities/tooling--auth-hub--contracts-and-edge-cases/",
       "title": "Contracts and edge cases",
-      "description": "AUTH_HUB_* and shared auth environment variables, OpenBao paths, pairing edge cases, and legacy AUTH_HUB_SECRET migration.",
+      "description": "AUTH_HUB_* and shared auth environment variables, pairing edge cases, and legacy AUTH_HUB_SECRET migration.",
       "status": "Standard",
       "domain": "tooling",
       "area": "auth-hub",
@@ -33536,7 +33438,6 @@
       ],
       "bookLinks": [
         "/book/08-green-tests-red-production/beskid-test-cli/",
-        "/book/08-green-tests-red-production/ci-testing/",
         "/book/12-the-normative-bible/language-law-vs-implementation/",
         "/book/appendix-spec-map/"
       ]
@@ -34093,7 +33994,7 @@
       "specPath": "openspec/specs/tooling--formatter--verification-and-traceability/spec.md",
       "path": "/platform-spec/capabilities/tooling--formatter--verification-and-traceability/",
       "title": "Formatter verification and traceability",
-      "description": "Concrete tests, CI hooks, and code anchors that demonstrate formatter contract conformance.",
+      "description": "Concrete tests, conformance checks, and code anchors that demonstrate formatter contract conformance.",
       "status": "Standard",
       "domain": "tooling",
       "area": "formatter",
@@ -34128,15 +34029,15 @@
           "anchor": "requirement-formatter-idempotency-round-trip"
         },
         {
-          "id": "BSP-REQ-FF3D85BCE989",
+          "id": "BSP-REQ-4C7D66D3B567",
           "legacySlug": null,
           "sourcePath": "openspec/specs/tooling--formatter--verification-and-traceability/spec.md",
-          "sourceHash": "1b9121c5c7d735b0528d652bd014d3e8e73f8dbc4f2caf5e66ddef411bfa45f3",
+          "sourceHash": "3b580525205038a08aaf587a0b55ac8a2e3c898597e8477560364584d0499f92",
           "status": "Standard",
           "normative": true,
           "migrationStatus": "extracted",
-          "title": "Format check CI drift gate",
-          "anchor": "requirement-format-check-ci-drift-gate"
+          "title": "Format check detects source drift",
+          "anchor": "requirement-format-check-detects-source-drift"
         }
       ],
       "records": [
@@ -38996,7 +38897,7 @@
       "path": "GUIDE.md",
       "title": "Beskid project guide",
       "authority": "informative",
-      "sourceHash": "e90fea7fea2b8a288266b055f5a41c88731535ad3d73e193447c1d2d6e88e94a",
+      "sourceHash": "309b992d41ac0c9a65606500daaf74d74613db828cba16b297a6d26ce518269f",
       "standardLinks": [
         "/platform-spec/"
       ],
@@ -39043,54 +38944,6 @@
         "/platform-spec/...",
         "/platform-spec/compiler/..."
       ],
-      "containsNormativeKeywords": false,
-      "disposition": "informative-by-policy"
-    },
-    {
-      "path": "docs/superpowers/plans/2026-06-19-ci-cleanup-and-diagnosability.md",
-      "title": "CI Cleanup & Diagnosability Implementation Plan",
-      "authority": "informative",
-      "sourceHash": "b72280d6b36b9b1ed3ab42d09e7e0974b4cfbbad0f37b7ac6c6b14e294119b88",
-      "standardLinks": [],
-      "containsNormativeKeywords": true,
-      "disposition": "informative-by-policy"
-    },
-    {
-      "path": "docs/superpowers/specs/2026-06-18-beskid-distrib-distribution-design.md",
-      "title": "Beskid Distribution CI/CD — Design",
-      "authority": "informative",
-      "sourceHash": "108ecc6f0ea029faede08113ea92623c5547ed2c0836f25ee5998185c51fa958",
-      "standardLinks": [],
-      "containsNormativeKeywords": false,
-      "disposition": "informative-by-policy"
-    },
-    {
-      "path": "docs/superpowers/specs/2026-06-18-normative-spec-migration-design.md",
-      "title": "Normative Spec Migration to `site/spec-content` + React Platform-Spec",
-      "authority": "informative",
-      "sourceHash": "65363a8ff46e2fe28286e74a284204261dfa070833655c2f9e6c8e3b7a9faa18",
-      "standardLinks": [
-        "/platform-spec/",
-        "/platform-spec/.github/workflows/ci.yml",
-        "/platform-spec/git-meta.ts",
-        "/platform-spec/github-repo.ts",
-        "/platform-spec/language-meta/surface-syntax/lexical-and-syntax/",
-        "/platform-spec/package.json",
-        "/platform-spec/related-topics-html.ts",
-        "/platform-spec/src",
-        "/platform-spec/src/components/editor/proposal-banner.tsx",
-        "/platform-spec/src/components/reader/platform-spec-map.tsx",
-        "/platform-spec/src/components/reader/syntax-graph.tsx"
-      ],
-      "containsNormativeKeywords": true,
-      "disposition": "informative-by-policy"
-    },
-    {
-      "path": "docs/superpowers/specs/2026-06-19-ci-cleanup-and-diagnosability-design.md",
-      "title": "CI Cleanup & Diagnosability — Design",
-      "authority": "informative",
-      "sourceHash": "929f69394443fdbac1b5560564ba8ffd5365d208e0a869593677ba3dfc51020b",
-      "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
     },
@@ -39478,15 +39331,6 @@
       "disposition": "informative-by-policy"
     },
     {
-      "path": "site/website/src/content/docs/book/06-monorepo-as-coping-mechanism/ci-and-monorepos.md",
-      "title": "CI and monorepos",
-      "authority": "informative",
-      "sourceHash": "2dba2e1f82e5a92640e63f76d7a7ed26e9474b66f294746d24e93b9c3ed08aea",
-      "standardLinks": [],
-      "containsNormativeKeywords": false,
-      "disposition": "informative-by-policy"
-    },
-    {
       "path": "site/website/src/content/docs/book/06-monorepo-as-coping-mechanism/dependency-cycles.md",
       "title": "Dependency cycles",
       "authority": "informative",
@@ -39628,18 +39472,6 @@
       "authority": "informative",
       "sourceHash": "ae3d05766fbe20f0d88290c92fe4a77a069822f5f2e2edcb600810ce97c2b6a7",
       "standardLinks": [
-        "/platform-spec/tooling/cli/build-analyze-run-contract/"
-      ],
-      "containsNormativeKeywords": false,
-      "disposition": "informative-by-policy"
-    },
-    {
-      "path": "site/website/src/content/docs/book/08-green-tests-red-production/ci-testing.md",
-      "title": "CI and testing",
-      "authority": "informative",
-      "sourceHash": "9d34626139b2c7c12a39bd3669fd16700ff0f5e8b0605bbc3bc630378c2c50ff",
-      "standardLinks": [
-        "/platform-spec/compiler/conformance/",
         "/platform-spec/tooling/cli/build-analyze-run-contract/"
       ],
       "containsNormativeKeywords": false,
@@ -40534,18 +40366,6 @@
       "disposition": "informative-by-policy"
     },
     {
-      "path": "site/website/src/content/docs/book/20-doc-comments-that-are-not-lies/verify-docs.md",
-      "title": "Verify docs in CI",
-      "authority": "informative",
-      "sourceHash": "38b58db9b28059ebe91828ccb7324bb8fa0d50868a31ccdb599802fc5d69e3a8",
-      "standardLinks": [
-        "/platform-spec/language-meta/surface-syntax/documentation-comments/",
-        "/platform-spec/community/spec-maintenance/spec-authority-and-decisions/"
-      ],
-      "containsNormativeKeywords": false,
-      "disposition": "informative-by-policy"
-    },
-    {
       "path": "site/website/src/content/docs/book/21-ffi-and-forbidden-friendships/c-abi-profile.md",
       "title": "C ABI profile",
       "authority": "informative",
@@ -40595,15 +40415,6 @@
       "title": "Rust ABI profile",
       "authority": "informative",
       "sourceHash": "9f881ecea59d717cc91b8bd5bb791fab445770beb5e680461bcde2d0e05199f9",
-      "standardLinks": [],
-      "containsNormativeKeywords": false,
-      "disposition": "informative-by-policy"
-    },
-    {
-      "path": "site/website/src/content/docs/book/22-so-you-want-to-contribute/ci-and-green-builds.md",
-      "title": "CI and green builds",
-      "authority": "informative",
-      "sourceHash": "60acdd29158ee0d4f9f68451fb15a84f8e96a2ac7f27d0b4d1e8568b3858dbd2",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -58027,7 +57838,7 @@
       "decision": null,
       "title": "Domain, Area, Feature, and Article frontmatter templates",
       "status": "Standard",
-      "sourceHash": "944bb847910cb85cd4088e417849809acf438f4403445a74794835b4b7b9ff8d"
+      "sourceHash": "71f1d2e9e5fd068096a4b1c9168521291de07629a33b61e7e22717c3c8275b63"
     },
     {
       "id": "BSP-CAP-243CCA14D04E",
@@ -58049,7 +57860,7 @@
       "decision": null,
       "title": "Domain, Area and Feature template bundle",
       "status": "Standard",
-      "sourceHash": "2a7ee98eff66e9b088700053d6fa561944b45c74157876785fb03baef8748101"
+      "sourceHash": "d70f3be8c90cf9715f6fe2bb2908ae27cf149b2032fdfe54fe05cb609fa612b4"
     },
     {
       "id": "BSP-CAP-0CF08AD3592A",
@@ -58115,7 +57926,7 @@
       "decision": null,
       "title": "Release and versioning policy",
       "status": "Standard",
-      "sourceHash": "1baa2bbdef5ca5587d9c5644b02607e19fbe50c7b21a1ee160687a2354983341"
+      "sourceHash": "a0644ebed87d157c29d17a91b37adccd240b3c94de16ffef8a08318ae18e79e5"
     },
     {
       "id": "BSP-CAP-73D36745349C",
@@ -58137,7 +57948,7 @@
       "decision": null,
       "title": "Specification authority and embedded decisions",
       "status": "Standard",
-      "sourceHash": "816cc5ec52ac04f76ecbb15ad177a8b574841e51d700ff9d8320883ba2c84b62"
+      "sourceHash": "609370b841ba087b1f78144ed46564c42b03cdb763dcc97a809b5224f1fdc951"
     },
     {
       "id": "BSP-CAP-2AFEA2015944",
@@ -58159,7 +57970,7 @@
       "decision": null,
       "title": "Backends (JIT and AOT)",
       "status": "Standard",
-      "sourceHash": "ce1cc1bebab0337dcb51aeda6c7764b85ecf78042ec2fc9e89df958afc31070f"
+      "sourceHash": "701998b6a97f4ad3c3ae6dcfe68054c6088b6049527a4a079a47a415ffe4e4b7"
     },
     {
       "id": "BSP-CAP-385EB951CF77",
@@ -58181,7 +57992,7 @@
       "decision": null,
       "title": "Build and run orchestration",
       "status": "Standard",
-      "sourceHash": "ffc82e1553ab5ec0c898868c6874740da5d1d95a86e87ea5cc6a7b1ee49111f7"
+      "sourceHash": "a107ff1ff000110ec807640c9b342032dc043bdf313583a8bbe32ad6abce5543"
     },
     {
       "id": "BSP-CAP-F657795EE222",
@@ -58203,7 +58014,7 @@
       "decision": null,
       "title": "Dependency workspace and lockfile",
       "status": "Standard",
-      "sourceHash": "ed7b275e2ec8129f17dae503ac5a56db39e979278ceb4abe67bac8865a265082"
+      "sourceHash": "7b1564c90a24d0e0ca8b7404c1a14f98287c91de9bdd351d97383b5a89341489"
     },
     {
       "id": "BSP-CAP-2C72070F24A9",
@@ -58357,7 +58168,7 @@
       "decision": null,
       "title": "Lowering contract",
       "status": "Standard",
-      "sourceHash": "f04d2d19f78ebfef5fc67240aff844aed9f6c36e03049bc73c05c5b4a14eaa7e"
+      "sourceHash": "a656b7f7caea7c56f928c049c46f1e7ec14aaf421e127d3ea3be0edff69db150"
     },
     {
       "id": "BSP-CAP-17D447489B2D",
@@ -58467,7 +58278,7 @@
       "decision": null,
       "title": "Pest parser generator",
       "status": "Standard",
-      "sourceHash": "8155b4a327ba1c2b3cf3b5d141d7a241ee5ffb2ba0d8401c7133c31e908ad31d"
+      "sourceHash": "bf5ef0363bae94b860fecfa51e1193aa62aeabcb7b8c67e7b7ca8d210dab1e3e"
     },
     {
       "id": "BSP-CAP-9DDBFB74F30B",
@@ -58533,7 +58344,7 @@
       "decision": null,
       "title": "Conformance evidence policy",
       "status": "Standard",
-      "sourceHash": "83f5bcc7aa6d3ab75f58387a0c61be5dceeabe02c0c51e239a73b35d53539864"
+      "sourceHash": "ef7218df26d1d7783addd19a6a14fa282344016247ae9dc87ee386b000d2c972"
     },
     {
       "id": "BSP-CAP-96082146E519",
@@ -58555,7 +58366,7 @@
       "decision": null,
       "title": "Test harnesses and fixtures",
       "status": "Standard",
-      "sourceHash": "af082b003f58de7e1adb30ae6742f79abc2ef97e925f962e244da69cb638c252"
+      "sourceHash": "a3b69513a5cdce2d0368e4731b419bd9d7fd63d8583e21c8be5e4142e87e27b6"
     },
     {
       "id": "BSP-CAP-346532919D19",
@@ -58665,7 +58476,7 @@
       "decision": null,
       "title": "Crate-to-spec anchors",
       "status": "Standard",
-      "sourceHash": "08065c44703b33ed15949ced214f723670d566785d5d5b3628f258e1bebca4f5"
+      "sourceHash": "c690b1619afb26c33facae62eeafdb00845cf8f476e101b5ac7d25477c25c013"
     },
     {
       "id": "BSP-CAP-7771EB0A6B45",
@@ -58753,7 +58564,7 @@
       "decision": null,
       "title": "Workspace and lock contracts",
       "status": "Standard",
-      "sourceHash": "6bad8ee5e5476f2e2f0a94691ea1662a27b6dece6fbd3b02e04c536ab9014396"
+      "sourceHash": "06b4e1b0fb11e75682a903be62a31ff50ab09946ee2a16e85c3ba7928ae34c7f"
     },
     {
       "id": "BSP-CAP-9B3CB614FCB7",
@@ -58797,7 +58608,7 @@
       "decision": null,
       "title": "Diagnostic code registry",
       "status": "Standard",
-      "sourceHash": "b9c2955518096ad50f3ff42e37e80d89cb246e427de21b6657b721110f5eac65"
+      "sourceHash": "a617a3d854f19b924332b14d2f303816d669edb5eea2dc96b6b9b57848ef93b0"
     },
     {
       "id": "BSP-CAP-613D8D805D24",
@@ -58907,7 +58718,7 @@
       "decision": null,
       "title": "Type-system pass contract",
       "status": "Standard",
-      "sourceHash": "3fc48aa34ae385871ddc8e37172d099ba6e1f40b38cc533e33b2ec69df2f72ef"
+      "sourceHash": "01b9a8a57698712301e6e8863fadea0bfa4de28268e5fa26c76629598e6f8ab8"
     },
     {
       "id": "BSP-CAP-C011944B8DE1",
@@ -58929,7 +58740,7 @@
       "decision": null,
       "title": "Corelib discovery and packaging",
       "status": "Standard",
-      "sourceHash": "d2656eb0afa1d2d24165674357c8d7a370510c54c86ddd3a2e204888d7a55c44"
+      "sourceHash": "42557d70c0356943dc2362f7780ea796297b3172b3bda83f820b80c087b6bfea"
     },
     {
       "id": "BSP-CAP-A1A8E812574B",
@@ -58951,7 +58762,7 @@
       "decision": null,
       "title": "Corelib injection and resolution",
       "status": "Standard",
-      "sourceHash": "689ffecdc092fd8b913a18090f0d986ceb093800c4223e1776acfdce7afad42c"
+      "sourceHash": "051df6f9828b43e0f19cd45c6bd7c3ff4a9f74802ff6a6d07efe168efa498b61"
     },
     {
       "id": "BSP-CAP-AE388A0E3B23",
@@ -59193,7 +59004,7 @@
       "decision": null,
       "title": "Core.Fluent",
       "status": "Standard",
-      "sourceHash": "eee069d928d9d4463a5942c112ab480b5773e5d84f68dfc1e3dad144707c98c5"
+      "sourceHash": "a830ec00cda584ad41fff92d2ff897112971d67b41cac50e574e8499355295a0"
     },
     {
       "id": "BSP-CAP-CF5A8BFAFD56",
@@ -59435,7 +59246,7 @@
       "decision": null,
       "title": "Corelib API shape",
       "status": "Standard",
-      "sourceHash": "64f051ccdfe5738b337cef2f919f40247543d2ee4c5dff7500108917ea25adc3"
+      "sourceHash": "e4ff290d158eb2c5324c92dd2e13b298fcfe435005b915c9977db81c7ec0c45c"
     },
     {
       "id": "BSP-CAP-334BB1A9ADAD",
@@ -59479,7 +59290,7 @@
       "decision": null,
       "title": "ANSI escape model",
       "status": "Standard",
-      "sourceHash": "db52cbcaaeeecfa7bd80e10d4e0ee3ec9f2b9b2f50225b1ff5d9b90ad11148cd"
+      "sourceHash": "7fe722f0a25795530707f3d082edafde0fa849d157d86f1ef7412cf95878211a"
     },
     {
       "id": "BSP-CAP-810857DE9D8E",
@@ -59501,7 +59312,7 @@
       "decision": null,
       "title": "Console capabilities",
       "status": "Standard",
-      "sourceHash": "c74302133a120c5653fddfd7914ca54f706443ea3923346f4a5e807c177f1a0b"
+      "sourceHash": "88900db012af9229751a49dc03f7d2f4c7764725bae17fa500218d45b3808a07"
     },
     {
       "id": "BSP-CAP-01754E758689",
@@ -59677,7 +59488,7 @@
       "decision": null,
       "title": "ABI versioning and compatibility",
       "status": "Standard",
-      "sourceHash": "757ce82caf35281ea1d430b8656ab401ea1eaea4b2f4893a0ff41d3ea7c8fd73"
+      "sourceHash": "181e7f7a173f95e94ba6ae4d39b55fcb48c790d3fe42b78631dc80d27d2411d6"
     },
     {
       "id": "BSP-CAP-A171547ADF54",
@@ -59721,7 +59532,7 @@
       "decision": null,
       "title": "Extern dispatch and policy",
       "status": "Standard",
-      "sourceHash": "d9b8593498c94609e7211c9013a370ebe35a8b5ffed3fad7d4aec4e4eff41dea"
+      "sourceHash": "c2d1321d363842aba60ac7a39bd8339281acb5a5d04b687827068b39d093bb76"
     },
     {
       "id": "BSP-CAP-97C444BA51D6",
@@ -59809,7 +59620,7 @@
       "decision": null,
       "title": "Panic, IO, and syscalls",
       "status": "Standard",
-      "sourceHash": "7fe129c6eda57b6e2361a4013a4174f3ea3e945392a4272c627773099ce65627"
+      "sourceHash": "460dd339066d219e834a2831de1be821aaa51381a363349bfb07ab856d816e09"
     },
     {
       "id": "BSP-CAP-E20CFCDC2386",
@@ -59831,7 +59642,7 @@
       "decision": null,
       "title": "Runtime feature flags",
       "status": "Standard",
-      "sourceHash": "a81a35c4415e20295f28609b50d9dc874f72225c5984c94fee8f00e27ae13133"
+      "sourceHash": "20dd62eb5658a377d247751f05959d58ee52172e9c183fa5e1e9ef7835a81b9a"
     },
     {
       "id": "BSP-CAP-3380C7E3C94B",
@@ -60051,7 +59862,7 @@
       "decision": null,
       "title": "C ABI profile",
       "status": "Standard",
-      "sourceHash": "8175497688fa391d068e5adc8e2989cd8c4db8acece0b2473fae6279d858d06c"
+      "sourceHash": "dc7f896fcbb70c28227cf80c358317ab60d869332cb215edc4087c41a769e600"
     },
     {
       "id": "BSP-CAP-D9DF6656F2E5",
@@ -60095,7 +59906,7 @@
       "decision": null,
       "title": "FFI and extern",
       "status": "Standard",
-      "sourceHash": "982188fa6cfb08b4646c4595045556b0aec81287bb04b939bf6f3d2daea38abb"
+      "sourceHash": "25ded7b43defd53451b9bd0534b8e5be0cefddd7c15820477a08cf898e47c4e0"
     },
     {
       "id": "BSP-CAP-983AAC55EE48",
@@ -60227,7 +60038,7 @@
       "decision": null,
       "title": "Metaprogramming",
       "status": "Standard",
-      "sourceHash": "15ba787805624f8ed5c88cd2dd33fbdc9aa63a26a0675b78a4b7cdffa91b2757"
+      "sourceHash": "3797381cee7416632596ab17b2eea6f2b4a343c9e0736d4faca87ab279ecbf2a"
     },
     {
       "id": "BSP-CAP-81B824296964",
@@ -60491,7 +60302,7 @@
       "decision": null,
       "title": "Contracts and edge cases",
       "status": "Standard",
-      "sourceHash": "cd0468c8d965c7ee7fcd353e24a58c152097dcc124ae7be3a9d8589e6feb6427"
+      "sourceHash": "11a1d2bd43d45bebd210cd3c0051bbb0ca1c77a493012d415ebb4d094ad42a14"
     },
     {
       "id": "BSP-CAP-2BA104D80F90",
@@ -60557,7 +60368,7 @@
       "decision": null,
       "title": "Build, analyze, and run contract",
       "status": "Standard",
-      "sourceHash": "8e7c66256b82a3334cb267193943183cb8f3defee2f2dcd874b88c4d59d7e07e"
+      "sourceHash": "4ccd4cb3e8943a88fe3065fed18b95be8799e8ef2d0b3fb2e7c1978f0f6578f6"
     },
     {
       "id": "BSP-CAP-DA123DD4F7F0",
@@ -60689,7 +60500,7 @@
       "decision": null,
       "title": "Formatter design model",
       "status": "Standard",
-      "sourceHash": "fe1fb78abb00b907e9ea1efb84de2c88960dcc88e81ecfca98fc831734c464fd"
+      "sourceHash": "c2bf4e412ae962e550663173eb80fdc8dcfd7438d5ab28f55f3d9f449bd712fe"
     },
     {
       "id": "BSP-CAP-0CD7857FDDC2",
@@ -60711,7 +60522,7 @@
       "decision": null,
       "title": "Formatter verification and traceability",
       "status": "Standard",
-      "sourceHash": "1b9121c5c7d735b0528d652bd014d3e8e73f8dbc4f2caf5e66ddef411bfa45f3"
+      "sourceHash": "3b580525205038a08aaf587a0b55ac8a2e3c898597e8477560364584d0499f92"
     },
     {
       "id": "BSP-CAP-C93B7A5B7319",
@@ -60777,7 +60588,7 @@
       "decision": null,
       "title": "Diagnostics and workspace analysis",
       "status": "Standard",
-      "sourceHash": "02b68ece3aa18eed34c6799617093dea89245a8a7047286ba8e03bd022bacd89"
+      "sourceHash": "9d72cbd3d2c0e25ed56a8965f68768d1466727dacbf94eea3e9b827cd4a27ce7"
     },
     {
       "id": "BSP-CAP-1BF0235C3E03",
@@ -60799,7 +60610,7 @@
       "decision": null,
       "title": "IntelliSense capabilities and behavior",
       "status": "Standard",
-      "sourceHash": "e6787a387803280e3f9dbdfb1e080fcdb738f725fa5f6744143ddae4082d999f"
+      "sourceHash": "a9c657bda25edc6f28e06faa6fdcbf494d9811c250134ae7a0ecb48b6e236c05"
     },
     {
       "id": "BSP-CAP-942BDF7AAE15",
@@ -60821,7 +60632,7 @@
       "decision": null,
       "title": "Snapshot and refresh contract",
       "status": "Standard",
-      "sourceHash": "1e41bda623f40f27171f7cfb3d2b2cca0fd0aa6e23e8bc5f07e9cdc4ec079ca9"
+      "sourceHash": "69c4530b2439c634f1023974ebd462382de6103f1777e1f41c6ab5c3d5dd2426"
     },
     {
       "id": "BSP-CAP-08FECFB7E3ED",
@@ -60843,7 +60654,7 @@
       "decision": null,
       "title": "Bsol (Beskid Structured Object Language)",
       "status": "Standard",
-      "sourceHash": "d0346a5c387f0cb9926b3f11b11042d1a0025b6c292c970168ce345ff137cb55"
+      "sourceHash": "9e98bcecae6b46e74fea718980c95e0d8ef79fb8bddde556842baa43a2b58504"
     },
     {
       "id": "BSP-CAP-B7580959BA36",
@@ -60865,7 +60676,7 @@
       "decision": null,
       "title": "Project manifest contract",
       "status": "Standard",
-      "sourceHash": "3294484119b0bd3da3ad8e0eed876085fa9801c8b20b99c35ccb5a4ce53ff4fa"
+      "sourceHash": "8262c229d90be93b1c739047ce1c5fd270ae5b1b89b974862be127976549474d"
     },
     {
       "id": "BSP-CAP-A877247F8D66",
@@ -60887,7 +60698,7 @@
       "decision": null,
       "title": "Workspace and lock contracts",
       "status": "Standard",
-      "sourceHash": "1bf30d9030208c939e4b49caa7c7c21830101bf18f503fd8846c894bd9140678"
+      "sourceHash": "7f08314e4a021393bd279a96e9c38f3c038ebfda23ea10c6e1fb6b74b430f996"
     },
     {
       "id": "BSP-CAP-5A70F93AE083",
@@ -60909,7 +60720,7 @@
       "decision": null,
       "title": "Contracts and edge cases",
       "status": "Standard",
-      "sourceHash": "e33f5dea3d0f7f69befb02c0cd4df9e3b67b34bcef05468dea936ddce65e2407"
+      "sourceHash": "cccb51acf623fa0a341bde08fd5f56a4f20f0b2f8afa323ff292327795747d51"
     },
     {
       "id": "BSP-CAP-9AD1DF1EC777",
@@ -60931,7 +60742,7 @@
       "decision": null,
       "title": "Design model",
       "status": "Standard",
-      "sourceHash": "879d6a47d5fab63855de2d38d6d9371a3c6c6cf2075437f6ee2074619139169a"
+      "sourceHash": "62dc4bc5c10add2c5ba83b62b4a5b0864bc63056f1a7b14d367ae4868431938f"
     },
     {
       "id": "BSP-CAP-86DF5D5624A3",
@@ -60953,7 +60764,7 @@
       "decision": null,
       "title": "beskid new command",
       "status": "Standard",
-      "sourceHash": "bda0d1211ce48baca8f7caadbb96d836d830ffe02fddf949b510a6559fcc74f1"
+      "sourceHash": "d43686d4f4ad6509eb879d6938750056ec86e591c2b3d6e4d95d76a924973d52"
     },
     {
       "id": "BSP-CAP-8CB6099B132E",
@@ -60997,7 +60808,7 @@
       "decision": null,
       "title": "Project templates",
       "status": "Standard",
-      "sourceHash": "8f9f2efed36f596265607ad835b58edc73ea5548edd287ec9e817e8a552d8dca"
+      "sourceHash": "ff296419de0c9b1904ae3d6a33e4d64668d7d620430968225abe138e4e415ddf"
     },
     {
       "id": "BSP-CAP-13DBD951E2CC",
@@ -61063,7 +60874,7 @@
       "decision": null,
       "title": "pckg client contract",
       "status": "Standard",
-      "sourceHash": "82e4c2a0aa79a2c84bb76142e2234035ab0b9e23cb3ae4dabd578ec01a937c58"
+      "sourceHash": "c385d56c52336d6c48be780cef068962d099db9991d5e6305268f2f4012c7d7c"
     },
     {
       "id": "BSP-CAP-5A23843812F0",
@@ -61107,7 +60918,7 @@
       "decision": null,
       "title": "Extension surface",
       "status": "Standard",
-      "sourceHash": "719a0d5c2c374162342210d94ef622ed7977f839328fc0e22828e17170fda007"
+      "sourceHash": "b8831ecd0ca9ce35fe7d6f23d822915158cb0f75d8175b314e9fa28de6042ba8"
     },
     {
       "id": "BSP-CAP-D8E1C109B260",

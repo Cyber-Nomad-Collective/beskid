@@ -183,7 +183,7 @@ Diagnostic `rule` strings in `ParseResult::Err` **may** keep the original Pest s
 
 1. `Core.Text.Pest.EmitCombinatorModule` output for canonical fixtures (for example `regex.pest`) matches current `Generated.bd` semantics.
 2. Emitted symbols satisfy **PARSER-005** (no `Parse_[a-z]` callables, no `_[a-z0-9]+` locals).
-3. `corelib_pest_gen` mod rebuild replaces `regen_grammar_parsers.sh` in CI.
+3. `corelib_pest_gen` mod rebuild replaces `regen_grammar_parsers.sh` during canonical regeneration.
 
 Until removal, conformance tests **may** diff Rust bridge output against Beskid emit as a migration gate.
 

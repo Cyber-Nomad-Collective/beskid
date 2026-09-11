@@ -34,7 +34,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 > | --- | --- |
 > | **design-model** | Data/state model, invariants, and at least one diagram or structured flow (`arch` block or table) |
 > | **contracts** | MUST/SHOULD table or numbered rules testable independently of the hub summary |
-> | **verification** | Concrete test paths, crates, CI jobs, or registry codes — not “TBD” |
+> | **verification** | Concrete test paths, crates, conformance commands, or registry codes — not “TBD” |
 > | **operations** / **migration** | Procedures, rollout constraints, or compatibility steps |
 > | **decisions-record** | Legacy only—migrate rows into **`adr/`** files per [Specification authority and embedded decisions](/platform-spec/community/spec-maintenance/spec-authority-and-decisions/) |
 > | **adr** | One decision per file; `SpecAdrChrome`; reader **ADRs** tab lists expandable detail |
@@ -220,7 +220,7 @@ Each article in a bundle **must** meet a minimum for its role (in addition to [R
 | --- | --- |
 | **design-model** | Data/state model, invariants, and at least one diagram or structured flow (`arch` block or table) |
 | **contracts** | MUST/SHOULD table or numbered rules testable independently of the hub summary |
-| **verification** | Concrete test paths, crates, CI jobs, or registry codes — not “TBD” |
+| **verification** | Concrete test paths, crates, conformance commands, or registry codes — not “TBD” |
 | **operations** / **migration** | Procedures, rollout constraints, or compatibility steps |
 | **decisions-record** | Legacy only—migrate rows into **`adr/`** files per [Specification authority and embedded decisions](/platform-spec/community/spec-maintenance/spec-authority-and-decisions/) |
 | **adr** | One decision per file; `SpecAdrChrome`; reader **ADRs** tab lists expandable detail |
@@ -307,7 +307,7 @@ Component usage requires a rationale note; tables stay sparse.
 ``````markdown
 ## Context
 
-Inconsistent hub shapes made navigation and CI layout validation unpredictable.
+Inconsistent hub shapes made navigation and automated layout validation unpredictable.
 
 ## Decision
 
@@ -375,7 +375,7 @@ On **Standard** pages the following are **forbidden**: (1) **circular canon** �
 
 ## Consequences
 
-`PSC001`/`PSC002`/`PSC007` fail or warn in CI; pages that cannot meet minimums **must** use `status: Proposed`.
+`PSC001`/`PSC002`/`PSC007` fail or warn under strict validation; pages that cannot meet minimums **must** use `status: Proposed`.
 
 ## Verification anchors
 
