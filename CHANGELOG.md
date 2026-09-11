@@ -11,20 +11,24 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
-- Use AppVeyor's Monterey macOS worker for the compiler lane; the newer macOS
-  images spent the worker budget rebuilding Homebrew PowerShell dependencies
-  before the repository gate could start.
-- Keep AppVeyor's native compiler runtime lane within the one-hour worker cap by isolating runtime-kit staging from the full local workspace-test phase.
-- Add a Buildkite validation pipeline that reuses the canonical AppVeyor lane scripts without publication authority.
-- Keep Linux runtime validation within the hosted worker budget by avoiding a duplicate matrix rebuild after canonical host-kit staging.
-- Run the LSP command contract in the editor lane only, avoiding a second full Rust dependency build in Linux runtime validation.
+- Replace the overlapping hosted build providers with one minimal Woodpecker
+  3.18.1 build service: Linux Docker validation and native Linux, Windows, and
+  macOS target builds share one fail-closed platform wrapper.
+- Keep GitHub Actions only for explicit Open VSX and Zed marketplace
+  publication; stable compiler publication remains a separately reviewed
+  manual operation.
+- Remove operational build-provider and deployment policy from the normative
+  OpenSpec standard while retaining provider-neutral product, language, ABI,
+  artifact, and conformance requirements.
 
 ### Added
 
-- AppVeyor: add dedicated Linux validation lanes for the VS Code and Zed
-  extensions, including their editor-authoring, package, language-asset, and
-  LSP command-contract gates; marketplace and registry publication remains in
-  the GitHub-native release workflows.
+- Publish stable compiler release 0.4.744 for Linux amd64, macOS arm64, and
+  Windows amd64, including CLI, LSP, direct-install bundles, platform
+  installers, checksums, and verified immutable and rolling release aliases.
+- Add a separately deployable Woodpecker server/Linux-agent Compose template,
+  native worker runbook, strict workflow contracts, and durable per-target
+  build evidence without automatic publication.
 - VS Code extension: register standalone `.bsol` documents through the same
   grammar, language configuration, and native LSP client used for `.bproj` and
   `.bws`, including incremental completion, hover, diagnostics, and semantic
@@ -93,16 +97,11 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
-- Cross-validate the shipped `aarch64-apple-darwin` compiler and LSP artifacts
-  from AppVeyor's Intel Sonoma worker without misreporting arm64 runtime smoke
-  coverage, requiring an unsupported x86-64 macOS runtime manifest, or
-  provisioning the native LLVM symbol toolchain used only by runtime-kit smoke.
-- Bootstrap rustup idempotently on native AppVeyor workers before configuring
-  the stable minimal toolchain, and make Windows native-command exit status the
-  failure authority so ordinary Git progress on stderr does not abort setup.
-  Suppress duplicate branch builds when the same commit is already covered by
-  a pull-request build, and install ripgrep wherever compiler/editor contracts
-  use it instead of assuming it exists on native workers.
+- Admit the linker-generated `dyld_stub_binder` import only for Darwin shared
+  libraries, restoring the macOS arm64 runtime-kit build without weakening
+  provenance checks for static artifacts or other undeclared imports.
+- Make the Windows installer contract explicitly x64 and compatible with the
+  pinned WiX toolset, including corrected XML metadata and package scope.
 - Advance the compiler pin to complete x86-64 Linux fibers through generated
   tail transfers, preserving CET shadow-stack state while keeping scheduler
   completion and the manifest-owned context switch as single authorities.
@@ -259,10 +258,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
-- Move root validation and five platform-image builds from GitHub Actions and
-  Blacksmith to AppVeyor. Trusted `main` builds publish immutable `sha-*` and
-  controlled `production` tags only to `cr.beskid-lang.org`; Watchtower remains
-  the sole production reconciliation authority.
+- Keep platform-image reconciliation separate from repository build workers;
+  Watchtower remains the sole production reconciliation authority.
 - Zed extension: move the complete package into the dedicated `editors/zed`
   crate and use `zed_extension_api` 0.7.0 with `wasm32-wasip2`.
 - Run release-critical compiler and LSP Windows/macOS gates on Blacksmith so a

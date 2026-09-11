@@ -23,7 +23,7 @@ Beskid is an AOT-only programming language, compiler/runtime, core library, pack
 | `editors/zed/` | Registry-compatible Zed extension package, official Rust SDK adapter, language assets, snippets, and packaged grammar |
 | `beskid_vscode/`, `beskid_treesitter/`, `beskid_bsol/`, `beskid_distrib/`, `beskid_templates/` | Editor, grammar, BSOL, distribution, and template subprojects |
 | `site/auth/`, `site/learn/` | Shared GitHub OAuth hub and interactive learning application |
-| `.woodpecker/`, `scripts/ci/` | Woodpecker native build fan-in, immutable-first platform publication, digest evidence, and reusable local validation |
+| `.woodpecker/`, `scripts/ci/` | Woodpecker native target builds, durable checksum evidence, manual release helpers, and reusable local validation |
 | `.github/workflows/` | Editor-marketplace publication and GitHub-native maintenance only |
 
 Most major product directories above are Git submodules. Before editing one,
@@ -72,12 +72,11 @@ selects it through `clang`; macOS and Windows keep their platform linkers.
 1. Define observable behavior changes in an OpenSpec delta before implementation.
 2. Run GitNexus impact analysis before editing an existing symbol; report high or critical blast radius.
 3. Stabilize tests, add the canonical path, migrate consumers, and only then delete the legacy path.
-4. Let the Woodpecker publication pipeline serialize release-capable `main`
-   builds. Complete all three required native compiler jobs before publication.
-   Build and publish five immutable `sha-<commit>` images with
-   registry digests, publish packages successfully, finalize the five-image
-   evidence, then retag those exact images as `production`; leave production
-   reconciliation solely to Watchtower.
+4. Use Woodpecker to produce and verify each native target independently.
+   Before a stable release, collect the Linux, Windows, and macOS result files
+   into one manual release workspace, build the fail-closed release state, and
+   publish immutable artifacts before advancing rolling aliases. Leave
+   production reconciliation solely to Watchtower.
 5. Run focused tests plus strict OpenSpec/provenance validation and GitNexus change detection before commit.
 6. Update `CHANGELOG.md`; update `GLOSSARY.md` when canonical terminology changes. Do not add `Co-authored-by` trailers.
 
@@ -96,12 +95,12 @@ selects it through `clang`; macOS and Windows keep their platform linkers.
   duplicate extension language manifests, queries, or grammar artifacts.
 - Tracker's SQLite model is delivery authority. Its GitHub synchronization is
   limited to the supported public bug surface.
-- Woodpecker is the validation and platform-image publication authority. Its
-  publication pipeline serializes release-capable builds to prevent an older
-  build from advancing mutable tags after a newer build. Pull requests and
-  non-`main` events cannot mutate package, image, or production tags. Watchtower is the only
-  automated production-reconciliation authority; its asynchronous convergence
-  is observed by operators, not controlled by CI.
+- Woodpecker is the validation and native-build authority. It has no package,
+  image, rolling-tag, or production mutation credentials; a release operator
+  verifies all target evidence and performs immutable-first publication
+  manually. Watchtower is the only automated production-reconciliation
+  authority; its asynchronous convergence is observed by operators, not
+  controlled by repository builds.
   GitHub Actions remains only for editor-marketplace and repository-native
   maintenance operations.
 
