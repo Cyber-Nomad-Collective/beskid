@@ -1,6 +1,6 @@
 ---
 title: Verify Production Delivery
-description: Verify AppVeyor publication, Watchtower reconciliation, and production health without giving CI deployment authority.
+description: Verify Woodpecker publication, Watchtower reconciliation, and production health without giving build automation deployment authority.
 pageKind: task
 diagramPolicy: not-needed
 diagramOmissionReason: The numbered promotion and rollback procedure is already linear.
@@ -18,21 +18,21 @@ verified:
 ---
 
 Keep registry and production credentials in their secret managers. Do not print,
-commit, copy, or put a token on a command line. AppVeyor may publish platform
+commit, copy, or put a token on a command line. Woodpecker may publish platform
 images, but it cannot start, replace, or roll back production containers.
 Watchtower is the sole automated reconciliation authority.
 
 ## Prerequisites
 
-Confirm the AppVeyor build came from `main`, was not a pull request, and passed
-the complete `linux-platform` lane. Confirm the production host is authenticated
+Confirm the Woodpecker publication came from `main`, was not a pull request,
+and consumed successful Linux, macOS, and Windows build evidence. Confirm the production host is authenticated
 to `cr.beskid-lang.org` and Watchtower is healthy.
 
 ## Actions
 
-1. Open the successful AppVeyor build for the intended `main` commit.
-2. Record its build URL, full source SHA, and successful `linux-platform` job.
-3. Verify that `.appveyor-reports/platform-images.json` contains five immutable digest records matching the source SHA.
+1. Open the successful Woodpecker publication for the intended `main` commit.
+2. Record its build URL, full source SHA, and three successful native build results.
+3. Verify that its image manifest contains five immutable digest records matching the source SHA.
 4. Confirm all five immutable tags exist as `cr.beskid-lang.org/beskid/<lane>:sha-<full-sha>`.
 5. Confirm each controlled `production` tag resolves to the intended image.
 6. Inspect Watchtower logs for a successful reconciliation of `website`, `learn`, `tracker`, `nexus`, and `pckg`.
@@ -41,13 +41,13 @@ to `cr.beskid-lang.org` and Watchtower is healthy.
 
 ## Expected result
 
-The recorded AppVeyor source SHA matches every immutable image tag, Watchtower
+The recorded Woodpecker source SHA matches every immutable image tag, Watchtower
 reports the corresponding reconciliation, and each public service is healthy.
 No CI job performed a production container action.
 
 ## Recovery
 
-If publication or health verification fails, preserve the AppVeyor URL, source
+If publication or health verification fails, preserve the Woodpecker URL, source
 SHA, finalized image manifest when present, Watchtower window, and failed
 endpoint status. Promotion and promoter-cleanup failures occur after manifest
 finalization, so use that artifact to identify any partially advanced tag set.

@@ -23,8 +23,8 @@ Beskid is an AOT-only programming language, compiler/runtime, core library, pack
 | `editors/zed/` | Registry-compatible Zed extension package, official Rust SDK adapter, language assets, snippets, and packaged grammar |
 | `beskid_vscode/`, `beskid_treesitter/`, `beskid_bsol/`, `beskid_distrib/`, `beskid_templates/` | Editor, grammar, BSOL, distribution, and template subprojects |
 | `site/auth/`, `site/learn/` | Shared GitHub OAuth hub and interactive learning application |
-| `appveyor.yml`, `scripts/ci/` | AppVeyor compiler fan-in, immutable-first platform publication, digest evidence, and provider-neutral local validation |
-| `.github/workflows/` | GitHub-native releases, distribution, editor-marketplace publication, and maintenance only |
+| `.woodpecker/`, `scripts/ci/` | Woodpecker native build fan-in, immutable-first platform publication, digest evidence, and reusable local validation |
+| `.github/workflows/` | Editor-marketplace publication and GitHub-native maintenance only |
 
 Most major product directories above are Git submodules. Before editing one,
 run `git submodule status` and treat its own repository status, instructions,
@@ -41,7 +41,7 @@ tests, and changelog as separate from the superrepo root.
 | Install root web dependencies | `pnpm install` |
 | Run host-callable preflight gates | `just gate` |
 | Add static workflow-policy checks | `just gate-full` |
-| Run the AppVeyor migration contract | `bash scripts/ci/test/appveyor-migration-contract.test.sh` |
+| Run reusable build/release contracts | `bash scripts/ci/test/run-cicd-foundation-tests.sh` |
 | Rebuild the OpenSpec read catalog | `pnpm openspec:catalog` |
 | Validate OpenSpec and provenance | `pnpm openspec:validate` |
 | Build website | `pnpm --cwd site/website run build` |
@@ -54,8 +54,8 @@ tests, and changelog as separate from the superrepo root.
 | Verify Zed language assets | `bash scripts/ci/test/zed-language-assets.test.sh` |
 | List root recipes | `just --list` |
 
-`just gate` deliberately does not run the compiler gate; AppVeyor runs the
-native compiler matrix through the canonical `scripts/ci` entrypoint. Use the
+`just gate` deliberately does not run the compiler gate; Woodpecker runs the
+native compiler matrix through repository-owned `scripts/ci` entrypoints. Use the
 compiler repository's own documented commands for focused compiler work.
 `just gate-full` additionally requires `actionlint` for the retained
 GitHub-native publication workflows.
@@ -72,9 +72,9 @@ selects it through `clang`; macOS and Windows keep their platform linkers.
 1. Define observable behavior changes in an OpenSpec delta before implementation.
 2. Run GitNexus impact analysis before editing an existing symbol; report high or critical blast radius.
 3. Stabilize tests, add the canonical path, migrate consumers, and only then delete the legacy path.
-4. Let AppVeyor's `max_jobs: 1` project cap serialize builds through its FIFO
-   queue. Within a build, complete all three required compiler jobs before the
-   platform lane. Build and publish five immutable `sha-<commit>` images with
+4. Let the Woodpecker publication pipeline serialize release-capable `main`
+   builds. Complete all three required native compiler jobs before publication.
+   Build and publish five immutable `sha-<commit>` images with
    registry digests, publish packages successfully, finalize the five-image
    evidence, then retag those exact images as `production`; leave production
    reconciliation solely to Watchtower.
@@ -96,16 +96,14 @@ selects it through `clang`; macOS and Windows keep their platform linkers.
   duplicate extension language manifests, queries, or grammar artifacts.
 - Tracker's SQLite model is delivery authority. Its GitHub synchronization is
   limited to the supported public bug surface.
-- AppVeyor is the validation and platform-image publication authority. Its
-  project queue serializes release-capable builds to prevent an older build
-  from advancing mutable tags after a newer build. This intentionally trades
-  build duration for release ordering. Its
-  shared event policy rejects pull requests, tags, manual/API and scheduled
-  builds, rebuilds, and incomplete reruns from mutation. Watchtower is the only
+- Woodpecker is the validation and platform-image publication authority. Its
+  publication pipeline serializes release-capable builds to prevent an older
+  build from advancing mutable tags after a newer build. Pull requests and
+  non-`main` events cannot mutate package, image, or production tags. Watchtower is the only
   automated production-reconciliation authority; its asynchronous convergence
   is observed by operators, not controlled by CI.
-  GitHub Actions remains only for GitHub-native release, distribution,
-  editor-marketplace, security, and maintenance operations.
+  GitHub Actions remains only for editor-marketplace and repository-native
+  maintenance operations.
 
 ## Agent boundaries
 
@@ -115,7 +113,7 @@ Parallel agents must use disjoint write scopes. Knowledge files live outside the
 |---|---|---|
 | Standard and docs | `openspec/`, `site/website/`, `docs/` | `~/.agents/knowledge/spec-docs.md` |
 | Tracker and Nexus integration | `beskid_tracker/`, `beskid_nexus/`, relevant shared package APIs | `~/.agents/knowledge/apps-integration.md` |
-| CI/CD and infrastructure | `.github/`, `scripts/ci/`, `beskid_infra/` | `~/.agents/knowledge/cicd.md` |
+| Build, release, and infrastructure | `.github/`, `scripts/ci/`, `beskid_infra/` | `~/.agents/knowledge/cicd.md` |
 | Compiler/runtime | `compiler/` | `~/.agents/knowledge/compiler.md` |
 | ABI contracts | `compiler/runtime_manifest.bsol`, ABI model and generated metadata | `~/.agents/knowledge/abi-v5.md` |
 | pckg migration | `pckg/`, `compiler/crates/beskid_pckg_*`, `site/auth/` | `~/.agents/knowledge/pckg-*.md` |
@@ -143,9 +141,8 @@ Parallel agents must use disjoint write scopes. Knowledge files live outside the
   preflight, especially for compiler work that root preflight excludes?
 - Does the task require private package access, deployment credentials, or
   another external authority that must fail closed when unavailable?
-- Has a live AppVeyor proof shown that every serialized hosted job, especially
-  the platform lane, stays within the 60-minute per-job limit, or is a
-  private/BYOC worker required?
+- Have the Woodpecker Linux, macOS, and Windows agents demonstrated the exact
+  pinned toolchains and artifact transfer expected by the release pipeline?
 - Can private nested submodules be checked out at their pinned commits on every
   native worker without exposing reusable credentials to pull-request code?
 

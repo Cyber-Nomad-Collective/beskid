@@ -27,7 +27,7 @@ if [[ "${engine}" == "podman" ]]; then
 fi
 
 command -v docker >/dev/null 2>&1 || {
-  echo "docker is required for GitHub Actions Compose validation" >&2
+  echo "docker is required for Compose validation" >&2
   exit 127
 }
 exec docker compose "$@"

@@ -1,15 +1,11 @@
 ---
 title: "CI and green builds"
-description: GitHub Actions across superrepo and submodules, and how to triage failures from logs.
+description: Woodpecker builds across the superrepo and submodules, and how to triage failures from retained logs.
 tableOfContents: true
 ---
 
-CI runs per repo and submodule. When red, use GitHub CLI before guessing:
-
-```bash
-gh run list --limit 5
-gh run view <run-id> --log-failed
-```
+Builds run per repository and submodule. When a pipeline is red, inspect the
+failed Woodpecker step and its retained log before guessing.
 
 Superrepo changes often need commits in **`compiler`**, **`pckg`**, or **`beskid_vscode`** first, then a submodule pointer bump—pushing only the parent repo is a classic way to achieve "green locally, red everywhere."
 

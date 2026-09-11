@@ -24,7 +24,7 @@ use standard HTTPS through the shared host edge.
 ## Prerequisites
 
 Use a supported container engine and the pinned Compose contract. Obtain the
-exact AppVeyor source SHA and matching immutable image tags without changing
+exact Woodpecker source SHA and matching immutable image tags without changing
 them.
 
 ## Actions
