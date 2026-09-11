@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "61cab33e3440c9281a9b1bd36a83924b11a5a3d52393a5df958a32f734b57137",
+  "revision": "3f4871902d693429c0f71c5a1257af2f02212e6c9faf964a54fced80e0ae7eb8",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -11,7 +11,7 @@
     "normativeSources": 304,
     "provisionalCapabilities": 52,
     "legacyArtifacts": 3189,
-    "informativeDocuments": 185,
+    "informativeDocuments": 183,
     "documentsWithNormativeKeywords": 10,
     "specDocuments": 189
   },
@@ -38877,7 +38877,7 @@
       "path": "AGENTS.md",
       "title": "Beskid — Toolchain & Stack",
       "authority": "informative",
-      "sourceHash": "c82a2569a1b372e20e868d299d031dc6d9fe9ea8569357f36c297eb76adadfc7",
+      "sourceHash": "c3a1a2593dabf186aebb732aed1abf92fbd0d85ecd5d54a647f6fd7bcba3dd96",
       "standardLinks": [],
       "containsNormativeKeywords": true,
       "disposition": "informative-by-policy"
@@ -38886,7 +38886,7 @@
       "path": "GLOSSARY.md",
       "title": "Glossary",
       "authority": "informative",
-      "sourceHash": "d198403a34b5a115076ef9175cbbb108ef681e1748f692c9c2d6f78c659ada35",
+      "sourceHash": "100e0ae1f2c6ed48b97ca65b1f836137f0459d3d2f8c73290941385a7e773312",
       "standardLinks": [
         "/platform-spec/"
       ],
@@ -38897,7 +38897,7 @@
       "path": "GUIDE.md",
       "title": "Beskid project guide",
       "authority": "informative",
-      "sourceHash": "309b992d41ac0c9a65606500daaf74d74613db828cba16b297a6d26ce518269f",
+      "sourceHash": "0cbfc58678a76ded7a698add35c917f6d63fff87d006ae1099d8d8c59ca46138",
       "standardLinks": [
         "/platform-spec/"
       ],
@@ -38913,24 +38913,6 @@
         "/platform-spec/",
         "/platform-spec/README.md"
       ],
-      "containsNormativeKeywords": false,
-      "disposition": "informative-by-policy"
-    },
-    {
-      "path": "docs/distribution/SECRETS.md",
-      "title": "Distribution Pipeline Secrets",
-      "authority": "informative",
-      "sourceHash": "b25a217e1baaf95107745a770bb8cf70a75f056fc2a0dcbe2c814c91497c4614",
-      "standardLinks": [],
-      "containsNormativeKeywords": false,
-      "disposition": "informative-by-policy"
-    },
-    {
-      "path": "docs/orchestrate/verify-all-on-main-v04.md",
-      "title": "verify-all-on-main (v0.4)",
-      "authority": "informative",
-      "sourceHash": "2ebf9c3141317a43884b3e3803057e7f26b4275b510748f477613ead9201537a",
-      "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
     },
@@ -39067,7 +39049,7 @@
       "path": "site/website/src/content/docs/book/01-it-works-on-my-machine/downloads-and-releases.md",
       "title": "Downloads and rolling releases",
       "authority": "informative",
-      "sourceHash": "601e7773059e9611f91334f8c04379760959ed163b342488b3c96d01dc635062",
+      "sourceHash": "2ef29bfb4da21c94e4121a6f134f0cbccad1ec1517e715d5038eecc9d9f371a9",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -40459,7 +40441,7 @@
       "path": "site/website/src/content/docs/book/22-so-you-want-to-contribute/index.mdx",
       "title": "So you want to contribute, huh?",
       "authority": "informative",
-      "sourceHash": "c7a27071d7314161ad2f68fb0fcc746657918da5aeddcc67cd99641210af86b8",
+      "sourceHash": "fb827b8ccf48d57cef3a294a1c59028880b39b8b8ba7dd1e083762eba243e34a",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -40714,7 +40696,7 @@
       "path": "site/website/src/content/docs/book/reference/cli/formatter-development.md",
       "title": "Formatter development (Emit)",
       "authority": "informative",
-      "sourceHash": "c22f6415be2dbcc51ff06ae3ad8a5fcb2c8a75a0c3778076c9a9d8b99c18636f",
+      "sourceHash": "fa67df7abd5178f289804ba8d0f30c2e027cb955ddc61f36105b833ffba93fee",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -40771,7 +40753,7 @@
       "path": "site/website/src/content/docs/book/reference/lsp/testing-and-observability.md",
       "title": "Beskid LSP Testing and Observability",
       "authority": "informative",
-      "sourceHash": "b591628e09d149a6a8f1e6ce76a7152d99c4041c584ae0e41feea6da506acac7",
+      "sourceHash": "d649935a2b1020e29ca536836c7418718f6808c4d7cedf13151ace300a43903f",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"

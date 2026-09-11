@@ -1,8 +1,9 @@
 # GitHub-native workflows
 
-Root validation, native release builds, and platform publication run outside
-GitHub Actions. This directory is intentionally limited to operations whose
-external authority is a GitHub or editor-marketplace API.
+Root validation and native target builds run in Woodpecker, while stable
+publication is a separately reviewed manual operation. This directory is
+intentionally limited to operations whose external authority is a GitHub or
+editor-marketplace API.
 
 | Workflow | Purpose |
 |----------|---------|

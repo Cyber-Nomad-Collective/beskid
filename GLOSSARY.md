@@ -12,22 +12,6 @@ Generation-scoped results computed by Salsa for expanded AST nodes, including re
 
 An informative, checked-in conceptual map of the Beskid compiler and its direct boundaries. It resolves canonical public specification links from the OpenSpec catalog, presents implementation paths as evidence, and never replaces OpenSpec requirements as the normative authority.
 
-## AppVeyor CI authority
-
-The repository-owned pipeline that validates pull requests and `main`. Its
-project-level `max_jobs: 1` cap uses AppVeyor's FIFO project queue as the
-release sequencer, preventing older and newer builds from overlapping; the
-tradeoff is a longer end-to-end build. Within a fresh trusted `main` push, three
-separate required compiler jobs complete the `compiler-validation` fan-in one
-at a time. The platform job then publishes five immutable
-`sha-<full-commit>` images to `cr.beskid-lang.org`, publishes packages, and only
-then finalizes an AppVeyor artifact containing exactly five digest-backed image
-identities before advancing the matching `production` tags without rebuilding.
-Promotion failure leaves that evidence available while failing the job. Pull
-requests, tags, manual/API and scheduled builds, rebuilds, and incomplete reruns
-have no mutation authority. It has no authority or credentials to control production
-containers; Watchtower asynchronously owns that reconciliation boundary.
-
 ## AOT run
 
 The `beskid run` workflow that resolves and analyzes a program, compiles and
@@ -139,10 +123,9 @@ The project-resolution rule selected by CLI flags. `--locked` requires an existi
 ## Global distribution version
 
 The one release identity for all externally distributed Beskid artifacts. An
-explicit GitHub-native compiler release uses the AppVeyor build number exactly
-as `0.4.<build-number>` after recording the validated source commit and build
-identity; tags, commits, and downstream workflow run numbers cannot create an
-alternate value.
+explicit stable release selects one monotonic semantic version after recording
+the validated superrepo and compiler commits; every platform artifact and
+installer must report that same version.
 
 ## Informative documentation
 
@@ -197,9 +180,8 @@ The historical name for the separately deployed standard reader. That service is
 The operational evidence boundary joining an immutable
 `cr.beskid-lang.org/beskid/<lane>:sha-*` image, its controlled `production`
 alias, Watchtower reconciliation status, and the service's public health result.
-AppVeyor can publish and report image identity but cannot start, replace, or
-roll back production containers. Those actions belong to Watchtower and the
-production operator.
+Repository build workers cannot start, replace, or roll back production
+containers. Those actions belong to Watchtower and the production operator.
 
 ## Product-use guide
 
@@ -284,6 +266,14 @@ OpenSpec text without copying that text into Docs.
 ## Workspace manifest
 
 A `.bws` file that names a set of project-member directories. Each member directory contains exactly one project manifest.
+
+## Woodpecker build service
+
+The single repository build service for beskid. A Linux Docker worker validates
+trusted pushes and builds Linux targets; dedicated local-backend workers build
+Windows amd64 and macOS arm64 targets for manual or version-tag requests. Each
+worker produces durable, checksummed evidence but has no release-publication or
+production-deployment authority.
 
 ## Semantic review
 
