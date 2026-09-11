@@ -97,6 +97,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Correct Woodpecker organization-limited registration and SQLite volume
+  ownership, and document the root-owned secret handling for the native macOS
+  and Windows workers.
 - Admit the linker-generated `dyld_stub_binder` import only for Darwin shared
   libraries, restoring the macOS arm64 runtime-kit build without weakening
   provenance checks for static artifacts or other undeclared imports.
