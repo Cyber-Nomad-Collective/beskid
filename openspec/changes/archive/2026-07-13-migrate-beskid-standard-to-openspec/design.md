@@ -16,7 +16,7 @@ Constraints include existing stable `/platform-spec/**` links, user changes alre
 - Use a framework-neutral embed/directive protocol across the platform-spec site, Book, Tracker, and Nexus.
 - Reduce Tracker GitHub integration to bugs without losing historical links.
 - Make Nexus a useful authority-aware graph joining standard, docs, code, tests, and bugs.
-- Replace unsafe CI/CD with build-once digest promotion, staging, production gates, rollback, supply-chain evidence, and trace correlation.
+- Replace unsafe delivery automation with build-once digest promotion, staging, production gates, rollback, supply-chain evidence, and trace correlation.
 
 **Non-Goals:**
 
@@ -91,4 +91,3 @@ Rollback keeps the legacy content tree read-only and retains the previous health
 - Which registry/signing stack is preferred for enforcement: GitHub artifact attestations plus Cosign keyless signing, or another organization-standard verifier?
 - What retention period is required for historical Tracker task links and legacy URL aliases?
 - Should accepted ADR histories live under archived OpenSpec changes only, or also in a generated non-normative design-history view?
-

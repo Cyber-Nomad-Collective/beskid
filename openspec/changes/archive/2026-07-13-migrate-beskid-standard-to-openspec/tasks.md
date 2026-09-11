@@ -1,6 +1,6 @@
 ## 1. Stabilize and inventory
 
-- [x] 1.1 Inventory custom standard nodes, Book/docs overlap, application consumers, GitHub sync stacks, Nexus indexing, and all CI/CD paths.
+- [x] 1.1 Inventory custom standard nodes, Book/docs overlap, application consumers, GitHub sync stacks, Nexus indexing, and all delivery-automation paths.
 - [x] 1.2 Research OpenSpec format with Context7 and initialize the repo-local OpenSpec workflow.
 - [x] 1.3 Record high/critical blast-radius findings and preserve unrelated worktree changes.
 - [x] 1.4 Pin the OpenSpec CLI version used locally and in CI, then validate all change artifacts strictly.
@@ -29,7 +29,7 @@
 - [x] 4.5 Replace Nexus's legacy MDX scanner with a revisioned OpenSpec catalog index and cache invalidation.
 - [x] 4.6 Render typed links/embeds in Nexus documentation panels and expose authority-aware standard/book/code/test/bug relations.
 
-## 5. Replace CI/CD
+## 5. Replace delivery automation
 
 - [x] 5.1 Introduce reusable changed-component quality, conformance, OpenSpec, integration, Compose, and security workflows with blocking reports.
 - [x] 5.2 Build images once by SHA, publish digest manifests, SBOMs, provenance, signatures, and vulnerability results without persisting package tokens.
