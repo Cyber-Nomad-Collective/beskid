@@ -2,8 +2,7 @@
 # Open VSX publish: build the LSP binary natively, bundle the VS Code
 # extension, and publish to Open VSX with retry/backoff.
 #
-# The pipeline runs natively on a GitHub-hosted OS runner and surfaces every
-# step in the log.
+# The marketplace workflow runs natively on each supported operating system.
 #
 # Run from the superrepo root. Assumes the compiler and beskid_vscode submodules
 # are already initialised, and that OVSX_TOKEN is exported.

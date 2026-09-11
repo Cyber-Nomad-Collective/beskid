@@ -146,7 +146,7 @@ At minimum, CI should run:
 2. Integration tests for diagnostics lifecycle
 3. Lint + format checks
 4. Regression fixtures for previously fixed bugs
-5. Formatter regression gate in the reusable GitHub Actions quality workflow and local Cargo lane
+5. Formatter regression gate in Woodpecker and the local Cargo lane
 
 Optional later:
 

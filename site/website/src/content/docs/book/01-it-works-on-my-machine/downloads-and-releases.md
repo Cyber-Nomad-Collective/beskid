@@ -8,7 +8,7 @@ Beskid does not ask you to compile from source on day one unless you want to. Th
 
 ## Rolling CLI channels
 
-The **beskid** superrepo GitHub Actions release workflow publishes prebuilt binaries to **GitHub Releases** on [beskid_compiler](https://github.com/Cyber-Nomad-Collective/beskid_compiler) (`cli-stable`/`cli-unstable`, `cli-version.txt`, immutable `cli-v*`). Version resolution, matrix builds, provenance, and promotion use repository scripts plus reusable GitHub Actions workflows. Install scripts under the website (`site/website/public/`) and the [Downloads](/downloads/) page consume a channel-specific rolling tag.
+A verified release operator publishes prebuilt binaries to **GitHub Releases** on [beskid_compiler](https://github.com/Cyber-Nomad-Collective/beskid_compiler) (`cli-stable`/`cli-unstable`, `cli-version.txt`, immutable `cli-v*`). Native builds and provenance use the same repository scripts in Woodpecker and manual releases. Install scripts under the website (`site/website/public/`) and the [Downloads](/downloads/) page consume a channel-specific rolling tag.
 
 ```mermaid
 accTitle: Compiler release to download page

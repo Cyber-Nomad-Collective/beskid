@@ -1,100 +1,74 @@
-# Open VSX publish: native LSP build (per-OS) → bundle → publish to Open VSX.
-#
-# Ported off Dagger so the publish path no longer depends on the Dagger engine
-# or the beskid_infra TS module. Mirrors the staging design: a GitHub-hosted OS
-# matrix builds the LSP binary natively, runs the gates natively (output visible
-# in the log), then assembles + publishes the VSIX with retry/backoff.
 name: Publish VS Code Extension to Open VSX
 
 on:
-  workflow_run:
-    workflows: [Compiler release]
-    branches: [main]
-    types: [completed]
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Exact superrepo commit whose compiler and editor sources will be packaged
+        required: true
+        type: string
+      release_version:
+        description: Stable compiler release version to assign to the extension
+        required: true
+        type: string
 
 permissions:
-  actions: read
   contents: read
 
 concurrency:
-  group: open-vsx-publish-${{ github.event.workflow_run.id }}
+  group: open-vsx-publish-${{ inputs.source_sha }}-${{ inputs.release_version }}
   cancel-in-progress: false
 
-env:
-  COMPILER_REPO: Cyber-Nomad-Collective/beskid_compiler
-
 jobs:
-  # Guard job: the publish matrix below cannot reference `secrets.*` in a
-  # job-level `if:` (matrix jobs are evaluated before the secrets context is
-  # available, which fails workflow validation). This single non-matrix job
-  # reads the secret into an output and gates the matrix via `needs:`.
-  # When OVSX_TOKEN is unset, the whole pipeline skips cleanly instead of
-  # failing deep inside the publish step.
-  check-token:
-    name: Check OVSX token
-    if: >-
-      github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.head_branch == 'main'
-    runs-on: blacksmith-4vcpu-ubuntu-2404
-    outputs:
-      enabled: ${{ steps.check.outputs.enabled }}
+  validate:
+    name: Validate marketplace release inputs
+    runs-on: ubuntu-latest
     steps:
-      - id: check
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.source_sha }}
+          fetch-depth: 0
+
+      - name: Validate release version and token
         shell: bash
         env:
-          GH_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
-          COMPILER_RELEASE_READ_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
+          RELEASE_VERSION: ${{ inputs.release_version }}
           OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
-          HANDOFF_TAG: compiler-handoff-${{ github.event.workflow_run.id }}
         run: |
           set -euo pipefail
-          if [[ -z "${OVSX_TOKEN}" ]]; then
-            echo "OVSX_TOKEN is empty — skipping Open VSX publish (repo/env misconfiguration)" >&2
-            echo "enabled=false" >> "${GITHUB_OUTPUT}"
-            exit 0
-          fi
-          [[ -n "${COMPILER_RELEASE_READ_TOKEN}" ]] || {
-            echo 'COMPILER_SUBMODULE_TOKEN is required to read the compiler release handoff.' >&2
+          [[ "${SOURCE_SHA}" =~ ^[0-9a-f]{40}$ ]] || {
+            echo 'source_sha must be a full lowercase commit SHA.' >&2
+            exit 1
+          }
+          [[ "$(git rev-parse HEAD)" == "${SOURCE_SHA}" ]] || {
+            echo 'The checked-out commit does not match source_sha.' >&2
+            exit 1
+          }
+          git fetch origin main
+          git merge-base --is-ancestor "${SOURCE_SHA}" origin/main || {
+            echo 'source_sha must already be reachable from main.' >&2
+            exit 1
+          }
+          [[ "${RELEASE_VERSION}" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]] || {
+            echo "release_version must be a stable semantic version: ${RELEASE_VERSION}" >&2
+            exit 1
+          }
+          [[ -n "${OVSX_TOKEN}" ]] || {
+            echo 'OVSX_TOKEN is required for an explicit marketplace publication.' >&2
             exit 1
           }
 
-          # The triggering workflow is Compiler release, the authoritative
-          # publisher. Its GitHub Release handoff carries the resolved version,
-          # channel, and publishable flag without consuming Actions artifact
-          # storage. The gate result alone is not enough (a failed gate still
-          # publishes an unstable release).
-          state_dir="$(mktemp -d)"
-          if ! gh release download "${HANDOFF_TAG}" --repo "${COMPILER_REPO}" \
-                --pattern release-state.json --dir "${state_dir}" --clobber 2>/dev/null \
-              || [[ ! -f "${state_dir}/release-state.json" ]]; then
-            echo "compiler release handoff state missing — release did not publish; skipping Open VSX." >&2
-            echo "enabled=false" >> "${GITHUB_OUTPUT}"
-            exit 0
-          fi
-          publishable="$(jq -r '.publishable // false' "${state_dir}/release-state.json")"
-          channel="$(jq -r '.channel // empty' "${state_dir}/release-state.json" | tr -d '[:space:]')"
-          if [[ "${publishable}" != "true" ]]; then
-            echo "Compiler release not publishable (channel=${channel:-<empty>}); skipping Open VSX publication." >&2
-            echo "enabled=false" >> "${GITHUB_OUTPUT}"
-            exit 0
-          fi
-          case "${channel}" in
-            stable) echo "enabled=true" >> "${GITHUB_OUTPUT}" ;;
-            unstable) echo "Skipping Open VSX publication for the unstable compiler release channel."; echo "enabled=false" >> "${GITHUB_OUTPUT}" ;;
-            *) echo "Unsupported or missing compiler release channel: ${channel:-<empty>}" >&2; exit 1 ;;
-          esac
-
   publish:
     name: Publish (${{ matrix.label }})
-    needs: check-token
-    if: needs.check-token.outputs.enabled == 'true'
+    needs: validate
     runs-on: ${{ matrix.os }}
     timeout-minutes: 50
     strategy:
       fail-fast: false
       matrix:
         include:
-          - os: blacksmith-4vcpu-ubuntu-2404
+          - os: ubuntu-latest
             label: linux-x64
             platform: linux-x64
             bin_name: beskid_lsp
@@ -118,18 +92,17 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.workflow_run.head_sha }}
+          ref: ${{ inputs.source_sha }}
           fetch-depth: 0
           fetch-tags: true
-          persist-credentials: true
 
-      - name: Init compiler (+ corelib) and beskid_bsol submodules
+      - name: Initialize compiler and BSOL sources
         shell: bash
         env:
           COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
         run: bash ./scripts/ci/init-compiler-submodule.sh
 
-      - name: Init beskid_vscode submodule
+      - name: Initialize VS Code extension source
         shell: bash
         env:
           BESKID_VSCODE_SUBMODULE_URL: https://github.com/Cyber-Nomad-Collective/beskid_vscode.git
@@ -169,7 +142,6 @@ jobs:
             *) echo "Unsupported runner OS for ripgrep installation: ${RUNNER_OS}" >&2; exit 1 ;;
           esac
 
-      # Native gates — output streams directly to the job log.
       - name: VS Code extension gate
         shell: bash
         env:
@@ -182,26 +154,9 @@ jobs:
           RUST_MIN_STACK: "67108864"
         run: bash ./scripts/ci/compiler-rust-gate.sh
 
-      - name: Download release state from the compiler GitHub Release handoff
-        id: release-version
-        shell: bash
-        env:
-          GH_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
-          HANDOFF_TAG: compiler-handoff-${{ github.event.workflow_run.id }}
-        run: |
-          set -euo pipefail
-          gh release download "${HANDOFF_TAG}" --repo "${COMPILER_REPO}" \
-            --pattern release-state.json --dir release-state --clobber
-          version="$(jq -r '.version // empty' release-state/release-state.json | tr -d '[:space:]')"
-          [[ "${version}" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)([-+][0-9A-Za-z.-]+)?$ ]] || {
-            echo "Compiler release state has invalid version: ${version:-<empty>}" >&2
-            exit 1
-          }
-          echo "version=${version}" >> "${GITHUB_OUTPUT}"
-
-      - name: Publish Open VSX (native)
+      - name: Publish Open VSX package
         shell: bash
         env:
           OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
-          BESKID_RELEASE_VERSION: ${{ steps.release-version.outputs.version }}
+          BESKID_RELEASE_VERSION: ${{ inputs.release_version }}
         run: bash ./scripts/ci/open-vsx-publish.sh "${{ matrix.platform }}" "${{ matrix.bin_name }}" "${{ matrix.rust_target }}"

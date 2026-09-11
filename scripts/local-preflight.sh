@@ -4,13 +4,13 @@
 #   scripts/local-preflight.sh           # host tier (seconds)
 #   scripts/local-preflight.sh --full    # host tier + workflow policy checks
 #
-# Host tier runs the same scripts/ci/*.sh gates AppVeyor runs, so the class of bug
-# that broke main (stale pnpm-lock.yaml) is caught in seconds locally. --full adds
+# Host tier runs the same reusable scripts/ci/*.sh gates as hosted builds, so
+# stale lockfiles and similar failures are caught locally. --full adds
 # static workflow validation without invoking deployment jobs.
 #
 # Skip rules (non-failing):
 #   - @beskid/* / @cyber-nomad-* app gates skip if NODE_AUTH_TOKEN unset
-#   - native compiler matrix is not run here (AppVeyor workers own it)
+#   - the native compiler matrix is not run by this fast host tier
 #   - --full requires actionlint
 set -euo pipefail
 
@@ -59,8 +59,6 @@ echo "==> HOST TIER"
 run_host_gate "openspec" bash "${ROOT}/scripts/ci/openspec-gate.sh"
 run_host_gate "conformance" bash "${ROOT}/scripts/ci/conformance-gate.sh"
 run_host_gate "platform-integration" bash "${ROOT}/scripts/ci/platform-integration-gate.sh"
-run_host_gate "supply-chain-security" bash "${ROOT}/scripts/ci/security-policy-gate.sh"
-
 if [[ "$FULL" -eq 1 ]]; then
   echo ""
   echo "==> FULL TIER (workflow policy)"

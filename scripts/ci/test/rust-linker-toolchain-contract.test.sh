@@ -164,26 +164,9 @@ else
   pass "CI does not compile cargo-binstall from source"
 fi
 
-check_text ".github/actions/setup-compiler-gate/action.yml" \
-  'uses: \$/\.github/actions/setup-rust-build-tools' \
-  "compiler gate uses the shared Rust build tools action"
-check_text ".github/actions/setup-compiler-gate/action.yml" \
-  'install-sccache: true' \
-  "compiler gate enables sccache in the shared action"
-
-for workflow in .github/workflows/compiler-release.yml .github/workflows/publish-open-vsx.yml; do
-  check_text "${workflow}" 'uses: \./\.github/actions/setup-rust-build-tools' \
-    "${workflow} uses the shared Rust build tools action"
-done
-
-check_text "scripts/ci/appveyor-install.sh" 'sudo apt-get install[^[:cntrl:]]*' \
-  "AppVeyor owns native Linux tool installation in a repository script"
-check_text "scripts/ci/appveyor-install.sh" 'build-essential clang curl git jq lld llvm mold pkg-config libssl-dev ripgrep' \
-  "AppVeyor Linux lanes install the mold, LLVM, and ripgrep toolchain"
-check_text "scripts/ci/appveyor-install.sh" 'install_brew_formula ripgrep' \
-  "AppVeyor macOS lanes install ripgrep"
-check_text "scripts/ci/lib/appveyor-rust-toolchain.sh" 'rustup toolchain install stable --profile minimal' \
-  "AppVeyor native lanes provision the Rust toolchain"
+check_text ".github/workflows/publish-open-vsx.yml" \
+  'uses: \./\.github/actions/setup-rust-build-tools' \
+  "Open VSX publication uses the shared Rust build tools action"
 
 check_text "compiler/justfile" 'cargo binstall cargo-sweep' \
   "cargo-sweep guidance recommends cargo binstall"

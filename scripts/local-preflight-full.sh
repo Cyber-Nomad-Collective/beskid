@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Full preflight tier: validate every workflow and the immutable delivery
-# contracts without invoking jobs that can mutate external environments.
+# Full preflight tier: validate retained GitHub-native workflows and reusable
+# build/release contracts without invoking external mutations.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -13,4 +13,4 @@ command -v actionlint >/dev/null 2>&1 || {
 
 actionlint .github/workflows/*.yml
 bash scripts/ci/test/run-cicd-foundation-tests.sh
-echo "full: workflows and immutable delivery contracts OK"
+echo "full: workflows and build/release contracts OK"

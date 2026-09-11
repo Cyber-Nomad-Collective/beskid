@@ -15,19 +15,14 @@
 
 ## CI (`scripts/ci/`)
 
-Submodule initialization plus native gates and publication entrypoints. AppVeyor
-owns repository validation and platform-image publication; retained GitHub
-Actions workflows handle only GitHub-native release and marketplace concerns.
-Dagger, Blacksmith, and Testbox CI orchestration are retired.
+Submodule initialization plus reusable native gates, release builders, and
+publication entrypoints. Woodpecker owns repository validation and platform
+image publication. GitHub workflows are limited to editor marketplaces and
+repository-native maintenance.
 
 | Script | Used by |
 |--------|---------|
-| [`appveyor-install.sh`](ci/appveyor-install.sh) | Native AppVeyor toolchain and pinned-submodule setup by lane |
-| [`appveyor-entrypoint.sh`](ci/appveyor-entrypoint.sh) | Linux/macOS AppVeyor validation dispatcher |
-| [`appveyor-entrypoint.ps1`](ci/appveyor-entrypoint.ps1) | Windows AppVeyor ABI-v5 runtime-kit validation dispatcher |
-| [`appveyor-package-publish.sh`](ci/appveyor-package-publish.sh) | Unconditional Corelib/template rehearsal plus trusted-main publication to `pckg.beskid-lang.org` |
-| [`appveyor-platform-publish.sh`](ci/appveyor-platform-publish.sh) | Fail-closed five-lane image build and trusted-main publication to `cr.beskid-lang.org` |
-| [`init-submodules.sh`](ci/init-submodules.sh) | AppVeyor / release / Open VSX pinned-submodule checkouts |
+| [`init-submodules.sh`](ci/init-submodules.sh) | Pinned-submodule checkouts for hosted and manual builds |
 | [`init-compiler-submodule.sh`](ci/init-compiler-submodule.sh) | Compiler + corelib checkout (tags for semver) |
 | [`compiler-rust-gate.sh`](ci/compiler-rust-gate.sh) | Compiler Rust gate (clippy + workspace tests) |
 | [`lsp-command-contract-gate.sh`](ci/lsp-command-contract-gate.sh) | LSP + VS Code command-contract gate |
@@ -36,20 +31,18 @@ Dagger, Blacksmith, and Testbox CI orchestration are retired.
 | [`site-build-gate.sh`](ci/site-build-gate.sh) | Auth / canonical website build gate |
 | [`vscode-gate.sh`](ci/vscode-gate.sh) | VS Code extension `pnpm test` |
 | [`verify-frozen-lockfile.sh`](ci/verify-frozen-lockfile.sh) | Per-directory `pnpm install --frozen-lockfile` |
-| [`compute-cli-version.sh`](ci/compute-cli-version.sh) | Compiler-minted global `0.4.<build>` version |
+| [`resolve-beskid-version.sh`](ci/resolve-beskid-version.sh) | Provider-neutral compiler release `0.4.<build>` version resolver |
 | [`build-release-artifact.sh`](ci/build-release-artifact.sh) | Native CLI/LSP release build |
 | [`publish-release-stream.sh`](ci/publish-release-stream.sh) | `gh release` for `cli-*` / `lsp-*` streams |
 | [`build-release-platform.sh`](ci/build-release-platform.sh) | Independent native CLI/LSP/bundle build with retained logs and structured failures |
 | [`build-release-state.sh`](ci/build-release-state.sh) | Stable/unstable publication eligibility and machine-readable release state |
-| [`render-compiler-release-notes.sh`](ci/render-compiler-release-notes.sh) | Human-readable GitHub release notes generated from release state |
-| [`run-ci-reported-command.sh`](ci/run-ci-reported-command.sh) | GitHub annotations, summaries, raw logs, and JSON for failed gate commands |
+| [`render-compiler-release-notes.sh`](ci/render-compiler-release-notes.sh) | Human-readable release notes generated from release state |
 | [`corelib-publish.sh`](ci/corelib-publish.sh) | Pack and publish the production corelib closure plus all first-party templates to pckg (`--dry-run` validates every artifact without secrets or registry mutation) |
 | [`open-vsx-publish.sh`](ci/open-vsx-publish.sh) | Open VSX publish (native) |
 | [`openspec-gate.sh`](ci/openspec-gate.sh) | Strict OpenSpec authority validation |
 | [`conformance-gate.sh`](ci/conformance-gate.sh) | Requirement/provenance conformance validation |
 | [`platform-integration-gate.sh`](ci/platform-integration-gate.sh) | Cross-site delivery integration contract |
 | [`shared-ui-nexus-gate.sh`](ci/shared-ui-nexus-gate.sh) | Shared UI Vitest + Nexus unit/Playwright E2E |
-| [`security-policy-gate.sh`](ci/security-policy-gate.sh) | Offline AppVeyor-publication and Watchtower-authority policy |
 
 ## Lazygit
 
@@ -57,13 +50,11 @@ Dagger, Blacksmith, and Testbox CI orchestration are retired.
 
 ## Local CI
 
-[`../validate-ci-local.sh`](../validate-ci-local.sh) runs the same integration,
-shared-ui/Nexus, OpenSpec, conformance, and supply-chain policy used by the
-AppVeyor platform lane. Shared UI + Nexus command parity:
+[`../validate-ci-local.sh`](../validate-ci-local.sh) runs the reusable integration,
+shared-ui/Nexus, OpenSpec, and conformance checks used by hosted builds. Shared UI + Nexus command parity:
 [`../docs/orchestrate/shared-ui-nexus-gate.md`](../docs/orchestrate/shared-ui-nexus-gate.md).
 
-AppVeyor and retained GitHub-native release contracts run without external
-state changes:
+Reusable build and release contracts run without external state changes:
 
 ```bash
 bash scripts/ci/test/run-cicd-foundation-tests.sh

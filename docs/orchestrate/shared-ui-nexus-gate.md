@@ -52,8 +52,8 @@ Package-level notes: `beskid_nexus/gitnexus-web/TESTING.md`.
 
 ## CI
 
-The AppVeyor `linux-platform` lane calls the same script from the root
-AppVeyor entrypoint after initializing `beskid_web_common` and `beskid_nexus`.
+The Woodpecker Linux platform lane calls the same script after initializing
+`beskid_web_common` and `beskid_nexus`.
 Local and CI therefore share one authority path. The lane must pass before any
 platform image is published to `cr.beskid-lang.org`; Watchtower deployment is
 outside this gate.

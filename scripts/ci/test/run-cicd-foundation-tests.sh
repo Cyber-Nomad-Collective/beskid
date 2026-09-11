@@ -6,35 +6,23 @@ root="$(cd "$(dirname "$0")/../../.." && pwd)"
 node --test "${root}/scripts/ci/test/license-policy.test.mjs"
 node "${root}/scripts/ci/check-license-policy.mjs" --root "${root}"
 
-bash "${root}/scripts/ci/test/appveyor-migration-contract.test.sh"
-bash "${root}/scripts/ci/test/appveyor-rustup-bootstrap.test.sh"
-bash "${root}/scripts/ci/test/appveyor-macos-cross-gate.test.sh"
-bash "${root}/scripts/ci/test/appveyor-migration-isolation.test.sh"
-bash "${root}/scripts/ci/test/appveyor-event-policy.test.sh"
-
 for script in \
-  appveyor-install.sh \
-  appveyor-entrypoint.sh \
-  appveyor-macos-cross-gate.sh \
-  appveyor-package-publish.sh \
-  appveyor-platform-publish.sh \
-  security-policy-gate.sh; do
+  build-release-artifact.sh \
+  build-release-platform.sh \
+  build-release-state.sh \
+  compiler-rust-gate.sh \
+  corelib-publish.sh \
+  open-vsx-publish.sh \
+  publish-release-stream.sh; do
   bash -n "${root}/scripts/ci/${script}"
 done
-bash -n "${root}/scripts/ci/lib/appveyor-event-policy.sh"
-bash -n "${root}/scripts/ci/lib/appveyor-platform-images.sh"
-bash -n "${root}/scripts/ci/lib/appveyor-rust-toolchain.sh"
 
-"${root}/scripts/ci/test/run-distribute-workflow-contract-tests.sh"
-bash "${root}/scripts/ci/test/release-version-contract.test.sh"
 bash "${root}/scripts/ci/test/editor-authoring-version.test.sh"
 bash "${root}/scripts/ci/test/build-release-state.test.sh"
 bash "${root}/scripts/ci/test/build-release-platform.test.sh"
 bash "${root}/scripts/ci/test/render-ci-failure.test.sh"
 bash "${root}/scripts/ci/test/shared-ui-nexus-gate-contract.test.sh"
-bash "${root}/scripts/ci/test/platform-integration-checkout-contract.test.sh"
 bash "${root}/scripts/ci/test/platform-stylesheet-contract.test.sh"
-bash "${root}/scripts/ci/test/github-release-handoff.test.sh"
 bash "${root}/scripts/ci/test/image-preparation-contract.test.sh"
 bash "${root}/scripts/ci/test/rust-linker-toolchain-contract.test.sh"
 
@@ -44,4 +32,4 @@ CORELIB_QUALITY_ONLY=1 "${root}/scripts/ci/corelib-gate.sh"
 bash "${root}/scripts/ci/test/corelib-gate-report.test.sh"
 bash "${root}/scripts/ci/test/corelib-publish-contract.test.sh"
 
-echo "CI/CD foundation tests OK"
+echo "build and release foundation tests OK"
