@@ -56,12 +56,14 @@ Before deployment, an administrator must:
    secret: rotating it invalidates the server's outstanding gRPC JWTs.
 4. After review, copy `deploy/woodpecker/compose.yml` to
    `/opt/woodpecker/compose.yml`, copy `.env.example` to
-   `/opt/woodpecker/.env`, fill the three values, and protect it with mode
+   `/opt/woodpecker/.env`, fill all four values, and protect it with mode
    `0600`.
 5. Create `/opt/woodpecker/data`, `/opt/woodpecker/agent`, and
-   `/var/lib/woodpecker/beskid-output`, owned by the account that runs the
-   Docker daemon. The first two are visible bind mounts for the server database
-   and agent identity. The agent's
+   `/var/lib/woodpecker/beskid-output`. The server image runs as UID/GID
+   `1000:1000`, so `/opt/woodpecker/data` must be owned by `1000:1000`; keep
+   `/opt/woodpecker/agent` root-owned with mode `0700` and the output directory
+   root-owned with mode `0750`. The first two are visible bind mounts for the
+   server database and agent identity. The agent's
    `WOODPECKER_BACKEND_DOCKER_VOLUMES` mounts that host directory at
    `/woodpecker-output` in every Linux step container.
 6. Validate without starting services:
@@ -71,12 +73,13 @@ Before deployment, an administrator must:
    docker compose --env-file .env config --quiet
    ```
 
-7. Start with `docker compose up -d`, sign in as the configured administrator
-   `pmikstacki` through the GitHub OAuth flow, enable only
-   `Cyber-Nomad-Collective/beskid`, and leave the repository untrusted. Closed
-   registration, organization/repository-owner filters, public-only GitHub
-   OAuth scope, and disabled user-created agent registration are enforced by
-   Compose. The workflow needs no privileged step or repository secret.
+7. Start with `docker compose up -d`, authorize the GitHub OAuth app for
+   `Cyber-Nomad-Collective`, and sign in as the configured administrator
+   `pmikstacki`. Registration is open only to that approved organization;
+   repository-owner filtering, public-only GitHub OAuth scope, and disabled
+   user-created agent registration are enforced by Compose. Enable only
+   `Cyber-Nomad-Collective/beskid` and leave the repository untrusted. The
+   workflow needs no privileged step or repository secret.
 8. Confirm the connected Linux agent reports the automatic labels
    `platform=linux/amd64`, `backend=docker`, plus
    `role=beskid-linux`. Keep `WOODPECKER_MAX_WORKFLOWS=1` so native release
@@ -98,9 +101,11 @@ agent identity and secrets.
 
 Use the existing x86_64 Windows AWS build host and the Woodpecker
 `woodpecker-agent_windows_amd64.zip` asset from the official 3.18.1 release.
-Verify it against the release's `checksums.txt` before installation. Register a
-dedicated agent in **Settings -> Agents -> Add agent**; do not reuse the Linux
-system token. Write that agent token to
+Verify it against the release's `checksums.txt` before installation. This
+deployment uses Woodpecker's system agent token for all managed workers, so
+copy `WOODPECKER_AGENT_SECRET` from the root-only server environment into the
+Windows worker's local secret file; never place it in SSM command history or a
+repository. Write it to
 `C:\ProgramData\Woodpecker\agent-secret`, grant read access only to the service
 account, and configure:
 
@@ -141,8 +146,8 @@ prints the exact `WOODPECKER_OUTPUT_PATH`.
 ## Native macOS agent
 
 Use the official `woodpecker-agent_darwin_arm64.tar.gz` asset from Woodpecker
-3.18.1 and verify it against the release `checksums.txt`. Register a separate
-agent in the server UI. Store its token in
+3.18.1 and verify it against the release `checksums.txt`. Store the managed
+system agent token in
 `~/.config/woodpecker/agent-secret` with mode `0600`, then configure the agent's
 launchd service with:
 

@@ -14,7 +14,8 @@ services:
       WOODPECKER_HOST: https://ci.beskid-lang.org
       WOODPECKER_SERVER_ADDR: ":8000"
       WOODPECKER_GRPC_ADDR: ":9000"
-      WOODPECKER_OPEN: "false"
+      # Registration is limited to the approved GitHub organization below.
+      WOODPECKER_OPEN: "true"
       WOODPECKER_ADMIN: pmikstacki
       WOODPECKER_ORGS: Cyber-Nomad-Collective
       WOODPECKER_REPO_OWNERS: Cyber-Nomad-Collective
