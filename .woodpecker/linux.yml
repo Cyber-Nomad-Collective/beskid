@@ -1,0 +1,29 @@
+labels:
+  platform: linux/amd64
+  backend: docker
+  role: beskid-linux
+
+steps:
+  - name: validate-and-build
+    image: rust:1.98.1-bookworm@sha256:9a73a5088750b4c95158ab26629c854c3d6fc4b173cb7bc8079ad252d8ed7bfa
+    commands:
+      - apt-get update >/dev/null
+      - apt-get install -y --no-install-recommends ca-certificates clang git jq lld llvm mold nodejs pkg-config libssl-dev >/dev/null
+      - bash scripts/ci/test/build-release-platform.test.sh
+      - bash scripts/ci/test/build-release-state.test.sh
+      - bash scripts/ci/test/woodpecker-build-platform.test.sh
+      - bash scripts/ci/test/woodpecker-workflow-contract.test.sh
+      - |
+        if [ "$${CI_PIPELINE_EVENT}" = tag ]; then
+          release_version="$${CI_COMMIT_TAG#v}"
+        elif [ "$${CI_PIPELINE_EVENT}" = manual ]; then
+          release_version="$${BESKID_RELEASE_VERSION:?set BESKID_RELEASE_VERSION for a manual build}"
+        else
+          echo "Validation complete; native build runs only for manual and version-tag events."
+          exit 0
+        fi
+        output="/woodpecker-output/$${CI_PIPELINE_NUMBER}-$${CI_COMMIT_SHA}/linux"
+        bash scripts/ci/woodpecker-build-platform.sh linux "$${release_version}" "$${output}"
+
+when:
+  - event: [push, tag, manual]

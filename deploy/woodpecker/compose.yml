@@ -1,0 +1,69 @@
+name: beskid-woodpecker
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  server:
+    image: woodpeckerci/woodpecker-server:v3.18.1@sha256:0b8dbb53d3795f470f524cdb186551f0ad383cc4bd0d299febb7f3d7c6a56771
+    restart: unless-stopped
+    environment:
+      WOODPECKER_HOST: https://ci.beskid-lang.org
+      WOODPECKER_SERVER_ADDR: ":8000"
+      WOODPECKER_GRPC_ADDR: ":9000"
+      WOODPECKER_OPEN: "false"
+      WOODPECKER_ADMIN: pmikstacki
+      WOODPECKER_ORGS: Cyber-Nomad-Collective
+      WOODPECKER_REPO_OWNERS: Cyber-Nomad-Collective
+      WOODPECKER_DISABLE_USER_AGENT_REGISTRATION: "true"
+      WOODPECKER_GITHUB: "true"
+      WOODPECKER_GITHUB_PUBLIC_ONLY: "true"
+      WOODPECKER_GITHUB_CLIENT: ${WOODPECKER_GITHUB_CLIENT:?set WOODPECKER_GITHUB_CLIENT}
+      WOODPECKER_GITHUB_SECRET: ${WOODPECKER_GITHUB_SECRET:?set WOODPECKER_GITHUB_SECRET}
+      WOODPECKER_AGENT_SECRET: ${WOODPECKER_AGENT_SECRET:?set WOODPECKER_AGENT_SECRET}
+      WOODPECKER_GRPC_SECRET: ${WOODPECKER_GRPC_SECRET:?set WOODPECKER_GRPC_SECRET}
+    expose:
+      - "8000"
+      - "9000"
+    labels:
+      caddy_ingress_network: coolify
+      caddy_0: https://ci.beskid-lang.org
+      caddy_0.reverse_proxy: "{{upstreams 8000}}"
+      caddy_1: https://woodpecker-agent.beskid-lang.org
+      caddy_1.reverse_proxy: "{{upstreams 9000}}"
+      caddy_1.reverse_proxy.transport: http
+      caddy_1.reverse_proxy.transport.versions: h2c
+    networks:
+      - coolify
+    volumes:
+      - /opt/woodpecker/data:/var/lib/woodpecker
+    logging: *default-logging
+
+  linux-agent:
+    image: woodpeckerci/woodpecker-agent:v3.18.1@sha256:93235c148a9f91aa455bd88dc788a12bed7921499f33fee1124ac50aad7b8e1a
+    restart: unless-stopped
+    depends_on:
+      - server
+    environment:
+      WOODPECKER_SERVER: server:9000
+      WOODPECKER_AGENT_SECRET: ${WOODPECKER_AGENT_SECRET:?set WOODPECKER_AGENT_SECRET}
+      WOODPECKER_BACKEND: docker
+      WOODPECKER_MAX_WORKFLOWS: "1"
+      WOODPECKER_HOSTNAME: bdziam-linux-docker
+      WOODPECKER_AGENT_LABELS: platform=linux/amd64,backend=docker,role=beskid-linux
+      WOODPECKER_BACKEND_DOCKER_VOLUMES: /var/lib/woodpecker/beskid-output:/woodpecker-output
+    networks:
+      - coolify
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /opt/woodpecker/agent:/etc/woodpecker
+      - /var/lib/woodpecker/beskid-output:/var/lib/woodpecker/beskid-output
+    logging: *default-logging
+
+networks:
+  coolify:
+    name: coolify
+    external: true
