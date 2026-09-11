@@ -12,9 +12,8 @@
 - [ ] 2.3 Delete Blazor host registrations, mappings, and obsolete UI assets.
 - [ ] 2.4 Remove the duplicate browser bundle path from the image.
 
-## 3. Verification and delivery
+## 3. Verification
 
 - [ ] 3.1 Add server integration coverage for SPA, API, auth, hub, and missing-asset boundaries.
 - [ ] 3.2 Run pckg web tests and server tests.
-- [ ] 3.3 Build and smoke-test the Linux image with Podman.
-- [ ] 3.4 Run the pckg GitHub Actions lane and promote only the verified digest.
+- [ ] 3.3 Build the packaged server and smoke-test its React and API route boundaries.

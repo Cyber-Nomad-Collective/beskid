@@ -99,6 +99,6 @@
   `mod.glue` phase ordering tests pass.
 - [ ] 8.3 Run `bun run scripts/openspec/validate-standard.ts` and
   assert the OpenSpec standard validates with the new change.
-- [ ] 8.4 Run full OpenSpec, compiler workspace, and release gates;
+- [ ] 8.4 Run full OpenSpec, compiler workspace, and distribution conformance checks;
   update catalog/changelog/traceability evidence and run GitNexus
   changed-scope analysis before integration.

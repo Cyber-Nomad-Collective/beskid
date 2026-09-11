@@ -157,8 +157,8 @@ See **[flow and algorithm](./flow-and-algorithm/)** for activation → LSP init 
 </SpecSection>
 
 <SpecSection title="Compatibility and versioning" id="compatibility-and-versioning">
-- Extension engine pin and Open VSX platform matrix remain governed by publish workflow (darwin-arm64 / darwin-x64 LSP target pairing).
-- The Compiler CI workflow is the sole global distribution-version authority: it **must** mint exactly `0.4.<GITHUB_RUN_NUMBER>` on `main` and emit that value. Open VSX **must** consume the emitted value from the triggering Compiler run; it **must not** derive a version from its own tag, commit, manifest, or workflow run number.
+- Extension engine pins SHALL select the matching LSP target for each supported platform, including darwin-arm64 and darwin-x64.
+- Published compiler CLI, LSP, and extension artifacts that belong to one release **must** use the same SemVer from the release manifest. The extension **must not** derive an independent version from its own tag, commit, or manifest.
 - `selectedProjectUri` deprecated in favor of `focusedProjectUri` for one release cycle.
 </SpecSection>
 
@@ -173,7 +173,7 @@ See **[examples](./examples/)** for corelib workspace and single-app project wal
 </SpecSection>
 
 <SpecSection title="Verification and traceability" id="verification-and-traceability">
-See **[verification and traceability](./verification-and-traceability/)** for CI, unit, and smoke anchors.
+See **[verification and traceability](./verification-and-traceability/)** for conformance, unit, and smoke anchors.
 </SpecSection>
 
 <SpecSection title="Decisions" id="decisions">
@@ -664,13 +664,13 @@ How implementers prove the extension surface matches this spec.
 | `pckgClient` cache + auth header | Unit tests with mock `fetch` |
 | `autoSelect` path → project URI | Unit tests under `src/workspace/` |
 | E2E smoke | `@vscode/test-electron`: activate, mock executeCommand, assert tree labels |
-| Lint in CI | `beskid_vscode` `bun run lint` in extension workflow |
+| Extension lint | `beskid_vscode` `bun run lint` |
 
 ## Platform spec
 
 | Check | Command |
 | --- | --- |
-| trudoc + platform-spec content | `cd site/website && bun run verify:trudoc -- --preset ci` |
+| OpenSpec standard | `pnpm run openspec:validate` |
 
 ## Manual smoke (corelib)
 

@@ -122,13 +122,13 @@ The CLI layer in `compiler/crates/beskid_cli/src/commands/format.rs` is the **on
    - `--write`: in-place rewrite.
    - `--check`: bail non-zero on the first mismatch with a `not formatted:` message.
 
-The CLI **must not** attempt to recover from a parse error by skipping the file; CI behaviors that need partial coverage **must** drive the formatter on a curated file list rather than tolerate parse failures.
+The CLI **must not** attempt to recover from a parse error by skipping the file; callers that need partial coverage **must** drive the formatter on a curated file list rather than tolerate parse failures.
 
 ## Verification and maintenance notes
 
 - **Idempotency** — the canonical test is to run `format_program(parse(format_program(parse(s))))` and assert byte equality with `format_program(parse(s))`. This **must** be exercised in `beskid_analysis` unit tests.
 - **Policy regressions** — any change to `policy.rs` **must** be accompanied by an ADR (or an existing ADR update) and a refresh of fixture outputs.
-- **Drift detection** — CI **should** run `beskid format --check` against a known-formatted source tree (Beskid's own corelib and book code samples) to catch regressions early.
+- **Drift detection** — `beskid format --check` **should** run against a known-formatted source tree (Beskid's own corelib and book code samples) to expose regressions.
 
 ## Related topics
 

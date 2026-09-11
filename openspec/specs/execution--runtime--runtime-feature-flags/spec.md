@@ -102,7 +102,7 @@ No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-EXEC-R
 ``````markdown
 ## Context
 
-CI and VSIX builds enable different `beskid_runtime` features. Confusing feature gates with ABI bumps breaks compatibility checks.
+Different distributed artifacts may enable different `beskid_runtime` features. Confusing feature gates with ABI bumps breaks compatibility checks.
 
 ## Decision
 
@@ -176,7 +176,7 @@ Conformance and doc tests **must** pin feature set when asserting array behavior
 | ID | Requirement |
 | --- | --- |
 | **RFF-001** | Optional runtime features **must not** change `BESKID_RUNTIME_ABI_VERSION` unless they alter existing symbol signatures or layouts. |
-| **RFF-002** | Default CI/release runtime builds **must** document which features are enabled in build notes or manifests. |
+| **RFF-002** | Default distribution runtime builds **must** document which features are enabled in build notes or manifests. |
 | **RFF-003** | Tests that require `arrays_backing` **must** enable the feature on `beskid_runtime` dependency. |
 | **RFF-004** | `metrics` exports **must** be absent from baseline `RUNTIME_EXPORT_SYMBOLS` when built without `metrics`. |
 | **RFF-005** | Compiler lowering **must not** assume element backing exists unless workspace policy enables `arrays_backing`. |
@@ -235,7 +235,7 @@ Document **optional runtime capabilities** selected at **build time** via Cargo 
 | Actor | Role |
 | --- | --- |
 | **`beskid_runtime` Cargo.toml** | Declares `metrics`, `arrays_backing`, `sched` features |
-| **Maintainers / CI** | Builds runtime with agreed feature set for CLI, VSIX, releases |
+| **Artifact builder** | Builds runtime with the declared feature set for CLI, VSIX, and release artifacts |
 | **Compiler tests** | Enable features when validating optional behavior |
 | **Tooling** | Documents which flags are on in prebuilt binaries |
 
@@ -252,7 +252,7 @@ Document **optional runtime capabilities** selected at **build time** via Cargo 
 
 ```mermaid
 flowchart LR
-  manifest[Workspace / CI profile]
+  manifest[Workspace / artifact profile]
   rt[beskid_runtime features]
   tests[Compiler tests]
   cli[Shipped CLI / VSIX]
@@ -293,7 +293,7 @@ Shipped artifacts **must** document enabled features. Mixing a compiler test bui
 cargo test -p beskid_tests --features beskid_runtime/arrays_backing
 ```
 
-(Exact feature propagation follows workspace `Cargo.toml` dependency declarations—maintainers mirror the pattern used in compiler CI.)
+(Exact feature propagation follows workspace `Cargo.toml` dependency declarations.)
 
 ## Header-only array scenario (default)
 
@@ -319,7 +319,7 @@ This does not change runtime features; it documents cross-crate flag vocabulary 
 
 ## Release matrix documentation (prose)
 
-Open VSX jobs should record in CI logs whether `arrays_backing` is enabled for the bundled runtime. Operators comparing local `cargo build` vs extension behavior should check that matrix before reporting array bugs.
+An extension release manifest should record whether `arrays_backing` is enabled for the bundled runtime. Operators comparing local `cargo build` with extension behavior should check that manifest before reporting array bugs.
 
 ## Related topics
 
@@ -364,7 +364,7 @@ No. Selection is compile-time for the linked `beskid_runtime` artifact. CLI flag
 | --- | --- |
 | Array element segfault | Build runtime with `arrays_backing` or stop dereferencing `ptr` |
 | Missing `rt_metrics_*` at link | Enable `metrics` on runtime **and** ensure codegen emits calls |
-| Extern works locally, fails in CI | CI engine lacks `extern_dlopen` — use link-time externs |
+| Extern works locally, fails in a distributed artifact | Its runtime lacks `extern_dlopen` — use link-time externs |
 | VSIX vs local CLI array difference | Compare release matrices for runtime features |
 
 ## Related topics
@@ -392,7 +392,7 @@ How optional features propagate from Cargo to runtime behavior. Build alignment 
 
 ## Build-time selection
 
-1. CI or local `cargo build -p beskid_runtime --features …` enables cfg gates in `builtins/arrays.rs`, `metrics` module, etc.
+1. `cargo build -p beskid_runtime --features …` enables cfg gates in `builtins/arrays.rs`, `metrics` module, etc.
 2. `beskid_engine` / CLI link the same feature-enabled runtime artifact (workspace dependency features must match).
 3. `BESKID_RUNTIME_ABI_VERSION` stays constant unless symbol/signatures change (**ABI-005**).
 
@@ -417,7 +417,7 @@ How optional features propagate from Cargo to runtime behavior. Build alignment 
 
 ## Release verification flow
 
-1. Read release manifest / CI matrix for enabled features.
+1. Read the release manifest for enabled features.
 2. Run conformance tests compiled with the same feature set.
 3. Compare `array_new` behavior in integration tests (backing vs header-only).
 
@@ -468,8 +468,8 @@ How optional features propagate from Cargo to runtime behavior. Build alignment 
 | ID | Check |
 | --- | --- |
 | **RFF-001** | ABI version constant unchanged in feature-only PRs |
-| **RFF-003** | CI job definitions list `arrays_backing` where needed |
-| **RFF-006** | Default engine feature set off in release workflow |
+| **RFF-003** | Artifact manifests list `arrays_backing` where needed |
+| **RFF-006** | Default engine feature set off in distribution profile |
 
 ## Implementation anchors
 - `compiler/crates/beskid_runtime/Cargo.toml` — default feature set verification

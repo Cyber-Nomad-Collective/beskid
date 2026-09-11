@@ -207,7 +207,7 @@ New language semantics start in language-meta; implementation domains link back 
 
 ## Verification anchors
 
-`packages/trudoc/src/verify/platform-spec-content.ts`; `cd site/website && bun run verify:trudoc -- --preset ci`.
+`packages/trudoc/src/verify/platform-spec-content.ts`; `pnpm run openspec:validate`.
 ``````
 
 </details>
@@ -237,7 +237,7 @@ Classification happens before authoring: “what does valid code mean?” → la
 
 ## Verification anchors
 
-`relatedTopics` frontmatter validation in `verify:trudoc --preset ci`.
+`relatedTopics` frontmatter validation in `pnpm run openspec:validate`.
 ``````
 
 </details>
@@ -263,7 +263,7 @@ Implementation that alters observable language or platform behavior **must** be 
 
 ## Consequences
 
-Contributors pair spec and code in one change set; CI content gates block **Standard** stubs.
+Contributors pair spec and code in one change set; the standard validator blocks **Standard** stubs.
 
 ## Verification anchors
 
@@ -328,7 +328,7 @@ Any **Standard** page failing content gates (circular canon stubs, placeholder-o
 
 ## Consequences
 
-Maturity is explicit in frontmatter; CI strict mode can fail scaffold **Standard** pages.
+Maturity is explicit in frontmatter; strict validation can fail scaffold **Standard** pages.
 
 ## Verification anchors
 

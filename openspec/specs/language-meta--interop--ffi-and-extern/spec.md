@@ -521,7 +521,7 @@ Toolchains **conform** to this feature when:
 | Contract clause | Verification anchor |
 | --- | --- |
 | `Extern` on contract only | `beskid_tests` analysis **E1510** |
-| `Abi:"C"` + `Library` | `beskid_tests` extern validation pipeline |
+| `Abi:"C"` + `Library` | `beskid_tests` extern conformance suite |
 | Interop view types | Type fixtures + lowering signature scan (`validate_ffi_signature`) |
 | Link-time libraries | Manifest contract tests + future CLI import tests |
 | Export / callbacks | Dedicated fixtures under `export-and-callbacks` hub |

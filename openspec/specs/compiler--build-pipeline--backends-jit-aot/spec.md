@@ -344,10 +344,6 @@ Implementation anchors:
 
 Evidence should include JIT runtime tests in `compiler/crates/beskid_tests/src/runtime/` and AOT contract tests in `compiler/crates/beskid_tests/src/aot/`.
 
-CI anchors:
-
-- Compiler pipeline checks in `compiler/.github/workflows/ci.yml` (`test`, `e2e-*`, `extern-engine-security`).
-- Superrepo runtime orchestration in `.github/workflows/runtime-ci.yml`.
 ``````
 
 </details>

@@ -135,7 +135,7 @@ Public graph API **must** merge `codeDoc` and `specLinks` as **separate** node p
 | N-MCP-03 | Header button **Connect MCP** **must** be visible when user is signed in |
 | N-MCP-04 | Dialog **must** show endpoint URL, auth header template, copy actions, and link to [MCP contracts](/platform-spec/tooling/nexus/contracts-and-edge-cases#mcp) |
 
-Token value is a deployment secret — UI shows placeholder guidance for operators, not the live secret.
+Token value is a runtime secret — UI shows placeholder guidance for operators, not the live secret.
 
 ## Ownership verification
 

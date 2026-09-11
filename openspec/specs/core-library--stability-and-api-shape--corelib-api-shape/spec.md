@@ -400,7 +400,7 @@ Every Beskid project got the corelib prelude injected by default (see [Corelib i
 
 - The prelude stayed small and predictable: only a vetted surface shipped transitively.
 - Tier 2 / Tier 3 modules remained reachable via explicit `use System.FS;` (etc.); no expressivity lost.
-- CI caught accidental prelude growth before merge, keeping the v0.3 → v1.0 compatibility budget intact.
+- The prelude validator caught accidental prelude growth, keeping the v0.3 → v1.0 compatibility budget intact.
 
 ## Verification anchors (historical)
 
@@ -905,7 +905,7 @@ Top-of-file `///` doc blocks must either attach to the first item or be folded i
 | API-SHAPE-007 (Tier 1 stability) | `beskid_tests::projects::corelib::layout::corelib_collections_sources_carry_api_shape_tier_directives` plus snapshot reviews | `CollectionsTier1Tests` (`tests/corelib_tests/src/collections/CollectionsTier1Tests.bd`) | `beskid test --project tests/corelib_tests --target CollectionsTier1Tests` |
 | API-SHAPE-008 (Tier 2 stability) | `beskid_tests::projects::corelib::layout::corelib_collections_sources_carry_api_shape_tier_directives` | `CollectionsListTests`, `CollectionsMapTests`, `CollectionsSetTests`, `CollectionsQueueTests`, `CollectionsStackTests`, `SystemFsTests`, `SystemPathTests` | `beskid test --project tests/corelib_tests --target CollectionsMapTests` (repeat per target) |
 | API-SHAPE-009 (Tier 3 not in prelude / completions) | Prelude reader checks in `beskid_tests::projects::corelib::compile::checked_in_corelib_prelude_exports_mvp_modules` plus the layout tier directives test | — | `cargo test -p beskid_tests projects::corelib::compile::checked_in_corelib_prelude_exports_mvp_modules` |
-| API-SHAPE-010 (consumer badges) | trudoc `verify:platform-spec-content` checks ADRs and `## Decisions` table on the hub | — | `bun run --cwd site/website verify:trudoc -- --preset ci` |
+| API-SHAPE-010 (consumer badges) | OpenSpec validation checks ADRs and `## Decisions` table on the hub | — | `pnpm run openspec:validate` |
 
 ## Conformance commands
 
@@ -929,7 +929,7 @@ cd compiler/corelib/beskid_corelib/tests/corelib_tests && beskid test --target S
 cd compiler/corelib/beskid_corelib/tests/corelib_tests && beskid test --target SystemPathTests
 
 # Spec contract (no Proposed pages under api-shape, no scaffold stubs, decisions present)
-cd site/website && bun run verify:trudoc -- --preset ci
+pnpm run openspec:validate
 ```
 
 ## Traceability map
@@ -956,7 +956,7 @@ cd site/website && bun run verify:trudoc -- --preset ci
 - `api.json` round-trip preserves `tier` for tier-tagged items and omits it cleanly for items left as `None`.
 - The prelude validator passes after any module promotion.
 - `cargo test -p beskid_tests projects::corelib::layout` is green.
-- `bun run verify:trudoc -- --preset ci` reports zero Proposed pages under `core-library/stability-and-api-shape/corelib-api-shape/`.
+- `pnpm run openspec:validate` reports zero Proposed pages under `core-library/stability-and-api-shape/corelib-api-shape/`.
 ``````
 
 </details>

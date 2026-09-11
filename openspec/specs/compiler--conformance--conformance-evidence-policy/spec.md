@@ -223,7 +223,7 @@ Normative contracts for conformance evidence. Every conformance test must assert
 
 ## Edge cases to monitor
 - **Partial refactors** that update only one side of a Mod contract dispatch.
-- **Manifest goldens** that pass locally but differ on CI due to lockfile resolution divergence.
+- **Manifest goldens** that pass on one host but differ on another due to lockfile resolution divergence.
 - **LSP diagnostics** that diverge from CLI diagnostics for the same input (tracked in `spine/diagnostics_parity.rs`).
 
 ## Anchored code paths
@@ -373,8 +373,8 @@ The Mod pipeline phases fired in an order that violates the canonical sequence: 
 ### Why are LSP diagnostics different from CLI diagnostics for the same input?
 Check `compiler/crates/beskid_tests/src/spine/diagnostics_parity.rs`. The spine parity tests assert that Mod diagnostics round-trip through `beskid_lsp` with the same codes as CLI analysis. If they diverge, a code path in the LSP middleware or the spine is producing a different diagnostic than the CLI pipeline.
 
-### My incremental replay test passes locally but fails on CI. Why?
-Incremental replay in `compiler/crates/beskid_tests/src/mods/incremental_replay.rs` asserts byte-identical generator output. Differences between local and CI usually come from:
+### Why does my incremental replay test differ between hosts?
+Incremental replay in `compiler/crates/beskid_tests/src/mods/incremental_replay.rs` asserts byte-identical generator output. Differences between hosts usually come from:
 - Lockfile resolution producing different dependency hashes.
 - Environment-specific paths leaking into generator output.
 - Non-deterministic ordering in hash maps or parallel passes.

@@ -421,7 +421,7 @@ Grammar, AST, or profile shape changes **must** update, in order:
 3. **[Bsol design model](./design-model/)** Rust AST excerpt when public types change
 4. **[Runtime manifest profile](./runtime-manifest-profile/)** when `runtime_manifest.bsol` rules change
 5. Manifest contract articles when lowering semantics or diagnostic bands change
-6. `cd site/website && bun run verify:trudoc -- --preset ci` after MDX edits
+6. `pnpm run openspec:validate` after standard edits
 
 ## Traceability matrix
 

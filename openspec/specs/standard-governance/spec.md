@@ -34,7 +34,7 @@ The records below preserve migration history. They are not normative except wher
 ``````markdown
 ## Overview
 
-The Beskid platform specification defines normative language, compiler, tooling, and deployment contracts.
+The Beskid platform specification defines normative language, compiler, runtime, and tooling contracts.
 
 ## Scope
 

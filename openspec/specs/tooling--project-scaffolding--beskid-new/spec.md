@@ -269,7 +269,7 @@ beskid new contract --symbol contractName=Foo -o ./Src/Foo.bd --project ./App/Pr
 
 - **`beskid new console`** without install: auto-install latest from registry when online.
 - **Ambiguous shortName**: error listing matching package ids.
-- **CI**: document `beskid new ... --no-interactive` in guides.
+- **Noninteractive use**: document `beskid new ... --no-interactive` in guides.
 ``````
 
 </details>
