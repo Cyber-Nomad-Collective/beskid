@@ -20,6 +20,7 @@ for name in linux macos windows; do
   file="${workflow_dir}/${name}.yml"
   test -f "${file}"
   grep -Fq 'woodpecker-build-platform.sh' "${file}"
+  grep -Fq 'recursive: false' "${file}"
 done
 
 grep -Fq 'platform: linux/amd64' "${workflow_dir}/linux.yml"

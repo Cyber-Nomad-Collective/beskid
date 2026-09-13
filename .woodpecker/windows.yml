@@ -3,6 +3,12 @@ labels:
   backend: local
   role: beskid-windows
 
+clone:
+  git:
+    image: plugin-git
+    settings:
+      recursive: false
+
 steps:
   - name: build-windows
     image: bash

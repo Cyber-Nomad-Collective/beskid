@@ -28,6 +28,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Replace the overlapping hosted build providers with one minimal Woodpecker
   3.18.1 build service: Linux Docker validation and native Linux, Windows, and
   macOS target builds share one fail-closed platform wrapper.
+- Make Woodpecker clone only the declared compiler build dependencies; inactive
+  submodules no longer prevent native validation before the build wrapper can
+  initialize its required inputs.
 - Remove operational build-provider and deployment policy from the normative
   OpenSpec standard while retaining provider-neutral product, language, ABI,
   artifact, and conformance requirements.
