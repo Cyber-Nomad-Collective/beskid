@@ -17,7 +17,10 @@ test('landing Download action keeps visitors in the Downloads page', async () =>
 
 test('landing code example offers a Learn playground handoff', async () => {
   const codeWindow = await readWebsiteFile('src/components/LandingCodeWindow.astro');
+  const codeTabs = await readWebsiteFile('src/data/landing-code-tabs.ts');
 
   assert.match(codeWindow, /Try in playground/);
   assert.match(codeWindow, /learn\.beskid-lang\.org\/\?code=/);
+  assert.match(codeTabs, /i32 Main\(\)/);
+  assert.doesNotMatch(codeTabs, /Core\.String|Core\.Input|Core\.Output|Result<|Beskid\.Compiler/);
 });

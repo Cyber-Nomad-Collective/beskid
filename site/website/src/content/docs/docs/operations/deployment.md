@@ -14,7 +14,7 @@ authority:
   limits: This page does not deploy or roll back a production container. The production operator owns those external actions.
 verified:
   revision: 1c48165332356625e6ce1e273ac8c84e46c8a195
-  date: 2026-09-09
+  date: 2026-09-08
 ---
 
 Keep registry and production credentials in their secret managers. Do not print,

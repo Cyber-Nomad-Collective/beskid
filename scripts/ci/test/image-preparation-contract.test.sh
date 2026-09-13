@@ -62,6 +62,9 @@ for requirement in \
   'COPY compiler/.cargo ./compiler/.cargo' \
   'CARGO_TARGET_DIR=/workspace/target cargo build -p beskid_cli --release' \
   'CARGO_TARGET_DIR=/workspace/target cargo build -p beskid_lsp --release' \
+  'BESKID_CORELIB_ROOT=/workspace/runtime-output/beskid_corelib' \
+  '/workspace/runtime-output/beskid --version' \
+  'test -f /workspace/runtime-output/beskid_corelib/beskid_corelib/corelib.bproj' \
   'BESKID_RUNTIME_PREFIX=/workspace/target/native-runtime-kit' \
   'BESKID_CLI_BIN=/workspace/target/release/beskid_cli' \
   'mkdir -p /workspace/runtime-output' \
@@ -70,6 +73,7 @@ for requirement in \
   'cp -a /workspace/target/native-runtime-kit /workspace/runtime-output/native-runtime-kit' \
   'COPY --from=rust /workspace/runtime-output/beskid /app/site/learn/beskid' \
   'COPY --from=rust /workspace/runtime-output/beskid_lsp /app/site/learn/beskid_lsp' \
+  'COPY --from=rust /workspace/runtime-output/beskid_corelib /app/site/learn/beskid_corelib' \
   'COPY --from=rust /workspace/runtime-output/native-runtime-kit /app/site/learn/native-runtime-kit' \
   'COPY --from=web /app/site/learn/src/data /app/site/learn/src/data' \
   'COPY --from=web /app/site/learn/src/lib/playground.ts /app/site/learn/src/lib/playground.ts' \
@@ -83,6 +87,10 @@ done
 
 if [[ "${learn}" != *'ENV BESKID_LSP_BINARY=/app/site/learn/beskid_lsp'* ]]; then
   echo "site/learn/Dockerfile must configure the bundled compiler language server" >&2
+  exit 1
+fi
+if [[ "${learn}" != *'ENV BESKID_CORELIB_ROOT=/app/site/learn/beskid_corelib'* ]]; then
+  echo "site/learn/Dockerfile must use the corelib bundled with its compiler build" >&2
   exit 1
 fi
 

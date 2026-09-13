@@ -13,7 +13,7 @@ const openSpecRoot = path.resolve(import.meta.dirname, '../../../../openspec');
 test('catalog projection exposes one canonical public page for every capability and requirement', () => {
 	const projection = __test.loadStandardRouteProjection(openSpecRoot);
 	assert.equal(projection.capabilities.length, 198);
-	assert.equal(projection.requirements.length, 571);
+	assert.equal(projection.requirements.length, 573);
 	assert.equal(new Set(projection.routes.map((route) => route.pathname)).size, projection.routes.length);
 });
 

@@ -10,11 +10,11 @@ audience:
 authority:
   status: security-sensitive
   sourceLabel: Standalone production deployment contract
-  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid/blob/main/beskid_sites/deploy/README.md
+  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid/blob/1c48165332356625e6ce1e273ac8c84e46c8a195/beskid_sites/deploy/README.md
   limits: This page contains no credential and cannot authorize AppVeyor or Watchtower account changes.
 verified:
   revision: 1c48165332356625e6ce1e273ac8c84e46c8a195
-  date: 2026-09-09
+  date: 2026-09-08
 ---
 
 Store runtime credentials in OpenBao and registry publication credentials in

@@ -10,11 +10,11 @@ audience:
 authority:
   status: informative
   sourceLabel: Pinned production Compose contract
-  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid/blob/main/beskid_sites/deploy/docker-compose.yml
+  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid/blob/1c48165332356625e6ce1e273ac8c84e46c8a195/beskid_sites/deploy/docker-compose.yml
   limits: This page summarizes the standalone production Compose contract. Watchtower controls labelled application updates.
 verified:
   revision: 1c48165332356625e6ce1e273ac8c84e46c8a195
-  date: 2026-09-09
+  date: 2026-09-08
 ---
 
 The production template contains five Beskid application images, Authentik,

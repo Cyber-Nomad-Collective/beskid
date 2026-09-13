@@ -11,6 +11,13 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Consume a verified, complete compiler release bundle in every distribution
+  target rather than independently downloading CLI and LSP artifacts.
+- Make landing-page examples standalone playground programs and pin Learn to
+  the compiler's matching bundled corelib at image build time.
+- Document the current release-readiness audit, including incomplete AppVeyor
+  evidence, the post-migration version regression, and the requirements for a
+  safe three-host fallback build.
 - Use AppVeyor's Monterey macOS worker for the compiler lane; the newer macOS
   images spent the worker budget rebuilding Homebrew PowerShell dependencies
   before the repository gate could start.

@@ -301,15 +301,19 @@ jobs:
         run: ./scripts/ci/init-submodules.sh beskid_distrib
         shell: bash
 
-      - name: Fetch immutable CLI + LSP (windows-amd64)
+      - name: Fetch verified compiler bundle (windows-amd64)
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
           VERSION: ${{ needs.resolve-rolling.outputs.version }}
         run: |
           mkdir -p build
-          bash beskid_distrib/scripts/fetch-release-assets.sh cli "${VERSION}" x86_64-pc-windows-msvc build/beskid.exe
-          bash beskid_distrib/scripts/fetch-release-assets.sh lsp "${VERSION}" x86_64-pc-windows-msvc build/beskid_lsp.exe
+          bash beskid_distrib/scripts/fetch-release-bundle.sh "${VERSION}" x86_64-pc-windows-msvc build
+
+      - name: Setup Node.js (for deterministic WiX bundle harvesting)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
       - name: Setup .NET (for WiX v4 dotnet tool)
         uses: actions/setup-dotnet@3940d3729529571e04ac2bf6e1a500d4b2566b8c # v4
@@ -428,15 +432,13 @@ jobs:
       - name: Init beskid_distrib submodule
         run: ./scripts/ci/init-submodules.sh beskid_distrib
 
-      - name: Fetch immutable CLI + LSP (darwin-arm64)
+      - name: Fetch verified compiler bundle (darwin-arm64)
         env:
           GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
           VERSION: ${{ needs.resolve-rolling.outputs.version }}
         run: |
           mkdir -p build
-          bash beskid_distrib/scripts/fetch-release-assets.sh cli "${VERSION}" aarch64-apple-darwin build/beskid
-          bash beskid_distrib/scripts/fetch-release-assets.sh lsp "${VERSION}" aarch64-apple-darwin build/beskid_lsp
-          chmod 0755 build/beskid build/beskid_lsp
+          bash beskid_distrib/scripts/fetch-release-bundle.sh "${VERSION}" aarch64-apple-darwin build
 
       - name: Build macOS DMG
         env:
@@ -478,15 +480,13 @@ jobs:
       - name: Init beskid_distrib submodule
         run: ./scripts/ci/init-submodules.sh beskid_distrib
 
-      - name: Fetch immutable CLI + LSP (linux-amd64)
+      - name: Fetch verified compiler bundle (linux-amd64)
         env:
           GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
           VERSION: ${{ needs.resolve-rolling.outputs.version }}
         run: |
           mkdir -p build
-          cd build
-          bash ../beskid_distrib/scripts/fetch-release-assets.sh cli "${VERSION}" x86_64-unknown-linux-gnu
-          bash ../beskid_distrib/scripts/fetch-release-assets.sh lsp "${VERSION}" x86_64-unknown-linux-gnu
+          bash beskid_distrib/scripts/fetch-release-bundle.sh "${VERSION}" x86_64-unknown-linux-gnu build
 
       - name: Build .deb
         env:
@@ -529,6 +529,14 @@ jobs:
           fetch-depth: 0
       - name: Init beskid_distrib submodule
         run: ./scripts/ci/init-submodules.sh beskid_distrib
+
+      - name: Fetch verified compiler bundle for OCI image
+        env:
+          GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
+          VERSION: ${{ needs.resolve-rolling.outputs.version }}
+        run: |
+          rm -rf beskid_distrib/oci-build
+          bash beskid_distrib/scripts/fetch-release-bundle.sh "${VERSION}" x86_64-unknown-linux-gnu beskid_distrib/oci-build/beskid-bundle
 
       - name: Login to GHCR
         uses: docker/login-action@v3

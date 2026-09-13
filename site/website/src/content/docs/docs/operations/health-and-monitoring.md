@@ -10,11 +10,11 @@ audience:
 authority:
   status: informative
   sourceLabel: Standalone production deployment checks
-  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid/blob/main/beskid_sites/deploy/deploy.sh
+  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid/blob/1c48165332356625e6ce1e273ac8c84e46c8a195/beskid_sites/deploy/deploy.sh
   limits: Endpoint success proves availability only. It does not prove complete application correctness.
 verified:
   revision: 1c48165332356625e6ce1e273ac8c84e46c8a195
-  date: 2026-09-09
+  date: 2026-09-08
 ---
 
 Use separate AppVeyor publication and Watchtower reconciliation evidence for

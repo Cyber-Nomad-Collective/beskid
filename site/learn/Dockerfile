@@ -64,6 +64,9 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
   ./scripts/stage-native-runtime-kit.sh \
   && install -m 0755 /workspace/target/release/beskid_cli /workspace/runtime-output/beskid \
   && install -m 0755 /workspace/target/release/beskid_lsp /workspace/runtime-output/beskid_lsp \
+  && BESKID_CORELIB_ROOT=/workspace/runtime-output/beskid_corelib \
+     /workspace/runtime-output/beskid --version >/dev/null \
+  && test -f /workspace/runtime-output/beskid_corelib/beskid_corelib/corelib.bproj \
   && test -x /workspace/runtime-output/beskid || (echo "beskid binary missing after install" >&2 && exit 1) \
   && test -x /workspace/runtime-output/beskid_lsp || (echo "beskid_lsp binary missing after install" >&2 && exit 1) \
   && cp -a /workspace/target/native-runtime-kit /workspace/runtime-output/native-runtime-kit
@@ -93,6 +96,7 @@ COPY --from=web /app/site/learn/src/server /app/site/learn/src/server
 COPY --from=web /app/site/learn/package.json /app/site/learn/package.json
 COPY --from=rust /workspace/runtime-output/beskid /app/site/learn/beskid
 COPY --from=rust /workspace/runtime-output/beskid_lsp /app/site/learn/beskid_lsp
+COPY --from=rust /workspace/runtime-output/beskid_corelib /app/site/learn/beskid_corelib
 COPY --from=rust /workspace/runtime-output/native-runtime-kit /app/site/learn/native-runtime-kit
 COPY LICENSE /usr/share/licenses/beskid/Apache-2.0.txt
 COPY LICENSES/AGPL-3.0-only.txt /usr/share/licenses/beskid/AGPL-3.0-only.txt
@@ -102,6 +106,7 @@ ENV NODE_ENV=production
 ENV PORT=80
 ENV BESKID_BINARY=/app/site/learn/beskid
 ENV BESKID_LSP_BINARY=/app/site/learn/beskid_lsp
+ENV BESKID_CORELIB_ROOT=/app/site/learn/beskid_corelib
 ENV BESKID_RUNTIME_PREFIX=/app/site/learn/native-runtime-kit
 ENV BESKID_COMMAND_TIMEOUT_MS=25000
 ENV BESKID_RELEASE_CHANNEL=${BESKID_RELEASE_CHANNEL}
