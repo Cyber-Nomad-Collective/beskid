@@ -16,6 +16,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Enable Git long-path checkout behavior while initializing CI submodules, so
+  Windows workers can materialize the compiler fixture tree.
 - Let Windows native release builds use the checked-in Rust `rust-lld.exe`
   linker configuration instead of overriding it with a host-specific Visual
   Studio discovery path.
