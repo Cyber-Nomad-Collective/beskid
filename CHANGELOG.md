@@ -16,6 +16,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Use Buildx's Docker-compatible local exporter for the platform-image
+  verification job, avoiding unsupported attestation manifest-list exports on
+  the rootless NixOS worker.
 - Streamline Woodpecker into combined validation, three native build/package
   definitions, one manual release path, and one isolated platform-image job.
   Remove remaining GitHub executors and avoid separate marketplace, packaging,

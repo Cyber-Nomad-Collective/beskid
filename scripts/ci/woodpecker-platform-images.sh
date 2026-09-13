@@ -50,7 +50,7 @@ for path in "${submodules[@]}"; do
   printf '%s\t%s\n' "${path}" "${actual}" >>"${gitlinks}"
 done
 phase=build; message='building immutable images'; write_journal
-build_image() { local lane="$1" context="$2" dockerfile="$3" metadata="${output}/metadata-${1}.json"; shift 3; docker buildx build --load --provenance=mode=min --sbom=true --metadata-file "${metadata}" --file "${dockerfile}" --tag "$(immutable_ref "${lane}")" "$@" "${context}"; }
+build_image() { local lane="$1" context="$2" dockerfile="$3" metadata="${output}/metadata-${1}.json"; shift 3; docker buildx build --load --provenance=false --sbom=false --metadata-file "${metadata}" --file "${dockerfile}" --tag "$(immutable_ref "${lane}")" "$@" "${context}"; }
 docker buildx version || fail build 'Docker Buildx is unavailable'
 for lane in "${lanes[@]}"; do
   current_lane="${lane}"
