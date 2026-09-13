@@ -4,7 +4,6 @@ set -euo pipefail
 
 root="$(cd "$(dirname "$0")/../../.." && pwd)"
 extension_root="${root}/editors/zed"
-publish_workflow="${root}/.github/workflows/publish-zed-extension.yml"
 developer_tasks="${root}/.zed/tasks.json"
 extension_readme="${extension_root}/README.md"
 extension_gitignore="${extension_root}/.gitignore"
@@ -103,71 +102,6 @@ grep -Fq 'args = ["**"]' "${extension_root}/extension.toml" || \
   fail 'Zed extension process capability must preserve trusted configured arguments'
 grep -Fq 'path = ["Cyber-Nomad-Collective", "beskid_compiler", "releases", "download", "lsp-stable", "**"]' "${extension_root}/extension.toml" || \
   fail 'Zed extension download capability must remain limited to the stable Beskid release path'
-
-[[ -f "${publish_workflow}" ]] || fail 'missing Zed publication workflow'
-grep -Fq 'extension-path: extensions/beskid' "${publish_workflow}" || \
-  fail 'Zed publication workflow does not update the canonical registry submodule path'
-! grep -Fq 'extension-path: editors/zed' "${publish_workflow}" || \
-  fail 'Zed publication workflow confuses the source subdirectory with the registry submodule path'
-! grep -Eq '^[[:space:]]*workflow_dispatch:' "${publish_workflow}" || \
-  fail 'Zed publication workflow permits a tag-less dispatch that the registry action rejects'
-! grep -Fq 'push-to: Cyber-Nomad-Collective/zed-extensions' "${publish_workflow}" || \
-  fail 'Zed publication workflow targets a registry fork that does not exist'
-grep -Fq 'bash scripts/ci/test/zed-extension-package.test.sh' "${publish_workflow}" || \
-  fail 'Zed publication workflow does not run the package gate'
-grep -Fq 'bash scripts/ci/test/zed-language-assets.test.sh' "${publish_workflow}" || \
-  fail 'Zed publication workflow does not run the language-assets gate'
-grep -Fq 'repos/Cyber-Nomad-Collective/beskid_compiler/releases/tags/lsp-stable' "${publish_workflow}" || \
-  fail 'Zed publication workflow does not require the stable LSP release'
-grep -Fq 'gh release download lsp-stable' "${publish_workflow}" || \
-  fail 'Zed publication workflow does not download the stable release state'
-grep -Fq 'release-state.json' "${publish_workflow}" || \
-  fail 'Zed publication workflow does not validate the authoritative release state'
-grep -Fq '.channel == "stable"' "${publish_workflow}" || \
-  fail 'Zed publication workflow does not require stable release state'
-grep -Fq '.tests.gate_result == "success"' "${publish_workflow}" || \
-  fail 'Zed publication workflow does not require successful compiler gates'
-grep -Fq '(.complete_platforms | sort) == ["linux", "macos", "windows"]' "${publish_workflow}" || \
-  fail 'Zed publication workflow does not require exactly three complete platforms'
-grep -Fq '.provenance.compiler_commit == $compiler_commit' "${publish_workflow}" || \
-  fail 'Zed publication workflow does not bind the stable LSP to the pinned compiler gitlink'
-grep -Fq 'git rev-parse HEAD:compiler' "${publish_workflow}" || \
-  fail 'Zed publication workflow does not resolve the tagged compiler gitlink'
-grep -Fq 'GITHUB_REF_NAME#v' "${publish_workflow}" || \
-  fail 'Zed publication workflow does not derive the registry version from the tag'
-grep -Fq 'editors/zed/extension.toml' "${publish_workflow}" || \
-  fail 'Zed publication workflow does not parse the package manifest version'
-grep -Fq 'GH_TOKEN: ${{ github.token }}' "${publish_workflow}" || \
-  fail 'Zed stable-release guard does not authenticate its GitHub API request'
-for release_asset in \
-  lsp-version.txt \
-  beskid_lsp-linux-amd64 \
-  beskid_lsp-darwin-arm64 \
-  beskid_lsp-windows-amd64.exe; do
-  grep -Fq "${release_asset}" "${publish_workflow}" || \
-    fail "Zed publication workflow does not require ${release_asset}"
-done
-package_gate_line="$(grep -nF 'bash scripts/ci/test/zed-extension-package.test.sh' "${publish_workflow}" | head -n1 | cut -d: -f1)"
-asset_gate_line="$(grep -nF 'bash scripts/ci/test/zed-language-assets.test.sh' "${publish_workflow}" | head -n1 | cut -d: -f1)"
-release_guard_line="$(grep -nF 'name: Verify stable LSP release assets' "${publish_workflow}" | head -n1 | cut -d: -f1)"
-version_guard_line="$(grep -nF 'name: Verify tag matches Zed manifest version' "${publish_workflow}" | head -n1 | cut -d: -f1)"
-grep -Fq 'permissions:' "${publish_workflow}" || \
-  fail 'Zed publication workflow does not declare explicit permissions'
-grep -Fq 'contents: read' "${publish_workflow}" || \
-  fail 'Zed publication workflow does not retain read access for checkout and release verification'
-! grep -Eq '^[[:space:]]*(contents|pull-requests):[[:space:]]*write' "${publish_workflow}" || \
-  fail 'Zed publication workflow grants unnecessary write permission to the repository token'
-reviewed_action='huacnlee/zed-extension-action@11b0e4805c1f4382a4bb3b1a9b17be328e1559c3'
-grep -Fq "uses: ${reviewed_action}" "${publish_workflow}" || \
-  fail 'Zed publication workflow does not pin the reviewed registry action commit'
-! grep -Eq 'uses: huacnlee/zed-extension-action@(v[0-9]+|main|master)$' "${publish_workflow}" || \
-  fail 'Zed publication workflow uses a mutable registry-action reference'
-publish_action_line="$(grep -nF "uses: ${reviewed_action}" "${publish_workflow}" | head -n1 | cut -d: -f1)"
-[[ "${package_gate_line}" -lt "${publish_action_line}" && \
-   "${asset_gate_line}" -lt "${publish_action_line}" && \
-   "${release_guard_line}" -lt "${publish_action_line}" && \
-   "${version_guard_line}" -lt "${publish_action_line}" ]] || \
-  fail 'Zed publication gates must run before the registry action'
 
 [[ -f "${developer_tasks}" ]] || fail 'missing repository Zed developer tasks'
 grep -Fq 'bash scripts/ci/test/zed-extension-package.test.sh' "${developer_tasks}" || \

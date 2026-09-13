@@ -6,11 +6,12 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "${ROOT}"
 
-command -v actionlint >/dev/null 2>&1 || {
-  echo "full: actionlint not installed (brew install actionlint)" >&2
+command -v woodpecker-cli >/dev/null 2>&1 || {
+  echo "full: woodpecker-cli is required; see docs/operations/woodpecker.md" >&2
   exit 1
 }
 
-actionlint .github/workflows/*.yml
+woodpecker-cli lint --strict --plugins-trusted-clone plugin-git \
+  --plugins-trusted-clone docker.io/woodpeckerci/plugin-git:2.10.1 .woodpecker
 bash scripts/ci/test/run-cicd-foundation-tests.sh
 echo "full: workflows and build/release contracts OK"

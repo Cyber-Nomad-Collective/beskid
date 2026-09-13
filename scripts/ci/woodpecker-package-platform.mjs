@@ -19,7 +19,13 @@ try {
   const [platform, inputArg, outputArg] = process.argv.slice(2);
   if (!["linux", "macos", "windows"].includes(platform)) throw new Error("unsupported platform");
   const input = resolve(inputArg), output = resolve(outputArg);
-  const evidence = JSON.parse(run(process.execPath, [join(scripts, "woodpecker-release-evidence.mjs"), input], undefined, "invalid release evidence"));
+  const evidence = JSON.parse(run(process.execPath, [join(scripts, "woodpecker-release-evidence.mjs"), input, platform], undefined, "invalid release evidence"));
+  const root = resolve(scripts, "../..");
+  const rootCommit = run("git", ["rev-parse", "HEAD"], root, "source lookup failed").trim();
+  if (rootCommit !== evidence.source.superrepo_commit) throw new Error("checkout does not match release evidence");
+  const expectedDistrib = run("git", ["rev-parse", "HEAD:beskid_distrib"], root, "distribution gitlink lookup failed").trim();
+  const actualDistrib = run("git", ["rev-parse", "HEAD"], distrib, "distribution checkout lookup failed").trim();
+  if (actualDistrib !== expectedDistrib) throw new Error("distribution checkout does not match source gitlink");
   const target = evidence.platforms.find(item => item.platform === platform);
   const archive = target.artifacts.find(item => item.name.endsWith(".tar.gz"));
   mkdirSync(output, { mode: 0o700 });
@@ -52,7 +58,7 @@ try {
     if (!statSync(join(output, name)).isFile() || statSync(join(output, name)).size === 0) throw new Error(`missing installer: ${name}`);
     return { name, sha256: digest(join(output, name)) };
   });
-  const result = { schema_version: 1, platform, target: target.target, version, source: evidence.source, bundle_sha256: archive.sha256, status: "success", published: false, artifacts };
+  const result = { schema_version: 1, platform, target: target.target, version, source: evidence.source, distrib_commit: actualDistrib, bundle_sha256: archive.sha256, status: "success", published: false, artifacts };
   writeFileSync(join(output, "package-result.json"), `${JSON.stringify(result, null, 2)}\n`, { flag: "wx" });
   process.stdout.write(`${JSON.stringify(result)}\n`);
 } catch (error) {

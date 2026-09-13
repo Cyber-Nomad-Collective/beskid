@@ -8,6 +8,17 @@ requested_version="${2:?stable release version}"
 output_dir="${3:?absolute durable output directory}"
 
 root="$(cd "$(dirname "$0")/../.." && pwd)"
+if [[ -n "${CI_PIPELINE_NUMBER:-}" || -n "${CI_COMMIT_SHA:-}" ]]; then
+  for override in WOODPECKER_RELEASE_VERSION_VALIDATOR WOODPECKER_INIT_SUBMODULES_SCRIPT WOODPECKER_RELEASE_PLATFORM_SCRIPT WOODPECKER_VSWHERE; do
+    if printenv "${override}" >/dev/null; then
+      echo "${override} is test-only and forbidden in a pipeline" >&2
+      exit 2
+    fi
+  done
+  [[ "${CI_COMMIT_SHA:-}" == "$(git -C "${root}" rev-parse HEAD)" ]] || { echo 'pipeline source does not match checkout' >&2; exit 2; }
+  git -C "${root}" diff --quiet
+  git -C "${root}" diff --cached --quiet
+fi
 version_validator="${WOODPECKER_RELEASE_VERSION_VALIDATOR:-${root}/scripts/ci/release-version.mjs}"
 init_submodules="${WOODPECKER_INIT_SUBMODULES_SCRIPT:-${root}/scripts/ci/init-submodules.sh}"
 platform_builder="${WOODPECKER_RELEASE_PLATFORM_SCRIPT:-${root}/scripts/ci/build-release-platform.sh}"
@@ -88,6 +99,13 @@ if [[ "${platform}" == windows && -z "${CARGO_TARGET_X86_64_PC_WINDOWS_MSVC_LINK
 fi
 
 bash "${init_submodules}" compiler beskid_bsol
+if [[ -n "${CI_PIPELINE_NUMBER:-}" || -n "${CI_COMMIT_SHA:-}" ]]; then
+  for dependency in compiler beskid_bsol; do
+    [[ "$(git -C "${root}" rev-parse "HEAD:${dependency}")" == "$(git -C "${root}/${dependency}" rev-parse HEAD)" ]] || { echo "${dependency} differs from pinned source" >&2; exit 2; }
+    git -C "${root}/${dependency}" diff --quiet
+    git -C "${root}/${dependency}" diff --cached --quiet
+  done
+fi
 bash "${platform_builder}" \
   "${target}" "${cli_asset}" "${lsp_asset}" \
   "${version}" stable "${output_dir}" "${bundle_asset}"
@@ -107,8 +125,8 @@ test -x "${cli_path}"
 test -x "${lsp_path}"
 test -f "${bundle_path}"
 
-cli_version="$(${cli_path} --version)"
-lsp_version="$(${lsp_path} --version)"
+cli_version="$("${cli_path}" --version)"
+lsp_version="$("${lsp_path}" --version)"
 [[ "${cli_version}" == "beskid ${version}" ]]
 [[ "${lsp_version}" == "beskid_lsp ${version}" ]]
 printf 'cli=%s\nlsp=%s\n' "${cli_version}" "${lsp_version}" \
@@ -116,16 +134,25 @@ printf 'cli=%s\nlsp=%s\n' "${cli_version}" "${lsp_version}" \
 
 bundle_root="beskid-${version}-${target}"
 tar -tzf "${bundle_path}" >"${output_dir}/bundle-contents.log"
+bundle_extension=""
+[[ "${platform}" == windows ]] && bundle_extension=.exe
 for required in \
-  "${bundle_root}/beskid_cli" \
-  "${bundle_root}/beskid_lsp" \
-  "${bundle_root}/beskid-up" \
-  "${bundle_root}/native-runtime-kit/beskid-runtime/abi-5/${target}/release/abi.json"; do
+  "${bundle_root}/bin/beskid${bundle_extension}" \
+  "${bundle_root}/bin/beskid_lsp${bundle_extension}" \
+  "${bundle_root}/bin/beskid-up${bundle_extension}" \
+  "${bundle_root}/lib/beskid-runtime/abi-5/${target}/release/abi.json" \
+  "${bundle_root}/beskid_corelib/corelib.bproj" \
+  "${bundle_root}/packages/" \
+  "${bundle_root}/release-version.txt"; do
   grep -Fxq "${required}" "${output_dir}/bundle-contents.log" || {
     echo "bundle is missing ${required}" >&2
     exit 1
   }
 done
+[[ "$(tar -xOzf "${bundle_path}" "${bundle_root}/release-version.txt")" == "${version}" ]] || {
+  echo 'bundle release-version.txt does not match the requested version' >&2
+  exit 1
+}
 
 superrepo_sha="$(git -C "${root}" rev-parse HEAD)"
 compiler_sha="$(git -C "${root}/compiler" rev-parse HEAD 2>/dev/null || printf unavailable)"

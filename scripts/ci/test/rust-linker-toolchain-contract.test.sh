@@ -137,37 +137,6 @@ else
   failures=$((failures + 1))
 fi
 
-tools_action=".github/actions/setup-rust-build-tools/action.yml"
-check_text "${tools_action}" 'cargo-bins/cargo-binstall@b874e25ea559687bec77e281e9b271aa1367b624' \
-  "Rust build tools pin cargo-binstall v1.23.0"
-check_text "${tools_action}" 'version: "1\.23\.0"' \
-  "Rust build tools pin the installed cargo-binstall binary"
-check_text "${tools_action}" 'rui314/setup-mold@7e4f20ad28a2e8ca6fd0892ccf72e2abb706b9c3' \
-  "Rust build tools pin setup-mold v1"
-check_text "${tools_action}" 'mold-version: "2\.42\.0"' \
-  "Rust build tools pin mold"
-check_text "${tools_action}" 'make-default: false' \
-  "Rust build tools leave system ld unchanged"
-check_text "${tools_action}" 'SCCACHE_VERSION="0\.9\.1"' \
-  "Rust build tools pin sccache"
-check_text "${tools_action}" 'cargo binstall([^[:cntrl:]]*)--version "\$\{SCCACHE_VERSION\}"([^[:cntrl:]]*)sccache' \
-  "Rust build tools install pinned sccache with cargo-binstall"
-check_text "${tools_action}" '--strategies crate-meta-data,quick-install' \
-  "Rust build tools fail closed instead of compiling sccache"
-check_text "${tools_action}" 'cargo-binstall -V' \
-  "Rust build tools use cargo-binstall's non-ambiguous version probe"
-
-if rg -n 'cargo install cargo-binstall' \
-  "${root}/.github/actions" "${root}/.github/workflows" >/dev/null; then
-  fail "CI must install prebuilt cargo-binstall instead of compiling it from source"
-else
-  pass "CI does not compile cargo-binstall from source"
-fi
-
-check_text ".github/workflows/publish-open-vsx.yml" \
-  'uses: \./\.github/actions/setup-rust-build-tools' \
-  "Open VSX publication uses the shared Rust build tools action"
-
 check_text "compiler/justfile" 'cargo binstall cargo-sweep' \
   "cargo-sweep guidance recommends cargo binstall"
 

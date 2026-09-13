@@ -96,18 +96,6 @@ function createFixture(overrides = {}) {
   for (const platform of Object.keys(PLATFORMS)) {
     writePlatform(root, platform, overrides[platform] ?? {}, source, version);
   }
-  writeJson(join(root, "gate-evidence.json"), {
-    schema_version: 1,
-    source,
-    version,
-    checks: [
-      { name: "compiler-rust", status: "success" },
-      { name: "corelib", status: "success" },
-      { name: "openspec", status: "success" },
-      { name: "editor", status: "success" },
-    ],
-    ...overrides.gates,
-  });
   return root;
 }
 
@@ -117,8 +105,19 @@ function runValidator(root) {
   });
 }
 
+function createPackageFixture() {
+  const repo = new URL("../../../", import.meta.url).pathname;
+  const source = {
+    superrepo_commit: spawnSync("git", ["-C", repo, "rev-parse", "HEAD"], { encoding: "utf8" }).stdout.trim(),
+    compiler_commit: spawnSync("git", ["-C", repo, "rev-parse", "HEAD:compiler"], { encoding: "utf8" }).stdout.trim(),
+  };
+  const overrides = {};
+  for (const platform of Object.keys(PLATFORMS)) overrides[platform] = { buildResult: { source } };
+  return { root: createFixture(overrides), source };
+}
+
 test("packaging rejects legacy flat bundles instead of reporting an installer success", (t) => {
-  const root = createFixture();
+  const { root } = createPackageFixture();
   t.after(() => rmSync(root, { recursive: true, force: true }));
   const result = spawnSync(process.execPath, [packagePath.pathname, "linux", root, join(root, "packages")], { encoding: "utf8" });
   assert.notEqual(result.status, 0);
@@ -127,18 +126,18 @@ test("packaging rejects legacy flat bundles instead of reporting an installer su
 });
 
 test("packaging rejects invalid evidence before creating output", (t) => {
-  const root = createFixture({ gates: { checks: [] } });
+  const root = createFixture({ linux: { buildResult: { platform_result_status: "failed" } } });
   t.after(() => rmSync(root, { recursive: true, force: true }));
   const output = join(root, "packages");
   const result = spawnSync(process.execPath, [packagePath.pathname, "linux", root, output], { encoding: "utf8" });
   assert.notEqual(result.status, 0);
-  assert.match(result.stderr, /gate evidence/);
+  assert.match(result.stderr, /platform_result_status/);
   assert.equal(existsSync(output), false);
 });
 
 test("native packaging consumes the complete verified bundle", { skip: !["darwin", "linux"].includes(process.platform) }, (t) => {
   const platform = process.platform === "darwin" ? "macos" : "linux";
-  const root = createFixture();
+  const { root, source } = createPackageFixture();
   t.after(() => rmSync(root, { recursive: true, force: true }));
   const target = PLATFORMS[platform].target;
   const name = `beskid-${VERSION}-${target}`;
@@ -164,13 +163,23 @@ test("native packaging consumes the complete verified bundle", { skip: !["darwin
   const report = JSON.parse(readFileSync(join(output, "package-result.json")));
   assert.equal(report.status, "success");
   assert.equal(report.published, false);
-  assert.deepEqual(report.source, SOURCE);
+  assert.deepEqual(report.source, source);
   assert.equal(report.artifacts[0].sha256, sha256(readFileSync(join(output, report.artifacts[0].name))));
   if (platform === "macos") {
     const formula = readFileSync(join(output, "beskid.rb"), "utf8");
     assert.ok(formula.includes(`/v${VERSION}/${name}.tar.gz`));
     assert.ok(formula.includes(sha256(readFileSync(archive))));
   }
+});
+
+test("packaging rejects evidence for another checkout before output creation", (t) => {
+  const root = createFixture();
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  const output = join(root, "packages");
+  const result = spawnSync(process.execPath, [packagePath.pathname, "linux", root, output], { encoding: "utf8" });
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /checkout does not match/);
+  assert.equal(existsSync(output), false);
 });
 
 test("aggregation snapshots validated artifacts and records only observed gates", (t) => {
@@ -182,7 +191,7 @@ test("aggregation snapshots validated artifacts and records only observed gates"
   assert.equal(result.status, 0, result.stderr);
   const state = JSON.parse(readFileSync(join(output, "release-state.json")));
   assert.equal(state.publishable, true);
-  assert.deepEqual(state.tests.successful, ["compiler-rust:gate", "corelib:gate", "editor:gate", "openspec:gate"]);
+  assert.deepEqual(state.tests.successful, ["linux:native-build", "macos:native-build", "windows:native-build"]);
   assert.equal(state.complete_platforms.length, 3);
   assert.equal(readFileSync(join(output, "assets", "beskid-linux-amd64"), "utf8"), "linux-cli");
   const manifest = JSON.parse(readFileSync(join(output, "assets", "beskid-release.json")));
@@ -219,7 +228,6 @@ test("accepts complete matching platform and gate evidence", (t) => {
   assert.equal(evidence.version, VERSION);
   assert.deepEqual(evidence.source, SOURCE);
   assert.deepEqual(evidence.platforms.map(({ platform }) => platform), ["linux", "macos", "windows"]);
-  assert.deepEqual(evidence.gates.map(({ name }) => name), ["compiler-rust", "corelib", "openspec", "editor"]);
 });
 
 test("rejects mismatched source provenance", (t) => {
@@ -234,30 +242,12 @@ test("rejects mismatched source provenance", (t) => {
   assert.match(result.stderr, /windows source\.compiler_commit does not match linux/);
 });
 
-test("rejects a failed required gate and an empty check list", (t) => {
-  const failedRoot = createFixture({
-    gates: {
-      checks: [
-        { name: "compiler-rust", status: "success" },
-        { name: "corelib", status: "success" },
-        { name: "openspec", status: "success" },
-        { name: "editor", status: "failed" },
-      ],
-    },
-  });
-  const emptyRoot = createFixture({ gates: { checks: [] } });
-  t.after(() => {
-    rmSync(failedRoot, { recursive: true, force: true });
-    rmSync(emptyRoot, { recursive: true, force: true });
-  });
-
-  const failed = runValidator(failedRoot);
-  const empty = runValidator(emptyRoot);
-
-  assert.notEqual(failed.status, 0);
-  assert.match(failed.stderr, /gate editor must have status success/);
-  assert.notEqual(empty.status, 0);
-  assert.match(empty.stderr, /gate evidence checks must be a non-empty array/);
+test("rejects a failed native build", (t) => {
+  const root = createFixture({ linux: { buildResult: { platform_result_status: "failed" } } });
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  const result = runValidator(root);
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /platform_result_status/);
 });
 
 test("rejects missing artifacts and tampered checksums", (t) => {

@@ -33,7 +33,6 @@ try {
   mkdirSync(output, { mode: 0o700 });
   const snapshot = join(output, "evidence");
   mkdirSync(snapshot);
-  copyFileSync(join(input, "gate-evidence.json"), join(snapshot, "gate-evidence.json"));
   for (const platform of evidence.platforms) {
     mkdirSync(join(snapshot, platform.platform));
     for (const name of [...platform.artifacts.map(asset => asset.name), "SHA256SUMS"]) {
@@ -49,10 +48,10 @@ try {
   const reports = join(output, "gate-reports");
   mkdirSync(reports);
   mkdirSync(join(reports, "stages"));
-  for (const [index, check] of checked.gates.entries()) {
+  for (const [index, platform] of checked.platforms.entries()) {
     json(join(reports, "stages", `${index}.json`), {
-      component: check.name, stage: "gate", platform: "release", status: check.status,
-      command: null, raw_log: "evidence/gate-evidence.json",
+      component: platform.platform, stage: "native-build", platform: platform.target, status: "success",
+      command: null, raw_log: `evidence/${platform.platform}/platform-result-${platform.target}.json`,
     });
   }
   const results = [];
@@ -65,8 +64,7 @@ try {
     }
   }
   run("bash", [join(scripts, "build-beskid-release-manifest.sh"), version, compiler, join(assets, "beskid-release.json"), ...bundles]);
-  // Canonical state builder consumes real observed checks, never its legacy
-  // success-label fallback. State is emitted only after snapshot validation.
+  // Canonical state builder consumes the three verified native build results. State is emitted only after snapshot validation.
   run("bash", [join(scripts, "build-release-state.sh"), "stable", version, compiler, superrepo, "success", join(output, "release-state.json"), ...results],
     { ...process.env, GATE_REPORT_DIR: reports, HANDOFF_RELEASE_URL: "" });
   const state = JSON.parse(readFileSync(join(output, "release-state.json"), "utf8"));

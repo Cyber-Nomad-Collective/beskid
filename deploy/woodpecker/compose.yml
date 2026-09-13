@@ -58,7 +58,8 @@ services:
       WOODPECKER_BACKEND_DOCKER_LIMIT_CPU_QUOTA: "200000"
       WOODPECKER_HOSTNAME: bdziam-linux-docker
       WOODPECKER_AGENT_LABELS: platform=linux/amd64,backend=docker,role=beskid-linux
-      WOODPECKER_BACKEND_DOCKER_VOLUMES: /var/lib/woodpecker/beskid-output:/woodpecker-output
+      # Trusted jobs upload through role-restricted SFTP; release input is read-only.
+      WOODPECKER_BACKEND_DOCKER_VOLUMES: /var/lib/woodpecker/beskid-output:/woodpecker-output,/etc/woodpecker/handoff/linux.sftp:/etc/woodpecker/handoff/linux.sftp:ro,/etc/woodpecker/handoff/known_hosts:/etc/woodpecker/handoff/known_hosts:ro,/var/lib/woodpecker-handoff:/woodpecker-handoff:ro
     networks:
       - coolify
     volumes:

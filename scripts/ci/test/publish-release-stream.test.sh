@@ -18,7 +18,16 @@ for argument in "$@"; do
   previous="${argument}"
 done
 case "$1 $2" in
-  "release view") [[ "${GH_EXISTING:-0}" == 1 ]] && exit 0; exit 1 ;;
+  "api repos/"*)
+    printf '{"object":{"type":"commit","sha":"%s"}}\n' "${GH_REF_SHA:-0123456789abcdef0123456789abcdef01234567}"
+    ;;
+  "release view")
+    [[ "${GH_EXISTING:-0}" == 1 ]] || exit 1
+    if [[ "$*" == *'--json assets'* ]]; then
+      for path in "${GH_REMOTE_DIR}/"*; do basename "${path}"; done
+    fi
+    exit 0
+    ;;
   "release download")
     pattern='' destination=''
     while [[ $# -gt 0 ]]; do
@@ -87,3 +96,34 @@ if GH_LOG="${TMP}/gh.log" GH_NOTES="${TMP}/notes.md" GH_EXISTING=1 GH_REMOTE_DIR
   fail "immutable mismatch accepted"
 fi
 if grep -Eq '^release (edit|upload|create)' "${TMP}/gh.log"; then fail "immutable mismatch mutated release"; fi
+
+: >"${TMP}/gh.log"
+if GH_LOG="${TMP}/gh.log" GH_NOTES="${TMP}/notes.md" GH_EXISTING=1 GH_REMOTE_DIR="${TMP}/remote" GH_REF_SHA=ffffffffffffffffffffffffffffffffffffffff PATH="${TMP}/bin:${PATH}" GH_TOKEN=test-token \
+  bash "${SCRIPT}" cli 1.2.3-unstable 0123456789abcdef0123456789abcdef01234567 "${TMP}/assets" immutable unstable "${TMP}/release-state.json" 2>"${TMP}/wrong-ref.err"; then
+  fail "immutable wrong tag target accepted"
+fi
+grep -Fq 'tag does not resolve' "${TMP}/wrong-ref.err" || fail "wrong tag target not diagnosed"
+if grep -Eq '^release (edit|upload|create)' "${TMP}/gh.log"; then fail "wrong tag mutated release"; fi
+
+cp "${TMP}/assets/beskid-linux-amd64" "${TMP}/remote/beskid-linux-amd64"
+touch "${TMP}/remote/unexpected-executable"
+: >"${TMP}/gh.log"
+if GH_LOG="${TMP}/gh.log" GH_NOTES="${TMP}/notes.md" GH_EXISTING=1 GH_REMOTE_DIR="${TMP}/remote" PATH="${TMP}/bin:${PATH}" GH_TOKEN=test-token \
+  bash "${SCRIPT}" cli 1.2.3-unstable 0123456789abcdef0123456789abcdef01234567 "${TMP}/assets" immutable unstable "${TMP}/release-state.json"; then
+  fail "unexpected remote artifact accepted"
+fi
+
+jq '.version="1.2.3" | .channel="stable" | .tests={gate_result:"success",successful:["gate"],failed:[]}' "${TMP}/release-state.json" >"${TMP}/stable-state.json"
+jq '.version="2.0.0"' "${TMP}/stable-state.json" >"${TMP}/remote/release-state.json"
+: >"${TMP}/gh.log"
+if GH_LOG="${TMP}/gh.log" GH_NOTES="${TMP}/notes.md" GH_EXISTING=1 GH_REMOTE_DIR="${TMP}/remote" PATH="${TMP}/bin:${PATH}" GH_TOKEN=test-token \
+  bash "${SCRIPT}" cli 1.2.3 0123456789abcdef0123456789abcdef01234567 "${TMP}/assets" rolling stable "${TMP}/stable-state.json"; then
+  fail "stable rolling alias regressed"
+fi
+if grep -Eq '^release (edit|upload|create)' "${TMP}/gh.log"; then fail "stable downgrade mutated release"; fi
+
+jq '.version="1.2.2"' "${TMP}/stable-state.json" >"${TMP}/remote/release-state.json"
+: >"${TMP}/gh.log"
+GH_LOG="${TMP}/gh.log" GH_NOTES="${TMP}/notes.md" GH_EXISTING=1 GH_REMOTE_DIR="${TMP}/remote" PATH="${TMP}/bin:${PATH}" GH_TOKEN=test-token \
+  bash "${SCRIPT}" cli 1.2.3 0123456789abcdef0123456789abcdef01234567 "${TMP}/assets" rolling stable "${TMP}/stable-state.json"
+grep -Fq 'api --method PATCH repos/Cyber-Nomad-Collective/beskid_compiler/git/refs/tags/cli-stable' "${TMP}/gh.log" || fail "rolling git ref did not move"

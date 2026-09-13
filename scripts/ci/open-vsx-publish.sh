@@ -5,7 +5,8 @@
 # The marketplace workflow runs natively on each supported operating system.
 #
 # Run from the superrepo root. Assumes the compiler and beskid_vscode submodules
-# are already initialised, and that OVSX_TOKEN is exported.
+# are already initialised. The default mode only builds a VSIX; publication
+# requires BESKID_OPEN_VSX_PUBLISH=1 and OVSX_TOKEN.
 #
 # Usage: open-vsx-publish.sh <platform> <bin-name> [rust-target]
 #   platform    e.g. linux-x64, darwin-arm64, darwin-x64, win32-x64
@@ -25,7 +26,6 @@ cd "${ROOT}"
   echo "BESKID_RELEASE_VERSION \`$BESKID_RELEASE_VERSION\` is not valid semver" >&2
   exit 1
 }
-: "${OVSX_TOKEN:?OVSX_TOKEN must be exported}"
 [[ -d beskid_vscode ]] || { echo "beskid_vscode submodule not initialised" >&2; exit 1; }
 [[ -d compiler ]]     || { echo "compiler submodule not initialised" >&2; exit 1; }
 
@@ -105,7 +105,21 @@ is_already_published() {
     && printf '%s' "$output" | grep -Fqi "$extension_version"
 }
 
-# Idempotent namespace creation (already-exists is fine).
+mkdir -p dist
+vsix="dist/beskid-${PLATFORM}.vsix"
+echo "==> vsce package -> $vsix"
+bunx @vscode/vsce package --target "$PLATFORM" --out "$vsix"
+
+if [[ "${BESKID_OPEN_VSX_PUBLISH:-0}" != "1" ]]; then
+  echo "Open VSX: package complete (${PLATFORM}); publication not requested"
+  exit 0
+fi
+
+: "${OVSX_TOKEN:?OVSX_TOKEN must be exported when BESKID_OPEN_VSX_PUBLISH=1}"
+
+# Idempotent namespace creation (already-exists is fine). This is deliberately
+# after the explicit publication switch: validation/package jobs have no
+# registry side effects and do not need the publisher credential.
 set +e
 create_out="$(bunx ovsx create-namespace "$publisher" -p "$OVSX_TOKEN" 2>&1)"
 create_code=$?
@@ -117,11 +131,6 @@ if [[ "$create_code" -ne 0 ]]; then
     exit 1
   fi
 fi
-
-mkdir -p dist
-vsix="dist/beskid-${PLATFORM}.vsix"
-echo "==> vsce package -> $vsix"
-bunx @vscode/vsce package --target "$PLATFORM" --out "$vsix"
 
 # ---------------------------------------------------------------------------
 # 5. Publish with 4-attempt exponential backoff on transient errors.

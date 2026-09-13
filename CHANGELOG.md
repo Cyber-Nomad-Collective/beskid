@@ -16,6 +16,10 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Streamline Woodpecker into combined validation, three native build/package
+  definitions, one manual release path, and one isolated platform-image job.
+  Remove remaining GitHub executors and avoid separate marketplace, packaging,
+  signing, and release-controller pipelines.
 - Consume a verified, complete compiler release bundle in every distribution
   target rather than independently downloading CLI and LSP artifacts.
 - Make landing-page examples standalone playground programs and pin Learn to
@@ -42,11 +46,14 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Added
 
-- Add independent Woodpecker OpenSpec validation and fail-closed, three-target
-  release-evidence validation with exact source, artifact checksum, and required
-  gate checks. These are migration prerequisites, not end-to-end release proof.
+- Add Woodpecker OpenSpec validation and three-target release-input checks for
+  exact source, version, platform success, and artifact checksums.
 - Add private release-evidence aggregation and native installer packaging that
   reuse the canonical release and distribution implementations without publishing.
+- Use role-restricted SFTP for native build outputs and a manual, opt-in
+  publisher that uploads immutable assets before advancing rolling aliases.
+- Assemble compiler bundles in the canonical installed `bin/` and ABI-v5
+  `lib/` layout required by native installer recipes.
 
 - Publish stable compiler release 0.4.744 for Linux amd64, macOS arm64, and
   Windows amd64, including CLI, LSP, direct-install bundles, platform

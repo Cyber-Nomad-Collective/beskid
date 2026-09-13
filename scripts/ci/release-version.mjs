@@ -12,8 +12,21 @@ export function parseExactReleaseVersion(raw, { stableOnly = false } = {}) {
   return version;
 }
 
+export function compareStableReleaseVersions(next, current) {
+  const parts = value => parseExactReleaseVersion(value, { stableOnly: true }).split("+", 1)[0].split(".").map(BigInt);
+  const a = parts(next), b = parts(current);
+  for (let index = 0; index < 3; index++) {
+    if (a[index] !== b[index]) return a[index] > b[index] ? 1 : -1;
+  }
+  return 0;
+}
+
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   try {
+    if (process.argv[2] === "--compare-stable" && process.argv.length === 5) {
+      console.log(compareStableReleaseVersions(process.argv[3], process.argv[4]));
+      process.exit(0);
+    }
     const [version, option] = process.argv.slice(2);
     if (!version || (option && option !== "--stable-only")) {
       throw new Error("usage: release-version.mjs <version> [--stable-only]");

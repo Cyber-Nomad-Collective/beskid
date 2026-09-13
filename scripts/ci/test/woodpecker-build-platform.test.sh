@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+unset CI_PIPELINE_NUMBER CI_COMMIT_SHA
 
 ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 SCRIPT="${ROOT}/scripts/ci/woodpecker-build-platform.sh"
@@ -39,11 +40,16 @@ SCRIPT
 chmod +x "${output}/${cli_asset}" "${output}/${lsp_asset}"
 
 bundle_root="${bundle_asset%.tar.gz}"
-mkdir -p "${output}/${bundle_root}/native-runtime-kit/beskid-runtime/abi-5/${target}/release"
-touch "${output}/${bundle_root}/beskid_cli" \
-  "${output}/${bundle_root}/beskid_lsp" \
-  "${output}/${bundle_root}/beskid-up" \
-  "${output}/${bundle_root}/native-runtime-kit/beskid-runtime/abi-5/${target}/release/abi.json"
+extension=''; [[ "${target}" == x86_64-pc-windows-msvc ]] && extension=.exe
+mkdir -p "${output}/${bundle_root}/bin" \
+  "${output}/${bundle_root}/lib/beskid-runtime/abi-5/${target}/release" \
+  "${output}/${bundle_root}/beskid_corelib" "${output}/${bundle_root}/packages"
+touch "${output}/${bundle_root}/bin/beskid${extension}" \
+  "${output}/${bundle_root}/bin/beskid_lsp${extension}" \
+  "${output}/${bundle_root}/bin/beskid-up${extension}" \
+  "${output}/${bundle_root}/lib/beskid-runtime/abi-5/${target}/release/abi.json" \
+  "${output}/${bundle_root}/beskid_corelib/corelib.bproj"
+printf '%s\n' "${version}" >"${output}/${bundle_root}/release-version.txt"
 tar -czf "${output}/${bundle_asset}" -C "${output}" "${bundle_root}"
 rm -rf "${output:?}/${bundle_root}"
 
@@ -69,7 +75,7 @@ chmod +x "${TMP}/vswhere.sh"
 
 assert_platform() {
   local platform="$1" target="$2" cli="$3" lsp="$4" bundle="$5"
-  local output="${TMP}/output-${platform}"
+  local output="${TMP}/output-${platform}${6:-}"
   FAKE_INIT_LOG="${TMP}/init-${platform}.log" \
     WOODPECKER_VSWHERE="${TMP}/vswhere.sh" \
     WOODPECKER_INIT_SUBMODULES_SCRIPT="${TMP}/init-submodules.sh" \
@@ -95,7 +101,7 @@ assert_platform() {
 
 assert_platform linux x86_64-unknown-linux-gnu \
   beskid-linux-amd64 beskid_lsp-linux-amd64 \
-  beskid-1.2.3-x86_64-unknown-linux-gnu.tar.gz
+  beskid-1.2.3-x86_64-unknown-linux-gnu.tar.gz ' with spaces'
 assert_platform macos aarch64-apple-darwin \
   beskid-darwin-arm64 beskid_lsp-darwin-arm64 \
   beskid-1.2.3-aarch64-apple-darwin.tar.gz
@@ -128,5 +134,16 @@ if bash "${SCRIPT}" linux 1.2.3 "${TMP}/nonempty" >/dev/null 2>&1; then
   echo 'non-empty output directory unexpectedly accepted' >&2
   exit 1
 fi
+
+if CI_PIPELINE_NUMBER=42 CI_COMMIT_SHA="$(git -C "${ROOT}" rev-parse HEAD)" \
+  FAKE_INIT_LOG="${TMP}/ci-fake-init" \
+  WOODPECKER_INIT_SUBMODULES_SCRIPT="${TMP}/init-submodules.sh" \
+  WOODPECKER_RELEASE_PLATFORM_SCRIPT="${TMP}/build-release-platform.sh" \
+  bash "${SCRIPT}" linux 1.2.3 "${TMP}/ci-fake-output" >"${TMP}/ci-fake.log" 2>&1; then
+  echo 'pipeline accepted a test-only builder override' >&2
+  exit 1
+fi
+test ! -e "${TMP}/ci-fake-init"
+grep -q 'test-only' "${TMP}/ci-fake.log"
 
 echo 'Woodpecker platform wrapper tests OK'

@@ -5,17 +5,11 @@
  * Usage: node scripts/ci/woodpecker-release-evidence.mjs <evidence-directory>
  *
  * Directory schema:
- *   <root>/gate-evidence.json
  *   <root>/<linux|macos|windows>/woodpecker-build-result.json
  *   <root>/<linux|macos|windows>/platform-result-<target>.json
  *   <root>/<linux|macos|windows>/SHA256SUMS
  *   <root>/<linux|macos|windows>/<CLI, LSP, and bundle artifacts>
  *
- * gate-evidence.json is schema version 1 with `source` containing exactly the
- * checked `superrepo_commit` and `compiler_commit` values, a stable semver
- * `version`, and a non-empty `checks` array. Each check is `{name, status}`;
- * compiler-rust, corelib, openspec, and editor must each occur once
- * and every listed check must have status `success`.
  */
 import { createHash } from "node:crypto";
 import { lstatSync, readFileSync } from "node:fs";
@@ -41,7 +35,6 @@ const PLATFORMS = [
     lsp: "beskid_lsp-windows-amd64.exe",
   },
 ];
-const REQUIRED_GATES = ["compiler-rust", "corelib", "openspec", "editor"];
 const STABLE_SEMVER = /^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$/;
 const GIT_COMMIT = /^[0-9a-f]{40}$/;
 
@@ -209,51 +202,31 @@ function validatePlatform(root, definition, expectedSource, expectedVersion) {
   };
 }
 
-function validateGates(root, source, version) {
-  const gates = readJson(join(root, "gate-evidence.json"), "gate evidence");
-  if (gates.schema_version !== 1) fail("gate evidence schema_version must be 1");
-  sameSource(readSource(gates.source, "gate evidence source"), source, "gate evidence source", "linux");
-  if (gates.version !== version) fail("gate evidence version does not match linux");
-  if (!Array.isArray(gates.checks) || gates.checks.length === 0) fail("gate evidence checks must be a non-empty array");
-  const seen = new Set();
-  const checks = gates.checks.map((check, index) => {
-    if (check === null || Array.isArray(check) || typeof check !== "object") fail(`gate evidence check ${index} must be an object`);
-    const name = requireString(check.name, `gate evidence check ${index}.name`);
-    if (seen.has(name)) fail(`gate evidence repeats check ${name}`);
-    seen.add(name);
-    if (check.status !== "success") fail(`gate ${name} must have status success`);
-    return { name, status: check.status };
-  });
-  for (const name of REQUIRED_GATES) {
-    if (!seen.has(name)) fail(`gate evidence is missing required check ${name}`);
-  }
-  return checks;
-}
-
-function validate(root) {
+function validate(root, selectedPlatform) {
   const resolvedRoot = resolve(root);
   requireDirectory(resolvedRoot, "evidence directory");
-  const linux = readJson(join(resolvedRoot, "linux", "woodpecker-build-result.json"), "linux build result");
+  const selected = selectedPlatform ? PLATFORMS.filter(item => item.platform === selectedPlatform) : PLATFORMS;
+  if (selected.length === 0) fail("unsupported platform");
+  const linux = readJson(join(resolvedRoot, selected[0].platform, "woodpecker-build-result.json"), `${selected[0].platform} build result`);
   if (linux.schema_version !== 1) fail("linux build result schema_version must be 1");
   const source = readSource(linux.source, "linux source");
   const version = requireString(linux.version, "linux version");
   if (!STABLE_SEMVER.test(version)) fail("linux version must be a stable semantic version");
-  const platforms = PLATFORMS.map((definition) => validatePlatform(resolvedRoot, definition, source, version));
-  const gates = validateGates(resolvedRoot, source, version);
-  return { schema_version: 1, version, source, platforms, gates };
+  const platforms = selected.map((definition) => validatePlatform(resolvedRoot, definition, source, version));
+  return { schema_version: 1, version, source, platforms };
 }
 
 function usage() {
-  return "usage: woodpecker-release-evidence.mjs <evidence-directory>";
+  return "usage: woodpecker-release-evidence.mjs <evidence-directory> [linux|macos|windows]";
 }
 
-if (process.argv.length !== 3 || process.argv[2] === "--help") {
+if (![3, 4].includes(process.argv.length) || process.argv[2] === "--help") {
   process.stderr.write(`${usage()}\n`);
   process.exit(process.argv[2] === "--help" ? 0 : 2);
 }
 
 try {
-  process.stdout.write(`${JSON.stringify(validate(process.argv[2]), null, 2)}\n`);
+  process.stdout.write(`${JSON.stringify(validate(process.argv[2], process.argv[3]), null, 2)}\n`);
 } catch (error) {
   process.stderr.write(`woodpecker release evidence: ${error.message}\n`);
   process.exit(1);

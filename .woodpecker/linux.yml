@@ -10,19 +10,25 @@ clone:
       recursive: false
 
 steps:
+  - name: validate-standard
+    image: node:22.16.0-bookworm
+    commands:
+      - corepack enable
+      - corepack install -g pnpm@10.17.1+sha512.17c560fca4867ae9473a3899ad84a88334914f379be46d455cbf92e5cf4b39d34985d452d2583baf19967fa76cb5c17bc9e245529d0b98745721aa7200ecaf7a
+      - bash scripts/ci/woodpecker-standard.sh
+
   - name: validate-and-build
     image: rust:1.98.1-bookworm@sha256:9a73a5088750b4c95158ab26629c854c3d6fc4b173cb7bc8079ad252d8ed7bfa
     commands:
       - apt-get update >/dev/null
-      - apt-get install -y --no-install-recommends ca-certificates clang git jq lld llvm mold nodejs pkg-config libssl-dev >/dev/null
-      - bash scripts/ci/test/build-release-platform.test.sh
-      - bash scripts/ci/test/build-release-state.test.sh
-      - bash scripts/ci/test/woodpecker-build-platform.test.sh
-      - bash scripts/ci/test/woodpecker-workflow-contract.test.sh
-      - bash scripts/ci/test/woodpecker-standard-workflow.test.sh
+      - apt-get install -y --no-install-recommends ca-certificates clang git jq lld llvm mold nodejs openssh-client pkg-config libssl-dev >/dev/null
       - bash scripts/ci/init-submodules.sh beskid_distrib
-      - node --test scripts/ci/test/woodpecker-release-evidence.test.mjs
+      - bash scripts/ci/test/run-woodpecker-tests.sh
       - |
+        if [ "$${CI_PIPELINE_EVENT}" = manual ] && [ "$${BESKID_TASK}" = validate ]; then
+          echo "Validation complete."
+          exit 0
+        fi
         if [ "$${CI_PIPELINE_EVENT}" = tag ]; then
           release_version="$${CI_COMMIT_TAG#v}"
         elif [ "$${CI_PIPELINE_EVENT}" = manual ]; then
@@ -33,8 +39,12 @@ steps:
         fi
         output="/woodpecker-output/$${CI_PIPELINE_NUMBER}-$${CI_COMMIT_SHA}/linux"
         bash scripts/ci/woodpecker-build-platform.sh linux "$${release_version}" "$${output}"
+        package_output="$${output}-package"
+        node scripts/ci/woodpecker-package-platform.mjs linux "$$(dirname "$${output}")" "$${package_output}"
+        node -e 'const fs=require("fs"),p=process.argv[1],o=process.argv[2],r=JSON.parse(fs.readFileSync(p+"/package-result.json")); for(const a of r.artifacts) fs.copyFileSync(p+"/"+a.name,o+"/"+a.name); fs.copyFileSync(p+"/package-result.json",o+"/package-result.json")' "$${package_output}" "$${output}"
+        bash scripts/ci/woodpecker-upload-handoff.sh linux "$${output}" "$${CI_COMMIT_SHA}" "$$(git rev-parse HEAD:compiler)" "$${release_version}" "$${CI_PIPELINE_NUMBER}"
 
 when:
   - event: [push, tag]
   - event: manual
-    evaluate: 'BESKID_TASK == "build"'
+    evaluate: 'BESKID_TASK == "build" || BESKID_TASK == "validate"'

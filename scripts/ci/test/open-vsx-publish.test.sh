@@ -17,8 +17,10 @@ missing_version_output="$(
 [[ "$missing_version_output" == *"BESKID_RELEASE_VERSION must be exported"* ]] || \
   fail "missing-version error did not identify BESKID_RELEASE_VERSION: $missing_version_output"
 
+# shellcheck disable=SC2016 # literal contract from the publisher source
 grep -Fq ': "${BESKID_RELEASE_VERSION:?BESKID_RELEASE_VERSION must be exported}"' "$SCRIPT" || \
   fail "publisher does not require BESKID_RELEASE_VERSION"
+# shellcheck disable=SC2016 # literal contract from the publisher source
 grep -Fq 'target="$BESKID_RELEASE_VERSION"' "$SCRIPT" || \
   fail "publisher does not use BESKID_RELEASE_VERSION as the extension version"
 if grep -Fq 'git describe' "$SCRIPT" || grep -Fq 'git rev-list' "$SCRIPT"; then
@@ -47,6 +49,7 @@ SH
 cat >"${tmp}/bin/bunx" <<'SH'
 #!/usr/bin/env bash
 set -euo pipefail
+printf '%s\n' "$*" >>"${BUNX_LOG}"
 case "$1" in
   ovsx)
     [[ "$2" == create-namespace ]] && exit 0
@@ -69,9 +72,16 @@ exit 0
 SH
 chmod +x "${tmp}/bin/cargo" "${tmp}/bin/bun" "${tmp}/bin/bunx"
 
+PATH="${tmp}/bin:${PATH}" \
+  BESKID_RELEASE_VERSION=9.8.7 BUNX_LOG="${tmp}/package-bunx.log" \
+  bash "${tmp}/root/scripts/ci/open-vsx-publish.sh" linux-x64 beskid_lsp
+if grep -Fq 'ovsx ' "${tmp}/package-bunx.log"; then
+  fail 'default packaging mode invoked the Open VSX publisher'
+fi
+
 run_publish() {
   PATH="${tmp}/bin:${PATH}" \
-  BESKID_RELEASE_VERSION=9.8.7 OVSX_TOKEN=test \
+  BESKID_RELEASE_VERSION=9.8.7 BESKID_OPEN_VSX_PUBLISH=1 OVSX_TOKEN=test BUNX_LOG="${tmp}/publish-bunx.log" \
   OVSX_PUBLISH_OUTPUT="$1" OVSX_PUBLISH_CODE=1 \
   bash "${tmp}/root/scripts/ci/open-vsx-publish.sh" linux-x64 beskid_lsp
 }

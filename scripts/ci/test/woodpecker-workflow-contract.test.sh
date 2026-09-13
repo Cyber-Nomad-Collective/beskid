@@ -7,7 +7,7 @@ compose="${ROOT}/deploy/woodpecker/compose.yml"
 env_example="${ROOT}/deploy/woodpecker/.env.example"
 
 test -d "${workflow_dir}"
-test -f "${workflow_dir}/standard.yml"
+test ! -e "${workflow_dir}/standard.yml"
 
 for name in linux macos windows; do
   file="${workflow_dir}/${name}.yml"
@@ -27,9 +27,11 @@ fi
 grep -Fq 'platform: darwin/arm64' "${workflow_dir}/macos.yml"
 grep -Fq 'backend: local' "${workflow_dir}/macos.yml"
 grep -Fq 'role: beskid-macos' "${workflow_dir}/macos.yml"
+grep -Fq 'image: plugin-git' "${workflow_dir}/macos.yml"
 grep -Fq 'platform: windows/amd64' "${workflow_dir}/windows.yml"
 grep -Fq 'backend: local' "${workflow_dir}/windows.yml"
 grep -Fq 'role: beskid-windows' "${workflow_dir}/windows.yml"
+grep -Fq 'image: plugin-git' "${workflow_dir}/windows.yml"
 
 for file in "${workflow_dir}/macos.yml" "${workflow_dir}/windows.yml"; do
   grep -Fq 'event: tag' "${file}"
@@ -38,10 +40,18 @@ for file in "${workflow_dir}/macos.yml" "${workflow_dir}/windows.yml"; do
   grep -Fq 'BESKID_TASK == "build"' "${file}"
 done
 
+for file in "${workflow_dir}/linux.yml" "${workflow_dir}/macos.yml" "${workflow_dir}/windows.yml"; do
+  grep -Fq 'woodpecker-package-platform.mjs' "${file}"
+  grep -Fq 'package-result.json' "${file}"
+  ! grep -Fq 'BESKID_RELEASE_EVIDENCE_DIR' "${file}"
+  ! grep -Fq 'output}/package' "${file}"
+done
+grep -Fq 'BESKID_TASK == "build" || BESKID_TASK == "validate"' "${workflow_dir}/linux.yml"
+
 # This contract owns only native build and standard validation lanes. Editor,
 # security and protected publishing lanes have separate policy contracts;
 # adding them must not grant publication authority to these four workflows.
-if grep -iqE 'publish|from_secret|GH_TOKEN|S3|rclone' "${workflow_dir}/linux.yml" "${workflow_dir}/macos.yml" "${workflow_dir}/windows.yml" "${workflow_dir}/standard.yml"; then
+if grep -iqE 'from_secret|GH_TOKEN|S3|rclone' "${workflow_dir}/linux.yml" "${workflow_dir}/macos.yml" "${workflow_dir}/windows.yml"; then
   echo 'Woodpecker build workflows must not publish or stage artifacts externally' >&2
   exit 1
 fi

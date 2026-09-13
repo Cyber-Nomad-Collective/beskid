@@ -16,6 +16,7 @@
 #   release-channel  stable (default) | unstable
 # Env: GH_TOKEN (github token with contents:write on beskid_compiler)
 set -euo pipefail
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 STREAM="${1:?stream (cli | lsp)}"
 RELEASE_VERSION="${2:?release-version}"
@@ -94,7 +95,8 @@ jq -e --arg version "${RELEASE_VERSION}" --arg compiler "${COMPILER_SHA}" --arg 
 
 notes_file="$(mktemp)"
 immutable_check=""
-trap 'rm -f "${notes_file}"; [[ -z "${immutable_check}" ]] || rm -rf "${immutable_check}"' EXIT
+rolling_check=""
+trap 'rm -f "${notes_file}"; [[ -z "${immutable_check}" ]] || rm -rf "${immutable_check}"; [[ -z "${rolling_check}" ]] || rm -rf "${rolling_check}"' EXIT
 bash "$(dirname "$0")/render-compiler-release-notes.sh" "${RELEASE_STATE}" "${STREAM}" >"${notes_file}"
 
 cd "$ASSETS_DIR"
@@ -116,10 +118,47 @@ done
 # version file as a compatibility projection for the public installers.
 assets+=("${version_file}" release-state.json)
 
+verify_immutable_tag() {
+  local object type sha depth=0
+  object="$(gh api "repos/${REPO}/git/ref/tags/${immutable_tag}")"
+  while :; do
+    type="$(jq -r '.object.type' <<<"${object}")"
+    sha="$(jq -r '.object.sha' <<<"${object}")"
+    [[ "${sha}" =~ ^[0-9a-f]{40}$ ]] || { echo 'invalid immutable tag object' >&2; return 1; }
+    if [[ "${type}" == commit ]]; then
+      [[ "${sha}" == "${COMPILER_SHA}" ]] || {
+        echo "immutable tag does not resolve to compiler ${COMPILER_SHA}" >&2
+        return 1
+      }
+      return 0
+    fi
+    [[ "${type}" == tag && "${depth}" -lt 8 ]] || { echo 'unsupported immutable tag object chain' >&2; return 1; }
+    depth=$((depth + 1))
+    object="$(gh api "repos/${REPO}/git/tags/${sha}")"
+  done
+}
+
 # Immutable tag: create if missing, then upload assets. This always happens
 # before the caller can advance rolling aliases.
 if [[ "$PHASE" == "immutable" || "$PHASE" == "both" ]]; then
   if gh release view "$immutable_tag" --repo "$REPO" >/dev/null 2>&1; then
+    verify_immutable_tag
+    # Distribution owns additional installer assets on the CLI release. Their
+    # presence must not prevent a compiler-stream retry, but unknown assets do.
+    allowed_assets=("${assets[@]}" SHA256SUMS)
+    if [[ "${STREAM}" == cli ]]; then
+      allowed_assets+=("beskid-${RELEASE_VERSION}-windows-amd64.msi"
+        "beskid-${RELEASE_VERSION}-windows-amd64.exe"
+        "beskid-${RELEASE_VERSION}-macos-arm64.dmg"
+        "beskid-${RELEASE_VERSION}-amd64.deb" distrib-version.txt)
+    fi
+    remote_assets="$(gh release view "$immutable_tag" --repo "$REPO" --json assets --jq '.assets[].name')"
+    while IFS= read -r remote_asset; do
+      printf '%s\n' "${allowed_assets[@]}" | grep -Fxq -- "${remote_asset}" || {
+        echo "unexpected immutable release asset: ${remote_asset}" >&2
+        exit 1
+      }
+    done <<<"${remote_assets}"
     immutable_check="$(mktemp -d)"
     for asset in "${assets[@]}"; do
       gh release download "$immutable_tag" --repo "$REPO" --pattern "$asset" --dir "${immutable_check}"
@@ -139,10 +178,25 @@ fi
 # always reflects the latest main).
 if [[ "$PHASE" == "rolling" || "$PHASE" == "both" ]]; then
   if gh release view "$rolling_tag" --repo "$REPO" >/dev/null 2>&1; then
+    if [[ "${RELEASE_CHANNEL}" == stable ]]; then
+      rolling_check="$(mktemp -d)"
+      gh release download "$rolling_tag" --repo "$REPO" --pattern release-state.json --dir "${rolling_check}"
+      jq -e '.schema_version == 1 and .channel == "stable" and .publishable == true' "${rolling_check}/release-state.json" >/dev/null
+      previous_version="$(jq -r '.version' "${rolling_check}/release-state.json")"
+      ordering="$(node "${SCRIPT_DIR}/release-version.mjs" --compare-stable "${RELEASE_VERSION}" "${previous_version}")"
+      [[ "${ordering}" != -1 ]] || { echo "refusing stable downgrade from ${previous_version} to ${RELEASE_VERSION}" >&2; exit 1; }
+      if [[ "${ordering}" == 0 ]]; then
+        previous_compiler="$(jq -r '.provenance.compiler_commit' "${rolling_check}/release-state.json")"
+        [[ "${previous_compiler}" == "${COMPILER_SHA}" ]] || { echo 'same stable version refers to another compiler commit' >&2; exit 1; }
+      fi
+    fi
     # Uploading replacement assets does not move the tag; retarget it so the
     # rolling release metadata and assets describe the same compiler build.
     gh release edit "$rolling_tag" --repo "$REPO" --target "$COMPILER_SHA" --notes-file "${notes_file}"
     gh release upload "$rolling_tag" --repo "$REPO" "${assets[@]}" --clobber
+    # Editing release metadata alone does not retarget an existing Git tag.
+    gh api --method PATCH "repos/${REPO}/git/refs/tags/${rolling_tag}" \
+      -f "sha=${COMPILER_SHA}" -F force=true >/dev/null
   else
     gh release create "$rolling_tag" --repo "$REPO" --target "$COMPILER_SHA" \
       --title "$rolling_title" --notes-file "${notes_file}" "${assets[@]}"
