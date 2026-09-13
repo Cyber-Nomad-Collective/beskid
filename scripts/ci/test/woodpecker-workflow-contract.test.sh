@@ -6,15 +6,8 @@ workflow_dir="${ROOT}/.woodpecker"
 compose="${ROOT}/deploy/woodpecker/compose.yml"
 env_example="${ROOT}/deploy/woodpecker/.env.example"
 
-if [[ -d "${workflow_dir}" ]]; then
-  workflow_count="$(find "${workflow_dir}" -maxdepth 1 -type f -name '*.yml' -print | wc -l | tr -d ' ')"
-else
-  workflow_count=0
-fi
-[[ "${workflow_count}" -eq 3 ]] || {
-  echo "expected exactly three Woodpecker workflows, found ${workflow_count}" >&2
-  exit 1
-}
+test -d "${workflow_dir}"
+test -f "${workflow_dir}/standard.yml"
 
 for name in linux macos windows; do
   file="${workflow_dir}/${name}.yml"
@@ -26,7 +19,7 @@ done
 grep -Fq 'platform: linux/amd64' "${workflow_dir}/linux.yml"
 grep -Fq 'backend: docker' "${workflow_dir}/linux.yml"
 grep -Fq 'role: beskid-linux' "${workflow_dir}/linux.yml"
-grep -Fq 'event: [push, tag, manual]' "${workflow_dir}/linux.yml"
+grep -Fq 'event: [push, tag]' "${workflow_dir}/linux.yml"
 if grep -Fq 'pull_request' "${workflow_dir}/linux.yml"; then
   echo 'Linux workflow must not expose its durable host bind to pull requests' >&2
   exit 1
@@ -42,9 +35,13 @@ for file in "${workflow_dir}/macos.yml" "${workflow_dir}/windows.yml"; do
   grep -Fq 'event: tag' "${file}"
   grep -Fq 'ref: refs/tags/v*' "${file}"
   grep -Fq 'event: manual' "${file}"
+  grep -Fq 'BESKID_TASK == "build"' "${file}"
 done
 
-if grep -RiqE 'publish|from_secret|GH_TOKEN|S3|rclone' "${workflow_dir}"; then
+# This contract owns only native build and standard validation lanes. Editor,
+# security and protected publishing lanes have separate policy contracts;
+# adding them must not grant publication authority to these four workflows.
+if grep -iqE 'publish|from_secret|GH_TOKEN|S3|rclone' "${workflow_dir}/linux.yml" "${workflow_dir}/macos.yml" "${workflow_dir}/windows.yml" "${workflow_dir}/standard.yml"; then
   echo 'Woodpecker build workflows must not publish or stage artifacts externally' >&2
   exit 1
 fi

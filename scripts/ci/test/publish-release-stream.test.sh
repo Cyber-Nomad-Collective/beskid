@@ -18,7 +18,18 @@ for argument in "$@"; do
   previous="${argument}"
 done
 case "$1 $2" in
-  "release view") exit 1 ;;
+  "release view") [[ "${GH_EXISTING:-0}" == 1 ]] && exit 0; exit 1 ;;
+  "release download")
+    pattern='' destination=''
+    while [[ $# -gt 0 ]]; do
+      case "$1" in
+        --pattern) pattern="$2"; shift ;;
+        --dir) destination="$2"; shift ;;
+      esac
+      shift
+    done
+    cp "${GH_REMOTE_DIR}/${pattern}" "${destination}/${pattern}"
+    ;;
 esac
 EOF
 chmod +x "${TMP}/bin/gh"
@@ -54,3 +65,25 @@ if grep -Eq '^release (create|upload) cli-v1.2.3-unstable' "${TMP}/gh.log"; then
 fi
 
 echo 'publish release stream tests OK'
+
+# A successful state for another version must never reach GitHub.
+: >"${TMP}/gh.log"
+if GH_LOG="${TMP}/gh.log" GH_NOTES="${TMP}/notes.md" PATH="${TMP}/bin:${PATH}" GH_TOKEN=test-token \
+  bash "${SCRIPT}" cli 9.9.9 0123456789abcdef0123456789abcdef01234567 "${TMP}/assets" immutable unstable "${TMP}/release-state.json"; then
+  fail "publisher accepted a different version than its evidence"
+fi
+test ! -s "${TMP}/gh.log" || fail "mismatched evidence reached GitHub"
+
+# Existing immutable content is a read-only retry, not a clobber operation.
+mkdir "${TMP}/remote"
+cp "${TMP}/assets/"* "${TMP}/remote/"
+GH_LOG="${TMP}/gh.log" GH_NOTES="${TMP}/notes.md" GH_EXISTING=1 GH_REMOTE_DIR="${TMP}/remote" PATH="${TMP}/bin:${PATH}" GH_TOKEN=test-token \
+  bash "${SCRIPT}" cli 1.2.3-unstable 0123456789abcdef0123456789abcdef01234567 "${TMP}/assets" immutable unstable "${TMP}/release-state.json"
+if grep -Eq '^release (edit|upload|create)' "${TMP}/gh.log"; then fail "immutable retry mutated release"; fi
+printf 'different\n' >"${TMP}/remote/beskid-linux-amd64"
+: >"${TMP}/gh.log"
+if GH_LOG="${TMP}/gh.log" GH_NOTES="${TMP}/notes.md" GH_EXISTING=1 GH_REMOTE_DIR="${TMP}/remote" PATH="${TMP}/bin:${PATH}" GH_TOKEN=test-token \
+  bash "${SCRIPT}" cli 1.2.3-unstable 0123456789abcdef0123456789abcdef01234567 "${TMP}/assets" immutable unstable "${TMP}/release-state.json"; then
+  fail "immutable mismatch accepted"
+fi
+if grep -Eq '^release (edit|upload|create)' "${TMP}/gh.log"; then fail "immutable mismatch mutated release"; fi

@@ -27,3 +27,4 @@ when:
   - event: tag
     ref: refs/tags/v*
   - event: manual
+    evaluate: 'BESKID_TASK == "build"'

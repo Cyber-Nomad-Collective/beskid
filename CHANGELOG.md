@@ -37,6 +37,12 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Added
 
+- Add independent Woodpecker OpenSpec validation and fail-closed, three-target
+  release-evidence validation with exact source, artifact checksum, and required
+  gate checks. These are migration prerequisites, not end-to-end release proof.
+- Add private release-evidence aggregation and native installer packaging that
+  reuse the canonical release and distribution implementations without publishing.
+
 - Publish stable compiler release 0.4.744 for Linux amd64, macOS arm64, and
   Windows amd64, including CLI, LSP, direct-install bundles, platform
   installers, checksums, and verified immutable and rolling release aliases.
@@ -111,6 +117,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Refuse mismatched publication evidence and overwriting different immutable
+  compiler release assets; matching immutable retries are read-only.
 - Correct Woodpecker organization-limited registration and SQLite volume
   ownership, and document the root-owned secret handling for the native macOS
   and Windows workers.

@@ -78,9 +78,23 @@ esac
   exit 1
 }
 RELEASE_STATE="$(cd "$(dirname "${RELEASE_STATE}")" && pwd)/$(basename "${RELEASE_STATE}")"
+node "$(dirname "$0")/release-version.mjs" "${RELEASE_VERSION}" >/dev/null
+jq -e --arg version "${RELEASE_VERSION}" --arg compiler "${COMPILER_SHA}" --arg channel "${RELEASE_CHANNEL}" '
+  .schema_version == 1 and .publishable == true and
+  .version == $version and .channel == $channel and
+  .provenance.compiler_commit == $compiler and
+  ($compiler | test("^[0-9a-f]{40}$")) and
+  (.provenance.superrepo_commit | test("^[0-9a-f]{40}$")) and
+  (if $channel == "stable" then .tests.gate_result == "success" and
+    (.tests.failed | length) == 0 else true end)
+' "${RELEASE_STATE}" >/dev/null || {
+  echo 'publication arguments do not match qualified release-state evidence' >&2
+  exit 1
+}
 
 notes_file="$(mktemp)"
-trap 'rm -f "${notes_file}"' EXIT
+immutable_check=""
+trap 'rm -f "${notes_file}"; [[ -z "${immutable_check}" ]] || rm -rf "${immutable_check}"' EXIT
 bash "$(dirname "$0")/render-compiler-release-notes.sh" "${RELEASE_STATE}" "${STREAM}" >"${notes_file}"
 
 cd "$ASSETS_DIR"
@@ -106,8 +120,15 @@ assets+=("${version_file}" release-state.json)
 # before the caller can advance rolling aliases.
 if [[ "$PHASE" == "immutable" || "$PHASE" == "both" ]]; then
   if gh release view "$immutable_tag" --repo "$REPO" >/dev/null 2>&1; then
-    gh release edit "$immutable_tag" --repo "$REPO" --notes-file "${notes_file}"
-    gh release upload "$immutable_tag" --repo "$REPO" "${assets[@]}" --clobber
+    immutable_check="$(mktemp -d)"
+    for asset in "${assets[@]}"; do
+      gh release download "$immutable_tag" --repo "$REPO" --pattern "$asset" --dir "${immutable_check}"
+      cmp -s "$asset" "${immutable_check}/${asset}" || {
+        echo "immutable release ${immutable_tag} differs at ${asset}; refusing overwrite" >&2
+        exit 1
+      }
+    done
+    echo "Immutable release ${immutable_tag} already matches; no mutation."
   else
     gh release create "$immutable_tag" --repo "$REPO" --target "$COMPILER_SHA" \
       --title "$immutable_title" --notes-file "${notes_file}" "${assets[@]}"
