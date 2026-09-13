@@ -16,6 +16,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Stage the compiler corelib alongside Learn's CLI and LSP binaries before
+  verifying the image runtime, so the platform-image job validates the actual
+  installed layout rather than masking a missing-corelib failure.
 - Link production-delivery documentation to the retained Standard root after
   removal of the staged-delivery observability specification.
 - Use Buildx's Docker-compatible local exporter for the platform-image

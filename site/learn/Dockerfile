@@ -64,11 +64,12 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
   ./scripts/stage-native-runtime-kit.sh \
   && install -m 0755 /workspace/target/release/beskid_cli /workspace/runtime-output/beskid \
   && install -m 0755 /workspace/target/release/beskid_lsp /workspace/runtime-output/beskid_lsp \
+  && cp -a corelib /workspace/runtime-output/beskid_corelib \
+  && test -f /workspace/runtime-output/beskid_corelib/beskid_corelib/corelib.bproj \
+  && test -x /workspace/runtime-output/beskid \
+  && test -x /workspace/runtime-output/beskid_lsp \
   && BESKID_CORELIB_ROOT=/workspace/runtime-output/beskid_corelib \
      /workspace/runtime-output/beskid --version >/dev/null \
-  && test -f /workspace/runtime-output/beskid_corelib/beskid_corelib/corelib.bproj \
-  && test -x /workspace/runtime-output/beskid || (echo "beskid binary missing after install" >&2 && exit 1) \
-  && test -x /workspace/runtime-output/beskid_lsp || (echo "beskid_lsp binary missing after install" >&2 && exit 1) \
   && cp -a /workspace/target/native-runtime-kit /workspace/runtime-output/native-runtime-kit
 
 # The production server is a Bun program (`Bun.serve` / `Bun.file`). Keep the
