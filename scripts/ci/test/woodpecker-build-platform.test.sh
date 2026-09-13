@@ -25,7 +25,7 @@ output="$6"
 bundle_asset="$7"
 
 if [[ "${target}" == x86_64-pc-windows-msvc ]]; then
-  test -n "${CARGO_TARGET_X86_64_PC_WINDOWS_MSVC_LINKER:-}"
+  test -z "${CARGO_TARGET_X86_64_PC_WINDOWS_MSVC_LINKER:-}"
 fi
 
 mkdir -p "${output}/release-logs"
@@ -63,21 +63,10 @@ jq -n --arg target "${target}" --arg cli "${cli_asset}" --arg lsp "${lsp_asset}"
 EOF
 chmod +x "${TMP}/build-release-platform.sh"
 
-mkdir -p "${TMP}/Visual Studio/VC/Auxiliary/Build" \
-  "${TMP}/Visual Studio/VC/Tools/MSVC/14.44/bin/Hostx64/x64"
-printf '14.44\r\n' >"${TMP}/Visual Studio/VC/Auxiliary/Build/Microsoft.VCToolsVersion.default.txt"
-touch "${TMP}/Visual Studio/VC/Tools/MSVC/14.44/bin/Hostx64/x64/link.exe"
-cat >"${TMP}/vswhere.sh" <<EOF
-#!/usr/bin/env bash
-printf '%s\\r\\n' '${TMP}/Visual Studio'
-EOF
-chmod +x "${TMP}/vswhere.sh"
-
 assert_platform() {
   local platform="$1" target="$2" cli="$3" lsp="$4" bundle="$5"
   local output="${TMP}/output-${platform}${6:-}"
   FAKE_INIT_LOG="${TMP}/init-${platform}.log" \
-    WOODPECKER_VSWHERE="${TMP}/vswhere.sh" \
     WOODPECKER_INIT_SUBMODULES_SCRIPT="${TMP}/init-submodules.sh" \
     WOODPECKER_RELEASE_PLATFORM_SCRIPT="${TMP}/build-release-platform.sh" \
     bash "${SCRIPT}" "${platform}" 1.2.3 "${output}" >"${TMP}/${platform}.log"

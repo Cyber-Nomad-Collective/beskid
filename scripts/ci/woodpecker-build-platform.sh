@@ -66,38 +66,6 @@ if find "${output_dir}" -mindepth 1 -maxdepth 1 -print -quit | grep -q .; then
 fi
 output_dir="$(cd "${output_dir}" && pwd -P)"
 
-if [[ "${platform}" == windows && -z "${CARGO_TARGET_X86_64_PC_WINDOWS_MSVC_LINKER:-}" ]]; then
-  vswhere="${WOODPECKER_VSWHERE:-}"
-  if [[ -z "${vswhere}" ]]; then
-    program_files_x86="$(printenv 'ProgramFiles(x86)' 2>/dev/null || true)"
-    if [[ -n "${program_files_x86}" ]] && command -v cygpath >/dev/null 2>&1; then
-      program_files_x86="$(cygpath -u "${program_files_x86}")"
-    fi
-    vswhere="${program_files_x86:-/c/Program Files (x86)}/Microsoft Visual Studio/Installer/vswhere.exe"
-  fi
-  [[ -f "${vswhere}" ]] || {
-    echo "vswhere.exe is required to resolve the x64 MSVC linker: ${vswhere}" >&2
-    exit 2
-  }
-  visual_studio="$("${vswhere}" -latest -products '*' \
-    -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 \
-    -property installationPath | tr -d '\r' | tail -n 1)"
-  if [[ "${visual_studio}" == [A-Za-z]:\\* ]] && command -v cygpath >/dev/null 2>&1; then
-    visual_studio="$(cygpath -u "${visual_studio}")"
-  fi
-  tools_version="$(tr -d '\r\n' \
-    <"${visual_studio}/VC/Auxiliary/Build/Microsoft.VCToolsVersion.default.txt")"
-  linker="${visual_studio}/VC/Tools/MSVC/${tools_version}/bin/Hostx64/x64/link.exe"
-  [[ -f "${linker}" ]] || {
-    echo "resolved x64 MSVC linker does not exist: ${linker}" >&2
-    exit 2
-  }
-  if command -v cygpath >/dev/null 2>&1; then
-    linker="$(cygpath -w "${linker}")"
-  fi
-  export CARGO_TARGET_X86_64_PC_WINDOWS_MSVC_LINKER="${linker}"
-fi
-
 bash "${init_submodules}" compiler beskid_bsol
 if [[ -n "${CI_PIPELINE_NUMBER:-}" || -n "${CI_COMMIT_SHA:-}" ]]; then
   for dependency in compiler beskid_bsol; do

@@ -16,6 +16,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Let Windows native release builds use the checked-in Rust `rust-lld.exe`
+  linker configuration instead of overriding it with a host-specific Visual
+  Studio discovery path.
 - Stage the compiler corelib alongside Learn's CLI and LSP binaries before
   verifying the image runtime, so the platform-image job validates the actual
   installed layout rather than masking a missing-corelib failure.
