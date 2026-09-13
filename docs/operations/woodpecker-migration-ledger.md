@@ -39,7 +39,7 @@ long-term alternative.
 | `.github/workflows/distribute.yml` | Runs after a compiler release or manually; produces Windows MSI/EXE, macOS DMG and Homebrew formula, Debian package, two container images, and the final `distrib-version.txt` marker. | Controller dispatches platform packaging jobs after the verified release state. It waits for Windows installer, macOS DMG/Homebrew, Linux `.deb`, and Linux container results before writing the marker last. | A controlled version confirms each installer is attached to its immutable and rolling release, container image digests exist under both tags, and the marker is absent if any required platform publisher fails. |
 | `.github/workflows/publish-open-vsx.yml` | After a successful stable compiler release, builds and gates four VSIX targets (Linux x64, macOS arm64/x64, Windows x64) and publishes them to Open VSX. | A protected release-controller stage first verifies the stable `release-state.json`, then runs the target build/gate work and calls `scripts/ci/open-vsx-publish.sh` once per platform. | All four VSIX builds and extension/compiler gates pass; an actual macOS x64 cross-build on the arm64 worker is verified; a repeat publish is idempotent; unstable releases never reach Open VSX. |
 | `.github/workflows/publish-zed-extension.yml` | On a `v*` tag, validates the Zed manifest, package, language assets, and stable LSP provenance, then uses a pinned GitHub Action to update Zed Extensions. | A Linux Woodpecker tag pipeline performs the same local validations and a checked-in replacement for the pinned action: update the authorized fork, create or update the Zed Extensions pull request, and leave merging to the Zed review process. | A disposable/tag test proves a version mismatch fails before mutation, checks all stable LSP assets and provenance, and opens the expected PR without direct writes to `zed-industries/extensions`. |
-| GitHub CodeQL default setup (repository/organization configuration, not a tracked workflow file) | GitHub-managed code scanning runs outside `.github/workflows`; it must remain visible during the cutover, including its existing failures. | Install and pin the CodeQL CLI in a VPS-backed Woodpecker security pipeline. Run database creation and analysis for the configured languages on trusted main and an equivalent scheduled scan; publish SARIF to the chosen security reporting system. If GitHub code-scanning visibility is retained, upload through its API from the VPS rather than GitHub Actions. | Before disabling default setup, compare one successful external CodeQL analysis and one intentionally detectable fixture/known finding with the current configuration, confirm scheduled execution and retention, and confirm real product findings are reported rather than suppressed. |
+| GitHub CodeQL default setup (repository configuration, not a tracked workflow) | External GitHub configuration is distinct from Woodpecker. | No Woodpecker replacement: explicitly removed by the user on 2026-09-13. | CodeQL is not a Woodpecker release gate. No substitute scanner or scheduled scan is enabled. Existing GitHub settings require separate cutover reconciliation. |
 
 ## Secret and permission ledger
 
@@ -57,7 +57,6 @@ agent secrets for publishing.
 | `OVSX_TOKEN` | Open VSX publisher | Publish namespace/extension versions only. | Pending migration. |
 | `BESKID_VSCODE_SUBMODULE_TOKEN` | Open VSX checkout | Read only `beskid_vscode`. | Pending migration. |
 | `COMMITTER_TOKEN` | Zed extension PR publisher | Fine-grained access to the approved fork and pull-request operations; never direct write access to `zed-industries/extensions`. | Pending migration. |
-| `CODE_SCANNING_UPLOAD_TOKEN` | external CodeQL reporter, only if GitHub remains the results UI | `security_events:write` and repository read; omit when the chosen external reporting system does not use GitHub. | Pending design decision. |
 
 The existing Woodpecker server secrets (`WOODPECKER_GITHUB_CLIENT`,
 `WOODPECKER_GITHUB_SECRET`, `WOODPECKER_AGENT_SECRET`, and
@@ -80,8 +79,6 @@ publication credentials and must never be made available to repository steps.
 - [ ] Distribution fan-out is exercised with a non-public/disposable version;
       final marker ordering and retry behavior are verified.
 - [ ] Open VSX and Zed replacements pass their gates and idempotency/PR tests.
-- [ ] External CodeQL configuration is verified against GitHub default setup,
-      scheduled scanning is active, and findings remain visible.
 - [ ] Workflow-contract tests are replaced with provider-neutral checks; no
       test continues to assert deleted GitHub Actions YAML.
 - [ ] A reviewed cutover confirms that the old workflows are disabled or
@@ -92,7 +89,7 @@ publication credentials and must never be made available to repository steps.
 Verified facts are limited to the live Woodpecker service, Linux Docker worker,
 macOS worker, CLI authentication, and the checked-in build-only pipeline
 contracts. No end-to-end VPS release, distribution, Open VSX, Zed, Windows
-worker, or external CodeQL replacement has yet been exercised. Consequently,
+worker has yet been exercised. Consequently,
 the repository is not ready to remove the remaining GitHub workflow files.
 
 ## Integration record (2026-09-13)
@@ -120,17 +117,13 @@ the repository is not ready to remove the remaining GitHub workflow files.
   expected assets are byte-identical; differing or incomplete releases require
   operator investigation and are not clobbered. Mocked GitHub-boundary tests
   cover equal retries, mismatch and wrong source/version arguments.
-- `security.yml` replaces the configured Actions, JavaScript/TypeScript and Rust
-  CodeQL languages with one pinned CLI bundle and retained SARIF. Alias language
-  names are coalesced. Tests cover findings, scanner failure, malformed/empty
-  SARIF and forbidden real-pipeline test overrides. The scan is limited to
-  2048 MiB and two threads; Linux build containers are capped at 3 GiB and two
-  CPU periods per period. No real scan or SARIF upload is yet qualified, and
-  GitHub default setup remains enabled. The weekly cron must be installed after
-  the replacement branch is approved for cutover.
+- CodeQL was removed from Woodpecker at the user's explicit request. Its
+  workflow, scripts, tests, and release gate are absent; no cron was installed.
+  Historical run logs remain diagnostic records, not active release requirements.
+  Linux build containers retain their general 3 GiB/two-CPU resource limits.
 
 Ruling: native build/standard workflow policy tests cover their named,
-secret-free lanes. Editor, security and publisher definitions own separate
+secret-free lanes. Editor and publisher definitions own separate
 policy tests; an exact workflow-count rule would prevent adding replacements.
 The cost is that every new lane must be reviewed for its own authority boundary.
 
@@ -146,7 +139,7 @@ not relax the distribution bundle contract.
 ### Manual selection
 
 Use `woodpecker-cli pipeline create Cyber-Nomad-Collective/beskid --branch
-<branch> --var BESKID_TASK=<task>` with `validate`, `security`, `build`,
+<branch> --var BESKID_TASK=<task>` with `validate`, `build`,
 `editors` or `platform` as appropriate. Native build and editor tasks also
 require `--var BESKID_RELEASE_VERSION=<exact-stable-version>`. These variables
 select work, not publication authority. Never put secret values in CLI arguments.

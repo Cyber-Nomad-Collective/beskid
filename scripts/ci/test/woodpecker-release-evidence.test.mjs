@@ -104,7 +104,6 @@ function createFixture(overrides = {}) {
       { name: "compiler-rust", status: "success" },
       { name: "corelib", status: "success" },
       { name: "openspec", status: "success" },
-      { name: "security", status: "success" },
       { name: "editor", status: "success" },
     ],
     ...overrides.gates,
@@ -183,7 +182,7 @@ test("aggregation snapshots validated artifacts and records only observed gates"
   assert.equal(result.status, 0, result.stderr);
   const state = JSON.parse(readFileSync(join(output, "release-state.json")));
   assert.equal(state.publishable, true);
-  assert.deepEqual(state.tests.successful, ["compiler-rust:gate", "corelib:gate", "editor:gate", "openspec:gate", "security:gate"]);
+  assert.deepEqual(state.tests.successful, ["compiler-rust:gate", "corelib:gate", "editor:gate", "openspec:gate"]);
   assert.equal(state.complete_platforms.length, 3);
   assert.equal(readFileSync(join(output, "assets", "beskid-linux-amd64"), "utf8"), "linux-cli");
   const manifest = JSON.parse(readFileSync(join(output, "assets", "beskid-release.json")));
@@ -220,7 +219,7 @@ test("accepts complete matching platform and gate evidence", (t) => {
   assert.equal(evidence.version, VERSION);
   assert.deepEqual(evidence.source, SOURCE);
   assert.deepEqual(evidence.platforms.map(({ platform }) => platform), ["linux", "macos", "windows"]);
-  assert.deepEqual(evidence.gates.map(({ name }) => name), ["compiler-rust", "corelib", "openspec", "security", "editor"]);
+  assert.deepEqual(evidence.gates.map(({ name }) => name), ["compiler-rust", "corelib", "openspec", "editor"]);
 });
 
 test("rejects mismatched source provenance", (t) => {
@@ -242,8 +241,7 @@ test("rejects a failed required gate and an empty check list", (t) => {
         { name: "compiler-rust", status: "success" },
         { name: "corelib", status: "success" },
         { name: "openspec", status: "success" },
-        { name: "security", status: "failed" },
-        { name: "editor", status: "success" },
+        { name: "editor", status: "failed" },
       ],
     },
   });
@@ -257,7 +255,7 @@ test("rejects a failed required gate and an empty check list", (t) => {
   const empty = runValidator(emptyRoot);
 
   assert.notEqual(failed.status, 0);
-  assert.match(failed.stderr, /gate security must have status success/);
+  assert.match(failed.stderr, /gate editor must have status success/);
   assert.notEqual(empty.status, 0);
   assert.match(empty.stderr, /gate evidence checks must be a non-empty array/);
 });

@@ -14,7 +14,7 @@
  * gate-evidence.json is schema version 1 with `source` containing exactly the
  * checked `superrepo_commit` and `compiler_commit` values, a stable semver
  * `version`, and a non-empty `checks` array. Each check is `{name, status}`;
- * compiler-rust, corelib, openspec, security, and editor must each occur once
+ * compiler-rust, corelib, openspec, and editor must each occur once
  * and every listed check must have status `success`.
  */
 import { createHash } from "node:crypto";
@@ -41,7 +41,7 @@ const PLATFORMS = [
     lsp: "beskid_lsp-windows-amd64.exe",
   },
 ];
-const REQUIRED_GATES = ["compiler-rust", "corelib", "openspec", "security", "editor"];
+const REQUIRED_GATES = ["compiler-rust", "corelib", "openspec", "editor"];
 const STABLE_SEMVER = /^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$/;
 const GIT_COMMIT = /^[0-9a-f]{40}$/;
 
