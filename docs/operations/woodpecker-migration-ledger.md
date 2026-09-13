@@ -99,6 +99,8 @@ the repository is not ready to remove the remaining GitHub workflow files.
 
 - VPS pipeline 2 passed the four build-migration contract suites after disabling
   recursive clone. This was not a native compiler build or release qualification.
+- VPS pipeline 3 (`b683ec29`) passed Linux contract/evidence checks and the actual
+  independent OpenSpec workflow; strict validation reported 214 passed, 0 failed.
 - `standard.yml` runs the four canonical OpenSpec validators independently;
   all four commands passed locally on the migration branch without changing
   the catalog. Current-main results remain a separate source-specific claim.
@@ -118,6 +120,14 @@ the repository is not ready to remove the remaining GitHub workflow files.
   expected assets are byte-identical; differing or incomplete releases require
   operator investigation and are not clobbered. Mocked GitHub-boundary tests
   cover equal retries, mismatch and wrong source/version arguments.
+- `security.yml` replaces the configured Actions, JavaScript/TypeScript and Rust
+  CodeQL languages with one pinned CLI bundle and retained SARIF. Alias language
+  names are coalesced. Tests cover findings, scanner failure, malformed/empty
+  SARIF and forbidden real-pipeline test overrides. The scan is limited to
+  2048 MiB and two threads; Linux build containers are capped at 3 GiB and two
+  CPU periods per period. No real scan or SARIF upload is yet qualified, and
+  GitHub default setup remains enabled. The weekly cron must be installed after
+  the replacement branch is approved for cutover.
 
 Ruling: native build/standard workflow policy tests cover their named,
 secret-free lanes. Editor, security and publisher definitions own separate

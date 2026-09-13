@@ -1,0 +1,27 @@
+labels:
+  platform: linux/amd64
+  backend: docker
+  role: beskid-linux
+
+clone:
+  git:
+    image: woodpeckerci/plugin-git:2.10.1
+    settings:
+      recursive: false
+
+steps:
+  - name: codeql-security
+    image: node:22.16.0-bookworm
+    commands:
+      - apt-get update >/dev/null
+      - apt-get install -y --no-install-recommends ca-certificates curl git >/dev/null
+      - bash scripts/ci/woodpecker-security.sh
+
+when:
+  - event: push
+    branch: main
+  - event: manual
+    branch: [main, codex/woodpecker-migration]
+    evaluate: 'BESKID_TASK == "security"'
+  - event: cron
+    cron: security-weekly

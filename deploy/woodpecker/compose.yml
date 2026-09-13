@@ -53,6 +53,9 @@ services:
       WOODPECKER_AGENT_SECRET: ${WOODPECKER_AGENT_SECRET:?set WOODPECKER_AGENT_SECRET}
       WOODPECKER_BACKEND: docker
       WOODPECKER_MAX_WORKFLOWS: "1"
+      # The worker shares a host with production; bound each build container.
+      WOODPECKER_BACKEND_DOCKER_LIMIT_MEM: "3221225472"
+      WOODPECKER_BACKEND_DOCKER_LIMIT_CPU_QUOTA: "200000"
       WOODPECKER_HOSTNAME: bdziam-linux-docker
       WOODPECKER_AGENT_LABELS: platform=linux/amd64,backend=docker,role=beskid-linux
       WOODPECKER_BACKEND_DOCKER_VOLUMES: /var/lib/woodpecker/beskid-output:/woodpecker-output

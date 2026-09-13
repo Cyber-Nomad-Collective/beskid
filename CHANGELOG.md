@@ -37,6 +37,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Added
 
+- Add a VPS CodeQL workflow with a checksum-pinned bundle, retained SARIF,
+  bounded memory/CPU, and explicit failure on findings or scanner errors.
 - Add independent Woodpecker OpenSpec validation and fail-closed, three-target
   release-evidence validation with exact source, artifact checksum, and required
   gate checks. These are migration prerequisites, not end-to-end release proof.
