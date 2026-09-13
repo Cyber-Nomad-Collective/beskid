@@ -16,6 +16,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Link production-delivery documentation to the retained Standard root after
+  removal of the staged-delivery observability specification.
 - Use Buildx's Docker-compatible local exporter for the platform-image
   verification job, avoiding unsupported attestation manifest-list exports on
   the rootless NixOS worker.

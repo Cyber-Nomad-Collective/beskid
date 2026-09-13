@@ -9,8 +9,8 @@ audience:
   - release maintainer
 authority:
   status: security-sensitive
-  sourceLabel: Canonical staged-delivery and observability requirement
-  sourceHref: https://beskid-lang.org/docs/standard/staged-delivery-observability/
+  sourceLabel: Canonical Beskid Standard
+  sourceHref: https://beskid-lang.org/docs/standard/
   limits: This page does not deploy or roll back a production container. The production operator owns those external actions.
 verified:
   revision: 1c48165332356625e6ce1e273ac8c84e46c8a195
