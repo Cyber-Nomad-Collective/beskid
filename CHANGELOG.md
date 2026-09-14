@@ -16,6 +16,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Let the non-interactive Windows worker discover the administrator-installed
+  Rust toolchain before native release builds.
 - Normalize `jq` text reads in native release builds so Windows CRLF output
   cannot contaminate component names or diagnostic file paths.
 - Enable Git long-path checkout behavior while initializing CI submodules, so

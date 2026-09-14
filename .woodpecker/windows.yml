@@ -19,6 +19,16 @@ steps:
         else
           release_version="$${BESKID_RELEASE_VERSION:?set BESKID_RELEASE_VERSION for a manual build}"
         fi
+        # The agent is a Windows SYSTEM task while Rust is installed for the
+        # administrative build account. Make that supported toolchain visible
+        # without relying on an interactive login environment.
+        for cargo_bin in "C:/Users/Administrator/.cargo/bin" "C:/Users/ContainerAdministrator/.cargo/bin"; do
+          if [ -x "$${cargo_bin}/cargo.exe" ]; then
+            export PATH="$${cargo_bin}:$${PATH}"
+            break
+          fi
+        done
+        command -v cargo >/dev/null || { echo "Rust cargo toolchain is unavailable to the Windows agent" >&2; exit 1; }
         output="C:/woodpecker-output/beskid/$${CI_PIPELINE_NUMBER}-$${CI_COMMIT_SHA}/windows"
         bash scripts/ci/init-submodules.sh beskid_distrib
         bash scripts/ci/woodpecker-build-platform.sh windows "$${release_version}" "$${output}"
