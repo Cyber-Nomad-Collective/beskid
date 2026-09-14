@@ -16,6 +16,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Normalize `jq` text reads in native release builds so Windows CRLF output
+  cannot contaminate component names or diagnostic file paths.
 - Enable Git long-path checkout behavior while initializing CI submodules, so
   Windows workers can materialize the compiler fixture tree.
 - Let Windows native release builds use the checked-in Rust `rust-lld.exe`

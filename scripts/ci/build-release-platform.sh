@@ -19,6 +19,12 @@ output_dir="$(cd "${output_dir}" && pwd)"
 builder="$(cd "$(dirname "${builder}")" && pwd)/$(basename "${builder}")"
 repo_root="${RELEASE_ARTIFACT_ROOT:-$(cd "$(dirname "$0")/../.." && pwd)}"
 
+# jq.exe writes CRLF. In Bash command substitutions, the final LF is removed
+# while the CR remains, corrupting filenames composed from jq output.
+jq_text() {
+  jq -r "$@" | tr -d '\r'
+}
+
 run_build() {
   local component="$1" package="$2" binary="$3" asset="$4" log="$5"
   local status=success rc=0 reason
@@ -63,16 +69,16 @@ else
 fi
 
 diagnostic_files=()
-for component in $(jq -r '.builds | keys[]' "${result}"); do
-  if [[ "$(jq -r ".builds.${component}.status" "${result}")" == failed ]]; then
+for component in $(jq_text '.builds | keys[]' "${result}"); do
+  if [[ "$(jq_text ".builds.${component}.status" "${result}")" == failed ]]; then
     diagnostic="${output_dir}/release-logs/${target}-${component}.failure.json"
     if ! bash "${reporter}" compiler "${component}-release-build" "${target}" \
-      "$(jq -r ".builds.${component}.command" "${result}")" \
+      "$(jq_text ".builds.${component}.command" "${result}")" \
       "${output_dir}/release-logs/${target}-${component}.log" \
       "${target}-${component}.log" "${diagnostic}"; then
       jq -n \
         --arg component compiler --arg stage "${component}-release-build" --arg platform "${target}" \
-        --arg command "$(jq -r ".builds.${component}.command" "${result}")" \
+        --arg command "$(jq_text ".builds.${component}.command" "${result}")" \
         --arg reason "structured reporter failed; inspect retained raw log" \
         --arg log_path "${target}-${component}.log" \
         '{schema_version:1,component:$component,stage:$stage,platform:$platform,command:$command,
@@ -90,9 +96,9 @@ fi
 jq --argjson diagnostics "${diagnostics}" '.diagnostics = $diagnostics' "${result}" >"${result}.tmp"
 mv "${result}.tmp" "${result}"
 
-for component in $(jq -r '.builds | keys[]' "${result}"); do
-  if [[ "$(jq -r ".builds.${component}.status" "${result}")" == failed ]]; then
-    reason="$(jq -r ".builds.${component}.reason" "${result}")"
+for component in $(jq_text '.builds | keys[]' "${result}"); do
+  if [[ "$(jq_text ".builds.${component}.status" "${result}")" == failed ]]; then
+    reason="$(jq_text ".builds.${component}.reason" "${result}")"
     echo "::error title=${target} ${component} build failed::${reason}"
   fi
 done
