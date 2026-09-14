@@ -37,6 +37,8 @@ steps:
             curl.exe --fail --location --retry 3 --output "$${CARGO_HOME}/rustup-init.exe" https://win.rustup.rs/x86_64
             "$${CARGO_HOME}/rustup-init.exe" -y --profile minimal --no-modify-path --default-toolchain stable-x86_64-pc-windows-msvc
           fi
+          cargo_exe="$$(find "$${CARGO_HOME}" -type f -name cargo.exe -print -quit)"
+          [ -n "$${cargo_exe}" ] && export PATH="$$(dirname "$${cargo_exe}"):$${PATH}"
         fi
         command -v cargo >/dev/null || { echo "Rust cargo toolchain provisioning failed on the Windows agent" >&2; exit 1; }
         output="C:/woodpecker-output/beskid/$${CI_PIPELINE_NUMBER}-$${CI_COMMIT_SHA}/windows"
