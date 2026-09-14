@@ -19,16 +19,26 @@ steps:
         else
           release_version="$${BESKID_RELEASE_VERSION:?set BESKID_RELEASE_VERSION for a manual build}"
         fi
-        # The agent is a Windows SYSTEM task while Rust is installed for the
-        # administrative build account. Make that supported toolchain visible
-        # without relying on an interactive login environment.
+        # The agent is a Windows SYSTEM task. Reuse an existing Rust toolchain
+        # when present; otherwise provision a minimal MSVC toolchain in an
+        # agent-owned ProgramData location for future non-interactive builds.
         for cargo_bin in "C:/Users/Administrator/.cargo/bin" "C:/Users/ContainerAdministrator/.cargo/bin"; do
           if [ -x "$${cargo_bin}/cargo.exe" ]; then
             export PATH="$${cargo_bin}:$${PATH}"
             break
           fi
         done
-        command -v cargo >/dev/null || { echo "Rust cargo toolchain is unavailable to the Windows agent" >&2; exit 1; }
+        if ! command -v cargo >/dev/null; then
+          export CARGO_HOME="C:/ProgramData/Woodpecker/rust/cargo"
+          export RUSTUP_HOME="C:/ProgramData/Woodpecker/rust/rustup"
+          export PATH="$${CARGO_HOME}/bin:$${PATH}"
+          if ! [ -x "$${CARGO_HOME}/bin/cargo.exe" ]; then
+            mkdir -p "$${CARGO_HOME}" "$${RUSTUP_HOME}"
+            curl.exe --fail --location --retry 3 --output "$${CARGO_HOME}/rustup-init.exe" https://win.rustup.rs/x86_64
+            "$${CARGO_HOME}/rustup-init.exe" -y --profile minimal --no-modify-path --default-toolchain stable-x86_64-pc-windows-msvc
+          fi
+        fi
+        command -v cargo >/dev/null || { echo "Rust cargo toolchain provisioning failed on the Windows agent" >&2; exit 1; }
         output="C:/woodpecker-output/beskid/$${CI_PIPELINE_NUMBER}-$${CI_COMMIT_SHA}/windows"
         bash scripts/ci/init-submodules.sh beskid_distrib
         bash scripts/ci/woodpecker-build-platform.sh windows "$${release_version}" "$${output}"
