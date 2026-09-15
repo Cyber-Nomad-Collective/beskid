@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="beskid core" viewBox="0 0 120 120">
+  <title>beskid core</title>
+  <defs><mask id="ridge-beskid-core" maskUnits="userSpaceOnUse" x="0" y="0" width="120" height="120" style="mask-type:luminance"><polygon points="12,86 42,32 64,64 53,79 41,58 27,86" fill="white"/><polygon points="48,86 86,20 101,62 87,62 82,49 64,80 94,80 94,74 108,88 94,102 94,96 48,96" fill="white"/></mask></defs><rect width="120" height="120" fill="#047857" mask="url(#ridge-beskid-core)"/>
+</svg>

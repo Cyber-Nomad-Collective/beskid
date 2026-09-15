@@ -7,7 +7,6 @@ import {
 	BookOpen,
 	CheckCircle,
 	FlaskConical,
-	GraduationCap,
 	LayoutList,
 	Lightbulb,
 	PanelLeftClose,
@@ -567,8 +566,21 @@ function App() {
 					<header className="learn-header">
 						<div className="learn-header-left">
 							<BeskidHub />
-							<GraduationCap className="w-6 h-6 text-primary" />
-							<h1 className="text-xl font-bold">Beskid Learn</h1>
+							<img
+								src="/logo.svg"
+								alt=""
+								width={32}
+								height={32}
+								className="block shrink-0 dark:hidden"
+							/>
+							<img
+								src="/logo-dark.svg"
+								alt=""
+								width={32}
+								height={32}
+								className="hidden shrink-0 dark:block"
+							/>
+							<h1 className="text-xl font-bold">beskid learn</h1>
 
 							{viewMode === "playground" ? (
 								<Badge>

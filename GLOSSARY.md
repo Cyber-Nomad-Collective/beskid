@@ -385,3 +385,7 @@ The 0.4 delivery obligation for Beskid.Glue: the normative OpenSpec contract, th
 ## Glue generation (0.5)
 
 The 0.5 delivery obligation for Beskid.Glue: language-specific code generation (Rust and .NET emitters), dotscope-based .NET signature reading, corelib/runtime stdio and other-protocol implementation, full `ToolchainProbe` implementation, and extending glue projects in Beskid to insert rust, C#, or any language.
+
+## Ridge identity
+
+The user-selected beskid logo: two solid, asymmetric mountain shoulders separated by an open diagonal, paired with a lowercase wordmark. Its canonical geometry and generated asset family live in [`site/beskid_brand`](site/beskid_brand/); usage is defined in [`BRAND.md`](site/beskid_brand/BRAND.md).

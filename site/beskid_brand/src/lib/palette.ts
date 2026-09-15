@@ -1,11 +1,13 @@
 /**
  * Full Beskid color palette — tints, shades, and semantic roles.
- * Generated from #3aac9e base using luminance-preserving shifts.
+ * Companion UI tints derived from the canonical identity colors.
  *
- * "Beskid Teal" — the mineral green of Carpathian mountain lakes.
+ * These interpolated UI tints are not additional approved logo colors.
  */
 
-const BASE_TEAL = "#3aac9e";
+import { C } from "./brand";
+
+const BASE_TEAL = C.teal;
 
 function hexToRgb(hex: string): [number, number, number] {
 	const h = hex.replace("#", "");
@@ -56,16 +58,16 @@ export const TEAL = {
 } as const;
 
 export const DARK_MODE_TEAL = {
-	50: "#5eeadb",
-	100: shade("#5eeadb", 0.08),
-	200: shade("#5eeadb", 0.18),
-	300: shade("#5eeadb", 0.3),
-	400: shade("#5eeadb", 0.42),
-	500: "#5eeadb",
-	600: tint("#5eeadb", 0.08),
-	700: tint("#5eeadb", 0.18),
-	800: tint("#5eeadb", 0.3),
-	900: tint("#5eeadb", 0.42),
+	50: C.tealLight,
+	100: shade(C.tealLight, 0.08),
+	200: shade(C.tealLight, 0.18),
+	300: shade(C.tealLight, 0.3),
+	400: shade(C.tealLight, 0.42),
+	500: C.tealLight,
+	600: tint(C.tealLight, 0.08),
+	700: tint(C.tealLight, 0.18),
+	800: tint(C.tealLight, 0.3),
+	900: tint(C.tealLight, 0.42),
 } as const;
 
 export const NEUTRAL = {
@@ -80,12 +82,12 @@ export const NEUTRAL = {
 	700: "#495057",
 	800: "#343a40",
 	900: "#212529",
-	dark: "#0d1117",
+	dark: C.bgDark,
 } as const;
 
 export const SEMANTIC = {
-	primary: "#3aac9e",
-	primaryLight: "#5eeadb",
+	primary: C.teal,
+	primaryLight: C.tealLight,
 	success: "#2dba4e",
 	warning: "#dbab09",
 	danger: "#cf222e",

@@ -14,7 +14,7 @@ Brand = apps.get_model("authentik_brands", "Brand")
 AUTH_URL = "https://auth.beskid-lang.org"
 LOGO_URL = (
     "https://raw.githubusercontent.com/Cyber-Nomad-Collective/beskid/main/"
-    "site/website/src/assets/beskid_logo.svg"
+    "site/beskid_brand/service-auth-horizontal.svg"
 )
 # Beskid Żywiecki from Mała Racza, by Pudelek, CC BY 3.0:
 # https://commons.wikimedia.org/wiki/File:Beskid_%C5%BBywiecki._Widok_z_Ma%C5%82ej_Raczy.jpg

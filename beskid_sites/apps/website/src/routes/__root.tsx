@@ -33,7 +33,10 @@ export const Route = createRootRouteWithContext<WebsiteRouterContext>()({
 					"A statically typed, AOT-first language for services, CLIs, and teams that outgrew .NET's abstraction stack.",
 			},
 		],
-		links: [{ rel: "stylesheet", href: appCss }],
+		links: [
+			{ rel: "stylesheet", href: appCss },
+			{ rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
+		],
 	}),
 	component: RootComponent,
 	shellComponent: RootDocument,
@@ -55,9 +58,29 @@ function RootComponent() {
 						<Link
 							to="/"
 							className="island-kicker"
-							style={{ textDecoration: "none", fontWeight: 700 }}
+							style={{
+								display: "flex",
+								alignItems: "center",
+								gap: 8,
+								textDecoration: "none",
+								fontWeight: 700,
+							}}
 						>
-							Beskid
+							<img
+								src="/logo.svg"
+								alt=""
+								width={32}
+								height={32}
+								className="block shrink-0 dark:hidden"
+							/>
+							<img
+								src="/logo-dark.svg"
+								alt=""
+								width={32}
+								height={32}
+								className="hidden shrink-0 dark:block"
+							/>
+							beskid
 						</Link>
 					</TopbarLeftSlot>
 				}

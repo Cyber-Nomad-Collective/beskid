@@ -5,7 +5,7 @@
  *
  * Design principle:
  *   "beskid" wordmark → always bold weight (700)
- *   service name      → light weight (300)
+ *   service name      → medium weight (500)
  *   body text         → regular weight (400)
  *   code              → monospace
  *
@@ -13,7 +13,7 @@
  * Font files: node_modules/@fontsource/inter/files/inter-latin-{weight}-normal.woff2
  *
  * For PDF embedding: use the woff2 files directly (pdf-lib/fontkit supports woff2).
- * For SVG: reference "Inter" with system-ui fallback.
+ * For SVG: outline Inter glyphs at generation time.
  * For Canvas/node: load woff2 buffer via fontkit.
  */
 
@@ -114,9 +114,9 @@ export const FONT_FAMILY_MONO =
 export const WORDMARK = {
 	family: "Inter, system-ui, -apple-system, sans-serif",
 	/** "beskid" wordmark */
-	beskid: { weight: 700, letterSpacing: 4 },
+	beskid: { weight: 700, letterSpacing: -2 },
 	/** Service name in stacked lockups */
-	service: { weight: 300, letterSpacing: 2 },
+	service: { weight: 500, letterSpacing: 0 },
 	/** Tagline */
 	tagline: { weight: 400, letterSpacing: 1 },
 } as const;

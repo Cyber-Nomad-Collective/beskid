@@ -11,6 +11,21 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Replace editable product logos with the Ridge family across website, app navigation, favicons, VS Code, and installer artwork; add repeatable brand asset synchronization.
+
+- Refine service logo joins and terminals, including regular Tracker steps and a single masked Nexus silhouette.
+
+- Adopt Emerald for the Ridge brand and shared UI accent roles, preserve UI
+  surfaces, and give each service a purpose-led silhouette integrating both Ridge peaks with
+  transparent SVG masks and broad structural geometry.
+
+- Focus the Ridge brand preview on four selectable green palettes with persistent
+  light/dark modes, and remove the unselected logo concepts.
+
+- Redesign `site/beskid_brand` around one solid Ridge logo source, with three
+  explored concepts, outlined SVG lockups, research-backed brand guidance, and
+  consistent PDF/Lottie exports; replace destructive cleanup with named outputs.
+
 - Consume a verified, complete compiler release bundle in every distribution
   target rather than independently downloading CLI and LSP artifacts.
 - Make landing-page examples standalone playground programs and pin Learn to

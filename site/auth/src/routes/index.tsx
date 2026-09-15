@@ -14,7 +14,23 @@ function HomePage() {
 	return (
 		<div className="page-wrap">
 			<div className="auth-topbar">
-				<p className="island-kicker">Beskid</p>
+				<p className="island-kicker flex items-center gap-2">
+					<img
+						src="/logo.svg"
+						alt=""
+						width={32}
+						height={32}
+						className="block shrink-0 dark:hidden"
+					/>
+					<img
+						src="/logo-dark.svg"
+						alt=""
+						width={32}
+						height={32}
+						className="hidden shrink-0 dark:block"
+					/>
+					beskid auth
+				</p>
 				<div className="flex items-center gap-2">
 					{session ? (
 						<Button variant="outline" size="sm" asChild>

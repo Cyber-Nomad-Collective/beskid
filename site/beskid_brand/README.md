@@ -1,34 +1,35 @@
-# Beskid Brand Assets
+# beskid brand
 
-Flat geometric brand assets for the [Beskid programming language](https://github.com/beskid-lang). Every file uses straight lines, sharp vertices, and solid colors — no curves, no gradients, no opacity. See [`BRAND.md`](./BRAND.md) for full guidelines.
+The Ridge identity: two solid mountain shoulders, lowercase Inter lettering, and the approved Emerald/light-emerald colors.
 
-## Files
+Start with the [interactive Ridge preview](brand-preview.html), [brand guidelines](BRAND.md), or [research and decisions](RESEARCH.md). The preview shows the selected Ridge family, four green comparisons, light/dark modes, an enlarged gallery of all nine service icons with full silhouettes grounded in each service’s purpose, and their lockups.
 
-### Guidelines
+## Generate
 
-| File | Kind |
-|------|------|
-| `BRAND.md` | Full brand guidelines — colors, typography, logo usage, service icons, voice |
-| `README.md` | This overview |
+This is a standalone pnpm package outside the root workspace membership.
 
-### Logo Lockups
+```sh
+cd site/beskid_brand
+pnpm install --ignore-workspace --frozen-lockfile
+pnpm build
+pnpm check
+pnpm all
+pnpm sync:assets
+```
 
-| File | Kind |
-|------|------|
-| `beskid-icon.svg` | Icon-only mark — geometric mountain + diamond AST node (120×120) |
-| `beskid-logo-stacked.svg` | Stacked vertical lockup — icon above wordmark (200×180) |
-| `beskid-logo-horizontal.svg` | Horizontal lockup — icon left of wordmark (300×80) |
-| `beskid-logo-dark.svg` | Stacked lockup for dark backgrounds, #5eeadb on #0d1117 (200×180) |
+Open `brand-preview.html` locally. It needs no server; the editable SVGs are self-contained and the page loads editorial Inter text from the installed package. Palette and mode controls update the page and logo samples. Emerald is the default and production palette. Other palettes are exploratory previews; switching them does not change the Emerald SVG, PDF or Lottie exports. Production black and white exports are provided separately.
 
-### Service Icons
+## Deliverables
 
-| File | Service | Kind |
-|------|---------|------|
-| `icon-beskid-core.svg` | Beskid Core | Mountain + diamond AST node (120×120) |
-| `icon-auth.svg` | Beskid Auth | Mountain + flat-topped shield (120×120) |
-| `icon-platform-spec.svg` | Platform Spec | Mountain + document with rule lines (120×120) |
-| `icon-learn.svg` | Beskid Learn | Mountain + open book pages (120×120) |
-| `icon-website.svg` | Beskid Website | Mountain + octagon globe with equator (120×120) |
-| `icon-tracker.svg` | Beskid Tracker | Mountain + three task squares (120×120) |
-| `icon-pckg.svg` | Beskid Package Registry | Mountain + isometric box (120×120) |
-| `icon-nexus.svg` | Beskid Nexus | Mountain + three diamond graph nodes (120×120) |
+- 47 production SVGs: parent mark, horizontal/stacked/wordmark lockups, reversed and single-ink variants, nine service families.
+- `beskid-brand-kit.pdf`: two-page vector specimen.
+- `beskid-logo-static.json` and `beskid-logo-draw.json`: shared-geometry Lottie static/reveal.
+- `brand-preview.html`: interactive Ridge preview with actual-size samples.
+
+`src/lib/brand.ts` owns master geometry and identity colors. Components own arrangements; output adapters produce SVG, PDF and animation. SVG lettering is outlined, so the logos need no installed fonts. Service marks integrate both peaks using luminance masks with transparent channels; use unique mask IDs when repeating SVGs inline. The parent Ridge stays unchanged.
+
+Cleanup deletes only named generated artifacts. It preserves source/configuration and unrelated files. Run regeneration after changing sources; do not hand-edit the generated logo family.
+
+Preserve existing shared UI theme surfaces when applying Emerald accents. Brand ink and paper remain unchanged.
+
+Emerald accent roles are also applied in the shared UI theme, preserving its existing surfaces. `pnpm sync:assets` regenerates the website and app favicons, Tracker PNG/ICO assets, editor and installer artwork, and shared Astro/React hub icon data. The command regenerates canonical SVGs before synchronizing consumers. Consumer assets are checked in so submodules can build independently. No deployment is performed. See repository [LICENSING.md](../../LICENSING.md) for brand rights.

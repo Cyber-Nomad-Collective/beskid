@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="beskid website" viewBox="0 0 120 120">
+  <title>beskid website</title>
+  <defs><mask id="ridge-website" maskUnits="userSpaceOnUse" x="0" y="0" width="120" height="120" style="mask-type:luminance"><polygon points="12,96 12,82 42,32 60,52 86,20 108,82 108,96" fill="white"/><polygon points="28,96 28,83 43,56 60,75 83,46 94,83 94,96" fill="black"/></mask></defs><rect width="120" height="120" fill="#6EE7B7" mask="url(#ridge-website)"/>
+</svg>

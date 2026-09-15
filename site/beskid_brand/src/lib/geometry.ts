@@ -1,5 +1,5 @@
 /**
- * Geometry primitives — contour map edition.
+ * Geometry primitives shared by brand renderers.
  */
 export type Point = readonly [number, number];
 
@@ -72,7 +72,15 @@ export interface Group {
 	scale?: number;
 	title?: string;
 }
-export type Shape = Polyline | Polygon | Line | Circle | Text | Rect | Group;
+/** Union filled regions, then subtract broad channels using an SVG luminance mask. */
+export interface MaskedShape {
+  kind: "masked";
+  id: string;
+  body: readonly (readonly Point[])[];
+  cuts: readonly (readonly Point[])[];
+  fill: string;
+}
+export type Shape = Polyline | Polygon | Line | Circle | Text | Rect | Group | MaskedShape;
 
 export interface IconSpec {
 	viewBox: [number, number, number, number];

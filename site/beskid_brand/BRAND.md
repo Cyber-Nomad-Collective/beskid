@@ -1,122 +1,161 @@
-# Beskid Brand Guidelines
+# beskid brand guidelines
 
-> The Beskid brand uses a **3D low-poly mesh** — an isometric wireframe mountain built from triangular facets, ridgelines, and connecting struts. No curves, no gradients. The mesh is the signature.
+The new **Ridge** identity uses two solid, asymmetric mountain shoulders and a lowercase wordmark. The open diagonal between the forms is part of the mark. It gives the silhouette separation at small sizes and a clear rising rhythm.
 
-## Design Philosophy
+Ridge is the user-selected replacement identity. This package is its source. Updating it does not deploy the identity to websites, editors, or distribution packages. Review the [visual board](brand-preview.html) before a coordinated rollout. The [research notes](RESEARCH.md) record the decision and supporting evidence.
 
-### 3D Low-Poly Mesh
+## Identity and voice
 
-Every Beskid icon carries the same 3D mountain structure:
+Write the project name **beskid**, including at the start of a sentence. The identity connects mountain terrain with the clarity and structure of a programming language; it is an original geometric abstraction, not a map of a particular summit.
 
-- **8 triangular facets** connecting a front ridgeline to a back ridgeline — filled at 10% opacity, creating a translucent faceted surface
-- **Front ridgeline** (2.5px stroke, `#3aac9e`) — the emphasized silhouette, 3 asymmetric peaks
-- **Back ridgeline** (1px stroke, `#1a6b62`) — offset (+10x, −8y) for isometric depth
-- **5 vertical struts** (1.5px at 35% opacity) — connecting front→back vertices
-- **Diamond AST node** below the mesh — the compiler identity mark
+Use direct language, runnable examples, concrete benefits, and honest trade-offs. Welcome people into the language. Avoid elitist climbing metaphors, inflated performance claims, and unexplained compiler jargon. “A clearer way to the summit” is exploration copy, not a required tagline.
 
-Hard constraints:
-- **NO cubic beziers** — every line is a straight segment (polyline, polygon, line)
-- **NO hex-alpha** (`#RRGGBBAA`) — use `fill-opacity` attribute for compatibility
-- **NO gradients** — flat colors only
-- **NO arcs** — no `<path>` arc commands
+## The master mark
 
-### The Mesh Coordinates
+Canonical geometry lives in [`src/lib/brand.ts`](src/lib/brand.ts), in `MARK_POLYGONS`. Every production SVG, PDF, and Lottie mark is generated from these same coordinates.
 
-```typescript
-// Front ridgeline — the visible silhouette
-RIDGE_FRONT: [18,70] → [34,28] → [60,54] → [86,16] → [106,70]
+- Canvas: `120 × 120` units.
+- Visible bounds: x = 12–108, y = 24–96.
+- Left summit: `(42, 38)`; right summit: `(86, 24)`.
+- Two closed polygons, solid fill, no strokes, gradients, shadows, or translucent detail.
+- Preserve both forms and the open space between them; do not connect, rotate, skew, or independently reposition them.
+- Curves in outlined lettering are intentional. The old blanket prohibition on Bézier paths does not apply to typography.
 
-// Back ridgeline — isometric offset
-RIDGE_BACK:  [28,62] → [44,22] → [68,48] → [94,12] → [114,62]
+A **mark** is the mountain symbol alone. A **wordmark** is the drawn name. A **lockup** is their fixed arrangement. These terms describe artwork, not new product constructs.
 
-// 8 triangular facets connecting the two ridges
-MESH_FACETS: alternating triangles across 4 ridge segments
+## Color
+
+All hexadecimal values are sRGB. Color names describe this identity, not universal UI semantic tokens.
+
+| Color | Hex | Role |
+|---|---|---|
+| Emerald | `#047857` | Primary mark on white or limestone |
+| Light emerald | `#6EE7B7` | Reversed mark on deep forest |
+| Deep forest | `#102D2A` | Primary wordmark, dark surface, body text on limestone |
+| Limestone | `#F5F3EB` | Warm light surface; reversed lettering |
+| Deep emerald | `#064E3B` | Supporting UI accent; not a separate master logo variant |
+| Black / white | `#000000` / `#FFFFFF` | Single-ink reproduction and reversed artwork |
+
+The horizontal dark asset is entirely light emerald on transparent background; the stacked dark asset includes a deep forest background and limestone lettering. Do not put either reversed asset on a light surface. Use the black or white master when the production process supports one ink only.
+
+### Interactive palette preview
+
+The Ridge preview offers four paired greens. Light/dark mode changes the whole page and its logo samples.
+
+| Palette | Light-mode mark | Dark-mode mark |
+|---|---|---|
+| Forest | `#087F70` | `#64D8BC` |
+| Pine | `#166534` | `#86EFAC` |
+| Moss | `#4D6B32` | `#B6D785` |
+| Emerald — selected, current exports | `#047857` | `#6EE7B7` |
+
+Emerald is the approved production palette and the preview default. Forest, Pine and Moss remain exploratory comparisons. Switching the preview does not change the Emerald SVG, PDF or Lottie exports. The contrast figures below apply to Emerald with the preserved brand surfaces.
+
+Keep the existing shared UI theme surfaces when applying the new accent colors. Brand ink (`#102D2A`) and paper (`#F5F3EB`) remain unchanged; this logo palette does not require a product-wide surface recolor.
+
+### Contrast and accessibility
+
+Calculated from the WCAG relative-luminance formula:
+
+| Foreground / background | Contrast | Use |
+|---|---:|---|
+| Emerald / white | 5.48:1 | Logo and normal text |
+| Emerald / limestone | 4.94:1 | Logo and normal text |
+| Light emerald / deep forest | 9.63:1 | Reversed logo and text |
+| Deep forest / limestone | 13.21:1 | Preferred body copy |
+| Light emerald / white | 1.52:1 | Do not use |
+| Deep emerald / limestone | 8.75:1 | Supporting accent and text |
+
+W3C exempts logotypes from the text contrast requirement; that exception does not extend to general brand-colored UI text. Normal text requires 4.5:1; qualifying large text requires 3:1. These ratios describe solid colors, not a guarantee about every rendered pixel. [W3C: Contrast (Minimum)](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html)
+
+For a home link whose sole content is the logo, use `alt="beskid home"`. Where visible adjacent text already names the link, use `alt=""` for the redundant image. Inline SVG exports include an accessible name; decorative inline usage should remove that name and use `aria-hidden="true"`. Provide a visible keyboard focus indicator on the link. [W3C: Functional Images](https://www.w3.org/WAI/tutorials/images/functional/)
+
+```html
+<a href="/">
+  <img src="/beskid-logo-horizontal.svg" alt="beskid home" width="180" height="60">
+</a>
 ```
-
-Three peaks — asymmetrical: left peak at y=28, center dip at y=54, right peak at y=16 (tallest). This asymmetry gives the silhouette the character of a real Beskid ridgeline.
-
-## Brand Colors
-
-| Name | Hex | Usage |
-|------|-----|-------|
-| **Beskid Teal** | `#3aac9e` | Primary brand. Ridge, struts, facets, diamond, wordmark. |
-| **Beskid Teal Dark** | `#1a6b62` | Back ridgeline (depth cue). |
-| **Beskid Teal Light** | `#5eeadb` | Dark mode variant — replaces teal on `#0d1117` backgrounds. |
-| **Background Light** | `#ffffff` | Default document/website background. |
-| **Background Dark** | `#0d1117` | Dark mode. Matches GitHub dark. |
-
-**Color constraints:** NO opacity modifiers on fill colors — use `fill-opacity` SVG attribute. NO gradients. NO alpha channels in hex.
 
 ## Typography
 
-| Role | Spec |
-|------|------|
-| **Primary font** | `Inter, system-ui, -apple-system, sans-serif` |
-| **Logo wordmark** | Lowercase `"beskid"`, `font-weight: 700`, `letter-spacing: 4px` |
-| **Service name** | `font-weight: 300`, `letter-spacing: 1.5px`, secondary color (`#868e96`) |
-| **Code / monospace** | `SF Mono`, `Fira Code`, `Cascadia Code` |
+- Wordmark: Inter Bold (700), lowercase, tracking `−0.03125em` (−2 units at 64-unit font size).
+- Service descriptor: Inter Medium (500), lowercase, normal tracking.
+- UI/body text: Inter Regular (400), with system sans-serif fallback.
+- Code: the product's existing monospace stack; do not make code part of the logo.
 
-No custom web fonts required — Inter ships with `@fontsource/inter`.
+All exported SVG lettering is outlined at generation time. It renders without installed fonts, external resources, or browser-specific text measurement. Do not retype the wordmark for a production logo. The preview uses locally installed Inter for editorial text; its logo assets remain font-independent. Inter is distributed under the SIL Open Font License; retain the font's supplied license when redistributing font files. [Inter project](https://rsms.me/inter/)
 
-## Logo Variants
+## Clear space and minimum size
 
-| File | Description | Use case |
-|------|-------------|----------|
-| `beskid-icon.svg` | 3D mesh mountain + diamond. `120×120`. | Favicons, app icons. |
-| `beskid-logo-stacked.svg` | Mesh above wordmark. `200×200`. | README, docs. |
-| `beskid-logo-horizontal.svg` | Mesh left, wordmark right. `300×80`. | Headers, navbars. |
-| `beskid-logo-dark.svg` | Stacked on `#0d1117` with `#5eeadb`. `200×200`. | Dark mode. |
+Define **u** as 12 units on the 120-unit master. Keep at least **u** of clear space around the visible artwork. At 24px canvas size, u = 2.4px. Embedded SVG padding counts toward this distance; surrounding layout must provide any remainder. Use 2u when space permits. Do not crop SVG viewBoxes to make the symbol appear larger in a lockup.
 
-## Service Icons
+| Asset | Minimum rendered size | Guidance |
+|---|---|---|
+| Parent mark | 16 × 16px | Favicon only at 16px; prefer 24px or larger |
+| Horizontal logo | 144px wide | Prefer 180px in navigation |
+| Stacked logo | 96px wide | Prefer 120px or larger |
+| Service icon | 48 × 48px | Use the parent mark plus an adjacent service label below this size |
+| Service horizontal lockup | 230px wide | Keeps the service descriptor near 10px |
+| Service stacked lockup | 144px wide | Prefer 180px or larger |
 
-8 icons share the identical 3D mesh above, plus a unique geometric service accent below:
+These are design starting points checked in the local specimen, not universal printing guarantees. Proof small physical applications in the target process. For embroidery or stamping, use single-ink artwork and preserve the diagonal opening.
 
-| File | Service | Accent |
-|------|---------|--------|
-| `icon-beskid-core.svg` | Beskid Core | Diamond (AST node) |
-| `icon-auth.svg` | Beskid Auth | Pentagon shield |
-| `icon-platform-spec.svg` | Platform Spec | Document rect with lines |
-| `icon-learn.svg` | Beskid Learn | Open book (two angled polygons) |
-| `icon-website.svg` | Beskid Website | 10-vertex globe + equator |
-| `icon-tracker.svg` | Beskid Tracker | Three solid squares |
-| `icon-pckg.svg` | Package Registry | Isometric box |
-| `icon-nexus.svg` | Beskid Nexus | Three connected diamond nodes |
+## Asset map
 
-## Merged Service Logos
+| Files | Content |
+|---|---|
+| `beskid-icon.svg` | Emerald parent mark, transparent, 120 × 120 |
+| `beskid-icon-{dark,black,white}.svg` | Light emerald, black, or white parent mark, transparent |
+| `beskid-logo-horizontal.svg` | Emerald mark + deep forest wordmark, 360 × 120 |
+| `beskid-logo-horizontal-{dark,black,white}.svg` | Light emerald, black, or white horizontal lockup, transparent |
+| `beskid-logo-stacked.svg` | Light stacked lockup, 240 × 240 |
+| `beskid-logo-dark.svg` | Stacked lockup on deep forest, 240 × 240 |
+| `beskid-logo-wordmark.svg` | Deep forest wordmark alone, 240 × 90 |
+| `icon-{service}.svg` | Service signature, 120 × 120 |
+| `service-{service}-{horizontal,stacked,dark}.svg` | Service lockups, 460 × 120 or 240 × 260 |
+| `beskid-brand-kit.pdf` | Two-page vector specimen, light and dark |
+| `beskid-logo-static.json` | Static emerald Lottie mark |
+| `beskid-logo-draw.json` | Emerald Lottie opacity reveal; retained filename does not imply stroke drawing |
+| `brand-preview.html` | Ridge-only palette/mode preview, production family, actual-size samples |
 
-Each service has 3 lockups: `service-{name}-{horizontal,stacked,dark}.svg`
+### Service family
 
-Horizontal: `[3D mesh] beskid ServiceName` (bold 700 + light 300 type)
-Stacked: mesh above, "beskid" below, service name at bottom
+The parent Ridge mark stays unchanged. Each service mark composes its meaning across the full silhouette, with both peaks participating. Bold polygon bodies and structural channels express compilation, access, reference, reading, execution, navigation, delivery, publication and code relationships. The forms are authored directly on the 120-unit canvas. Service lettering remains in the lockup.
 
-## Logo Usage
+Service SVGs use luminance masks: white body regions remain visible and black cuts remove artwork. The channels are transparent, so the surrounding surface shows through. When embedding multiple SVGs inline, give every mask a unique ID and update its `url(#...)` reference; repeated copies of the same service must not share document IDs. External `<img>` assets keep separate SVG documents.
 
-### Minimum Sizes
+The preview includes an enlarged gallery of all nine integrated service icons alongside their lockups. These are the existing core, auth, standard, book, learn, website, tracker, pckg and nexus services.
 
-| Variant | Minimum |
-|---------|---------|
-| `beskid-icon.svg` | `24×24 px` |
-| `beskid-logo-horizontal.svg` | `150 px` wide |
-| `beskid-logo-stacked.svg` | `100 px` wide |
+| File identifier | Public descriptor | Service symbol |
+|---|---|---|
+| `beskid-core` | core | Source branches converging into an output route |
+| `auth` | auth | Ridgeline shield surrounding a protected passage |
+| `platform-spec` | standard | Reference spine with aligned rules |
+| `book` | book | Two peaked pages joined by a shared binding |
+| `learn` | learn | Execution chevron folding through both peaks toward a result |
+| `website` | website | Open entry passage beneath a rising roof |
+| `tracker` | tracker | Continuous stepped delivery route reaching the summit |
+| `pckg` | pckg | Mountain-crowned publication layers |
+| `nexus` | nexus | Repository branches meeting at a shared graph junction |
 
-### Don'ts
-- ❌ Don't add curves — no beziers, no arcs
-- ❌ Don't add gradients — flat colors only
-- ❌ Don't use hex-alpha — use `fill-opacity` / `stroke-opacity`
-- ❌ Don't recolor — use the dark variant
-- ❌ Don't alter mesh coordinates — the asymmetry is intentional
+The `platform-spec` filename identifier remains stable; its visible descriptor is **standard**, matching the public standard under `/docs/standard/`. Do not write redundant labels such as “beskid Beskid Auth.” Service cue geometry has one implementation in `src/components/icons.ts`.
 
-## File Naming
+## Motion
 
+Use the static mark by default. The supplied reveal changes opacity only; its settled geometry matches the static asset. Play once and leave the final frame visible. Never use a looping logo to imply compiler progress. Respect `prefers-reduced-motion` by selecting the static SVG or static Lottie; the JSON animation cannot enforce the host application's preference itself.
+
+## Production and maintenance
+
+```sh
+cd site/beskid_brand
+pnpm install --ignore-workspace --frozen-lockfile
+pnpm build
+pnpm check
+pnpm all
 ```
-beskid-{variant}.svg       # Logo lockups (icon, logo-stacked, logo-horizontal, logo-dark)
-icon-{service}.svg         # Service icons
-service-{service}-{layout}.svg  # Merged service lockups
-```
 
-## Brand Voice
+This standalone package has its own `pnpm-lock.yaml`. `pnpm all` cleans only an explicit list of generated files and regenerates SVG, HTML, PDF, and Lottie. Never use a wildcard that removes source JSON or configuration. The renderer overwrites only its owned output names.
 
-> *"A language you climb, not one handed to you."*
+Review `brand-preview.html` after geometry, typography, or color changes. Check the smallest examples, dark surfaces, monochrome variants, and all service names. Commit source and regenerated deliverables together. Old mesh/contour sources have been removed from this package; do not restore them as a second drawing path.
 
-Clear, direct sentences. Technical precision. Honest trade-offs.
-No corporate jargon. No hype.
+Brand asset and trademark treatment is described in the repository's [LICENSING.md](../../LICENSING.md). These guidelines do not grant additional rights or imply trademark clearance.

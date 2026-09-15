@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="beskid pckg" viewBox="0 0 120 120">
+  <title>beskid pckg</title>
+  <defs><mask id="ridge-pckg" maskUnits="userSpaceOnUse" x="0" y="0" width="120" height="120" style="mask-type:luminance"><polygon points="12,68 42,28 60,46 86,20 108,68 60,88" fill="white"/><polygon points="12,80 60,98 108,80 108,90 60,108 12,90" fill="white"/><polygon points="31,62 44,48 60,64 83,43 91,61 60,74" fill="black"/></mask></defs><rect width="120" height="120" fill="#047857" mask="url(#ridge-pckg)"/>
+</svg>

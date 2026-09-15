@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="beskid nexus" viewBox="0 0 120 120">
+  <title>beskid nexus</title>
+  <defs><mask id="ridge-nexus" maskUnits="userSpaceOnUse" x="0" y="0" width="120" height="120" style="mask-type:luminance"><polygon points="12,86 40,32 60,52 86,20 108,86 94,96 60,84 26,96" fill="white"/><polygon points="31,76 43,53 53,65" fill="black"/><polygon points="68,65 82,46 92,76" fill="black"/></mask></defs><rect width="120" height="120" fill="#047857" mask="url(#ridge-nexus)"/>
+</svg>

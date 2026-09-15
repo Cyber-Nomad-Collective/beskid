@@ -1,43 +1,28 @@
-import { readdirSync, rmSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
-import { beskidCoreIcon, SERVICE_ICONS } from "./components/icons";
-import { LOGOS } from "./components/logos";
-import {
-	mergedServiceDark,
-	mergedServiceHorizontal,
-	mergedServiceStacked,
-} from "./components/service-logos";
-import { C, SERVICES } from "./lib/brand";
-import { renderIcon } from "./lib/svg";
+import { writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { SERVICE_ICONS } from './components/icons';
+import { LOGOS, horizontalVariant, iconVariant } from './components/logos';
+import { mergedServiceDark, mergedServiceHorizontal, mergedServiceStacked } from './components/service-logos';
+import { C, SERVICES } from './lib/brand';
+import { renderIcon } from './lib/svg';
+import { textEl } from './lib/geometry';
+import { Preview } from './preview';
 
-const OUT = join(import.meta.dirname!, "..");
-try {
-	for (const f of readdirSync(OUT).filter((f: string) => f.endsWith(".svg")))
-		rmSync(join(OUT, f), { force: true });
-} catch (_) {}
-function w(n: string, s: string): void {
-	writeFileSync(join(OUT, n), s, "utf-8");
-	console.log(`  ${n}`);
+const output = join(import.meta.dirname, '..');
+function Write(name: string, contents: string): void {
+  writeFileSync(join(output, name), contents, 'utf8');
 }
-
-console.log("\nLogos:");
-for (const [v, fn] of Object.entries(LOGOS)) {
-	const c = v === "logo-dark" ? C.tealLight : C.tealLight;
-	w(`beskid-${v}.svg`, renderIcon((fn as any)(c)));
+for (const [variant, draw] of Object.entries(LOGOS)) Write(`beskid-${variant}.svg`, renderIcon(draw()));
+for (const [name,color] of Object.entries({dark:C.tealLight,black:'#000000',white:'#FFFFFF'})) {
+  Write(`beskid-icon-${name}.svg`,renderIcon(iconVariant(color)));
+  Write(`beskid-logo-horizontal-${name}.svg`,renderIcon(horizontalVariant(color)));
 }
-
-w("icon-beskid-core.svg", renderIcon(beskidCoreIcon(C.tealLight)));
-
-console.log("\nService icons:");
-for (const s of SERVICES) {
-	if (s === "beskid-core") continue;
-	w(`icon-${s}.svg`, renderIcon(SERVICE_ICONS[s](C.tealLight)));
+Write('beskid-logo-wordmark.svg',renderIcon({viewBox:[0,0,240,90],title:'beskid',shapes:[textEl(120,67,'beskid',C.ink,{fontSize:64,fontWeight:700,letterSpacing:-2,textAnchor:'middle'})]}));
+for (const service of SERVICES) {
+  Write(`icon-${service}.svg`,renderIcon(SERVICE_ICONS[service]()));
+  Write(`service-${service}-horizontal.svg`,renderIcon(mergedServiceHorizontal(service)));
+  Write(`service-${service}-stacked.svg`,renderIcon(mergedServiceStacked(service)));
+  Write(`service-${service}-dark.svg`,renderIcon(mergedServiceDark(service)));
 }
-
-console.log("\nMerged service logos:");
-for (const s of SERVICES) {
-	w(`service-${s}-horizontal.svg`, renderIcon(mergedServiceHorizontal(s)));
-	w(`service-${s}-stacked.svg`, renderIcon(mergedServiceStacked(s)));
-	w(`service-${s}-dark.svg`, renderIcon(mergedServiceDark(s)));
-}
-console.log("\nDone.");
+Write('brand-preview.html',Preview());
+console.log('Generated 47 production SVGs and brand-preview.html.');

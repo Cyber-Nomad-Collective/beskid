@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="beskid auth" viewBox="0 0 120 120">
+  <title>beskid auth</title>
+  <defs><mask id="ridge-auth" maskUnits="userSpaceOnUse" x="0" y="0" width="120" height="120" style="mask-type:luminance"><polygon points="12,84 42,32 60,52 86,20 108,84 60,108" fill="white"/><polygon points="28,80 44,53 60,72 83,43 93,80 60,95" fill="black"/></mask></defs><rect width="120" height="120" fill="#047857" mask="url(#ridge-auth)"/>
+</svg>

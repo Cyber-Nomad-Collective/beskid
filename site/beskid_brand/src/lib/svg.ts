@@ -1,3 +1,5 @@
+import fontkit from "@pdf-lib/fontkit";
+import { INTER } from "./typography";
 import type { Point, Shape } from "./geometry";
 
 function pts(s: Point[]): string {
@@ -7,6 +9,11 @@ function pts(s: Point[]): string {
 function sEl(el: Shape, indent = 0): string {
 	const p = "  ".repeat(indent);
 	switch (el.kind) {
+        case "masked": {
+            const regions = el.body.map(points => `<polygon points="${pts([...points])}" fill="white"/>`).join('');
+            const channels = el.cuts.map(points => `<polygon points="${pts([...points])}" fill="black"/>`).join('');
+            return `${p}<defs><mask id="${el.id}" maskUnits="userSpaceOnUse" x="0" y="0" width="120" height="120" style="mask-type:luminance">${regions}${channels}</mask></defs><rect width="120" height="120" fill="${el.fill}" mask="url(#${el.id})"/>`;
+        }
 		case "polyline": {
 			let a = `points="${pts(el.points)}" fill="none" stroke="${el.stroke}" stroke-width="${el.strokeWidth}" stroke-linecap="${el.strokeLinecap}" stroke-linejoin="${el.strokeLinejoin}"`;
 			if (el.opacity !== undefined) a += ` opacity="${el.opacity}"`;
@@ -35,7 +42,8 @@ function sEl(el: Shape, indent = 0): string {
 			return `${a}/>`;
 		}
 		case "text":
-			return `${p}<text x="${el.x}" y="${el.y}" font-family="${el.fontFamily}" font-size="${el.fontSize}" font-weight="${el.fontWeight}" letter-spacing="${el.letterSpacing}" text-anchor="${el.textAnchor}" fill="${el.fill}">${el.content}</text>`;
+            return `${p}${OutlineText(el)}`;
+
 		case "rect": {
 			let a = `x="${el.x}" y="${el.y}" width="${el.width}" height="${el.height}"`;
 			a += el.fill ? ` fill="${el.fill}"` : ` fill="none"`;
@@ -68,7 +76,35 @@ export function renderIcon(icon: {
 }): string {
 	const [x, y, w, h] = icon.viewBox;
 	const inner: string[] = [];
-	if (icon.title) inner.push(`  <title>${icon.title}</title>`);
+	if (icon.title) inner.push(`  <title>${EscapeXml(icon.title)}</title>`);
 	inner.push(...icon.shapes.map((s) => sEl(s, 1)));
-	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${x} ${y} ${w} ${h}">\n${inner.join("\n")}\n</svg>`;
+	return `<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${EscapeXml(icon.title ?? "beskid")}" viewBox="${x} ${y} ${w} ${h}">\n${inner.join("\n")}\n</svg>`;
+}
+
+function EscapeXml(value: string): string {
+    return value.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]!));
+}
+
+const fonts = new Map<number, ReturnType<typeof fontkit.create>>();
+/** Outline at generation time: distributed SVG needs no font or network request. */
+function OutlineText(el: Extract<Shape, {kind:'text'}>): string {
+    let font = fonts.get(el.fontWeight);
+    if (!font) {
+        const style = Object.values(INTER).find(s => s.weight === el.fontWeight);
+        if (!style) throw new Error(`Unsupported brand font weight: ${el.fontWeight}`);
+        font = fontkit.create(style.buffer());
+        fonts.set(el.fontWeight, font);
+    }
+    const run = font.layout(el.content);
+    const scale = el.fontSize / font.unitsPerEm;
+    const width = run.positions.reduce((sum, p) => sum + p.xAdvance * scale, 0)
+        + Math.max(0, run.glyphs.length - 1) * el.letterSpacing;
+    const offset = el.textAnchor === 'middle' ? width / 2 : el.textAnchor === 'end' ? width : 0;
+    let x = el.x - offset;
+    return run.glyphs.map((glyph, i) => {
+        const position = run.positions[i];
+        const path = `<path fill="${el.fill}" transform="translate(${x + position.xOffset * scale} ${el.y - position.yOffset * scale}) scale(${scale} ${-scale})" d="${glyph.path.toSVG()}"/>`;
+        x += position.xAdvance * scale + el.letterSpacing;
+        return path;
+    }).join('');
 }

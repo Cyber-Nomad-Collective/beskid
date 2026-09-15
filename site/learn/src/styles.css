@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:is([data-theme="dark"] *));
 @import "@beskid/material-theme";
 @import "@beskid/ui-react/styles/hub.css";
 @import "@beskid/ui-react/styles/shadcn-entry.css";
