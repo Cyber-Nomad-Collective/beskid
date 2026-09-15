@@ -15,7 +15,7 @@
 			"devalue": "^5.8.1",
 			"@dagrejs/dagre": "^3.0.0",
 			"@dagrejs/graphlib": "^4.0.1",
-			"@tanstack/router-core": "1.171.21"
+			"@tanstack/router-core": "1.171.28"
 	}
 	},
 	"scripts": {

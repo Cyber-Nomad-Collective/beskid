@@ -16,6 +16,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Align the shared router-core override with React Router so Tracker production builds resolve the expected routing exports.
+
 - Replace editable product logos with the Ridge family across website, app navigation, favicons, VS Code, and installer artwork; add repeatable brand asset synchronization.
 
 - Refine service logo joins and terminals, including regular Tracker steps and a single masked Nexus silhouette.
