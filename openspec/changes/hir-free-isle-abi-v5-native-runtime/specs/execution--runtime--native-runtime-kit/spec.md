@@ -246,12 +246,12 @@ Runtime kits MUST install under `lib/beskid-runtime/abi-5/<target>/<debug|releas
 - **THEN** JIT and AOT use the exact installed target/profile kit
 
 #### Scenario: Three-target, two-profile artifact matrix
-- **GIVEN** Linux x86-64, macOS arm64, and Windows x86-64 release lanes
+- **GIVEN** Linux x86-64, macOS arm64, and Windows x86-64 supported target builds
 - **WHEN** debug and release runtime kits are built and installed
 - **THEN** each lane contains the manifest-matched static and shared artifacts and passes JIT and AOT installed-prefix smokes without a source-tree or Rust-runtime fallback
 
-### Requirement: Binary provenance is a release gate
-The release pipeline MUST inspect every produced runtime and linked application artifact for manifest allowlist conformance and forbidden Rust/bridge/host/unwind provenance.
+### Requirement: Distributable binaries satisfy provenance constraints
+Every distributable runtime and linked application artifact MUST conform to the manifest allowlist and MUST contain no forbidden Rust, bridge, host, or unwind provenance.
 
 #### Scenario: Forbidden linked provenance
 - **GIVEN** a candidate runtime or linked application binary containing a forbidden symbol family or object provenance

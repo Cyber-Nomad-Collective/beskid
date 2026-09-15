@@ -1,0 +1,39 @@
+labels:
+  platform: linux/amd64
+  backend: docker
+  role: beskid-linux
+
+clone:
+  git:
+    image: woodpeckerci/plugin-git:2.10.1
+    settings:
+      recursive: false
+
+steps:
+  - name: prepare-release
+    image: node:22.16.0-bookworm
+    commands: &release-commands
+      - apt-get update >/dev/null
+      - apt-get install -y --no-install-recommends ca-certificates gh git jq >/dev/null
+      - bash scripts/ci/woodpecker-release.sh "$${BESKID_BUILD_PIPELINE_NUMBER:?select build run}" "$${BESKID_RELEASE_VERSION:?set stable version}"
+    when:
+      - evaluate: 'BESKID_TASK == "release"'
+
+  - name: publish-release
+    image: node:22.16.0-bookworm
+    environment:
+      BESKID_PUBLISH_RELEASE: "1"
+      GH_TOKEN:
+        from_secret: compiler_release_token
+    commands: *release-commands
+    when:
+      - event: manual
+        branch: main
+        evaluate: 'BESKID_TASK == "release-publish"'
+
+# Preparation has no credentials. Publication uses the same entrypoint and is
+# selected explicitly; no compiler release is published by push or tag.
+when:
+  - event: manual
+    branch: [main, codex/woodpecker-migration]
+    evaluate: 'BESKID_TASK == "release" || BESKID_TASK == "release-publish"'

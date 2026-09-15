@@ -7,6 +7,15 @@ TMP="$(mktemp -d)"
 trap 'rm -rf "${TMP}"' EXIT
 mkdir -p "${TMP}/bin"
 
+# jq.exe writes CRLF on Windows. Bash command substitution removes the final LF
+# but preserves CR, so exercise every script-side jq read under that behavior.
+cat >"${TMP}/bin/jq" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+"${REAL_JQ}" "$@" | awk '{ printf "%s\r\n", $0 }'
+EOF
+chmod +x "${TMP}/bin/jq"
+
 cat >"${TMP}/builder.sh" <<'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
@@ -29,6 +38,7 @@ run_platform() {
     cd "${output}"
     BUILD_RELEASE_ARTIFACT_SCRIPT="${TMP}/builder.sh" RELEASE_ARTIFACT_ROOT="${TMP}/artifact-root" \
       FAKE_ARTIFACT_ROOT="${TMP}/artifact-root" FAIL_ASSETS="${failures}" \
+      REAL_JQ="$(command -v jq)" PATH="${TMP}/bin:${PATH}" \
       "${SCRIPT}" x86_64-test beskid-test beskid_lsp-test 0.4.1 "${channel}" .
   )
 }
@@ -63,7 +73,7 @@ mkdir -p "${TMP}/reporter-failed"
   cd "${TMP}/reporter-failed"
   BUILD_RELEASE_ARTIFACT_SCRIPT="${TMP}/builder.sh" RELEASE_ARTIFACT_ROOT="${TMP}/artifact-root" \
     FAKE_ARTIFACT_ROOT="${TMP}/artifact-root" FAIL_ASSETS='beskid_lsp-test' \
-    CI_FAILURE_REPORTER="${TMP}/failing-reporter.sh" \
+    CI_FAILURE_REPORTER="${TMP}/failing-reporter.sh" REAL_JQ="$(command -v jq)" PATH="${TMP}/bin:${PATH}" \
     "${SCRIPT}" x86_64-test beskid-test beskid_lsp-test 0.4.1 unstable .
 )
 jq -e '(.diagnostics | length) == 1 and .diagnostics[0].stage == "lsp-release-build" and

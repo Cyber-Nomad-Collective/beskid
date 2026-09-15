@@ -16,7 +16,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 > | Terminal | At least one method **must** return a non-step type (`Into{Name}()`, `ApplyTo(...)`, `IntoSequence()`, etc.) |
 > | Authoring | Wrapper types carry **`[FluentStep]`** / **`[FluentInner]`** / **`[FluentChain]`** / **`[FluentTerminal]`** attributes (`Beskid.Fluent` in compiler SDK) |
 > | Generation | `Beskid.Fluent` mod **may** emit step contracts from annotated types via `Collector`/`Generator` and `Emitter`; **`Core.Fluent.Registry`** is deprecated |
-> | Stability | Generated fluent facades are **`@tier(supported)`** until host merge and target-driven materialization are automatic in CI |
+> | Stability | Generated fluent facades are **`@tier(supported)`** until host merge and target-driven materialization are automatic |
 
 **Stable ID:** `BSP-REQ-14BA430C6B5A`  
 **Legacy source:** `site/spec-content/platform-spec/core-library/foundation-and-primitives/core-fluent/adr/0001-fluent-step-contract/content.md`  
@@ -90,13 +90,13 @@ Chainable APIs (ANSI builders, future collection facades) need a uniform contrac
 | Terminal | At least one method **must** return a non-step type (`Into{Name}()`, `ApplyTo(...)`, `IntoSequence()`, etc.) |
 | Authoring | Wrapper types carry **`[FluentStep]`** / **`[FluentInner]`** / **`[FluentChain]`** / **`[FluentTerminal]`** attributes (`Beskid.Fluent` in compiler SDK) |
 | Generation | `Beskid.Fluent` mod **may** emit step contracts from annotated types via `Collector`/`Generator` and `Emitter`; **`Core.Fluent.Registry`** is deprecated |
-| Stability | Generated fluent facades are **`@tier(supported)`** until host merge and target-driven materialization are automatic in CI |
+| Stability | Generated fluent facades are **`@tier(supported)`** until host merge and target-driven materialization are automatic |
 
 ## Consequences
 
 - Collections and Query gain optional fluent wrappers without duplicating semantics on the underlying types.
 - Console ANSI contracts remain the normative hand-written example; registry may include them later.
-- Mod output may be checked in via **`generatedOutputs`** materialization until merge/reparse is proven in CI; no standalone `beskid mod generate` CLI.
+- Mod output may be checked in via **`generatedOutputs`** materialization until merge/reparse is proven by conformance tests; no standalone `beskid mod generate` CLI.
 
 ## Verification anchors
 

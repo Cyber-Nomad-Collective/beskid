@@ -260,7 +260,7 @@ File-only commands (`parse`, `tree` with a single `.bd` path) may bypass the pro
 
 ## Terminal UI summary
 
-When stderr is a TTY and `--plain` is not set, pipeline-backed commands render phase progress on the alternate screen using a **single flexible shell**: a context bar, a stage-focused primary pane, a secondary pane (pipeline tree, test list, or summary chart), a log strip, and dual progress gauges in the footer. Pane weights shift with the active pipeline stage (workspace resolve, front-end parse, semantic analysis, lowering/codegen, or test execution). **Navigation:** after compile completes the pipeline screen stays visible until **Space** opens the test table (`beskid test`) or summary (other commands); **Space** again opens the summary chart; **Space** or **q** exits. The same facts are always echoed as a one-line stderr summary after the TUI exits so scripts and CI logs stay parseable. `--plain` skips the alternate-screen UI entirely.
+When stderr is a TTY and `--plain` is not set, pipeline-backed commands render phase progress on the alternate screen using a **single flexible shell**: a context bar, a stage-focused primary pane, a secondary pane (pipeline tree, test list, or summary chart), a log strip, and dual progress gauges in the footer. Pane weights shift with the active pipeline stage (workspace resolve, front-end parse, semantic analysis, lowering/codegen, or test execution). **Navigation:** after compile completes the pipeline screen stays visible until **Space** opens the test table (`beskid test`) or summary (other commands); **Space** again opens the summary chart; **Space** or **q** exits. The same facts are always echoed as a one-line stderr summary after the TUI exits so noninteractive consumers can parse them. `--plain` skips the alternate-screen UI entirely.
 
 ## Implementation anchors
 
@@ -309,7 +309,7 @@ beskid run --project apps/demo/Project.proj --entrypoint DemoHost.Run
 
 JIT-compiles the resolved `app` target and invokes the named entry function.
 
-## Workspace lock before CI build
+## Workspace lock before a reproducible build
 
 ```bash
 beskid lock --project apps/demo/Project.proj
@@ -324,7 +324,7 @@ beskid build --project apps/demo/Project.proj
 beskid build --project apps/demo/Project.proj --plain
 ```
 
-Maps pipeline phases to line-oriented stderr suitable for CI log parsers.
+Maps pipeline phases to line-oriented stderr suitable for noninteractive log parsers.
 ``````
 
 </details>
@@ -340,9 +340,9 @@ Maps pipeline phases to line-oriented stderr suitable for CI log parsers.
 <summary>Migrated source text</summary>
 
 ``````markdown
-## Why does `analyze` pass in the IDE but fail in CI?
+## Why does `analyze` pass in the IDE but fail from the CLI?
 
-The CLI runs the full project graph and lock policy. Ensure CI calls `beskid lock` (or checks in `Project.lock`) and sets `BESKID_CORELIB_ROOT` when not using the bundled corelib layout. Compare against the focused `Project.proj` the extension sends to the LSP.
+The CLI runs the full project graph and lock policy. Run `beskid lock` (or check in `Project.lock`) and set `BESKID_CORELIB_ROOT` when not using the bundled corelib layout. Compare against the focused `Project.proj` the extension sends to the LSP.
 
 ## `build` cannot find corelib / `Std`
 
@@ -478,7 +478,7 @@ Integration coverage lives in `compiler/crates/beskid_tests/src/analysis/pipelin
 
 ## Release checks
 
-Compiler CI builds the `beskid` binary and runs the workspace test crate. Changing command surfaces **must** extend an existing integration test or add a focused CLI test rather than relying on manual smoke runs only.
+Changing command surfaces **must** extend an existing integration test or add a focused CLI test rather than relying on manual smoke runs only.
 
 ## Spec maintenance
 

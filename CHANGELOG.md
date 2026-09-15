@@ -9,6 +9,11 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ## [Unreleased]
 
+### Removed
+
+- Remove CodeQL from Woodpecker, including its workflow, scanner scripts,
+  tests, and release qualification requirement. No replacement scanner is enabled.
+
 ### Changed
 
 - Replace editable product logos with the Ridge family across website, app navigation, favicons, VS Code, and installer artwork; add repeatable brand asset synchronization.
@@ -26,6 +31,27 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   explored concepts, outlined SVG lockups, research-backed brand guidance, and
   consistent PDF/Lottie exports; replace destructive cleanup with named outputs.
 
+- Let the non-interactive Windows worker discover an existing Rust toolchain
+  or provision a minimal one in its agent-owned ProgramData directory.
+- Normalize `jq` text reads in native release builds so Windows CRLF output
+  cannot contaminate component names or diagnostic file paths.
+- Enable Git long-path checkout behavior while initializing CI submodules, so
+  Windows workers can materialize the compiler fixture tree.
+- Let Windows native release builds use the checked-in Rust `rust-lld.exe`
+  linker configuration instead of overriding it with a host-specific Visual
+  Studio discovery path.
+- Stage the compiler corelib alongside Learn's CLI and LSP binaries before
+  verifying the image runtime, so the platform-image job validates the actual
+  installed layout rather than masking a missing-corelib failure.
+- Link production-delivery documentation to the retained Standard root after
+  removal of the staged-delivery observability specification.
+- Use Buildx's Docker-compatible local exporter for the platform-image
+  verification job, avoiding unsupported attestation manifest-list exports on
+  the rootless NixOS worker.
+- Streamline Woodpecker into combined validation, three native build/package
+  definitions, one manual release path, and one isolated platform-image job.
+  Remove remaining GitHub executors and avoid separate marketplace, packaging,
+  signing, and release-controller pipelines.
 - Consume a verified, complete compiler release bundle in every distribution
   target rather than independently downloading CLI and LSP artifacts.
 - Make landing-page examples standalone playground programs and pin Learn to
@@ -40,13 +66,33 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Add a Buildkite validation pipeline that reuses the canonical AppVeyor lane scripts without publication authority.
 - Keep Linux runtime validation within the hosted worker budget by avoiding a duplicate matrix rebuild after canonical host-kit staging.
 - Run the LSP command contract in the editor lane only, avoiding a second full Rust dependency build in Linux runtime validation.
+- Replace the overlapping hosted build providers with one minimal Woodpecker
+  3.18.1 build service: Linux Docker validation and native Linux, Windows, and
+  macOS target builds share one fail-closed platform wrapper.
+- Make Woodpecker clone only the declared compiler build dependencies; inactive
+  submodules no longer prevent native validation before the build wrapper can
+  initialize its required inputs.
+- Remove operational build-provider and deployment policy from the normative
+  OpenSpec standard while retaining provider-neutral product, language, ABI,
+  artifact, and conformance requirements.
 
 ### Added
 
-- AppVeyor: add dedicated Linux validation lanes for the VS Code and Zed
-  extensions, including their editor-authoring, package, language-asset, and
-  LSP command-contract gates; marketplace and registry publication remains in
-  the GitHub-native release workflows.
+- Add Woodpecker OpenSpec validation and three-target release-input checks for
+  exact source, version, platform success, and artifact checksums.
+- Add private release-evidence aggregation and native installer packaging that
+  reuse the canonical release and distribution implementations without publishing.
+- Use role-restricted SFTP for native build outputs and a manual, opt-in
+  publisher that uploads immutable assets before advancing rolling aliases.
+- Assemble compiler bundles in the canonical installed `bin/` and ABI-v5
+  `lib/` layout required by native installer recipes.
+
+- Publish stable compiler release 0.4.744 for Linux amd64, macOS arm64, and
+  Windows amd64, including CLI, LSP, direct-install bundles, platform
+  installers, checksums, and verified immutable and rolling release aliases.
+- Add a separately deployable Woodpecker server/Linux-agent Compose template,
+  native worker runbook, strict workflow contracts, and durable per-target
+  build evidence without automatic publication.
 - VS Code extension: register standalone `.bsol` documents through the same
   grammar, language configuration, and native LSP client used for `.bproj` and
   `.bws`, including incremental completion, hover, diagnostics, and semantic
@@ -115,16 +161,16 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
-- Cross-validate the shipped `aarch64-apple-darwin` compiler and LSP artifacts
-  from AppVeyor's Intel Sonoma worker without misreporting arm64 runtime smoke
-  coverage, requiring an unsupported x86-64 macOS runtime manifest, or
-  provisioning the native LLVM symbol toolchain used only by runtime-kit smoke.
-- Bootstrap rustup idempotently on native AppVeyor workers before configuring
-  the stable minimal toolchain, and make Windows native-command exit status the
-  failure authority so ordinary Git progress on stderr does not abort setup.
-  Suppress duplicate branch builds when the same commit is already covered by
-  a pull-request build, and install ripgrep wherever compiler/editor contracts
-  use it instead of assuming it exists on native workers.
+- Refuse mismatched publication evidence and overwriting different immutable
+  compiler release assets; matching immutable retries are read-only.
+- Correct Woodpecker organization-limited registration and SQLite volume
+  ownership, and document the root-owned secret handling for the native macOS
+  and Windows workers.
+- Admit the linker-generated `dyld_stub_binder` import only for Darwin shared
+  libraries, restoring the macOS arm64 runtime-kit build without weakening
+  provenance checks for static artifacts or other undeclared imports.
+- Make the Windows installer contract explicitly x64 and compatible with the
+  pinned WiX toolset, including corrected XML metadata and package scope.
 - Advance the compiler pin to complete x86-64 Linux fibers through generated
   tail transfers, preserving CET shadow-stack state while keeping scheduler
   completion and the manifest-owned context switch as single authorities.
@@ -281,10 +327,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
-- Move root validation and five platform-image builds from GitHub Actions and
-  Blacksmith to AppVeyor. Trusted `main` builds publish immutable `sha-*` and
-  controlled `production` tags only to `cr.beskid-lang.org`; Watchtower remains
-  the sole production reconciliation authority.
+- Keep platform-image reconciliation separate from repository build workers;
+  Watchtower remains the sole production reconciliation authority.
 - Zed extension: move the complete package into the dedicated `editors/zed`
   crate and use `zed_extension_api` 0.7.0 with `wasm32-wasip2`.
 - Run release-critical compiler and LSP Windows/macOS gates on Blacksmith so a

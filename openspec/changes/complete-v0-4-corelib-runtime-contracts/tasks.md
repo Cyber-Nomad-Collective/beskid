@@ -70,7 +70,7 @@
 - [ ] 5.2 Add per-target start/end/duration/phase reporting, a 120-second
   per-target timeout, a 30-minute whole-matrix timeout, and clean cancellation
   that names the active target.
-- [ ] 5.3 Make the release gate reject filters, smoke mode, missing-target
+- [ ] 5.3 Make the distribution conformance check reject filters, smoke mode, missing-target
   skips, ignored tests, retries, stale reports, and a denominator other than
   the current manifest's 61 targets.
 

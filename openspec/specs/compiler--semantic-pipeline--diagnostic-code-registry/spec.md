@@ -236,7 +236,7 @@ The registry model is intentionally centralized:
 - Rule modules reference kinds, not hard-coded code strings.
 - Delivery adapters (CLI/LSP) preserve code identity while formatting messages.
 
-This avoids drift between compiler internals and platform documentation, and it makes diagnostics easier to consume in editors and CI tooling.
+This avoids drift between compiler internals and platform documentation, and it makes diagnostics easier to consume in editors and machine-readable tooling.
 
 ## Mod, manifest, and mod-host band (**E1801–E1899**)
 

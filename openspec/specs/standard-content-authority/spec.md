@@ -29,7 +29,7 @@ Every canonical capability SHALL contain named normative requirements that use S
 
 #### Scenario: Standard validation runs
 - **GIVEN** canonical specs or migration inputs changed
-- **WHEN** CI validates the standard
+- **WHEN** the standard validator runs
 - **THEN** OpenSpec strict validation, provenance coverage, placeholder detection, link validation, and normative-density checks all pass
 
 ### Requirement: Public standard links remain stable

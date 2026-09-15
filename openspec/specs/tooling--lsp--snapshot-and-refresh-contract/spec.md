@@ -287,7 +287,7 @@ Workspace scans emit `BeskidStatusParams` with `phase: workspace_scan` and throt
 2. `hydrate_disk_after_close` reads file from disk into `workspace_index`.
 3. Reopen uses `didOpen` → fresh open snapshot (disk index entry removed).
 
-## CI parity check
+## Entry-point parity check
 
 Run `beskid analyze --project <same Project.proj>` and compare diagnostic codes to the Problems panel for the same file generation—discrepancies indicate cache or focus mismatch, not intentional divergence.
 ``````

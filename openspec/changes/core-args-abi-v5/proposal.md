@@ -25,7 +25,7 @@ alias, raw import, ambient process-vector, or empty-vector fallback. Public
 implementation changes to the count/get pair. No public standard URL or
 legacy URL changes.
 
-## Rollback and staged deployment
+## Compatibility and reversion
 
 This contract is staged before compiler and runtime implementation. If a
 target adapter cannot meet it, that target remains unsupported for this

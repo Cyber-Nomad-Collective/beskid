@@ -11,7 +11,7 @@ Beskid's normative rules are spread across a 1,042-node custom content tree, Boo
 - Add structured Markdown directives for links among OpenSpec requirements, Book pages, implementation symbols, Tracker bugs, and Nexus graph views.
 - Remove Tracker GitHub synchronization for roadmap tasks and non-bug work; retain GitHub integration only for public bug intake, bug status, and bug references.
 - Extend Beskid Nexus indexing and link resolution so OpenSpec capabilities and requirements participate in code/document graphs and deep links.
-- **BREAKING** Remove legacy and duplicated CI/CD pipelines, then introduce generic reusable GitHub Actions for validation, build, test, supply-chain checks, staged image promotion, deployment, rollback, and OpenTelemetry-compatible trace correlation.
+- **BREAKING** Remove legacy and duplicated automation pipelines, then introduce generic reusable GitHub Actions for validation, build, test, supply-chain checks, staged image promotion, deployment, rollback, and OpenTelemetry-compatible trace correlation.
 
 ## Capabilities
 

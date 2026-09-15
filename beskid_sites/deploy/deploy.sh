@@ -155,8 +155,8 @@ need BESKID_EDGE_NETWORK "shared host edge network name"
   err "BESKID_EDGE_NETWORK must name an existing shared host edge network"
   exit 1
 }
-need REGISTRY_USERNAME "registry account used by AppVeyor and Watchtower"
-need REGISTRY_PASSWORD "registry password used by AppVeyor and Watchtower"
+need REGISTRY_USERNAME "registry account used by the publisher and Watchtower"
+need REGISTRY_PASSWORD "registry password used by the publisher and Watchtower"
 need POSTGRES_PASSWORD "shared Postgres password"
 need SITE_IMAGE_TAG "website image tag (production)"
 need TRACKER_IMAGE_TAG "tracker image tag (production)"

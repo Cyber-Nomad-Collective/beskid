@@ -33,4 +33,4 @@ The current compiler still routes validated programs through HIR and a Rust-link
 
 ## Impact
 
-This affects `beskid_analysis`, `beskid_queries`, `beskid_codegen`, the new ISLE rule crate, JIT/AOT entry points, `beskid_abi`, runtime and bridge crates, LSP document services, corelib runtime sources, runtime-kit tooling, installers, CI, and release manifests. HIR artifacts and Rust runtime provenance become release-blocking retired patterns. The change supports only little-endian 64-bit `x86_64-unknown-linux-gnu`, `aarch64-apple-darwin`, and `x86_64-pc-windows-msvc` runtime kits.
+This affects `beskid_analysis`, `beskid_queries`, `beskid_codegen`, the new ISLE rule crate, JIT/AOT entry points, `beskid_abi`, runtime and bridge crates, LSP document services, corelib runtime sources, runtime-kit tooling, installers, and release manifests. HIR artifacts and Rust runtime provenance become forbidden distribution patterns. The change supports only little-endian 64-bit `x86_64-unknown-linux-gnu`, `aarch64-apple-darwin`, and `x86_64-pc-windows-msvc` runtime kits.

@@ -56,16 +56,3 @@ and websocket endpoints MUST remain unchanged.
   token
 - **WHEN** it reaches a protected registry API after the cutover
 - **THEN** authorization outcomes match the pre-cutover API contract
-
-### Requirement: pckg image promotion verifies React delivery
-
-An immutable pckg image SHALL prove before promotion that its React entrypoint,
-one nested browser route, and one concrete Vite asset are served successfully;
-it SHALL also prove that a server-owned health or API route is not rewritten to
-the React document.
-
-#### Scenario: An image has a broken static handoff
-
-- **GIVEN** an image omits its Vite output or serves it from an unmounted path
-- **WHEN** the image delivery smoke test runs
-- **THEN** the image lane fails before a digest can be promoted

@@ -231,7 +231,7 @@ Built at boot from `NEXUS_SPEC_ROOT` (default: `site/website/src/content/docs/pl
 | NX-MCP-02 | Requests **must** include `Authorization: Bearer <NEXUS_MCP_AUTH_TOKEN>` |
 | NX-MCP-03 | Missing or invalid Bearer **must** return `401` |
 | NX-MCP-04 | MCP tools expose graph query capabilities from the cached index — same data plane as public graph API |
-| NX-MCP-05 | Connect MCP dialog **must** document endpoint and header format; token is operator-supplied via deployment env |
+| NX-MCP-05 | Connect MCP dialog **must** document endpoint and header format; token is supplied through secure runtime configuration |
 
 Example client configuration:
 
@@ -250,7 +250,7 @@ Header: Authorization: Bearer $NEXUS_MCP_AUTH_TOKEN
 | Doc job failed | `docStatus: failed`; graph still served; `codeDoc` absent on affected entities |
 | Non-GitHub `gitUrl` on create | `400` — ownership cannot be verified |
 | GitHub API rate limit | Ownership cache reduces calls; transient failures **must** fail closed (403) |
-| Spec index stale after site deploy | Operator restarts Nexus or triggers spec index rebuild at boot |
+| Spec index stale after standard publication | Operator restarts Nexus or triggers spec index rebuild at boot |
 
 ## Type reference
 

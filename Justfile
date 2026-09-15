@@ -45,9 +45,8 @@ test-corelib-spine:
 gate args='':
     "{{root}}/scripts/local-preflight.sh" {{args}}
 
-# Full-fidelity run: host tier first (fail-fast), then static checks for the
-# AppVeyor and retained GitHub-native publication configuration. Native compiler
-# lanes remain AppVeyor worker jobs and are not emulated locally here.
+# Full-fidelity run: host tier first, then static checks for retained
+# GitHub-native marketplace workflows and reusable build/release contracts.
 gate-full:
     "{{root}}/scripts/local-preflight.sh" --full
 

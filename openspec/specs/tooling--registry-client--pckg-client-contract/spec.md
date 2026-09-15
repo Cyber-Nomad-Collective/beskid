@@ -361,9 +361,9 @@ Exact subcommand names follow `PckgCommand` in `cli.rs` (use `beskid pckg --help
 
 Maps to registry aliases in `Workspace.proj`.
 
-## CI corelib publish
+## Corelib publication
 
-Compiler CI uses `BESKID_PCKG_KEY` to publish the **`corelib`** package identity after build—same client stack as local `beskid pckg` with injected secrets.
+The **`corelib`** package identity uses the same `beskid pckg` client stack as other package publication.
 ``````
 
 </details>
@@ -443,7 +443,7 @@ flowchart TD
 
 ## Version state file
 
-Pack may persist local version hints in `.beskid/pckg` state (`PackVersionState`) for iterative development. Production CI must coordinate the planned exact versions before packing and upload those artifact-bound versions unchanged.
+Pack may persist local version hints in `.beskid/pckg` state (`PackVersionState`) for iterative development. A publisher must choose exact versions before packing and upload those artifact-bound versions unchanged.
 
 ## Error handling
 
@@ -487,7 +487,7 @@ All HTTP failures surface as `PckgError` with status, message, and optional body
 | `README.md` zip entry | Pack tests + server doc browser smoke |
 | `api.json` primary docs model | Publish documentation tests |
 | Template `packageKind` | `detect_pack_profile` + server template validators |
-| Registry-assigned versions | Server API integration (no client-side version override in CI publish) |
+| Registry-assigned versions | Server API integration (no client-side version override during publication) |
 
 Spec edits **must** stay aligned with `PackageManifestMetadata` and workspace provisioning changes in `compiler/crates/beskid_pckg_server/Services/Workspace/`.
 ``````

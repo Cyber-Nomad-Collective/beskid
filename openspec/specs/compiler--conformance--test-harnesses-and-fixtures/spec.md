@@ -58,7 +58,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 > | --- | --- |
 > | Diagnostics parity | For a fixed corpus (≥20 project fixtures), CLI analyze / semantic gate diagnostics **must** equal `prepare_compilation(DiagnosticsOnly)` diagnostics (codes and presence; path labels may differ per D-COMP-BUILD-0012) |
 > | Link completeness | Project-backed run/test/build fixtures **must** pass `validate_artifact` with no undefined callees |
-> | Corelib matrix | Every `corelib_tests` target in `beskid_corelib/tests/corelib_tests` **must** pass under `beskid test` using the workspace-built CLI in CI |
+> | Corelib matrix | Every `corelib_tests` target in `beskid_corelib/tests/corelib_tests` **must** pass under `beskid test` using the workspace-built CLI |
 > 
 > New spine regressions **must** add a fixture in `beskid_tests` before closing related ADRs.
 
@@ -235,7 +235,7 @@ The reference compiler **must** maintain:
 | --- | --- |
 | Diagnostics parity | For a fixed corpus (≥20 project fixtures), CLI analyze / semantic gate diagnostics **must** equal `prepare_compilation(DiagnosticsOnly)` diagnostics (codes and presence; path labels may differ per D-COMP-BUILD-0012) |
 | Link completeness | Project-backed run/test/build fixtures **must** pass `validate_artifact` with no undefined callees |
-| Corelib matrix | Every `corelib_tests` target in `beskid_corelib/tests/corelib_tests` **must** pass under `beskid test` using the workspace-built CLI in CI |
+| Corelib matrix | Every `corelib_tests` target in `beskid_corelib/tests/corelib_tests` **must** pass under `beskid test` using the workspace-built CLI |
 
 New spine regressions **must** add a fixture in `beskid_tests` before closing related ADRs.
 
@@ -247,7 +247,6 @@ New spine regressions **must** add a fixture in `beskid_tests` before closing re
 
 - `compiler/crates/beskid_tests/src/spine/`
 - `compiler/crates/beskid_codegen/tests/array_tests_linking.rs`
-- `compiler/corelib/ci/run_corelib_tests.py`
 - `compiler/crates/beskid_tests/src/runtime/jit.rs`
 ``````
 
@@ -375,7 +374,7 @@ After applying a fix, add or update a focused fixture in the nearest test crate 
 <summary>Migrated source text</summary>
 
 ``````markdown
-## Why did a change pass locally but fail in CI?
+## Why did a focused check pass while the full conformance suite fails?
 
 Most often, one crate boundary changed but the corresponding fixture or downstream consumer was not updated. Re-run the nearest conformance suite and inspect cross-crate handoff points.
 

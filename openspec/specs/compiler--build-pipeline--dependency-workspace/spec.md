@@ -231,7 +231,7 @@ The model separates planning from materialization:
 
 ``````markdown
 - **Fresh install:** no lockfile, normal mode creates `Project.lock v1`.
-- **CI locked mode:** `--locked` fails if dependency versions differ from lockfile.
+- **`--locked` mode:** `--locked` fails if dependency versions differ from lockfile.
 - **Frozen release mode:** `--frozen` compiles only when current lockfile already matches graph.
 - **Registry outage:** optional dependency fetch failure is surfaced according to unresolved policy.
 ``````
@@ -252,7 +252,7 @@ The model separates planning from materialization:
 ## Why did lock command update files unexpectedly?
 Run with `--frozen` to prevent lockfile writes; normal mode allows synchronization.
 
-## Why does locked mode fail in CI but not locally?
+## Why does locked mode differ between environments?
 Local dependency graph or manifest may differ from committed lockfile.
 
 ## Where are dependency sources materialized?

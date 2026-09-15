@@ -78,7 +78,7 @@ Policy bodies live in `format/policy.rs` so spacing rules stay centralized.
 2. **`Emit` impl** — add `fn emit` in the most natural module (`expressions_emit.rs` vs `statements_emit.rs` vs `items/…`).
 3. **Delegate** — prefer `child.emit(w, cx)?` over duplicating indent logic.
 4. **Policy** — if the node introduces new vertical spacing needs, extend `policy.rs` and thread through `EmitCtx` rather than hard-coding double newlines at call sites.
-5. **Tests** — add `*.input.bd` / `*.expected.bd` under `crates/beskid_tests_surface/fixtures/format/`. The harness scans subdirectories. Run `cargo test -p beskid_tests_surface format` from `compiler/`. GitHub Actions runs the repository quality workflow.
+5. **Tests** — add `*.input.bd` / `*.expected.bd` under `crates/beskid_tests_surface/fixtures/format/`. The harness scans subdirectories. Run `cargo test -p beskid_tests_surface format` from `compiler/`. Woodpecker runs the same repository command.
 
 ## Idempotence and grouped expressions
 

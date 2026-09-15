@@ -120,7 +120,7 @@ existing phases. The `--backend` CLI flag defaults to `clif`; glue
 backends error immediately with `NotImplementedFor0_4`. No public
 standard URL or legacy URL changes.
 
-## Rollback and staged deployment
+## Compatibility and reversion
 
 This contract is staged before language-specific generation. 0.4
 ships the contracts, typed models, backend seam, toolchain probe

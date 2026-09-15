@@ -1,0 +1,50 @@
+labels:
+  platform: linux/amd64
+  backend: docker
+  role: beskid-platform
+
+clone:
+  git:
+    image: woodpeckerci/plugin-git:2.10.1
+    settings:
+      recursive: false
+
+steps:
+  - name: platform-images
+    image: docker:27.5.1-cli
+    environment:
+      BESKID_PLATFORM_DOCKER_TRUSTED: "1"
+    commands:
+      - apk add --no-cache bash git jq
+      - bash scripts/ci/woodpecker-platform-images.sh
+    when:
+      - event: push
+        branch: main
+      - event: manual
+        evaluate: 'BESKID_TASK == "platform"'
+
+  - name: platform-publish
+    image: docker:27.5.1-cli
+    environment:
+      BESKID_PLATFORM_DOCKER_TRUSTED: "1"
+      BESKID_PLATFORM_PUBLISH: "1"
+      REGISTRY_USERNAME:
+        from_secret: registry_username
+      REGISTRY_PASSWORD:
+        from_secret: registry_password
+    commands:
+      - apk add --no-cache bash git jq
+      - bash scripts/ci/woodpecker-platform-images.sh
+    when:
+      - event: manual
+        branch: main
+        evaluate: 'BESKID_TASK == "platform-publish"'
+
+# Registry credentials exist only in the protected explicit publisher step.
+
+when:
+  - event: push
+    branch: main
+  - event: manual
+    branch: [main, codex/woodpecker-migration]
+    evaluate: 'BESKID_TASK == "platform" || BESKID_TASK == "platform-publish"'

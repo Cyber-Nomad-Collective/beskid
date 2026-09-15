@@ -1,0 +1,59 @@
+labels:
+  platform: windows/amd64
+  backend: local
+  role: beskid-windows
+
+clone:
+  git:
+    image: plugin-git
+    settings:
+      recursive: false
+
+steps:
+  - name: build-windows
+    image: bash
+    commands:
+      - |
+        if [ "$${CI_PIPELINE_EVENT}" = tag ]; then
+          release_version="$${CI_COMMIT_TAG#v}"
+        else
+          release_version="$${BESKID_RELEASE_VERSION:?set BESKID_RELEASE_VERSION for a manual build}"
+        fi
+        # The agent is a Windows SYSTEM task. Reuse an existing Rust toolchain
+        # when present; otherwise provision a minimal MSVC toolchain in an
+        # agent-owned ProgramData location for future non-interactive builds.
+        for cargo_bin in "C:/Users/Administrator/.cargo/bin" "C:/Users/ContainerAdministrator/.cargo/bin"; do
+          if [ -x "$${cargo_bin}/cargo.exe" ]; then
+            export PATH="$${cargo_bin}:$${PATH}"
+            break
+          fi
+        done
+        if ! command -v cargo >/dev/null; then
+          export CARGO_HOME="C:/ProgramData/Woodpecker/rust/cargo"
+          export RUSTUP_HOME="C:/ProgramData/Woodpecker/rust/rustup"
+          export PATH="$${CARGO_HOME}/bin:$${PATH}"
+          cargo_exe="$${CARGO_HOME}/bin/cargo.exe"
+          if ! [ -f "$${cargo_exe}" ]; then
+            mkdir -p "$${CARGO_HOME}" "$${RUSTUP_HOME}"
+            curl.exe --fail --location --retry 3 --output "$${CARGO_HOME}/rustup-init.exe" https://win.rustup.rs/x86_64
+            "$${CARGO_HOME}/rustup-init.exe" -y --profile minimal --no-modify-path --default-toolchain stable-x86_64-pc-windows-msvc
+          fi
+          [ -f "$${cargo_exe}" ] || { echo "Rust cargo executable was not installed" >&2; exit 1; }
+          export PATH="$$(cygpath -u "$$(dirname "$${cargo_exe}")"):$${PATH}"
+        fi
+        command -v cargo >/dev/null || { echo "Rust cargo toolchain provisioning failed on the Windows agent" >&2; exit 1; }
+        output="C:/woodpecker-output/beskid/$${CI_PIPELINE_NUMBER}-$${CI_COMMIT_SHA}/windows"
+        bash scripts/ci/init-submodules.sh beskid_distrib
+        bash scripts/ci/woodpecker-build-platform.sh windows "$${release_version}" "$${output}"
+        package_output="$${output}-package"
+        node scripts/ci/woodpecker-package-platform.mjs windows "$$(dirname "$${output}")" "$${package_output}"
+        node -e 'const fs=require("fs"),p=process.argv[1],o=process.argv[2],r=JSON.parse(fs.readFileSync(p+"/package-result.json")); for(const a of r.artifacts) fs.copyFileSync(p+"/"+a.name,o+"/"+a.name); fs.copyFileSync(p+"/package-result.json",o+"/package-result.json")' "$${package_output}" "$${output}"
+        export BESKID_HANDOFF_SSH_KEY="C:/ProgramData/Woodpecker/handoff/windows.sftp"
+        export BESKID_HANDOFF_KNOWN_HOSTS="C:/ProgramData/Woodpecker/handoff/known_hosts"
+        bash scripts/ci/woodpecker-upload-handoff.sh windows "$${output}" "$${CI_COMMIT_SHA}" "$$(git rev-parse HEAD:compiler)" "$${release_version}" "$${CI_PIPELINE_NUMBER}"
+
+when:
+  - event: tag
+    ref: refs/tags/v*
+  - event: manual
+    evaluate: 'BESKID_TASK == "build"'

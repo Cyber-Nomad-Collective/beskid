@@ -25,5 +25,5 @@
 ## 5. Verify networking evidence
 
 - [ ] 5.1 Run focused runtime handle/reactor/race/leak tests, corelib DNS/TCP/UDP tests, and JIT/AOT/native loopback suites on every locally available target.
-- [ ] 5.2 Run required Linux epoll, macOS kqueue, and Windows IOCP CI cells; record unavailable cells and their exact environment limitation on CYB-61 rather than weakening the matrix.
+- [ ] 5.2 Run required Linux epoll, macOS kqueue, and Windows IOCP target conformance tests; record unavailable targets and their exact environment limitation on CYB-61 rather than weakening the matrix.
 - [ ] 5.3 Run `openspec validate beskid-v0-5-networking --strict --no-interactive`, then `bun run openspec:validate`. Do not regenerate the catalog in this change; the HTTP release change owns that authorized step.

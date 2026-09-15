@@ -17,7 +17,7 @@
 #   binary          beskid_cli | beskid_lsp | ignored for beskid_bundle
 #   target          x86_64-unknown-linux-gnu | aarch64-apple-darwin | x86_64-apple-darwin | x86_64-pc-windows-msvc
 #   asset-name      output file name (e.g. beskid-linux-amd64)
-#   release-version resolved semver (from compute-cli-version.sh)
+#   release-version resolved semantic version
 set -euo pipefail
 
 PACKAGE="${1:?package (beskid_cli | beskid_lsp | beskid_bundle)}"
@@ -102,13 +102,27 @@ if [[ "$PACKAGE" == "beskid_bundle" ]]; then
 
   release_stage="$(mktemp -d)"
   bundle_dir="${release_stage}/beskid-${RELEASE_VERSION}-${TARGET}"
-  mkdir -p "$bundle_dir"
-  for bundle_binary in beskid_cli beskid_lsp beskid-up; do
-      built_binary="target/${TARGET}/release/${bundle_binary}${binary_extension}"
+  mkdir -p "${bundle_dir}/bin"
+  for binary_mapping in beskid_cli:beskid beskid_lsp:beskid_lsp beskid-up:beskid-up; do
+    built_name="${binary_mapping%%:*}"
+    installed_name="${binary_mapping#*:}"
+    built_binary="target/${TARGET}/release/${built_name}${binary_extension}"
     [[ -f "$built_binary" ]] || { echo "Missing built bundle artifact: $built_binary" >&2; exit 1; }
-    cp -f "$built_binary" "$bundle_dir/"
+    cp -f "$built_binary" "${bundle_dir}/bin/${installed_name}${binary_extension}"
   done
-  cp -a "${runtime_prefix}/lib" "${bundle_dir}/native-runtime-kit"
+  chmod 0755 "${bundle_dir}/bin/beskid${binary_extension}" \
+    "${bundle_dir}/bin/beskid_lsp${binary_extension}" \
+    "${bundle_dir}/bin/beskid-up${binary_extension}"
+  [[ -f "${runtime_prefix}/lib/beskid-runtime/abi-5/${TARGET}/release/abi.json" ]] || {
+    echo "Native runtime kit omitted ${TARGET}/release/abi.json" >&2
+    exit 1
+  }
+  [[ -f corelib/beskid_corelib/corelib.bproj ]] || { echo 'Compiler corelib is incomplete' >&2; exit 1; }
+  [[ -d corelib/packages ]] || { echo 'Compiler bundled packages are missing' >&2; exit 1; }
+  cp -a "${runtime_prefix}/lib" "${bundle_dir}/lib"
+  cp -a corelib/beskid_corelib "${bundle_dir}/beskid_corelib"
+  cp -a corelib/packages "${bundle_dir}/packages"
+  printf '%s\n' "${RELEASE_VERSION}" >"${bundle_dir}/release-version.txt"
   tar -C "${release_stage}" -czf "${ROOT}/${ASSET_NAME}" "$(basename "$bundle_dir")"
   echo "built ${ASSET_NAME} (Beskid ${RELEASE_VERSION} bundle for ${TARGET})"
   exit 0
