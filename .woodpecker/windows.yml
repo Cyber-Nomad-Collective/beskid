@@ -42,6 +42,20 @@ steps:
           export PATH="$$(cygpath -u "$$(dirname "$${cargo_exe}")"):$${PATH}"
         fi
         command -v cargo >/dev/null || { echo "Rust cargo toolchain provisioning failed on the Windows agent" >&2; exit 1; }
+        vsdevcmd='C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/Tools/VsDevCmd.bat'
+        [ -f "$${vsdevcmd}" ] || { echo "Visual Studio Build Tools environment script is missing" >&2; exit 1; }
+        vs_env="C:/ProgramData/Woodpecker/vs-env-$${CI_PIPELINE_NUMBER}.cmd"
+        printf '@call "%s" -no_logo -arch=x64 -host_arch=x64\r\n@set\r\n' "$$(cygpath -w "$${vsdevcmd}")" >"$${vs_env}"
+        while IFS='=' read -r name value; do
+          case "$${name}" in
+            PATH|Path) export PATH="$$(cygpath -p -u "$${value}")" ;;
+            INCLUDE|LIB|LIBPATH|VCINSTALLDIR|VCToolsInstallDir|WindowsSdkDir|WindowsSDKVersion)
+              export "$${name}=$${value}"
+              ;;
+          esac
+        done < <(cmd.exe //d //c "$$(cygpath -w "$${vs_env}")" | tr -d '\r')
+        rm -f "$${vs_env}"
+        command -v link.exe >/dev/null || { echo "Visual Studio linker is unavailable after environment setup" >&2; exit 1; }
         output="C:/woodpecker-output/beskid/$${CI_PIPELINE_NUMBER}-$${CI_COMMIT_SHA}/windows"
         bash scripts/ci/init-submodules.sh beskid_distrib
         bash scripts/ci/woodpecker-build-platform.sh windows "$${release_version}" "$${output}"

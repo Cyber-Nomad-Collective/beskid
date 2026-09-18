@@ -13,6 +13,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 - Regenerate the OpenSpec document catalog after the glossary changed so the
   Woodpecker standard-validation gate can build the release revision.
+- Initialize the Visual Studio Build Tools environment for the Windows SYSTEM
+  worker before staging the ABI-v5 native runtime kit.
 
 ### Removed
 
