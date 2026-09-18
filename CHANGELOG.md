@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Treat the qualified release state as the global version authority by recording
+  the verified DEB, MSI, EXE, DMG, and Homebrew formula alongside native
+  artifacts, so the public download API exposes one complete stable release.
 - Validate fetched Woodpecker release handoffs from their identity marker and
   complete checksum inventory without relying on local mtimes rewritten by
   recursive SFTP downloads.

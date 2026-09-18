@@ -47,7 +47,14 @@ write_role() {
     macos) installers=("beskid-${version}-macos-arm64.dmg" beskid.rb) ;;
     windows) installers=("beskid-${version}-windows-amd64.msi" "beskid-${version}-windows-amd64.exe") ;;
   esac
-  for name in "${installers[@]}"; do printf '%s-%s\n' "$role" "$name" >"$installer_dir/$name"; done
+  for name in "${installers[@]}"; do
+    if [[ "$name" == beskid.rb ]]; then
+      printf 'class Beskid\n  url "https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/download/v%s/beskid-%s-%s.tar.gz"\n  version "%s"\nend\n' \
+        "$version" "$version" "$target" "$version" >"$installer_dir/$name"
+    else
+      printf '%s-%s\n' "$role" "$name" >"$installer_dir/$name"
+    fi
+  done
   local artifacts='[]' name
   for name in "${installers[@]}"; do
     artifacts="$(jq --arg name "$name" --arg digest "$(sha "$installer_dir/$name")" '. + [{name:$name,sha256:$digest}]' <<<"$artifacts")"
@@ -104,6 +111,9 @@ case "$1 $2" in
     while [[ $# -gt 0 ]]; do case "$1" in -f) [[ "$2" == sha=* ]] && printf '%s\n' "${2#sha=}" >"$repo/$tag/.target"; shift 2;; -F) shift 2;; *) shift;; esac; done
     printf '{}\n'
     ;;
+  'api repos/Cyber-Nomad-Collective/beskid_homebrew/contents/Formula/beskid.rb')
+    if [[ "$*" == *'--method PUT'* ]]; then printf '{}\n'; else exit 1; fi
+    ;;
   'api repos/'*)
     tag="${2##*/}"; printf '{"object":{"type":"commit","sha":"%s"}}\n' "$(cat "$repo/$tag/.target")"
     ;;
@@ -119,7 +129,11 @@ output="$tmp/rootfs/woodpecker-output/releases/70-${source_sha}/qualified"
 for name in "beskid-${version}-amd64.deb" "beskid-${version}-macos-arm64.dmg" \
   "beskid-${version}-windows-amd64.msi" "beskid-${version}-windows-amd64.exe"; do
   test -f "$output/assets/$name" || fail "prepared release omitted $name"
+  jq -e --arg name "$name" '.available_artifacts | index($name) != null' \
+    "$output/release-state.json" >/dev/null || fail "release state omitted installer $name"
 done
+test "$(jq -r '.distribution.homebrew_formula.name' "$output/release-state.json")" = beskid.rb || \
+  fail 'release state omitted the Homebrew formula'
 test ! -s "$tmp/gh.log" || fail 'prepare mode reached GitHub'
 
 # A handoff checksum failure is rejected before a transaction is created.
@@ -174,6 +188,7 @@ rolling="$(grep -n '^release create cli-stable' "$tmp/gh.log" | cut -d: -f1)"
    "$bundle_immutable" -lt "$installer_immutable" && "$installer_immutable" -lt "$rolling" ]] || \
   fail 'publication order did not preserve immutable-all before rolling'
 grep -Fq "release upload cli-stable" "$tmp/gh.log" || fail 'rolling installers were not uploaded'
+grep -Fq 'beskid_homebrew/contents/Formula/beskid.rb' "$tmp/gh.log" || fail 'Homebrew formula was not published'
 
 # An identical retry compares immutable bytes and performs no immutable writes.
 : >"$tmp/gh.log"

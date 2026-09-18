@@ -90,6 +90,8 @@ done
 qualified="$release/qualified"
 node "$scripts/woodpecker-aggregate-release.mjs" "$release/native" "$qualified" \
   "$version" "$source_sha" "$compiler_sha" >/dev/null
+state="$qualified/release-state.json"
+assets="$qualified/assets"
 
 installers=()
 for role in "${roles[@]}"; do
@@ -109,17 +111,49 @@ for(const artifact of result.artifacts){const path=join(dir,artifact.name),st=ls
 NODE
   while IFS= read -r name; do installers+=("$name"); done <"$package_list"
 done
+
+# The release state is the single public version authority. Native aggregation
+# creates it first; enrich it only with installers whose package-result record
+# has already been checksum-validated above.
+node - "$state" "$version" "$source_sha" "$compiler_sha" "$distrib_sha" \
+  "$release/input/linux" "$release/input/macos" "$release/input/windows" <<'NODE'
+const {createHash}=require("node:crypto"),{readFileSync,renameSync,writeFileSync}=require("node:fs"),{join}=require("node:path");
+const [statePath,version,source,compiler,distrib,...dirs]=process.argv.slice(2);
+const fail=m=>{throw new Error(m)}, digest=p=>createHash("sha256").update(readFileSync(p)).digest("hex");
+const state=JSON.parse(readFileSync(statePath,"utf8"));
+if(state.version!==version||state.provenance?.superrepo_commit!==source||state.provenance?.compiler_commit!==compiler)fail("qualified release state identity mismatch");
+const expected={linux:[`beskid-${version}-amd64.deb`],macos:[`beskid-${version}-macos-arm64.dmg`,`beskid.rb`],windows:[`beskid-${version}-windows-amd64.msi`,`beskid-${version}-windows-amd64.exe`]};
+const packages=[], formulas=[];
+for(const dir of dirs){
+  const result=JSON.parse(readFileSync(join(dir,"package-result.json"),"utf8"));
+  if(!expected[result.platform]||result.version!==version||result.distrib_commit!==distrib||result.source?.superrepo_commit!==source||result.source?.compiler_commit!==compiler||result.status!=="success")fail(`${result.platform||"unknown"} package-result identity mismatch`);
+  const names=(result.artifacts||[]).map(a=>a?.name);
+  if(names.length!==expected[result.platform].length||expected[result.platform].some(name=>!names.includes(name)))fail(`${result.platform} package-result inventory mismatch`);
+  for(const artifact of result.artifacts){
+    if(!artifact||typeof artifact.name!=="string"||typeof artifact.sha256!=="string"||artifact.sha256!==digest(join(dir,artifact.name)))fail(`${result.platform} package-result checksum mismatch: ${artifact?.name}`);
+    const entry={platform:result.platform,name:artifact.name,sha256:artifact.sha256};
+    if(artifact.name==="beskid.rb")formulas.push(entry);else packages.push(entry);
+  }
+}
+if(formulas.length!==1)fail("expected exactly one Homebrew formula");
+state.available_artifacts=[...new Set([...state.available_artifacts,...packages.map(item=>item.name)])].sort();
+state.distribution={schema_version:1,commit:distrib,packages:packages.sort((a,b)=>a.name.localeCompare(b.name)),homebrew_formula:formulas[0]};
+const temporary=`${statePath}.tmp`;
+writeFileSync(temporary,`${JSON.stringify(state,null,2)}\n`,{flag:"wx"});
+renameSync(temporary,statePath);
+NODE
 for name in "${installers[@]}"; do
   role=linux; [[ "$name" == *macos* ]] && role=macos; [[ "$name" == *windows* ]] && role=windows
   cp "$release/input/$role/$name" "$qualified/assets/$name"
 done
+cp "$release/input/macos/beskid.rb" "$assets/beskid.rb"
+release_assets=("${installers[@]}" beskid.rb)
 
 if [[ "${BESKID_PUBLISH_RELEASE:-0}" == 0 ]]; then
   echo "Woodpecker release prepared: $qualified"
   exit 0
 fi
 
-state="$qualified/release-state.json"; assets="$qualified/assets"
 for stream in cli lsp bundle; do
   bash "$scripts/publish-release-stream.sh" "$stream" "$version" "$compiler_sha" "$assets" immutable stable "$state"
 done
@@ -128,7 +162,7 @@ done
 remote="$(gh release view "cli-v${version}" --repo Cyber-Nomad-Collective/beskid_compiler --json assets --jq '.assets[].name')"
 check_dir="$(mktemp -d)"; trap 'rm -rf "$check_dir"' EXIT
 missing=()
-for name in "${installers[@]}"; do
+for name in "${release_assets[@]}"; do
   if grep -Fxq -- "$name" <<<"$remote"; then
     gh release download "cli-v${version}" --repo Cyber-Nomad-Collective/beskid_compiler --pattern "$name" --dir "$check_dir"
     cmp -s "$assets/$name" "$check_dir/$name" || { echo "immutable installer differs: $name" >&2; exit 1; }
@@ -137,9 +171,10 @@ for name in "${installers[@]}"; do
   fi
 done
 [[ "${#missing[@]}" == 0 ]] || gh release upload "cli-v${version}" --repo Cyber-Nomad-Collective/beskid_compiler "${missing[@]}"
+bash "$scripts/publish-homebrew-formula.sh" "$assets/beskid.rb" "$version"
 
 for stream in cli lsp bundle; do
   bash "$scripts/publish-release-stream.sh" "$stream" "$version" "$compiler_sha" "$assets" rolling stable "$state"
 done
-gh release upload cli-stable --repo Cyber-Nomad-Collective/beskid_compiler "${installers[@]/#/$assets/}" --clobber
+gh release upload cli-stable --repo Cyber-Nomad-Collective/beskid_compiler "${release_assets[@]/#/$assets/}" --clobber
 echo "Woodpecker release published: $version ($source_sha)"
