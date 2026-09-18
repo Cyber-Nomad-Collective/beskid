@@ -13,6 +13,10 @@ function run(command, args, cwd, label) {
   if (result.error || result.status !== 0) throw new Error(`${label}: ${result.error?.message || result.stderr || result.stdout}`);
   return result.stdout;
 }
+function bashPath(path) {
+  if (process.platform !== "win32") return path;
+  return run("cygpath", ["-u", path], undefined, "Windows Bash path conversion failed").trim();
+}
 function digest(path) { return createHash("sha256").update(readFileSync(path)).digest("hex"); }
 try {
   if (process.argv.length !== 5) throw new Error("usage: woodpecker-package-platform.mjs <linux|macos|windows> <evidence-dir> <new-output-dir>");
@@ -33,7 +37,7 @@ try {
   copyFileSync(join(input, platform, archive.name), snapshot);
   if (digest(snapshot) !== archive.sha256) throw new Error("bundle changed while snapshotting");
   const bundle = join(output, "bundle");
-  run("bash", [join(distrib, "scripts/extract-release-bundle.sh"), snapshot, evidence.version, target.target, bundle], output, "bundle extraction failed");
+  run("bash", [bashPath(join(distrib, "scripts/extract-release-bundle.sh")), bashPath(snapshot), evidence.version, target.target, bashPath(bundle)], output, "bundle extraction failed");
   const version = evidence.version;
   let files;
   if (platform === "linux") {
@@ -50,8 +54,8 @@ try {
     const assets = join(output, "installer-assets");
     mkdirSync(assets); mkdirSync(join(assets, "icons"));
     run("magick", [join(distrib, "assets/icons/beskid-512.png"), "-resize", "256x256", "-define", "icon:auto-resize=256,128,96,64,48,32,16", join(assets, "icons/beskid.ico")], output, "installer icon failed");
-    run("bash", [join(distrib, "windows/build-msi.sh"), version, bundle, assets], output, "MSI packaging failed");
-    run("bash", [join(distrib, "windows/build-exe.sh"), version, join(output, `beskid-${version}-windows-amd64.msi`), assets], output, "EXE packaging failed");
+    run("bash", [bashPath(join(distrib, "windows/build-msi.sh")), version, bashPath(bundle), bashPath(assets)], output, "MSI packaging failed");
+    run("bash", [bashPath(join(distrib, "windows/build-exe.sh")), version, bashPath(join(output, `beskid-${version}-windows-amd64.msi`)), bashPath(assets)], output, "EXE packaging failed");
     files = [`beskid-${version}-windows-amd64.msi`, `beskid-${version}-windows-amd64.exe`];
   }
   const artifacts = files.map(name => {

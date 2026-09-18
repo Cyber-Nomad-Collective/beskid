@@ -18,6 +18,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Add the Windows agent's LLVM binaries to Git Bash's build environment with a
   POSIX path and fail early unless the compiler, assembler, linker, and
   librarian are all available.
+- Convert Windows filesystem paths to Git Bash paths before extracting release
+  bundles and building MSI/EXE packages, preventing `tar` from treating the
+  drive letter as a remote host.
 - Advance the compiler release input to accept the standard Mach-O shared-image
   stub binder while keeping static runtime archives fail closed.
 
