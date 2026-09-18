@@ -26,8 +26,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   Git Bash boundary and fetching the official GitHub release asset with
   connection-error retries so installer icon generation is reproducible; keep
   setup as simple commands so Woodpecker's Windows wrapper cannot split shell
-  compound blocks while rendering Git Bash, and isolate the native installer's
-  standard input so it cannot consume the remainder of the generated script.
+  compound blocks while rendering Git Bash, and isolate native installer
+  execution in its own step so it cannot consume or terminate the build script.
 - Advance the compiler release input to accept the standard Mach-O shared-image
   stub binder while keeping static runtime archives fail closed.
 
