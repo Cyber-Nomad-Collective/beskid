@@ -21,6 +21,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Convert Windows filesystem paths to Git Bash paths before extracting release
   bundles and building MSI/EXE packages, preventing `tar` from treating the
   drive letter as a remote host.
+- Stage both the PNG bootstrapper logo and generated ICO in the isolated
+  Windows installer-assets directory before invoking WiX packaging.
 - Provision a checksum-pinned ImageMagick build in the Windows SYSTEM worker's
   ProgramData directory, preserving its silent installer switches across the
   Git Bash boundary and fetching the official GitHub release asset with

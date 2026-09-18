@@ -53,7 +53,9 @@ try {
   } else {
     const assets = join(output, "installer-assets");
     mkdirSync(assets); mkdirSync(join(assets, "icons"));
-    run("magick", [join(distrib, "assets/icons/beskid-512.png"), "-resize", "256x256", "-define", "icon:auto-resize=256,128,96,64,48,32,16", join(assets, "icons/beskid.ico")], output, "installer icon failed");
+    const bootstrapperLogo = join(distrib, "assets/icons/beskid-512.png");
+    copyFileSync(bootstrapperLogo, join(assets, "icons/beskid-512.png"));
+    run("magick", [bootstrapperLogo, "-resize", "256x256", "-define", "icon:auto-resize=256,128,96,64,48,32,16", join(assets, "icons/beskid.ico")], output, "installer icon failed");
     run("bash", [bashPath(join(distrib, "windows/build-msi.sh")), version, bashPath(bundle), bashPath(assets)], output, "MSI packaging failed");
     run("bash", [bashPath(join(distrib, "windows/build-exe.sh")), version, bashPath(join(output, `beskid-${version}-windows-amd64.msi`)), bashPath(assets)], output, "EXE packaging failed");
     files = [`beskid-${version}-windows-amd64.msi`, `beskid-${version}-windows-amd64.exe`];
