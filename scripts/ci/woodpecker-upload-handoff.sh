@@ -22,4 +22,8 @@ remote="/incoming/${run}-${source}/${role}"
 printf 'mkdir "%s"\nmkdir "%s"\n' "/incoming/${run}-${source}" "$remote" >"$batch"
 while IFS= read -r name; do printf 'put "%s" "%s/%s"\n' "$capsule/$name" "$remote" "$name"; done <"$files" >>"$batch"
 printf 'put "%s" "%s/UPLOAD_SHA256SUMS"\nput "%s" "%s/UPLOAD_COMPLETE"\n' "$capsule/UPLOAD_SHA256SUMS" "$remote" "$capsule/UPLOAD_COMPLETE" "$remote" >>"$batch"
-sftp -b "$batch" -i "$ssh_key" -oBatchMode=yes -oStrictHostKeyChecking=yes -oUserKnownHostsFile="$known_hosts" "$user@$host"
+# Quote the path inside the OpenSSH option value as well as at the shell
+# boundary. OpenSSH reparses -o values, so an unquoted macOS Application
+# Support path is otherwise split even though the shell passed one argument.
+sftp -b "$batch" -i "$ssh_key" -oBatchMode=yes -oStrictHostKeyChecking=yes \
+  -o "UserKnownHostsFile=\"$known_hosts\"" "$user@$host"

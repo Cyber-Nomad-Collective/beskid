@@ -55,7 +55,15 @@ steps:
           esac
         done < <(cmd.exe //d //c "$$(cygpath -w "$${vs_env}")" | tr -d '\r')
         rm -f "$${vs_env}"
-        command -v link.exe >/dev/null || { echo "Visual Studio linker is unavailable after environment setup" >&2; exit 1; }
+        llvm_bin='C:/Program Files/LLVM/bin'
+        [ -d "$${llvm_bin}" ] || { echo "LLVM toolchain is missing from the Windows agent" >&2; exit 1; }
+        export PATH="$${llvm_bin}:$${PATH}"
+        for native_tool in clang.exe llvm-ml.exe link.exe lib.exe; do
+          command -v "$${native_tool}" >/dev/null || {
+            echo "$${native_tool} is unavailable after native toolchain setup" >&2
+            exit 1
+          }
+        done
         output="C:/woodpecker-output/beskid/$${CI_PIPELINE_NUMBER}-$${CI_COMMIT_SHA}/windows"
         bash scripts/ci/init-submodules.sh beskid_distrib
         bash scripts/ci/woodpecker-build-platform.sh windows "$${release_version}" "$${output}"
