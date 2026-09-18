@@ -70,8 +70,9 @@ steps:
           imagemagick_installer='C:/ProgramData/Woodpecker/ImageMagick-7.1.2-31-Q8-x64-static.exe'
           imagemagick_sha256='936ea5b58f7071ac7b107a5a3d74d062484dd83b566874c765048641f300fc82'
           mkdir -p "$$(dirname "$${imagemagick_installer}")"
-          curl.exe --fail --location --retry 3 --output "$${imagemagick_installer}" \
-            https://download.imagemagick.org/archive/binaries/ImageMagick-7.1.2-31-Q8-x64-static.exe
+          curl.exe --fail --location --retry 3 --retry-all-errors --retry-delay 2 \
+            --output "$${imagemagick_installer}" \
+            https://github.com/ImageMagick/ImageMagick/releases/download/7.1.2-31/ImageMagick-7.1.2-31-Q8-x64-static.exe
           printf '%s *%s\n' "$${imagemagick_sha256}" "$${imagemagick_installer}" | sha256sum --check --strict
           MSYS2_ARG_CONV_EXCL='*' "$${imagemagick_installer}" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP- \
             "/DIR=$$(cygpath -w "$${imagemagick_dir}")"
