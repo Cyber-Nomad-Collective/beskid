@@ -27,7 +27,10 @@ test("falls back from missing stable metadata to the published unstable release 
 							"beskid-0.4.607-unstable-windows-amd64.msi",
 							"beskid-0.4.607-unstable-windows-amd64.exe",
 							"beskid-0.4.607-unstable-macos-arm64.dmg",
-					],
+						],
+						distribution: {
+							homebrew_formula: { name: "beskid.rb" },
+						},
 				}),
 				{ status: 200 },
 			);
@@ -61,6 +64,7 @@ test("falls back from missing stable metadata to the published unstable release 
 			{ platform: "windows-amd64", label: "Windows (.msi)" },
 			{ platform: "windows-amd64", label: "Windows (.exe bootstrapper)" },
 			{ platform: "darwin-arm64", label: "macOS (.dmg)" },
+			{ platform: "darwin-arm64", label: "Homebrew" },
 		],
 	);
 	assert.ok(requested.some((url) => url.includes("cli-stable/release-state.json")));

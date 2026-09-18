@@ -150,7 +150,7 @@ if [[ "$PHASE" == "immutable" || "$PHASE" == "both" ]]; then
       allowed_assets+=("beskid-${RELEASE_VERSION}-windows-amd64.msi"
         "beskid-${RELEASE_VERSION}-windows-amd64.exe"
         "beskid-${RELEASE_VERSION}-macos-arm64.dmg"
-        "beskid-${RELEASE_VERSION}-amd64.deb" distrib-version.txt)
+        "beskid-${RELEASE_VERSION}-amd64.deb" beskid.rb distrib-version.txt)
     fi
     remote_assets="$(gh release view "$immutable_tag" --repo "$REPO" --json assets --jq '.assets[].name')"
     while IFS= read -r remote_asset; do

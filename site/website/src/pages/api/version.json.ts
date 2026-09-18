@@ -25,6 +25,9 @@ interface ReleaseState {
 	channel: "stable" | "unstable";
 	version: string;
 	available_artifacts: string[];
+	distribution?: {
+		homebrew_formula?: { name: string };
+	};
 }
 
 function isReleaseState(value: unknown): value is ReleaseState {
@@ -35,7 +38,9 @@ function isReleaseState(value: unknown): value is ReleaseState {
 		typeof state.version === "string" &&
 		/^\d+\.\d+\.\d+(?:-unstable)?$/.test(state.version) &&
 		Array.isArray(state.available_artifacts) &&
-		state.available_artifacts.every((asset) => typeof asset === "string")
+		state.available_artifacts.every((asset) => typeof asset === "string") &&
+		(state.distribution === undefined ||
+			typeof state.distribution === "object")
 	);
 }
 
@@ -117,6 +122,14 @@ export async function GET({ url: requestUrl }: { url: URL }) {
 				url: `${ghReleaseBase}/beskid-${version}-macos-arm64.dmg`,
 			},
 		].filter((pkg) => available.has(pkg.url.slice(pkg.url.lastIndexOf("/") + 1)));
+		if (state.distribution?.homebrew_formula?.name === "beskid.rb") {
+			packages.push({
+				platform: "darwin-arm64",
+				label: "Homebrew",
+				command: "brew tap Cyber-Nomad-Collective/beskid_homebrew https://github.com/Cyber-Nomad-Collective/beskid_homebrew && brew install beskid",
+				url: "https://github.com/Cyber-Nomad-Collective/beskid_homebrew/blob/main/Formula/beskid.rb",
+			});
+		}
 
 		const payload: VersionPayload = {
 			version,
