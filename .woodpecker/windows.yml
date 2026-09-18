@@ -74,8 +74,9 @@ steps:
             --output "$${imagemagick_installer}" \
             https://github.com/ImageMagick/ImageMagick/releases/download/7.1.2-31/ImageMagick-7.1.2-31-Q8-x64-static.exe
           printf '%s *%s\n' "$${imagemagick_sha256}" "$${imagemagick_installer}" | sha256sum --check --strict
+          imagemagick_dir_windows="$$(cygpath -w "$${imagemagick_dir}")"
           MSYS2_ARG_CONV_EXCL='*' "$${imagemagick_installer}" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP- \
-            "/DIR=$$(cygpath -w "$${imagemagick_dir}")"
+            "/DIR=$${imagemagick_dir_windows}"
         fi
         [ -x "$${imagemagick_exe}" ] || { echo "ImageMagick installation failed on the Windows agent" >&2; exit 1; }
         export PATH="$$(cygpath -u "$${imagemagick_dir}"):$${PATH}"
