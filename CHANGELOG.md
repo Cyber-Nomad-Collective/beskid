@@ -25,8 +25,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   ProgramData directory, preserving its silent installer switches across the
   Git Bash boundary and fetching the official GitHub release asset with
   connection-error retries so installer icon generation is reproducible; keep
-  the silent installer invocation on one shell line and use a guarded command
-  group so Woodpecker cannot split an `if` block while rendering Windows Bash.
+  setup as simple commands so Woodpecker's Windows wrapper cannot split shell
+  compound blocks while rendering Git Bash.
 - Advance the compiler release input to accept the standard Mach-O shared-image
   stub binder while keeping static runtime archives fail closed.
 
