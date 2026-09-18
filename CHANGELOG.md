@@ -21,6 +21,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Convert Windows filesystem paths to Git Bash paths before extracting release
   bundles and building MSI/EXE packages, preventing `tar` from treating the
   drive letter as a remote host.
+- Provision a checksum-pinned ImageMagick build in the Windows SYSTEM worker's
+  ProgramData directory so installer icon generation is reproducible.
 - Advance the compiler release input to accept the standard Mach-O shared-image
   stub binder while keeping static runtime archives fail closed.
 

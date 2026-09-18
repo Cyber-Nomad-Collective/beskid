@@ -64,6 +64,21 @@ steps:
             exit 1
           }
         done
+        imagemagick_dir='C:/ProgramData/Woodpecker/ImageMagick'
+        imagemagick_exe="$${imagemagick_dir}/magick.exe"
+        if ! [ -x "$${imagemagick_exe}" ]; then
+          imagemagick_installer='C:/ProgramData/Woodpecker/ImageMagick-7.1.2-31-Q8-x64-static.exe'
+          imagemagick_sha256='936ea5b58f7071ac7b107a5a3d74d062484dd83b566874c765048641f300fc82'
+          mkdir -p "$$(dirname "$${imagemagick_installer}")"
+          curl.exe --fail --location --retry 3 --output "$${imagemagick_installer}" \
+            https://download.imagemagick.org/archive/binaries/ImageMagick-7.1.2-31-Q8-x64-static.exe
+          printf '%s *%s\n' "$${imagemagick_sha256}" "$${imagemagick_installer}" | sha256sum --check --strict
+          "$${imagemagick_installer}" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP- \
+            "/DIR=$$(cygpath -w "$${imagemagick_dir}")"
+        fi
+        [ -x "$${imagemagick_exe}" ] || { echo "ImageMagick installation failed on the Windows agent" >&2; exit 1; }
+        export PATH="$$(cygpath -u "$${imagemagick_dir}"):$${PATH}"
+        command -v magick.exe >/dev/null || { echo "magick.exe is unavailable after ImageMagick setup" >&2; exit 1; }
         output="C:/woodpecker-output/beskid/$${CI_PIPELINE_NUMBER}-$${CI_COMMIT_SHA}/windows"
         bash scripts/ci/init-submodules.sh beskid_distrib
         bash scripts/ci/woodpecker-build-platform.sh windows "$${release_version}" "$${output}"
