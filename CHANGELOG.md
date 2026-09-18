@@ -15,8 +15,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   Woodpecker standard-validation gate can build the release revision.
 - Initialize the Visual Studio Build Tools environment for the Windows SYSTEM
   worker before staging the ABI-v5 native runtime kit.
-- Add the Windows agent's LLVM binaries to the build environment and fail early
-  unless the compiler, assembler, linker, and librarian are all available.
+- Add the Windows agent's LLVM binaries to Git Bash's build environment with a
+  POSIX path and fail early unless the compiler, assembler, linker, and
+  librarian are all available.
 - Advance the compiler release input to accept the standard Mach-O shared-image
   stub binder while keeping static runtime archives fail closed.
 

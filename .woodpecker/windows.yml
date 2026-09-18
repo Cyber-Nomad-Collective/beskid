@@ -57,7 +57,7 @@ steps:
         rm -f "$${vs_env}"
         llvm_bin='C:/Program Files/LLVM/bin'
         [ -d "$${llvm_bin}" ] || { echo "LLVM toolchain is missing from the Windows agent" >&2; exit 1; }
-        export PATH="$${llvm_bin}:$${PATH}"
+        export PATH="$$(cygpath -u "$${llvm_bin}"):$${PATH}"
         for native_tool in clang.exe llvm-ml.exe link.exe lib.exe; do
           command -v "$${native_tool}" >/dev/null || {
             echo "$${native_tool} is unavailable after native toolchain setup" >&2
