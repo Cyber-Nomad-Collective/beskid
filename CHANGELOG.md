@@ -9,6 +9,11 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ## [Unreleased]
 
+### Fixed
+
+- Regenerate the OpenSpec document catalog after the glossary changed so the
+  Woodpecker standard-validation gate can build the release revision.
+
 ### Removed
 
 - Remove CodeQL from Woodpecker, including its workflow, scanner scripts,
