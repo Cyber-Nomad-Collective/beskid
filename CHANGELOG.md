@@ -23,6 +23,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   drive letter as a remote host.
 - Stage both the PNG bootstrapper logo and generated ICO in the isolated
   Windows installer-assets directory before invoking WiX packaging.
+- Read macOS handoff credentials from the agent user's persistent Woodpecker
+  directory instead of the per-task temporary `HOME`.
 - Provision a checksum-pinned ImageMagick build in the Windows SYSTEM worker's
   ProgramData directory, preserving its silent installer switches across the
   Git Bash boundary and fetching the official GitHub release asset with
