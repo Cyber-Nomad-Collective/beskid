@@ -50,8 +50,6 @@ const fields={}; for(const line of readFileSync(join(dir,marker),"utf8").trimEnd
 }
 const expected={role,source,compiler,version,pipeline};
 if(Object.keys(fields).length!==5||Object.entries(expected).some(([key,value])=>fields[key]!==value)) fail("UPLOAD_COMPLETE identity mismatch");
-const markerTime=stat(join(dir,marker)).mtimeMs;
-if(names.some(name=>name!==marker&&stat(join(dir,name)).mtimeMs>markerTime)) fail("UPLOAD_COMPLETE was not uploaded last");
 const payload=names.filter(name=>!name.startsWith("UPLOAD_")).sort(), sums=new Map();
 for(const line of readFileSync(join(dir,sumsName),"utf8").split(/\r?\n/)){
   if(!line) continue; const match=/^([0-9a-fA-F]{64}) [ *]([^/\\]+)$/.exec(line);

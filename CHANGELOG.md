@@ -9,6 +9,35 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ## [Unreleased]
 
+### Fixed
+
+- Validate fetched Woodpecker release handoffs from their identity marker and
+  complete checksum inventory without relying on local mtimes rewritten by
+  recursive SFTP downloads.
+- Regenerate the OpenSpec document catalog after the glossary changed so the
+  Woodpecker standard-validation gate can build the release revision.
+- Initialize the Visual Studio Build Tools environment for the Windows SYSTEM
+  worker before staging the ABI-v5 native runtime kit.
+- Add the Windows agent's LLVM binaries to Git Bash's build environment with a
+  POSIX path and fail early unless the compiler, assembler, linker, and
+  librarian are all available.
+- Convert Windows filesystem paths to Git Bash paths before extracting release
+  bundles and building MSI/EXE packages, preventing `tar` from treating the
+  drive letter as a remote host.
+- Stage both the PNG bootstrapper logo and generated ICO in the isolated
+  Windows installer-assets directory before invoking WiX packaging.
+- Read macOS handoff credentials from the agent user's persistent Woodpecker
+  directory instead of the per-task temporary `HOME`.
+- Provision a checksum-pinned ImageMagick build in the Windows SYSTEM worker's
+  ProgramData directory, preserving its silent installer switches across the
+  Git Bash boundary and fetching the official GitHub release asset with
+  connection-error retries so installer icon generation is reproducible; keep
+  setup as simple commands so Woodpecker's Windows wrapper cannot split shell
+  compound blocks while rendering Git Bash, and isolate native installer
+  execution in its own step so it cannot consume or terminate the build script.
+- Advance the compiler release input to accept the standard Mach-O shared-image
+  stub binder while keeping static runtime archives fail closed.
+
 ### Removed
 
 - Remove CodeQL from Woodpecker, including its workflow, scanner scripts,

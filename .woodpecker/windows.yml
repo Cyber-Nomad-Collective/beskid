@@ -10,6 +10,19 @@ clone:
       recursive: false
 
 steps:
+  - name: setup-imagemagick
+    image: bash
+    commands:
+      - |
+        imagemagick_dir='C:/ProgramData/Woodpecker/ImageMagick'
+        imagemagick_installer='C:/ProgramData/Woodpecker/ImageMagick-7.1.2-31-Q8-x64-static.exe'
+        imagemagick_sha256='936ea5b58f7071ac7b107a5a3d74d062484dd83b566874c765048641f300fc82'
+        mkdir -p "$$(dirname "$${imagemagick_installer}")"
+        [ -f "$${imagemagick_installer}" ] || curl.exe --fail --location --retry 3 --retry-all-errors --retry-delay 2 --output "$${imagemagick_installer}" https://github.com/ImageMagick/ImageMagick/releases/download/7.1.2-31/ImageMagick-7.1.2-31-Q8-x64-static.exe
+        printf '%s *%s\n' "$${imagemagick_sha256}" "$${imagemagick_installer}" | sha256sum --check --strict
+        imagemagick_dir_windows="$$(cygpath -w "$${imagemagick_dir}")"
+        MSYS2_ARG_CONV_EXCL='*' "$${imagemagick_installer}" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP- "/DIR=$${imagemagick_dir_windows}" </dev/null
+
   - name: build-windows
     image: bash
     commands:
@@ -42,6 +55,33 @@ steps:
           export PATH="$$(cygpath -u "$$(dirname "$${cargo_exe}")"):$${PATH}"
         fi
         command -v cargo >/dev/null || { echo "Rust cargo toolchain provisioning failed on the Windows agent" >&2; exit 1; }
+        vsdevcmd='C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/Tools/VsDevCmd.bat'
+        [ -f "$${vsdevcmd}" ] || { echo "Visual Studio Build Tools environment script is missing" >&2; exit 1; }
+        vs_env="C:/ProgramData/Woodpecker/vs-env-$${CI_PIPELINE_NUMBER}.cmd"
+        printf '@call "%s" -no_logo -arch=x64 -host_arch=x64\r\n@set\r\n' "$$(cygpath -w "$${vsdevcmd}")" >"$${vs_env}"
+        while IFS='=' read -r name value; do
+          case "$${name}" in
+            PATH|Path) export PATH="$$(cygpath -p -u "$${value}")" ;;
+            INCLUDE|LIB|LIBPATH|VCINSTALLDIR|VCToolsInstallDir|WindowsSdkDir|WindowsSDKVersion)
+              export "$${name}=$${value}"
+              ;;
+          esac
+        done < <(cmd.exe //d //c "$$(cygpath -w "$${vs_env}")" | tr -d '\r')
+        rm -f "$${vs_env}"
+        llvm_bin='C:/Program Files/LLVM/bin'
+        [ -d "$${llvm_bin}" ] || { echo "LLVM toolchain is missing from the Windows agent" >&2; exit 1; }
+        export PATH="$$(cygpath -u "$${llvm_bin}"):$${PATH}"
+        for native_tool in clang.exe llvm-ml.exe link.exe lib.exe; do
+          command -v "$${native_tool}" >/dev/null || {
+            echo "$${native_tool} is unavailable after native toolchain setup" >&2
+            exit 1
+          }
+        done
+        imagemagick_dir='C:/ProgramData/Woodpecker/ImageMagick'
+        imagemagick_exe="$${imagemagick_dir}/magick.exe"
+        [ -x "$${imagemagick_exe}" ] || { echo "ImageMagick installation failed on the Windows agent" >&2; exit 1; }
+        export PATH="$$(cygpath -u "$${imagemagick_dir}"):$${PATH}"
+        command -v magick.exe >/dev/null || { echo "magick.exe is unavailable after ImageMagick setup" >&2; exit 1; }
         output="C:/woodpecker-output/beskid/$${CI_PIPELINE_NUMBER}-$${CI_COMMIT_SHA}/windows"
         bash scripts/ci/init-submodules.sh beskid_distrib
         bash scripts/ci/woodpecker-build-platform.sh windows "$${release_version}" "$${output}"

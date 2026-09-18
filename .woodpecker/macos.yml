@@ -26,8 +26,8 @@ steps:
         package_output="$${output}-package"
         node scripts/ci/woodpecker-package-platform.mjs macos "$$(dirname "$${output}")" "$${package_output}"
         node -e 'const fs=require("fs"),p=process.argv[1],o=process.argv[2],r=JSON.parse(fs.readFileSync(p+"/package-result.json")); for(const a of r.artifacts) fs.copyFileSync(p+"/"+a.name,o+"/"+a.name); fs.copyFileSync(p+"/package-result.json",o+"/package-result.json")' "$${package_output}" "$${output}"
-        export BESKID_HANDOFF_SSH_KEY="$${HOME}/Library/Application Support/Woodpecker/handoff/macos.sftp"
-        export BESKID_HANDOFF_KNOWN_HOSTS="$${HOME}/Library/Application Support/Woodpecker/handoff/known_hosts"
+        export BESKID_HANDOFF_SSH_KEY="/Users/mikserek/Library/Application Support/Woodpecker/handoff/macos.sftp"
+        export BESKID_HANDOFF_KNOWN_HOSTS="/Users/mikserek/Library/Application Support/Woodpecker/handoff/known_hosts"
         bash scripts/ci/woodpecker-upload-handoff.sh macos "$${output}" "$${CI_COMMIT_SHA}" "$$(git rev-parse HEAD:compiler)" "$${release_version}" "$${CI_PIPELINE_NUMBER}"
 
 when:
