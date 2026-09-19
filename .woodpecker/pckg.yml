@@ -1,0 +1,33 @@
+labels:
+  platform: linux/amd64
+  backend: docker
+  role: beskid-linux
+
+clone:
+  git:
+    image: woodpeckerci/plugin-git:2.10.1
+    settings:
+      recursive: false
+
+steps:
+  - name: publish-corelib-and-templates
+    image: rust:1.98.1-bookworm@sha256:9a73a5088750b4c95158ab26629c854c3d6fc4b173cb7bc8079ad252d8ed7bfa
+    environment:
+      BESKID_PCKG_API_KEY:
+        from_secret: pckg_release_publisher_key
+    commands:
+      - apt-get update >/dev/null
+      - apt-get install -y --no-install-recommends ca-certificates clang git lld llvm mold nodejs pkg-config libssl-dev unzip >/dev/null
+      - bash scripts/ci/init-submodules.sh compiler beskid_bsol beskid_templates
+      - bash scripts/ci/corelib-publish.sh patch
+    when:
+      - event: manual
+        branch: main
+        evaluate: 'BESKID_TASK == "pckg-publish"'
+
+# Package versions are resolved independently from pckg before this protected
+# manual publisher starts. Pushes and tags never receive the publisher secret.
+when:
+  - event: manual
+    branch: main
+    evaluate: 'BESKID_TASK == "pckg-publish"'

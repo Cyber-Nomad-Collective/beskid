@@ -278,26 +278,24 @@ function copyWorkspace(source, destination) {
   });
 }
 
-function generateCorelibDocs(cliBin, workspaceRoot, packages) {
+function generateCorelibDocsForPackage(cliBin, workspaceRoot, meta) {
   const environment = { ...process.env, BESKID_CORELIB_ROOT: workspaceRoot };
-  for (const meta of packages) {
-    const source = join(workspaceRoot, meta.sourceRel);
-    const docsOut = join(source, ".beskid", "docs");
-    rmSync(docsOut, { recursive: true, force: true });
-    if (!meta.hasApiDocs) {
-      console.log(`[pack] ${meta.registryName}: declaration-only facade; API docs omitted`);
-      continue;
-    }
-    const manifest = discoverProjectManifest(source);
-    execFileSync(cliBin, ["doc", "--project", manifest, "--out", docsOut], {
-      cwd: workspaceRoot,
-      env: environment,
-      stdio: "inherit",
-    });
-    const apiJson = join(docsOut, "api.json");
-    if (!existsSync(apiJson) || statSync(apiJson).size === 0) {
-      throw new Error(`Doc generation did not produce ${apiJson}`);
-    }
+  const source = join(workspaceRoot, meta.sourceRel);
+  const docsOut = join(source, ".beskid", "docs");
+  rmSync(docsOut, { recursive: true, force: true });
+  if (!meta.hasApiDocs) {
+    console.log(`[pack] ${meta.registryName}: declaration-only facade; API docs omitted`);
+    return;
+  }
+  const manifest = discoverProjectManifest(source);
+  execFileSync(cliBin, ["doc", "--project", manifest, "--out", docsOut], {
+    cwd: workspaceRoot,
+    env: environment,
+    stdio: "inherit",
+  });
+  const apiJson = join(docsOut, "api.json");
+  if (!existsSync(apiJson) || statSync(apiJson).size === 0) {
+    throw new Error(`Doc generation did not produce ${apiJson}`);
   }
 }
 
@@ -424,6 +422,9 @@ function packArtifacts(cliBin, stage, corelibPackages, templatePackages, plans, 
   for (const meta of all) {
     const plan = plans.get(meta.registryName);
     const source = join(meta.workspace, meta.sourceRel);
+    if (meta.kind === "library") {
+      generateCorelibDocsForPackage(cliBin, meta.workspace, meta);
+    }
     const plannedDependencies = meta.dependencyNames.map((name) => {
       const dependencyPlan = plans.get(name);
       if (!dependencyPlan) throw new Error(`${meta.registryName}: no publication plan for dependency ${name}`);
@@ -579,7 +580,6 @@ async function main() {
   try {
     copyWorkspace(corelibRoot, join(stage, "corelib"));
     copyWorkspace(templatesRoot, join(stage, "templates"));
-    generateCorelibDocs(cliBin, join(stage, "corelib"), corelibPackages);
     removeBuildOutputs(join(stage, "corelib"));
     const packed = packArtifacts(cliBin, stage, corelibPackages, templatePackages, plans, bump);
     if (dryRun) {
