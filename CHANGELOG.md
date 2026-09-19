@@ -11,6 +11,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Advance the compiler submodule to the merged package-manifest fix, so stable release assets can publish library artifacts accepted by PCKG.
+
 - Generate each Corelib package's API documentation immediately before packing,
   so independent package artifacts retain their documentation during publication.
 - Treat the qualified release state as the global version authority by recording
