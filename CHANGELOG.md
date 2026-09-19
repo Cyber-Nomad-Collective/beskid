@@ -11,6 +11,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Advance the compiler submodule to the merged package-manifest fix, so stable release assets can publish library artifacts accepted by PCKG.
+
 - Generate each Corelib package's API documentation immediately before packing,
   so independent package artifacts retain their documentation during publication.
 - Treat the qualified release state as the global version authority by recording
@@ -49,6 +51,11 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   tests, and release qualification requirement. No replacement scanner is enabled.
 
 ### Changed
+
+- Let the protected PCKG publisher use a version-pinned compiler release CLI, avoiding a Rust compiler rebuild for each manual package publication.
+
+- Add an evidence-backed compiler 0.5 readiness assessment covering Foundation,
+  networking, ISLE lowering, Glue, and cross-target release gaps.
 
 - Align the shared router-core override with React Router so Tracker production builds resolve the expected routing exports.
 
