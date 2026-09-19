@@ -33,6 +33,8 @@ assert_contains "${RUNNER}" 'BESKID_PCKG_URL: baseUrl.href' \
   "the canonical compiler client receives the selected registry endpoint"
 assert_contains "${RUNNER}" 'beskid_compiler/tree/main/corelib' \
   "corelib package metadata links to the compiler repository's real corelib root"
+assert_contains "${RUNNER}" 'generateCorelibDocsForPackage(cliBin, meta.workspace, meta);' \
+  "each documented corelib package is generated immediately before packing"
 assert_contains "${PUBLISHER}" 'BESKID_PUBLISH_DRY_RUN' \
   "the publisher exposes a no-secret, no-mutation validation mode"
 assert_contains "${PUBLISHER}" 'https://pckg.beskid-lang.org' \

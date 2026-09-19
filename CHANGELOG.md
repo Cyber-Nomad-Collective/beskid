@@ -11,6 +11,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Generate each Corelib package's API documentation immediately before packing,
+  so independent package artifacts retain their documentation during publication.
 - Treat the qualified release state as the global version authority by recording
   the verified DEB, MSI, EXE, DMG, and Homebrew formula alongside native
   artifacts, so the public download API exposes one complete stable release.
