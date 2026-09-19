@@ -50,6 +50,11 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Let the protected PCKG publisher use a version-pinned compiler release CLI, avoiding a Rust compiler rebuild for each manual package publication.
+
+- Add an evidence-backed compiler 0.5 readiness assessment covering Foundation,
+  networking, ISLE lowering, Glue, and cross-target release gaps.
+
 - Align the shared router-core override with React Router so Tracker production builds resolve the expected routing exports.
 
 - Replace editable product logos with the Ridge family across website, app navigation, favicons, VS Code, and installer artwork; add repeatable brand asset synchronization.

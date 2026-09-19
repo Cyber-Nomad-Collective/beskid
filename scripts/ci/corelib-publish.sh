@@ -2,9 +2,9 @@
 # Pack and publish the production corelib and first-party template packages.
 #
 # The packaging + upload logic lives in the native pure-Node runner at
-# scripts/ci/lib/corelib-publish-runner.mjs. This script builds
-# beskid_cli, ensures the runtime bridge, and invokes that runner with host
-# paths used by native runners.
+# scripts/ci/lib/corelib-publish-runner.mjs. This script either uses an
+# explicitly supplied verified beskid_cli release binary or builds one locally,
+# then invokes that runner with the source workspaces.
 #
 # Run from the superrepo root. Assumes compiler (+ corelib), beskid_bsol, and
 # beskid_templates submodules are initialised.
@@ -69,12 +69,17 @@ fi
 RUNNER="${ROOT}/scripts/ci/lib/corelib-publish-runner.mjs"
 [[ -f "$RUNNER" ]] || { echo "Missing publish runner: $RUNNER" >&2; exit 1; }
 
-cd "$COMPILER_ROOT"
-cargo build -p beskid_cli --release
-export BESKID_CLI_BIN="${COMPILER_ROOT}/target/release/beskid_cli"
-export BESKID_RUNTIME_PREFIX="${BESKID_RUNTIME_PREFIX:-${CARGO_TARGET_DIR:-${COMPILER_ROOT}/target}/native-runtime-kit}"
-export BESKID_RUNTIME_KIT_PROFILE=release
-bash scripts/stage-native-runtime-kit.sh
+if [[ -n "${BESKID_CLI_BIN:-}" ]]; then
+  [[ -x "${BESKID_CLI_BIN}" ]] || {
+    echo "BESKID_CLI_BIN must name an executable compiler release binary" >&2
+    exit 1
+  }
+  export BESKID_CLI_BIN
+else
+  cd "$COMPILER_ROOT"
+  cargo build -p beskid_cli --release
+  export BESKID_CLI_BIN="${COMPILER_ROOT}/target/release/beskid_cli"
+fi
 
 if command -v node >/dev/null 2>&1; then
   JS_RUNTIME="$(command -v node)"

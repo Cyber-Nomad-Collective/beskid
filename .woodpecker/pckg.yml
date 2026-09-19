@@ -11,15 +11,28 @@ clone:
 
 steps:
   - name: publish-corelib-and-templates
-    image: rust:1.98.1-bookworm@sha256:9a73a5088750b4c95158ab26629c854c3d6fc4b173cb7bc8079ad252d8ed7bfa
+    image: node:22.16.0-bookworm
     environment:
       BESKID_PCKG_API_KEY:
         from_secret: pckg_release_publisher_key
     commands:
       - apt-get update >/dev/null
-      - apt-get install -y --no-install-recommends ca-certificates clang git lld llvm mold nodejs pkg-config libssl-dev unzip >/dev/null
+      - apt-get install -y --no-install-recommends ca-certificates gh git jq unzip >/dev/null
       - bash scripts/ci/init-submodules.sh compiler beskid_bsol beskid_templates
-      - bash scripts/ci/corelib-publish.sh patch
+      - |
+        version="$${BESKID_COMPILER_RELEASE_VERSION:?set the verified compiler release version}"
+        case "$${version}" in
+          [0-9]*.[0-9]*.[0-9]*) ;;
+          *) echo "BESKID_COMPILER_RELEASE_VERSION must be a release version" >&2; exit 1 ;;
+        esac
+        mkdir -p /woodpecker-toolchain
+        GH_TOKEN= gh release download "cli-v$${version}" --repo Cyber-Nomad-Collective/beskid_compiler --pattern beskid-linux-amd64 --dir /woodpecker-toolchain --clobber
+        expected_digest="$(GH_TOKEN= gh api "repos/Cyber-Nomad-Collective/beskid_compiler/releases/tags/cli-v$${version}" --jq '.assets[] | select(.name == "beskid-linux-amd64") | .digest')"
+        actual_digest="sha256:$(sha256sum /woodpecker-toolchain/beskid-linux-amd64 | awk '{print $1}')"
+        test "$${expected_digest}" = "$${actual_digest}"
+        chmod 0755 /woodpecker-toolchain/beskid-linux-amd64
+        test "$(/woodpecker-toolchain/beskid-linux-amd64 --version)" = "beskid $${version}"
+      - BESKID_CLI_BIN=/woodpecker-toolchain/beskid-linux-amd64 bash scripts/ci/corelib-publish.sh patch
     when:
       - event: manual
         branch: main

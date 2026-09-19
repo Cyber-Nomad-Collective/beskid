@@ -37,6 +37,12 @@ assert_contains "${RUNNER}" 'generateCorelibDocsForPackage(cliBin, meta.workspac
   "each documented corelib package is generated immediately before packing"
 assert_contains "${PUBLISHER}" 'BESKID_PUBLISH_DRY_RUN' \
   "the publisher exposes a no-secret, no-mutation validation mode"
+assert_contains "${PUBLISHER}" 'if [[ -n "${BESKID_CLI_BIN:-}" ]]' \
+  "a verified prebuilt compiler binary bypasses the local Rust build"
+assert_contains "${PUBLISHER}" 'BESKID_CLI_BIN must name an executable compiler release binary' \
+  "a supplied compiler binary is validated before package generation"
+assert_contains "$(cat "${ROOT}/.woodpecker/pckg.yml")" 'expected_digest=' \
+  "the PCKG pipeline checks the downloaded compiler release checksum"
 assert_contains "${PUBLISHER}" 'https://pckg.beskid-lang.org' \
   "the publisher default uses the canonical public registry URL"
 assert_eq "absent" "$({ grep -Fq 'https://pckg.beskid-lang.org:8082' <<<"${PUBLISHER}" && echo present; } || echo absent)" \
