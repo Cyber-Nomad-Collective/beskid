@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Advance the distribution revision to retry the bounded Finder layout step
+  while creating the branded macOS DMG, so transient AppleEvent timeouts do
+  not prevent an otherwise qualified stable release.
 - Advance the compiler submodule to the merged package-manifest fix, so stable release assets can publish library artifacts accepted by PCKG.
 
 - Generate each Corelib package's API documentation immediately before packing,
