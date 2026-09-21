@@ -51,6 +51,15 @@ for path in "${submodules[@]}"; do
 done
 phase=build; message='building immutable images'; write_journal
 build_image() { local lane="$1" context="$2" dockerfile="$3" metadata="${output}/metadata-${1}.json"; shift 3; docker buildx build --load --provenance=false --sbom=false --metadata-file "${metadata}" --file "${dockerfile}" --tag "$(immutable_ref "${lane}")" "$@" "${context}"; }
+registry_manifest_digest() {
+  local reference="$1" formatted
+  formatted="$(docker buildx imagetools inspect --format '{{json .Manifest}}' "${reference}")" || return
+  if [[ "${formatted}" =~ ^sha256:[0-9a-f]{64}$ ]]; then
+    printf '%s\n' "${formatted}"
+  else
+    jq -er '.digest // empty' <<<"${formatted}"
+  fi
+}
 docker buildx version || fail build 'Docker Buildx is unavailable'
 for lane in "${lanes[@]}"; do
   current_lane="${lane}"
@@ -74,13 +83,13 @@ printf '%s' "${REGISTRY_PASSWORD}" | docker login "${registry}" --username "${RE
 phase='publish-immutable'; message='publishing immutable images'; write_journal
 for lane in "${lanes[@]}"; do
   current_lane="${lane}"; immutable="$(immutable_ref "${lane}")"; expected="$(awk -F '\t' -v lane="${lane}" '$1 == lane {print $3}' "${lanes_file}")"; probe_error="${output}/remote-${lane}.err"
-  if remote="$(docker buildx imagetools inspect --format '{{.Manifest.Digest}}' "${immutable}" 2>"${probe_error}")"; then
+  if remote="$(registry_manifest_digest "${immutable}" 2>"${probe_error}")"; then
     [[ "${remote}" == "${expected}" ]] || fail publish-immutable "Immutable tag already exists with a different digest for ${lane}"
     set_lane "${lane}" immutable-existing "${expected}" "${remote}"; write_journal; continue
   fi
   grep -Eqi '(not found|manifest unknown|name unknown)' "${probe_error}" || fail publish-immutable "Could not establish whether immutable tag exists for ${lane}"
   docker push "${immutable}" || fail publish-immutable "Immutable push failed for ${lane}"
-  published="$(docker buildx imagetools inspect --format '{{.Manifest.Digest}}' "${immutable}")" || fail publish-immutable "Published immutable tag cannot be read for ${lane}"
+  published="$(registry_manifest_digest "${immutable}")" || fail publish-immutable "Published immutable tag cannot be read for ${lane}"
   [[ "${published}" =~ ^sha256:[0-9a-f]{64}$ ]] || fail publish-immutable "Published immutable tag has an invalid digest for ${lane}"
   if [[ "${published}" != "${expected}" ]]; then
     echo "Registry canonicalized the ${lane} manifest digest; recording the published digest as authoritative."
