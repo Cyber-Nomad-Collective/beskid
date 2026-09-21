@@ -124,7 +124,7 @@ export interface ThemeProviderProps {
  * - `mock` (local dev): return a fake user so the shell renders without an
  *   Authelia instance in front of it.
  */
-export type ShellAuthMode = "authelia" | "mock";
+export type ShellAuthMode = "authelia" | "authentik" | "mock";
 
 /**
  * Per-app OIDC + session configuration passed to {@link createShellAuth}.

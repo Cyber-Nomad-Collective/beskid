@@ -14,7 +14,7 @@ import { z } from "zod";
  */
 export const env = createEnv({
 	server: {
-		SHELL_AUTH_MODE: z.enum(["authelia", "mock"]).default("mock"),
+		SHELL_AUTH_MODE: z.enum(["authelia", "authentik", "mock"]).default("mock"),
 		/** Authelia OIDC issuer origin (e.g. http://localhost:9091). */
 		AUTHELIA_OIDC_ISSUER: z.string().url().optional(),
 		/** This app's OIDC client id (registered in Authelia). */

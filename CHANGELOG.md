@@ -12,9 +12,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 ### Fixed
 
 - Resolve pckg users from the verified Authentik forward-auth headers through
-  the shared shell-core mapper, preventing the protected dashboard from
-  redirecting authenticated users back to login; align the production Compose
-  auth mode with the supported `authelia` value.
+  the shared shell-core mapper, keep the web and Rust registry in the same
+  `authentik` mode, and prevent authenticated dashboard requests from looping
+  back to login.
 
 - Advance the distribution revision to write the branded macOS DMG layout
   directly, avoiding Finder AppleEvent timeouts in the non-interactive release

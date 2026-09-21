@@ -60,6 +60,14 @@ describe("resolveShellUser (authelia mode)", () => {
 	});
 });
 
+describe("resolveShellUser (authentik mode)", () => {
+	it("defers identity resolution to the trusted forward-auth headers", async () => {
+		process.env.SHELL_AUTH_MODE = "authentik";
+		expect(await auth.resolveShellUser("anything")).toBeNull();
+		delete process.env.SHELL_AUTH_MODE;
+	});
+});
+
 describe("guards", () => {
 	it("requireShellUser throws when unauthenticated", () => {
 		expect(() => auth.requireShellUser(null)).toThrow();

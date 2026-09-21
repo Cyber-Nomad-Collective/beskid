@@ -6,9 +6,9 @@ import type { ShellSession } from "./shell-session";
 /**
  * Authelia auth helpers for the shell.
  *
- * - `getShellAuthMode()` reads `SHELL_AUTH_MODE` at call time (`authelia` vs
- *   `mock`). `mock` returns a fake user so the shell renders without an
- *   Authelia instance in front of it.
+ * - `getShellAuthMode()` reads `SHELL_AUTH_MODE` at call time. `mock` returns
+ *   a fake user so the shell renders without an identity provider in front of
+ *   it; `authentik` leaves identity resolution to the trusted edge headers.
  * - `requireShellUser` / `requireShellGroup` are pure guard helpers.
  * - `createResolveShellUser(session)` builds the request-time resolver that
  *   unseals the signed session cookie in `authelia` mode.
@@ -24,6 +24,7 @@ const MOCK_USER: ShellUser = {
 
 export function getShellAuthMode(): ShellAuthMode {
 	const mode = process.env.SHELL_AUTH_MODE ?? "mock";
+	if (mode === "authentik") return "authentik";
 	return mode === "authelia" ? "authelia" : "mock";
 }
 
@@ -47,6 +48,7 @@ export function createResolveShellUser(session: ShellSession) {
 		if (getShellAuthMode() === "mock") {
 			return MOCK_USER;
 		}
+		if (getShellAuthMode() === "authentik") return null;
 		if (!sessionToken) return null;
 		return session.unsealShellSession(sessionToken);
 	};
