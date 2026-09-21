@@ -5,6 +5,7 @@ import {
 	oidcStateCookieHeader,
 	readOidcStateCookie,
 } from "#/server/shell-auth";
+import { env } from "#/env.server";
 
 /**
  * Starts the OIDC authorization-code flow: redirects the browser to
@@ -17,6 +18,17 @@ export const Route = createFileRoute("/api/auth/login")({
 		handlers: {
 			GET: async ({ request }) => {
 				const url = new URL(request.url);
+				// Production currently delegates authentication to the host's
+				// Authentik outpost. Keep the copied OIDC flow available when its
+				// client is configured, but never turn an unset deployment secret
+				// into a public 500 response.
+				if (
+					!env.AUTHELIA_OIDC_ISSUER ||
+					!env.SHELL_TEMPLATE_OIDC_CLIENT_ID ||
+					!env.SHELL_TEMPLATE_OIDC_CLIENT_SECRET
+				) {
+					return Response.redirect(`${url.origin}/auth`, 302);
+				}
 				const redirectUri = `${url.origin}/api/auth/callback`;
 
 				// CSRF state: cookie + query param must match on callback.
