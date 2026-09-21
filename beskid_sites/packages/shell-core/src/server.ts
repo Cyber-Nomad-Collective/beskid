@@ -22,7 +22,11 @@ export {
 	requireShellUser,
 } from "./server/create-shell-auth";
 export type { OidcClient, OidcClientConfig } from "./server/oidc";
-export { claimsToShellUser, createOidcClient } from "./server/oidc";
+export {
+	claimsToShellUser,
+	createOidcClient,
+	shellUserFromForwardAuthHeaders,
+} from "./server/oidc";
 export type { OidcState, OidcStateConfig } from "./server/oidc-state";
 export { createOidcState } from "./server/oidc-state";
 export type { ShellSession, ShellSessionConfig } from "./server/shell-session";

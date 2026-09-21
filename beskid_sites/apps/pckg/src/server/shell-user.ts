@@ -1,4 +1,5 @@
 import type { ShellUser } from "@cyber-nomad-collective/beskid-shell-core";
+import { shellUserFromForwardAuthHeaders } from "@cyber-nomad-collective/beskid-shell-core/server";
 import { createServerFn } from "@tanstack/react-start";
 import { resolveShellUser, SESSION_COOKIE_NAME } from "#/server/shell-auth";
 
@@ -16,8 +17,12 @@ import { resolveShellUser, SESSION_COOKIE_NAME } from "#/server/shell-auth";
  */
 export const getShellUser = createServerFn({ method: "GET" }).handler(
 	async (): Promise<ShellUser | null> => {
-		const { getCookie } = await import("@tanstack/react-start/server");
+		const { getCookie, getRequest } = await import(
+			"@tanstack/react-start/server"
+		);
 		const sessionToken = getCookie(SESSION_COOKIE_NAME) ?? null;
-		return resolveShellUser(sessionToken);
+		const sessionUser = await resolveShellUser(sessionToken);
+		if (sessionUser) return sessionUser;
+		return shellUserFromForwardAuthHeaders(getRequest().headers);
 	},
 );
