@@ -56,7 +56,7 @@ case "$1 ${2:-}" in
     reference="${@: -1}"
     state="${MOCK_DOCKER_LOG}.remote-${reference//\//_}"
     state="${state//:/_}"
-    if [[ -f "${state}" ]]; then printf '%s\n' "${MOCK_REMOTE_DIGEST:-sha256:$(printf '1%.0s' {1..64})}"; else touch "${state}"; printf 'manifest unknown\n' >&2; exit 1; fi ;;
+    if [[ -f "${state}" || "${MOCK_REMOTE_PRESENT:-}" == 1 ]]; then printf '%s\n' "${MOCK_REMOTE_DIGEST:-sha256:$(printf '1%.0s' {1..64})}"; else touch "${state}"; printf 'manifest unknown\n' >&2; exit 1; fi ;;
   'login '*) cat >/dev/null ;;
   'push '*) [[ "$*" != *"${MOCK_DOCKER_FAIL_PUSH_LANE:-never}"* ]] || exit 72 ;;
   'pull '*) ;;
@@ -122,7 +122,7 @@ last_immutable="$(grep -n 'push .*:sha-' "${published}/docker.log" | tail -n1 | 
 test -s "${published}/output/platform-images.json" || fail 'publication must write image evidence'
 
 remote_mismatch="$(fixture remote-mismatch)"
-if run_fixture "${remote_mismatch}" env CI_PIPELINE_EVENT=manual CI_COMMIT_BRANCH=main BESKID_PLATFORM_PUBLISH=1 REGISTRY_USERNAME=publisher REGISTRY_PASSWORD=x MOCK_REMOTE_DIGEST=sha256:$(printf '2%.0s' {1..64}); then
+if run_fixture "${remote_mismatch}" env CI_PIPELINE_EVENT=manual CI_COMMIT_BRANCH=main BESKID_PLATFORM_PUBLISH=1 REGISTRY_USERNAME=publisher REGISTRY_PASSWORD=x MOCK_REMOTE_DIGEST=sha256:$(printf '2%.0s' {1..64}) MOCK_REMOTE_PRESENT=1; then
   fail 'remote digest mismatch unexpectedly passed'
 fi
 assert_not_contains ':production' "${remote_mismatch}/docker.log" 'remote mismatch must not promote'

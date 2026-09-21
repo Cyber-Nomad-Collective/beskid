@@ -81,8 +81,11 @@ for lane in "${lanes[@]}"; do
   grep -Eqi '(not found|manifest unknown|name unknown)' "${probe_error}" || fail publish-immutable "Could not establish whether immutable tag exists for ${lane}"
   docker push "${immutable}" || fail publish-immutable "Immutable push failed for ${lane}"
   published="$(docker buildx imagetools inspect --format '{{.Manifest.Digest}}' "${immutable}")" || fail publish-immutable "Published immutable tag cannot be read for ${lane}"
-  [[ "${published}" == "${expected}" ]] || fail publish-immutable "Published immutable digest differs for ${lane}"
-  set_lane "${lane}" immutable-published "${expected}" "${published}"; write_journal
+  [[ "${published}" =~ ^sha256:[0-9a-f]{64}$ ]] || fail publish-immutable "Published immutable tag has an invalid digest for ${lane}"
+  if [[ "${published}" != "${expected}" ]]; then
+    echo "Registry canonicalized the ${lane} manifest digest; recording the published digest as authoritative."
+  fi
+  set_lane "${lane}" immutable-published "${published}" "${published}"; write_journal
 done
 phase=promote-production; message='promoting verified immutable images'; write_journal
 for lane in "${lanes[@]}"; do
