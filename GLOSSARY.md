@@ -70,7 +70,7 @@ Tracker integration in which GitHub Issues represents public bugs and their supp
 
 ## Canonical pckg implementation
 
-The single pckg product implementation: `beskid_pckg_server` is the sole registry/backend authority and `beskid_sites/apps/pckg` is the sole web application. Shared shell and UI behavior remains imported from its canonical packages rather than copied into pckg. The migration copies and minimally adapts proven pckg-specific behavior from historical sources, then deletes `pckg/web` and every compatibility path; maintaining two active web clients is not an accepted transition state at completion.
+The single pckg product implementation: `beskid_pckg_server` is the sole registry/backend authority and `beskid_sites/apps/pckg` is the sole web application. Shared shell and UI behavior remains imported from its canonical packages rather than copied into pckg. Proven pckg-specific behavior is copied and minimally adapted from historical sources; maintaining two active web clients is not an accepted state.
 
 ## CLI root command inventory
 

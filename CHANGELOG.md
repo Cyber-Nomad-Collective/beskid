@@ -52,6 +52,11 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Restore `beskid_sites/apps/pckg` as the sole pckg web implementation by
+  copying the maintained Rust API client, package-kind behavior, package and
+  docs journeys, shared shell integration, publisher release center, and
+  same-origin registry proxy; remove the retired `pckg/web` client from the
+  production image and keep Watchtower health checks on the consolidated app.
 - Add a detailed implementation plan for restoring the consolidated pckg site,
   reaching package, publisher, and documentation parity, improving publisher
   convenience through CLI-first release guidance, and retiring the duplicate

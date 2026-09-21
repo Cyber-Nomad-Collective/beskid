@@ -2,7 +2,6 @@ packages:
   - beskid_tracker
   - beskid_web_common
   - beskid_web_common/packages/*
-  - pckg/web
   - site/auth
   - site/website
   - site/learn

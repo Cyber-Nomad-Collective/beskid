@@ -288,6 +288,10 @@ PublishScripts/
 !beskid_sites/packages/
 !beskid_sites/packages/shell-core/
 !beskid_sites/packages/shell-core/**
+# The consolidated pckg web app is a tracked JS workspace, not a NuGet output
+# directory. Keep this exception after the broad NuGet rule above.
+!beskid_sites/apps/pckg/
+!beskid_sites/apps/pckg/**
 # VS Code extension: pckg client sources live under `src/packages/` (not NuGet).
 !beskid_vscode/src/packages/
 !beskid_vscode/src/packages/**

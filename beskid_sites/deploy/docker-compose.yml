@@ -335,7 +335,7 @@ services:
       - pckg-packages:/app/packages
       - pckg-data:/app/data
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8082/health/ready"]
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8082/api/health"]
       interval: 20s
       timeout: 5s
       retries: 5

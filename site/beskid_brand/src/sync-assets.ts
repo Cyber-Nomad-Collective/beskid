@@ -24,7 +24,7 @@ const svgTargets: [string, ServiceId | undefined, string?][] = [
   ['site/website/src/assets/beskid_logo.svg', undefined],
   ['site/auth/public/favicon.svg', 'auth'],
   ['site/learn/public/favicon.svg', 'learn'],
-  ['pckg/web/public/favicon.svg', 'pckg'],
+  ['beskid_sites/apps/pckg/public/favicon.svg', 'pckg'],
   ['beskid_nexus/gitnexus-web/public/favicon.svg', 'nexus'],
   ['beskid_tracker/public/favicon.svg', 'tracker'],
   ['beskid_sites/apps/website/public/favicon.svg', 'website'],
