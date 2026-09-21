@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "5c4bc54daf900e14574eaa883f124e946e0bc06b433cefb0602e942407f82e39",
+  "revision": "b6c66d171b18501340d2c96cc80f8e6c2120fef545d7bbe379dc94297e5f190a",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -38877,7 +38877,7 @@
       "path": "AGENTS.md",
       "title": "Beskid — Toolchain & Stack",
       "authority": "informative",
-      "sourceHash": "82498cf0a78080bdf0ebf48a2f19c0c2173e2150bc7f2a94f39a11b110e27216",
+      "sourceHash": "c3a1a2593dabf186aebb732aed1abf92fbd0d85ecd5d54a647f6fd7bcba3dd96",
       "standardLinks": [],
       "containsNormativeKeywords": true,
       "disposition": "informative-by-policy"
@@ -38886,7 +38886,7 @@
       "path": "GLOSSARY.md",
       "title": "Glossary",
       "authority": "informative",
-      "sourceHash": "ddd131cef2b31a5f1c2f1fbe80d8f5ac305a223be3ca0ec1409b6f136950e1b4",
+      "sourceHash": "bd468c72daac085f44f334fa193515e3f638021cb4830d1f80f1b6216f24513f",
       "standardLinks": [
         "/platform-spec/"
       ],
