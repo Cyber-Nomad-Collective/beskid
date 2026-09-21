@@ -51,7 +51,7 @@ learn="$(<"${root}/site/learn/Dockerfile")"
 for requirement in \
   'COPY site/learn/package.json ./site/learn/package.json' \
   'COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./' \
-  'COPY beskid_web_common ./beskid_web_common' \
+  'COPY beskid_web_common' \
   'pnpm install --frozen-lockfile --filter beskid-learn...' \
   'COPY compiler/scripts ./compiler/scripts' \
   'apt-get install -y --no-install-recommends clang lld mold' \
@@ -155,14 +155,15 @@ done
 
 pckg="$(<"${root}/pckg/Dockerfile")"
 for requirement in \
-  'COPY beskid_web_common ./beskid_web_common' \
+  'COPY beskid_sites/apps/pckg' \
+  'COPY beskid_web_common/packages/beskid-ui-react' \
   'COPY beskid_bsol ./beskid_bsol' \
-  'pnpm install --dir /src/beskid_web_common --frozen-lockfile' \
-  'pnpm install --dir /src/pckg/web --frozen-lockfile' \
+  'pnpm install --dir /src/beskid_sites --frozen-lockfile --filter beskid-pckg...' \
   'COPY compiler ./compiler' \
   'cargo build --release -p beskid_pckg_server' \
   'PCKG_ARTIFACT_ROOT=/app/packages' \
-  '/health/ready'; do
+  'PCKG_REGISTRY_ORIGIN=http://127.0.0.1:8083' \
+  '/api/health'; do
   if [[ "${pckg}" != *"${requirement}"* ]]; then
     echo "pckg/Dockerfile is missing required Rust fresh-store preparation: ${requirement}" >&2
     exit 1
