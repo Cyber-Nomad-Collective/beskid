@@ -27,7 +27,10 @@ export const Route = createFileRoute("/api/auth/login")({
 					!env.SHELL_TEMPLATE_OIDC_CLIENT_ID ||
 					!env.SHELL_TEMPLATE_OIDC_CLIENT_SECRET
 				) {
-					return Response.redirect(`${url.origin}/auth`, 302);
+					return new Response(null, {
+						status: 302,
+						headers: { Location: "/auth" },
+					});
 				}
 				const redirectUri = `${url.origin}/api/auth/callback`;
 
