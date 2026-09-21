@@ -12,11 +12,11 @@ clone:
 steps:
   - name: publish-corelib-and-templates
     image: node:22.16.0-bookworm
-      environment:
-        BESKID_PCKG_API_KEY:
-          from_secret: pckg_release_publisher_key
-        GH_TOKEN:
-          from_secret: compiler_release_token
+    environment:
+      BESKID_PCKG_API_KEY:
+        from_secret: pckg_release_publisher_key
+      GH_TOKEN:
+        from_secret: compiler_release_token
     commands:
       - apt-get update >/dev/null
       - apt-get install -y --no-install-recommends ca-certificates gh git jq unzip >/dev/null
