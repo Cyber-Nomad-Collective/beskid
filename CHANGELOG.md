@@ -16,6 +16,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   redirecting authenticated users back to login; align the production Compose
   auth mode with the supported `authelia` value.
 
+- Advance the distribution revision to write the branded macOS DMG layout
+  directly, avoiding Finder AppleEvent timeouts in the non-interactive release
+  worker while retaining the background and Applications shortcut.
 - Advance the compiler submodule to the merged package-manifest fix, so stable release assets can publish library artifacts accepted by PCKG.
 
 - Generate each Corelib package's API documentation immediately before packing,

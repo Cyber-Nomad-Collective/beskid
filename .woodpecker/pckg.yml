@@ -15,6 +15,8 @@ steps:
     environment:
       BESKID_PCKG_API_KEY:
         from_secret: pckg_release_publisher_key
+      GH_TOKEN:
+        from_secret: compiler_release_token
     commands:
       - apt-get update >/dev/null
       - apt-get install -y --no-install-recommends ca-certificates gh git jq unzip >/dev/null
@@ -26,8 +28,8 @@ steps:
           *) echo "BESKID_COMPILER_RELEASE_VERSION must be a release version" >&2; exit 1 ;;
         esac
         mkdir -p /woodpecker-toolchain
-        GH_TOKEN= gh release download "cli-v$${version}" --repo Cyber-Nomad-Collective/beskid_compiler --pattern beskid-linux-amd64 --dir /woodpecker-toolchain --clobber
-        expected_digest="$(GH_TOKEN= gh api "repos/Cyber-Nomad-Collective/beskid_compiler/releases/tags/cli-v$${version}" --jq '.assets[] | select(.name == "beskid-linux-amd64") | .digest')"
+        gh release download "cli-v$${version}" --repo Cyber-Nomad-Collective/beskid_compiler --pattern beskid-linux-amd64 --dir /woodpecker-toolchain --clobber
+        expected_digest="$(gh api "repos/Cyber-Nomad-Collective/beskid_compiler/releases/tags/cli-v$${version}" --jq '.assets[] | select(.name == "beskid-linux-amd64") | .digest')"
         actual_digest="sha256:$(sha256sum /woodpecker-toolchain/beskid-linux-amd64 | awk '{print $1}')"
         test "$${expected_digest}" = "$${actual_digest}"
         chmod 0755 /woodpecker-toolchain/beskid-linux-amd64
