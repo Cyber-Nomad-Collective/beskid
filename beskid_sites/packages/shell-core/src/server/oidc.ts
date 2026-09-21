@@ -67,6 +67,35 @@ export function claimsToShellUser(payload: Record<string, unknown>): ShellUser {
 	return { username, email, name, groups };
 }
 
+/**
+ * Map the identity headers copied by the trusted Authentik forward-auth
+ * boundary to the same shell user shape produced by OIDC claims.
+ *
+ * The edge is responsible for authenticating the request and sanitising these
+ * headers; applications only consume the verified result. Keeping this mapper
+ * beside the OIDC claim mapper prevents each app from drifting its identity
+ * contract.
+ */
+export function shellUserFromForwardAuthHeaders(
+	headers: Headers,
+): ShellUser | null {
+	const username = headers.get("x-authentik-username")?.trim() ?? "";
+	if (!username) return null;
+	const email = headers.get("x-authentik-email")?.trim() || undefined;
+	const name = headers.get("x-authentik-name")?.trim() || undefined;
+	const groups = (headers.get("x-authentik-groups") ?? "")
+		.split(",")
+		.map((group) => group.trim())
+		.filter(Boolean);
+	return {
+		username,
+		email,
+		name,
+		groups,
+		avatarUrl: `https://github.com/${encodeURIComponent(username)}.png`,
+	};
+}
+
 export function createOidcClient(config: OidcClientConfig): OidcClient {
 	const discoveryCache: Record<string, OidcDiscovery> = {};
 

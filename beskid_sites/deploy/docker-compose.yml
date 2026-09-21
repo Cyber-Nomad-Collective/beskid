@@ -328,7 +328,7 @@ services:
     env_file:
       - ${BESKID_ENV_FILE:-.env}
     environment:
-      SHELL_AUTH_MODE: authentik
+      SHELL_AUTH_MODE: authelia
       SHELL_ADMIN_GROUP: pckg-admins
       SHELL_MODERATOR_GROUP: pckg-moderators
     volumes:

@@ -11,6 +11,11 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Resolve pckg users from the verified Authentik forward-auth headers through
+  the shared shell-core mapper, preventing the protected dashboard from
+  redirecting authenticated users back to login; align the production Compose
+  auth mode with the supported `authelia` value.
+
 - Advance the compiler submodule to the merged package-manifest fix, so stable release assets can publish library artifacts accepted by PCKG.
 
 - Generate each Corelib package's API documentation immediately before packing,

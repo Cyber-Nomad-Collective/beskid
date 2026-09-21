@@ -133,8 +133,8 @@ pckg_block="$(service_block pckg)"
   echo 'pckg must forward authenticated browser requests through Authentik' >&2
   exit 1
 }
-[[ "${pckg_block}" == *"SHELL_AUTH_MODE: authentik"* ]] || {
-  echo 'pckg must parse the Authentik identity injected by the edge' >&2
+[[ "${pckg_block}" == *"SHELL_AUTH_MODE: authelia"* ]] || {
+	 echo 'pckg must use the supported production auth mode while parsing the Authentik identity injected by the edge' >&2
   exit 1
 }
 
