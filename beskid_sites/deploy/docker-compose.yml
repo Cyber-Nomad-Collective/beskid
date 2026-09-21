@@ -67,6 +67,9 @@ volumes:
     name: beskid-pckg_pckg-artifacts
     external: true
   pckg-data:
+  nodebb-config:
+  nodebb-build:
+  nodebb-uploads:
 
 services:
   # ---------------------------------------------------------------------------
@@ -340,6 +343,69 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+    logging: *default-logging
+    deploy:
+      resources:
+        limits:
+          memory: 768m
+          cpus: "1.5"
+
+  # NodeBB is the canonical community surface linked from package pages.
+  # Its configuration and generated assets are persisted so a container
+  # recreation cannot return the site to the uninitialised installer.
+  community:
+    image: ghcr.io/nodebb/nodebb:4.16.0
+    restart: unless-stopped
+    labels:
+      com.beskid.release: production
+      caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
+      caddy_0: https://community.beskid-lang.org
+      "caddy_0.@community_authentik_session.header_regexp": community_authentik Cookie authentik_proxy_[^=]+=
+      caddy_0.route_0: /outpost.goauthentik.io/*
+      caddy_0.route_0.0_reverse_proxy: authentik-server:9000
+      caddy_0.route_1: "@community_authentik_session"
+      caddy_0.route_1.0_forward_auth: authentik-server:9000
+      caddy_0.route_1.0_forward_auth.uri: /outpost.goauthentik.io/auth/caddy
+      caddy_0.route_1.0_forward_auth.copy_headers: X-Authentik-Username X-Authentik-Groups X-Authentik-Entitlements X-Authentik-Email X-Authentik-Name X-Authentik-Uid X-Authentik-Jwt
+      caddy_0.route_2.reverse_proxy: "{{upstreams 4567}}"
+    entrypoint: ["/opt/nodebb-entrypoint.sh"]
+    networks:
+      - beskid-edge
+      - beskid-backend
+    expose:
+      - "4567"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - ${BESKID_ENV_FILE:-.env}
+    environment:
+      NODEBB_URL: https://community.beskid-lang.org
+      NODEBB_SESSION_SECRET: ${NODEBB_SESSION_SECRET:?set NODEBB_SESSION_SECRET}
+      NODEBB_ADMIN_USERNAME: ${NODEBB_ADMIN_USERNAME:?set NODEBB_ADMIN_USERNAME}
+      NODEBB_ADMIN_PASSWORD: ${NODEBB_ADMIN_PASSWORD:?set NODEBB_ADMIN_PASSWORD}
+      NODEBB_ADMIN_EMAIL: ${NODEBB_ADMIN_EMAIL:?set NODEBB_ADMIN_EMAIL}
+      NODEBB_DB_HOST: postgres
+      NODEBB_DB_PORT: "5432"
+      NODEBB_DB_NAME: ${NODEBB_DB_NAME:-beskid}
+      NODEBB_DB_USER: ${NODEBB_DB_USER:?set NODEBB_DB_USER}
+      NODEBB_DB_PASSWORD: ${NODEBB_DB_PASSWORD:?set NODEBB_DB_PASSWORD}
+    volumes:
+      - nodebb-config:/opt/config
+      - nodebb-build:/usr/src/app/build
+      - nodebb-uploads:/usr/src/app/public/uploads
+      - ./nodebb-entrypoint.sh:/opt/nodebb-entrypoint.sh:ro
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - >-
+          require('http').get('http://127.0.0.1:4567/',r=>process.exit(r.statusCode < 500 ? 0 : 1)).on('error',()=>process.exit(1))
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
     logging: *default-logging
     deploy:
       resources:

@@ -75,6 +75,7 @@ smoke() {
     "https://nexus.beskid-lang.org/api/health|nexus health"
     "https://pckg.beskid-lang.org/health/ready|pckg health"
     "https://learn.beskid-lang.org/api/health|learn health"
+    "https://community.beskid-lang.org/|community homepage"
     "https://cr.beskid-lang.org/v2/|registry v2"
   )
   for entry in "${endpoints[@]}"; do
@@ -134,7 +135,7 @@ if [ "$FROM_OPENBAO" -eq 1 ]; then
   }
 
   # Per-service OpenBao paths (mirror beskid_infra/docs/openbao-layout.md).
-  for svc in postgres tracker nexus pckg learn authentik; do
+  for svc in postgres tracker nexus pckg learn authentik nodebb; do
     read_secrets "$svc" >> "${ENV_FILE}" || true
   done
   read_secrets registry >> "${ENV_FILE}" || true
@@ -168,6 +169,12 @@ need AUTHENTIK_SECRET_KEY "Authentik secret key"
 need AUTHENTIK_BOOTSTRAP_TOKEN "Authentik bootstrap API token"
 need GITHUB_CLIENT_ID "GitHub OAuth client ID for Authentik"
 need GITHUB_CLIENT_SECRET "GitHub OAuth client secret for Authentik"
+need NODEBB_SESSION_SECRET "NodeBB session secret"
+need NODEBB_ADMIN_USERNAME "NodeBB administrator username"
+need NODEBB_ADMIN_PASSWORD "NodeBB administrator password"
+need NODEBB_ADMIN_EMAIL "NodeBB administrator email"
+need NODEBB_DB_USER "NodeBB PostgreSQL username"
+need NODEBB_DB_PASSWORD "NodeBB PostgreSQL password"
 for image_tag in "$SITE_IMAGE_TAG" "$TRACKER_IMAGE_TAG" "$NEXUS_IMAGE_TAG" "$PCKG_IMAGE_TAG" "$LEARN_IMAGE_TAG"; do
   [[ "${image_tag}" == production ]] || { err "all application image tags must be production for Watchtower"; exit 1; }
 done
@@ -190,6 +197,8 @@ remote "docker network inspect ${BESKID_EDGE_NETWORK} >/dev/null" || {
 remote "mkdir -p ${REMOTE_DIR}/registry ${REMOTE_DIR}/watchtower"
 
 scp -q "${SCRIPT_DIR}/docker-compose.yml" "${DEPLOY_HOST}:${REMOTE_DIR}/docker-compose.yml"
+scp -q "${SCRIPT_DIR}/nodebb-entrypoint.sh" "${DEPLOY_HOST}:${REMOTE_DIR}/nodebb-entrypoint.sh"
+remote "chmod 755 ${REMOTE_DIR}/nodebb-entrypoint.sh"
 scp -q "${SCRIPT_DIR}/registry/config.yml" "${DEPLOY_HOST}:${REMOTE_DIR}/registry/config.yml"
 scp -q "${SCRIPT_DIR}/registry/htpasswd" "${DEPLOY_HOST}:${REMOTE_DIR}/registry/htpasswd"
 remote "chmod 600 ${REMOTE_DIR}/registry/htpasswd"

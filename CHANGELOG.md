@@ -11,6 +11,10 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Restore the community NodeBB service as a tracked production Compose
+  contract with persisted configuration/assets, automated first boot, shared
+  PostgreSQL connectivity, canonical Caddy routing, and a health check.
+
 - Resolve pckg users from the verified Authentik forward-auth headers through
   the shared shell-core mapper, keep the web and Rust registry in the same
   `authentik` mode, and prevent authenticated dashboard requests from looping

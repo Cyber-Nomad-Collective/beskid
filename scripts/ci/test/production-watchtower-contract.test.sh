@@ -72,7 +72,7 @@ require 'external: true' "$compose"
 
 forbid '^  auth:' "$compose"
 forbid '^  authelia:' "$compose"
-forbid '^  community:' "$compose"
+require '  community:' "$compose"
 require './registry/htpasswd:/auth/htpasswd:ro' "$compose"
 require './watchtower/config.json:/config.json:ro' "$compose"
 require "grep -q '401 Unauthorized'" "$compose"
@@ -87,14 +87,45 @@ require 'need REGISTRY_PASSWORD' "$deploy_script"
 require 'read_secrets registry' "$deploy_script"
 require '${REMOTE_DIR}/watchtower/config.json' "$deploy_script"
 require 'chmod 600 ${REMOTE_DIR}/watchtower/config.json' "$deploy_script"
+require '${SCRIPT_DIR}/nodebb-entrypoint.sh' "$deploy_script"
+require 'chmod 755 ${REMOTE_DIR}/nodebb-entrypoint.sh' "$deploy_script"
 require 'https://cr.beskid-lang.org/v2/' "$deploy_script"
 require 'authentication challenge' "$deploy_script"
 require 'deploy/registry/htpasswd' "$sites_gitignore"
 
-for service in website learn tracker nexus pckg; do
+for service in website learn tracker nexus pckg community; do
   require "  ${service}:" "$compose"
-  require "com.centurylinklabs.watchtower.enable: \"true\"" "$compose"
 done
+
+community_block="$(service_block community)"
+[[ "${community_block}" == *"ghcr.io/nodebb/nodebb:"* ]] || {
+  echo 'community must use the pinned NodeBB image' >&2
+  exit 1
+}
+[[ "${community_block}" == *"caddy_0: https://community.beskid-lang.org"* ]] || {
+  echo 'community must have the canonical public hostname' >&2
+  exit 1
+}
+[[ "${community_block}" == *"caddy_0.route_2.reverse_proxy: \"{{upstreams 4567}}\""* ]] || {
+  echo 'community must route to NodeBB on port 4567' >&2
+  exit 1
+}
+[[ "${community_block}" == *"nodebb-config:/opt/config"* ]] || {
+  echo 'community must persist NodeBB configuration' >&2
+  exit 1
+}
+[[ "${community_block}" == *"./nodebb-entrypoint.sh:/opt/nodebb-entrypoint.sh:ro"* ]] || {
+  echo 'community must use the tracked NodeBB bootstrap wrapper' >&2
+  exit 1
+}
+[[ "${community_block}" == *"NODEBB_SESSION_SECRET"* ]] || {
+  echo 'community must receive its session secret from deploy environment' >&2
+  exit 1
+}
+[[ "${community_block}" != *"com.centurylinklabs.watchtower.enable: \"true\""* ]] || {
+  echo 'community must not be advanced by the application image Watchtower lane' >&2
+  exit 1
+}
 
 require '  authentik-postgresql:' "$compose"
 require '  authentik-server:' "$compose"
@@ -111,6 +142,15 @@ require 'AUTHENTIK_SECRET_KEY' "$env_example"
 require 'AUTHENTIK_BOOTSTRAP_TOKEN' "$env_example"
 require 'GITHUB_CLIENT_ID' "$env_example"
 require 'GITHUB_CLIENT_SECRET' "$env_example"
+require 'NODEBB_SESSION_SECRET' "$env_example"
+require 'NODEBB_ADMIN_USERNAME' "$env_example"
+require 'NODEBB_ADMIN_PASSWORD' "$env_example"
+require 'NODEBB_ADMIN_EMAIL' "$env_example"
+require 'NODEBB_DB_USER' "$env_example"
+require 'NODEBB_DB_PASSWORD' "$env_example"
+require 'need NODEBB_SESSION_SECRET' "$deploy_script"
+require 'need NODEBB_ADMIN_PASSWORD' "$deploy_script"
+require 'need NODEBB_DB_PASSWORD' "$deploy_script"
 require 'caddy_0.route.0_reverse_proxy: /outpost.goauthentik.io/* authentik-server:9000' "$compose"
 require 'caddy_0.route.1_forward_auth: authentik-server:9000' "$compose"
 require 'caddy_0.route.1_forward_auth.uri: /outpost.goauthentik.io/auth/caddy' "$compose"
