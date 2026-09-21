@@ -30,5 +30,10 @@ function PackageDetailsPage() {
 		throw details.error;
 	}
 
-	return <PackageDetail details={details.data} />;
+	const communitySlug = details.data.package.name
+		.toLowerCase()
+		.replace(/[^a-z0-9]+/g, "-")
+		.replace(/^-|-$/g, "");
+
+	return <PackageDetail details={details.data} communitySlug={communitySlug} />;
 }
