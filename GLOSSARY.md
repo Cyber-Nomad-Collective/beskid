@@ -45,6 +45,21 @@ core-library, startup, template, or generated material incorporated into an
 output is deliberately Apache-2.0 so that output may be licensed independently,
 subject to any separately identified third-party material.
 
+## Cleanup conversion
+
+The one explicit error conversion used only by a scoped `use` cleanup. It is a
+non-generic function marked `[CleanupConversion]` with exactly one
+`DisposeError` parameter and a return type exactly equal to the enclosing
+callable's `Result` error type. It is not a general error coercion and never
+changes postfix `?` semantics.
+
+## Cleanup region
+
+The existing lexical local-root scope augmented with reverse-order scoped-use
+disposal obligations. Every supported exit crosses this one region stack so
+each active resource is disposed exactly once and cleanup-error precedence is
+consistent.
+
 ## Bug-only GitHub synchronization
 
 Tracker integration in which GitHub Issues represents public bugs and their supported status/discussion fields only. Roadmap tasks, versions, workstreams, milestones, and deliverables remain in Tracker's SQLite domain model.
@@ -52,6 +67,10 @@ Tracker integration in which GitHub Issues represents public bugs and their supp
 ## Canonical UI packages
 
 `@beskid/ui-react` and `@beskid/beskid-ui`, sourced from `beskid_web_common`. They provide the only shared component and style implementation for Beskid web applications.
+
+## Canonical pckg implementation
+
+The single pckg product implementation: `beskid_pckg_server` is the sole registry/backend authority and `beskid_sites/apps/pckg` is the sole web application. Shared shell and UI behavior remains imported from its canonical packages rather than copied into pckg. The migration copies and minimally adapts proven pckg-specific behavior from historical sources, then deletes `pckg/web` and every compatibility path; maintaining two active web clients is not an accepted transition state at completion.
 
 ## CLI root command inventory
 
@@ -90,6 +109,18 @@ Statuses include draft, submitted, approved, rejected, merged, abandoned, and su
 Terminal status when the linked GitHub pull request closes without merge. Distinct from
 moderator rejection of a submitted context.
 
+## Derived external-wait capacity
+
+The scheduler invariant that grants each live valid fiber exactly one active external-wait registration. Its usable admission capacity is therefore the live-fiber capacity, rather than the number of physically allocated wait records; a second registration for the same fiber is a duplicate failure, not capacity exhaustion. See `BSP-REQ-A0D58F1B3E21`.
+
+## Descriptor domain
+
+The native-operation domain carried by the existing syscall ABI: a nonnegative signed 32-bit file descriptor. On Linux and macOS it denotes a POSIX file descriptor; on Windows it denotes a descriptor in the supported application UCRT namespace. A source `Descriptor::Raw(i64)` is validated into this domain before narrowing. It is never a Win32 `HANDLE` or a raw pointer.
+
+## Descriptor-owned native operation
+
+An accepted syscall worker request that owns a private duplicate of its caller-supplied descriptor until the one native transfer has completed or been safely abandoned. It never changes or closes the caller's descriptor, and cancellation does not release the duplicate while the worker can still use it.
+
 ## Filesystem existence tri-state
 
 The `Core.FS.Exists` outcome model in which an existing path is `Ok(true)`, a
@@ -107,6 +138,13 @@ Heuristic parse fallback diagnostics emitted when AST construction can still suc
 ## single-token deletion recovery
 
 An error-recovery heuristic that deletes one unexpected token when the following token is accepted by the parser’s expected-set (or is otherwise a safe continuation), then continues parsing from the recovered position. In this project it is used in sync recovery for punctuation-heavy and list-like syntax to reduce spurious cascading errors.
+
+## Scoped-use acquisition
+
+The proof that `use Type name = expression;` obtains sole lexical ownership:
+either direct fresh construction or a recursively source-proven factory return
+whose leaves are fresh constructions. Existing aliases, borrowed values,
+unresolved/dynamic factories, and cyclic factory evidence fail closed.
 
 ## Immutable graph
 

@@ -52,6 +52,23 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Add a detailed implementation plan for restoring the consolidated pckg site,
+  reaching package, publisher, and documentation parity, improving publisher
+  convenience through CLI-first release guidance, and retiring the duplicate
+  legacy web client only after contract, browser, and deployment gates pass;
+  require the migration to finish with `beskid_sites/apps/pckg` as the sole web
+  implementation and `beskid_pckg_server` as the sole registry implementation.
+  Use a copy-first DRY inventory so proven components, tests, route behavior,
+  and API contracts are moved and minimally adapted instead of rewritten.
+
+- Re-baseline the Beskid 0.5 closure plan against the active Foundation and
+  Networking OpenSpec changes, current compiler seams, and three-target
+  behavioral evidence requirements.
+
+- Add an evidence-backed v0.5 Foundations implementation plan covering typed
+  fiber/channel transport, scheduler ownership and timers, scoped cleanup, and
+  Core.IO release gates.
+
 - Let the protected PCKG publisher use a version-pinned compiler release CLI, avoiding a Rust compiler rebuild for each manual package publication.
 
 - Add an evidence-backed compiler 0.5 readiness assessment covering Foundation,
