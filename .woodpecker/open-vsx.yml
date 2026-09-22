@@ -1,7 +1,7 @@
 labels:
   platform: linux/amd64
   backend: docker
-  role: beskid-open-vsx
+  role: beskid-linux
 
 clone:
   git:
