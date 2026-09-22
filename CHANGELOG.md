@@ -9,6 +9,11 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ## [Unreleased]
 
+### Added
+
+- Add a protected manual Woodpecker publisher for the Linux x64 Beskid VS Code
+  extension on Open VSX.
+
 ### Fixed
 
 - Resolve pckg users from the verified Authentik forward-auth headers through

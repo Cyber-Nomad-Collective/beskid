@@ -48,6 +48,19 @@ for file in "${workflow_dir}/linux.yml" "${workflow_dir}/macos.yml" "${workflow_
 done
 grep -Fq 'BESKID_TASK == "build" || BESKID_TASK == "validate"' "${workflow_dir}/linux.yml"
 
+# Open VSX is a protected, explicit publisher. The workflow must not inherit
+# credentials into an ordinary validation or native-build lane.
+open_vsx_workflow="${workflow_dir}/open-vsx.yml"
+test -f "${open_vsx_workflow}"
+grep -Fq 'BESKID_TASK == "open-vsx-publish"' "${open_vsx_workflow}"
+grep -Fq 'event: manual' "${open_vsx_workflow}"
+grep -Fq 'branch: main' "${open_vsx_workflow}"
+grep -Fq 'from_secret: open_vsx_token' "${open_vsx_workflow}"
+grep -Fq 'BESKID_OPEN_VSX_PUBLISH: "1"' "${open_vsx_workflow}"
+grep -Fq 'init-submodules.sh compiler beskid_bsol beskid_vscode' "${open_vsx_workflow}"
+grep -Fq 'open-vsx-publish.sh linux-x64 beskid_lsp' "${open_vsx_workflow}"
+grep -Fq 'BESKID_RELEASE_VERSION:?set stable version' "${open_vsx_workflow}"
+
 # This contract owns only native build and standard validation lanes. Editor,
 # security and protected publishing lanes have separate policy contracts;
 # adding them must not grant publication authority to these four workflows.

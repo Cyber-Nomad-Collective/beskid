@@ -63,6 +63,35 @@ calling the existing stream publisher. A changed `main` cannot consume an older
 build: rebuild from the selected revision. Immutable release retries must be
 byte-identical; conflicting assets are not overwritten.
 
+### Open VSX extension publication
+
+Open VSX is a separate protected manual publisher. It builds the Linux x64 LSP
+from the checked-out compiler gitlink and publishes the matching target-specific
+VSIX. It never runs for push, tag, pull-request, or ordinary build workflows.
+
+Create the Woodpecker repository secret named `open_vsx_token` from the Open VSX
+publisher credential. Keep it restricted to the repository and do not expose it
+to pull requests. The workflow reads it only in the `publish-open-vsx` step;
+the token must never be placed in a pipeline variable, tracked file, or build
+log.
+
+Use the stable compiler release version that matches the checked-out compiler
+gitlink. For the current release this is `0.4.746`:
+
+```bash
+woodpecker-cli pipeline create Cyber-Nomad-Collective/beskid --branch main \
+  --var BESKID_TASK=open-vsx-publish --var BESKID_RELEASE_VERSION=0.4.746
+```
+
+After a successful pipeline, verify the exact registry version instead of
+relying solely on the job result:
+
+```bash
+curl --fail --silent --show-error \
+  https://open-vsx.org/api/beskid/beskid-vscode/0.4.746 | jq -e \
+  '.version == "0.4.746" and .files.download | contains("linux-x64")'
+```
+
 The SFTP inbox is `/var/lib/woodpecker-handoff/<role>/incoming/<build>-<sha>/<role>`.
 Prepared output is `/var/lib/woodpecker/beskid-output/releases/<release-run>-<sha>`.
 Each invocation creates a new private snapshot; interrupted output remains for

@@ -1,0 +1,45 @@
+labels:
+  platform: linux/amd64
+  backend: docker
+  role: beskid-open-vsx
+
+clone:
+  git:
+    image: woodpeckerci/plugin-git:2.10.1
+    settings:
+      recursive: false
+
+steps:
+  - name: publish-open-vsx
+    image: rust:1.98.1-bookworm@sha256:9a73a5088750b4c95158ab26629c854c3d6fc4b173cb7bc8079ad252d8ed7bfa
+    environment:
+      BESKID_OPEN_VSX_PUBLISH: "1"
+      OVSX_TOKEN:
+        from_secret: open_vsx_token
+    commands:
+      - apt-get update >/dev/null
+      - apt-get install -y --no-install-recommends ca-certificates clang curl git jq lld llvm mold pkg-config unzip >/dev/null
+      - |
+        bun_version='1.2.20'
+        bun_archive='/tmp/bun-linux-x64.zip'
+        bun_sha256='4e9edc4cba0c7c1623a288be01e53bbde11a4d073f2cf339cab026627858b548'
+        curl --fail --location --retry 3 --retry-all-errors --output "${bun_archive}" "https://github.com/oven-sh/bun/releases/download/bun-v${bun_version}/bun-linux-x64.zip"
+        printf '%s  %s\n' "${bun_sha256}" "${bun_archive}" | sha256sum --check --strict
+        unzip -q "${bun_archive}" -d /opt
+        install -m 0755 /opt/bun-linux-x64/bun /usr/local/bin/bun
+        test "$(bun --version)" = "${bun_version}"
+      - bash scripts/ci/init-submodules.sh compiler beskid_bsol beskid_vscode
+      - |
+        version="$${BESKID_RELEASE_VERSION:?set stable version}"
+        case "${version}" in
+          [0-9]*.[0-9]*.[0-9]*) ;;
+          *) echo 'BESKID_RELEASE_VERSION must be a stable release version' >&2; exit 1 ;;
+        esac
+        bash scripts/ci/open-vsx-publish.sh linux-x64 beskid_lsp
+
+# Marketplace publication is always a protected, explicit main-branch action.
+# The Open VSX token is exposed only to this step by Woodpecker's secret store.
+when:
+  - event: manual
+    branch: main
+    evaluate: 'BESKID_TASK == "open-vsx-publish"'
