@@ -23,7 +23,7 @@ Interactive learning surface for the Beskid language.
 - Edit lesson files directly in `site/learn/curriculum/<lesson>/start.bd`.
 - Check a single lesson from terminal:
   - `cd site/learn`
-  - `pnpm run lesson:check 01-hello-beskid`
+  - `pnpm run lesson:check orientation_learning_loop`
 - Check all seeded lessons:
   - `cd site/learn`
   - `pnpm run check:all`
@@ -67,14 +67,14 @@ to a checkout that contains both `/compiler/Cargo.toml` and `/site/learn`.
 - Smoke checks:
   - `curl -I https://learn.beskid-lang.org`
   - `curl -s https://learn.beskid-lang.org/api/health`
-  - `curl -s https://learn.beskid-lang.org/api/check -H 'content-type: application/json' -d '{"exerciseId":"01_hello_beskid","code":"i32 Main() {\\n  return 0;\\n}","command":"analyze"}'`
+  - `curl -s https://learn.beskid-lang.org/api/check -H 'content-type: application/json' -d '{"exerciseId":"orientation_learning_loop","code":"i32 Main() {\\n  return 0;\\n}","command":"analyze"}'`
 
 For a guided setup in Codespaces, follow [CODESPACES.md](CODESPACES.md).
 
 ## Exercises
 
-The exercise list lives in `src/data/learningCatalog.ts` and is mirrored by files in
-`curriculum/`.
+The authored exercise list lives in `curriculum/`; the committed
+`src/data/generatedLearningCatalog.ts` is generated from it.
 
 Each lesson uses a concrete command from the Beskid CLI:
 
@@ -90,6 +90,5 @@ This mirrors rustlings-style validation: code must pass real diagnostics before 
 
 ## Extensibility
 
-- Add an exercise by appending to `src/data/learningCatalog.ts`.
-- Add richer lesson files by adding a per-exercise folder and returning
-  exercise-specific starter text + expected pass criteria.
+- Add a manifest-listed lesson package under `curriculum/`, then run
+  `pnpm run curriculum:build` to regenerate the catalog.

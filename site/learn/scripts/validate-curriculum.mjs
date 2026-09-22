@@ -30,6 +30,7 @@ const REQUIRED_METADATA = [
 	"hints",
 	"questions",
 ];
+const AVAILABILITY_STATUSES = new Set(["available", "reference-only"]);
 
 function readJson(filePath) {
 	try {
@@ -94,6 +95,7 @@ function validateQuestions(questions, label) {
 		if (typeof question.id !== "string" || !question.id || ids.has(question.id)) throw new Error(`${label} ids must be unique non-empty strings`);
 		if (typeof question.text !== "string" || !question.text) throw new Error(`${label}.${question.id}.text must be a non-empty string`);
 		assertArrayOfStrings(question.options, `${label}.${question.id}.options`);
+		if (new Set(question.options).size !== question.options.length) throw new Error(`${label}.${question.id}.options must be unique`);
 		if (!Number.isInteger(question.correctIndex) || question.correctIndex < 0 || question.correctIndex >= question.options.length) {
 			throw new Error(`${label}.${question.id}.correctIndex must select an option`);
 		}
@@ -146,14 +148,26 @@ function validateCodeExamples(body, lessonFile) {
 function validateCheck(check, metadata, lessonFile) {
 	if (!check || typeof check !== "object" || Array.isArray(check)) throw new Error(`${lessonFile}: check.json must be an object`);
 	if (!["interactive", "reference-only"].includes(check.mode)) throw new Error(`${lessonFile}: check.json mode must be interactive or reference-only`);
+	if (!AVAILABILITY_STATUSES.has(check.status)) throw new Error(`${lessonFile}: check.json status must be available or reference-only`);
 	if (check.command !== metadata.command) throw new Error(`${lessonFile}: check.json command must match lesson front matter`);
 	if (!check.acceptance || typeof check.acceptance !== "object") throw new Error(`${lessonFile}: check.json requires an acceptance object`);
-	if (check.mode === "interactive" && !INTERACTIVE_COMMANDS.has(check.command)) throw new Error(`${lessonFile}: unsupported interactive command '${check.command}'`);
-	if (check.mode === "reference-only" && check.command !== "reference") throw new Error(`${lessonFile}: reference-only lessons must declare command 'reference'`);
+	if (check.mode === "interactive") {
+		if (!INTERACTIVE_COMMANDS.has(check.command)) throw new Error(`${lessonFile}: unsupported interactive command '${check.command}'`);
+		if (check.status !== "available") throw new Error(`${lessonFile}: interactive lessons must declare status 'available'`);
+		if (check.acceptance.kind !== "compiler" || check.acceptance.expect !== "pass") throw new Error(`${lessonFile}: interactive acceptance must be { kind: 'compiler', expect: 'pass' }`);
+	}
+	if (check.mode === "reference-only") {
+		if (check.command !== "reference") throw new Error(`${lessonFile}: reference-only lessons must declare command 'reference'`);
+		if (check.status !== "reference-only") throw new Error(`${lessonFile}: reference-only lessons must declare status 'reference-only'`);
+		if (check.acceptance.kind !== "reference" || check.acceptance.expect !== "read") throw new Error(`${lessonFile}: reference-only acceptance must be { kind: 'reference', expect: 'read' }`);
+	}
+	if (Object.keys(check.acceptance).length !== 2) throw new Error(`${lessonFile}: acceptance may contain only kind and expect`);
+	if (Object.hasOwn(check, "expectedOutput") && typeof check.expectedOutput !== "string") throw new Error(`${lessonFile}: expectedOutput must be a string when present`);
 }
 
 function topologicallyValidatePrerequisites(lessonRecords) {
 	const ids = new Set(lessonRecords.map(({ id }) => id));
+	const recordsById = new Map(lessonRecords.map((record, index) => [record.id, { ...record, index }]));
 	const state = new Map();
 	const visit = (record, trail) => {
 		const status = state.get(record.id);
@@ -162,7 +176,9 @@ function topologicallyValidatePrerequisites(lessonRecords) {
 		state.set(record.id, "visiting");
 		for (const prerequisite of record.metadata.prerequisites) {
 			if (!ids.has(prerequisite)) throw new Error(`${record.id}: unknown prerequisite '${prerequisite}'`);
-			visit(lessonRecords.find(({ id }) => id === prerequisite), [...trail, record.id]);
+			const prerequisiteRecord = recordsById.get(prerequisite);
+			if (prerequisiteRecord.index >= record.index) throw new Error(`${record.id}: prerequisite '${prerequisite}' must appear earlier in manifest learning order`);
+			visit(prerequisiteRecord, [...trail, record.id]);
 		}
 		state.set(record.id, "done");
 	};
@@ -188,6 +204,8 @@ export function validateCurriculum({ curriculumRoot }) {
 		assertArrayOfStrings(context.lessons, `${manifestPath}: context ${context.id} lessons`);
 		seenContextIds.add(context.id);
 		seenContextPaths.add(context.path);
+		const contextFile = path.join(curriculumRoot, context.path, "context.md");
+		if (!fs.existsSync(contextFile) || !fs.readFileSync(contextFile, "utf8").trim()) throw new Error(`${manifestPath}: context ${context.id} requires a non-empty ${context.path}/context.md`);
 		for (const id of context.lessons) {
 			if (listedLessonIds.has(id)) throw new Error(`${manifestPath}: lesson '${id}' appears in more than one context`);
 			const definition = manifest.lessons[id];

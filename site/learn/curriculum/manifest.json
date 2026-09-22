@@ -12,43 +12,109 @@
 			"id": "foundations",
 			"title": "Foundations",
 			"path": "01-foundations",
-			"capabilities": ["main", "literals-and-types", "bindings", "expressions", "mutation-and-assignment"],
-			"lessons": ["foundations_main", "foundations_values", "foundations_bindings", "foundations_expressions", "foundations_mutation"]
+			"capabilities": [
+				"main",
+				"literals-and-types",
+				"bindings",
+				"expressions",
+				"mutation-and-assignment"
+			],
+			"lessons": [
+				"foundations_main",
+				"foundations_values",
+				"foundations_bindings",
+				"foundations_expressions",
+				"foundations_mutation"
+			]
 		},
 		{
 			"id": "control-flow",
 			"title": "Control flow",
 			"path": "02-control-flow",
-			"capabilities": ["functions", "if", "loops", "booleans", "break-and-continue"],
-			"lessons": ["flow_functions", "flow_choices", "flow_repetition", "flow_retrieval", "flow_booleans", "flow_loop_exits"]
+			"capabilities": [
+				"functions",
+				"if",
+				"loops",
+				"booleans",
+				"break-and-continue"
+			],
+			"lessons": [
+				"flow_functions",
+				"flow_choices",
+				"flow_repetition",
+				"flow_retrieval",
+				"flow_booleans",
+				"flow_loop_exits"
+			]
 		},
 		{
 			"id": "data-modeling",
 			"title": "Data modeling",
 			"path": "03-data-modeling",
-			"capabilities": ["nominal-types", "fields", "methods", "enums", "match", "collections", "events-and-subscribers"],
-			"lessons": ["data_structs", "data_methods", "data_enums", "data_match", "data_collections", "data_events"]
-		},
-		{
-			"id": "core-library",
-			"title": "Practical core library",
-			"path": "08-core-library",
-			"capabilities": ["corelib-discovery", "api-docs", "corelib-collections", "corelib-conversions"],
-			"lessons": ["corelib_discovery", "corelib_api_docs", "corelib_collections", "corelib_conversions"]
+			"capabilities": [
+				"nominal-types",
+				"fields",
+				"methods",
+				"enums",
+				"match",
+				"collections",
+				"events-and-subscribers"
+			],
+			"lessons": [
+				"data_structs",
+				"data_methods",
+				"data_enums",
+				"data_match",
+				"data_collections",
+				"data_events"
+			]
 		},
 		{
 			"id": "program-structure",
 			"title": "Program structure",
 			"path": "04-program-structure",
-			"capabilities": ["modules", "visibility", "projects-and-packages", "tooling"],
-			"lessons": ["structure_modules", "structure_visibility", "structure_projects", "structure_tests"]
+			"capabilities": [
+				"modules",
+				"visibility",
+				"projects-and-packages",
+				"tooling"
+			],
+			"lessons": [
+				"structure_modules",
+				"structure_visibility",
+				"structure_projects",
+				"structure_tests"
+			]
+		},
+		{
+			"id": "core-library",
+			"title": "Practical core library",
+			"path": "08-core-library",
+			"capabilities": [
+				"corelib-discovery",
+				"api-docs",
+				"corelib-collections",
+				"corelib-conversions"
+			],
+			"lessons": [
+				"corelib_discovery",
+				"corelib_api_docs",
+				"corelib_collections",
+				"corelib_conversions"
+			]
 		},
 		{
 			"id": "reliability-and-abstraction",
 			"title": "Reliability and abstraction",
 			"path": "05-reliability-and-abstraction",
 			"capabilities": ["option", "result", "errors", "generics", "contracts"],
-			"lessons": ["reliability_option", "reliability_result", "reliability_errors", "reliability_generics", "reliability_contracts"]
+			"lessons": [
+				"reliability_option",
+				"reliability_result",
+				"reliability_errors",
+				"reliability_generics",
+				"reliability_contracts"
+			]
 		},
 		{
 			"id": "functions-with-context",
@@ -61,67 +127,196 @@
 			"id": "fibers-and-channels",
 			"title": "Fibers and channels",
 			"path": "07-fibers-and-channels",
-			"capabilities": ["cooperative-fibers", "spawn", "join", "yield-cancel-detach", "channels", "fiber-capstone"],
-			"lessons": ["fibers_model", "fibers_spawn", "fibers_join", "fibers_control", "fibers_channels", "fibers_capstone"]
+			"capabilities": [
+				"cooperative-fibers",
+				"spawn",
+				"join",
+				"yield-cancel-detach",
+				"channels",
+				"fiber-capstone"
+			],
+			"lessons": [
+				"fibers_model",
+				"fibers_spawn",
+				"fibers_join",
+				"fibers_control",
+				"fibers_channels",
+				"fibers_capstone"
+			]
 		},
 		{
 			"id": "advanced-language",
 			"title": "Advanced language surfaces",
 			"path": "09-advanced-language",
-			"capabilities": ["extend", "attributes", "documentation-comments", "macros", "mods", "serialization", "ffi", "memory"],
-			"lessons": ["advanced_extend", "advanced_attributes", "advanced_docs", "advanced_macros", "advanced_mods", "advanced_serialization", "advanced_ffi", "advanced_memory"]
+			"capabilities": [
+				"extend",
+				"attributes",
+				"documentation-comments",
+				"macros",
+				"mods",
+				"serialization",
+				"ffi",
+				"memory"
+			],
+			"lessons": [
+				"advanced_extend",
+				"advanced_attributes",
+				"advanced_docs",
+				"advanced_macros",
+				"advanced_mods",
+				"advanced_serialization",
+				"advanced_ffi",
+				"advanced_memory"
+			]
 		}
 	],
 	"lessons": {
-		"orientation_learning_loop": { "path": "00-orientation/01-learning-loop" },
-		"orientation_diagnostics": { "path": "00-orientation/02-reading-diagnostics" },
-		"foundations_main": { "path": "01-foundations/01-main-and-exit-codes" },
-		"foundations_values": { "path": "01-foundations/02-values-literals-and-types" },
-		"foundations_bindings": { "path": "01-foundations/03-names-and-immutability" },
-		"foundations_expressions": { "path": "01-foundations/04-operators-and-expressions" },
-		"foundations_mutation": { "path": "01-foundations/05-mutation-and-assignment" },
-		"flow_functions": { "path": "02-control-flow/01-functions-and-contracts" },
-		"flow_choices": { "path": "02-control-flow/02-choices-with-if" },
-		"flow_repetition": { "path": "02-control-flow/03-repetition-with-loops" },
-		"flow_retrieval": { "path": "02-control-flow/04-control-flow-retrieval" },
-		"flow_booleans": { "path": "02-control-flow/05-boolean-logic-and-short-circuiting" },
-		"flow_loop_exits": { "path": "02-control-flow/06-break-and-continue" },
-		"data_structs": { "path": "03-data-modeling/01-structs-and-fields" },
-		"data_methods": { "path": "03-data-modeling/02-methods-and-receivers" },
-		"data_enums": { "path": "03-data-modeling/03-enums-for-states" },
-		"data_match": { "path": "03-data-modeling/04-match-and-exhaustiveness" },
-		"data_collections": { "path": "03-data-modeling/05-arrays-and-collections" },
-		"data_events": { "path": "03-data-modeling/06-events-and-subscribers" },
-		"structure_modules": { "path": "04-program-structure/01-modules-and-use" },
-		"structure_visibility": { "path": "04-program-structure/02-visibility-and-public-apis" },
-		"structure_projects": { "path": "04-program-structure/03-projects-packages-and-builds" },
-		"structure_tests": { "path": "04-program-structure/04-tests-and-diagnostics" },
-		"reliability_option": { "path": "05-reliability-and-abstraction/01-option-and-absence" },
-		"reliability_result": { "path": "05-reliability-and-abstraction/01-result-and-fallible-work" },
-		"reliability_errors": { "path": "05-reliability-and-abstraction/02-errors-as-data" },
-		"reliability_generics": { "path": "05-reliability-and-abstraction/03-generic-reusable-code" },
-		"reliability_contracts": { "path": "05-reliability-and-abstraction/04-contracts-and-conformance" },
-		"context_lambdas": { "path": "06-functions-with-context/01-lambdas" },
-		"context_capture": { "path": "06-functions-with-context/02-capture-and-lifetime-boundaries" },
-		"context_composition": { "path": "06-functions-with-context/03-composing-behaviour" },
-		"fibers_model": { "path": "07-fibers-and-channels/01-cooperative-concurrency-model" },
-		"fibers_spawn": { "path": "07-fibers-and-channels/02-spawn-and-fiber-handles" },
-		"fibers_join": { "path": "07-fibers-and-channels/03-join-and-fiber-results" },
-		"fibers_control": { "path": "07-fibers-and-channels/04-yield-cancel-and-detach" },
-		"fibers_channels": { "path": "07-fibers-and-channels/05-channels-and-message-passing" },
-		"fibers_capstone": { "path": "07-fibers-and-channels/06-concurrent-quest-log-capstone" }
-		,
-		"corelib_discovery": { "path": "08-core-library/01-discovering-corelib-and-apis" },
-		"corelib_api_docs": { "path": "08-core-library/02-reading-api-docs-and-signatures" },
-		"corelib_collections": { "path": "08-core-library/03-practical-collections" },
-		"corelib_conversions": { "path": "08-core-library/04-conversions-and-formatting" },
-		"advanced_extend": { "path": "09-advanced-language/01-extending-types" },
-		"advanced_attributes": { "path": "09-advanced-language/02-attributes-and-annotations" },
-		"advanced_docs": { "path": "09-advanced-language/03-documentation-comments" },
-		"advanced_macros": { "path": "09-advanced-language/04-macros" },
-		"advanced_mods": { "path": "09-advanced-language/05-mods-and-conditional-compilation" },
-		"advanced_serialization": { "path": "09-advanced-language/06-serialization" },
-		"advanced_ffi": { "path": "09-advanced-language/07-ffi-boundaries" },
-		"advanced_memory": { "path": "09-advanced-language/08-memory-and-ownership" }
+		"orientation_learning_loop": {
+			"path": "00-orientation/01-learning-loop"
+		},
+		"orientation_diagnostics": {
+			"path": "00-orientation/02-reading-diagnostics"
+		},
+		"foundations_main": {
+			"path": "01-foundations/01-main-and-exit-codes"
+		},
+		"foundations_values": {
+			"path": "01-foundations/02-values-literals-and-types"
+		},
+		"foundations_bindings": {
+			"path": "01-foundations/03-names-and-immutability"
+		},
+		"foundations_expressions": {
+			"path": "01-foundations/04-operators-and-expressions"
+		},
+		"foundations_mutation": {
+			"path": "01-foundations/05-mutation-and-assignment"
+		},
+		"flow_functions": {
+			"path": "02-control-flow/01-functions-and-contracts"
+		},
+		"flow_choices": {
+			"path": "02-control-flow/02-choices-with-if"
+		},
+		"flow_repetition": {
+			"path": "02-control-flow/03-repetition-with-loops"
+		},
+		"flow_retrieval": {
+			"path": "02-control-flow/04-control-flow-retrieval"
+		},
+		"flow_booleans": {
+			"path": "02-control-flow/05-boolean-logic-and-short-circuiting"
+		},
+		"flow_loop_exits": {
+			"path": "02-control-flow/06-break-and-continue"
+		},
+		"data_structs": {
+			"path": "03-data-modeling/01-structs-and-fields"
+		},
+		"data_methods": {
+			"path": "03-data-modeling/02-methods-and-receivers"
+		},
+		"data_enums": {
+			"path": "03-data-modeling/03-enums-for-states"
+		},
+		"data_match": {
+			"path": "03-data-modeling/04-match-and-exhaustiveness"
+		},
+		"data_collections": {
+			"path": "03-data-modeling/05-arrays-and-collections"
+		},
+		"data_events": {
+			"path": "03-data-modeling/06-events-and-subscribers"
+		},
+		"structure_modules": {
+			"path": "04-program-structure/01-modules-and-use"
+		},
+		"structure_visibility": {
+			"path": "04-program-structure/02-visibility-and-public-apis"
+		},
+		"structure_projects": {
+			"path": "04-program-structure/03-projects-packages-and-builds"
+		},
+		"structure_tests": {
+			"path": "04-program-structure/04-tests-and-diagnostics"
+		},
+		"reliability_option": {
+			"path": "05-reliability-and-abstraction/01-option-and-absence"
+		},
+		"reliability_result": {
+			"path": "05-reliability-and-abstraction/01-result-and-fallible-work"
+		},
+		"reliability_errors": {
+			"path": "05-reliability-and-abstraction/02-errors-as-data"
+		},
+		"reliability_generics": {
+			"path": "05-reliability-and-abstraction/03-generic-reusable-code"
+		},
+		"reliability_contracts": {
+			"path": "05-reliability-and-abstraction/04-contracts-and-conformance"
+		},
+		"context_lambdas": {
+			"path": "06-functions-with-context/01-lambdas"
+		},
+		"context_capture": {
+			"path": "06-functions-with-context/02-capture-and-lifetime-boundaries"
+		},
+		"context_composition": {
+			"path": "06-functions-with-context/03-composing-behaviour"
+		},
+		"fibers_model": {
+			"path": "07-fibers-and-channels/01-cooperative-concurrency-model"
+		},
+		"fibers_spawn": {
+			"path": "07-fibers-and-channels/02-spawn-and-fiber-handles"
+		},
+		"fibers_join": {
+			"path": "07-fibers-and-channels/03-join-and-fiber-results"
+		},
+		"fibers_control": {
+			"path": "07-fibers-and-channels/04-yield-cancel-and-detach"
+		},
+		"fibers_channels": {
+			"path": "07-fibers-and-channels/05-channels-and-message-passing"
+		},
+		"fibers_capstone": {
+			"path": "07-fibers-and-channels/06-concurrent-quest-log-capstone"
+		},
+		"corelib_discovery": {
+			"path": "08-core-library/01-discovering-corelib-and-apis"
+		},
+		"corelib_api_docs": {
+			"path": "08-core-library/02-reading-api-docs-and-signatures"
+		},
+		"corelib_collections": {
+			"path": "08-core-library/03-practical-collections"
+		},
+		"corelib_conversions": {
+			"path": "08-core-library/04-conversions-and-formatting"
+		},
+		"advanced_extend": {
+			"path": "09-advanced-language/01-extending-types"
+		},
+		"advanced_attributes": {
+			"path": "09-advanced-language/02-attributes-and-annotations"
+		},
+		"advanced_docs": {
+			"path": "09-advanced-language/03-documentation-comments"
+		},
+		"advanced_macros": {
+			"path": "09-advanced-language/04-macros"
+		},
+		"advanced_mods": {
+			"path": "09-advanced-language/05-mods-and-conditional-compilation"
+		},
+		"advanced_serialization": {
+			"path": "09-advanced-language/06-serialization"
+		},
+		"advanced_ffi": {
+			"path": "09-advanced-language/07-ffi-boundaries"
+		},
+		"advanced_memory": {
+			"path": "09-advanced-language/08-memory-and-ownership"
+		}
 	}
 }

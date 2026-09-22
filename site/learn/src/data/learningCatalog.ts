@@ -1,7 +1,12 @@
 import type { LessonStep } from "#/components/lessonWorkspace/steps";
 import { generatedLearnExercises } from "./generatedLearningCatalog";
 
-export type Question = { id: string; text: string; options: string[]; correctIndex: number };
+export type Question = {
+	id: string;
+	text: string;
+	options: string[];
+	correctIndex: number;
+};
 export type LearnExerciseCategory =
 	| "orientation"
 	| "foundations"
@@ -13,7 +18,12 @@ export type LearnExerciseCategory =
 	| "fibers-and-channels"
 	| "core-library"
 	| "advanced-language";
-export interface TileLayoutEntry { id: string; label: string; defaultVisible: boolean; defaultSize: number; }
+export interface TileLayoutEntry {
+	id: string;
+	label: string;
+	defaultVisible: boolean;
+	defaultSize: number;
+}
 
 // This UI/server contract is deliberately stable. Curriculum authors write
 // Markdown; scripts/build-curriculum.mjs produces this shape from it.
@@ -25,6 +35,7 @@ export type LearnExercise = {
 	starterCode: string;
 	command: string;
 	mode: "interactive" | "reference-only";
+	status: "available" | "reference-only";
 	expectedOutput?: string;
 	hints: Array<string>;
 	lessonPath: string;
@@ -35,12 +46,22 @@ export type LearnExercise = {
 	category: LearnExerciseCategory;
 	tileLayout?: ReadonlyArray<TileLayoutEntry>;
 	steps?: ReadonlyArray<LessonStep>;
-	layout?: { visibleTiles: ReadonlyArray<"editor" | "terminal" | "content" | "hints" | "questions" | "fileExplorer"> };
+	layout?: {
+		visibleTiles: ReadonlyArray<
+			"editor" | "terminal" | "content" | "hints" | "questions" | "fileExplorer"
+		>;
+	};
 };
 
-export type LearnProgress = { exerciseId: string; completed: boolean; score: number; completedAt?: string };
+export type LearnProgress = {
+	exerciseId: string;
+	completed: boolean;
+	score: number;
+	completedAt?: string;
+};
 
-export const learnExercises: ReadonlyArray<LearnExercise> = generatedLearnExercises;
+export const learnExercises: ReadonlyArray<LearnExercise> =
+	generatedLearnExercises;
 export const exerciseCount = learnExercises.length;
 
 export function validateModeForExercise(exercise: LearnExercise): string {
@@ -60,4 +81,5 @@ export const lessonGroups: Record<LearnExerciseCategory, LearnExercise[]> = {
 	"core-library": [],
 	"advanced-language": [],
 };
-for (const exercise of learnExercises) (lessonGroups[exercise.category] ??= []).push(exercise);
+for (const exercise of learnExercises)
+	lessonGroups[exercise.category].push(exercise);
