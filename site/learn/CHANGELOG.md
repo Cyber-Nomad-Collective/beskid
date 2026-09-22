@@ -10,6 +10,8 @@
 
 ### Changed
 
+- Make the Learn workspace fill the viewport and combine course progress with
+  lesson selection in one responsive learning navigator.
 - Apply canonical Emerald Ridge branding to application icons and browser assets.
 - Require ordered prerequisite edges, explicit context briefs, and declared
   availability and acceptance metadata in the authored curriculum.

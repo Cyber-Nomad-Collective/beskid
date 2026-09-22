@@ -6,8 +6,10 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@beskid/ui-react";
-import { CheckCircle, Flame, Trophy } from "lucide-react";
+import { BookOpen, CheckCircle, Flame, Trophy } from "lucide-react";
 import { useMemo } from "react";
+import type { LearnExercise } from "#/data/learningCatalog";
+import LessonCard from "./LessonCard";
 
 interface CategoryInfo {
 	label: string;
@@ -19,6 +21,9 @@ interface ProgressTrackerProps {
 	passedLessons: Record<string, boolean>;
 	exerciseCount: number;
 	categories: Record<string, CategoryInfo>;
+	lessons: ReadonlyArray<LearnExercise>;
+	activeLessonId: string;
+	onSelectLesson: (lesson: LearnExercise) => void;
 	streak?: number;
 }
 
@@ -26,6 +31,9 @@ function ProgressTracker({
 	passedLessons,
 	exerciseCount,
 	categories,
+	lessons,
+	activeLessonId,
+	onSelectLesson,
 	streak = 0,
 }: ProgressTrackerProps) {
 	const completedCount = useMemo(
@@ -98,13 +106,12 @@ function ProgressTracker({
 	const earnedCount = achievements.filter((a) => a.earned).length;
 
 	return (
-		<div className="space-y-4">
-			{/* Total Progress */}
-			<Card>
+		<section className="learning-navigator" aria-label="Learning navigator">
+			<Card className="learning-navigator__overview">
 				<CardHeader className="pb-3">
 					<CardTitle className="flex items-center gap-2 text-lg">
 						<CheckCircle className="size-5 text-emerald-500" />
-						Overall Progress
+						Your learning path
 					</CardTitle>
 					<CardDescription>
 						{completedCount} of {exerciseCount} lessons completed ({pct}%)
@@ -120,95 +127,115 @@ function ProgressTracker({
 				</CardContent>
 			</Card>
 
-			{/* Streak */}
-			<Card>
-				<CardHeader className="pb-3">
-					<CardTitle className="flex items-center gap-2 text-lg">
-						<Flame className="size-5 text-orange-500" />
-						Current Streak
-					</CardTitle>
-					<CardDescription>
-						{streak > 0
-							? `${streak} day${streak === 1 ? "" : "s"} and counting!`
-							: "Start learning to build your streak"}
-					</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<div className="flex items-center gap-3">
-						<div className="flex h-16 w-16 items-center justify-center rounded-full bg-orange-500/10">
-							<span className="text-2xl font-bold text-orange-500">{streak}</span>
-						</div>
-						<div
-							className="h-12 w-12"
-							data-lottie="flame-animation"
-							data-lottie-src="/animations/flame.json"
+			<div className="learning-navigator__lessons">
+				<div className="learning-navigator__section-heading">
+					<BookOpen className="size-4 text-primary" />
+					<h2>Lessons</h2>
+				</div>
+				<div className="learning-navigator__lesson-list">
+					{lessons.map((lesson) => (
+						<LessonCard
+							key={lesson.id}
+							lesson={lesson}
+							isActive={lesson.id === activeLessonId}
+							isCompleted={passedLessons[lesson.id] ?? false}
+							onSelect={() => onSelectLesson(lesson)}
 						/>
-					</div>
-				</CardContent>
-			</Card>
+					))}
+				</div>
+			</div>
 
-			{/* Per-Category Progress */}
-			<Card>
-				<CardHeader className="pb-3">
-					<CardTitle className="text-lg">Categories</CardTitle>
-				</CardHeader>
-				<CardContent className="space-y-3">
-					{Object.entries(categories).map(([key, cat]) => {
-						const catPct =
-							cat.count > 0 ? Math.round((cat.completed / cat.count) * 100) : 0;
-						return (
-							<div key={key}>
-								<div className="mb-1 flex items-center justify-between text-sm">
-									<span className="font-medium">{cat.label}</span>
-									<span className="text-muted-foreground">
-										{cat.completed}/{cat.count}
-									</span>
-								</div>
-								<div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
-									<div
-										className="h-full rounded-full bg-sky-500 transition-[width] duration-700 ease-in-out"
-										style={{ width: `${catPct}%` }}
-									/>
-								</div>
+			<div className="learning-navigator__details">
+				{/* Streak */}
+				<Card>
+					<CardHeader className="pb-3">
+						<CardTitle className="flex items-center gap-2 text-lg">
+							<Flame className="size-5 text-orange-500" />
+							Current Streak
+						</CardTitle>
+						<CardDescription>
+							{streak > 0
+								? `${streak} day${streak === 1 ? "" : "s"} and counting!`
+								: "Start learning to build your streak"}
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<div className="flex items-center gap-3">
+							<div className="flex h-16 w-16 items-center justify-center rounded-full bg-orange-500/10">
+								<span className="text-2xl font-bold text-orange-500">{streak}</span>
 							</div>
-						);
-					})}
-				</CardContent>
-			</Card>
+							<div
+								className="h-12 w-12"
+								data-lottie="flame-animation"
+								data-lottie-src="/animations/flame.json"
+							/>
+						</div>
+					</CardContent>
+				</Card>
 
-			{/* Achievements */}
-			<Card>
-				<CardHeader className="pb-3">
-					<CardTitle className="flex items-center gap-2 text-lg">
-						<Trophy className="size-5 text-amber-500" />
-						Achievements
-					</CardTitle>
-					<CardDescription>
-						{earnedCount} of {achievements.length} earned
-					</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<div className="flex flex-wrap gap-2">
-						{achievements.map((ach) => (
-							<Badge
-								key={ach.id}
-								className={
-									ach.earned
-										? "border-amber-500/50 bg-amber-500/10 text-amber-700"
-										: "opacity-40"
-								}
-								title={ach.description}
-							>
-								<Trophy
-									className={`mr-1 size-3 ${ach.earned ? "text-amber-500" : ""}`}
-								/>
-								{ach.label}
-							</Badge>
-						))}
-					</div>
-				</CardContent>
-			</Card>
-		</div>
+				{/* Per-Category Progress */}
+				<Card>
+					<CardHeader className="pb-3">
+						<CardTitle className="text-lg">Categories</CardTitle>
+					</CardHeader>
+					<CardContent className="space-y-3">
+						{Object.entries(categories).map(([key, cat]) => {
+							const catPct =
+								cat.count > 0 ? Math.round((cat.completed / cat.count) * 100) : 0;
+							return (
+								<div key={key}>
+									<div className="mb-1 flex items-center justify-between text-sm">
+										<span className="font-medium">{cat.label}</span>
+										<span className="text-muted-foreground">
+											{cat.completed}/{cat.count}
+										</span>
+									</div>
+									<div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
+										<div
+											className="h-full rounded-full bg-sky-500 transition-[width] duration-700 ease-in-out"
+											style={{ width: `${catPct}%` }}
+										/>
+									</div>
+								</div>
+							);
+						})}
+					</CardContent>
+				</Card>
+
+				{/* Achievements */}
+				<Card>
+					<CardHeader className="pb-3">
+						<CardTitle className="flex items-center gap-2 text-lg">
+							<Trophy className="size-5 text-amber-500" />
+							Achievements
+						</CardTitle>
+						<CardDescription>
+							{earnedCount} of {achievements.length} earned
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<div className="flex flex-wrap gap-2">
+							{achievements.map((ach) => (
+								<Badge
+									key={ach.id}
+									className={
+										ach.earned
+											? "border-amber-500/50 bg-amber-500/10 text-amber-700"
+											: "opacity-40"
+									}
+									title={ach.description}
+								>
+									<Trophy
+										className={`mr-1 size-3 ${ach.earned ? "text-amber-500" : ""}`}
+									/>
+									{ach.label}
+								</Badge>
+							))}
+						</div>
+					</CardContent>
+				</Card>
+			</div>
+		</section>
 	);
 }
 
