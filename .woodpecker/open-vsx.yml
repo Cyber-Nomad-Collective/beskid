@@ -18,7 +18,7 @@ steps:
         from_secret: open_vsx_token
     commands:
       - apt-get update >/dev/null
-      - apt-get install -y --no-install-recommends ca-certificates clang curl git jq lld llvm mold pkg-config unzip >/dev/null
+      - apt-get install -y --no-install-recommends ca-certificates clang curl git jq lld llvm mold nodejs pkg-config unzip >/dev/null
       - |
         bun_version='1.2.20'
         bun_archive='/tmp/bun-linux-x64.zip'
