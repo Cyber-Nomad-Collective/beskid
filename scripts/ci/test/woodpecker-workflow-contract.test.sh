@@ -61,6 +61,8 @@ grep -Fq 'BESKID_OPEN_VSX_PUBLISH: "1"' "${open_vsx_workflow}"
 grep -Fq 'init-submodules.sh compiler beskid_bsol beskid_vscode' "${open_vsx_workflow}"
 grep -Fq 'open-vsx-publish.sh linux-x64 beskid_lsp' "${open_vsx_workflow}"
 grep -Fq 'BESKID_RELEASE_VERSION:?set stable version' "${open_vsx_workflow}"
+grep -Fq '"$${bun_archive}"' "${open_vsx_workflow}"
+! grep -Fq '"${bun_archive}"' "${open_vsx_workflow}"
 
 # This contract owns only native build and standard validation lanes. Editor,
 # security and protected publishing lanes have separate policy contracts;
