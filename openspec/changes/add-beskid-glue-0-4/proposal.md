@@ -20,10 +20,15 @@ stdio bridge generation).
 
 This change completes the contracts before 0.4 sign-off so the glue
 model, backend abstraction, toolchain probe, glue mod contracts, and
-corelib interop view types are normative, typed, and fail-closed. 0.5
+corelib interop view types are normative, typed, and fail-closed. v0.6
 delivers language-specific code generation (Rust crate emission, .NET
 project emission via dotscope, stdio-protocol runtime, corelib glue
 runtime implementations); 0.4 is the contract cutoff.
+
+The pending Glue changes are v0.6 delivery planning. They create no
+v0.5 release-acceptance, target-support, artifact, toolchain, or
+conformance requirement. v0.5 retains the current fail-closed Glue
+backends and CLIF production path.
 
 ## What Changes
 
@@ -39,7 +44,7 @@ runtime implementations); 0.4 is the contract cutoff.
   trait and `BackendKind` enum at the `CodegenInput` boundary.
   `CraneliftClif` is the existing path; `RustSource` and
   `DotNetProject` are declared and fail closed with
-  `BackendError::NotImplementedFor0_4` until 0.5. Backend selection is
+  `BackendError::NotImplementedFor0_4` until v0.6. Backend selection is
   via a `--backend` CLI flag (default `clif`); glue backends error
   immediately.
 - **ADD** `tooling--foreign-library-import--glue-toolchain-probe`: a
@@ -125,7 +130,7 @@ standard URL or legacy URL changes.
 This contract is staged before language-specific generation. 0.4
 ships the contracts, typed models, backend seam, toolchain probe
 scaffold, glue mod contract ids, corelib interop views, and the CLI
-flag — all fail-closed for glue backends. 0.5 delivers Rust crate
+flag — all fail-closed for glue backends. v0.6 delivers Rust crate
 emission, .NET project emission via dotscope, stdio-protocol runtime,
 and corelib glue runtime implementations. Reverting a later
 implementation restores the prior release as a unit; it does not
@@ -135,7 +140,7 @@ discovery, or a six-contract mod SDK as the production path.
 
 ## Impact
 
-Spec plus scaffold in this change. Follow-on 0.5 work covers
+Spec plus scaffold in this change. Follow-on v0.6 work covers
 language-specific Rust crate emission, .NET project emission via
 dotscope signature read/write, stdio-protocol runtime implementation,
 corelib glue runtime implementations, and conformance tests for each

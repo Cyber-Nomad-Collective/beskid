@@ -106,9 +106,7 @@ host-invocation path.
 ## ADDED Requirements
 
 ### Requirement: Generic contract type parameters
-A contract MAY declare zero or more type parameters by inserting
-`GenericParameters` between its name and its body, identical in syntax to
-`EnumDefinition` and `TypeDefinition`. The type parameters MUST be in scope
+A contract MAY declare zero or more type parameters by inserting `GenericParameters` between its name and its body, identical in syntax to `EnumDefinition` and `TypeDefinition`. The type parameters MUST be in scope
 inside the contract's `ContractMethodSignature` return types and parameter
 types. `ContractMethodSignature` SHALL NOT individually declare generic
 parameters; generic dispatch on a contract method is derived from the
@@ -135,9 +133,7 @@ tuple.
   diagnostic is emitted
 
 ### Requirement: Impl-block conformance linkage
-An `impl` block MAY name a conformance list after its receiver type:
-`impl ReceiverType : ContractName [, ContractName]* { ... }`. The conformance
-targets MUST resolve to `ContractDefinition` items; otherwise the compiler
+An `impl` block MAY name a conformance list after its receiver type: `impl ReceiverType : ContractName [, ContractName]* { ... }`. The conformance targets MUST resolve to `ContractDefinition` items; otherwise the compiler
 emits **E1607**. The compiler MUST verify at the impl site that every
 required method of each named contract (including methods flattened from
 `ContractEmbedding`) is present with a compatible signature. The receiver
@@ -163,9 +159,7 @@ individual method items) so the conformance clause is preserved.
   contract's required signature before comparing them
 
 ### Requirement: Generic parameter contract bounds
-A generic function MAY declare a `where` clause after its parameter list and
-before its body, listing zero or more type-parameter-to-contract bounds of the
-form `T : ContractPath`. A bound target MUST resolve to a `ContractDefinition`.
+A generic function MAY declare a `where` clause after its parameter list and before its body, listing zero or more type-parameter-to-contract bounds of the form `T : ContractPath`. A bound target MUST resolve to a `ContractDefinition`.
 A call to a bounded generic function MUST be rejected (fail closed) if the
 inferred or explicitly-supplied concrete type for a bounded parameter does not
 conform to the named contract. The bound check MUST complete before
@@ -241,8 +235,7 @@ SHALL NOT be introduced as a keyword or receiver name.
   `StyleChain`
 
 ### Requirement: Contract associated type declarations
-A contract MAY declare associated types as `type Identifier ("=" BeskidType)? ";`
-inside its body. An associated type declaration MUST be a new `ContractItem`
+A contract MAY declare associated types as `type Identifier ("=" BeskidType)? ";` inside its body. An associated type declaration MUST be a new `ContractItem`
 variant. An associated-type reference `T::Item` (double-colon, paralleling
 `EnumPath` and `Option::Some`) MUST resolve via the implementor's binding for
 `Item`, populated when a type declares `: Contract`. Inside a contract body,
@@ -301,8 +294,7 @@ where a contract type is expected.
   parameter counts differ
 
 ### Requirement: Bounded generic method availability
-Inside a bounded generic function body, a method call on a receiver of type
-`T` where `T : C` MUST resolve the method against contract `C`'s
+Inside a bounded generic function body, a method call on a receiver of type `T` where `T : C` MUST resolve the method against contract `C`'s
 `ContractMethodSignature` declarations and lower to a per-concrete-`T`
 specialized direct call. A non-existent method MUST be rejected with a
 `ContractMethodNotFound`-class diagnostic. The bound's method availability

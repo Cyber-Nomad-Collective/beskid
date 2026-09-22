@@ -1,3 +1,7 @@
+> **Release scope:** This pending change plans Glue/FFI reconciliation
+> for v0.6. It creates no v0.5 acceptance requirement; v0.5 retains
+> the existing fail-closed Glue behavior and direct C ABI production path.
+
 ## 1. Validate and establish RED evidence
 
 - [ ] 1.1 Create the proposal, design, tasks, and complete capability

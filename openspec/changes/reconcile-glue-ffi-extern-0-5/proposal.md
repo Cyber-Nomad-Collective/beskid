@@ -14,7 +14,7 @@ two hubs can drift and a single symbol can produce both a link-time
 `ExternImport` row and a glue `GlueTag` binding, which is
 non-deterministic at the foreign boundary.
 
-This change establishes the normative relationship before 0.5
+This change establishes the normative relationship before v0.6
 language-specific glue generation lands: `Extern` / `[Export]` are the
 direct C ABI surfaces for dlopen-able artifacts and link-time binding;
 `[GlueImport]` / `[GlueExport]` are the glue-mod-driven surfaces for
@@ -60,7 +60,9 @@ standard URL or legacy URL changes.
 
 ## Compatibility and reversion
 
-This contract is staged before 0.5 glue generation. Reverting a later
+This contract is staged before v0.6 glue generation. It creates no
+v0.5 release-acceptance requirement; v0.5 retains the existing
+fail-closed Glue behavior and direct C ABI production path. Reverting a later
 implementation restores the prior release as a unit; it does not
 reinstate a dual-surface symbol as a valid program. The conflict
 diagnostic is the production path; there is no fallback that silently
@@ -68,7 +70,7 @@ picks one surface over the other.
 
 ## Impact
 
-Spec-only in this change. Follow-on work covers the conflict
+Spec-only in this change. Follow-on v0.6 work covers the conflict
 diagnostic in the semantic pipeline, conformance fixtures for both
 import and export conflicts, and traceability evidence in the FFI and
 export verification articles.

@@ -13,8 +13,24 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 - Add a protected manual Woodpecker publisher for the Linux x64 Beskid VS Code
   extension on Open VSX.
+- Add a bounded native-test child runner that can supply literal stdin while
+  concurrently draining stdout and stderr, plus a staged Foundation regression
+  that records direct redirected-standard-stream behavior separately from the
+  runtime-kit smoke matrix.
 
 ### Fixed
+
+- Preserve explicit `[Export]` metadata through syntax-assembly lowering, so
+  native C fixtures link their declared ABI symbols instead of internal syntax
+  identities; declare every direct C fixture entrypoint explicitly and keep
+  the private timer-validation bridge assembler-safe without changing Core.IO
+  transfer policy.
+
+- Accept only the canonical Windows extended-drive spelling of an already
+  declared Corelib source when associating it with its physical identity;
+  retain exact origin, bytes, regular-file, and uniqueness checks so aliases
+  and copied source remain denied while Windows native lowering receives the
+  Corelib service facts it needs.
 
 - Resolve pckg users from the verified Authentik forward-auth headers through
   the shared shell-core mapper, keep the web and Rust registry in the same
@@ -64,6 +80,11 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   tests, and release qualification requirement. No replacement scanner is enabled.
 
 ### Changed
+
+- Add the private, rootless NixOS developer build-box check path for the
+  compiler workspace. It reuses Woodpecker's immutable Rust base, carries a
+  sealed compiler/Corelib/BSOL closure, runs Cargo offline in a bounded systemd
+  scope, and keeps credentials and connection topology outside the repository.
 
 - Restore `beskid_sites/apps/pckg` as the sole pckg web implementation by
   copying the maintained Rust API client, package-kind behavior, package and

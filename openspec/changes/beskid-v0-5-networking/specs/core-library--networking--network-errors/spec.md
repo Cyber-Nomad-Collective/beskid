@@ -6,13 +6,21 @@ union. It MUST include `AddressInUse`, `AddressNotAvailable`,
 `ConnectionAborted`, `ConnectionRefused`, `ConnectionReset`, `HostNotFound`,
 `InvalidAddress`, `MessageTooLarge`, `NetworkDown`, `NotConnected`,
 `PermissionDenied`, `TimedOut`, `Cancelled`, `Closed`, `Busy`, `CleanupFailed`,
-and `Unsupported`.
+`Unsupported`, and `ResourceExhausted`.
 Native errors MUST be mapped to exactly one applicable variant before reaching
 corelib. A public Network error MUST NOT carry an errno, WSA code, OS descriptor,
 platform constant, or unbounded native error text. `Network` SHALL declare the
 explicit cleanup conversion from Foundation `DisposeError` to
 `NetworkError::CleanupFailed` for callables returning `Result<T, NetworkError>`;
 this MUST NOT create a general implicit conversion.
+
+`NetworkError::ResourceExhausted` SHALL be returned when the runtime socket
+table has no free slot, when a runtime or native allocation for a request,
+buffer, or resolver job fails, or when the host reports descriptor, buffer,
+or memory exhaustion. `NetworkError::NetworkDown` SHALL be reserved for a
+host report that the network, route, or host is unreachable, and for
+native failures that match no other variant. The two variants MUST NOT be
+substituted for one another.
 
 **Stable ID:** `BSP-REQ-CAB59E0274D1`
 
@@ -25,3 +33,8 @@ this MUST NOT create a general implicit conversion.
 - **GIVEN** a network resource whose scoped `Dispose` returns `DisposeError::Failed`
 - **WHEN** it exits a callable returning `Result<T, NetworkError>`
 - **THEN** the explicit cleanup conversion returns `NetworkError::CleanupFailed` without native error detail
+
+#### Scenario: Socket table exhaustion is not a network outage
+- **GIVEN** every runtime socket slot holds a live socket
+- **WHEN** a caller binds one more UDP socket
+- **THEN** it receives `NetworkError::ResourceExhausted` and, after one live socket closes, the next bind succeeds

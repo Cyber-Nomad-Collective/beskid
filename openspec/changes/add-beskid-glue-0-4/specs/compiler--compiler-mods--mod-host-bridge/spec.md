@@ -16,7 +16,7 @@ The `SDK_MOD_CONTRACTS` set SHALL include seven `Beskid.Glue.*` contract ids alo
 - **THEN** the mod is registered with the `Beskid.Glue.TypeMapping` contract id and the `MapType` entry method
 
 ### Requirement: mod.glue phase id
-The pipeline SHALL define a `mod.glue` phase id between `mod.rewrite` and `lower.ready`. The `mod.glue` phase SHALL be inserted into `FULL_BUILD_PHASE_ORDER`, `JIT_RUN_PHASE_ORDER`, and `RUN_AOT_PHASE_ORDER` between `MOD_REWRITE` and `LOWER_READY`. The phase ordering SHALL be asserted: `MOD_REWRITE < MOD_GLUE < LOWER_READY`. 0.4 declares the phase id and ordering; 0.5 wires the orchestrator. Existing phases SHALL NOT be reordered.
+The pipeline SHALL define a `mod.glue` phase id between `mod.rewrite` and `lower.ready`. The `mod.glue` phase SHALL be inserted into `FULL_BUILD_PHASE_ORDER`, `JIT_RUN_PHASE_ORDER`, and `RUN_AOT_PHASE_ORDER` between `MOD_REWRITE` and `LOWER_READY`. The phase ordering SHALL be asserted: `MOD_REWRITE < MOD_GLUE < LOWER_READY`. 0.4 declares the phase id and ordering; v0.6 wires the orchestrator. Existing phases SHALL NOT be reordered.
 
 **Stable ID:** `BSP-REQ-MOD-HOST-GLUE-PHASE`
 

@@ -1,3 +1,7 @@
+> **Release scope:** This pending change plans Glue delivery for v0.6.
+> It creates no v0.5 acceptance requirement; v0.5 retains the existing
+> fail-closed Glue backend behavior and CLIF production path.
+
 ## 1. Validate and establish RED evidence
 
 - [x] 1.1 Create the proposal, design, tasks, and complete capability

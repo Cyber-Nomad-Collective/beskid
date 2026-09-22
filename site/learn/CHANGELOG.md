@@ -7,6 +7,9 @@
   generated Learn catalog pipeline.
 - Surface source-backed reference-only lessons without exposing a misleading
   compiler check.
+- Add an evidence-informed curriculum-authoring research note covering the
+  Predict–Run–Investigate–Modify–Make lesson progression, worked examples,
+  subgoal labels, retrieval, and compiler-feedback design.
 
 ### Changed
 

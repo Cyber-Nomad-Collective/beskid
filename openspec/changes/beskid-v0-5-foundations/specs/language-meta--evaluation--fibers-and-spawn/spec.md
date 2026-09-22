@@ -31,7 +31,7 @@ A spawned closure SHALL capture only values represented by a transferable ABI va
 - **THEN** compilation fails with `StackReferenceEscapesSpawn`
 
 ### Requirement: Fiber terminal operations consume one handle state
-`Join`, `Detach`, and `Cancel` SHALL operate on one move-only fiber-handle state machine. `Join` MUST consume the handle and return exactly one terminal `Result<T, FiberError>`; a second `Join` or a `Join` after `Detach` MUST be rejected by semantic use-after-move analysis. `Detach` MUST consume the handle and return `unit`. `Cancel` MUST return `unit`, remain idempotent, request cancellation without consuming the handle, and cause a later successful `Join` to return `FiberError::Cancelled()` when cancellation wins before normal completion. The child-panic terminal status is the exact `i64` value `2`; a child panic MUST cause `Join` to return `FiberError::Panicked(2)`.
+`Join`, `Detach`, and `Cancel` SHALL operate on one move-only fiber-handle state machine. `Join` MUST consume the handle and return exactly one terminal `Result<T, FiberError>`; a second `Join` or a `Join` after `Detach` MUST be rejected by semantic use-after-move analysis. `Detach` MUST consume the handle and return `unit`. `Cancel` MUST return `unit`, remain idempotent, request cancellation without consuming the handle, and cause a later `Join` to return `FiberError::Cancelled(reason, cancelerId)` when cancellation wins before normal completion. A child panic MUST cause `Join` to return `FiberError::Panicked(2_i64, message)`. The error payloads and their preservation SHALL follow the concurrency-package requirement `BSP-REQ-F61E094A4838`; the child-panic code constraint is a value invariant of that existing payload-bearing type.
 
 **Stable ID:** `BSP-REQ-8CE166C9D003`
 
@@ -43,7 +43,7 @@ A spawned closure SHALL capture only values represented by a transferable ABI va
 #### Scenario: Cancel wins before completion
 - **GIVEN** a running `Fiber<unit>` that observes cancellation before producing a result
 - **WHEN** its owner calls `Cancel` and then `Join`
-- **THEN** `Join` returns `FiberError::Cancelled()`
+- **THEN** `Join` returns `FiberError::Cancelled(reason, cancelerId)` with the recorded cancellation details
 
 #### Scenario: Join after detach is rejected
 - **GIVEN** a `Fiber<i64>` whose owner has successfully invoked `Detach`
@@ -53,7 +53,7 @@ A spawned closure SHALL capture only values represented by a transferable ABI va
 #### Scenario: Child panic has a typed terminal outcome
 - **GIVEN** a child fiber that terminates by panic
 - **WHEN** its owner invokes `Join`
-- **THEN** `Join` returns `FiberError::Panicked(2)`
+- **THEN** `Join` returns `FiberError::Panicked(2_i64, message)` with the child's recorded panic message
 
 ### Requirement: Non-detached children complete during main shutdown
 When `main` returns, the runtime SHALL join every child fiber of `main` that has not been detached before stopping scheduler workers. A detached child MUST NOT delay shutdown, and an unjoined detached-child panic MUST abort the process.

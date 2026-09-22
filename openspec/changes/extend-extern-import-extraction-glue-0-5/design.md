@@ -19,6 +19,10 @@ has no contract for collecting foreign import metadata, and the
 `ExternImport` CLIF path does not apply. This change extends the
 extraction contract with a glue path alongside the CLIF path.
 
+The glue extraction implementation is v0.6 delivery scope. This
+pending change creates no v0.5 acceptance requirement: v0.5 retains
+the existing fail-closed Glue behavior and CLIF production path.
+
 Normative behavior remains owned by OpenSpec. The extraction contract
 hub owns both paths; the CLIF path is the path for `Extern` imports,
 the glue path is the path for `[GlueImport]` imports. The two paths do
@@ -40,7 +44,7 @@ by `reconcile-glue-ffi-extern-0-5`.
   `language-meta--interop--beskid-glue`).
 - Defining the one-surface-per-symbol rule (owned by
   `reconcile-glue-ffi-extern-0-5`).
-- Implementing the glue emission; 0.5 delivers the implementation.
+- Implementing the glue emission; v0.6 delivers the implementation.
 - Changing the CLIF `ExternImport` record shape or the link-time
   resolution contract.
 
@@ -82,7 +86,7 @@ import.
   changes must preserve it.
 - [0.4 ships the contract without the implementation] -> The glue
   extraction path fails closed with `BackendError::NotImplementedFor0_4`
-  until 0.5; the CLIF path remains the production path for 0.4.
+  until v0.6; the CLIF path remains the production path for 0.4 and v0.5.
 
 ## Migration Plan
 

@@ -11,7 +11,7 @@ object carrying the backend kind and library identity) and an emission
 path through the seven atomized glue contracts, not a link-time
 `ExternImport` row. The current spec covers only the CLIF path, so a
 glue backend has no normative extraction contract. This change
-extends the spec to cover glue backends before 0.5 language-specific
+extends the spec to cover glue backends before v0.6 language-specific
 generation lands.
 
 ## What Changes
@@ -44,21 +44,23 @@ This change is spec-only and adds a second extraction path. The
 existing CLIF `ExternImport` extraction for `Extern` imports is
 unchanged. The glue extraction path applies only to `[GlueImport]`
 imports and produces `GlueTag` records, not `ExternImport` rows. 0.4
-declares the contract; 0.5 implements the glue emission. No public
+declares the contract; v0.6 implements the glue emission. No public
 standard URL or legacy URL changes.
 
 ## Compatibility and reversion
 
-This contract is staged before 0.5 glue generation. 0.4 ships the
+This contract is staged before v0.6 glue generation. 0.4 ships the
 contract; the glue extraction path fails closed with
-`BackendError::NotImplementedFor0_4` until 0.5. Reverting a later
+`BackendError::NotImplementedFor0_4` until v0.6. It creates no v0.5
+release-acceptance requirement; v0.5 retains the existing fail-closed
+Glue behavior and CLIF production path. Reverting a later
 implementation restores the prior release as a unit; it does not
 reinstate a CLIF-only extraction contract without a glue path as the
 production path for glue backends.
 
 ## Impact
 
-Spec-only in this change. Follow-on 0.5 work covers the glue
+Spec-only in this change. Follow-on v0.6 work covers the glue
 extraction implementation in the codegen pipeline, conformance fixtures
 for the `GlueTag` emission path, and traceability evidence in the
 extern import extraction verification article.

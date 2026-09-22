@@ -45,6 +45,14 @@ core-library, startup, template, or generated material incorporated into an
 output is deliberately Apache-2.0 so that output may be licensed independently,
 subject to any separately identified third-party material.
 
+## Developer build box
+
+The private NixOS-hosted, rootless Linux compiler executor used only for local
+development checks. It is outside project CI, release qualification, and
+release provenance: a successful build-box check is never evidence that a
+Beskid release is valid. It may use private transport and caches without
+creating a project release contract.
+
 ## Cleanup conversion
 
 The one explicit error conversion used only by a scoped `use` cleanup. It is a

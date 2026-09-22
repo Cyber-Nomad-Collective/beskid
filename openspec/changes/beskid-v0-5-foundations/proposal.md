@@ -9,8 +9,10 @@ CYB-60 establishes the Foundation gate before CYB-61 networking and CYB-62 HTTP.
 - Define bindable `spawn`, rooted `Fiber<T>` results and captures, consuming join/detach behavior, idempotent cancellation, and main-fiber child shutdown.
 - Define canonical traced ABI-value channel transport, commit/cancel ownership, close-after-drain, and parking without holding the channel mutex.
 - Define owner-routed external completion, active external-wait accounting, monotonic generation-tagged timers, and exactly-one wait winners.
-- Define the `spawn` expression and scoped `use` binding grammar, `Disposable` cleanup ordering, `Core.IO`, strict bytes/encoding behavior, and the corrected `ReadBytesWith` result type.
+- Define `Core.Time.Sleep(Duration) -> Result<unit, TimerError>` with checked monotonic deadlines, closed typed outcomes, and call-owned registration on that existing scheduler path; defer public absolute sleep until clock-domain identity is enforceable.
+- Define the `spawn` expression and scoped `use` binding grammar, `Disposable` cleanup ordering, `Core.IO` with a closed `TransferFailure` cause on `ReadFailed` and `WriteFailed`, strict bytes/encoding behavior, and the corrected `ReadBytesWith` result type.
 - Add an acceptance matrix that assigns parser, semantic, runtime, corelib, JIT, AOT, and native evidence to each normative requirement.
+- Define a growable managed heap of chained regions with Lua/Go-style pacing, a configurable committed-size cap, and a typed, diagnosable `out_of_memory` trap in place of the current fixed 1 MiB region and illegal-instruction exit (design: `docs/superpowers/specs/2026-09-22-growable-gc-heap-design.md`).
 
 ## Compatibility, migration, and rollout
 
@@ -27,6 +29,6 @@ Before implementation, this OpenSpec change can be abandoned without runtime or 
 
 ## Impact
 
-- Affected canonical capabilities: fibers/spawn, channels, scheduler, grammar/parser, error handling, bytes, encoding, core concurrency, Core.Syscall, and corelib API shape.
+- Affected canonical capabilities: fibers/spawn, channels, scheduler, grammar/parser, error handling, bytes, encoding, core concurrency, Core.Syscall, Core.Time, corelib API shape, and the memory and GC runtime contract.
 - Affected implementation surfaces: parser and semantic analysis, lowering and ABI manifest, scheduler and runtime builtins, foundation and concurrency corelib packages, JIT, AOT, and native runtime-kit conformance.
 - Follow-on changes: CYB-61 networking consumes `Channel<TcpStream>`, `use`, monotonic deadlines, and owner-routed external completions; CYB-62 HTTP consumes only those completed Foundation contracts.

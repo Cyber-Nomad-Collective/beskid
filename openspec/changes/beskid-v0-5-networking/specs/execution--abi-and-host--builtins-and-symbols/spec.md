@@ -20,7 +20,10 @@ Network API.
 Every socket ABI operation SHALL be declared in the runtime manifest and MUST
 have exactly one generated ABI signature, runtime export or dispatch entry, and
 runtime implementation. Hand-written import signatures, direct Cranelift
-socket calls, and target-specific public entrypoints are prohibited.
+socket calls, and target-specific public entrypoints are prohibited. The
+manifest socket status enumeration SHALL list every public `NetworkError`
+variant in declaration order starting at 1, followed by exactly one internal
+pending status that MUST NOT cross the runtime/corelib boundary.
 
 **Stable ID:** `BSP-REQ-B094EDC16A72`
 

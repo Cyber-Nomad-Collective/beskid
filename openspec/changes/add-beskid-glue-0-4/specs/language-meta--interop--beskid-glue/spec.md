@@ -21,7 +21,7 @@
 - **THEN** the glue model produces a foreign-callable binding that the foreign library can invoke through the stdio bridge
 
 ### Requirement: Stdio bridge fiber
-`Beskid.Glue` SHALL generate a stdio bridge as a Beskid fiber that exchanges `StdioBridgeMessage` values over a channel. Each imported foreign library SHALL be represented by a host typed tag object (`GlueTag`) carrying the backend kind and library identity. The fiber SHALL marshal calls through the tag object and the stdio message protocol. The stdio bridge SHALL support both directions: import (read foreign library signatures and produce Beskid bindings) and export (expose Beskid functions to a foreign library). 0.4 defines the contract; 0.5 implements the runtime protocol.
+`Beskid.Glue` SHALL generate a stdio bridge as a Beskid fiber that exchanges `StdioBridgeMessage` values over a channel. Each imported foreign library SHALL be represented by a host typed tag object (`GlueTag`) carrying the backend kind and library identity. The fiber SHALL marshal calls through the tag object and the stdio message protocol. The stdio bridge SHALL support both directions: import (read foreign library signatures and produce Beskid bindings) and export (expose Beskid functions to a foreign library). 0.4 defines the contract; v0.6 implements the runtime protocol.
 
 **Stable ID:** `BSP-REQ-GLUE-STDIO-BRIDGE`
 

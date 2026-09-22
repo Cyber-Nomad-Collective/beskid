@@ -17,7 +17,9 @@ change and adds no alternate socket path.
   generation-tagged runtime handles and one reactor operation state.
 - Define the `Network.Types` and `Network.Errors` public contracts, including
   portable addresses, options, and error variants that contain no descriptor,
-  errno, Winsock code, or platform constant.
+  errno, Winsock code, or platform constant. `ResourceExhausted` is distinct
+  from `NetworkDown`, and stream failures carry the Foundation
+  `TransferFailure` cause.
 - Define cancellable, non-caching DNS resolution; TCP listeners and streams;
   UDP sockets and datagram boundaries; their ownership, deadline, and
   concurrency policies; and Linux/macOS/Windows conformance requirements.

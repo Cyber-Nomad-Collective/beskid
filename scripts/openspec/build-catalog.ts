@@ -39,12 +39,20 @@ function requirementTitles(markdown: string): string[] {
 	);
 }
 
+// The public Standard is served at `/docs/standard/`; `/platform-spec/` is the
+// legacy route and the catalog identity prefix. The site treats
+// `/docs/standard/<path>/` and `/platform-spec/<path>/` as the same page, so
+// canonical links are recorded in their catalog identity form.
 function standardLinks(markdown: string): string[] {
 	return [
 		...new Set(
 			[
-				...markdown.matchAll(/\]\((\/platform-spec\/[^\s)#?]*\/?)(?:#[^)]+)?\)/g),
-			].map((match) => match[1]),
+				...markdown.matchAll(
+					/\]\((\/(?:platform-spec|docs\/standard)\/[^\s)#?]*\/?)(?:#[^)]+)?\)/g,
+				),
+			].map((match) =>
+				match[1].replace(/^\/docs\/standard\//, "/platform-spec/"),
+			),
 		),
 	];
 }

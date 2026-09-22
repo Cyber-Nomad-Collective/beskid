@@ -12,7 +12,7 @@
 
 ## Tech Stack
 - **Compiler:** Rust, AOT-only, host composition. Corelib in `compiler/corelib` (Beskid sources, not a Rust crate move)
-- **pckg:** Rust package registry (`compiler/crates/beskid_pckg_server/`) + React client (`pckg/web/`); legacy .NET backend removed
+- **pckg:** Rust package registry (`compiler/crates/beskid_pckg_server/`) + TanStack web app (`beskid_sites/apps/pckg/`); legacy .NET and duplicate web clients removed
 - **Sites:** `site/website` (landing, Docs, Book, blog), `site/auth`, `site/learn`
 - **Apps:** `beskid_tracker` (SQLite SOT), `beskid_nexus` (graph explorer), `beskid_web_common` (shared TS: `trudoc`, `@beskid/beskid-ui`, `@beskid/ui-react`)
 - **Infra:** standalone production Compose in `beskid_sites/deploy`, OpenBao secrets, private registry, Watchtower, Memgraph, and Grafana monitoring at `monitor.beskid-lang.org`
@@ -29,7 +29,7 @@
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **beskid** (69004 symbols, 141297 relationships, 300 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **beskid** (121068 symbols, 223747 relationships, 300 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > Index stale? Run `node .gitnexus/run.cjs analyze` from the project root — it auto-selects an available runner. No `.gitnexus/run.cjs` yet? `npx gitnexus analyze` (npm 11 crash → `npm i -g gitnexus`; #1939).
 
@@ -82,6 +82,7 @@ This project is indexed by GitNexus as **beskid** (69004 symbols, 141297 relatio
 - When promoting provisional OpenSpec capabilities, require real SHALL requirements and scenarios via OpenSpec changes—not stub fills; leave taxonomy hubs and empty governance/design-model stubs provisional until leaf obligations exist
 - Respect Linear ownership labels (`agent/cursor` vs `agent/codex`); create Cursor children under Codex parents without relabeling or closing them; file Codex blockers for missing facts outside exclusive scope rather than expanding into Codex-owned crates
 - Prefer parent and submodule state on `main` with clean merges; fix merge noise rather than leaving divergent local branches; agents push only their own branch and do not merge `main` unless the user explicitly authorizes merge for that task
+- For the active v0.5 release program, the user authorizes necessary in-repository implementation, test, documentation, and isolated build-cache changes; continue through overnight decisions by recording convention-fit rulings, but still ask before pushes, merges, publishing, destructive operations, credential changes, or external service changes
 - Do not invent Coolify service UUIDs, GHCR package Write grants, or secret token values—fail closed and document the exact human admin step instead
 
 ## Learned Workspace Facts

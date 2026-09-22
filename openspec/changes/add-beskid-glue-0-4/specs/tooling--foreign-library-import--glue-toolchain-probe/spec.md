@@ -21,16 +21,16 @@ The toolchain SHALL define a `ToolchainProbe` contract that resolves external to
 - **THEN** the result is a `ToolchainError` variant naming the tool, the expected sha256, and the actual sha256
 
 ### Requirement: ToolCapability enum covers glue toolchain tools
-The `ToolCapability` enum SHALL cover the tools a glue backend needs: `Rustc`, `Cargo`, `Dotnet`, `Linker`, and `Dotscope`. Each `ToolSpec` SHALL declare one `ToolCapability`. The toolchain probe SHALL use the capability to select the discovery strategy (e.g. `rustc --version` for `Rustc`, `dotnet --version` for `Dotnet`). 0.4 defines the scaffold; 0.5 implements the discovery logic. The scaffold SHALL be fail-closed: no `ResolvedTool` is produced until the discovery and validation logic is implemented.
+The `ToolCapability` enum SHALL cover the tools a glue backend needs: `Rustc`, `Cargo`, `Dotnet`, `Linker`, and `Dotscope`. Each `ToolSpec` SHALL declare one `ToolCapability`. The toolchain probe SHALL use the capability to select the discovery strategy (e.g. `rustc --version` for `Rustc`, `dotnet --version` for `Dotnet`). 0.4 defines the scaffold; v0.6 implements the discovery logic. The scaffold SHALL be fail-closed: no `ResolvedTool` is produced until the discovery and validation logic is implemented.
 
 **Stable ID:** `BSP-REQ-GLUE-TOOLCHAIN-CAPABILITIES`
 
 #### Scenario: Rustc capability selects rustc version discovery
 - **GIVEN** a `ToolSpec` with `ToolCapability::Rustc`
-- **WHEN** the toolchain probe discovers the tool (0.5)
+- **WHEN** the toolchain probe discovers the tool (v0.6)
 - **THEN** it invokes `rustc --version` and parses the version
 
 #### Scenario: Dotscope capability selects dotscope discovery
 - **GIVEN** a `ToolSpec` with `ToolCapability::Dotscope`
-- **WHEN** the toolchain probe discovers the tool (0.5)
+- **WHEN** the toolchain probe discovers the tool (v0.6)
 - **THEN** it resolves the `dotscope` crate from the Cargo dependency graph and validates its version

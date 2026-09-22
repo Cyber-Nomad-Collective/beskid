@@ -31,6 +31,10 @@ rules. This change adds the boundary between them: a symbol uses one
 surface, not both, and the reference compiler rejects a conflicting
 annotation.
 
+The boundary and its implementation are v0.6 delivery scope. This
+pending change creates no v0.5 acceptance requirement: v0.5 retains
+the existing fail-closed Glue behavior and the CLIF direct-C-ABI path.
+
 ## Goals / Non-Goals
 
 **Goals:**

@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: Backend trait at the CodegenInput boundary
-The compiler SHALL lower typed syntax through a `Backend` trait at the `CodegenInput` boundary. The `Backend` trait SHALL be object-safe with a `kind()` method returning a `BackendKind` and a `lower()` method consuming `&CodegenInput`, `&dyn TargetIsa`, and `&[SyntaxModuleItem]` to produce a `BackendArtifact`. The `CraneliftClif` backend SHALL wrap the existing `lower_syntax_program` and produce a `BackendArtifact::Clif(CodegenArtifact)`. The `RustSource` and `DotNetProject` backends SHALL be declared and SHALL fail closed with `BackendError::NotImplementedFor0_4` until 0.5. The backend SHALL NOT be selected via a new mod contract kind; it SHALL be selected via a `--backend` CLI flag or manifest flag.
+The compiler SHALL lower typed syntax through a `Backend` trait at the `CodegenInput` boundary. The `Backend` trait SHALL be object-safe with a `kind()` method returning a `BackendKind` and a `lower()` method consuming `&CodegenInput`, `&dyn TargetIsa`, and `&[SyntaxModuleItem]` to produce a `BackendArtifact`. The `CraneliftClif` backend SHALL wrap the existing `lower_syntax_program` and produce a `BackendArtifact::Clif(CodegenArtifact)`. The `RustSource` and `DotNetProject` backends SHALL be declared and SHALL fail closed with `BackendError::NotImplementedFor0_4` until v0.6. The backend SHALL NOT be selected via a new mod contract kind; it SHALL be selected via a `--backend` CLI flag or manifest flag.
 
 **Stable ID:** `BSP-REQ-BACKEND-TRAIT`
 
@@ -36,7 +36,7 @@ The compiler SHALL define a `BackendKind` enum with variants `CraneliftClif`, `R
 - **THEN** the CLI errors with `BackendKindParseError` naming the unknown value and the accepted set
 
 ### Requirement: BackendArtifact enum
-The compiler SHALL define a `BackendArtifact` enum with variants `Clif(CodegenArtifact)`, `RustSource(String)`, and `DotNetProject(String)`. 0.4 SHALL populate only the `Clif` variant; the `RustSource` and `DotNetProject` variants SHALL be declared but never produced. The `BackendArtifact` SHALL extend the shared-codegen-artifact contract: the CLIF variant carries the existing `CodegenArtifact` schema; the source variants carry a generated source string (0.5). Consumers SHALL use `expect_clif()` to extract the `CodegenArtifact` from the `Clif` variant; calling `expect_clif()` on a source variant SHALL panic.
+The compiler SHALL define a `BackendArtifact` enum with variants `Clif(CodegenArtifact)`, `RustSource(String)`, and `DotNetProject(String)`. 0.4 SHALL populate only the `Clif` variant; the `RustSource` and `DotNetProject` variants SHALL be declared but never produced. The `BackendArtifact` SHALL extend the shared-codegen-artifact contract: the CLIF variant carries the existing `CodegenArtifact` schema; the source variants carry a generated source string (v0.6). Consumers SHALL use `expect_clif()` to extract the `CodegenArtifact` from the `Clif` variant; calling `expect_clif()` on a source variant SHALL panic.
 
 **Stable ID:** `BSP-REQ-BACKEND-ARTIFACT`
 
@@ -46,6 +46,6 @@ The compiler SHALL define a `BackendArtifact` enum with variants `Clif(CodegenAr
 - **THEN** the inner `CodegenArtifact` is returned
 
 #### Scenario: Source artifact panics on expect_clif
-- **GIVEN** a `BackendArtifact::RustSource(source)` (0.5)
+- **GIVEN** a `BackendArtifact::RustSource(source)` (v0.6)
 - **WHEN** `expect_clif()` is called
 - **THEN** the call panics because the artifact is not a CLIF artifact

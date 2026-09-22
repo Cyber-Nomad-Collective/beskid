@@ -30,6 +30,16 @@ Submitting an external wait SHALL park only the submitting fiber. The owner sche
 - **WHEN** the scheduler selects its next runnable fiber
 - **THEN** it executes fiber B before the external wait for fiber A completes
 
+### Requirement: External-wait capacity derives from live fiber capacity
+An owner scheduler SHALL admit at most one active external-wait registration for each live valid fiber. Its usable external-wait capacity SHALL be derived from the scheduler's live-fiber capacity, so every live valid fiber can hold its one registration simultaneously. Implementations MAY retain additional physical record storage, but it SHALL NOT introduce a lower normal admission limit. A repeated registration for the same valid fiber SHALL be rejected as a duplicate without changing active accounting, timer state, or the original registration's winner. A terminal release SHALL make that fiber's one registration available again; stale generations remain harmless under `BSP-REQ-896BA6C917E9`.
+
+**Stable ID:** `BSP-REQ-A0D58F1B3E21`
+
+#### Scenario: Full legal admission remains distinct from duplicate rejection
+- **GIVEN** every live valid fiber owns one active external-wait registration
+- **WHEN** a second registration is attempted for one of those fibers
+- **THEN** the attempt SHALL be rejected as a duplicate, all existing registrations SHALL remain active and unchanged, and a terminal release SHALL permit one subsequent valid registration
+
 ### Requirement: Monotonic timers use generation-tagged registrations
 `Sleep`, timeout, and deadline waits SHALL use monotonic absolute deadlines. Every timer registration and cancellation MUST carry a generation that makes an obsolete fire harmless; wall-clock changes MUST NOT advance, delay, or reclassify a monotonic deadline.
 

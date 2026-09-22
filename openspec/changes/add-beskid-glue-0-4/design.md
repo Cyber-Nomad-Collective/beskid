@@ -16,7 +16,10 @@ Rewriter, GrammarGenerator) with no glue-specific contracts.
 
 This change introduces the contracts, typed models, backend seam,
 toolchain probe scaffold, glue mod contracts, and corelib interop views
-that 0.5 language-specific generation will consume.
+that v0.6 language-specific generation will consume. These pending
+deltas do not add a v0.5 release-acceptance, target-support, artifact,
+or conformance obligation. v0.5 retains the existing fail-closed Glue
+backend behavior.
 
 ## Decisions
 
@@ -49,13 +52,13 @@ Alternative considered: let `Beskid.Glue` define its own type-shape
 enum. Rejected because it duplicates the normative vocabulary and
 creates drift between the glue model and the ABI profiles.
 
-### D-GLUE-0003: 0.4 is contracts cutoff, 0.5 is generation
+### D-GLUE-0003: 0.4 is contracts cutoff, v0.6 is generation
 
 0.4 ships: the typed Interop.Contracts Rust model, the `Backend` trait
 and `BackendKind` enum, the `ToolchainProbe` scaffold, the seven glue
 mod contract ids, the `Core.Interop` corelib package, the `mod.glue`
 phase id, and the `--backend` CLI flag. All glue backends fail closed
-with `NotImplementedFor0_4`. 0.5 ships: language-specific Rust crate
+with `NotImplementedFor0_4`. v0.6 ships: language-specific Rust crate
 emission, .NET project emission via dotscope signature read/write,
 stdio-protocol runtime implementation, and corelib glue runtime
 implementations.
@@ -80,7 +83,7 @@ typed model, filesystem/process I/O for dotscope/rustc/dotnet) is Rust.
 Alternative considered: direct FFI calls without a stdio bridge.
 Rejected because the stdio bridge decouples Beskid GC from foreign
 memory management, supports both directions (import and export), and
-extends to other protocols (sockets, pipes) in 0.5+ without a new
+extends to other protocols (sockets, pipes) in v0.6+ without a new
 architecture.
 
 ## Goals / Non-Goals
@@ -109,10 +112,10 @@ architecture.
 
 **Non-Goals:**
 
-- Language-specific Rust crate emission or .NET project emission (0.5).
-- stdio-protocol runtime implementation (0.5).
-- dotscope integration for .NET signature read/write (0.5).
-- Corelib glue runtime implementations (0.5).
+- Language-specific Rust crate emission or .NET project emission (v0.6).
+- stdio-protocol runtime implementation (v0.6).
+- dotscope integration for .NET signature read/write (v0.6).
+- Corelib glue runtime implementations (v0.6).
 - A JIT glue execution path or glue sandboxing beyond existing mod
   capability policy.
 - Changing the existing CLIF codegen path or `CodegenArtifact` layout.
@@ -132,11 +135,11 @@ architecture.
   portability.
 - [ToolchainProbe scaffold has no real resolution yet] -> The scaffold
   defines the typed `ToolSpec`, `ResolvedTool`, and atomized
-  `ToolchainError` variants; 0.5 fills the resolution logic. The
+  `ToolchainError` variants; v0.6 fills the resolution logic. The
   scaffold is fail-closed: no tool is resolved as available until
   validation is implemented.
 - [mod.glue phase has no orchestrator yet] -> The phase id is declared
-  and ordered; 0.5 wires the orchestrator. Existing phases are
+  and ordered; v0.6 wires the orchestrator. Existing phases are
   unaffected.
 
 ## Migration Plan
@@ -176,5 +179,6 @@ discovery, or a six-contract mod SDK as the production path.
 None. The backend seam, Interop.Contracts instantiation, toolchain
 probe shape, glue contract set, phase ordering, and CLI flag are fixed
 by this change. Language-specific emission rules, stdio-protocol
-wire format, and dotscope integration remain 0.5 implementation
-detail constrained by these contracts.
+wire format, and dotscope integration remain v0.6 implementation
+detail constrained by these contracts; they are not v0.5 acceptance
+requirements.
