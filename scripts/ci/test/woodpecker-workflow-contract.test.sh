@@ -53,6 +53,7 @@ grep -Fq 'BESKID_TASK == "build" || BESKID_TASK == "validate"' "${workflow_dir}/
 open_vsx_workflow="${workflow_dir}/open-vsx.yml"
 test -f "${open_vsx_workflow}"
 grep -Fq 'BESKID_TASK == "open-vsx-publish"' "${open_vsx_workflow}"
+grep -Fq 'role: beskid-linux' "${open_vsx_workflow}"
 grep -Fq 'event: manual' "${open_vsx_workflow}"
 grep -Fq 'branch: main' "${open_vsx_workflow}"
 grep -Fq 'from_secret: open_vsx_token' "${open_vsx_workflow}"
