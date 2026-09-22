@@ -23,15 +23,15 @@ steps:
         bun_version='1.2.20'
         bun_archive='/tmp/bun-linux-x64.zip'
         bun_sha256='4e9edc4cba0c7c1623a288be01e53bbde11a4d073f2cf339cab026627858b548'
-        curl --fail --location --retry 3 --retry-all-errors --output "${bun_archive}" "https://github.com/oven-sh/bun/releases/download/bun-v${bun_version}/bun-linux-x64.zip"
-        printf '%s  %s\n' "${bun_sha256}" "${bun_archive}" | sha256sum --check --strict
-        unzip -q "${bun_archive}" -d /opt
+        curl --fail --location --retry 3 --retry-all-errors --output "$${bun_archive}" "https://github.com/oven-sh/bun/releases/download/bun-v$${bun_version}/bun-linux-x64.zip"
+        printf '%s  %s\n' "$${bun_sha256}" "$${bun_archive}" | sha256sum --check --strict
+        unzip -q "$${bun_archive}" -d /opt
         install -m 0755 /opt/bun-linux-x64/bun /usr/local/bin/bun
-        test "$(bun --version)" = "${bun_version}"
+        test "$(bun --version)" = "$${bun_version}"
       - bash scripts/ci/init-submodules.sh compiler beskid_bsol beskid_vscode
       - |
         version="$${BESKID_RELEASE_VERSION:?set stable version}"
-        case "${version}" in
+        case "$${version}" in
           [0-9]*.[0-9]*.[0-9]*) ;;
           *) echo 'BESKID_RELEASE_VERSION must be a stable release version' >&2; exit 1 ;;
         esac
