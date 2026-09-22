@@ -1,0 +1,7 @@
+i32 Main() {
+  let name = 41;
+  if name == 42 {
+    return 0;
+  }
+  return 1;
+}

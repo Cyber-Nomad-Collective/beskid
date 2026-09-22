@@ -1,0 +1,8 @@
+i32 Main() {
+  i32 first = 1;
+  i32 second = 2;
+  if first + second == 3 {
+    return 0;
+  }
+  return 1;
+}

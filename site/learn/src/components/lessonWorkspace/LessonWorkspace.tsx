@@ -35,6 +35,7 @@ export function LessonWorkspace({
 	exercise,
 	onPassed,
 }: LessonWorkspaceProps) {
+	const isReferenceOnly = exercise.mode === "reference-only";
 	const [code, setCode] = useState(exercise.starterCode);
 	const [running, setRunning] = useState(false);
 	const [result, setResult] = useState<CheckResponse | null>(null);
@@ -136,6 +137,10 @@ export function LessonWorkspace({
 	}, [activeStep, steps]);
 
 	const runCheck = useCallback(() => {
+		if (isReferenceOnly) {
+			setStepMessage("This is a reference-only lesson. Read the linked specification and complete the retrieval prompt; there is no compiler check for this surface.");
+			return;
+		}
 		const term = terminalShell.current;
 		if (!term || running) {
 			return;
@@ -206,7 +211,7 @@ export function LessonWorkspace({
 			.finally(() => {
 				setRunning(false);
 			});
-	}, [activeStep, code, exercise, onPassed, running]);
+	}, [activeStep, code, exercise, isReferenceOnly, onPassed, running]);
 
 	const checkStep = useCallback(() => {
 		const step = steps[activeStep];
@@ -243,9 +248,15 @@ export function LessonWorkspace({
 						<div className="workspace-tile-content editor-pane">
 							<div className="editor-toolbar">
 								<Badge variant="outline" className="text-xs">
-									{exercise.command}
+									{isReferenceOnly ? "reference-only" : exercise.command}
 								</Badge>
 								<div className="flex gap-2 ml-auto">
+									{isReferenceOnly ? (
+										<Badge variant="outline" className="text-xs">
+											Read and retrieve
+										</Badge>
+									) : (
+										<>
 									<Button
 										variant="ghost"
 										size="xs"
@@ -263,6 +274,8 @@ export function LessonWorkspace({
 										<Play className="w-3.5 h-3.5 mr-1" />
 										{running ? "Running..." : "Run"}
 									</Button>
+										</>
+									)}
 								</div>
 							</div>
 							<Editor
@@ -278,6 +291,7 @@ export function LessonWorkspace({
 									minimap: { enabled: false },
 									tabSize: 2,
 									automaticLayout: true,
+									readOnly: isReferenceOnly,
 								}}
 							/>
 						</div>
@@ -320,8 +334,13 @@ export function LessonWorkspace({
 											variant="secondary"
 											className={clsx("text-xs shrink-0", difficultyClass)}
 										>
-											{exercise.difficulty}
+										{exercise.difficulty}
+									</Badge>
+									{isReferenceOnly && (
+										<Badge variant="outline" className="text-xs shrink-0">
+											Reference-only
 										</Badge>
+									)}
 									</div>
 									<p className="text-muted-foreground text-xs line-clamp-2">
 										{exercise.objective}
@@ -437,7 +456,7 @@ export function LessonWorkspace({
 					return null;
 		}
 	},
- [activeHint, difficultyClass, exercise, handleLanguageReady, running, result, code, runCheck],
+	[activeHint, difficultyClass, exercise, handleLanguageReady, isReferenceOnly, running, result, code, runCheck],
 );
 
 	const renderMosaic = useCallback(

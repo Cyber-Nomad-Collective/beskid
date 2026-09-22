@@ -14,9 +14,12 @@
 		"test": "vitest run",
 		"preview": "pnpm exec vite preview --host 0.0.0.0 --port 4173",
 		"start": "pnpm exec bun run server.ts",
+		"curriculum:validate": "pnpm exec node scripts/validate-curriculum.mjs",
+		"curriculum:build": "pnpm exec node scripts/build-curriculum.mjs",
+		"curriculum:check-generated": "pnpm exec node scripts/build-curriculum.mjs --check",
 		"lesson:check": "pnpm exec node scripts/check-lesson.mjs",
-		"lessons:list": "node -e \"const fs=require('node:fs');const entries=fs.readdirSync('curriculum',{withFileTypes:true}).filter((entry)=>entry.isDirectory()&&/^\\d{2}-/.test(entry.name)).map((entry)=>entry.name).sort().join(' ');console.log(entries);\"",
-		"check:all": "pnpm run -s lessons:list | xargs -n1 -P1 pnpm run lesson:check",
+		"lessons:list": "pnpm exec node scripts/list-curriculum-lessons.mjs",
+		"check:all": "pnpm exec node scripts/check-all-lessons.mjs",
 		"sync:beskid-packages": "bash ../../scripts/sync-beskid-packages.sh site/learn"
 	},
 	"dependencies": {
