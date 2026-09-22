@@ -11,6 +11,7 @@ const interactiveLesson = {
 	starterCode: "i32 Main() { return 0; }",
 	command: "analyze",
 	mode: "interactive",
+	status: "available",
 	hints: [],
 	lessonPath: "/site/learn/curriculum/fixture/lesson.md",
 	difficulty: "beginner",
@@ -20,18 +21,35 @@ const interactiveLesson = {
 	category: "foundations",
 } satisfies LearnExercise;
 
-const referenceLesson = { ...interactiveLesson, id: "reference_fixture", command: "reference", mode: "reference-only" } satisfies LearnExercise;
+const referenceLesson = {
+	...interactiveLesson,
+	id: "reference_fixture",
+	command: "reference",
+	mode: "reference-only",
+	status: "reference-only",
+} satisfies LearnExercise;
 
 describe("immutable lesson tile layouts", () => {
 	it("derives the visible tile set from the lesson instead of user state", () => {
-		expect(getLessonTileIds(interactiveLesson)).toEqual(["editor", "terminal", "content"]);
+		expect(getLessonTileIds(interactiveLesson)).toEqual([
+			"editor",
+			"terminal",
+			"content",
+		]);
 	});
 
 	it("builds a deterministic mosaic for each lesson declaration", () => {
-		expect(buildLessonTileLayout(interactiveLesson)).toMatchObject({ kind: "split" });
+		expect(buildLessonTileLayout(interactiveLesson)).toMatchObject({
+			kind: "split",
+		});
 	});
 
 	it("removes the terminal from reference-only lesson layouts", () => {
-		expect(getLessonTileIds(referenceLesson)).toEqual(["editor", "content", "hints", "questions"]);
+		expect(getLessonTileIds(referenceLesson)).toEqual([
+			"editor",
+			"content",
+			"hints",
+			"questions",
+		]);
 	});
 });

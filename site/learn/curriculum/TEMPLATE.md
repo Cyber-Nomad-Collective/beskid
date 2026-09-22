@@ -74,13 +74,14 @@ declared Beskid CLI command against both source files.
 ```json
 {
   "mode": "interactive",
+  "status": "available",
   "command": "analyze",
   "acceptance": { "kind": "compiler", "expect": "pass" }
 }
 ```
 
 For a source-backed feature that the selected compiler cannot execute, use
-`"mode": "reference-only"`, `"command": "reference"`, and
+`"mode": "reference-only"`, `"status": "reference-only"`, `"command": "reference"`, and
 `{"kind":"reference","expect":"read"}`. Keep the same four-file package,
 state the limitation in **Run**, and never present it as an interactive UI
 exercise. Do not use reference-only merely to skip verification.
@@ -94,3 +95,6 @@ Authoring rules:
 - Use verified compiler feedback in **Failure clinic**.
 - Fiber traces are examples, never scheduling promises; avoid thread and
   `async`/`await` metaphors.
+- `status` has exactly two values: `available` for compiler-backed lessons and
+  `reference-only` for source-backed reading lessons. It must agree with mode
+  and its exact acceptance object.

@@ -5,7 +5,8 @@ every permitted context and lesson package in learning order; it is not a
 filesystem discovery convention. The generator reads only those paths and
 derives `../src/data/generatedLearningCatalog.ts` for the React app.
 
-Each package has `lesson.md`, `start.bd`, `solution.bd`, and `check.json`.
+Each context has a `context.md`; each package has `lesson.md`, `start.bd`,
+`solution.bd`, and `check.json`.
 Read [TEMPLATE.md](TEMPLATE.md) before authoring a lesson: it defines required
 front matter, headings, acceptance metadata, pedagogy, and reference-only
 rules.
@@ -21,4 +22,5 @@ Useful commands from `site/learn`:
   interactive lessons only.
 
 Never add a numbered directory and expect it to run automatically. Add it to
-the manifest, give it a stable id, and declare its prerequisite edges.
+the manifest, give it a stable id, declare its prerequisite edges, and place
+it after those edges in manifest learning order.

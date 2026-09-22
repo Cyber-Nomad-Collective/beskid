@@ -1,5 +1,9 @@
 {
-  "mode": "reference-only",
-  "command": "reference",
-  "acceptance": { "kind": "reference", "expect": "read" }
+	"mode": "reference-only",
+	"status": "reference-only",
+	"command": "reference",
+	"acceptance": {
+		"kind": "reference",
+		"expect": "read"
+	}
 }

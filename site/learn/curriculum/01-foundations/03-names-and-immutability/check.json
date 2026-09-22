@@ -1,1 +1,9 @@
-{"mode":"interactive","command":"analyze","acceptance":{"kind":"compiler","expect":"pass"}}
+{
+	"mode": "interactive",
+	"status": "available",
+	"command": "analyze",
+	"acceptance": {
+		"kind": "compiler",
+		"expect": "pass"
+	}
+}

@@ -11,30 +11,43 @@ import {
 	TerminalIcon,
 } from "lucide-react";
 import type * as monacoEditor from "monaco-editor";
-import { type ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+	type ReactElement,
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
 import { Terminal } from "xterm";
 import { CodeHighlight } from "#/components/CodeHighlight";
 import { ExplorerTile } from "#/components/ExplorerTile";
 import { LessonContent } from "#/components/LessonContent";
-import { GuidedLessonRail } from "./GuidedLessonRail";
-import { type MosaicNode } from "#/components/workspaceLayout";
+import type { MosaicNode } from "#/components/workspaceLayout";
 import type { LearnExercise } from "#/data/learningCatalog";
 import { validateModeForExercise } from "#/data/learningCatalog";
-
-import { parseCheckResponse, parseMultiline, type CheckResponse, writeBlock } from "./checkProtocol";
-import { buildLessonTileLayout } from "./layout";
-import { getLessonSteps, type LessonStepStatus, validateSourceStep } from "./steps";
 import { attachBeskidLsp, registerBeskidLanguage } from "#/lib/beskidLspClient";
+
+import {
+	type CheckResponse,
+	parseCheckResponse,
+	parseMultiline,
+	writeBlock,
+} from "./checkProtocol";
+import { GuidedLessonRail } from "./GuidedLessonRail";
+import { buildLessonTileLayout } from "./layout";
+import {
+	getLessonSteps,
+	type LessonStepStatus,
+	validateSourceStep,
+} from "./steps";
 
 interface LessonWorkspaceProps {
 	exercise: LearnExercise;
 	onPassed: (id: string) => void;
 }
 
-export function LessonWorkspace({
-	exercise,
-	onPassed,
-}: LessonWorkspaceProps) {
+export function LessonWorkspace({ exercise, onPassed }: LessonWorkspaceProps) {
 	const isReferenceOnly = exercise.mode === "reference-only";
 	const [code, setCode] = useState(exercise.starterCode);
 	const [running, setRunning] = useState(false);
@@ -43,9 +56,13 @@ export function LessonWorkspace({
 	const layout = useMemo(() => buildLessonTileLayout(exercise), [exercise]);
 	const steps = useMemo(() => getLessonSteps(exercise), [exercise]);
 	const [activeStep, setActiveStep] = useState(0);
-	const [stepStatuses, setStepStatuses] = useState<LessonStepStatus[]>(() => steps.map((_, index) => index === 0 ? "current" : "locked"));
+	const [stepStatuses, setStepStatuses] = useState<LessonStepStatus[]>(() =>
+		steps.map((_, index) => (index === 0 ? "current" : "locked")),
+	);
 	const [stepMessage, setStepMessage] = useState<string | null>(null);
-	const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(null);
+	const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(
+		null,
+	);
 	const lspDisposableRef = useRef<{ dispose(): void } | null>(null);
 	const decorationsRef = useRef<string[]>([]);
 
@@ -63,7 +80,9 @@ export function LessonWorkspace({
 		setResult(null);
 		setActiveHint(0);
 		setActiveStep(0);
-		setStepStatuses(steps.map((_, index) => index === 0 ? "current" : "locked"));
+		setStepStatuses(
+			steps.map((_, index) => (index === 0 ? "current" : "locked")),
+		);
 		setStepMessage(null);
 	}, [exercise, steps]);
 
@@ -121,15 +140,21 @@ export function LessonWorkspace({
 		const focus = steps[activeStep]?.focus;
 		const model = editor?.getModel();
 		if (!editor || !focus || !model) return;
-		decorationsRef.current = editor.deltaDecorations(decorationsRef.current, [{
-			range: {
-				startLineNumber: focus.startLine,
-				startColumn: focus.startColumn ?? 1,
-				endLineNumber: focus.endLine,
-				endColumn: focus.endColumn ?? model.getLineMaxColumn(focus.endLine),
+		decorationsRef.current = editor.deltaDecorations(decorationsRef.current, [
+			{
+				range: {
+					startLineNumber: focus.startLine,
+					startColumn: focus.startColumn ?? 1,
+					endLineNumber: focus.endLine,
+					endColumn: focus.endColumn ?? model.getLineMaxColumn(focus.endLine),
+				},
+				options: {
+					isWholeLine: true,
+					className: "lesson-code-focus",
+					inlineClassName: "lesson-code-focus-inline",
+				},
 			},
-			options: { isWholeLine: true, className: "lesson-code-focus", inlineClassName: "lesson-code-focus-inline" },
-		}]);
+		]);
 		editor.revealLineInCenter(focus.startLine);
 		return () => {
 			decorationsRef.current = editor.deltaDecorations(decorationsRef.current, []);
@@ -138,7 +163,9 @@ export function LessonWorkspace({
 
 	const runCheck = useCallback(() => {
 		if (isReferenceOnly) {
-			setStepMessage("This is a reference-only lesson. Read the linked specification and complete the retrieval prompt; there is no compiler check for this surface.");
+			setStepMessage(
+				"This is a reference-only lesson. Read the linked specification and complete the retrieval prompt; there is no compiler check for this surface.",
+			);
 			return;
 		}
 		const term = terminalShell.current;
@@ -199,8 +226,22 @@ export function LessonWorkspace({
 					onPassed(exercise.id);
 					if (activeStep < steps.length - 1) setActiveStep((current) => current + 1);
 				}
-				setStepStatuses((current) => current.map((status, index) => index === activeStep ? (data.success ? "passed" : "failed") : index === activeStep + 1 && data.success ? "current" : status));
-				setStepMessage(data.success ? "Step complete." : "The check found something to fix. Read the output and try again.");
+				setStepStatuses((current) =>
+					current.map((status, index) =>
+						index === activeStep
+							? data.success
+								? "passed"
+								: "failed"
+							: index === activeStep + 1 && data.success
+								? "current"
+								: status,
+					),
+				);
+				setStepMessage(
+					data.success
+						? "Step complete."
+						: "The check found something to fix. Read the output and try again.",
+				);
 			})
 			.catch((error: unknown) => {
 				writeBlock(term, [
@@ -211,7 +252,15 @@ export function LessonWorkspace({
 			.finally(() => {
 				setRunning(false);
 			});
-	}, [activeStep, code, exercise, isReferenceOnly, onPassed, running]);
+	}, [
+		activeStep,
+		code,
+		exercise,
+		isReferenceOnly,
+		onPassed,
+		running,
+		steps.length,
+	]);
 
 	const checkStep = useCallback(() => {
 		const step = steps[activeStep];
@@ -219,21 +268,43 @@ export function LessonWorkspace({
 		if (step.check?.kind === "source") {
 			const validation = validateSourceStep(step, code);
 			setStepMessage(validation.message);
-			setStepStatuses((current) => current.map((status, index) => index === activeStep ? (validation.ok ? "passed" : "failed") : index === activeStep + 1 && validation.ok ? "current" : status));
-			if (validation.ok && activeStep < steps.length - 1) setActiveStep((current) => current + 1);
+			setStepStatuses((current) =>
+				current.map((status, index) =>
+					index === activeStep
+						? validation.ok
+							? "passed"
+							: "failed"
+						: index === activeStep + 1 && validation.ok
+							? "current"
+							: status,
+				),
+			);
+			if (validation.ok && activeStep < steps.length - 1)
+				setActiveStep((current) => current + 1);
 			return;
 		}
 		if (step.check?.kind === "command") return runCheck();
-		setStepStatuses((current) => current.map((status, index) => index === activeStep ? "passed" : index === activeStep + 1 ? "current" : status));
+		setStepStatuses((current) =>
+			current.map((status, index) =>
+				index === activeStep
+					? "passed"
+					: index === activeStep + 1
+						? "current"
+						: status,
+			),
+		);
 		setStepMessage("Step complete.");
 		if (activeStep < steps.length - 1) setActiveStep((current) => current + 1);
 	}, [activeStep, code, runCheck, steps]);
 
-	const selectStep = useCallback((index: number) => {
-		if (stepStatuses[index] === "locked") return;
-		setActiveStep(index);
-		setStepMessage(null);
-	}, [stepStatuses]);
+	const selectStep = useCallback(
+		(index: number) => {
+			if (stepStatuses[index] === "locked") return;
+			setActiveStep(index);
+			setStepMessage(null);
+		},
+		[stepStatuses],
+	);
 
 	const previousStep = useCallback(() => {
 		setActiveStep((current) => Math.max(0, current - 1));
@@ -257,23 +328,23 @@ export function LessonWorkspace({
 										</Badge>
 									) : (
 										<>
-									<Button
-										variant="ghost"
-										size="xs"
-										onClick={() => setCode(exercise.starterCode)}
-									>
-										<RotateCcw className="w-3.5 h-3.5 mr-1" /> Reset
-									</Button>
-									<Button
-										variant="default"
-										size="sm"
-										onClick={runCheck}
-										disabled={running}
-										className="run-btn"
-									>
-										<Play className="w-3.5 h-3.5 mr-1" />
-										{running ? "Running..." : "Run"}
-									</Button>
+											<Button
+												variant="ghost"
+												size="xs"
+												onClick={() => setCode(exercise.starterCode)}
+											>
+												<RotateCcw className="w-3.5 h-3.5 mr-1" /> Reset
+											</Button>
+											<Button
+												variant="default"
+												size="sm"
+												onClick={runCheck}
+												disabled={running}
+												className="run-btn"
+											>
+												<Play className="w-3.5 h-3.5 mr-1" />
+												{running ? "Running..." : "Run"}
+											</Button>
 										</>
 									)}
 								</div>
@@ -327,20 +398,18 @@ export function LessonWorkspace({
 								<BookOpen className="w-4 h-4 text-primary shrink-0" />
 								<div className="min-w-0">
 									<div className="flex items-center gap-2 mb-1">
-										<h2 className="text-base font-semibold truncate">
-											{exercise.title}
-										</h2>
+										<h2 className="text-base font-semibold truncate">{exercise.title}</h2>
 										<Badge
 											variant="secondary"
 											className={clsx("text-xs shrink-0", difficultyClass)}
 										>
-										{exercise.difficulty}
-									</Badge>
-									{isReferenceOnly && (
-										<Badge variant="outline" className="text-xs shrink-0">
-											Reference-only
+											{exercise.difficulty}
 										</Badge>
-									)}
+										{isReferenceOnly && (
+											<Badge variant="outline" className="text-xs shrink-0">
+												Reference-only
+											</Badge>
+										)}
 									</div>
 									<p className="text-muted-foreground text-xs line-clamp-2">
 										{exercise.objective}
@@ -380,21 +449,21 @@ export function LessonWorkspace({
 									</div>
 									<div className="flex gap-2 mt-2">
 										<Button
-										variant="ghost"
-										size="xs"
-										disabled={activeHint === 0}
-										onClick={() => setActiveHint((value) => value - 1)}
-									>
-										Prev
-									</Button>
-									<Button
-										variant="ghost"
-										size="xs"
-										disabled={activeHint >= exercise.hints.length - 1}
-										onClick={() => setActiveHint((value) => value + 1)}
-									>
-										Next
-									</Button>
+											variant="ghost"
+											size="xs"
+											disabled={activeHint === 0}
+											onClick={() => setActiveHint((value) => value - 1)}
+										>
+											Prev
+										</Button>
+										<Button
+											variant="ghost"
+											size="xs"
+											disabled={activeHint >= exercise.hints.length - 1}
+											onClick={() => setActiveHint((value) => value + 1)}
+										>
+											Next
+										</Button>
 									</div>
 								</>
 							) : (
@@ -422,15 +491,15 @@ export function LessonWorkspace({
 															"option-btn",
 															index === q.correctIndex && "option-correct",
 														)}
-														key={index}
+														key={option}
 													>
-													{index === q.correctIndex && (
-														<CheckCircle className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-													)}
-													<span className="truncate">{option}</span>
-												</button>
-											))}
-										</div>
+														{index === q.correctIndex && (
+															<CheckCircle className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+														)}
+														<span className="truncate">{option}</span>
+													</button>
+												))}
+											</div>
 										</div>
 									))}
 								</div>
@@ -454,10 +523,20 @@ export function LessonWorkspace({
 
 				default:
 					return null;
-		}
-	},
-	[activeHint, difficultyClass, exercise, handleLanguageReady, isReferenceOnly, running, result, code, runCheck],
-);
+			}
+		},
+		[
+			activeHint,
+			difficultyClass,
+			exercise,
+			handleLanguageReady,
+			isReferenceOnly,
+			running,
+			result,
+			code,
+			runCheck,
+		],
+	);
 
 	const renderMosaic = useCallback(
 		(node: MosaicNode, key: string): ReactElement => {
@@ -483,9 +562,13 @@ export function LessonWorkspace({
 					style={{
 						display: "grid",
 						gridTemplateColumns:
-								node.direction === "vertical" ? `${node.split}fr ${100 - node.split}fr` : undefined,
+							node.direction === "vertical"
+								? `${node.split}fr ${100 - node.split}fr`
+								: undefined,
 						gridTemplateRows:
-								node.direction === "horizontal" ? `${node.split}fr ${100 - node.split}fr` : undefined,
+							node.direction === "horizontal"
+								? `${node.split}fr ${100 - node.split}fr`
+								: undefined,
 					}}
 				>
 					{first}
@@ -500,7 +583,17 @@ export function LessonWorkspace({
 		<div className="workspace-container">
 			<div className="workspace-guided-layout">
 				<div className="workspace-fixed-mosaic">{renderMosaic(layout, "root")}</div>
-				<GuidedLessonRail title={exercise.title} steps={steps} activeStep={activeStep} statuses={stepStatuses} message={stepMessage} onSelectStep={selectStep} onCheck={checkStep} onPrevious={previousStep} />
+				<GuidedLessonRail
+					title={exercise.title}
+					steps={steps}
+					activeStep={activeStep}
+					statuses={stepStatuses}
+					message={stepMessage}
+					isReferenceOnly={isReferenceOnly}
+					onSelectStep={selectStep}
+					onCheck={checkStep}
+					onPrevious={previousStep}
+				/>
 			</div>
 		</div>
 	);
