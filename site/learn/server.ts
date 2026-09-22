@@ -24,6 +24,7 @@ type ExerciseSummary = {
 	title: string;
 	objective: string;
 	command: string;
+	mode: "interactive" | "reference-only";
 	expectedOutput?: string;
 	difficulty: string;
 	lessonPath: string;
@@ -531,6 +532,20 @@ async function runBeskidCheck(payload: CheckRequest): Promise<CheckResult> {
 			error: "unknown exercise",
 		};
 	}
+	if (exercise.mode === "reference-only") {
+		return {
+			exerciseId: payload.exerciseId,
+			command: exercise.command,
+			exitCode: 1,
+			success: false,
+			stdout: "",
+			stderr: "",
+			timedOut: false,
+			durationMs: 0,
+			diagnosticsSummary: "This lesson is reference-only and does not declare a compiler command.",
+			error: "reference-only lesson",
+		};
+	}
 
 	if (!COMPILER_AVAILABLE) {
 		return {
@@ -612,6 +627,7 @@ function resolvePublicExercises(): Array<ExerciseSummary> {
 		title: exercise.title,
 		objective: exercise.objective,
 		command: exercise.command,
+		mode: exercise.mode,
 		expectedOutput: exercise.expectedOutput,
 		difficulty: exercise.difficulty,
 		lessonPath: exercise.lessonPath,
@@ -728,6 +744,7 @@ Bun.serve({
 					title: exercise.title,
 					objective: exercise.objective,
 					command: exercise.command,
+					mode: exercise.mode,
 					expectedOutput: exercise.expectedOutput,
 					difficulty: exercise.difficulty,
 					lessonPath: exercise.lessonPath,
@@ -761,6 +778,12 @@ Bun.serve({
 				if (!exercise) {
 					return jsonResponse(404, {
 						error: `Unknown exerciseId: ${payload.exerciseId}`,
+					});
+				}
+
+				if (exercise.mode === "reference-only") {
+					return jsonResponse(409, {
+						error: `Lesson ${payload.exerciseId} is reference-only and has no compiler check.`,
 					});
 				}
 

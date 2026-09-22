@@ -1,0 +1,4 @@
+// Reference-only lesson package; see lesson.md for the normative-pending Option<T> sketch.
+i32 Main() {
+  return 0;
+}

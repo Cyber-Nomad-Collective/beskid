@@ -33,6 +33,16 @@ export function validateSourceStep(step: LessonStep, code: string): { ok: boolea
 
 export function getLessonSteps(exercise: LearnExercise): LessonStep[] {
 	if (exercise.steps?.length) return [...exercise.steps];
+	if (exercise.mode === "reference-only") {
+		return [
+			{
+				id: "read-and-retrieve",
+				title: "Read and retrieve",
+				body: "This source-backed lesson is reference-only. Read the lesson, complete its retrieval prompt, and use its linked specification; no compiler command is available here.",
+				focus: { startLine: 1, endLine: Math.min(3, exercise.starterCode.split("\n").length) },
+			},
+		];
+	}
 	return [
 		{
 			id: "understand",

@@ -1,18 +1,24 @@
 # Beskid Learn curriculum
 
-This folder holds the rustlings-style exercise source of truth.
+This directory is the sole authored source for Learn. `manifest.json` names
+every permitted context and lesson package in learning order; it is not a
+filesystem discovery convention. The generator reads only those paths and
+derives `../src/data/generatedLearningCatalog.ts` for the React app.
 
-- Each lesson has `lesson.md` (instructions), `start.bd` (what the user edits), and
-  `solution.bd` (reference implementation).
-- The web learn surface pulls exercise metadata from `src/data/learningCatalog.ts`.
-- Lesson IDs are intentionally numeric-prefix directories so both CLI (`check:all`) and
-  web navigation stay deterministic.
-- Command coverage now includes `analyze`, `parse`, `tree`, and `run`.
-- New exercise template:
+Each package has `lesson.md`, `start.bd`, `solution.bd`, and `check.json`.
+Read [TEMPLATE.md](TEMPLATE.md) before authoring a lesson: it defines required
+front matter, headings, acceptance metadata, pedagogy, and reference-only
+rules.
 
-```text
-01-lesson-name/
-  lesson.md
-  start.bd
-  solution.bd
-```
+Useful commands from `site/learn`:
+
+- `pnpm run curriculum:validate` validates the manifest and authored packages.
+- `pnpm run curriculum:build` validates and regenerates the catalog.
+- `pnpm run curriculum:check-generated` proves the committed catalog is current.
+- `pnpm run lesson:check <lesson-id>` checks the declared interactive starter
+  and solution using the command declared in lesson metadata.
+- `pnpm run check:all` validates first, then checks all manifest-listed
+  interactive lessons only.
+
+Never add a numbered directory and expect it to run automatically. Add it to
+the manifest, give it a stable id, and declare its prerequisite edges.

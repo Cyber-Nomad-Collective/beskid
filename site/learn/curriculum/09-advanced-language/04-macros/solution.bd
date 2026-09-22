@@ -1,0 +1,1 @@
+// Reference-only lesson package. The curriculum tool requires a safe placeholder.\ni32 Main() {\n  return 0;\n}\n

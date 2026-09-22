@@ -33,7 +33,9 @@ Interactive learning surface for the Beskid language.
     - `cd /workspaces/beskid && just learn-server`
 
 Run with `BESKID_BINARY` explicitly whenever possible so the endpoint uses the prebuilt
-`beskid` CLI binary (faster and deterministic).
+`beskid` CLI binary (faster and deterministic). In a sparse worktree without the
+compiler submodule, set `BESKID_REPO_ROOT` to a checkout containing `compiler/Cargo.toml`
+when using `lesson:check` or `check:all`.
 
 ## Runtime modes
 

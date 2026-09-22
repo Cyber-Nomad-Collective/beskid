@@ -71,6 +71,16 @@ function buildTreeFromWeightedTiles(tiles: WeightedTile[], depth = 0): MosaicNod
 }
 
 export function getTileConfigForExercise(exercise: LearnExercise): TileConfig[] {
+	if (exercise.mode === "reference-only") {
+		return DEFAULT_TILES.map((tile) => ({
+			...tile,
+			defaultVisible:
+				tile.id === "editor" ||
+				tile.id === "content" ||
+				tile.id === "hints" ||
+				tile.id === "questions",
+		}));
+	}
 	if (exercise.layout?.visibleTiles) {
 		const visible = new Set<string>(exercise.layout.visibleTiles);
 		return DEFAULT_TILES.map((tile) => ({ ...tile, defaultVisible: visible.has(tile.id) }));

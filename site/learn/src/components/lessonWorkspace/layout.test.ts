@@ -1,16 +1,37 @@
 import { describe, expect, it } from "vitest";
-import { learnExercises } from "#/data/learningCatalog";
+import type { LearnExercise } from "#/data/learningCatalog";
 
 import { buildLessonTileLayout, getLessonTileIds } from "./layout";
 
-const helloLesson = learnExercises[0]!;
+const interactiveLesson = {
+	id: "interactive_fixture",
+	title: "Interactive fixture",
+	objective: "Check a compiler-backed lesson.",
+	slug: "interactive-fixture",
+	starterCode: "i32 Main() { return 0; }",
+	command: "analyze",
+	mode: "interactive",
+	hints: [],
+	lessonPath: "/site/learn/curriculum/fixture/lesson.md",
+	difficulty: "beginner",
+	questions: [],
+	detailedContent: "## Hook and goal",
+	prerequisites: [],
+	category: "foundations",
+} satisfies LearnExercise;
+
+const referenceLesson = { ...interactiveLesson, id: "reference_fixture", command: "reference", mode: "reference-only" } satisfies LearnExercise;
 
 describe("immutable lesson tile layouts", () => {
 	it("derives the visible tile set from the lesson instead of user state", () => {
-		expect(getLessonTileIds(helloLesson)).toEqual(["editor", "terminal", "content"]);
+		expect(getLessonTileIds(interactiveLesson)).toEqual(["editor", "terminal", "content"]);
 	});
 
 	it("builds a deterministic mosaic for each lesson declaration", () => {
-		expect(buildLessonTileLayout(helloLesson)).toMatchObject({ kind: "split" });
+		expect(buildLessonTileLayout(interactiveLesson)).toMatchObject({ kind: "split" });
+	});
+
+	it("removes the terminal from reference-only lesson layouts", () => {
+		expect(getLessonTileIds(referenceLesson)).toEqual(["editor", "content", "hints", "questions"]);
 	});
 });
