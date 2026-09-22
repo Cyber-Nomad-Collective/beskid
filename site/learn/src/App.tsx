@@ -1,4 +1,4 @@
-import { Badge, BeskidHub, Button, Card, Separator } from "@beskid/ui-react";
+import { Badge, BeskidHub, Button, Card } from "@beskid/ui-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@beskid/ui-react/ui/sheet";
 import { Editor } from "@monaco-editor/react";
 import { FitAddon } from "@xterm/addon-fit";
@@ -21,7 +21,6 @@ import { Terminal } from "xterm";
 import { AuthGate, UserBadge } from "#/components/AuthGate";
 import { CodeHighlight } from "#/components/CodeHighlight";
 import { LessonContent } from "#/components/LessonContent";
-import LessonCard from "#/components/LessonCard";
 import { LessonEditor } from "#/components/LessonEditor";
 import { LessonWorkspace } from "#/components/LessonWorkspace";
 import Playground from "#/components/Playground";
@@ -31,7 +30,7 @@ import {
 	learnExercises,
 	validateModeForExercise,
 } from "#/data/learningCatalog";
-import { authentikLoginUrl, type AuthUser } from "#/lib/auth";
+import { type AuthUser, authentikLoginUrl } from "#/lib/auth";
 import { readPlaygroundHandoff } from "#/lib/playground-handoff";
 import "xterm/css/xterm.css";
 import "./styles.css";
@@ -523,16 +522,13 @@ function App() {
 		});
 	}, []);
 
-	const handleExerciseUpdated = useCallback((updated: LearnExercise) => {
-		setActiveExercise(updated);
-	}, []);
+	const selectLesson = useCallback((lesson: LearnExercise) => {
+		setActiveExercise(lesson);
+		setViewMode("lesson");
+		if (isCompact) setSidebarOpen(false);
+	}, [isCompact]);
 
 	// ── Derived state ──────────────────────────────────────────────────────────
-
-	const completedCount = useMemo(
-		() => Object.values(passedLessons).filter(Boolean).length,
-		[passedLessons],
-	);
 
 	const categories = useMemo(() => {
 		const map: Record<
@@ -582,13 +578,9 @@ function App() {
 							/>
 							<h1 className="text-xl font-bold">beskid learn</h1>
 
-							{viewMode === "playground" ? (
+							{viewMode === "playground" && (
 								<Badge>
 									<FlaskConical className="w-3.5 h-3.5 mr-1" /> Playground
-								</Badge>
-							) : (
-								<Badge variant="outline" className="text-xs">
-									{completedCount}/{learnExercises.length} done
 								</Badge>
 							)}
 						</div>
@@ -652,41 +644,30 @@ function App() {
 
 						{sidebarOpen && !isCompact && (
 							<aside className="learn-sidebar">
-								<Card className="sidebar-card">
-									<h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
-										<BookOpen className="w-4 h-4 text-primary" />
-										Lessons
-									</h2>
-									<div className="lesson-list-scroll">
-										{learnExercises.map((ex) => (
-											<LessonCard
-												key={ex.id}
-												lesson={ex}
-												isActive={activeExercise.id === ex.id}
-												isCompleted={passedLessons[ex.id] ?? false}
-												onSelect={() => {
-													setActiveExercise(ex);
-													setViewMode("lesson");
-												}}
-											/>
-										))}
-									</div>
-								</Card>
-
-								<Separator />
-
 								<ProgressTracker
 									passedLessons={passedLessons}
 									exerciseCount={learnExercises.length}
 									categories={categories}
+									lessons={learnExercises}
+									activeLessonId={activeExercise.id}
+									onSelectLesson={selectLesson}
 								/>
 							</aside>
 						)}
 						{isCompact && (
 							<Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
 								<SheetContent side="right" className="w-[min(24rem,90vw)] overflow-y-auto">
-									<SheetHeader><SheetTitle>Lessons</SheetTitle></SheetHeader>
-									<div className="space-y-4 px-4 pb-6">{learnExercises.map((ex) => <LessonCard key={ex.id} lesson={ex} isActive={activeExercise.id === ex.id} isCompleted={passedLessons[ex.id] ?? false} onSelect={() => { setActiveExercise(ex); setViewMode("lesson"); setSidebarOpen(false); }} />)}<ProgressTracker passedLessons={passedLessons} exerciseCount={learnExercises.length} categories={categories} /></div>
+									<SheetHeader><SheetTitle>Learning navigator</SheetTitle></SheetHeader>
+									<div className="px-4 pb-6">
+										<ProgressTracker
+											passedLessons={passedLessons}
+											exerciseCount={learnExercises.length}
+											categories={categories}
+											lessons={learnExercises}
+											activeLessonId={activeExercise.id}
+											onSelectLesson={selectLesson}
+										/>
+									</div>
 								</SheetContent>
 							</Sheet>
 						)}
