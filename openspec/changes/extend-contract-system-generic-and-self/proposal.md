@@ -78,11 +78,21 @@ partial `This` substitution, producing inconsistent conformance validation.
 - Affected canonical capability: `language-meta--contracts-and-effects--contracts`.
 - Affected implementation surfaces: `beskid.pest` grammar, AST nodes
   (`ContractDefinition`, `ContractEmbedding`, `ContractNode`, `ImplBlock`,
-  `Type`, `GenericParameter`), typechecker (`items.rs`, `contracts.rs`,
-  `helpers.rs`, `types.rs`), resolver (`items_statements.rs`), lowering-prep
-  (`substitution.rs`, `walker.rs`), `beskid_queries` semantic-contract
-  (`abi/specialization.rs`, `calls/resolution.rs`, `calls/generics.rs`), and
-  corelib (`Query/Iterator.bd`, `console/Ansi/Contracts.bd`, `compiler-sdk/.../Collect.bd`).
+  `Type`, `GenericParameter`), typechecker
+  (`types/checker/items.rs`, `analysis/rules/staged/contracts.rs`,
+  `types/checker/helpers.rs`, `types/checker/types.rs`), resolver
+  (`resolve/resolve_refs/items_statements.rs`), lowering-prep
+  (`types/lowering_prep/substitution.rs`, `types/lowering_prep/walker.rs`),
+  `beskid_queries` semantic-contract (`semantic_contract/contracts.rs` — the
+  generation-bound conformance-witness module already resolving
+  `type X : Contract` and feeding specialization identity; not present when
+  this design was first written and now the primary extension point for
+  Gaps 1/3/4 — plus `abi/specialization.rs`, `calls/resolution.rs`,
+  `calls/generics.rs`), and corelib (`Query/Iterator.bd`,
+  `console/Ansi/Contracts.bd`, `compiler-sdk/.../Collect.bd`). As of
+  2026-09-22 on `main`, every cited file:line in this proposal/design has
+  drifted by a small mechanical offset only (see `design.md` Impact note);
+  the described gaps and decisions remain accurate.
 - ISLE is unaffected: bounds complete before `DirectCallee::SpecializedItem`
   is minted, and `This` substitution reuses the existing specialization path.
 - Follow-on: generic combinators in `Query/Operators.bd`, the seven glue

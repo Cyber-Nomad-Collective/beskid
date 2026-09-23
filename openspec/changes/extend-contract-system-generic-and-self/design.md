@@ -157,6 +157,22 @@ not expose the legacy `type_conformances` table via a tracked fact. This keeps
 the SOT self-sufficient and is reused by `impl` conformance, generic bounds,
 and `This` substitution.
 
+## Implementation-surface note (2026-09-22, current `main`)
+
+Since this design was written, `main` gained
+`crates/beskid_queries/src/semantic_contract/contracts.rs` (576 lines,
+"Compile-time conformance witnesses"), which already resolves `type X :
+Contract` against `TypeDefinition` and feeds `GenericSpecializationInstance`.
+It is not a partial implementation of Gaps 1-4 — `ContractDefinition` still
+has no `generics` field, `ImplBlock` is still flattened to `Node::Method` at
+parse, and there is no `This`/`where` support anywhere — but it is the
+correct SOT extension point for the generation-bound conformance fact this
+design calls for, superseding the assumption that no such fact exists. Every
+other file:line citation in this design (grammar rule positions, `items.rs`
+line 333, `contracts.rs` lines, `helpers.rs`/`types.rs` lines) has drifted by
+a small mechanical offset only; re-verify exact line numbers per slice rather
+than trusting the numbers above.
+
 ## Cross-gap dependencies
 
 - Gap 2 #4 (conformance equality) is the same fix as Gap 4 #8.

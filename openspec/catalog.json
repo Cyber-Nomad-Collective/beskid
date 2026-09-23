@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "6e5fc0f981f34acd2663d05826a0058802523ac020e750c5c6334af043eedd39",
+  "revision": "5365c5045f280a2ba710ad002d20c96cfe6680da2f68f32f0a8e97268df62875",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -58341,7 +58341,7 @@
       "decision": null,
       "title": "Stage ordering and lowering",
       "status": "Standard",
-      "sourceHash": "1248e398442c35d95e196a5877a8cf3ea05c3f74958012d93258e0ddfc4c773a"
+      "sourceHash": "64ae1932db9bdd3b4b1fe30f66fb474d51776e77b4197875d183b33b0e1d376c"
     },
     {
       "id": "BSP-CAP-5117C8E20F48",
