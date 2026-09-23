@@ -77,7 +77,8 @@ corelib_run_bounded_phase() {
 
 corelib_run_test_matrix() {
   corelib_run_bounded_phase "run Corelib tests" "${CORELIB_TEST_TIMEOUT:-1800}" \
-    "$CLI" test --project "${TESTS_MANIFEST}" --all-targets --plain </dev/null
+    "$CLI" test --project "${TESTS_MANIFEST}" --all-targets --plain \
+    --target-timeout "${CORELIB_TARGET_TIMEOUT:-600}" </dev/null
 }
 
 corelib_sanitize_diagnostic_tail() {

@@ -205,6 +205,28 @@ Glue stays fail closed by default. If product scope includes generated Rust or .
 4. Extend `beskid_abi::toolchain` to exact path/prefix discovery, executable validation, version/target interrogation, SHA-256 pinning, and bounded captured invocation; never search ambient `PATH`.
 5. Emit a compilable Rust `cdylib` fixture and .NET SDK project fixture from the validated plan; test ownership, malformed signatures, code-injection-like identifiers, and import/export round trips. Use C ABI at foreign boundaries; preserve the existing CLIF path unchanged.
 
+## Independent contract-system lane — no gate dependency
+
+`extend-contract-system-generic-and-self` (generic contracts, `impl`-block
+conformance, `where`-bound checking, and `This`/associated types) is owned
+scope for the v0.5 release program but is not on the F/N/H critical path: it
+touches `beskid_analysis` typechecking/resolver, the `beskid_queries`
+semantic-contract conformance fact, and corelib, not the ABI/scheduler/socket
+surfaces F/N/H gate on. Execute it in parallel with Foundations/Networking/HTTP,
+serializing only where a slice's file list overlaps a live F/N/H worker's
+in-flight edits (`crates/beskid_isle/src/context/{calls,control_flow,enums,aggregate}.rs`
+and `crates/beskid_queries/src/semantic_contract/**` are busy — see
+`~/.claude/handoffs/networking-coordination.md` before claiming a path there).
+
+- Spec: `openspec/changes/extend-contract-system-generic-and-self/` (proposal,
+  design, tasks; validated strictly and independently of CYB-60/61/62 — it
+  carries no `dependsOn` in its `.openspec.yaml`).
+- Plan: `docs/superpowers/plans/2026-09-22-v05-contract-system.md` — ordered,
+  independently testable slices mapped to current `main`.
+- Gate: green when `cargo test -p beskid_analysis`, `cargo test -p
+  beskid_queries`, `just corelib`, and `pnpm run openspec:validate` pass for
+  this change; it does not block or get blocked by CYB-60/61/62 closure.
+
 ## Cross-target behavioral evidence
 
 Extend the existing Woodpecker release-evidence route rather than create another publisher. Add a versioned `feature-evidence-v1.json` per platform containing commit/version identity, target/runtime-kit digest, executed conformance case IDs, test-log hashes, and an explicit `not_applicable` reason for out-of-scope Glue. The aggregate must reject missing, mismatched, or unexecuted promised behavioral evidence even when CLI/LSP bundles build successfully.
