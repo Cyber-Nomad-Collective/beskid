@@ -20,6 +20,196 @@ their normative content.
 See `docs/superpowers/plans/2026-09-19-beskid-v0-5-closure-rebaseline.md` §
 "Independent contract-system lane."
 
+## Status (2026-09-24): merged
+
+All slices, including 9-11 and the follow-up gap fixes, are merged into
+compiler `main` at `b1b9307f` (contracts merge; branch head `20c44e68`)
+and corelib `main` at `3f2ab81`. Closed since the notes below: cross-unit
+contract signatures and associated types, E1201 on unresolved contract
+signatures, `this` as a value and receiver field chains, impl-block method
+calls, and `This` in implementing signatures. Corelib uses `This`/`this` in
+`StyleChain` and `ArrayIterator`. Verified on the merged tree: workspace
+tests green apart from known environment-only targets, runtime semantics
+7/7 targets, corelib tests 80/80 targets.
+
+Still open: receiver field chains and impl owners in generic types, `This`
+in contract signatures used through generic specialization, and impl
+method qualified names that omit the owner type. The notes below are the
+historical record.
+
+## Status (2026-09-23)
+
+Slices 1-8 landed on `codex/v05-contracts` in
+`.worktrees/compiler-v05-contracts` (compiler submodule, branch cut from
+`origin/main` `1bc4ec21`; not yet merged to the compiler's own `main` as of
+this update). Commits, in order: `90e3877c` (1), `506af03a` (2), `aa278fd9`
+(3), `f27b43f7` (4), `c2635bfe` (5), `6fe22fd7` (pipeline reorder, inserted
+between 5 and 6 -- see "Slice 5a" below), `fd9f9ee1` (6), `580b43af` (7),
+`eef88b5a` (8). All verified green: `cargo test -p beskid_analysis`
+322/322, `-p beskid_queries` 227/227, `-p beskid_tests_surface` 266/266,
+`-p beskid_isle` all green; `cargo check --workspace --all-targets` clean
+except one pre-existing, unrelated `beskid_cli` bug. Full per-slice
+red/green evidence and deviation rationale is in each commit message.
+Slice 9 (associated types) landed, commit `eacd54e6`, fully verified:
+`cargo test -p beskid_analysis` 331/331, `-p beskid_queries` 227/227, `-p
+beskid_tests_surface` 266/266, `-p beskid_isle` all green.
+
+Slice 10 (corelib migration -- `Query.Iterator`, `Collect.Rewriter`,
+`console/Ansi/Contracts.bd`'s six fluent step contracts) landed on
+corelib branch `codex/v05-contracts-slice10`, corelib commit `1a75f58`
+(the compiler-repo submodule pointer to this commit is **not yet
+committed** on `codex/v05-contracts` -- see slice 11 below, it depends on
+slice-11 corelib work that is itself unverified). Verified via `beskid_cli
+analyze` on the three touched packages (foundation, compiler-sdk,
+console); full detail and the two pre-existing, unrelated parse/resolution
+gaps it surfaced (an `Args.bd`/`ArgsError.bd` duplicated-path-segment bug,
+a semicolon-only `Query.bd` function declaration) are in the commit
+message.
+
+Slice 11 (`Iterator<T>` + fluent `This`-returning contracts, corelib
+tests through the real CLI) is **mid-way, interrupted by the remote
+builder (10.66.0.2) going offline** (stale WireGuard handshake) partway
+through rebuilding `beskid_cli` to pick up the fixes below. Status as of
+this update:
+
+- **Done and fully verified** (commit `ea6a6620` on `codex/v05-contracts`,
+  compiler repo): four compiler bugs found and fixed while wiring
+  `ArrayIterator<T> : Iterator<T>` (the first real generic-contract,
+  generic-implementor, applied-associated-type, and multi-method `This`-
+  returning conformance in this codebase) --
+  1. generic-implementor `This` substitution (was the bare unparameterized
+     name, now the implementor applied to its own generics),
+  2. the resolver never walked a conformance list's own generic type
+     arguments (`Iterator<T>`'s `T`),
+  3. `check_contract_conformances` never pushed the implementor's own
+     generics into scope before resolving conformance type arguments or
+     associated-type binding syntax,
+  4. a **general, contract-system-independent** bug: every method beyond
+     the first in any `type X { }` / `impl X { }` / `extend type X { }`
+     body shared one `receiver_type` span, so `this` (explicit or an
+     implicit bare-field access) failed to type-check in the second and
+     later methods of any multi-method body.
+  Each has isolated red/green evidence plus a clean full-suite rerun
+  (`beskid_analysis` 334/334, `beskid_queries` 227/227,
+  `beskid_tests_surface` 266/266, `beskid_isle` all green) in the commit
+  message.
+- **Drafted but NOT verified** (uncommitted, corelib working tree --
+  branch `codex/v05-contracts-slice10`, on top of `1a75f58`; drafted in
+  two passes, both while the builder was offline -- the second pass added
+  the remaining five step-contract conformances at the coordinator's
+  explicit request to draft the full surface before the build/fix pass):
+
+  Real conformances:
+  - `packages/foundation/src/Query/ArrayIterator.bd` --
+    `ArrayIterator<T> : Iterator<T>`, real `Current()`/`MoveNext()`
+    methods alongside the pre-existing free functions `Query.Operators`
+    still calls.
+  - `packages/console/src/Ansi/StyleChain.bd` -- `impl StyleChain :
+    AnsiStyleStep`, 14 methods each delegating to the pre-existing free
+    function of the same name (unambiguous: the free function always
+    takes one more explicit arg than the method, its own receiver).
+  - `packages/console/src/Ansi/Cursor.bd`, `Erase.bd`, `Screen.bd`,
+    `InputMode.bd` -- `: AnsiCursorStep`/`AnsiEraseStep`/`AnsiScreenStep`/
+    `AnsiInputModeStep` added to each type's existing inline-method body
+    (the methods already matched each contract's method set 1:1 before
+    this change; only the conformance declaration is new). **Unverified
+    risk specific to these four:** their inline methods make bare,
+    unqualified `Append(...)` calls (implicit-`this` method dispatch)
+    that no existing test ever exercised before this draft (the
+    pre-existing `AnsiBuildersTests.bd` only calls the free-function
+    form, `Ansi.Cursor.Position(...)`) -- this whole call-resolution path
+    is unverified independent of the contract-conformance work.
+  - `packages/console/src/Ansi/Osc.bd` -- `: AnsiOscStep`, plus a new
+    `Hyperlink(string, string)` method (the pre-existing free function of
+    that name is stateless, not builder-shaped, so there was no matching
+    method to just annotate). Deliberately does **not** delegate to the
+    free function by a bare call: the free function and the new method
+    share the identical name AND arity (both take two `string`s, unlike
+    every other delegating method here, where the free function always
+    has one more explicit arg), so an unqualified call would be
+    ambiguous between "call the free function" and self-recursion --
+    duplicates the free function's logic inline instead, with a comment
+    explaining why.
+
+  New corelib tests (method-dot-call syntax, mirroring the free-function
+  goldens in the pre-existing `QueryTests.bd`/`AnsiBuildersTests.bd`/
+  `AnsiStyleChainTests.bd`):
+  `beskid_corelib/tests/corelib_tests/src/query/QueryIteratorConformanceTests.bd`,
+  `.../console/AnsiStyleStepConformanceTests.bd`,
+  `.../console/AnsiFluentStepConformanceTests.bd`.
+
+  **None of this has been compiled.** The four compiler-side fixes in
+  `ea6a6620` were red/green-verified through the Rust test suites, but
+  `beskid_cli` was mid-rebuild picking them up when the builder went
+  offline, so `beskid_cli analyze`/`test` was never run against this
+  corelib state at all (not before, not after the fixes). **Do not
+  assume any of it compiles or passes tests -- verify from scratch**
+  (rebuild `beskid_cli`, `beskid_cli analyze --project
+  corelib/packages/foundation/corelib_foundation.bproj --plain` and
+  `.../console/corelib_console.bproj --plain`, then `beskid_cli test` on
+  `corelib_tests` with a rebuilt runtime kit if `analyze` is clean)
+  before committing any of it. Expect to actually debug and fix issues,
+  not just confirm green -- this is an intentionally unverified draft.
+
+- **Deliberately not drafted** (explicitly out of scope for this
+  drafting pass, not merely forgotten): `Rewriter<TSourceNode,
+  TTargetNode>` rewrites -- no `.bd` file anywhere in corelib implements
+  `Rewriter` (confirmed by `grep -rl Rewriter`), so there is no concrete
+  rewrite site to migrate yet; `Query.Operators`'s generic combinators --
+  migrating `Map`/`Take`/`Skip`/etc. from `ArrayIterator<T>`-specific
+  parameters to a real `where TIter: Iterator<T>`-bounded generic
+  receiver would be a substantial, blind signature redesign of code 16
+  existing `QueryTests.bd` tests already depend on, too risky to draft
+  without any way to verify it in this outage; `just corelib` / the full
+  test matrix (task 5.3).
+
+**Resume instructions:** once the builder is back, sync the compiler
+worktree (now includes commit `ea6a6620`) and the corelib working tree
+(uncommitted) to `/workspace/compiler-contracts`, rebuild `beskid_cli`,
+then verify the corelib state exactly as described above before
+committing it as a slice-11 corelib commit and bumping the compiler
+repo's `corelib` submodule pointer.
+
+**Slice 11 build/fix pass (2026-09-23, uncommitted, verified on the builder).**
+The drafts above now compile and pass. `cargo test -p beskid_analysis -p
+beskid_queries -p beskid_codegen -p beskid_ast_reflect_gen --tests` is green
+(isle_adapter 236/236), and 23 corelib targets (all console, query, and
+compiler-sdk targets, including the three new conformance targets) pass
+through `beskid_cli test`. Fixes and rulings:
+
+- Compiler: the unit type surface (`types/surface/builder.rs`) now seeds a
+  contract's generics, `This`, and associated types, so a contract declared
+  in another unit keeps its real signatures (they fell back to `unit`). It
+  also carries `contract_associated_types` across units and registers
+  `impl`-block methods. `check_contract_conformances` checks only the
+  conformances written in the unit being checked.
+- Generator: `beskid_ast_reflect_gen` escapes a variant named `This` to
+  `_This` (the mirror `Type.bd` did not parse after `This` became a
+  keyword). `ReflectSdkNodeKind` and the golden inventory list the three new
+  syntax node types.
+- Corelib: implementors write their concrete receiver type in method
+  signatures, as the spec scenario does (`StyleChain Bold()`), because
+  `This` in an implementing method signature is not typed or lowered yet.
+  `StyleChain` conforms through inline type-body methods (the step-builder
+  convention); the `impl` block form does not lower yet.
+- Ruling, `OscBuilder.Hyperlink`: a bare call inside a type-body method
+  binds to the sibling method of that name first
+  (`unqualified_enclosing_method_call`), so delegating would recurse. The
+  method keeps its own body, like every other method and free-function pair
+  in the step builders. A test asserts that both forms return the same bytes.
+- `Query.Operators` migration: not started. The combinators still take
+  `ArrayIterator<T>` directly and `QueryTests` (18/18) passes against them.
+
+Three deviations from this plan's original slice descriptions, each
+recorded in detail in its commit message: slice 3's comparator started
+structural (syntax-shape) rather than `TypeId`-based, corrected by the
+pipeline-reorder task; slice 7 represents `This` as a synthetic
+`TypeInfo::GenericParam("This")` rather than adding a new `TypeInfo::This_`
+variant; slice 8 adds an additive `where_bounds` field to
+`FunctionDefinition` rather than the `GenericParameter` struct replacing
+`Vec<Spanned<Identifier>>` everywhere generics are declared (bounds are
+implemented for standalone generic functions only).
+
 ## Coordination — busy paths
 
 Before claiming a slice, check
@@ -111,6 +301,41 @@ independently testable and revertible.
   parameter, not an unresolved/global type.
 - **Done when:** arity mismatches at the conformance site
   (`Iterator<i32, i32>` embedding a 1-param contract) are rejected.
+
+### Slice 5a — Semantic-pipeline reorder (added 2026-09-23, owner ruling)
+
+Not in the original plan; inserted here after slice 3's structural
+(declared-syntax-shape) comparator was found to be a necessary stopgap,
+not a full implementation of task 2.6's `FunctionSignature` (`TypeId`-
+based) equality: `stage6_contracts_and_methods` ran inside the
+`run_rules`/`RuleContext` diagnostics pipeline, which never runs full type
+checking (`stage2_type_check` there is structural-immutability-only --
+"full type-check runs in the lower spine" per its own doc comment). Owner
+ruling: move contract conformance checking into the real `TypeChecker`
+itself, replacing the structural stopgap with real `TypeId` equality,
+before `This` (slice 7) so slice 7's `This` substitution can rely on real
+type identity from the start.
+
+- **Files:** `crates/beskid_analysis/src/analysis/rules/staged.rs` and
+  `staged/contracts.rs` (deleted -- the stopgap and its call site);
+  `crates/beskid_analysis/src/types/checker/contracts.rs` (new
+  `check_contract_conformances`, called from `check_entry` after the main
+  per-item typing loop; fix to `seed_contract_signatures` to push a
+  contract's own generics into scope); `crates/beskid_analysis/src/types/
+  result.rs` (two new `TypeError` variants); `crates/beskid_analysis/src/
+  analysis/rules/types.rs` (`emit_type_error` arms mapping them to the same
+  E1601/E1602 `SemanticIssueKind`s the deleted stopgap used).
+- **Root cause found while wiring this, unrelated to the reorder itself:**
+  `resolve/member_items.rs`'s `Node::TypeDefinition` branch
+  double-registered every inline method as a second, receiver-less,
+  symbol-less `ItemId` alongside `resolve/collect.rs`'s already-correct
+  dedicated registration -- silently dropping the duplicate's
+  `FunctionSignature` and making `item_id_for_name` pick the wrong
+  candidate. Fixed by removing the duplicate registration.
+- **Done when:** `stage6`'s old test coverage (E1601/E1602, now via
+  `resolve_and_type_program` instead of `analyze()`, since that is the
+  only driver that can observe a `TypeError`) passes against real `TypeId`
+  equality; slices 1-5's own test suites stay green.
 
 ### Slice 6 — SOT conformance fact reuse (Gap 3 prerequisite, task 2.5)
 
