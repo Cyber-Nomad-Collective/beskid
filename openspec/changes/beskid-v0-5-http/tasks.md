@@ -3,7 +3,7 @@
 - [x] 1.1 Add the `corelib_http` package and aggregate registration.
 - [ ] 1.2 Implement bounded strict request/response parsing, chunk decoding,
   canonical header handling, and serialization over Foundation byte helpers.
-- [ ] 1.3 Implement client and listener-backed server exchanges exclusively
+- [x] 1.3 Implement client and listener-backed server exchanges exclusively
   over `Network.TcpStream` and `Network.TcpListener`.
 - [ ] 1.4 Enforce exactly one `Host` field per request
   (`BSP-REQ-6CAA5AC6F4E3`): add `MissingHost()` and `InvalidHost()` to
