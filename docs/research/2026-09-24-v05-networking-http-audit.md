@@ -70,3 +70,46 @@ branch work:
 
 These branches have not been merged into `main`; the original 45-item
 classification must not be presented as a post-integration release result.
+
+## Combined-candidate release-gate update (2026-09-25)
+
+The unmerged combined candidate (`codex/v05-release-candidate` at `25aca99b`)
+passes Linux corelib 81/81 and runtime 7/7, but its broader
+`cargo test -j 4 --workspace --all-targets --no-fail-fast` run is not green:
+2913 passed and 23 failed across 292 completed binaries. The log is
+`/var/lib/beskid-codex-build/run/v05-rc-workspace-tests.log` inside the Linux
+builder container; `scripts/diagnose/cargo-log.py` enumerates the failures.
+
+All 14 failing candidate `beskid_e2e_tests` cases are also in the clean-main
+failure set (main has one additional e2e failure). Eleven of the 14 stop before
+the requested build because the Rust tests name removed `Project.proj` or
+`Workspace.proj` manifests while the checked-in fixtures have `.bproj` and
+`.bws` files. The other three use stale fixture source or output assertions:
+`runtime_calls` has obsolete call arity/type and `read_len` spelling,
+`event_unsubscribe` has an unknown `User` module path and `fieldmut` syntax,
+and `smoke_fixture_build_graph_includes_corelib_dependency` reaches an unused
+private `Main` diagnostic. These are baseline harness debts, not proof of a
+candidate-only regression, but the full-workspace release gate remains red.
+
+Separately, the candidate's incremental and `corelib_mvp` tests report E1105
+for `Core.*` imports inside reachable corelib shards in a Std application;
+clean main passes the targeted cases. The reused runtime-fixture scheduler
+tests expose a lock-replay authority-path bug that disappears in clean source
+copies. The legality inventory exposes an unclassified `aggregate_literal`
+finding for opaque `Deadline`. Those are not resolved by repairing e2e
+fixtures, so this audit does not treat the passing corelib/runtime matrices as
+full release evidence.
+
+On the exact combined candidate, focused Linux checks additionally pass:
+`NetworkTcpTests` 4/4, `NetworkDisposableTests` 2/2,
+`HttpCodecTests` 13/13, `HttpSerializationTests` 4/4, and
+`HttpExchangeTests` 5/5. A shared Cargo target directory had briefly
+replaced the candidate CLI with a main-built binary; rebuilding the candidate
+CLI restored its match with the candidate kit before these reruns.
+
+The HTTP Host parser still accepts at least the invalid bracketed IPv6 form
+`[1:::2]`: its `Ipv6` cursor skips a third colon while consuming `::`.
+The existing rejection test for `[:::::::]` does not cover this form. HTTP
+strictness and public network deadlines remain incomplete; the owner has been
+asked to approve the bounded Host fix and to decide whether `SetDeadlines`
+updates operations already pending.
