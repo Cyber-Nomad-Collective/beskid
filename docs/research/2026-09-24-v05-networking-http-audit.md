@@ -57,7 +57,9 @@ branch work:
   `NetworkNativeTests` target on compiler branch `codex/network-shutdown-test`
   (`f8c383a1`). It verifies a nonzero leak count, handle closure, and
   idempotent repeated shutdown. Truthful operation/winner diagnostics remain
-  open; the native hook still hard-codes both details.
+  open; the native hook still hard-codes both details. The test calls the
+  shutdown hook directly, so a process-level nonzero leak-check failure is
+  not yet independently tested.
 - For the HTTP 81/81 builder run, the test project's generated
   `/workspace/compiler-http/corelib/beskid_corelib/tests/corelib_tests/Project.lock`
   names `/workspace/compiler-http/corelib` for its root and every dependency.
