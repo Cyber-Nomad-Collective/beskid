@@ -1,6 +1,6 @@
 ## 1. Validate the normative baseline
 
-- [ ] 1.1 Run `openspec validate beskid-v0-5-networking --strict --no-interactive` and correct every change-layout, requirement, stable-ID, and scenario error before implementation.
+- [x] 1.1 Run `openspec validate beskid-v0-5-networking --strict --no-interactive` and correct every change-layout, requirement, stable-ID, and scenario error before implementation.
 - [ ] 1.2 Confirm that CYB-60 / `beskid-v0-5-foundations` is accepted and its owner-routed completion, one-winner deadline, `Disposable`, Core.IO, and generic resource-channel evidence is green before introducing networking code.
 
 ## 2. Introduce the portable contracts
