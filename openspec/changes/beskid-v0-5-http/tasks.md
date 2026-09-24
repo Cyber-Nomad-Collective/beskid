@@ -49,7 +49,7 @@
 
 - [ ] 2.1 Add Beskid corelib tests for valid framing, malformed framing,
   limits, conflicting framing, chunks, and serialization.
-- [ ] 2.2 Extend `corelib_tests/src/http/CodecTests.bd`: add `Host: t` to
+- [x] 2.2 Extend `corelib_tests/src/http/CodecTests.bd`: add `Host: t` to
   the request fixtures that lack it (`ambiguous`, chunked valid and
   malformed, oversized body); add `MissingHost`, `InvalidHost`,
   `CloseDelimitedBody`, and `InterimResponse` arms to `IsError`; add
@@ -59,13 +59,13 @@
   `http_response_204_with_body_octets_is_trailing_bytes`,
   `http_unframed_2xx_response_is_close_delimited`, and
   `http_interim_response_is_rejected`.
-- [ ] 2.3 Extend `corelib_tests/src/http/SerializationTests.bd`: add a
+- [x] 2.3 Extend `corelib_tests/src/http/SerializationTests.bd`: add a
   `Host` header to `http_serializer_rejects_caller_supplied_framing_header`
   so it still asserts `AmbiguousFraming`; add
   `http_serializer_requires_host`; pass `MessageRole::Response` in
   `http_response_parser_requires_http11_status_and_exact_suffix` (its
   `204 ... x` case still expects `TrailingBytes`).
-- [ ] 2.4 Extend `corelib_tests/src/http/ExchangeTests.bd` with
+- [x] 2.4 Extend `corelib_tests/src/http/ExchangeTests.bd` with
   `http_exchange_head_returns_no_body` through loopback; the existing
   `Host: loopback.test` POST exchanges are unchanged.
 - [x] 2.5 Run `beskid analyze` for the HTTP fixture target.
