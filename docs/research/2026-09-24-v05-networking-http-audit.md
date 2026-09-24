@@ -53,8 +53,11 @@ branch work:
   `codex/http-hardening-tests` (`24cadc8`), with the new target registered by
   compiler branch `codex/http-hardening-catalog` (`ba1fc823`). The Linux full
   corelib matrix passes 81/81 and the parity check passes.
-- Shutdown still needs a deliberate-leak test and truthful operation/winner
-  diagnostics. The existing native hook hard-codes both details.
+- A deliberate live-socket shutdown test passes 4/4 in the Linux
+  `NetworkNativeTests` target on compiler branch `codex/network-shutdown-test`
+  (`f8c383a1`). It verifies a nonzero leak count, handle closure, and
+  idempotent repeated shutdown. Truthful operation/winner diagnostics remain
+  open; the native hook still hard-codes both details.
 
 These branches have not been merged into `main`; the original 45-item
 classification must not be presented as a post-integration release result.
