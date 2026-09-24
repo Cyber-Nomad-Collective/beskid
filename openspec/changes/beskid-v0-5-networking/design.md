@@ -31,10 +31,10 @@ discarded.
 An operation has exactly one terminal outcome: success, typed network error,
 cancellation, an explicitly configured deadline expiry, or close. The operation
 uses the Foundation atomic winner and owner scheduler completion path. v0.5 has
-no ambient deadline accessor: the first networking API that offers time limits
-MUST add a typed public deadline policy and pass its absolute deadline to the
-Foundation wait registration. Until then, networking registers unbounded waits
-and still shares cancellation, readiness, and close through the same winner.
+no ambient deadline accessor: its typed public deadline policy passes an
+absolute monotonic deadline to Foundation wait registration. Operations with
+no configured deadline register unbounded waits. Expiry shares the same
+one-winner transition as cancellation, readiness, and close.
 DNS may not interrupt an
 underlying host resolver; after caller cancellation it discards the eventual
 result while retaining Foundation external-wait accounting until the job exits.
@@ -79,28 +79,15 @@ order from 1, so `ResourceExhausted` is status 18 and the internal `Pending`
 status moves to 19; no hole is reserved. Network also declares its explicit
 scoped-cleanup conversion from `DisposeError` to `NetworkError::CleanupFailed`.
 
-### Deferred to `add-network-deadline-policy-0-6`
+### Explicit deadline policy in v0.5
 
-Caller-supplied deadlines are not part of v0.5. Every v0.5 wait registers an
-unbounded deadline, and the TCP delta already states that an operation has no
-deadline unless a future typed public deadline policy supplies one
-(`BSP-REQ-D15E92AB4C76`). Foundation deferred public absolute time until a
-clock-domain-safe deadline type exists (`BSP-REQ-D613601481B2`); a deadline
-policy without that type would expose raw nanosecond integers or invent a
-second time domain. The deferral is recorded here rather than as a change
-directory because a proposal-and-tasks-only change fails
-`openspec validate --strict` ("Change must have at least one delta"), and a
-real delta needs the Foundation `Core.Time.Deadline` requirement that does not
-exist yet. The rulings document
-(`docs/superpowers/specs/2026-09-22-networking-v05-rulings.md`, item 5) holds
-the proposed SHALL text and scenario for the deferred change.
-
-Target shape, recorded so v0.5 does not block it:
+The owner chose to implement typed deadlines in v0.5, superseding the
+September 22 deferral ruling. The public policy is:
 
 - Foundation adds an opaque monotonic `Core.Time.Deadline` with
   `Deadline.After(Duration) -> Result<Deadline, TimerError>` (checked
   addition, the same validation as `Sleep`) and no public constructor from
-  `Instant`. The deferred `SleepUntil` uses the same type.
+  `Instant`. Public `SleepUntil(Instant)` remains unavailable.
 - Network keeps the fixed `Core.IO.Stream` signatures and adds per-stream
   absolute deadlines: `TcpStream.SetDeadlines(TransferDeadlines policy) ->
   Result<unit, NetworkError>` with
@@ -114,12 +101,14 @@ Target shape, recorded so v0.5 does not block it:
 - The runtime passes the absolute monotonic value to
   `ExternalWaitRegister` in place of `-1`; there is no second timer path
   (`BSP-REQ-896BA6C917E9`, `BSP-REQ-F902B81D6E4C`).
-- HTTP adds `ExchangeDeadlines { Option<Deadline> head, Option<Deadline> body }`
-  only after the Network policy lands.
+- A compiler-authorized projection may read the private `Deadline` value only
+  in the canonical `Network/Internal.bd` service source, after verifying the
+  exact `Core.Time.Deadline` nominal type. Ordinary source cannot call the
+  projection or access raw monotonic ticks. The projected scalar is an
+  internal service argument, not a public API or native handle.
+- HTTP policy is decided separately; it must use this deadline type if added.
 
-v0.5 obligation: keep `-1` in every `ExternalWaitRegister` call, keep the
-README sentence that this API revision registers an unbounded deadline, and
-land `TransferFailure::TimedOut` (item 1) so the deferred change can use it.
+The runtime passes `-1` only for operations without a configured deadline.
 
 ### Security, observability, and source of truth
 

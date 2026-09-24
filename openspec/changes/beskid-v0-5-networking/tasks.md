@@ -18,6 +18,7 @@
 - [ ] 3.2 Implement non-caching resolver jobs in the blocking pool, preserve active-external-wait accounting until each job exits, and discard a cancelled caller's later resolver result.
 - [ ] 3.3 Implement TCP bind/listen/accept/connect/read/write/half-close/address/options with one-reader/one-writer and one-accept policies; verify partial transfer through Core.IO.
 - [ ] 3.4 Implement UDP bind, optional connect, receive-from, send-to, connected send/receive, source address, truncation metadata, and one-send/one-receive policy without making UDP a Stream.
+- [ ] 3.5 Implement the owner-approved v0.5 typed deadline policy: checked opaque `Core.Time.Deadline.After(Duration)`, TCP read/write policy and explicit lifecycle deadlines, and explicit UDP/DNS operation deadlines. Add a compiler-authorized projection only for the canonical Network service source, with exact nominal-type and ordinary-source rejection tests; thread its internal scalar through manifest-generated service signatures to the existing `ExternalWaitRegister`. Route every expiry through Foundation's owner-routed one-winner wait transition; preserve unbounded waits when no deadline is supplied and do not expose raw scheduler timestamps.
 
 ## 4. Delete superseded paths
 
@@ -29,5 +30,6 @@
 - [ ] 5.1 Run focused runtime handle/reactor/race/leak tests, corelib DNS/TCP/UDP tests, and JIT/AOT/native loopback suites on every locally available target.
 - [ ] 5.1a Add the resource-exhaustion evidence: a runtime test in `compiler/runtime/beskid/tests/runtime_semantics/src/NetworkNativeTests.bd` that opens loopback UDP sockets on port 0 until `NetworkOpen` returns 18, asserts the count is at most `NETWORK_SLOT_COUNT`, closes one, asserts the next open returns 0, then closes all and asserts `NetworkShutdown` reports 0 leaks (on macOS `EMFILE` may arrive before the table fills; both paths map to 18); and the corelib test `network_udp_exhaustion_is_typed` in `UdpTests.bd` through the public API.
 - [ ] 5.1b Add the transfer-cause evidence in `corelib_tests/src/network/TcpTests.bd`: `network_tcp_second_read_reports_busy_cause` and `network_tcp_peer_reset_is_not_eof` (peer abort returns `ReadFailed(TransferFailure::PeerReset())`; peer half-close returns `Ok(0)`).
+- [ ] 5.1c Add deterministic deadline evidence: constructor invalid/overflow cases, TCP timeout then reuse, DNS late-result discard and retained accounting, UDP unsent-payload ownership, and repeated deadline/readiness/close single-winner races on each target.
 - [ ] 5.2 Run required Linux epoll, macOS kqueue, and Windows IOCP target conformance tests; record unavailable targets and their exact environment limitation on CYB-61 rather than weakening the matrix.
 - [ ] 5.3 Run `openspec validate beskid-v0-5-networking --strict --no-interactive`, then `bun run openspec:validate`. Do not regenerate the catalog in this change; the HTTP release change owns that authorized step.

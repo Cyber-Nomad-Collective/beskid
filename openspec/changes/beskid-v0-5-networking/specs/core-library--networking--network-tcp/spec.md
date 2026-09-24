@@ -20,8 +20,8 @@ method's corresponding `IoError` with cause `Busy`; it MUST NOT change the
 fixed `Core.IO.Stream` method signatures. TCP construction,
 addressing, options, shutdown, cancellation, explicit deadline policy, and
 non-stream concurrency-policy failures MUST return `NetworkError`. v0.5 does
-not invent an ambient deadline lookup: an operation has no deadline unless a
-future typed public deadline policy supplies one. No operation may expose native
+not invent an ambient deadline lookup: an operation has no deadline unless the
+typed public v0.5 deadline policy supplies one. No operation may expose native
 descriptors or constants.
 
 **Stable ID:** `BSP-REQ-D15E92AB4C76`
@@ -40,7 +40,7 @@ operation-specific `IoError` (`ReadFailed(cause)` or `WriteFailed(cause)`)
 carrying the Foundation `TransferFailure::Busy` cause, without registering
 another reactor wait or consuming input. Cancellation, readiness, and close MUST obey the shared
 Foundation one-winner lifecycle; a deadline participates only when supplied by
-an explicit typed deadline policy.
+the explicit typed deadline policy.
 
 **Stable ID:** `BSP-REQ-410CB8F5E97A`
 
@@ -48,6 +48,32 @@ an explicit typed deadline policy.
 - **GIVEN** a TCP stream with one pending read
 - **WHEN** a second fiber starts another read on that stream
 - **THEN** the second operation returns `IoError::ReadFailed(TransferFailure::Busy())` and the first read remains the only registered read wait
+
+### Requirement: TCP exposes typed monotonic deadlines
+`TcpStream.SetDeadlines(TransferDeadlines policy)` SHALL accept separate
+optional opaque `Core.Time.Deadline` values for reads and writes while keeping
+the fixed `Core.IO.Stream` method signatures. An absent value SHALL register
+an unbounded wait. Expiry SHALL return
+`IoError::ReadFailed(TransferFailure::TimedOut())` or
+`IoError::WriteFailed(TransferFailure::TimedOut())` as appropriate, without
+closing the stream. `TcpStream.Connect` and `TcpListener.Accept` SHALL accept
+an explicit `Option<Deadline>` and return `NetworkError::TimedOut()` on expiry.
+No operation SHALL accept a raw integer, untagged `Instant`, or native timer
+handle as its public deadline. Deadline expiry, readiness, cancellation, and
+close SHALL compete through one Foundation winner transition; later events
+MUST NOT complete or consume the operation a second time.
+
+**Stable ID:** `BSP-REQ-1A35BB03D4E2`
+
+#### Scenario: Expired read deadline preserves the stream
+- **GIVEN** a stream whose peer sends nothing and an expired read deadline
+- **WHEN** the caller reads
+- **THEN** the read returns `IoError::ReadFailed(TransferFailure::TimedOut())` exactly once, and a later read with a new deadline can still receive peer data
+
+#### Scenario: Deadline, readiness, and close choose one outcome
+- **GIVEN** a TCP read pending under an explicit deadline
+- **WHEN** deadline expiry, socket readiness, and close become runnable together
+- **THEN** exactly one terminal result is delivered, any loser is discarded, and the stream is released at most once
 
 ### Requirement: TCP close transfers no duplicate resource ownership
 `TcpStream` and `TcpListener` close SHALL be idempotent and SHALL integrate with

@@ -6,6 +6,11 @@ section "Rulings needed before further work". This document is not normative.
 OpenSpec text proposed here must land in the named change directories before
 any observable behavior changes.
 
+**September 24 owner decision:** Item 5's v0.6 deadline deferral is superseded.
+Typed deadline behavior belongs in v0.5. The v0.5 Foundation and Networking
+OpenSpec deltas govern its implementation; item 5 below is historical rationale
+and design input, not the current schedule.
+
 **Inputs inspected (read-only):** `openspec/changes/beskid-v0-5-foundations`,
 `beskid-v0-5-networking`, `beskid-v0-5-http`; the design and plan documents;
 and the worktree `.worktrees/compiler-f6-native-descriptor-contract` at
@@ -22,10 +27,10 @@ and the worktree `.worktrees/compiler-f6-native-descriptor-contract` at
 | 2. Exhaustion reported as `NetworkDown` | Add `NetworkError::ResourceExhausted()` as public status 18; move internal `Pending` to 19 | v0.5 now | No. Convention-fit. |
 | 3. `Host` enforcement | Server rejects missing, duplicate, or malformed `Host` with `HttpError::MissingHost()` or `HttpError::InvalidHost()`; client serializer requires exactly one `Host` | v0.5 now | No. Convention-fit. |
 | 4. Unframed response bodies | Implement the RFC 9112 6.3 no-body rules (HEAD, 1xx, 204, 304) through a typed `MessageRole`; reject close-delimited bodies with `HttpError::CloseDelimitedBody()`; reject interim 1xx with `HttpError::InterimResponse()` | v0.5 now (rules); close-delimited reads deferred to 0.6 | No. Convention-fit. |
-| 5. Deadlines | Defer to a new change `add-network-deadline-policy-0-6`; record the API shape now so v0.5 does not block it | Deferred (0.6) | No. Convention-fit. |
+| 5. Deadlines | Typed deadline policy in the v0.5 Foundation and Networking deltas; the earlier deferral is superseded | v0.5 now | Owner decided September 24. |
 
-Recommended order of work: 2, 3, 4, then 1 after the owner rules; 5 after
-the v0.5 evidence gate. Items 2 to 4 are independent of item 1. Item 4
+Original recommended order of work: 2, 3, 4, then 1 after the owner rules.
+Item 5 now belongs in the v0.5 evidence gate. Items 2 to 4 are independent of item 1. Item 4
 depends on item 3 only for shared test fixtures.
 
 ---
@@ -616,6 +621,9 @@ rather than a wrong empty body.
 
 ## 5. Deadlines and a typed deadline policy
 
+This section records the original deferral analysis. The September 24 owner
+decision supersedes its schedule and moves the typed policy to v0.5.
+
 ### Problem in the code
 
 Every wait registers `ExternalWaitRegister(..., -1)` (`Operations.bd` line 65,
@@ -625,7 +633,7 @@ or retransmission failure already reaches corelib as `TimedOut` on lifecycle
 operations and, after item 1, as `TransferFailure::TimedOut` on stream
 operations. What is missing is a caller-supplied deadline.
 
-### Recommended ruling
+### Original recommended ruling (superseded)
 
 Deferred to a new OpenSpec change `openspec/changes/add-network-deadline-policy-0-6/`
 (naming follows `add-beskid-glue-0-4` and `extend-extern-import-extraction-glue-0-5`).
@@ -660,7 +668,7 @@ Record the target shape now so v0.5 does not block it:
 - HTTP adds `Limits`-adjacent `ExchangeDeadlines { Option<Deadline> head, Option<Deadline> body }`
   only after the Network policy lands.
 
-### OpenSpec text (for the deferred change, not for v0.5)
+### Original proposed OpenSpec text (now incorporated into v0.5)
 
 **File:** `openspec/changes/add-network-deadline-policy-0-6/specs/core-library--networking--network-tcp/spec.md`,
 MODIFIED `BSP-REQ-D15E92AB4C76`:
@@ -681,7 +689,7 @@ Scenario:
 > - **WHEN** the caller reads
 > - **THEN** it receives `IoError::ReadFailed(TransferFailure::TimedOut)` once, and a later read after a new deadline can still receive peer data
 
-### Affected files (deferred)
+### Affected files (v0.5 implementation)
 
 `Core/Time/Time.bd` (new `Deadline`), `Network/Tcp/TcpStream.bd`,
 `TcpListener.bd`, `Udp/UdpSocket.bd`, `Dns.bd`, `Internal.bd`,
