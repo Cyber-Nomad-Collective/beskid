@@ -18,7 +18,7 @@
   README that `HttpServer.Receive` returns the typed error and the
   application answers `Types.EmptyResponse(u16(400), "Bad Request")` and
   closes.
-- [ ] 1.5 Implement the RFC 9112 section 6.3 no-body rules through a typed
+- [x] 1.5 Implement the RFC 9112 section 6.3 no-body rules through a typed
   role (`BSP-REQ-58182F687E87`): add
   `pub enum MessageRole { Request(), Response(), HeadResponse(), }` to
   `Http/Types.bd`; add a `MessageRole role` parameter to
@@ -36,7 +36,7 @@
   "HEAD"`; `Server.Receive` passes `MessageRole::Request`. Keep
   `TrailingBytes` for octets after a complete bodiless response. Document
   that `Respond` to `HEAD` stays the application's responsibility.
-- [ ] 1.6 After Foundation task 2.8 lands `Core.IO.TransferFailure`, change
+- [x] 1.6 After Foundation task 2.8 lands `Core.IO.TransferFailure`, change
   `HttpError::Transport()` to `Transport(TransferFailure cause)` in
   `Errors.bd` and map `IoError::ReadFailed(c)` / `WriteFailed(c)` to
   `Transport(c)`, `InvalidRange` and `NoProgress` to
