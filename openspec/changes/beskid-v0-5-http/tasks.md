@@ -47,7 +47,7 @@
 
 ## 2. Evidence
 
-- [ ] 2.1 Add Beskid corelib tests for valid framing, malformed framing,
+- [x] 2.1 Add Beskid corelib tests for valid framing, malformed framing,
   limits, conflicting framing, chunks, and serialization.
 - [x] 2.2 Extend `corelib_tests/src/http/CodecTests.bd`: add `Host: t` to
   the request fixtures that lack it (`ambiguous`, chunked valid and
