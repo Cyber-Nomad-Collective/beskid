@@ -58,6 +58,13 @@ branch work:
   (`f8c383a1`). It verifies a nonzero leak count, handle closure, and
   idempotent repeated shutdown. Truthful operation/winner diagnostics remain
   open; the native hook still hard-codes both details.
+- For the HTTP 81/81 builder run, the test project's generated
+  `/workspace/compiler-http/corelib/beskid_corelib/tests/corelib_tests/Project.lock`
+  names `/workspace/compiler-http/corelib` for its root and every dependency.
+  The materialized `Http/Codec.bd` has the same SHA-256 as that checkout's
+  source (`f6b337a6a53b10d93d8f65db13da91e429e813e07e9090453af47aaee6e37516`).
+  This records provenance for that run; other committed `Project.lock` files
+  still contain stale absolute paths and remain a repository hygiene gap.
 
 These branches have not been merged into `main`; the original 45-item
 classification must not be presented as a post-integration release result.
