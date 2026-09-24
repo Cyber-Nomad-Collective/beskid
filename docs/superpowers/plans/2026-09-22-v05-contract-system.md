@@ -26,7 +26,7 @@ All slices, including 9-11 and the follow-up gap fixes, are merged into
 compiler `main` at `b1b9307f` (contracts merge; branch head `20c44e68`)
 and corelib `main` at `3f2ab81`. Closed since the notes below: cross-unit
 contract signatures and associated types, E1201 on unresolved contract
-signatures, `this` as a value and receiver field chains, impl-block method
+signatures, `this` as a value and non-generic receiver field chains, impl-block method
 calls, and `This` in implementing signatures. Corelib uses `This`/`this` in
 `StyleChain` and `ArrayIterator`. Verified on the merged tree: workspace
 tests green apart from known environment-only targets, runtime semantics
