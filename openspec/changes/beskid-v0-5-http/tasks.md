@@ -1,6 +1,6 @@
 ## 1. HTTP core library
 
-- [ ] 1.1 Add the `corelib_http` package and aggregate registration.
+- [x] 1.1 Add the `corelib_http` package and aggregate registration.
 - [ ] 1.2 Implement bounded strict request/response parsing, chunk decoding,
   canonical header handling, and serialization over Foundation byte helpers.
 - [ ] 1.3 Implement client and listener-backed server exchanges exclusively
