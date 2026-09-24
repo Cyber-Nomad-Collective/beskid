@@ -5,6 +5,10 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 
 > Code-to-meaning mapping is normative in `SemanticIssueKind::code()` and `diagnostic_kinds.rs`, synchronized with trudoc verify scripts—not LSP presentation layers.
 
+E1230 identifies a scoped-cleanup rejection. E1231 identifies a dead
+collection-growth violation. Both codes are user-facing semantic diagnostics
+and SHALL identify the offending source site.
+
 The inclusive range **E2101–E2199** is reserved for internal compiler
 errors: a legality fact or an ISLE lowering rule/fact that is still
 unavailable after the reachability-scoped semantic legality gate
@@ -14,7 +18,9 @@ E2101–E2199 codes SHALL NOT be assigned to an ordinary user-facing semantic
 rule; an internal-error code SHALL carry the unavailable query or missing
 rule name and its generation-bound site, and SHALL NOT be presented with a
 user-facing diagnostic label. Ordinary semantic rules must not allocate
-inside this band.
+inside this band. E2101 identifies an unavailable semantic fact after the
+gate has passed. E2102 identifies a missing ISLE lowering rule or fact after
+the gate has passed. E2103–E2199 remain reserved.
 
 **Stable ID:** `BSP-REQ-072159A73908`
 
@@ -23,13 +29,18 @@ inside this band.
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
-#### Scenario: Internal-error band is reserved, not yet allocated
+#### Scenario: Scoped cleanup and dead growth have user-facing codes
+- **GIVEN** a legality-checked item contains a scoped-cleanup rejection or a
+  dead collection-growth violation
+- **WHEN** the reachability-scoped legality gate evaluates the item
+- **THEN** the compiler SHALL report E1230 or E1231 at the offending source
+  site
+
+#### Scenario: Internal-error codes identify the missing boundary
 - **GIVEN** the reachability-scoped semantic legality gate has passed for
   every item a lowering request judges
 - **WHEN** a legality fact or ISLE rule for one of those items' nodes is
   still `unavailable` (a genuine compiler-port gap, not a user error)
-- **THEN** the compiler is permitted to report an internal-error code drawn
-  from **E2101–E2199** carrying the query/rule name and the site; this
-  change reserves the band and does not itself allocate E2101 or E2102 (a
-  following change wires `SemanticError::unavailable_at`'s site into that
-  rendering path at the module-emission boundary)
+- **THEN** the compiler SHALL report E2101 for an unavailable semantic fact
+  or E2102 for a missing ISLE rule or fact, carrying the query or rule name
+  and the site

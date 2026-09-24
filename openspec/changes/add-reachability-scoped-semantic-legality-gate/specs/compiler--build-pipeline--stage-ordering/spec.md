@@ -19,11 +19,14 @@ Before the reference compiler collects generic specializations or selects ISLE r
 - **THEN** it lowers and runs; requesting the misusing test reports E1204 at
   the call
 
-Note: this requirement's scope is not limited to E1201/E1204 — every
-legality fact registered in `beskid_queries::semantic_contract::legality`
-participates in the same gate. This change adds E1201 and E1204 as the first
-two facts; later changes add the rest of the diagnostics table drafted in
-`docs/superpowers/specs/2026-09-23-production-semantic-diagnostics-design.md`
-section 3 (E1229 generic parameter conflict, E1101/E1108/E1203 unknown
-callee, member/match/operator/import legality, scoped-cleanup/dead-growth
-codes) without changing this requirement's shape.
+This requirement applies to every legality fact registered in
+`beskid_queries::semantic_contract::legality`. This change includes E1201,
+E1204, E1229, E1230, and E1231. Later changes can add the remaining entries
+from the diagnostics table without changing this requirement's shape.
+
+#### Scenario: Eager cleanup checks do not judge an unreachable item
+- **GIVEN** a unit that contains an unreachable scoped-cleanup rejection or
+  dead collection-growth violation
+- **WHEN** the compiler lowers a different reachable item in that unit
+- **THEN** the compiler SHALL NOT report E1230 or E1231 for the unreachable
+  item

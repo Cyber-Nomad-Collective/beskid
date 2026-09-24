@@ -44,3 +44,32 @@
 
 - [x] 4.1 Draft this change (`add-reachability-scoped-semantic-legality-gate`) with deltas to the four capabilities named in the design.
 - [ ] 4.2 `openspec validate add-reachability-scoped-semantic-legality-gate --strict --no-interactive` (run from repo root; not yet executed in this pass).
+
+## 5. Prepare-spine and LSP exposure (design slice 6)
+
+- [x] 5.1 Generalize `TryDiagnosticAuthority` into `SemanticFactAuthority`; report legality findings for the entry item's reachable direct-call closure through the prepare spine. (`9065c47e`; `crates/beskid_analysis/src/services/prepare/{diagnostics,entry_points,spine}.rs`, `crates/beskid_queries/src/entry.rs`)
+- [x] 5.2 Render a dependency-unit finding against its own source and publish it only for that unit's LSP URI; deduplicate overlapping entry-unit findings without collapsing distinct source names. (`9065c47e`; `crates/beskid_lsp/src/diagnostics.rs`, `crates/beskid_analysis/src/services/prepare/diagnostics.rs`)
+- [x] 5.3 Tests: dependency-unit E1201 surfaces through shared and isolated prepare authorities, and LSP publishes it only when the dependency is the entry buffer. (`9065c47e`; `crates/beskid_queries/tests/try_diagnostics.rs`, `crates/beskid_lsp/src/diagnostics.rs`)
+- [ ] 5.4 Verify the prepare spine and LSP slice against the corelib and runtime suites.
+
+## 6. Scoped cleanup and dead growth in the gate (design slice 7)
+
+- [x] 6.1 Move `scoped_cleanup` and `dead_collection_growth` from the eager whole-assembly `build_typed_program` loop into `legality::check_items`, scoped to items the lowering request judges. (`c8b586d2`; `crates/beskid_queries/src/{semantic_contract/legality/{cleanup.rs,mod.rs},typed_program.rs}`)
+- [x] 6.2 Register and report E1230 for scoped-cleanup rejection and E1231 for dead collection growth at the offending source site. (`c8b586d2`; `crates/beskid_analysis/src/analysis/diagnostic_kinds*.rs`, `crates/beskid_queries/src/semantic_contract/legality/cleanup.rs`)
+- [x] 6.3 Tests: scoped-cleanup and dead-growth semantic-fact coverage, plus fail-closed codegen diagnostics. (`c8b586d2`; `crates/beskid_queries/tests/semantic_facts/{scoped_cleanup,dead_growth}.rs`, `crates/beskid_codegen/tests/isle_adapter/diagnostics_fail_closed.rs`)
+- [ ] 6.4 Verify E1230 and E1231 against the corelib and runtime suites.
+
+## 7. Generic parameter conflicts at the call (design slice 8)
+
+- [x] 7.1 Preserve the specialization authority's conflicting binding sites as `SemanticError::generic_binding_conflict` and expose `generic_parameter_conflict` to the legality gate for concrete generic calls. (`3f7fc9a2`; `crates/beskid_queries/src/{abi/specialization/inference.rs,semantic_contract/legality/generics.rs,semantic_contract/model/{errors.rs,generics.rs}}`)
+- [x] 7.2 Report E1229 at the conflicting call, without judging a generic body outside the caller environment. (`3f7fc9a2`; `crates/beskid_queries/src/semantic_contract/legality.rs`, `crates/beskid_codegen/tests/isle_adapter/diagnostics_fail_closed.rs`)
+- [x] 7.3 Tests: fail-closed codegen diagnostics reject exactly the misusing item with E1229 and without `MissingRuleOrFact`. (`3f7fc9a2`; `crates/beskid_codegen/tests/isle_adapter/diagnostics_fail_closed.rs`)
+- [ ] 7.4 Verify E1229 against the corelib and runtime suites.
+
+## 8. Internal errors and compile-fail corpus (design slice 9)
+
+- [x] 8.1 Allocate E2101 for an unavailable semantic fact and E2102 for a missing ISLE rule or fact after a clean legality gate; render the query or construct name, source site, help text, and source excerpt as an internal error. (`1d6886d2`; `crates/beskid_codegen/src/module_emission/{contracts,orchestration,specialization}.rs`, `crates/beskid_analysis/src/analysis/diagnostic_kinds*.rs`)
+- [x] 8.2 Add `unavailable_at` support at specialization sites and inventory every unavailable-query family as either legality-mapped or a known compiler gap. (`1d6886d2`; `crates/beskid_queries/src/semantic_contract/model/errors.rs`, `crates/beskid_queries/tests/unavailable_inventory.rs`)
+- [x] 8.3 Tests: E2102 is a source-excerpt internal diagnostic with no user code, legality findings retain source-excerpt diagnostics, and the unavailable inventory rejects unclassified or stale entries. (`1d6886d2`; `crates/beskid_codegen/tests/isle_adapter/diagnostics_fail_closed.rs`, `crates/beskid_queries/tests/unavailable_inventory.rs`)
+- [x] 8.4 Add the corelib compile-fail legality corpus harness, with one target per introduced legality code and an assertion that each finding is reported in the dependency unit without an internal error. (`6a6a389f`; `crates/beskid_tests_projects/src/spine/legality_compile_fail.rs`, `crates/beskid_tests_projects/src/spine/mod.rs`)
+- [ ] 8.5 Verify E2101/E2102 and the compile-fail corpus against the corelib and runtime suites.

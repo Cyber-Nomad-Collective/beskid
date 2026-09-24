@@ -12,13 +12,16 @@ A finding produced by a legality fact during `build`, `run`, or `test` SHALL car
   source generation
 - **THEN** both report E1201 with the same message and the same source span
 
-Note: this change (`add-reachability-scoped-semantic-legality-gate`) wires
-the legality gate into `lower_syntax_program`, the caller `build`/`run`/
-`test` share. It does not yet generalize
-`beskid_analysis::services::prepare::TryDiagnosticAuthority` into a shared
-`SemanticFactAuthority` for `analyze` and the LSP prepare tier (design
-section 2.5); until a following change does, this requirement's `analyze`/
-LSP half is satisfied only for findings World A's resolver/checker already
-reports for the entry unit, not yet for every legality fact on every
-reachable item. The requirement is recorded now so the following change is a
-scoped extension, not a new capability.
+The prepare spine SHALL use `SemanticFactAuthority` to collect legality
+findings for the entry item's reachable direct-call closure. A finding in a
+dependency unit SHALL retain that unit's source identity and span. The LSP
+SHALL publish a finding only for the URI of the source unit that owns its
+span.
+
+#### Scenario: Dependency finding is published for its own URI
+- **GIVEN** an entry unit that reaches a dependency unit with an unresolved
+  type in a legality-checked item
+- **WHEN** the LSP prepares diagnostics for the entry URI and for the
+  dependency URI
+- **THEN** the dependency finding is absent from the entry URI and is
+  published once with E1201 for the dependency URI
