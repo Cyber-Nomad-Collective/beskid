@@ -68,6 +68,6 @@
 - [ ] 2.4 Extend `corelib_tests/src/http/ExchangeTests.bd` with
   `http_exchange_head_returns_no_body` through loopback; the existing
   `Host: loopback.test` POST exchanges are unchanged.
-- [ ] 2.5 Run `beskid analyze` for the HTTP fixture target.
+- [x] 2.5 Run `beskid analyze` for the HTTP fixture target.
 - [ ] 2.6 Run strict OpenSpec validation and final release evidence after the
   prerequisite changes have independently passed.
