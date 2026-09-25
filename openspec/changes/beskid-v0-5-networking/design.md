@@ -92,6 +92,11 @@ September 22 deferral ruling. The public policy is:
   absolute deadlines: `TcpStream.SetDeadlines(TransferDeadlines policy) ->
   Result<unit, NetworkError>` with
   `pub type TransferDeadlines { pub Option<Deadline> read, pub Option<Deadline> write }`.
+  `SetDeadlines` atomically replaces both directions' policies. A pending read
+  or write adopts its direction's new absolute deadline; `None` clears its
+  pending timer, and later operations use the replacement policy. A terminal
+  readiness, cancellation, or close winner remains terminal if it wins before
+  the update.
   An expired read deadline completes the pending read with
   `IoError::ReadFailed(TransferFailure::TimedOut)`; the stream stays usable
   under a new deadline. Lifecycle operations take an explicit
@@ -101,6 +106,9 @@ September 22 deferral ruling. The public policy is:
 - The runtime passes the absolute monotonic value to
   `ExternalWaitRegister` in place of `-1`; there is no second timer path
   (`BSP-REQ-896BA6C917E9`, `BSP-REQ-F902B81D6E4C`).
+  Foundation also owner-routes deadline replacement for an already registered
+  wait token, updating the same timer heap without creating another winner
+  path.
 - A compiler-authorized projection may read the private `Deadline` value only
   in the canonical `Network/Internal.bd` service source, after verifying the
   exact `Core.Time.Deadline` nominal type. Ordinary source cannot call the

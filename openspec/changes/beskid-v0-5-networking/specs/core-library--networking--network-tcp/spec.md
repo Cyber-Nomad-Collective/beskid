@@ -53,7 +53,11 @@ the explicit typed deadline policy.
 `TcpStream.SetDeadlines(TransferDeadlines policy)` SHALL accept separate
 optional opaque `Core.Time.Deadline` values for reads and writes while keeping
 the fixed `Core.IO.Stream` method signatures. An absent value SHALL register
-an unbounded wait. Expiry SHALL return
+an unbounded wait. `SetDeadlines` SHALL atomically replace both directions'
+policies. A pending read or write SHALL adopt its direction's replacement
+deadline; replacing it with `None` SHALL clear that operation's pending
+deadline without completing it. Later operations SHALL use the replacement
+policy. Expiry SHALL return
 `IoError::ReadFailed(TransferFailure::TimedOut())` or
 `IoError::WriteFailed(TransferFailure::TimedOut())` as appropriate, without
 closing the stream. `TcpStream.Connect` and `TcpListener.Accept` SHALL accept
@@ -69,6 +73,16 @@ MUST NOT complete or consume the operation a second time.
 - **GIVEN** a stream whose peer sends nothing and an expired read deadline
 - **WHEN** the caller reads
 - **THEN** the read returns `IoError::ReadFailed(TransferFailure::TimedOut())` exactly once, and a later read with a new deadline can still receive peer data
+
+#### Scenario: Replacing a pending read deadline
+- **GIVEN** a read pending under a future typed deadline
+- **WHEN** `SetDeadlines` replaces the read deadline with an earlier one, and later replaces it with `None` before expiry
+- **THEN** the pending read uses each replacement in order, remains pending after the clear, and can complete once when peer data arrives
+
+#### Scenario: Setting an expired deadline on a pending read
+- **GIVEN** a read pending without a deadline while its peer sends nothing
+- **WHEN** `SetDeadlines` replaces the read policy with an already expired typed deadline
+- **THEN** the pending read completes with `IoError::ReadFailed(TransferFailure::TimedOut())` exactly once and the stream remains reusable
 
 #### Scenario: Deadline, readiness, and close choose one outcome
 - **GIVEN** a TCP read pending under an explicit deadline
