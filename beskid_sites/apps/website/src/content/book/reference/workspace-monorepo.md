@@ -6,10 +6,10 @@ description: Configure a multi-project Beskid repository with shared dependency 
 ## Layout example
 
 ```text
-Workspace.proj
-compiler/Project.proj
-compiler/corelib/beskid_corelib/Project.proj
-tools/Project.proj
+BeskidRoot.bws
+compiler/compiler.bproj
+compiler/corelib/beskid_corelib/beskid_corelib.bproj
+tools/tools.bproj
 ```
 
 ## Define workspace

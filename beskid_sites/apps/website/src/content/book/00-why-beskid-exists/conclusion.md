@@ -30,7 +30,7 @@ We are building:
 | [1.4 Principles](/book/00-why-beskid-exists/solid-dry-and-ddd/) | SOLID/DRY are fine; DDD often becomes mandatory abstraction theatre. |
 | [1.5 Trauma](/book/00-why-beskid-exists/trauma-by-developers-for-developers/) | Designer elegance ≠ field deadlines; fractured ecosystems are the real tax. |
 | [1.6 Giants](/book/00-why-beskid-exists/shoulders-of-giants/) | VMs and JIT bought reach; we pay in fog and workaround languages. |
-| [1.7 Memory](/book/00-why-beskid-exists/segfault-or-not-to-segfault/) | GC + small runtime wins most apps; ownership solves memory, not management. |
+| [1.7 Memory](/book/00-why-beskid-exists/segfault-or-stop-the-world/) | GC + small runtime wins most apps; ownership solves memory, not management. |
 | [1.8 Business](/book/00-why-beskid-exists/why-are-we-making-this-so-hard/) | Most products are rows with UI; stop billing cathedrals for spreadsheets. |
 
 ## Status
@@ -41,7 +41,7 @@ If that sounds like your kind of problem, stop ranting and start tooling.
 
 ## Next
 
-**Practical track:** [01. Tooling and Editors](/book/01-tooling-and-editors/)
+**Practical track:** [01. Tooling and Editors](/book/01-it-works-on-my-machine/)
 
 **Normative rules:** [Platform specification](/platform-spec/)
 

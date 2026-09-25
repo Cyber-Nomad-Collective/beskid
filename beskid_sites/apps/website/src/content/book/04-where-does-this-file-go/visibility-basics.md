@@ -19,7 +19,7 @@ Use boundary modules (`api.bd`, `mod service;` files) to:
 
 ## File-scoped modules tighten the story
 
-When `mod domain.feature;` owns a file, everything top-level in that file shares the module scope—additional `mod` declarations are disallowed to prevent nested chaos.
+When `mod domain.feature;` owns a file, everything top-level in that file shares the module scope. A second `mod` declaration is disallowed, so nested chaos never gets a foothold.
 
 ## Smell table
 
@@ -29,11 +29,4 @@ When `mod domain.feature;` owns a file, everything top-level in that file shares
 | Cross-layer imports | Introduce boundary module + `pub use` |
 | "Util" package imported everywhere | Split domain modules |
 
-## Standard reference (informative)
-
-- [Modules and Visibility](/platform-spec/language-meta/program-structure/modules-and-visibility/)
-- [Code style and naming](/platform-spec/language-meta/program-structure/code-style-and-naming/)
-
-## Next
-
-[Corelib layout](/book/04-where-does-this-file-go/corelib-layout/)
+See also [Modules and Visibility](/platform-spec/language-meta/program-structure/modules-and-visibility/) and [code style and naming](/platform-spec/language-meta/program-structure/code-style-and-naming/).

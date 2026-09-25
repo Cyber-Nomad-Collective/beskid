@@ -1,10 +1,10 @@
 ---
 title: "ADRs and decisions"
-description: Architecture decision records in platform-spec—one file per choice, ADRs tab in the reader.
+description: Architecture decision records in platform-spec, one file per choice, surfaced in the reader's ADRs tab.
 tableOfContents: true
 ---
 
-Long meetings deserve short records. **ADRs** capture closed platform choices so the spec reader's **ADRs** tab is the argument archive—not Slack scrollback.
+Long meetings deserve short records. **ADRs** capture closed platform choices. The spec reader's **ADRs** tab is the argument archive, not Slack scrollback.
 
 ## Where they live
 
@@ -25,7 +25,7 @@ Each ADR **must** include:
 | `adrStatus` | Accepted / Superseded / Proposed |
 | `## Context` / `## Decision` / `## Consequences` | Actual content |
 
-Hub **`## Decisions`** tables index `adrId` entries—avoid duplicating full prose only in `index.mdx` ([Spec authority](/platform-spec/community/spec-maintenance/spec-authority-and-decisions/)).
+Hub **`## Decisions`** tables index `adrId` entries. Do not duplicate the full prose only in `index.mdx` ([Spec authority](/platform-spec/community/spec-maintenance/spec-authority-and-decisions/)).
 
 ## Example topics you will see
 
@@ -35,8 +35,4 @@ Hub **`## Decisions`** tables index `adrId` entries—avoid duplicating full pro
 
 ## Superseded
 
-When a decision dies, mark **`adrStatus: Superseded`** and point to the replacement `adrId`—Git revision notes, not hidden URL versions.
-
-## Next
-
-[How to propose a change](/book/12-the-normative-bible/how-to-propose-a-change/)
+When a decision dies, mark **`adrStatus: Superseded`** and point to the replacement `adrId`. That is a Git revision, not a hidden URL version.

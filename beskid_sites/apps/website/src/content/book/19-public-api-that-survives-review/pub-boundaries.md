@@ -4,7 +4,7 @@ description: Keep most symbols private; export only what you intend to support.
 tableOfContents: true
 ---
 
-Default to **private**. Export with **`pub`** only when another compilation unit—or a human on the registry—should depend on the symbol.
+Default to **private**. Export with **`pub`** only when another compilation unit, or a human on the registry, should depend on the symbol.
 
 ## Practical API boundary pattern
 

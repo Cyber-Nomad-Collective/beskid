@@ -1,13 +1,13 @@
 ---
 title: "Diagnostics you will see"
-description: Common name and import errors—and how to fix them without ritual."
+description: Common name and import errors, and how to fix them without ritual."
 tableOfContents: true
 ---
 
 
 If you only read one page in this chapter, read this. These diagnostics are your daily companions.
 
-## Ambiguous import
+## Ambiguous import (E1104)
 
 **Symptom:** two imports expose the same name.
 
@@ -15,11 +15,11 @@ If you only read one page in this chapter, read this. These diagnostics are your
 
 <Aside type="caution">
 
-Do not "fix" ambiguity by deleting random imports until the error disappears—you will just ship the wrong `Parser`.
+Do not "fix" ambiguity by deleting random imports until the error disappears. You will just ship the wrong `Parser`.
 
 </Aside>
 
-## Unresolved name
+## Unresolved name (E1101)
 
 **Symptom:** symbol not found in scope.
 
@@ -30,7 +30,19 @@ Checklist:
 3. Symbol not `pub` in defining module
 4. Wrong module path vs file layout
 
-## Cannot access private item
+## Unknown import path (E1105)
+
+**Symptom:** the path in a `use` statement does not resolve to any module at all.
+
+This is a hard error: the compiler stops resolving that import instead of guessing and cascading into a pile of unrelated E1101s. Fix the path first; everything downstream usually clears on its own.
+
+## Missing import (E1109)
+
+**Symptom:** a symbol exists and is `pub`, but nothing imports it into the current scope.
+
+**Fix:** add the `use`. The compiler will not infer it from you having typed the name once elsewhere.
+
+## Cannot access private item (E1107)
 
 **Symptom:** using something that exists but is not exported.
 
@@ -40,14 +52,14 @@ Checklist:
 
 **Symptom:** extra `mod` in a file-scoped module file.
 
-**Fix:** move nested modules to another file or drop file-scoped declaration.
+**Fix:** move nested modules to another file or drop the file-scoped declaration.
 
 ## Reading the report
 
 CLI and LSP share miette-style reports. Read:
 
-- **Span** — which file/line
-- **Code** — diagnostic id when present (registry: [diagnostic code registry](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/))
+- **Span**: which file/line
+- **Code**: diagnostic id when present, cross-referenced in the [diagnostic code registry](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/)
 
 ```mermaid
 flowchart TD
@@ -57,11 +69,3 @@ flowchart TD
   C -->|visibility| P[pub or boundary]
   C -->|path| M[Fix mod / file layout]
 ```
-
-## Reference
-
-- [Semantic rules](/book/reference/analysis/semantic-rules/)
-
-## Next chapter
-
-[06. Monorepo as coping mechanism](/book/06-monorepo-as-coping-mechanism/)

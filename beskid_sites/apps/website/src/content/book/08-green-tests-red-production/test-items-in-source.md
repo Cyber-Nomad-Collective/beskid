@@ -1,6 +1,6 @@
 ---
 title: "Test items in source"
-description: Declare Beskid tests beside the code they lock down—meta, skip, and project kinds.
+description: Declare Beskid tests beside the code they lock down, with meta, skip, and project kinds.
 tableOfContents: true
 ---
 
@@ -25,29 +25,22 @@ test ParseFast {
 }
 ```
 
-- **`test Name { body }`** — test entry point; the name is followed directly by the body block (statements plus allowed `meta` / `skip` sections).
-- **`meta`** — tags, hierarchical `group`, timeouts, and future fixture hooks.
-- **`skip`** — when `condition` is true, the runner records **skipped** (not failed) and does not execute the body.
+- **`test Name { body }`**: test entry point. The name is followed directly by the body block (statements plus optional `meta` / `skip` sections).
+- **`meta`**: tags, hierarchical `group`, timeouts, and future fixture hooks.
+- **`skip`**: when `condition` is true, the runner records **skipped** (not failed) and does not execute the body.
 
 ## Where tests live
 
-- **Test** project kinds are the natural home; placing tests in App/Lib projects may warn per manifest policy (see [project manifest](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)).
-- Discovery walks parsed compilation units—top-level and inline modules—so keep tests near the behavior they pin.
+- **Test** project kinds are the natural home. Placing tests in App/Lib projects may warn per manifest policy (see [project manifest](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)).
+- Discovery walks parsed compilation units, top-level and inline modules, so keep tests near the behavior they pin.
 
 ## Tags and groups (practical)
 
 | Field | Use |
 | --- | --- |
 | `tags` | Execution intent: `fast`, `slow`, `integration`, `flaky` (honesty badge) |
-| `group` | Ownership prefix: `analysis.parser`, `cli.test` — powers `--group` filtering |
+| `group` | Ownership prefix (`analysis.parser`, `cli.test`); powers `--group` filtering |
 
 Stable names beat cute ones: `ResolverDuplicateNames` survives code search; `Test1` does not.
 
-## Deep spec
-
-- [Testing (language-meta)](/platform-spec/language-meta/contracts-and-effects/testing/)
-- [Testing framework reference](/book/reference/testing/)
-
-## Next
-
-[The `beskid test` CLI](/book/08-green-tests-red-production/beskid-test-cli/)
+See the [testing framework reference](/book/reference/testing/) for the full grammar.

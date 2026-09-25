@@ -17,7 +17,7 @@ Ask: *"Which crate phase does that?"* → **[Compiler](/platform-spec/compiler/)
 | Runtime ABI, scheduler, GC | execution | `beskid_runtime`, `beskid_engine`, `beskid_abi` |
 | Standard library API | core-library | `corelib` packages in `compiler/corelib` |
 
-Implementation domains **defer** with `relatedTopics`—they do not redefine normative tables copied from language-meta ([Spec authority](/platform-spec/community/spec-maintenance/spec-authority-and-decisions/)).
+Implementation domains **defer** with `relatedTopics`. They do not redefine normative tables copied from language-meta ([Spec authority](/platform-spec/community/spec-maintenance/spec-authority-and-decisions/)).
 
 ## Example: spawn
 
@@ -29,7 +29,3 @@ Implementation domains **defer** with `relatedTopics`—they do not redefine nor
 
 - **Law:** [Testing](/platform-spec/language-meta/contracts-and-effects/testing/)
 - **CLI:** [Build / analyze / run contract](/platform-spec/tooling/cli/build-analyze-run-contract/)
-
-## Next
-
-[Proposed vs Standard](/book/12-the-normative-bible/proposed-vs-standard/)

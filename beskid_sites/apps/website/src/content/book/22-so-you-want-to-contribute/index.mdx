@@ -9,21 +9,11 @@ tableOfContents: true
 This chapter is **informative**. Governance and enforceable process live under [Community / spec maintenance](/platform-spec/community/spec-maintenance/).
 </Aside>
 
-You read twenty-one chapters. You have opinions. Good—Beskid is not built by people who nod through enterprise standups without screaming internally.
+You read twenty-one chapters. You have opinions. Good. Beskid is not built by people who nod through enterprise standups without screaming internally.
 
 This chapter is the **on-ramp for contributors**: where repos live, how spec-first workflow avoids "surprise, we changed language law in a drive-by PR," and how to run tests without declaring war on CI.
 
-## What you will find here
-
-| Section | Topic |
-| --- | --- |
-| [Repos and submodules](/book/22-so-you-want-to-contribute/repos-and-submodules/) | Superrepo, `compiler`, `pckg`, extension, corelib. |
-| [Spec-first workflow](/book/22-so-you-want-to-contribute/spec-first-workflow/) | Extend platform-spec before observable behavior. |
-| [Compiler contributor path](/book/22-so-you-want-to-contribute/compiler-contributor-path/) | Crates, tests, pipeline phases. |
-| [Docs and website](/book/22-so-you-want-to-contribute/docs-and-website/) | `site/website`, trudoc, book vs spec. |
-| [Conformance and tests](/book/22-so-you-want-to-contribute/conformance-and-tests/) | Evidence and e2e policy. |
-| [CI and green builds](/book/22-so-you-want-to-contribute/ci-and-green-builds/) | Woodpecker steps and retained logs. |
-| [Contact](/book/22-so-you-want-to-contribute/contact/) | Maintainer reach-out. |
+Start with [Repos and submodules](/book/22-so-you-want-to-contribute/repos-and-submodules/) for the layout, then [Spec-first workflow](/book/22-so-you-want-to-contribute/spec-first-workflow/) before touching observable behavior. [Compiler contributor path](/book/22-so-you-want-to-contribute/compiler-contributor-path/) and [Conformance and tests](/book/22-so-you-want-to-contribute/conformance-and-tests/) cover crates and evidence; [Docs and website](/book/22-so-you-want-to-contribute/docs-and-website/) covers the book and platform-spec split; [CI and green builds](/book/22-so-you-want-to-contribute/ci-and-green-builds/) covers Woodpecker steps and retained logs. [Contact](/book/22-so-you-want-to-contribute/contact/) has the maintainer reach-out.
 
 <Aside type="tip">
 **Maintainer:** Piotr Mikstacki
@@ -37,11 +27,11 @@ This chapter is the **on-ramp for contributors**: where repos live, how spec-fir
 flowchart TD
   idea[Behavior change idea] --> spec[Platform-spec delta]
   spec --> code[Compiler / runtime / tooling]
-  code --> tests[beskid_tests / e2e]
+  code --> tests[tests_projects / e2e]
   tests --> ci[Green CI]
   book[Book chapter] -.informative.-> spec
 ```
 
 ## Finish the book
 
-[Appendix: Spec map](/book/appendix-spec-map/) — chapter ↔ spec ↔ crates matrix.
+[Appendix: Spec map](/book/appendix-spec-map/) is the chapter-to-spec-to-crates matrix.

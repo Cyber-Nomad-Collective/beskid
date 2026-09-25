@@ -1,45 +1,46 @@
 ---
 title: "Option and nullability"
-description: Option T is the only optional surface—no null, no optional keyword."
+description: "There is no null. There is Option<T>, and the compiler makes you say which one you meant."
 tableOfContents: true
 ---
 
+Type `null` and you get a diagnostic. There is no `?T`, no `optional` keyword, no nullable reference types with a compiler flag that half the solution has turned on. Absence is a value of a type that says so.
 
-If you type `null` expecting sympathy, you will receive diagnostics instead.
-
-## `Option<T>` only
-
-Optional presence **must** use `Option<T>` (corelib `Query.Contracts.Option`) or an explicit `enum` with a dedicated absent variant at API boundaries.
-
-- **Forbidden:** `null`, `optional` keyword, `?T` sugar
-- **Present / absent:** `Option<T>::Some(x)` / `Option<T>::None` (exact constructors per corelib)
-
-<Aside type="danger">
-
-Do not model failure as `Option`—use `Result`-shaped enums for errors ([error handling](/platform-spec/language-meta/contracts-and-effects/error-handling/)).
-
-</Aside>
-
-## Why the industry default is rejected
-
-`null` made billion-dollar bugs feel normal. Beskid chooses explicit enums so absence shows up in `match`, not in a surprise NRE at runtime.
-
-## Handling options
-
-Use `match` on options (see [enums and match](/platform-spec/language-meta/type-system/enums-and-match/)). Calling methods on a maybe-absent value without narrowing is a compile error—not a Friday production mystery.
-
-```mermaid
-flowchart TD
-  V[Value] --> M{match Option}
-  M -->|None| H0[handle absent]
-  M -->|Some| H1[use inner T]
+```beskid
+pub enum Option<T> {
+    Some(T value),
+    None,
+}
 ```
 
-## Normative decisions
+That is the whole definition, from `Core.Optional`. It is an ordinary enum. Nothing in the compiler special-cases it, which is the point: the machinery that makes `Option` safe is the same `match` exhaustiveness that makes every other enum safe.
 
-- **D-LM-TYP-002 — `Option<T>` only** in [Types](/platform-spec/language-meta/type-system/types/)
-- Glossary: [glossary and conformance](/platform-spec/language-meta/conformance/glossary-and-conformance/)
+## Using it
 
-## Next
+```beskid
+use Core.Optional;
 
-[Functions and methods](/book/07-compiler-is-not-your-therapist/functions-and-methods/)
+Option<Invoice> FindInvoice(i64 id) {
+    // ...
+    return Option::None;
+}
+
+string Describe(i64 id) {
+    return match FindInvoice(id) {
+        Option::Some(invoice) => "invoice for ${invoice.customer}",
+        Option::None => "no such invoice",
+    };
+}
+```
+
+`invoice.customer` inside the `Some` arm is a plain `Invoice`. Outside it, there is no `invoice` to dereference. You cannot write `FindInvoice(id).customer` because `Option<Invoice>` has no `customer` field, and the diagnostic for trying says exactly that. The billion-dollar mistake was letting that expression compile and finding out at runtime.
+
+The corelib ships helpers for the common shapes so you are not writing a four-line `match` every time: `Optional.HasValue(o)`, `Optional.UnwrapOr(o, fallback)`, `Optional.FromValue(v)`, `Optional.Empty<T>()`. They are ordinary functions written in Beskid, in `Core/Optional/Option.bd`, and you can read them.
+
+## What Option is not for
+
+`Option` says "there might not be one". It does not say why. A function that can fail returns `Result<T, E>` with an error type that names the failure, and chapter 09 is about that. Returning `Option::None` from `ParseConfig` because the file was unreadable throws away the one fact the caller needed, and it is the same mistake as returning `null` from a C# method that swallowed an exception, wearing a better type.
+
+## Why the rest of the industry is still arguing
+
+C# added nullable reference types in 2019, as a warning, opt-in per project, with `!` to silence it. Java has `Optional` in the standard library and `null` in every API that predates it, which is all of them. Kotlin got it right and then had to interoperate with Java. Beskid does not have a migration to manage, so it gets to have the rule instead of the flag: no null, one type for absence, exhaustive `match`. The decision is recorded in the standard as [D-LM-TYP-002](/platform-spec/language-meta/type-system/types/).

@@ -42,40 +42,29 @@ other test in the same compilation unit.
   `beskid_queries::semantic_contract::model` so a legality finding is a
   positive, coded, sited description of a user error, and a genuine compiler
   gap keeps a distinguishable site for its own (internal-error) rendering.
-- Reserve **E2101–E2199** for internal compiler errors (a legality fact or
-  ISLE rule/fact that is still unavailable after the gate has passed): this
-  slice reserves the band and renders the gate's own findings; a following
-  change assigns E2101/E2102 to the module-emission boundary's internal-error
-  rendering path (out of scope here, tracked as a following slice).
+- **ALLOCATE** E2101 for a semantic fact that remains unavailable after the
+  gate has passed, and E2102 for a missing ISLE rule or fact after the gate
+  has passed. Both internal errors carry the query or construct name, the
+  generation-bound source site, help text, and a source excerpt. The
+  E2101–E2199 band remains reserved for internal compiler errors.
 
 ## Out of scope for this change (tracked as following slices of the same
 design)
 
-- E1229 (generic parameter conflict) and the remaining diagnostics table
-  (E1101/E1108/E1203 unknown callee, E1211/E1301/E1302/E1307/E1304 member and
-  match legality, E1209 operator legality, E1105 imports, E1230/E1231 scoped
-  cleanup and dead growth) are **not** added by this change. World A already
-  reports E1229 for the entry unit (a prior, unrelated change); a World-B
-  `generic_binding_conflict` fact mirroring the full binding/witness/receiver
-  algorithm in `module_emission::specialization`'s ABI-level resolution is
-  deliberately deferred rather than risk a fact that disagrees with
-  production specialization.
-- Generalizing `TryDiagnosticAuthority` into a `SemanticFactAuthority` so
-  `beskid analyze` and the LSP prepare tier see the same findings as `beskid
-  build`/`test` (design section 2.5) is a following slice.
-- Moving `scoped_cleanup` and `dead_collection_growth` out of
-  `build_typed_program`'s eager whole-assembly loop and into the gate (design
-  section 2.1, section 4 slice 7) is a following slice.
+- The remaining diagnostics table entries not implemented by this change
+  remain out of scope: E1209 operator legality and any legality fact not
+  listed above. This change implements E1229 at the concrete generic call,
+  E1230/E1231 in the reachability-scoped gate, and prepare-spine/LSP exposure
+  for legality findings.
 
 ## Impact
 
 - Affected specs: `compiler--build-pipeline--stage-ordering` (ADDED
   requirement), `compiler--front-end--hir-normalization-and-legality` (ADDED
   requirement), `compiler--build-pipeline--diagnostics-parity` (ADDED
-  requirement, forward-looking: the gate's findings are defined to match
-  `analyze`/LSP once the following slice wires the shared authority),
-  `compiler--semantic-pipeline--diagnostic-code-registry` (MODIFIED: reserve
-  E2101–E2199).
+  requirement: prepare spine and LSP expose the shared legality findings),
+  `compiler--semantic-pipeline--diagnostic-code-registry` (MODIFIED: allocate
+  E1230, E1231, E2101, and E2102; reserve E2103–E2199).
 - Affected code: `crates/beskid_queries/src/semantic_contract/legality.rs`
   (new), `crates/beskid_queries/src/semantic_contract/local_type_resolution.rs`
   (generalized), `crates/beskid_queries/src/semantic_contract/model.rs`,

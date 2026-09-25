@@ -1,39 +1,27 @@
 ---
 title: "Mod SDK"
-description: compiler-sdk package, Beskid.Syntax mirror, Collector contract hierarchy, query pipeline.
+description: The compiler-sdk package, its Collector/Generator/Analyzer/Rewriter contracts, the Beskid.Syntax mirror, and where the Rust host areas live.
 tableOfContents: true
 ---
 
-The **`compiler-sdk`** package is the Beskid-side API for mods—contracts and `Beskid.Syntax` operations, not string templates.
+`compiler-sdk` is the Beskid-side API mods are written against: contracts and `Beskid.Syntax` operations, not string templates. Full normative text is under [Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/).
 
-Full normative article: [Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/).
+Five contracts make up the surface. `Collector` declares what a mod instance's scope narrows to. `Generator` contributes typed AST incrementally. `Analyzer` runs on the merged program and emits diagnostics plus rewrite fixes. `AttributeGenerator` exports attribute declarations, the shape a serialization mod uses. And `Rewriter` is generic over the node types it replaces, straight out of `Beskid/Compiler/Collect.bd`:
 
-## Contract hierarchy
+```beskid
+pub contract Rewriter<TSourceNode, TTargetNode> {
+    Result<TTargetNode, FixError> Rewrite(TSourceNode sourceNode);
+}
+```
 
-| Contract | Role |
-| --- | --- |
-| `Collector` | Declarative target collection and scope narrowing |
-| `Generator` | Typed AST contributions (incremental by default) |
-| `Analyzer` | Diagnostics + rewrite fixes on merged program |
-| `Rewriter<TSource, TTarget>` | `Result<TTarget, FixError> Rewrite(...)` |
-| `AttributeGenerator` | Exported attributes (e.g. serialization mods) |
+It is worth noticing that the mod SDK's own contracts are ordinary generic contracts, the same feature chapter 09 covers for user code. There is no separate compiler-only contract form.
 
 ## Beskid.Syntax
 
-- **`Node`** is a contract; traversal uses **`NodeRef`** `{ syntaxGenerationId, nodeId }`
-- **`Beskid.Compiler.Query`** + fluent DSL (`Select`, `WhereKind`, `Replace`, …)
-- **No source text emission**—hosts merge typed trees, then re-parse under bounds
+`Node` is a contract, and traversal happens through `NodeRef`, a `{ syntaxGenerationId, nodeId }` pair rather than a live pointer, so a reference from one generation cannot dangle into the next. `Beskid.Compiler.Query` and its fluent DSL, `Select`, `WhereKind`, `Replace`, and the rest, query and edit the typed tree. There is no source-text emission: a mod builds trees, the host merges them, and the merged program is re-parsed under a bounded number of rounds.
 
-Generated mirrors come from `beskid_ast_reflect_gen`—Rust AST is canonical; SDK sources are not hand-duplicated parallel syntax.
+The mirror itself comes from `beskid_ast_reflect_gen`. The Rust AST is canonical and the SDK sources are generated from it rather than hand-duplicated, so a grammar change that does not update the mirror is a build failure for mod authors instead of a silent drift into reading garbage.
 
-## Rust host areas
+## Where the Rust side lives
 
-Implementation specs under [Compiler mods](/platform-spec/compiler/compiler-mods/):
-
-- [Mod host bridge](/platform-spec/compiler/compiler-mods/mod-host-bridge/)
-- [Syntax domain model generation](/platform-spec/compiler/compiler-mods/syntax-domain-model-generation/)
-- [Incremental scheduling and determinism](/platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/)
-
-## Next
-
-[Generator, Analyzer, Rewriter](/book/15-mods-plugins-with-consequences/generator-analyzer-rewriter/)
+Implementation specs for the host side sit under [Compiler mods](/platform-spec/compiler/compiler-mods/): the [mod host bridge](/platform-spec/compiler/compiler-mods/mod-host-bridge/), [syntax domain model generation](/platform-spec/compiler/compiler-mods/syntax-domain-model-generation/), and [incremental scheduling and determinism](/platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/).

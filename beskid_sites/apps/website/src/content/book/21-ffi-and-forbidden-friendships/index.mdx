@@ -1,6 +1,6 @@
 ---
 title: "FFI and other forbidden friendships"
-description: Interop with C, Rust ABI profiles, extern, and callbacks—when you must talk to the outside world.
+description: Interop with C, Rust ABI profiles, extern, and callbacks. When you must talk to the outside world.
 tableOfContents: true
 ---
 
@@ -12,17 +12,7 @@ This chapter is **informative**. Enforceable rules live under the [Platform spec
 
 FFI is where languages go to die. Beskid separates **language interop law** (language-meta) from **host dispatch** (execution ABI) so you know which spec page to argue about.
 
-Start by choosing the boundary you need, then read the applicable profile before writing declarations or host glue. This chapter provides the route; [Interop](/platform-spec/language-meta/interop/) and [ABI and host](/platform-spec/execution/abi-and-host/) provide the authoritative contracts.
-
-## What you will find here
-
-| Section | Topic |
-| --- | --- |
-| [Interop overview](/book/21-ffi-and-forbidden-friendships/interop-overview/) | Domain map and profiles. |
-| [FFI and extern](/book/21-ffi-and-forbidden-friendships/ffi-and-extern/) | `extern` and contract imports. |
-| [C ABI profile](/book/21-ffi-and-forbidden-friendships/c-abi-profile/) | Link-time and dynamic resolution. |
-| [Rust ABI profile](/book/21-ffi-and-forbidden-friendships/rust-abi-profile/) | Boundary stability (not "import any crate"). |
-| [Export and callbacks](/book/21-ffi-and-forbidden-friendships/export-and-callbacks/) | Hosting Beskid from native code. |
+Start by choosing the boundary you need, then read the applicable profile before writing declarations or host glue. This chapter provides the route: [Interop overview](/book/21-ffi-and-forbidden-friendships/interop-overview/) for the domain map, [FFI and extern](/book/21-ffi-and-forbidden-friendships/ffi-and-extern/) for `extern` and contract imports, [C ABI profile](/book/21-ffi-and-forbidden-friendships/c-abi-profile/) and [Rust ABI profile](/book/21-ffi-and-forbidden-friendships/rust-abi-profile/) for the two boundary shapes, and [Export and callbacks](/book/21-ffi-and-forbidden-friendships/export-and-callbacks/) for hosting Beskid from native code. [Interop](/platform-spec/language-meta/interop/) and [ABI and host](/platform-spec/execution/abi-and-host/) hold the authoritative contracts.
 
 ```mermaid
 flowchart LR
@@ -38,7 +28,3 @@ flowchart LR
 Keep an interop boundary narrow and explicit. If a design mixes several foreign runtimes, split it into individual boundaries and validate each against its profile before composing them.
 
 </Aside>
-
-## Next
-
-[22. So you want to contribute](/book/22-so-you-want-to-contribute/)

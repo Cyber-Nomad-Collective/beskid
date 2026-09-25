@@ -4,7 +4,7 @@ description: Addressing workspace members from CLI and LSP, paths, and isolation
 tableOfContents: true
 ---
 
-Members are normal Beskid projects with their own `Project.proj`. The workspace adds **labels** and shared policy—not a second hidden build system.
+Members are normal Beskid projects with their own `.bproj`. The workspace adds **labels** and shared policy, not a second hidden build system.
 
 ## Member labels
 
@@ -14,23 +14,19 @@ Members are normal Beskid projects with their own `Project.proj`. The workspace 
 
 ```text
 repo/
-├── Workspace.proj
+├── Repo.bws
 ├── apps/
 │   └── main/
-│       ├── Project.proj
+│       ├── main.bproj
 │       └── Src/
 └── libs/
     └── shared/
-        ├── Project.proj
+        ├── shared.bproj
         └── Src/
 ```
 
-Path dependencies between members often use relative `path = "../../libs/shared"` edges—keep them boring and explicit.
+Path dependencies between members often use relative `path = "../../libs/shared"` edges. Keep them boring and explicit.
 
 ## Editor experience
 
-Open the workspace root folder in VS Code so LSP sees `Workspace.proj`. Opening only a nested member folder works until it does not—usually when cross-member imports confuse discovery.
-
-## Next
-
-[Dependency cycles](/book/06-monorepo-as-coping-mechanism/dependency-cycles/)
+Open the workspace root folder in VS Code so LSP sees the `.bws` file. Opening only a nested member folder works until it does not, usually when cross-member imports confuse discovery.

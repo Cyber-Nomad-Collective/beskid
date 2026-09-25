@@ -1,24 +1,27 @@
 ---
 title: "Publish your first package"
-description: Pointer to the reference workflow—authenticate, dry-run, publish, verify on the registry.
+description: Pack, configure, and upload. The three commands between a local project and a registry release.
 tableOfContents: true
 ---
 
-The step-by-step guide with commands and role requirements lives in the reference tree—this section exists so the tutorial nav has a landing page that does not duplicate every flag.
+The full flow is pack the artifact, store a credential, upload it:
 
-## Read this next
+```bash
+beskid pckg pack --package ./acme_math.bproj --output ./dist
+beskid pckg configure --api-key <token>
+beskid pckg upload --artifact ./dist/acme_math.bpk acme_math
+```
 
-**[Publish your first package](/book/reference/publish-first-package/)** — manifest checks, `beskid pckg login`, dry-run, publish, consume.
+Uploading needs a `Publisher` or `SuperAdmin` role on the account behind the credential; packing does not.
 
-## Before you publish
+## Before you upload
 
-- Run `beskid doc` so `.beskid/docs/api.json` exists for pckg registry docs ingestion.
+- `beskid pckg pack` runs the documentation pass by default, so `.beskid/docs/api.json` exists before the artifact is assembled. See [Doc and api.json](/book/16-corelib-batteries-with-opinions/doc-and-api-json/).
 - Run tests (`beskid test`) if your package is more than a manifest cosplay.
-- Confirm public API boundaries — see [Package public surface](/book/19-public-api-that-survives-review/package-public-surface/): registry consumers import what you exported, not what you "meant."
+- Confirm public API boundaries. See [Package public surface](/book/19-public-api-that-survives-review/package-public-surface/): registry consumers import what you exported, not what you "meant."
 
 ## See also
 
 - [pckg command reference](/book/reference/cli/commands/pckg/) — full subcommand and flag reference
-- [The pckg CLI](/book/18-packages-without-npm-trauma/pckg-cli/) — tutorial walkthrough
-- [Doc and api.json](/book/16-corelib-batteries-with-opinions/doc-and-api-json/) — generated API docs ingested by pckg registry
+- [The pckg CLI](/book/18-packages-without-npm-trauma/pckg-cli/) — pack, configure, upload, and authentication in more detail
 - [Packages without npm trauma](/book/18-packages-without-npm-trauma/) — chapter overview

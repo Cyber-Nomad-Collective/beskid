@@ -39,7 +39,3 @@ When the reference and tutorial disagree with the spec, **the spec wins** for la
 - [Platform specification](/platform-spec/)
 - [Tooling manifests](/platform-spec/tooling/manifests-and-lockfiles/)
 - [Language meta program structure](/platform-spec/language-meta/program-structure/)
-
-## Next chapter
-
-[03. Project.proj or it didn't happen](/book/03-project-proj-or-it-didnt-happen/)

@@ -15,6 +15,15 @@ code by message text.
 - **THEN** the compiler reports an internal error carrying the query or rule
   name and the site, with an internal-error code, and no user code
 
+#### Scenario: Internal errors identify the failed compiler boundary
+- **GIVEN** the legality gate yields no user finding for an item
+- **WHEN** a semantic fact remains unavailable during specialization
+- **THEN** the compiler SHALL report E2101 with the query name and source
+  excerpt
+- **WHEN** ISLE lowering has no required rule or fact for that item
+- **THEN** the compiler SHALL report E2102 with the construct name and source
+  excerpt
+
 #### Scenario: A user error is never classified from an unavailable message
 - **GIVEN** `unresolved_type_reference` finds an unresolved nominal type name
   in a type position of an item

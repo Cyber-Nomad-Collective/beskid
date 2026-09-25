@@ -76,7 +76,6 @@
 			"11-fibers-cheaper-than-threads/fibers-and-spawn",
 			"11-fibers-cheaper-than-threads/channels-preview",
 			"11-fibers-cheaper-than-threads/corelib-concurrency",
-			"11-fibers-cheaper-than-threads/v0-5-foundations-roadmap",
 			"12-the-normative-bible",
 			"12-the-normative-bible/informative-vs-normative",
 			"12-the-normative-bible/spec-leads-code",
@@ -112,6 +111,7 @@
 			"16-corelib-batteries-with-opinions/injection-and-resolution",
 			"16-corelib-batteries-with-opinions/terminal-and-console",
 			"16-corelib-batteries-with-opinions/doc-and-api-json",
+			"16-corelib-batteries-with-opinions/io-network-http",
 			"16-corelib-batteries-with-opinions/runtime-backed-surfaces",
 			"17-execution-abi-host-runtime",
 			"17-execution-abi-host-runtime/execution-domain",
@@ -158,6 +158,8 @@
 	"appendix": {
 		"label": "Appendix",
 		"defaultOpen": true,
-		"entries": ["appendix-spec-map"]
+		"entries": [
+			"appendix-spec-map"
+		]
 	}
 }

@@ -4,7 +4,7 @@ description: Beskid Project Resolution (HCL)
 ---
 
 
-This document defines how module paths are resolved, how the project graph is built from `Project.proj`, and how imports are validated.
+This document defines how module paths are resolved, how the project graph is built from `.bproj` manifests, and how imports are validated.
 
 It also defines the build/run dependency lifecycle used by CLI commands:
 
@@ -18,12 +18,12 @@ It also defines the build/run dependency lifecycle used by CLI commands:
 Graph implementation: `daggy` (`Dag<ProjectNode, DependencyEdge>`), with `petgraph` traversal utilities available through Daggy re-exports when needed.
 
 ## Terminology
-- **Project root**: directory containing `Project.proj`.
-- **Source root**: `project.root` field inside `Project.proj` (default `Src`).
+- **Project root**: directory containing a `.bproj` manifest.
+- **Source root**: `project.root` field inside the `.bproj` manifest (default `Src`).
 - **Module path**: dotted path like `Net.Http`.
 
 ## Project Graph Construction
-1. Start at the root project `Project.proj`.
+1. Start at the root project's `.bproj` manifest.
 2. Parse manifest to collect project identity, targets, and dependencies.
 3. Canonicalize manifest path and intern a node key for the root project.
 4. For each dependency, create an edge from consumer project -> dependency project.
@@ -57,7 +57,7 @@ The graph keeps project identity canonicalized by manifest path to prevent dupli
 - The projected ordered compile units are consumed by CLI and analysis pipelines.
 
 ## Unresolved Dependency Policy (v1)
-- `path`: must resolve to an existing `Project.proj`; otherwise error.
+- `path`: must resolve to an existing `.bproj` manifest; otherwise error.
 - `git` / `registry`: provider-disabled in runtime scope; must fail before compile.
 - Build/run does not continue past resolution stage when any dependency is unresolved.
 
@@ -116,7 +116,7 @@ The module graph is inferred from `mod` declarations and file layout. The manife
 - Access to non-`pub` symbols from another module is an error.
 
 ## Error Conditions
-- Missing `Project.proj`.
+- Missing `.bproj` manifest.
 - Duplicate project names in dependency graph.
 - Project cycles.
 - Missing path dependency manifest.

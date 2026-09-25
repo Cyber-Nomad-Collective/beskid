@@ -1,28 +1,30 @@
 ---
 title: "The corelib command"
-description: Materialize the embedded corelib template when you need to read or patch the standard library locally.
+description: Materialize the embedded corelib workspace when you want to read, patch, or build against the standard library on disk.
 tableOfContents: true
 ---
 
-`beskid corelib` copies the **embedded** corelib project template that ships inside the CLI build. You use it when you need a tree on disk—contributing to stdlib, debugging injection, or pointing `BESKID_CORELIB_SOURCE` at something you actually control.
-
-## What it does
-
-- Default output: `corelib/beskid_corelib` (override with `--output`).
-- If the destination is already the bundled template location, the command reports the path and exits—no redundant copy performance theatre.
-- Canonical sources in the superrepo live under `compiler/corelib/beskid_corelib/`; the **pckg package id** is **`corelib`**, not whatever folder name your trauma assigned in 2019.
-
-## Example
+The CLI binary embeds the corelib workspace it was built with. Normally that stays inside the binary and the resolver reads it from there. When you want the tree on disk, for reading, for a fix, or for pointing a build at a modified copy, you materialize it.
 
 ```bash
-beskid corelib --output ./vendor/beskid_corelib
+beskid corelib
+beskid corelib --output ./vendor/corelib
 ```
 
-## Normative anchors
+The default destination is `corelib/` under the current directory. What lands there is the whole workspace: `CoreLib.bws`, `packages/`, and `beskid_corelib/`. If the destination already is the bundled template location, the command prints the path and does nothing, because copying a tree over itself is not work.
 
-- [Corelib discovery and packaging](/platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/)
-- [CLI corelib command](/book/reference/cli/commands/corelib/)
+## Building against your copy
 
-## Previous
+```bash
+BESKID_CORELIB_SOURCE=./vendor/corelib beskid build --project ./MyApp.bproj --target App
+```
 
-[Corelib hub](/book/16-corelib-batteries-with-opinions/)
+`BESKID_CORELIB_SOURCE` tells the resolver to inject that tree instead of the embedded one. This is the loop for a standard library change: materialize, edit, set the variable, build the thing that exercises the edit, run `beskid test` on `corelib_tests`. The embedded copy is untouched, so unsetting the variable gets you back to a known state without reinstalling anything.
+
+Do not ship with the variable set. A production build that resolves the standard library from a path on one developer's laptop is a build nobody else can reproduce, and the lockfile will faithfully record that path for posterity.
+
+## Identity
+
+The package the resolver injects is named `corelib`. Its manifest is `beskid_corelib/corelib.bproj`, and its dependencies are the `corelib_*` packages under `packages/`. `corelib_foundation` is where `Core.*` lives, `corelib_concurrency` is chapter 11, `corelib_network` and `corelib_http` are two pages from here. Their manifests are ordinary `.bproj` files and chapter 03 applies to them without exception.
+
+Contracts: [corelib discovery and packaging](/platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/). Command reference: [beskid corelib](/book/reference/cli/commands/corelib/).

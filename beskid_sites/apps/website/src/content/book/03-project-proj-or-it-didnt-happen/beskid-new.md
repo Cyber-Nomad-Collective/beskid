@@ -1,40 +1,47 @@
 ---
 title: "beskid new"
-description: Templates for projects, workspaces, and items—scaffolding without copy-paste archaeology.
+description: Scaffold projects from templates that are themselves packages, so a template is versioned like everything else.
 tableOfContents: true
 ---
 
-Hand-rolling `Project.proj` is educational exactly once. After that, use **`beskid new`**.
-
-## What `new` covers
-
-The `new` subcommand lists, installs, and instantiates **templates** for:
-
-- Projects (with sensible `project` / `target` / `dependency` stubs)
-- Workspaces (when you already know you live in monorepo hell)
-- Individual items (files/modules) inside an existing tree
-
-See [new command](/book/reference/cli/commands/new/) and [project scaffolding](/book/reference/projects/scaffolding/).
-
-## Typical first project
-
-From an empty directory (flags exact names in reference):
+Hand-writing a manifest is educational once. The second time it is a typo in `entry` that costs you ten minutes. After that, use the scaffolder.
 
 ```bash
-beskid new project --name MyApp
+beskid new console
 ```
 
-You should get `Project.proj`, a `Src/` tree, and entry file paths that actually resolve. If not, your template checkout is stale—not your moral failure.
+That drops a `MyApp.bproj`, a `Src/Main.bd` with an empty `unit Main()`, and nothing else. No `.gitignore` full of IDE folders you do not use, no sample test that asserts `true`, no README that says "TODO: describe your project".
 
-## Corelib on new projects
+Run `beskid new` with no arguments and you get an interactive picker of installed templates plus what the registry offers. Or manage them explicitly:
 
-New projects expect the standard library to be reachable—tooling may materialize corelib via bundled templates (`corelib` command). When developing corelib itself, point `BESKID_CORELIB_SOURCE` at your checkout.
+```bash
+beskid new list --online
+beskid new install beskid.templates.console
+beskid new uninstall console
+```
 
-## When *not* to use templates
+## Templates are packages
 
-- You are merging into an existing repo with established layout conventions.
-- You are converting a foreign build system—read [resolution](/book/reference/projects/resolution/) before forcing paths.
+A template is a project whose manifest says `type = Template` and carries a `template` block with a `shortName` and a registry identity such as `beskid.templates.console`. It has no targets, because it is not built, only instantiated. Its `content/` directory is copied with `{{name}}` substituted.
 
-## Next
+```bsol
+beskid_templates_console {
+  name    = "beskid_templates_console"
+  version = "0.0.0"
+  type    = Template
+  template {
+    shortName = "console"
+    identity  = "beskid.templates.console"
+  }
+}
+```
 
-[Fetch, lock, update](/book/03-project-proj-or-it-didnt-happen/fetch-lock-update/)
+This is the same package model as everything else: a template is fetched from the registry, pinned by version, and cached locally. Your team's internal service template is a package you publish, not a wiki page titled "copy this folder and rename things".
+
+## Item templates
+
+Templates can also add a single file or module to an existing project. Pass the host manifest and an output path and the scaffolder places the item under that project's `root`. The [scaffolding reference](/book/reference/projects/scaffolding/) has the flag list.
+
+## When to skip it
+
+If you are wiring Beskid into a repository with an established layout, write the manifest by hand and set `root` to match. Templates encode a layout opinion, and fighting that opinion with post-scaffold moves is slower than typing twelve lines.

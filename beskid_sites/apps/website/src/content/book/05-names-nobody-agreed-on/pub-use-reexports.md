@@ -29,18 +29,8 @@ Consumers import from `myapp.api`, not from twenty leaf modules.
 ## When re-exports hurt
 
 - Re-exporting everything `pub` in core because you were lazy
-- Accidentally `pub use` internal helpers—now they are semver
-
-```mermaid
-flowchart LR
-  INT[internal modules] --> API[api.bd pub use]
-  API --> APP[application imports]
-```
+- Accidentally `pub use` internal helpers, which are now semver whether you meant it or not
 
 ## Relation to project `root_namespace`
 
-`root_namespace` in `Project.proj` is metadata for package naming conventions—it does **not** replace module paths in source. Keep module declarations honest.
-
-## Next
-
-[Diagnostics you will see](/book/05-names-nobody-agreed-on/diagnostics-you-will-see/)
+`root_namespace` in `.bproj` is metadata for package naming conventions. It does **not** replace module paths in source. Keep module declarations honest.

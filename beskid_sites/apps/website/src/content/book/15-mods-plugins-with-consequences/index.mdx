@@ -1,34 +1,17 @@
 ---
 title: "Mods: plugins with consequences"
-description: Compiler mods—Collector, Generator, Analyzer, Rewriter—and the AOT-only host pipeline.
+description: Compiler mods extend the AOT pipeline through Collector, Generator, Analyzer, and Rewriter contracts, and never through eval.
 tableOfContents: true
 ---
 
+A mod is a `type: Mod` package whose compiled artifact plugs into the compiler itself: it can add syntax, raise diagnostics, and rewrite the program before lowering. That is a serious amount of trust to hand a dependency, so mods run compiled and only compiled. There is no `eval`, no interpreted extension path, and no way for a mod to behave one way under the language server and another way under a real build.
 
-Mods are **plugins with consequences**: they mutate the compile graph, re-parse generated AST, and can fail closed with **E18xx** diagnostics before your app code runs. The compiler itself stays Rust; your extension is Beskid **`type: Mod`** plus AOT artifacts.
+The pages that follow: what a mod is and how the host discovers one, the SDK contracts and the `Beskid.Syntax` mirror mods are written against, the Generator/Analyzer/Rewriter roles and what happens when two of them disagree, the pipeline phases a mod runs inside, and the `beskid mod` commands that build and cache the artifact.
 
-Normative Beskid surface: [Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/). Host law: [Compiler mods](/platform-spec/compiler/compiler-mods/) and [Mod host bridge](/platform-spec/compiler/compiler-mods/mod-host-bridge/).
-
-## What you will find here
-
-| Section | Topic |
-| --- | --- |
-| [What is a mod](/book/15-mods-plugins-with-consequences/what-is-a-mod/) | Project kind, discovery, boundaries. |
-| [Mod SDK](/book/15-mods-plugins-with-consequences/mod-sdk/) | Contracts, Syntax mirror, query DSL. |
-| [Generator, Analyzer, Rewriter](/book/15-mods-plugins-with-consequences/generator-analyzer-rewriter/) | Roles and ordering. |
-| [beskid mod CLI](/book/15-mods-plugins-with-consequences/beskid-mod-cli/) | Build and wire mod packages. |
-| [Pipeline phases](/book/15-mods-plugins-with-consequences/pipeline-phases/) | collect → generate → analyze → rewrite. |
+Normative Beskid-facing surface: [Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/). Host-side law: [Compiler mods](/platform-spec/compiler/compiler-mods/).
 
 <Aside type="danger">
 
-Mods are **AOT-only**. If you expected `eval` at compile time, you brought the wrong language.
+Mods are AOT-only. If you expected `eval` at compile time, you brought the wrong language.
 
 </Aside>
-
-## Start here
-
-[What is a mod](/book/15-mods-plugins-with-consequences/what-is-a-mod/)
-
-## After this chapter
-
-Return to [book reference](/book/reference/) for CLI details, or read [Implementation map](/book/13-reading-the-law/implementation-map/) when filing spec+crate changes.

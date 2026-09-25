@@ -10,9 +10,9 @@ Runs built-in semantic rules over a resolved source file (or project entrypoint)
 | Argument | Description |
 | --- | --- |
 | `[INPUT]` | Optional path to a `.bd` file |
-| `--project` | Project directory or `Project.proj` path |
+| `--project` | Project directory or `.bproj` manifest path |
 | `--target` | Target name from the manifest |
-| `--workspace-member` | Workspace member when resolving via `Workspace.proj` |
+| `--workspace-member` | Workspace member when resolving via a `.bws` workspace manifest |
 | `--frozen` | Require lockfile match; forbid updates |
 | `--locked` | Require an existing lockfile |
 
@@ -24,7 +24,7 @@ Runs built-in semantic rules over a resolved source file (or project entrypoint)
 ## Example
 
 ```bash
-beskid analyze --project path/to/Project.proj
+beskid analyze --project path/to/MyApp.bproj
 ```
 
 [← Back to CLI command reference](/book/reference/cli/command-reference/)

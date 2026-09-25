@@ -4,7 +4,7 @@ description: Minimal commands to prove the CLI parses and analyzes Beskid source
 tableOfContents: true
 ---
 
-Before you create a `Project.proj` cathedral, prove the toolchain can read a `.bd` file on disk.
+Before you write a `.bproj` manifest, prove the toolchain can read a `.bd` file on disk.
 
 ## Version check
 
@@ -28,7 +28,7 @@ unit Main() {
 beskid parse hello.bd
 ```
 
-You should get a debug AST view, not a stack trace about missing manifests. If parse fails on syntax you copied from this book, the book is wrong—file an issue.
+You should get a debug AST view, not a stack trace about missing manifests. If parse fails on syntax you copied from this book, the book is wrong; file an issue.
 
 ## Analyze (semantic pass)
 
@@ -36,10 +36,10 @@ You should get a debug AST view, not a stack trace about missing manifests. If p
 beskid analyze hello.bd
 ```
 
-Analysis needs more context as programs grow; for a one-off file, flags may differ from project-scoped workflows. Once you have `Project.proj`, prefer:
+Analysis needs more context as programs grow; for a one-off file, flags may differ from project-scoped workflows. Once you have a `.bproj` manifest, prefer:
 
 ```bash
-beskid analyze --project path/to/Project.proj
+beskid analyze --project path/to/App.bproj
 ```
 
 See [analyze command](/book/reference/cli/commands/analyze/).
@@ -51,21 +51,10 @@ beskid format hello.bd
 beskid tree hello.bd
 ```
 
-Formatting is the fastest way to settle bike-shed wars. `tree` is the ASCII tourist map of the AST—useful when you suspect the parser saw your file differently than you did.
-
-```mermaid
-flowchart LR
-  parse[parse] --> tree[tree]
-  parse --> analyze[analyze]
-  analyze --> format[format]
-```
+Formatting is the fastest way to settle bike-shed wars. `tree` is the ASCII tourist map of the AST, useful when you suspect the parser saw your file differently than you did.
 
 ## What success looks like
 
 - Exit code zero (unless you intentionally broke the file).
 - Diagnostics printed in a readable report (miette-style) when you break types on purpose later.
 - No mystery about which binary ran (`which beskid`).
-
-## Next
-
-[Troubleshooting install](/book/01-it-works-on-my-machine/troubleshooting-install/)

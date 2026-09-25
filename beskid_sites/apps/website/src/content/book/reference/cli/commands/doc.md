@@ -10,9 +10,9 @@ Resolves a Beskid entrypoint (optional file path plus project flags), parses and
 | Argument | Description |
 | --- | --- |
 | `[INPUT]` | Optional `.bd` path (with `--project` resolution) |
-| `--project` | Project directory or `Project.proj` path |
+| `--project` | Project directory or `.bproj` manifest path |
 | `--target` | Target name from the manifest |
-| `--workspace-member` | Workspace member when resolving via `Workspace.proj` |
+| `--workspace-member` | Workspace member when resolving via a `.bws` workspace manifest |
 | `--frozen` | Require lockfile match; forbid updates |
 | `--locked` | Require an existing lockfile |
 | `--out` | Output directory (default `doc-out`); receives `api.json` and `index.md` |
@@ -47,7 +47,7 @@ When run as part of packaging, artifacts are written under **`<sourceRoot>/.besk
 ## Example
 
 ```bash
-beskid doc --project path/to/Project.proj --out doc-out
+beskid doc --project path/to/MyApp.bproj --out doc-out
 ```
 
 [← Back to CLI command reference](/book/reference/cli/command-reference/)

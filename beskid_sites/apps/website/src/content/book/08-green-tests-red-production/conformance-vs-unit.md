@@ -6,8 +6,8 @@ tableOfContents: true
 
 Two different questions:
 
-1. **Does my package behave?** — your `test` items, your CI job.
-2. **Does Beskid still mean what the spec says?** — `beskid_tests`, `beskid_e2e_tests`, and the [Conformance](/platform-spec/compiler/conformance/) area.
+1. **Does my package behave?** Your `test` items, your CI job.
+2. **Does Beskid still mean what the spec says?** The `beskid_tests_*` crate family, `beskid_e2e_tests`, and the [conformance](/platform-spec/compiler/conformance/) area.
 
 Confusing them is how you ship a green app on a red language.
 
@@ -19,30 +19,10 @@ Confusing them is how you ship a green app on a red language.
 
 ## Platform conformance harnesses
 
-The reference compiler workspace (`compiler/Cargo.toml`) includes:
+The reference compiler workspace (`compiler/Cargo.toml`) splits conformance by domain rather than keeping one monolithic crate: `beskid_tests_surface`, `beskid_tests_projects`, `beskid_tests_mods`, `beskid_tests_lsp`, `beskid_tests_aot`, `beskid_tests_pckg`, `beskid_tests_interop`, `beskid_tests_cli`, `beskid_tests_composition`, and `beskid_tests_abi` each lock one slice of behavior, and `beskid_e2e_tests` covers end-to-end CLI and pipeline scenarios. None of them are a substitute for your own `test` items, and your `test` items are not a substitute for any of them.
 
-| Crate | Role |
-| --- | --- |
-| `beskid_tests` | Fixture-heavy behavior locks, incremental/mod scheduling |
-| `beskid_e2e_tests` | End-to-end CLI and pipeline scenarios |
-
-Normative policy: [Conformance evidence](/platform-spec/compiler/conformance/conformance-evidence-policy/), [Test harnesses and fixtures](/platform-spec/compiler/conformance/test-harnesses-and-fixtures/).
-
-```mermaid
-flowchart TB
-  userTests[Your test items in .bd files]
-  cli[beskid test]
-  conformance[beskid_tests / beskid_e2e_tests in compiler CI]
-  spec[Platform spec contracts]
-  userTests --> cli
-  conformance --> spec
-  cli -.->|does not replace| conformance
-```
+Normative policy: [conformance evidence](/platform-spec/compiler/conformance/conformance-evidence-policy/) and [test harnesses and fixtures](/platform-spec/compiler/conformance/test-harnesses-and-fixtures/).
 
 ## When to contribute upstream
 
 If you found a **language** or **compiler** bug (diagnostic code wrong, spawn lowering changed, manifest resolution drift), add or extend a conformance fixture in `compiler/` **and** update the spec in the same change set ([spec leads code](/platform-spec/community/spec-maintenance/spec-authority-and-decisions/)).
-
-## Next
-
-[CI and testing](/book/08-green-tests-red-production/ci-testing/)

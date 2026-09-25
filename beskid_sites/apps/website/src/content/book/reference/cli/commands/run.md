@@ -1,26 +1,26 @@
 ---
 title: "beskid run"
-description: "JIT-compile and execute a Beskid program."
+description: "AOT-compile and execute a Beskid program in a subprocess."
 ---
 
-JIT-compiles a resolved Beskid program and runs an entrypoint function, printing the result to stdout.
+AOT-compiles a resolved Beskid program, links a real binary, and runs it in a subprocess with the given entrypoint function, printing the result to stdout. `run` is not a JIT/scripting command — JIT execution in the toolchain is limited to `beskid test` (in-process) and `beskid repl` (interactive snippets).
 
 ## Arguments
 
 | Argument | Description |
 | --- | --- |
 | `[INPUT]` | Optional `.bd` entry |
-| `--project` | Project directory or `Project.proj` path |
+| `--project` | Project directory or `.bproj` manifest path |
 | `--target` | Target name from the manifest |
-| `--workspace-member` | Workspace member when resolving via `Workspace.proj` |
+| `--workspace-member` | Workspace member when resolving via a `.bws` workspace manifest |
 | `--frozen` | Require lockfile match; forbid updates |
 | `--locked` | Require an existing lockfile |
-| `--entrypoint` | Function name to run (default `main`) |
+| `--entrypoint` | Function name to run (default `Main`) |
 
 ## Example
 
 ```bash
-beskid run --project path/to/Project.proj --entrypoint main
+beskid run --project path/to/MyApp.bproj --entrypoint Main
 ```
 
 [← Back to CLI command reference](/book/reference/cli/command-reference/)

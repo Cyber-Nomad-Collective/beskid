@@ -8,9 +8,9 @@ Not everything is an object. Not everything should be.
 
 ## Stack (activations)
 
-Function entry allocates an **activation record**: parameters, locals, temporaries. Returns pop the frame. This is the fast path—until you capture locals in a closure or `spawn` and the compiler has opinions.
+Function entry allocates an **activation record**: parameters, locals, temporaries. Returns pop the frame. This is the fast path, until you capture locals in a closure or `spawn` and the compiler has opinions.
 
-Fiber stacks are **separate** from the C#-style "thread pool fantasy"—see [Fiber scheduler and stacks](/platform-spec/execution/runtime/fiber-scheduler-and-stacks/).
+Fiber stacks are **separate** from the C#-style "thread pool fantasy". See [fiber scheduler and stacks](/platform-spec/execution/runtime/fiber-scheduler-and-stacks/).
 
 ## Heap (GC)
 
@@ -20,7 +20,7 @@ You do not `free()` in Beskid. You **stop leaking references** like a profession
 
 ## Spans (compiler-facing)
 
-In platform-spec and compiler crates you will see **`Span`** / source locations (`Spanned<T>` in diagnostics)—metadata for **where** in source, not a Rust `Span<T>` slice type for users. When reading [front-end](/platform-spec/compiler/front-end/) docs, "span" usually means **syntactic range**, not stackalloc.
+In platform-spec and compiler crates you will see **`Span`** / source locations (`Spanned<T>` in diagnostics). That is metadata for **where** in source, not a Rust `Span<T>` slice type for users. When reading [front-end](/platform-spec/compiler/front-end/) docs, "span" usually means **syntactic range**, not stackalloc.
 
 | Term in docs | Meaning |
 | --- | --- |
@@ -30,8 +30,4 @@ In platform-spec and compiler crates you will see **`Span`** / source locations 
 
 ## Arrays
 
-Arrays are a primitive Beskid type with unified length semantics where the type system allows—see [Types](/platform-spec/language-meta/type-system/types/) and corelib packages for surface API.
-
-## Next
-
-[Ownership preview](/book/10-memory-without-billion-dollar-mistake/ownership-preview/)
+Arrays are a primitive Beskid type with unified length semantics where the type system allows. See [types](/platform-spec/language-meta/type-system/types/) and corelib packages for the surface API.

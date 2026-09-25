@@ -1,35 +1,19 @@
 ---
 title: "What is a mod"
-description: type Mod projects, artifact-driven discovery, and what mods are not.
+description: A compiler mod is a type: Mod package whose AOT artifact exports SDK contract implementations, discovered by the host at mod.load, never eval'd.
 tableOfContents: true
 ---
 
-A **compiler mod** is a **`type: Mod`** package in the dependency graph whose compiled AOT artifact exports SDK **contract** implementations—generators, analyzers, rewriters—not random scripts the CLI `eval`s.
+A mod is a `type: Mod` package in the dependency graph whose compiled AOT artifact exports SDK contract implementations: generators, analyzers, rewriters, and the rest. It is not a script the CLI interprets, and it is not a Rust proc-macro living inside `beskid_analysis`; that is a host implementation detail a mod author never touches.
 
-## Not these things
-
-| Thing | Mod? |
-| --- | --- |
-| Rust proc-macro inside `beskid_analysis` | Host implementation detail |
-| Language `macro` items | [Language macros](/platform-spec/language-meta/metaprogramming/macros/) — parallel feature |
-| User `contract Disposable` | Structural type contract—different namespace |
-| `meta { }` blocks in old designs | Removed—`Collector` owns scope |
+Two other things share vocabulary with mods and are not mods. A language `macro` item is a separate feature, expanded during parsing rather than scheduled as a compiled contract; see [Language macros](/platform-spec/language-meta/metaprogramming/macros/). A user type's `contract Disposable` lives in a completely different namespace from the mod SDK's `Collector`, `Generator`, `Analyzer`, and `Rewriter` contracts, even though both use the word `contract`; chapter 09 draws that line in detail. And `meta { }` blocks from earlier designs are gone. `Collector` owns scope now.
 
 ## Discovery
 
-Manifest **`attachTo`** folklore is dead. During **`mod.load`** the host:
+Nothing "attaches" to anything. During `mod.load` the host resolves the transitive `Mod` dependencies from the compile plan, loads the AOT artifact for the target triple and cache key, reads `mod.descriptor.json` or the equivalent export table, and schedules `(contractId, typeId, entrySymbol)` tuples for the phases that follow.
 
-1. Resolves transitive `Mod` dependencies from `CompilePlan`
-2. Loads AOT artifact for target triple + cache key
-3. Reads `mod.descriptor.json` / export table
-4. Schedules `(contractId, typeId, entrySymbol)` tuples
+A duplicate registration is E1829, or one of E1851 through E1870, and it is caught before `collect` runs, not discovered mid-generation with half the program already rewritten. See [Compiler Mod SDK, contract discovery](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/#contract-discovery-normative).
 
-Duplicates → **E1829** / **E1851–E1870** before collect runs ([Compiler Mod SDK — discovery](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/#contract-discovery-normative)).
+## The compiler stays Rust
 
-## Compiler never in Beskid
-
-The reference compiler host is Rust-only. Mods extend compilation; they do not replace `beskid_analysis`.
-
-## Next
-
-[Mod SDK](/book/15-mods-plugins-with-consequences/mod-sdk/)
+The reference compiler host is Rust, full stop. A mod extends what compilation does; it does not replace `beskid_analysis`, and there is no path where Beskid interprets Beskid to make a compile-time decision.

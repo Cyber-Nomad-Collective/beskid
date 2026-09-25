@@ -17,7 +17,7 @@ The Downloads page exposes platform tabs with a copy-paste command block. Script
 
 Follow the tab for your platform on [Downloads](/downloads/); do not cargo-cult a macOS curl line on WSL unless you enjoy surprise architecture mismatches.
 
-## PATH — the silent failure mode
+## PATH: the silent failure mode
 
 After install, open a **new** terminal (or `source` your profile). Then:
 
@@ -26,28 +26,14 @@ which beskid
 beskid --version
 ```
 
-If `which` points somewhere unexpected, you have competition:
-
-```mermaid
-flowchart TD
-  A[You type beskid] --> B{Which binary wins?}
-  B -->|First on PATH| C[That binary runs]
-  B -->|Wrong one| D[Old version / wrong arch / shell function]
-  D --> E[Mystery diagnostics]
-```
-
-Common fixes:
+If `which` points somewhere unexpected, the shell is running whichever `beskid` sits first on `PATH`, not the one you just installed. Common fixes:
 
 - Put the install directory **before** stale paths in `PATH` (profile or `direnv`).
 - Remove duplicate installs you forgot about.
 - On macOS, check whether Rosetta vs native arch matches the downloaded build.
 
-## Corelib materialization (first run)
+## Corelib is implicit, not installed
 
-On launch, the CLI ensures the **bundled corelib** tree is available and may print a short message when it materializes or updates a copy. Override with `BESKID_CORELIB_SOURCE` when developing against a different corelib checkout (see [CLI command reference](/book/reference/cli/command-reference/)).
+The standard library (`Core.*`, e.g. `Core.Output`, `Core.Optional`) is available to every project automatically; the resolver injects the corelib package for you, so you never write a `use` statement to reach it. There is nothing to install here.
 
-That is not "install failed"—it is the toolchain making standard library sources reachable.
-
-## Next
-
-[Build from source](/book/01-it-works-on-my-machine/build-from-source/)
+If you are developing the standard library itself, `beskid corelib [--output dir]` copies the embedded corelib tree to disk so you have something to edit, and `BESKID_CORELIB_SOURCE` points the resolver at that materialized tree instead of the embedded one (see [CLI command reference](/book/reference/cli/command-reference/)). Application code never needs either.

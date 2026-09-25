@@ -14,9 +14,9 @@ use net.http.Client as HttpClient;
 pub use net.http.Client;
 ```
 
-- **Direct import** — bring a symbol into scope.
-- **Alias** — local name differs from the original (`as`).
-- **`pub use`** — re-export through the current module boundary.
+- **Direct import**: bring a symbol into scope.
+- **Alias**: local name differs from the original (`as`).
+- **`pub use`**: re-export through the current module boundary.
 
 ## File-scoped modules
 
@@ -26,11 +26,4 @@ With `mod app.core;` at the top, imports resolve inside that module scope. Local
 
 Prefer aliases when two imports collide (`AParser`, `BParser`) instead of "helpful" shortening that confuses readers.
 
-## Standard reference (informative)
-
-- [Name Resolution](/platform-spec/language-meta/program-structure/name-resolution/)
-- [Modules and Visibility](/platform-spec/language-meta/program-structure/modules-and-visibility/)
-
-## Next
-
-[Name resolution](/book/05-names-nobody-agreed-on/name-resolution/)
+See also [Name Resolution](/platform-spec/language-meta/program-structure/name-resolution/) and [Modules and Visibility](/platform-spec/language-meta/program-structure/modules-and-visibility/).

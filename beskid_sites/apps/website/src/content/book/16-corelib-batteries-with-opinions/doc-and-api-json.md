@@ -1,29 +1,30 @@
 ---
 title: "Doc and api.json"
-description: Package documentation is driven by structured api.json—the compiler is the source of truth for signatures and links.
+description: The compiler generates the API reference from the code. api.json is the contract the registry and the docs site consume, and nobody hand-edits it.
 tableOfContents: true
 ---
 
-`beskid doc` emits Markdown and **`api.json`** under `.beskid/docs/`. The JSON is not a parallel type system you maintain by hand: signatures, `typeRef` links, and member hierarchy are **compiler-derived**. Prose in `///` comments attaches to symbols; absence of prose does not remove the symbol from the API graph.
+```bash
+beskid doc --project ./MyLib.bproj --target Core
+```
 
-## Why this matters for pckg
+`beskid doc` walks the resolved program and emits two things under `.beskid/docs/`: Markdown a human can read, and `api.json`, a structured description of every public symbol with its signature, its members, the type references it makes, and the documentation attached to it.
 
-Registry ingestion and the pckg docs UI treat **`api.json` as the primary contract**. If your package page looks empty, the fix is usually "run doc generation and publish," not "invent a second schema in YAML."
+The JSON is compiler-derived. Signatures come from the semantic pipeline, `typeRef` links come from name resolution, and the member hierarchy comes from the syntax tree. The `///` comments provide the prose and nothing else. A symbol with no comment is still in the file with its full signature, because the API graph is a fact about the code and the prose is commentary on it.
 
-`beskid pckg pack` for library packages runs doc generation automatically — Markdown and `api.json` land under `.beskid/docs/` and ship inside the `.bpk` artifact. The pckg server indexes them on ingest.
+## What the registry does with it
 
-## Authoring tie-in
+`beskid pckg pack` for a library runs `doc` automatically and ships `.beskid/docs/` inside the `.bpk` artifact. The pckg server indexes `api.json` on ingest and renders the package page from it. A package page that looks empty means the package has no `pub` symbols, not that someone forgot to write a YAML file describing the ones it has.
 
-- Write `///` on declarations you want explained.
-- Use `@ref(Qualified.Name)` for cross-links the compiler can validate.
-- Put `@arg` on **callable parameters only**—see [chapter 20](/book/20-doc-comments-that-are-not-lies/).
+That is the difference from a docs site built from a separate source. There is no `docs/api/` tree to fall behind the code, no annotation processor pretending to be a second compiler, no DocFX configuration. The package is the documentation input.
 
-## See also
+## Writing for it
 
-- [Packages without npm trauma](/book/18-packages-without-npm-trauma/) — how pckg registry ingests `api.json` and Markdown
-- [The pckg CLI](/book/18-packages-without-npm-trauma/pckg-cli/) — `beskid pckg` tutorial and pack/doc flow
-- [pckg command reference](/book/reference/cli/commands/pckg/) — automatic doc generation during `beskid pckg pack`
-- [Publish your first package](/book/reference/publish-first-package/) — end-to-end publish with docs
-- [Package public surface](/book/19-public-api-that-survives-review/package-public-surface/) — what registry consumers see from your API docs
-- [api.json contract](/platform-spec/tooling/cli/api-json-contract/)
-- [Documentation comments](/platform-spec/language-meta/surface-syntax/documentation-comments/)
+- Put `///` on every `pub` declaration you would want a stranger to use. One sentence of purpose, then the non-obvious precondition or consequence.
+- Use `@arg` on callable parameters, and only there. A field is not an argument.
+- Use `@ref(Qualified.Name)` for cross-links. The compiler validates the target exists, so a reference to a renamed type is a doc error at build time, not a dead link discovered by a user.
+- `@tier(standard)` and `@variant(Name)` are how the corelib annotates stability tiers and enum variants. Chapter 20 has the full directive list.
+
+The corelib's own reference is generated this way from the same sources you can read under `packages/`. What you see on the package page is what `beskid doc` produced from `Core/IO/IO.bd`, with no editorial layer in between.
+
+Contracts: [api.json](/platform-spec/tooling/cli/api-json-contract/), [documentation comments](/platform-spec/language-meta/surface-syntax/documentation-comments/). Command reference: [beskid doc](/book/reference/cli/commands/doc/), [beskid pckg](/book/reference/cli/commands/pckg/).

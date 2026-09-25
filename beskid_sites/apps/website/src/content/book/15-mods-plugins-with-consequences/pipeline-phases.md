@@ -1,48 +1,23 @@
 ---
 title: "Pipeline phases"
-description: mod.collect through mod.rewrite in the host pipeline and beskid_pipeline phase IDs.
+description: Where mod.collect through mod.rewrite sit relative to parse and lowering, and the beskid_analysis::mod_host modules that run them.
 tableOfContents: true
 ---
 
-Mods insert **between parse and lowering**—after you have syntax, before you pretend Cranelift will save you.
+Mods insert between parse and lowering: after you have syntax, before Cranelift gets involved.
 
-## Author-facing order
-
-From [Compiler Mod SDK — pipeline interaction](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/):
-
-```mermaid
-flowchart TB
-  collect[mod.collect — Collector scopes targets]
-  generate[mod.generate — merge + reparse loops]
-  analyze[mod.analyze — diagnostics on merged program]
-  rewrite[mod.rewrite — apply fixes]
-  semantic[Semantic rules continue]
-  lower[codegen.lower]
-  collect --> generate --> analyze --> rewrite --> semantic --> lower
+```text
+mod.collect ──► mod.generate ──► mod.analyze ──► mod.rewrite ──► semantic rules ──► codegen.lower
 ```
 
-## Host modules (`beskid_analysis::mod_host`)
+Inside `beskid_analysis::mod_host`, that chain is five phases. Discovery and load find the AOT artifacts and build the schedule. Collect narrows work per mod instance. Generate, merge, and reparse resolve typed AST contributions. Analyze runs analyzers on the merged snapshot. Rewrite applies whatever the analyzers registered. Map: [Mod host bridge flow](/platform-spec/compiler/compiler-mods/mod-host-bridge/flow-and-algorithm/), [crate-to-spec anchors](/platform-spec/compiler/implementation-map/crate-to-spec-anchors/).
 
-| Phase | Host concern |
-| --- | --- |
-| `discovery` / `load` | Find AOT artifacts, build schedule |
-| `collect` | Narrow work per mod instance |
-| `generate` / `merge` / `reparse` | Typed AST contributions |
-| `analyze` | Run analyzers on merged snapshot |
-| `rewrite` | Apply rewriter results |
+## Phase IDs are shared, not improvised
 
-Map: [Mod host bridge flow](/platform-spec/compiler/compiler-mods/mod-host-bridge/flow-and-algorithm/), [Crate-to-spec anchors](/platform-spec/compiler/implementation-map/crate-to-spec-anchors/).
+`beskid_pipeline` gives every stage, mod phases included, a phase ID shared across the CLI, analysis, and codegen services. Log against that ID rather than inventing a string in whichever crate you happen to be editing. See [pipeline composition](/platform-spec/compiler/pipeline-composition/) and [stage ordering](/platform-spec/compiler/build-pipeline/stage-ordering/).
 
-## `beskid_pipeline`
+## Dependency injection stops at the host boundary
 
-Rust host composition shares **phase IDs** across CLI, analysis, and codegen services—avoid ad-hoc logging strings in random crates ([Pipeline composition](/platform-spec/compiler/pipeline-composition/), [Stage ordering](/platform-spec/compiler/build-pipeline/stage-ordering/)).
+The Rust host's DI container is wired at compile time and is read-only to mods and the SDK. A mod cannot register a service into it; anything a mod needs comes in through the request types the SDK contracts already take.
 
-## IoC note
-
-Dependency injection inside the Rust host is **compile-time** and read-only to mods/SDK—do not expect to register services from Beskid mod code.
-
-## Where to go next
-
-- Ship a mod: keep [Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/) open beside your editor.
-- Debug pipeline: [14. From source to something that runs](/book/14-from-source-to-runs/)
-- Change law: [12. The normative bible](/book/12-the-normative-bible/)
+Debugging the surrounding pipeline, resolution through codegen, is chapter 14's job; this page is only about the phases mods add to it.

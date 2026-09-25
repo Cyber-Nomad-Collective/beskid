@@ -8,7 +8,7 @@ This document defines the required project workflow used by `run`, `clif`, and `
 
 ## Scope
 
-- Single project root (`Project.proj`) plus transitive dependencies.
+- Single project root (`.bproj` manifest) plus transitive dependencies.
 - Source-only dependencies.
 - Active provider: `path`.
 - Deferred providers (infrastructure only): `git`, `registry`.
@@ -55,7 +55,7 @@ Project workflow diagnostics use shared analysis diagnostics infrastructure and 
 
 ### Error codes
 
-- `E3001`: missing `Project.proj` at '{path}'
+- `E3001`: missing `.bproj` manifest at '{path}'
 - `E3006`: dependency '{dependency}' manifest not found at {path}
 - `E3007`: dependency cycle detected: {chain}
 - `E3008`: unresolved external dependencies: {details}
