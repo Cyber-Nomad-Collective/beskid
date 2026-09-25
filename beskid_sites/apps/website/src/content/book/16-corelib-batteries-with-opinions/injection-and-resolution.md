@@ -1,30 +1,30 @@
 ---
 title: "Injection and resolution"
-description: Why every Beskid project sees the same corelib package identity without you declaring it seventeen times.
+description: Every project gets the same corelib without declaring it. How the resolver finds it, and what the override is for.
 tableOfContents: true
 ---
 
-You do not "add corelib like any other dependency" in the happy path. The analysis resolver **injects** the canonical package so beginners do not ship programs that forgot the standard library and veterans do not fork reality with a random `corelib` path on a USB stick.
+You do not add the standard library as a dependency. The resolver injects the `corelib` package into every project graph before it resolves anything else, and every `corelib_*` package comes with it. A beginner cannot ship a program that forgot the standard library, and a veteran cannot fork reality by pointing at a `corelib` on a USB stick and calling it a dependency.
 
-## Mental model
+## Discovery order
 
-1. Resolver builds the project graph from `Project.proj` (and workspace members if applicable).
-2. Corelib is located via discovery rules (embedded layout, `BESKID_CORELIB_ROOT`, overrides in dev).
-3. The same package identity **`corelib`** is what CI publishes to **pckg** and what the CLI embeds for offline work.
+1. `BESKID_CORELIB_SOURCE`, if set: a materialized workspace on disk. Development only.
+2. The corelib embedded in the installed toolchain.
 
-```mermaid
-flowchart TD
-  proj[Project.proj] --> graph[Resolution graph]
-  graph --> inj[Inject corelib]
-  inj --> canon[Canonical beskid_corelib tree]
-  dev[BESKID_CORELIB_SOURCE override] -.-> canon
-```
+That is the whole list. There is no search of the current directory, no lookup in a global package cache, and no "use whichever corelib the language server happened to find". The implicit standard library resolves exclusively from the toolchain that is running, so two machines with the same `beskid --version` see the same `Core.*` by construction.
 
-## When overrides matter
+## What injection gives you
 
-Local compiler work often sets `BESKID_CORELIB_SOURCE` to the submodule checkout so you are not editing the embedded snapshot like a cave person. Production consumers should rely on registry versions, not your laptop path.
+- `Core.*` is reachable in every file without a `use`. Writing `use Core.Output;` is still fine and the corelib does it for clarity.
+- Everything else in the corelib workspace is in the graph and importable by module path: `use Concurrency.Fiber;`, `use Network.Tcp.TcpStream;`, `use Http.Client;`.
+- The lockfile records the resolved corelib packages like any other dependency, with their materialized paths under `obj/beskid/deps/src/`.
 
-## Spec
+## Native imports are checked before emission
 
-- [Corelib injection and resolution](/platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/)
-- [Resolution and projects](/platform-spec/compiler/resolution-and-projects/)
+Corelib packages that reach into the runtime declare their native imports. Before lowering, the compiler checks that every declared import is one the runtime kit provides. A copied or unknown service name fails the build with the name in the diagnostic rather than an undefined symbol from the linker. This is the reason a mismatched corelib and runtime cannot produce a binary: the check runs first.
+
+## When to override
+
+You are fixing the standard library, and you want the fix under test before it is in a release. That is the case. `beskid corelib --output`, edit, `BESKID_CORELIB_SOURCE`, build, test. Production consumers rely on the embedded copy and the registry, never on a path.
+
+Contracts: [corelib injection and resolution](/platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/), [resolution and projects](/platform-spec/compiler/resolution-and-projects/).

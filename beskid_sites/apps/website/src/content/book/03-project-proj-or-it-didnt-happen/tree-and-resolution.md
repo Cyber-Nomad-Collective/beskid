@@ -1,50 +1,42 @@
 ---
-title: "Tree and resolution"
-description: Dependency DAG, build order, and debugging resolution without guessing."
+title: "Graphs and resolution"
+description: What the resolver does between reading a manifest and handing the compiler a module graph, and how to look at it.
 tableOfContents: true
 ---
 
-Resolution is not magic—it is a **DAG walk** with a lockfile receipt.
+Resolution is a DAG walk with a receipt. Nothing about it is clever, which is why it is debuggable.
 
-## Build lifecycle (deterministic sketch)
+1. Find the manifest, from `--project` or by walking the directory tree.
+2. If a `.bws` workspace owns it, load the workspace's member list and shared policy.
+3. Read every `dependency` block, load each dependency's manifest, and recurse until the graph closes.
+4. Inject `corelib` and its packages.
+5. Order the graph so every package builds before anything that depends on it.
+6. Write or verify `Project.lock`, then materialize sources under `obj/beskid`.
 
-1. Discover manifest (`Project.proj` or workspace member).
-2. Resolve dependency DAG.
-3. Sync `Project.lock`.
-4. Materialize dependencies under `obj/beskid`.
-5. Build dependencies before dependents.
+Then, and only then, does the compiler see a `.bd` file.
 
-```mermaid
-flowchart TD
-  D1[Dep A Lib] --> D2[Dep B Lib]
-  D2 --> APP[App target]
+## Looking at the graph
+
+```bash
+beskid graph --project ./MyApp.bproj
+beskid graph --project ./MyApp.bproj --kind imports --mermaid --output graph.mmd
 ```
 
-## Inspecting structure
+`graph` renders the resolved structure in the terminal, or emits Mermaid you can paste into a pull request. `--kind` selects the layer: `project` for the dependency graph, `workspace` for members, `module` for the module tree, `imports` for `use` edges between modules, and `host` for host composition. When "why is this package in my build" comes up in review, the answer is one command, not archaeology through five manifests.
 
-- `beskid tree` on a `.bd` file shows AST shape (parser-level).
-- Project graphs: use reference [resolution](/book/reference/projects/resolution/) and CLI project introspection flags documented on [tree command](/book/reference/cli/commands/tree/) where applicable to manifests.
-
-When resolution fails, read the diagnostic **first**—path dependencies love typos (`../Wrong`).
-
-## Workspace members
-
-Multi-project repos resolve members via `Workspace.proj` (chapter [06](/book/06-monorepo-as-coping-mechanism/)). Single-project repos stay ignorant and happy.
+`beskid tree file.bd` is a different tool. It prints the parse tree of one file, and it is for arguing with the parser, not the resolver.
 
 ## Failure modes
 
-| Symptom | Likely cause |
+| Diagnostic says | What happened |
 | --- | --- |
-| Disabled provider in graph | `git`/`registry` dep while only `path` enabled |
-| Missing entry | `target.entry` not under `project.root` |
-| Cycle | Circular path dependencies between projects |
-| Stale lock | Changed manifest without `lock`/`fetch` |
+| disabled provider | a dependency uses `source = git` or `registry`; only `path` resolves today |
+| entry not under root | `target.entry` escapes `root`, usually `../` in the path |
+| cycle | project A depends on B depends on A; chapter 06 covers the surgery |
+| lockfile mismatch under `--locked` | manifests changed since the last `lock` |
+| legacy `Project.proj` (E1894) | rename it to `<name>.bproj` |
+| legacy `Workspace.proj` (E1895) | rename it to `<name>.bws` |
 
-## Deep dive
+Path dependencies fail on typos more than anything else. `path = "../Inventroy"` produces a clear "manifest not found at" with the absolute path it tried, so read that path before you read anything else.
 
-- [Project Resolution](/book/reference/projects/resolution/)
-- [Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)
-
-## Next chapter
-
-[04. Where does this file even go?](/book/04-where-does-this-file-go/)
+The [resolution reference](/book/reference/projects/resolution/) has the full algorithm including workspace member precedence.

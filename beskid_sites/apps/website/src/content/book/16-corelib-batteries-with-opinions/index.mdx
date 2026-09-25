@@ -1,38 +1,29 @@
 ---
 title: "Corelib: batteries with opinions"
-description: The standard library is injected, opinionated, and documented through api.json—not a grab bag of copy-pasted helpers.
+description: The standard library is a workspace of Beskid packages, injected into every build, documented from its own source, and readable end to end.
 tableOfContents: true
 ---
 
+The standard library is not `System.*`, a forty-year accretion where `System.IO.File` and `System.IO.Abstractions` and `Microsoft.Extensions.FileProviders` all exist because nobody could delete the previous one. It is a workspace of eleven Beskid packages, written in Beskid, with a dependency graph you can print.
 
-<Aside type="caution">
-This chapter is **informative**. Enforceable rules live under the [Platform specification](/platform-spec/).
-</Aside>
-
-
-The **corelib** package is not "stdlib.zip you found on a forum." The compiler **injects** it, the runtime backs part of it, and **pckg** serves the rest as a normal package—with registry-assigned versions so nobody plays semver theatre in `Project.proj`.
-
-If you expected a monolithic `System.IO` graveyard, adjust expectations now.
-
-## What you will find here
-
-| Section | Topic |
-| --- | --- |
-| [corelib command](/book/16-corelib-batteries-with-opinions/corelib-command/) | Materialize the embedded template with `beskid corelib`. |
-| [Injection and resolution](/book/16-corelib-batteries-with-opinions/injection-and-resolution/) | How every project gets the same canonical package. |
-| [Terminal and console](/book/16-corelib-batteries-with-opinions/terminal-and-console/) | ANSI, streams, and why console is not syscall soup. |
-| [Doc and api.json](/book/16-corelib-batteries-with-opinions/doc-and-api-json/) | `beskid doc`, structured API, and pckg docs UI. |
-| [Runtime-backed surfaces](/book/16-corelib-batteries-with-opinions/runtime-backed-surfaces/) | What must call through the runtime vs pure Beskid. |
-
-```mermaid
-flowchart LR
-  CLI[beskid CLI] --> inj[Corelib injection]
-  inj --> src[beskid_corelib sources]
-  src --> doc[beskid doc / api.json]
-  doc --> pckg[pckg registry docs]
-  runtime[beskid_runtime] --> src
+```text
+corelib/
+├── CoreLib.bws                   the workspace
+├── beskid_corelib/               package "corelib": the aggregate everyone depends on
+└── packages/
+    ├── foundation/               Core.*: Results, Optional, Collections, String, Bytes,
+    │                             IO, FS, Time, Args, Disposable, Error, Output
+    ├── runtime/                  process init, host linkage
+    ├── concurrency/              Fiber, Channel, Mutex, WaitGroup, Hub
+    ├── console/                  ANSI, formatting, terminal capabilities
+    ├── network/                  Dns, Tcp, Udp
+    ├── http/                     HTTP/1.1 client and server
+    ├── interop/                  FFI profiles
+    ├── glue/                     cross-language glue (0.6 target)
+    ├── compiler-sdk/             Beskid.Compiler.*, Beskid.Syntax for mods
+    └── pest-gen-schema/          grammar generation support
 ```
 
-## Next
+Three things follow from that layout. The resolver injects `corelib` into every project, so you never declare it and `Core.*` is reachable without an import. `beskid doc` generates the API reference from the same `///` comments the language server shows on hover, so there is one documentation source and it cannot drift from the signatures. And when something in `Core.IO.ReadExact` surprises you, you open `Core/IO/IO.bd` and read thirty lines of Beskid, because that is what it is.
 
-[17. Execution: ABI, host, and runtime](/book/17-execution-abi-host-runtime/)
+The chapter covers the `corelib` command for getting that tree on disk, how injection and discovery work, the I/O, networking, and HTTP packages that arrived together, the console package, the documentation pipeline, and which surfaces are thin wrappers over runtime builtins versus pure Beskid.

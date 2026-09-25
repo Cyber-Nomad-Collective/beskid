@@ -1,35 +1,39 @@
 ---
 title: "CLIF and debug"
-description: Inspect Cranelift IR with beskid clif and debug flags without guessing lowering.
+description: Read the Cranelift IR the compiler emitted, log the backend, and know what to attach to a lowering bug.
 tableOfContents: true
 ---
 
-When lowering misbehaves, reading Rust alone is masochism. **`beskid clif`** dumps Cranelift IR so you can correlate machine intent with source.
+When a program type-checks and then does the wrong thing at runtime, the question is what the compiler emitted. Reading the Rust lowering to guess is masochism. Reading the IR is faster.
 
-## CLI
+```bash
+beskid clif Src/Main.bd
+beskid clif --project ./MyApp.bproj --target App
+```
 
-Reference: [beskid clif](/book/reference/cli/commands/clif/).
+`clif` resolves and lowers the program and prints the rendered CLIF for the entry and everything it reaches. Each function's IR comes out after the Cranelift verifier has accepted it, so what you see is what the backend compiled.
 
-Typical uses:
+## What to look for
 
-- Verify spawn/fiber lowering produced expected blocks
-- Compare JIT vs AOT IR for the same function
-- Attach IR to bug reports **with** the spec/feature link
+- **A `match` that took the wrong arm.** Find the block structure the `match` lowered to and check the comparison against the discriminant. Enum layouts are in the IR as loads at fixed offsets.
+- **A `spawn` that does not run.** Look for `fiber_spawn` and the environment it captured. A missing capture means the closure lowering dropped a root; a present capture with the wrong stack map means the collector may move it.
+- **A contract call that hit the wrong specialization.** The callee name includes the concrete type it was specialized for. If it names a type you did not expect, the conformance query resolved something you did not expect, and that is a semantic question before it is a codegen one.
 
-## Debug flags
+## Backend logging
 
-Compiler logging and phase traces align with `beskid_pipeline` phase IDs—see [Pipeline composition](/platform-spec/compiler/pipeline-composition/) and book chapter [02 tooling — logging](/book/02-path-not-found-tooling-anyway/logging-and-debug-flags/) for operator-facing flags.
+```bash
+beskid build Src/Main.bd --log-cranelift
+BESKID_LOG_CRANELIFT=1 beskid run Src/Main.bd
+```
 
-## Spec anchors
+The global `--log-cranelift` flag, or the environment variable, turns on Cranelift's own backend logging: register allocation, instruction selection, the passes it ran. It is verbose and it is for one function at a time. Shrink the file first.
 
-- [Diagnostics parity](/platform-spec/compiler/build-pipeline/diagnostics-parity/)
-- [Backends JIT/AOT](/platform-spec/compiler/build-pipeline/backends-jit-aot/)
+## Attaching to a bug report
+
+Three things, in this order: the source that reproduces it, the `beskid clif` output for that file, and the link to the standard's feature that says what the construct should do. The third one is not ceremony. A lowering is wrong relative to a rule, and a report that names the rule is one that can be fixed without a discussion about what the rule was.
 
 ## What CLIF is not
 
-- Not a substitute for semantic diagnostics—fix types first.
-- Not a public stability contract for third-party tools—IR details may shift with Cranelift updates.
+It is not stable. Cranelift's IR changes across Cranelift releases and the lowering rules change across Beskid releases; tooling that parses `clif` output is tooling with a short life. It is also not the place to debug type errors. If `analyze` is red, `clif` will not run, and if `analyze` is green and the IR looks wrong, the semantic pipeline is still the first suspect.
 
-## Next chapter
-
-[15. Mods: plugins with consequences](/book/15-mods-plugins-with-consequences/)
+Contracts: [diagnostics parity](/platform-spec/compiler/build-pipeline/diagnostics-parity/), [backends](/platform-spec/compiler/build-pipeline/backends-jit-aot/). Command reference: [beskid clif](/book/reference/cli/commands/clif/).

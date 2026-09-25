@@ -1,33 +1,44 @@
 ---
 title: "Fibers: cheaper than threads, still scary"
-description: Cooperative spawn, Fiber handles, channels, and corelib concurrency without async/await cosplay.
+description: "spawn, typed Fiber<T> handles, channels, and the corelib concurrency package. No async, no await, no colored functions."
 tableOfContents: true
 ---
 
+Threads are expensive. `async`/`await` is threads with extra syntax, two colors of function, and a decade of conference talks explaining why your `ConfigureAwait(false)` was in the wrong place. Beskid has `spawn`, which gives you a cooperative fiber and a typed handle, and channels, which are how fibers talk. That is the whole surface.
 
-Threads are expensive. **async/await** is threads with extra syntax and conference talks. Beskid uses **`spawn`** and **`Fiber<T>`**—cooperative fibers, channel-only cross-fiber data, and no `async` keyword because we have seen your previous codebase.
+```beskid
+use Concurrency.Fiber;
+use Concurrency.Channel;
+use Core.Output;
 
-Normative: [Fibers and spawn](/platform-spec/language-meta/evaluation/fibers-and-spawn/). Runtime: [Fiber scheduler and stacks](/platform-spec/execution/runtime/fiber-scheduler-and-stacks/). API: [Concurrency package](/platform-spec/core-library/concurrency/concurrency-package/).
+i64 Sum(Channel<i64> input) {
+    mut i64 total = 0_i64;
+    mut bool open = true;
+    while open {
+        match Channel<i64>.Receive(input) {
+            Result::Ok(n) => { total += n; },
+            Result::Error(_) => { open = false; },
+        };
+    }
+    return total;
+}
 
-## What you will find here
+unit Main() {
+    Channel<i64> numbers = Channel<i64>.Create();
+    Fiber<i64> summer = spawn Sum(numbers);
 
-| Section | Topic |
-| --- | --- |
-| [Evaluation model](/book/11-fibers-cheaper-than-threads/evaluation-model/) | Callables, closures, no async surface. |
-| [Fibers and spawn](/book/11-fibers-cheaper-than-threads/fibers-and-spawn/) | `spawn`, handles, join, cancel. |
-| [Channels preview](/book/11-fibers-cheaper-than-threads/channels-preview/) | Send/receive across fibers. |
-| [Corelib concurrency](/book/11-fibers-cheaper-than-threads/corelib-concurrency/) | `corelib_concurrency` contracts. |
+    for n in range(1, 11) {
+        Channel<i64>.Send(numbers, n);
+    }
+    Channel<i64>.Close(numbers);
 
-<Aside type="caution">
+    match summer.Join() {
+        Result::Ok(total) => Output.WriteLine("sum = ${total}"),
+        Result::Error(_) => Output.WriteLine("worker failed"),
+    };
+}
+```
 
-Reserved `async` / `await` tokens are **compile errors**. Do not `#define` around the language; use `spawn`.
+`spawn Sum(numbers)` starts `Sum` on its own fiber and hands back a `Fiber<i64>`, typed by what `Sum` returns. The parent feeds a channel, closes it, and `Join` waits for the result. No thread pool, no synchronization context, no `Task.Run` versus `Task.Factory.StartNew` trivia question.
 
-</Aside>
-
-## Start here
-
-[Evaluation model](/book/11-fibers-cheaper-than-threads/evaluation-model/)
-
-## Next chapter
-
-[12. The normative bible (and why we bothered)](/book/12-the-normative-bible/)
+The chapter covers the evaluation model and why there is no `async`, then `spawn` and the handle's three operations, then channels and the other primitives, then where all of it lives in the corelib and the runtime. `async` and `await` are reserved words and compile errors, so the porting strategy of `#define await` will not save anyone.

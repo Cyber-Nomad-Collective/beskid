@@ -1,29 +1,17 @@
 ---
 title: "From source to something that runs"
-description: Resolution, parse, semantic rules, IR, JIT, and AOT—mapped to beskid_pipeline phases and compiler crates.
+description: Resolution, parse, semantic facts, ISLE lowering, Cranelift, and the link step. Every stage, the crate that owns it, and the command that exposes it.
 tableOfContents: true
 ---
 
+Compilation is a pipeline, not a séance. Every stage has a crate, a command that exposes it, and a diagnostic band it is allowed to emit. This chapter walks the reference compiler from a manifest to a native binary.
 
-<Aside type="caution">
-Informative tour. Stage ordering and contracts are normative under [Build pipeline](/platform-spec/compiler/build-pipeline/).
-</Aside>
+```text
+manifest ──► resolution ──► parse ──► semantic facts ──► lowering ──► CLIF ──► object ──► link
+ .bproj      beskid_analysis   beskid_analysis   beskid_queries    beskid_isle   Cranelift  beskid_aot   beskid_aot
+             (projects)        (syntax, parser)  (Salsa)           beskid_codegen
+```
 
-Compilation is a pipeline, not a séance. This chapter walks the reference platform from manifest discovery to something you can `run` or `build`.
+Three things to know before the detail. The output is native code; there is no bytecode and no interpreter in the shipped path, and `beskid run` builds a binary and executes it. Semantic facts are computed once in a Salsa database and shared by the CLI, the language server, and the lowering, so the editor and the build cannot disagree about what a name means. And lowering goes through ISLE, the same term-rewriting language Cranelift uses for its own backends, which is how runtime pieces are being moved from Rust into Beskid one rule at a time.
 
-## What you will find here
-
-| Section | Topic |
-| --- | --- |
-| [Pipeline overview](/book/14-from-source-to-runs/pipeline-overview/) | End-to-end phases. |
-| [Front-end](/book/14-from-source-to-runs/front-end/) | Parse and AST/HIR shape. |
-| [AST and facts graph demo](/book/14-from-source-to-runs/ast-facts-graph/) | Shared AST ↔ facts viewers. |
-| [Semantic pipeline](/book/14-from-source-to-runs/semantic-pipeline/) | Analysis and diagnostics. |
-| [Codegen and IR](/book/14-from-source-to-runs/codegen-and-ir/) | Lowering and CLIF. |
-| [JIT run](/book/14-from-source-to-runs/jit-run/) | `beskid run` / engine. |
-| [AOT build](/book/14-from-source-to-runs/aot-build/) | `beskid build` / AOT. |
-| [clif and debug](/book/14-from-source-to-runs/clif-and-debug/) | Introspection commands. |
-
-## Next
-
-[15. Mods](/book/15-mods-plugins-with-consequences/)
+The pages that follow: the pipeline as a whole, the front-end, the semantic pipeline and where diagnostics come from, lowering and IR, the two places JIT still exists, the AOT build and link, and the `clif` command for when you need to see what the compiler actually emitted. The stage contracts are normative under [build pipeline](/platform-spec/compiler/build-pipeline/).

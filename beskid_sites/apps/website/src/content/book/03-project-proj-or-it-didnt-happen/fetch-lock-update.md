@@ -1,54 +1,42 @@
 ---
 title: "Fetch, lock, update"
-description: Dependency resolution, Project.lock, frozen builds, and staying reproducible."
+description: "The manifest declares intent. Project.lock records what happened. Three commands keep them honest."
 tableOfContents: true
 ---
 
-Manifests declare intent. **Locks** declare what actually happened—so CI and your laptop stop arguing.
+Every package manager eventually learns the same lesson: what you asked for and what you got are different files. Beskid starts with that separation instead of retrofitting it.
 
-## The trio
-
-| Command | Role |
+| Command | What it does |
 | --- | --- |
-| `fetch` | Resolve and materialize dependencies into `obj/beskid` |
-| `lock` | Synchronize `Project.lock` with current resolution |
-| `update` | Refresh resolution and materialized tree when policy allows |
+| `beskid fetch` | Resolve the dependency graph and materialize sources under `obj/beskid` |
+| `beskid lock` | Write `Project.lock` to match the current resolution |
+| `beskid update` | Re-resolve and refresh the materialized tree, rewriting the lock |
 
-Reference: [fetch](/book/reference/cli/commands/fetch/), [lock](/book/reference/cli/commands/lock/), [update](/book/reference/cli/commands/update/), [lockfile guide](/book/reference/projects/lockfile/).
+All three accept `--project`, `--target`, and `--workspace-member`, and share the two lockfile policies:
 
-## Frozen / locked builds
+- `--locked` requires that a lockfile exists and matches what resolution would produce now. Mismatch fails.
+- `--frozen` is `--locked` plus a ban on writing the lockfile. This is the CI flag.
 
-CI should prefer **reproducible** resolution:
+A pipeline that runs `beskid fetch --frozen` fails when someone edited a manifest and forgot to run `lock`. That failure is the point. The alternative is discovering the drift when production resolves a different folder than the one you tested.
 
-- `--frozen` — fail if lock would change
-- `--locked` — enforce lock consistency (see per-command docs for exact semantics)
+## What the lock actually contains
 
-```mermaid
-flowchart LR
-  M[Project.proj] --> R[Resolver]
-  R --> L[Project.lock]
-  R --> O[obj/beskid materialized]
-  L --> CI[CI with --frozen]
+`Project.lock` is a flat text file, versioned, and readable in a diff without tooling:
+
+```text
+# Project.lock v1
+root_manifest=/home/you/MyApp/MyApp.bproj
+project_name=MyApp
+dependencies:
+- name=Inventory;manifest=/home/you/Inventory/Inventory.bproj;project=/home/you/Inventory;source_root=/home/you/Inventory/Src;materialized_root=obj/beskid/deps/src/Inventory-9cd57d122395daf1
 ```
+
+One line per resolved package: where its manifest was, where its sources were, and the hashed directory the sources were copied into. When a review shows a lock diff you can read which dependency moved and where it moved to. Compare that with a 400-line `package-lock.json` change from adding one dev dependency.
+
+Commit the lock. The argument "it is generated" is true of every artifact that makes a build reproducible, and it is a bad argument for all of them.
 
 ## When the lock changes
 
-Expect `Project.lock` updates when:
+Expect a diff after you add, remove, or repoint a dependency, after a path dependency's manifest moves, and after a toolchain upgrade changes resolution rules. Do not expect one from editing source files. If `lock` rewrites the file and you did none of those things, the resolver's view of the world changed under you, and that is worth understanding before you commit it.
 
-- You add/remove/retarget dependencies
-- Path dependencies move on disk (sometimes)
-- Resolver policy or toolchain version changes resolution
-
-Do **not** `.gitignore` the lock because "it is generated" unless you enjoy production roulette.
-
-## Path-only era (v1)
-
-With `source = path` as the enabled provider, "version drift" is often literally **different folders on disk**. Workspaces add shared override policy—chapter [06](/book/06-monorepo-as-coping-mechanism/).
-
-## Standard reference (informative)
-
-- [Workspace and lock contracts](/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/)
-
-## Next
-
-[Tree and resolution](/book/03-project-proj-or-it-didnt-happen/tree-and-resolution/)
+Contracts for the lockfile and workspace-level locking are in the [workspace and lock contracts](/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/); the [lockfile reference](/book/reference/projects/lockfile/) walks the format field by field.

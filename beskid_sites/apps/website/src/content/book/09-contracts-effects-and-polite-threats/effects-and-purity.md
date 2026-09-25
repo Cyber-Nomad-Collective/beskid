@@ -1,46 +1,45 @@
 ---
 title: "Effects and purity"
-description: Where Beskid tracks compile-time effects vs runtime IO, spawn, and foreign calls.
+description: Where compile time ends and runtime begins, what the compiler proves about each, and the practical purity rules that do not need a monad.
 tableOfContents: true
 ---
 
-"Effects" in Beskid are not a monad tutorial. They are **boundaries**: what happens at compile time in mods, what happens at runtime in fibers and syscalls, and what the type system can prove before you ship.
+"Effects" here is not a monad tutorial. It is the question of what happens when, and which of it the compiler can see.
 
-## Compile-time effects (mods and macros)
+## Compile time: mods
 
-[Metaprogramming](/platform-spec/language-meta/metaprogramming/metaprogramming/) is explicit:
+Metaprogramming runs inside the compiler as AOT-compiled mod packages. A `Generator` emits typed syntax, an `Analyzer` reports diagnostics and proposes rewrites, the host merges the result and re-parses under a bounded number of rounds. All of it happens before lowering, and none of it exists at runtime. There is no reflection to inspect the generated code from inside the program, because there is nothing to inspect: after the merge it is ordinary source.
 
-- Mod work runs through **AOT-compiled** `type: Mod` artifacts—no interpreted Beskid at compile time except via linked mod entrypoints.
-- Generators emit **typed AST**; analyzers register rewrites; hosts merge and re-parse under bounded rounds.
-- Those effects are **compile-time only**; they become ordinary program semantics after lowering.
+This is the replacement for Roslyn source generators, and the difference is that a mod is a Beskid package with a version, not a NuGet-delivered compiler component that has to match the SDK patch level on every machine in CI. Chapter 15.
 
-```mermaid
-flowchart TB
-  mod[Mod collect / generate / analyze]
-  ast[Merged typed AST]
-  sem[Semantic pipeline]
-  rt[Runtime execution]
-  mod --> ast --> sem --> rt
-```
+## Runtime: I/O, fibers, native calls
 
-## Runtime effects
+Everything that touches the world goes through a documented surface:
 
-User-visible runtime behavior—**spawn**, channel IO, syscall-backed console, FFI—lives under [Evaluation](/platform-spec/language-meta/evaluation/), [Execution runtime](/platform-spec/execution/runtime/), and [Core library](/platform-spec/core-library/). The language does not pretend `println` is pure; it routes IO through documented surfaces ([panic-io and syscalls](/platform-spec/execution/runtime/panic-io-and-syscalls/)).
+- Console and files through `Core.Output`, `Core.Input`, `Core.FS`.
+- Bytes through the `Core.IO` contracts (`Reader`, `Writer`, `Stream`, `Closer`).
+- Sockets through the `Network` package, HTTP through `Http`.
+- Concurrency through `spawn`, `Fiber<T>`, and `Channel<T>`.
+- Native code through `extern` declarations with an ABI profile.
 
-## Purity (pragmatic, not academic)
+The language does not pretend `Output.WriteLine` is pure. It also does not track it in the type system. There is no `IO` monad and no effect annotation on functions. What there is instead is a set of structural rules the compiler does enforce:
 
-Beskid does not ship Haskell-style `IO` tracking in v0.x tutorials. Practical purity guidance:
-
-| Prefer | When |
+| Rule | Diagnostic |
 | --- | --- |
-| Pure functions + explicit `Result` | Domain logic you unit-test |
-| `spawn` + channels for concurrency | Cross-fiber communication ([Fibers and spawn](/platform-spec/language-meta/evaluation/fibers-and-spawn/)) |
-| `extern` / `[Extern]` only at boundaries | Native libraries with profile rules ([FFI and extern](/platform-spec/language-meta/interop/ffi-and-extern/)) |
+| A stack reference cannot be captured across `spawn` | E1225 |
+| A closure that consumes a captured `Fiber<T>` cannot be called twice | rejected at the capture |
+| A scoped `use` value must satisfy `Disposable` and live in a `Result`-returning function | E-band on the `use` |
+| `async` and `await` are reserved and rejected | reserved-keyword diagnostics |
 
-## Area hub
+Each of those is a specific bug class with a specific rule, which is a different philosophy from "mark everything that does I/O and hope the annotation is honest".
 
-Full index: [Contracts and effects](/platform-spec/language-meta/contracts-and-effects/).
+## Purity, the pragmatic version
 
-## Next
+- Domain logic takes values and returns `Result`. No `Output`, no sockets, no clock. It is the code you unit-test with `test` items and nothing else.
+- I/O lives at the edges, in functions whose names say so, behind `Result` types that say what can go wrong.
+- Cross-fiber data moves through channels. Shared mutable state guarded by a `Mutex` is for invariants, not for passing messages.
+- Native code lives behind one `extern` boundary per library, tested as an adversary.
 
-[Panic vs contract](/book/09-contracts-effects-and-polite-threats/panic-vs-contract/)
+You will not get a diagnostic for putting `Output.WriteLine` in the middle of a pricing function. You will get a pricing function nobody can test, which was true in every other language too. The compiler's job is to make the edges explicit; keeping them there is yours.
+
+Runtime surfaces are specified across [evaluation](/platform-spec/language-meta/evaluation/), [execution](/platform-spec/execution/runtime/), and [core library](/platform-spec/core-library/); compile-time metaprogramming is in [metaprogramming](/platform-spec/language-meta/metaprogramming/metaprogramming/).
