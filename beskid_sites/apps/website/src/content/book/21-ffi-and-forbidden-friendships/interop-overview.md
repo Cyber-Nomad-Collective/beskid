@@ -4,7 +4,7 @@ description: Language-meta interop domain and how profiles bind primitives.
 tableOfContents: true
 ---
 
-Start at [Interop](/platform-spec/language-meta/interop/). Profiles define which boundary is supported: [C ABI](/platform-spec/language-meta/interop/c-abi-profile/) is the user-authored foreign-code boundary, while [Rust ABI](/platform-spec/language-meta/interop/rust-abi-profile/) documents the language-owned runtime. Higher-level mapping rules live under [Interop contracts](/platform-spec/language-meta/interop/interop-contracts/). ABI v4 narrows the stable runtime surface to **kernel exports** plus **dispatch envelope layout**—soft ops route through tags, not ~80 direct linker symbols.
+Start at [Interop](/platform-spec/language-meta/interop/). Profiles define which boundary is supported: [C ABI](/platform-spec/language-meta/interop/c-abi-profile/) is the user-authored foreign-code boundary, while [Rust ABI](/platform-spec/language-meta/interop/rust-abi-profile/) documents the language-owned runtime. Higher-level mapping rules live under [Interop contracts](/platform-spec/language-meta/interop/interop-contracts/). ABI-v5 narrows the stable runtime surface to **kernel exports** plus **dispatch envelope layout**: soft ops route through tags, not ~80 direct linker symbols.
 
 > **Caution:** A user-authored `extern` target must use the [C ABI profile](/platform-spec/language-meta/interop/c-abi-profile/). To call a Rust library, expose a C-compatible shim and declare that shim as the target; do not link the crate through the Rust ABI profile. That profile is runtime-only.
 

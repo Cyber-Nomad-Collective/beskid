@@ -7,14 +7,14 @@ description: Beskid Project Examples (HCL)
 ## Example 1: Single-project app
 ```
 MyApp/
-├── Project.proj
+├── MyApp.bproj
 └── Src/
     └── Main.bd
 ```
 
-**Project.proj**
-```hcl
-project {
+**MyApp.bproj**
+```text
+MyApp {
   name    = "MyApp"
   version = "0.1.0"
   root    = "Src"
@@ -30,18 +30,18 @@ target "App" {
 ```
 Workspace/
 ├── App/
-│   ├── Project.proj
+│   ├── App.bproj
 │   └── Src/
 │       └── Main.bd
 └── Std/
-    ├── Project.proj
+    ├── Std.bproj
     └── Src/
         └── IO.bd
 ```
 
-**App/Project.proj**
-```hcl
-project {
+**App/App.bproj**
+```text
+App {
   name    = "App"
   version = "0.1.0"
   root    = "Src"
@@ -58,9 +58,9 @@ dependency "Std" {
 }
 ```
 
-**Std/Project.proj**
-```hcl
-project {
+**Std/Std.bproj**
+```text
+Std {
   name    = "Std"
   version = "0.1.0"
   root    = "Src"
@@ -75,16 +75,16 @@ target "Library" {
 ## Example 3: Nested module layout
 ```
 NetLib/
-├── Project.proj
+├── NetLib.bproj
 └── Src/
     ├── Net.bd
     └── Net/
         └── Http.bd
 ```
 
-**Project.proj**
-```hcl
-project {
+**NetLib.bproj**
+```text
+NetLib {
   name    = "NetLib"
   version = "0.1.0"
   root    = "Src"
@@ -109,14 +109,14 @@ pub type Client { ... }
 ## Example 4: Multiple targets
 ```
 Project/
-├── Project.proj
+├── Project.bproj
 └── Src/
     ├── Main.bd
     └── Tests.bd
 ```
 
-```hcl
-project {
+```text
+Project {
   name    = "Project"
   version = "0.2.0"
   root    = "Src"

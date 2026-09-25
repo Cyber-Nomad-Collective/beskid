@@ -10,16 +10,16 @@ Lowers a resolved Beskid source file into **CLIF** and prints the resulting IR t
 | Argument | Description |
 | --- | --- |
 | `[INPUT]` | Optional `.bd` entry |
-| `--project` | Project directory or `Project.proj` path |
+| `--project` | Project directory or `.bproj` manifest path |
 | `--target` | Target name from the manifest |
-| `--workspace-member` | Workspace member when resolving via `Workspace.proj` |
+| `--workspace-member` | Workspace member when resolving via a `.bws` workspace manifest |
 | `--frozen` | Require lockfile match; forbid updates |
 | `--locked` | Require an existing lockfile |
 
 ## Example
 
 ```bash
-beskid clif --project path/to/Project.proj
+beskid clif --project path/to/MyApp.bproj
 ```
 
 [← Back to CLI command reference](/book/reference/cli/command-reference/)

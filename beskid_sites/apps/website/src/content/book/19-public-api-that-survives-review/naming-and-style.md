@@ -4,7 +4,7 @@ description: Names that survive grep, review, and api.json without folklore.
 tableOfContents: true
 ---
 
-Naming is not aesthetics—it is an API contract. Platform-spec [Code style and naming](/platform-spec/language-meta/program-structure/code-style-and-naming/) is the normative baseline; this section is how you apply it without bike-shedding for three days.
+Naming is not aesthetics, it is an API contract. Platform-spec [Code style and naming](/platform-spec/language-meta/program-structure/code-style-and-naming/) is the normative baseline; this page is how you apply it without bike-shedding for three days.
 
 ## Case profiles (quick)
 
@@ -22,8 +22,8 @@ Full rules: [Code style and naming](/platform-spec/language-meta/program-structu
 
 - Name types for what they **are**, not what they were before the rewrite.
 - Avoid leaking `Internal`, `Helper`, `Util` into **public** paths unless you enjoy support tickets.
-- Align module names with folder layout (chapter 04)—surprises belong in fiction, not in `import`.
-- Mismatched case is an API smell even when the compiler accepts it today—**W163x** warnings are coming.
+- Align module names with folder layout (chapter 04); surprises belong in fiction, not in `import`.
+- Mismatched case is not just style: the compiler emits it as a warning. `W1630`–`W1638` cover PascalCase types, variants, and module segments, camelCase fields, parameters, and locals, and snake_case tests. Fix the warning instead of arguing about it in review.
 
 ## Spec
 

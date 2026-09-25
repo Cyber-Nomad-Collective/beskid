@@ -23,7 +23,7 @@ I tried to build a form generator with Blazor, ended up with rewriting C# in Rus
 | [1.4 SOLID, DRY, and the failure of DDD](/book/00-why-beskid-exists/solid-dry-and-ddd/) | Good principles weaponized into ceremony. |
 | [1.5 Trauma — by developers, for developers](/book/00-why-beskid-exists/trauma-by-developers-for-developers/) | Ecosystem fracture, designer fantasy vs field reality. |
 | [1.6 Are we really standing on the shoulders of giants?](/book/00-why-beskid-exists/shoulders-of-giants/) | Compilation history, VMs, JIT, and cognitive traps. |
-| [1.7 segfault or not to segfault](/book/00-why-beskid-exists/segfault-or-not-to-segfault/) | Memory models, GC, ownership, and why Go is almost right. |
+| [1.7 segfault or not to segfault](/book/00-why-beskid-exists/segfault-or-stop-the-world/) | Memory models, GC, ownership, and why Go is almost right. |
 | [1.8 Why are we making this so hard?](/book/00-why-beskid-exists/why-are-we-making-this-so-hard/) | Business reality vs engineering theatre. |
 | [1.9 Conclusion](/book/00-why-beskid-exists/conclusion/) | What Beskid is actually trying to be. |
 
@@ -31,7 +31,7 @@ I tried to build a form generator with Blazor, ended up with rewriting C# in Rus
 
 ![Shrug — fine, skip it](https://66.media.tumblr.com/tumblr_m0c88gZ2yd1rqfhi2o1_500.gif)
 
-Fair. Skip to [01. Tooling and Editors](/book/01-tooling-and-editors/) and treat Beskid as a tool until the existential dread becomes useful background.
+Fair. Skip to [01. Tooling and Editors](/book/01-it-works-on-my-machine/) and treat Beskid as a tool until the existential dread becomes useful background.
 
 ## Start the chapter
 

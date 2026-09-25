@@ -1,6 +1,6 @@
 ---
 title: "Language meta map"
-description: User-visible Beskid law—syntax, types, contracts, memory, evaluation, interop.
+description: User-visible Beskid law, syntax, types, contracts, memory, evaluation, interop.
 tableOfContents: true
 ---
 
@@ -33,8 +33,4 @@ Use an area page to choose a subject, a feature hub to understand its scope and 
 
 ## Linking from the book
 
-When this book says "the compiler will reject that," the receipt is usually a language-meta diagnostic band (e.g. **E16xx** contracts, spawn capture rules)—not a blog post.
-
-## Next
-
-[Compiler domain map](/book/13-reading-the-law/compiler-domain-map/)
+When this book says "the compiler will reject that," the receipt is usually a language-meta diagnostic band, such as the **E16xx** contract diagnostics (E1601 for a missing contract member) or the spawn capture rules. It is not a blog post.

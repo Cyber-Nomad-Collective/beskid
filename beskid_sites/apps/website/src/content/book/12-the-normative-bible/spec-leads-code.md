@@ -1,6 +1,6 @@
 ---
 title: "Spec leads code"
-description: Update normative platform-spec before—or with—observable compiler and runtime changes.
+description: Update normative platform-spec before, or with, observable compiler and runtime changes.
 tableOfContents: true
 ---
 
@@ -12,17 +12,10 @@ Authority: [Specification authority and embedded decisions](/platform-spec/commu
 
 ## Practical workflow
 
-```mermaid
-flowchart LR
-  gap[Design gap or bug]
-  spec[Spec PR — language-meta or domain feature]
-  impl[Compiler / corelib / tooling PR]
-  verify[Conformance + OpenSpec validate]
-  gap --> spec --> impl --> verify
-```
+Start from a design gap or bug. Land a spec PR against the owning language-meta or domain feature before, or alongside, the compiler, corelib, or tooling PR that changes behavior. Close with conformance tests and `openspec validate`.
 
 1. Classify the topic ([language law vs implementation](/book/12-the-normative-bible/language-law-vs-implementation/)).
-2. Extend the owning **feature hub** or article—no circular "canonical chapter is this page" stubs.
+2. Extend the owning **feature hub** or article. No circular "canonical chapter is this page" stubs.
 3. Anchor crates in [implementation map](/platform-spec/compiler/implementation-map/) when touching `compiler/`.
 4. Land tests in `beskid_tests` / `beskid_e2e_tests` when behavior is platform-wide.
 
@@ -33,7 +26,3 @@ flowchart LR
 | "Docs follow-up ticket" | Shipped behavior without law |
 | README-only normative rules | Not searchable, not validated |
 | Copy-paste tables across domains | Drift within a sprint |
-
-## Next
-
-[Language law vs implementation](/book/12-the-normative-bible/language-law-vs-implementation/)

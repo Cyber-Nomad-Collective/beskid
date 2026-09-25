@@ -4,7 +4,7 @@ description: A contributor path from design gap to OpenSpec change, implementati
 tableOfContents: true
 ---
 
-You found a bug or a missing feature. Excellent. Here is how to avoid becoming another "we'll document it later" statistic.
+You found a bug or a missing feature. Here is how to avoid becoming another "we'll document it later" statistic.
 
 ## 1. Classify ownership
 
@@ -38,12 +38,8 @@ Update `compiler/` (or corelib/tooling) and refresh [crate-to-spec anchors](/pla
 
 ## 5. Informative follow-up
 
-Update book chapters or [reference](/book/reference/) when tutorials should reflect the new world—**after** normative text lands.
+Update book chapters or [reference](/book/reference/) when tutorials should reflect the new world, **after** normative text lands.
 
 ## Community hub
 
 [Spec maintenance area](/platform-spec/community/spec-maintenance/)
-
-## Next chapter
-
-[13. Reading the law without going blind](/book/13-reading-the-law/)

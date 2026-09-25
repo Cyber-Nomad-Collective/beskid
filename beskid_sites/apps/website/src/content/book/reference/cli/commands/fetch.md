@@ -9,16 +9,16 @@ Resolves the dependency graph for a project (using the same discovery flags as o
 
 | Argument | Description |
 | --- | --- |
-| `--project` | Project directory or `Project.proj` path |
+| `--project` | Project directory or `.bproj` manifest path |
 | `--target` | Target name from the manifest |
-| `--workspace-member` | Workspace member when resolving via `Workspace.proj` |
+| `--workspace-member` | Workspace member when resolving via a `.bws` workspace manifest |
 | `--frozen` | Require lockfile match; forbid updates |
 | `--locked` | Require an existing lockfile |
 
 ## Example
 
 ```bash
-beskid fetch --project path/to/Project.proj
+beskid fetch --project path/to/MyApp.bproj
 ```
 
 On success, prints a short confirmation message.

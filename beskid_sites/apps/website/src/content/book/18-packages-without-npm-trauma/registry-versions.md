@@ -4,16 +4,13 @@ description: Normal flows do not let publishers hand-type package versions like 
 tableOfContents: true
 ---
 
-In normal publish flows, **the registry assigns package versions**—publishers do not supply manual semver bumps for every upload unless policy explicitly allows exceptions. That kills an entire class of "I published `99.99.99` because marketing" incidents.
+In normal publish flows, **the registry assigns package versions**. Publishers do not supply manual semver bumps for every upload unless policy explicitly allows exceptions. That kills an entire class of "I published `99.99.99` because marketing" incidents.
 
 ## What you declare vs what you get
 
-| You write in `Project.proj` | Registry / lockfile owns |
-| --- | --- |
-| Package id, dependencies, targets | Resolved version pins |
-| Dependency version ranges (policy) | Concrete versions after fetch/lock |
+You write the package id, its dependencies, and its targets in the `.bproj` manifest. The registry resolves the concrete version on upload, and the lockfile pins it for every later fetch. Dependency version ranges are policy you write; the exact versions that satisfy them after resolution are not yours to type.
 
-Treat `Project.lock` as truth for CI reproducibility—chapter 06 workspace material covers multi-project graphs.
+Treat the lockfile as truth for CI reproducibility. Chapter 06 covers multi-project workspace graphs.
 
 ## Spec
 

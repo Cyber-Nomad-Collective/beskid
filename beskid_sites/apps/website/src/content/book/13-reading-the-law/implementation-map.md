@@ -14,7 +14,3 @@ Open the [crate-to-spec anchors](/platform-spec/compiler/implementation-map/crat
 4. Return to the feature when a code path seems to imply a different rule.
 
 This order keeps an implementation shortcut from accidentally becoming a second specification.
-
-## Hub
-
-[13. Reading the law](/book/13-reading-the-law/)

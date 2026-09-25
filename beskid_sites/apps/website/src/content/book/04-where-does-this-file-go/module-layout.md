@@ -16,7 +16,7 @@ Optional file-scoped form at the top of a file:
 mod net.http;
 ```
 
-That declares the **entire file** lives in `net.http`. Additional `mod` declarations are **not allowed** in that file—boundaries stay explicit.
+That declares the **entire file** lives in `net.http`. A second `mod` declaration in that file is a **duplicate file-scoped module** error, not a suggestion.
 
 ## Inline vs file-scoped
 
@@ -24,11 +24,11 @@ That declares the **entire file** lives in `net.http`. Additional `mod` declarat
 | --- | --- |
 | File-scoped `mod a.b;` | Stable package-like files, API surfaces |
 | Path-derived module | Quick scripts, small tools |
-| Inline `pub mod` (non-file-scoped files) | Nested modules inside a parent file |
+| Inline `pub mod inner { ... }` | Nested modules inside a parent file |
 
 ## Folder patterns
 
-Map `domain.feature` → `domain/feature.bd` or nested folders as your tree convention demands—stay consistent within a repo so imports do not become a personality test.
+Map `domain.feature` to `domain/feature.bd` or nested folders as your tree convention demands. Stay consistent within a repo so imports do not become a personality test.
 
 ```mermaid
 flowchart TD
@@ -44,10 +44,4 @@ flowchart TD
 2. Keep implementation files under matching folders.
 3. Re-export only stable types/functions at the boundary (chapter [05](/book/05-names-nobody-agreed-on/)).
 
-## Standard reference (informative)
-
-- [Modules and Visibility](/platform-spec/language-meta/program-structure/modules-and-visibility/)
-
-## Next
-
-[Compilation units](/book/04-where-does-this-file-go/compilation-units/)
+See also the [Modules and Visibility](/platform-spec/language-meta/program-structure/modules-and-visibility/) reference.

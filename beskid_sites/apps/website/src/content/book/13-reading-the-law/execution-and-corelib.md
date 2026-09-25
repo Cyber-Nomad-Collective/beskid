@@ -18,7 +18,3 @@ Cross-domain features may link to both hubs. Follow those links rather than assu
 ## Trace into code carefully
 
 Once you have identified the feature, use its implementation anchors and tests as supporting evidence. The standard remains the authority for observable behavior; source layout is allowed to change.
-
-## Hub
-
-[13. Reading the law](/book/13-reading-the-law/)

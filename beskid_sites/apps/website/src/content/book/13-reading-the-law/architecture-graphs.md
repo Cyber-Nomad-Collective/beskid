@@ -13,8 +13,4 @@ Architecture graphs are a reading aid, not a replacement for the requirements th
 3. Follow the named feature links for the rule or decision you need.
 4. Use [crate-to-spec anchors](/platform-spec/compiler/implementation-map/crate-to-spec-anchors/) only after you know which requirement you are tracing into code.
 
-Graphs answer “where does this fit?”; the standard answers “what is required?”. When a graph and prose appear to disagree, treat the linked standard document as the authority and report the mismatch.
-
-## Hub
-
-[13. Reading the law](/book/13-reading-the-law/)
+Graphs answer "where does this fit?"; the standard answers "what is required?" When a graph and prose appear to disagree, treat the linked standard document as the authority and report the mismatch.

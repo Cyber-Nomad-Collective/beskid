@@ -10,7 +10,7 @@ CI for monorepos is where "works on my machine" goes to die publicly. Good.
 
 Run `lock` / `fetch` in CI with `--frozen` (or project-equivalent flags) so manifest drift fails the pipeline instead of production.
 
-Commit **per-project** `Project.lock` files (and workspace-level lock artifacts if your layout uses them—follow [lockfile guide](/book/reference/projects/lockfile/)).
+Commit **per-project** `Project.lock` files (and workspace-level lock artifacts if your layout uses them; follow the [lockfile guide](/book/reference/projects/lockfile/)).
 
 ## Matrix strategy
 
@@ -20,7 +20,7 @@ Commit **per-project** `Project.lock` files (and workspace-level lock artifacts 
 | Single job builds all | Cheaper | Harder to see who broke |
 | Affected detection | Fast at scale | Needs tooling investment |
 
-Start simple: build `App` + run `Test` target for each member you ship.
+Start simple: build `App` and run `Test` target for each member you ship.
 
 ```mermaid
 flowchart TD
@@ -34,15 +34,8 @@ flowchart TD
 
 Checkout must include all member folders referenced by relative paths. Shallow clones that omit `libs/` are a classic self-own.
 
-## Website / superrepo note
+## Superrepo note
 
-The Beskid superrepo itself is an aggregate of submodules—your application monorepo is a smaller cousin. Same lesson: **pin tool versions** (`beskid --version` in logs).
+The Beskid superrepo itself is an aggregate of submodules; your application monorepo is a smaller cousin. Same lesson: **pin tool versions** (`beskid --version` in logs).
 
-## Reference
-
-- [Workspace monorepo setup](/book/reference/workspace-monorepo/)
-- [Workspace and lock contracts](/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/)
-
-## Next chapter
-
-[07. The compiler is not your therapist](/book/07-compiler-is-not-your-therapist/)
+See also [workspace monorepo setup](/book/reference/workspace-monorepo/) and [workspace and lock contracts](/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/).

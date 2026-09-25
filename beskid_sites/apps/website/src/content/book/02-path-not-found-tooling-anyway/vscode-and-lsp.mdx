@@ -14,7 +14,7 @@ Published on Open VSX: [beskid-vscode](https://open-vsx.org/extension/beskid/bes
 The extension registers:
 
 - `beskid` for `*.bd` sources
-- `beskid-proj` for `*.proj` manifests (highlighting + the same LSP project model)
+- `beskid-proj` for `*.bproj`/`*.bws` manifests (highlighting + the same LSP project model)
 
 <Aside type="tip">
 
@@ -36,14 +36,7 @@ Fix: align `beskid --version` with the LSP binary the extension launches.
 ## What LSP gives you (week one)
 
 - Diagnostics on save / open
-- Basic navigation hooks (exact feature set grows with the server—see [LSP architecture](/book/reference/lsp/architecture-and-protocol-spec/))
-- Project-aware analysis rooted at `Project.proj`
+- Basic navigation hooks (exact feature set grows with the server; see [LSP architecture](/book/reference/lsp/architecture-and-protocol-spec/))
+- Project-aware analysis rooted at your `.bproj` manifest
 
-## Deep reference
-
-- [Guides / LSP](/book/reference/lsp/)
-- [Platform spec — tooling / editor integration](/platform-spec/tooling/) (as indexed in platform-spec)
-
-## Next
-
-[CLI tour](/book/02-path-not-found-tooling-anyway/cli-tour/)
+See [Guides / LSP](/book/reference/lsp/) for the full protocol and architecture reference.

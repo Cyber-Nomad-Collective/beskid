@@ -16,7 +16,3 @@ Open the [Tooling hub](/platform-spec/tooling/) for contracts around the command
 | Consume or publish packages | [Registry client](/platform-spec/tooling/registry-client/) |
 
 The [Book reference](/book/reference/) is the practical companion for command walkthroughs. Follow the standard link whenever a workflow depends on a contract rather than a local convenience.
-
-## Hub
-
-[13. Reading the law](/book/13-reading-the-law/)

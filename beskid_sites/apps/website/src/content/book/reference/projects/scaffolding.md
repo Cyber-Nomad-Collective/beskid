@@ -50,9 +50,9 @@ beskid new --git https://example.com/templates --git-ref main --git-subpath cons
 
 | `tags.type` | Creates |
 | --- | --- |
-| `project` | New directory with `Project.proj` and scaffold sources |
-| `workspace` | `Workspace.proj` plus member project trees |
-| `item` | Files inside an existing project; use `--project` for the host `Project.proj` |
+| `project` | New directory with a `.bproj` manifest and scaffold sources |
+| `workspace` | A `.bws` workspace manifest plus member project trees |
+| `item` | Files inside an existing project; use `--project` for the host `.bproj` manifest |
 
 Use **`--no-interactive`** in CI with every required symbol set via **`-n` / `--name`** or **`--symbol id=value`**. Use **`--force`** to write into a non-empty output directory.
 
@@ -64,7 +64,7 @@ Every **instantiated** ordinary **host** project (**`project.type` omitted or `H
 
 ## Authoring template packages
 
-Template authors use **`project.type = Template`** in `Project.proj` and publish with **`beskid pckg pack`** (sets **`packageKind: template`**, includes **`.beskid/template.json`**, skips **`api.json`** generation). See [beskid pckg](/book/reference/cli/commands/pckg/) and [Template packages](/platform-spec/tooling/project-scaffolding/template-packages/).
+Template authors use **`project.type = Template`** in the `.bproj` manifest and publish with **`beskid pckg pack`** (sets **`packageKind: template`**, includes **`.beskid/template.json`**, skips **`api.json`** generation). See [beskid pckg](/book/reference/cli/commands/pckg/) and [Template packages](/platform-spec/tooling/project-scaffolding/template-packages/).
 
 ## Related
 

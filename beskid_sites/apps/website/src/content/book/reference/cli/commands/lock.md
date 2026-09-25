@@ -9,14 +9,14 @@ Runs the resolver to synchronize **`Project.lock`** for the selected project. Un
 
 | Argument | Description |
 | --- | --- |
-| `--project` | Project directory or `Project.proj` path |
+| `--project` | Project directory or `.bproj` manifest path |
 | `--target` | Target name from the manifest |
-| `--workspace-member` | Workspace member when resolving via `Workspace.proj` |
+| `--workspace-member` | Workspace member when resolving via a `.bws` workspace manifest |
 
 ## Example
 
 ```bash
-beskid lock --project path/to/Project.proj
+beskid lock --project path/to/MyApp.bproj
 ```
 
 [← Back to CLI command reference](/book/reference/cli/command-reference/)

@@ -10,9 +10,9 @@ AOT-compiles a resolved Beskid program and writes build artifacts. Executable an
 | Argument | Description |
 | --- | --- |
 | `[INPUT]` | Optional `.bd` entry |
-| `--project` | Project directory or `Project.proj` path |
+| `--project` | Project directory or `.bproj` manifest path |
 | `--target` | Target name from the manifest |
-| `--workspace-member` | Workspace member when resolving via `Workspace.proj` |
+| `--workspace-member` | Workspace member when resolving via a `.bws` workspace manifest |
 | `--frozen` | Require lockfile match; forbid updates |
 | `--locked` | Require an existing lockfile |
 | `--entrypoint` | Entry function when applicable |
@@ -44,7 +44,7 @@ AOT-compiles a resolved Beskid program and writes build artifacts. Executable an
 ## Example
 
 ```bash
-beskid build --project path/to/Project.proj --release
+beskid build --project path/to/MyApp.bproj --release
 ```
 
 [← Back to CLI command reference](/book/reference/cli/command-reference/)

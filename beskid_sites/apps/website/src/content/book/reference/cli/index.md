@@ -10,7 +10,7 @@ The `beskid` binary is the primary interface for local development, CI, and edit
 - [Command reference](/book/reference/cli/command-reference/) — index of all subcommands; each command has its own page under [`/book/reference/cli/commands/`](/book/reference/cli/commands/parse/).
 - [Formatter internals](/book/reference/cli/formatter-development/) — how `Emit` / `EmitCtx` work for contributors extending the pretty-printer.
 - [LSP guide](/book/reference/lsp/) — document formatting uses the same engine as `beskid format`.
-- [Package client CLI](/book/18-packages-without-npm-trauma/pckg-cli/) — implemented `beskid pckg` vs planned `beskid pkg`.
+- [Package client CLI](/book/18-packages-without-npm-trauma/pckg-cli/) — tutorial walkthrough of `beskid pckg` (the real command; there is no `beskid pkg`).
 - [beskid new](/book/reference/cli/commands/new/) — template list, install, and instantiate.
 - [beskid pckg](/book/reference/cli/commands/pckg/) — pack, upload, and registry subcommands.
 
@@ -22,7 +22,7 @@ beskid test path/to/file.bd
 beskid format path/to/file.bd --write
 beskid fmt path/to/src --write
 beskid format path/to/tree --check
-beskid build --project path/to/Project.proj
+beskid build --project path/to/MyApp.bproj
 ```
 
 Install prebuilt binaries from [Downloads](/downloads/) or build from the compiler repository.

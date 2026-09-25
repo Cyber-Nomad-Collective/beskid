@@ -20,9 +20,9 @@ Fixes:
 
 You installed successfully and the shell still cannot see it.
 
-1. `echo $PATH` — is the install bin directory present?
+1. `echo $PATH`: is the install bin directory present?
 2. New terminal after editing `~/.bashrc` / `~/.zshrc`.
-3. `type beskid` — is a shell alias/function shadowing the binary?
+3. `type beskid`: is a shell alias/function shadowing the binary?
 
 ## Version mismatch (CLI vs LSP vs project)
 
@@ -34,12 +34,9 @@ Align versions:
 - `beskid --version` vs the binary the extension launches.
 - Reinstall extension after upgrading CLI.
 
-## Corelib / standard library materialization
+## Corelib / standard library confusion
 
-Symptoms: errors mentioning missing corelib tree, stale std paths, or first-run download messages that never finish.
-
-- Set `BESKID_CORELIB_SOURCE` to a local corelib checkout when developing the standard library (see [corelib command](/book/reference/cli/commands/corelib/)).
-- Ensure network access if your environment blocks first-run extraction (corporate proxy special hell).
+The standard library is embedded in the CLI binary; `Core.*` is reachable in every project without a `use` statement and without installing anything. If you are developing the standard library itself and pointed `BESKID_CORELIB_SOURCE` at a stale or wrong local checkout, you will see errors mentioning a missing corelib tree or paths that do not resolve. Unset the variable, or point it at a tree produced by `beskid corelib [--output dir]` (see [corelib command](/book/reference/cli/commands/corelib/)).
 
 ## Permission and quarantine (macOS)
 
@@ -56,7 +53,3 @@ uname -a
 ```
 
 Open an issue with that block. Accusing the borrow checker is optional.
-
-## Next chapter
-
-[02. PATH not found — tooling anyway](/book/02-path-not-found-tooling-anyway/)

@@ -9,11 +9,11 @@ This document describes the project contract used by CLI, analysis, and LSP tool
 
 ## Canonical project manifest
 
-- File name: `Project.proj`
+- File name: `<name>.bproj` (exactly one per folder)
 - Location: project root directory
-- Format: HCL-based declarative manifest
+- Format: Bsol, an HCL-like declarative manifest language
 
-`Project.proj` is the source of truth for:
+`<name>.bproj` is the source of truth for:
 
 - project identity,
 - targets,
@@ -26,7 +26,7 @@ Minimum expected layout:
 
 ```text
 MyProject/
-├── Project.proj
+├── MyProject.bproj
 ├── Src/
 │   └── main.bd   # default source root (set `project.root = "src"` if you prefer lowercase)
 ├── obj/

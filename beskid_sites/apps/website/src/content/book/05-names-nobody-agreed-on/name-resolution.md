@@ -4,7 +4,7 @@ description: Scope-first lookup, import precedence, and ambiguity errors."
 tableOfContents: true
 ---
 
-Name resolution is the compiler answering **which declaration did you mean?** When the answer is "more than one," you get an ambiguity error—this is a feature.
+Name resolution is the compiler answering **which declaration did you mean?** When the answer is "more than one," you get an ambiguity error. That is a feature.
 
 ## Expression lookup order
 
@@ -24,7 +24,7 @@ flowchart TD
 
 ## Ambiguity
 
-If two imports provide the same **unaliased** name, the compiler errors. Fix with `as` aliases—do not rely on import order to "win."
+If two imports provide the same **unaliased** name, the compiler errors. Fix with `as` aliases. Do not rely on import order to "win."
 
 ## Imports do not override locals
 
@@ -34,10 +34,4 @@ Assuming `use Foo;` lets you shadow a local `Foo` is a fast path to embarrassmen
 
 Fully qualified paths follow module nesting declared by files and `mod` statements. When lost, `beskid analyze` with a one-file repro beats staring at folders.
 
-## Standard reference (informative)
-
-- [Name Resolution](/platform-spec/language-meta/program-structure/name-resolution/)
-
-## Next
-
-[pub use re-exports](/book/05-names-nobody-agreed-on/pub-use-reexports/)
+See also [Name Resolution](/platform-spec/language-meta/program-structure/name-resolution/) in the spec.

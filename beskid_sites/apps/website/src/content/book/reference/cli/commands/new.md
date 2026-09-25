@@ -45,10 +45,10 @@ When the registry is configured, these packages are resolved from pckg (not from
 | `--git-ref <ref>` | Branch, tag, or commit |
 | `--git-subpath <dir>` | Subdirectory within the repository |
 | `--package <id>[@version]` | Registry template package (`packageKind: template`) |
-| `--project <Project.proj>` | Host project for **item** templates |
+| `--project <name.bproj>` | Host project for **item** templates |
 | `--allow-yanked` | Continue after yanked-version warning |
 | `--strict-post-actions` | Fail on unknown post-action id |
-| `--allow-project-manifest` | Item template may write `Project.proj` |
+| `--allow-project-manifest` | Item template may write the `.bproj` manifest |
 
 ## `beskid new list` flags
 
@@ -69,7 +69,7 @@ beskid new install beskid.templates.console
 beskid new console -n MyApp -o ./MyApp
 beskid new lib --symbol name=MyLib --no-interactive -o ./MyLib
 beskid new --git https://git.example.com/templates --git-ref main --git-subpath lib -o ./Lib
-beskid new contract --symbol contractName=Foo -o ./Src/Foo.bd --project ./App/Project.proj
+beskid new contract --symbol contractName=Foo -o ./Src/Foo.bd --project ./App/App.bproj
 ```
 
 ## Exit codes

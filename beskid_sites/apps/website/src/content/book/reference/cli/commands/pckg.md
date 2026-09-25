@@ -15,14 +15,14 @@ For ordinary **library** projects (`project.type` omitted or `Host`), `beskid pc
 On **pckg**, the in-browser documentation browser lists Markdown from:
 
 - `docs/**/*.md` in the artifact
-- optional root `README.md` (from `readme.md` at package root, `readme = "path"` in `Project.proj`, or an explicit on-disk `README.md`)
+- optional root `README.md` (from `readme.md` at package root, `readme = "path"` in the `.bproj` manifest, or an explicit on-disk `README.md`)
 - **`.beskid/docs/**/*.md`** (same layout as Beskid pack output)
 
 You can also ship hand-written docs under a top-level `docs/` directory in the package source; those paths are packed as usual and appear alongside generated files.
 
 Entrypoint resolution for generation:
 
-1. `<source>/Project.proj` (preferred)
+1. `<source>/*.bproj` (preferred)
 2. `<source>/main.bd`, `<source>/src/main.bd`, or `<source>/index.bd`
 3. otherwise, exactly one `.bd` file under `<source>`
 
@@ -30,7 +30,7 @@ If no deterministic entrypoint can be inferred, packing fails with an explicit e
 
 ## Template packages (`project.type = Template`)
 
-When `Project.proj` declares **`type = Template`**, pack uses the **template profile**:
+When the `.bproj` manifest declares **`type = Template`**, pack uses the **template profile**:
 
 - sets root `package.json` **`packageKind: "template"`**
 - includes **`.beskid/template.json`** in the artifact (required at pack time; schema **`beskid.template.v1`**)
@@ -61,10 +61,10 @@ For multi-package workspaces (for example **corelib** with `foundation`, `runtim
 
 Multipart fields:
 
-- `artifact` (required) — ZIP whose root contains `Workspace.proj` and each member’s source tree (`Project.proj`, `src/`, optional `package.json`)
+- `artifact` (required) — ZIP whose root contains a `.bws` workspace manifest and each member’s source tree (`.bproj`, `src/`, optional `package.json`)
 - `versionBump` (optional `patch` | `minor` | `major`, default `patch`) — registry-assigned semver bump applied to **every** member package
 
-The server publishes each member as a separate package version, rewrites workspace **path** dependencies to **registry** references using the versions assigned in that upload, and rejects published `package.json` dependencies that still use `path` or `workspace` sources. Optional root `workspace.package.json` (`schema: beskid.workspace.package.v1`) and per-member `package.json` `pckg.configuration` / `pckg.overrides` supply publish metadata; `Workspace.proj` `override` blocks pin external dependency versions.
+The server publishes each member as a separate package version, rewrites workspace **path** dependencies to **registry** references using the versions assigned in that upload, and rejects published `package.json` dependencies that still use `path` or `workspace` sources. Optional root `workspace.package.json` (`schema: beskid.workspace.package.v1`) and per-member `package.json` `pckg.configuration` / `pckg.overrides` supply publish metadata; `.bws` workspace manifest `override` blocks pin external dependency versions.
 
 CLI support for bundling and calling this endpoint is planned; CI can call the HTTP API directly until then.
 
