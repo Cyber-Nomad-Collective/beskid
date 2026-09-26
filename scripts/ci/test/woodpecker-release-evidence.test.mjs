@@ -9,6 +9,16 @@ import test from "node:test";
 const validatorPath = new URL("../woodpecker-release-evidence.mjs", import.meta.url);
 const aggregatePath = new URL("../woodpecker-aggregate-release.mjs", import.meta.url);
 const packagePath = new URL("../woodpecker-package-platform.mjs", import.meta.url);
+
+test("Windows packaging derives all installer artwork from the distribution generator", () => {
+  const source = readFileSync(packagePath, "utf8");
+  const generator = source.indexOf('"windows/generate-brand-assets.sh"');
+  const msi = source.indexOf('"windows/build-msi.sh"');
+  const exe = source.indexOf('"windows/build-exe.sh"');
+  assert.ok(generator >= 0, "packager must call the distribution brand generator");
+  assert.ok(generator < msi && msi < exe, "generate assets before MSI and EXE packaging");
+  assert.doesNotMatch(source, /"magick"/, "packager must not maintain a second artwork recipe");
+});
 const SOURCE = {
   superrepo_commit: "a".repeat(40),
   compiler_commit: "b".repeat(40),

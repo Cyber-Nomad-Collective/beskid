@@ -9,6 +9,11 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ## [Unreleased]
 
+### Changed
+
+- Generate all Windows installer artwork through the distribution brand-asset
+  script before Woodpecker builds the MSI and setup EXE.
+
 ### Added
 
 - Add a protected manual Woodpecker publisher for the Linux x64 Beskid VS Code
