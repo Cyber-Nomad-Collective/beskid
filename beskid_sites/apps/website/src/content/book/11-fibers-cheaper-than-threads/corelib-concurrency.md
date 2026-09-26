@@ -39,7 +39,7 @@ A bug in `Join` returning the wrong variant is a corelib bug. A bug in a fiber w
 Sleeping and deadlines live in `Core.Time`, not in the concurrency package, because a deadline is a value and a sleep is a wait:
 
 ```beskid
-use Core.Time;
+use Std.Core.Time;
 
 match Time.Sleep(Time.FromMilliseconds(100_i64)) {
     Result::Ok(_) => (),

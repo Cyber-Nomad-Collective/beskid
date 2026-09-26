@@ -10,7 +10,7 @@ The CLI is the ground truth. Editors are a pretty face on the same pipeline.
 
 - Response files: `@file` expansion (Rust `argfile` convention).
 - Failures: diagnostic report (miette) + non-zero exit unless noted.
-- Corelib: implicit in every project, no `use` statement required; `BESKID_CORELIB_SOURCE` only matters if you are developing the standard library itself.
+- Corelib: injected into every project from the installed toolchain, so you never declare it (application code imports it under the `Std` root, for example `use Std.Core.Output;`); `BESKID_CORELIB_SOURCE` only matters if you are developing the standard library itself.
 
 Full tables: [CLI command reference](/book/reference/cli/command-reference/).
 

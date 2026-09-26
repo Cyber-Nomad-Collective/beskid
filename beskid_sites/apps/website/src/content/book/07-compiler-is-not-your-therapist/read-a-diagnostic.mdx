@@ -35,7 +35,7 @@ Errors stop the build. Warnings do not, and the correct number of warnings in a 
 
 ## The three you will hit on day one
 
-**E1105, unknown import path.** `use Core.Optinal;` with a typo, or a module that exists but is not reachable from this target. The compiler now rejects these outright instead of letting the program proceed with a missing module and failing later on E1101 for every symbol it would have provided. Check the spelling, then check chapter 04 for whether the file is where the module path says it is.
+**E1105, unknown import path.** `use Std.Core.Optinal;` with a typo, or a module that exists but is not reachable from this target. The compiler now rejects these outright instead of letting the program proceed with a missing module and failing later on E1101 for every symbol it would have provided. Check the spelling, then check chapter 04 for whether the file is where the module path says it is.
 
 **E1204, wrong number of arguments.** Either you called a function with the wrong arity, or you called a generic with the wrong number of type arguments. The message tells you which and shows the signature it expected.
 

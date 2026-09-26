@@ -15,8 +15,9 @@ That is the whole list. There is no search of the current directory, no lookup i
 
 ## What injection gives you
 
-- `Core.*` is reachable in every file without a `use`. Writing `use Core.Output;` is still fine and the corelib does it for clarity.
-- Everything else in the corelib workspace is in the graph and importable by module path: `use Concurrency.Fiber;`, `use Network.Tcp.TcpStream;`, `use Http.Client;`.
+- Corelib modules are imported under the `Std` root: `use Std.Core.Output;`, `use Std.Core.Optional;`. A bare `Output.WriteLine(...)` with no import is an unknown value, and `use Core.Output;` in application code is an E1105. A fully qualified call such as `Std.Core.Output.WriteLine("x")` needs no `use`.
+- `use Std.Concurrency.Fiber;` and `use Std.Testing.Assert;` resolve from an ordinary project. `Network`, `Http`, and `Console` are separate packages, and in a bare project `use Std.Network.Tcp;` and `use Std.Console.Console;` are rejected as unknown import paths. Treat their import form as something to confirm against your toolchain rather than something this page promises.
+- The unrooted form, `use Core.Results;`, is what you see inside the corelib packages and in projects that depend on the `corelib` package by name.
 - The lockfile records the resolved corelib packages like any other dependency, with their materialized paths under `obj/beskid/deps/src/`.
 
 ## Native imports are checked before emission

@@ -9,8 +9,8 @@ You have a manifest, modules, and imports. Now the compiler wants to talk about 
 Here is a program that uses most of what the chapter covers.
 
 ```beskid
-use Core.Output;
-use Core.Optional;
+use Std.Core.Output;
+use Std.Core.Optional;
 
 enum Shape {
     Circle(f64 radius),

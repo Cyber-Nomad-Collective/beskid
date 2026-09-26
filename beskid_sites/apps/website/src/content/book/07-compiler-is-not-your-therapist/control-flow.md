@@ -56,6 +56,8 @@ Matching on literals works too: `match kind { "circle" => ..., "rect" => ..., _ 
 
 ## Scoped `use`
 
+The `Network` imports in this example are the unrooted paths the corelib sources use, kept as written.
+
 ```beskid
 use Network.Tcp.TcpListener;
 use Network.Tcp.TcpStream;

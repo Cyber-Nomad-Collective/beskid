@@ -46,5 +46,5 @@ when:
   - event: push
     branch: main
   - event: manual
-    branch: [main, codex/woodpecker-migration]
+    branch: main
     evaluate: 'BESKID_TASK == "platform" || BESKID_TASK == "platform-publish"'

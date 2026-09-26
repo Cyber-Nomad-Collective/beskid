@@ -9,7 +9,7 @@ Two layers, deliberately separate.
 ## `Core.Output`, `Core.Input`, `Core.Error`
 
 ```beskid
-use Core.Output;
+use Std.Core.Output;
 
 Output.WriteLine("plain text");
 Output.Write("no newline");
@@ -18,6 +18,8 @@ Output.Write("no newline");
 Syscall-backed writes to standard output, input, and error. `WriteLine` appends the platform newline and panics only if the write itself fails, since there is nowhere left to report that. This is the layer `Main` uses for a hello world, and it knows nothing about colors, terminals, or whether stdout is a pipe.
 
 ## `Console`
+
+The import below is the module path as the package spells it. Whether your project reaches the `Console` package under the `Std` root depends on the toolchain, so confirm it before copying.
 
 ```beskid
 use Console;
