@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "5365c5045f280a2ba710ad002d20c96cfe6680da2f68f32f0a8e97268df62875",
+  "revision": "06b4f987fecf51544b8ece626aee8caa15f492eb1bdd69ff72eb91e1a240d056",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -39109,7 +39109,7 @@
       "path": "site/website/src/content/docs/book/00-why-beskid-exists/segfault-or-stop-the-world.md",
       "title": "segfault or stop-the-world",
       "authority": "informative",
-      "sourceHash": "8276d025b3f35304614063dd793c300af32944916d8fe15b76db6da6dc2d925b",
+      "sourceHash": "83136665b15ca36309920780239f29f7f215af6992703ebfcdc9a5796c8500ec",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -39118,7 +39118,7 @@
       "path": "site/website/src/content/docs/book/00-why-beskid-exists/shoulders-of-giants.md",
       "title": "Are we really standing on the shoulders of giants?",
       "authority": "informative",
-      "sourceHash": "4e72e988a04757f75add9b7cb821d4862d3ecea27afba94406cf1ede7c4b4b72",
+      "sourceHash": "41d7afe37587669807f9b700b1413eabe1162e676b0bf32f0eec7e871928ccfe",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -39174,7 +39174,7 @@
       "path": "site/website/src/content/docs/book/01-it-works-on-my-machine/downloads-and-releases.md",
       "title": "Downloads and rolling releases",
       "authority": "informative",
-      "sourceHash": "2ef29bfb4da21c94e4121a6f134f0cbccad1ec1517e715d5038eecc9d9f371a9",
+      "sourceHash": "b2dfdda131e6eddbe3b9d7c9912cb05baf54f1b882db86196d1422215b17cec3",
       "standardLinks": [
         "/platform-spec/tooling/cli-and-distribution/"
       ],
@@ -39185,7 +39185,7 @@
       "path": "site/website/src/content/docs/book/01-it-works-on-my-machine/first-smoke-test.md",
       "title": "First smoke test",
       "authority": "informative",
-      "sourceHash": "0ed029a4c59cf461f13293aec9187ee587363f10daca067fe28e9f8b7b8fd825",
+      "sourceHash": "6ec380bccfea111ff375f27eaec900f75c9fbb2bcef9e6cc4cc94d8989a83fc7",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -39205,7 +39205,7 @@
       "path": "site/website/src/content/docs/book/01-it-works-on-my-machine/install-scripts-and-path.md",
       "title": "Install scripts and PATH",
       "authority": "informative",
-      "sourceHash": "cf5b046d835e7ce332acf71e9e0bcd4a3a8eacac8311712eae181191c5e43f10",
+      "sourceHash": "3014a8fa657b4b914ef27bf8e10fa3c0f738505aa3301d8fabcedf181ef3f38e",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -39223,7 +39223,7 @@
       "path": "site/website/src/content/docs/book/02-path-not-found-tooling-anyway/cli-tour.md",
       "title": "CLI tour",
       "authority": "informative",
-      "sourceHash": "12504fb7bc385181924419a2d01a14056ccffac555568a1deffde4ab3d6ef336",
+      "sourceHash": "0306f4162f439163ea3aa9601a900f5d00d36b566cc66ba02d3e387ebb6c8d96",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -39232,7 +39232,7 @@
       "path": "site/website/src/content/docs/book/02-path-not-found-tooling-anyway/file-types-and-discovery.md",
       "title": "File types and discovery",
       "authority": "informative",
-      "sourceHash": "976ed3a45a79023c3014508db09b7cee6473d930579351874ee462cc88de62d6",
+      "sourceHash": "016f74ef68730e479abc837d6a0f818ffeef021318a97a90ebb51b02ce7825c1",
       "standardLinks": [
         "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/",
         "/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/"
@@ -39253,7 +39253,7 @@
       "path": "site/website/src/content/docs/book/02-path-not-found-tooling-anyway/logging-and-debug-flags.md",
       "title": "Logging and debug flags",
       "authority": "informative",
-      "sourceHash": "62e9cfa38dedab1e5316e262c1a8277886028466dffd1c83b3be973e75d48ef4",
+      "sourceHash": "f2ee72a8021e9ea075b7b3b4fd766030b772bf5d5e20537b38fa1736db209fed",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -39295,7 +39295,7 @@
       "path": "site/website/src/content/docs/book/03-project-proj-or-it-didnt-happen/bsol-and-the-config-stack.md",
       "title": "Bsol — structured config without YAML trauma",
       "authority": "informative",
-      "sourceHash": "1d3313c605c3d97bcb61689d2a055fe82e6725ea54147613b647d206af93646c",
+      "sourceHash": "27948f4f1d2ede5dccf840cd6e7889f685d5e46caa8fc294c26f9c7529eb9ed5",
       "standardLinks": [
         "/platform-spec/tooling/manifests-and-lockfiles/bsol/",
         "/platform-spec/tooling/manifests-and-lockfiles/bsol/design-model/",
@@ -39308,7 +39308,7 @@
       "path": "site/website/src/content/docs/book/03-project-proj-or-it-didnt-happen/fetch-lock-update.md",
       "title": "Fetch, lock, update",
       "authority": "informative",
-      "sourceHash": "3b5414c4eb5cb3a35590ed9ce3e3db098446d973fdacda40419c9c16aa844f84",
+      "sourceHash": "6c025249a5858f82fd6e561e6f4235c99afa07f53544611e2c1103f660421466",
       "standardLinks": [
         "/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/"
       ],
@@ -39339,7 +39339,7 @@
       "path": "site/website/src/content/docs/book/03-project-proj-or-it-didnt-happen/targets-and-outputs.md",
       "title": "Targets and outputs",
       "authority": "informative",
-      "sourceHash": "803fa54fca4b1b956b9bf057ae0c4d6b18752f63ec07d1d2167ee1407a6b9795",
+      "sourceHash": "c0528eae9b82387e5fcdf8f1338ec6bdbc335457d3decd5a96f28e6ee2cdb0bc",
       "standardLinks": [
         "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/"
       ],
@@ -39350,7 +39350,7 @@
       "path": "site/website/src/content/docs/book/03-project-proj-or-it-didnt-happen/tree-and-resolution.md",
       "title": "Tree and resolution",
       "authority": "informative",
-      "sourceHash": "4fba1d5fae74907b009333a7c787bbcebb2a3ebe3be0b03b11c6359aba7b03fc",
+      "sourceHash": "16847cddc1586ec798e7ab164c8aa8785dfbd9e8de688ab1d83fc1c09ee11ddb",
       "standardLinks": [
         "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/"
       ],
@@ -39361,7 +39361,7 @@
       "path": "site/website/src/content/docs/book/04-where-does-this-file-go/compilation-units.md",
       "title": "Compilation units",
       "authority": "informative",
-      "sourceHash": "cf335bc15c0a327314aa5b9d75b8ab60fb9f275793f690bd6d8fc0f489c35117",
+      "sourceHash": "74e259cacb7f77ee76b000197b2b97ed349ddb8b97c519d871ef0f98c0f59287",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -39370,7 +39370,7 @@
       "path": "site/website/src/content/docs/book/04-where-does-this-file-go/corelib-layout.md",
       "title": "Corelib layout",
       "authority": "informative",
-      "sourceHash": "e495ed2c925d8ee640f6fe507ec078317ab264a0f5ab0f285d983bd3ace06cb4",
+      "sourceHash": "f527b3755cf51a15434a6791fb1f6e7107aea82a0b166644dd653af4d77352db",
       "standardLinks": [
         "/platform-spec/core-library/",
         "/platform-spec/language-meta/type-system/types/"
@@ -39391,7 +39391,7 @@
       "path": "site/website/src/content/docs/book/04-where-does-this-file-go/module-layout.md",
       "title": "Module layout",
       "authority": "informative",
-      "sourceHash": "ba388a77452f16b5883b13f778c2c7e48724a496f2a6b08e4d8e8f27eeb93006",
+      "sourceHash": "97b53b7023ff23a1a22975f3d311830996ac470346453f5142204183b875d4cb",
       "standardLinks": [
         "/platform-spec/language-meta/program-structure/modules-and-visibility/"
       ],
@@ -39414,7 +39414,7 @@
       "path": "site/website/src/content/docs/book/05-names-nobody-agreed-on/diagnostics-you-will-see.mdx",
       "title": "Diagnostics you will see",
       "authority": "informative",
-      "sourceHash": "e66bfafb4fb05f213f4287fcf4b80a1aeeedf34ce6a4f805799de9d769edd38a",
+      "sourceHash": "1a133171f1f96f7bc673475fd758567cd45cebc9b4896415ad8f340f750e622f",
       "standardLinks": [
         "/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/"
       ],
@@ -39446,7 +39446,7 @@
       "path": "site/website/src/content/docs/book/05-names-nobody-agreed-on/name-resolution.md",
       "title": "Name resolution",
       "authority": "informative",
-      "sourceHash": "1dfe095c7b086250fa8859e3c6051ae7815aea13f85103229bdfcba6aa3826f2",
+      "sourceHash": "7179af1fc245ee8039bddcbbb7329a738803dca21910455e0a581019e9436234",
       "standardLinks": [
         "/platform-spec/language-meta/program-structure/name-resolution/"
       ],
@@ -39457,7 +39457,7 @@
       "path": "site/website/src/content/docs/book/05-names-nobody-agreed-on/pub-use-reexports.md",
       "title": "pub use re-exports",
       "authority": "informative",
-      "sourceHash": "b59b0766e2ed612c4e3b053148d3c0a2533e69829e1e240a779f1df5f5af9c65",
+      "sourceHash": "6e6455eda7ff98bff0097ee6ca77b2605a5b2021a2769892326fadc676c1170c",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -39466,7 +39466,7 @@
       "path": "site/website/src/content/docs/book/06-monorepo-as-coping-mechanism/dependency-cycles.md",
       "title": "Dependency cycles",
       "authority": "informative",
-      "sourceHash": "b85c2574ba6b0cbb40f7898559dbcb8e8afad0d40741b0dd12cc31df2a71c3d7",
+      "sourceHash": "bcd3b1d2f16014eb6a1a3d4ad744cd051666d00c92d5b37c3e44bfbaaa169bdb",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -39493,7 +39493,7 @@
       "path": "site/website/src/content/docs/book/06-monorepo-as-coping-mechanism/workspace-manifest.md",
       "title": "Workspace manifest",
       "authority": "informative",
-      "sourceHash": "67cf1b8571203d0e0c73dc3cc667ab1265bf6a096ff429bf8162e47777d8ef84",
+      "sourceHash": "1b12062f7ee26ab8500fce87dc887d5b5774f08d940021bb3d0543768327d1d4",
       "standardLinks": [
         "/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/"
       ],
@@ -39504,7 +39504,7 @@
       "path": "site/website/src/content/docs/book/07-compiler-is-not-your-therapist/control-flow.md",
       "title": "Control flow",
       "authority": "informative",
-      "sourceHash": "ee06d2b0d9b3fdce2a3fe2c328136a03376de5ee3053ae13c0dd31f523293f7f",
+      "sourceHash": "3b5639a5c20dba07db288563baedb73bb55e1bee1aa360c456ba26545d05b3ae",
       "standardLinks": [
         "/platform-spec/language-meta/surface-syntax/lexical-and-syntax/",
         "/platform-spec/language-meta/type-system/enums-and-match/",
@@ -39541,7 +39541,7 @@
       "path": "site/website/src/content/docs/book/07-compiler-is-not-your-therapist/lexical-basics.md",
       "title": "Lexical basics",
       "authority": "informative",
-      "sourceHash": "896261dd4999a1bf0af6a14743152dfddda7ecd4e8adc9a9207fb581bf4bada9",
+      "sourceHash": "d53efd255afa8f6eb98d7fadae71598208e682b05ee9c696c134a349a26a4040",
       "standardLinks": [
         "/platform-spec/language-meta/surface-syntax/lexical-and-syntax/",
         "/platform-spec/language-meta/surface-syntax/documentation-comments/"
@@ -39553,7 +39553,7 @@
       "path": "site/website/src/content/docs/book/07-compiler-is-not-your-therapist/option-and-nullability.mdx",
       "title": "Option and nullability",
       "authority": "informative",
-      "sourceHash": "eefc50e2e68a0619c7f73c0c16b805738270aa3f57a335e114a3fe4c1b68d3d3",
+      "sourceHash": "ec9a60dfeac18211bec7e2524dc6d5b4f4b28b05a38ea944a2dc9ee190ff0b27",
       "standardLinks": [
         "/platform-spec/language-meta/contracts-and-effects/error-handling/",
         "/platform-spec/language-meta/type-system/enums-and-match/",
@@ -39567,7 +39567,7 @@
       "path": "site/website/src/content/docs/book/07-compiler-is-not-your-therapist/read-a-diagnostic.mdx",
       "title": "Read a diagnostic",
       "authority": "informative",
-      "sourceHash": "3cb7194305d4ca300fd2b3685da986cb6f255beaf157890535f90d01a9cd5933",
+      "sourceHash": "7243bd2b4c26c9bf727ff576b663dc5a300d011d0278db333ff4930fafe93d29",
       "standardLinks": [
         "/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/",
         "/platform-spec/language-meta/"
@@ -39579,7 +39579,7 @@
       "path": "site/website/src/content/docs/book/07-compiler-is-not-your-therapist/types-and-generics.md",
       "title": "Types and generics",
       "authority": "informative",
-      "sourceHash": "3d87dc588705a64a0654331bd97504a6f9bee71559d28a9de89c3e32716b9b3f",
+      "sourceHash": "5cd5a300bea7be8a428df86156bc5422ef45ab777e524ca2a81ca1746bdeda25",
       "standardLinks": [
         "/platform-spec/language-meta/type-system/type-inference/",
         "/platform-spec/language-meta/type-system/method-dispatch/",
@@ -39593,7 +39593,7 @@
       "path": "site/website/src/content/docs/book/08-green-tests-red-production/arrange-act-assert.md",
       "title": "Arrange, act, assert",
       "authority": "informative",
-      "sourceHash": "5c583c5634aad294875a2b463424860adcf19bde912180ea7a6802fafa245e04",
+      "sourceHash": "0b6a150675f7bdc1627c8a00f887fc6fa38a371acaadb30b3b55a1b6cc37520d",
       "standardLinks": [
         "/platform-spec/language-meta/contracts-and-effects/testing/"
       ],
@@ -39615,7 +39615,7 @@
       "path": "site/website/src/content/docs/book/08-green-tests-red-production/conformance-vs-unit.md",
       "title": "Conformance vs unit",
       "authority": "informative",
-      "sourceHash": "9f697580e5db04e552e81d53103ceecbc5e459130c1dd13b07421c449570779f",
+      "sourceHash": "023333f773c7843787183eff0753900243601836e2936557dcf902917205e7ac",
       "standardLinks": [
         "/platform-spec/compiler/conformance/",
         "/platform-spec/compiler/conformance/conformance-evidence-policy/",
@@ -39653,7 +39653,7 @@
       "path": "site/website/src/content/docs/book/09-contracts-effects-and-polite-threats/contracts-in-source.md",
       "title": "Contracts in source",
       "authority": "informative",
-      "sourceHash": "da4613c076f99ad34264892052b4697d2e212bff26a50e248ba01db9ddc33338",
+      "sourceHash": "db5e372aca50c6635bb770ad2a02867c178da98957d1ea348865419c2efe56df",
       "standardLinks": [
         "/platform-spec/language-meta/contracts-and-effects/contracts/",
         "/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/"
@@ -39665,7 +39665,7 @@
       "path": "site/website/src/content/docs/book/09-contracts-effects-and-polite-threats/effects-and-purity.md",
       "title": "Effects and purity",
       "authority": "informative",
-      "sourceHash": "ff0df16a782cb3e6bf369ec1d9e77edd877f9b820fd2effe78a374488c8d7750",
+      "sourceHash": "5390acc7af227a52c9fb58d082b1a029b436d1bb86175ae68442e7ad446c43ca",
       "standardLinks": [
         "/platform-spec/language-meta/metaprogramming/metaprogramming/",
         "/platform-spec/language-meta/evaluation/",
@@ -39683,7 +39683,7 @@
       "path": "site/website/src/content/docs/book/09-contracts-effects-and-polite-threats/errors-and-results.md",
       "title": "Errors and Result",
       "authority": "informative",
-      "sourceHash": "a7514393ea4aa75ea6f52406bd8230bef2893cc6ba5e1c1c844fdb8a6626f244",
+      "sourceHash": "b22b5b696abe742d6e4b6dd7bbb3fb0f24b3d5276de47d45c3a2a81dd29822bd",
       "standardLinks": [
         "/platform-spec/language-meta/contracts-and-effects/error-handling/",
         "/platform-spec/language-meta/interop/interop-contracts/",
@@ -39734,7 +39734,7 @@
       "path": "site/website/src/content/docs/book/10-memory-without-billion-dollar-mistake/memory-model-overview.md",
       "title": "Memory model overview",
       "authority": "informative",
-      "sourceHash": "e9988f385d9b941a2ec47998bb3571f04deabd4b77271bd7fe5ae1a6cc488e89",
+      "sourceHash": "f1f43f90bb57b23a50c80aadca745d5af85badc72ae9d6225e550051d5fed114",
       "standardLinks": [
         "/platform-spec/language-meta/memory-model/memory-and-references/",
         "/platform-spec/execution/runtime/memory-and-gc-runtime-contract/",
@@ -39751,7 +39751,7 @@
       "path": "site/website/src/content/docs/book/10-memory-without-billion-dollar-mistake/ownership-preview.md",
       "title": "Ownership preview",
       "authority": "informative",
-      "sourceHash": "69580affe5289696b29eb2a2dbd11ce7616fde4cceb4c330d69b26831dc4c906",
+      "sourceHash": "d0b498c2ea8dac904c3f76751f38975f7bb46294c8ac42f9c7dc23ee7cb7f064",
       "standardLinks": [
         "/platform-spec/language-meta/evaluation/fibers-and-spawn/",
         "/platform-spec/language-meta/memory-model/memory-and-references/"
@@ -39776,7 +39776,7 @@
       "path": "site/website/src/content/docs/book/10-memory-without-billion-dollar-mistake/unsafe-and-extern-preview.md",
       "title": "Unsafe and extern preview",
       "authority": "informative",
-      "sourceHash": "c4e69d8273f66fbd9f59e11032755f266ecf8f1f76633d049ad6b204002f829c",
+      "sourceHash": "aa69cd0f87a01bbb2add6a0b77cea741306fa5d19cf8eeedc4a96f1fe87269fc",
       "standardLinks": [
         "/platform-spec/language-meta/interop/ffi-and-extern/",
         "/platform-spec/language-meta/interop/interop-contracts/",
@@ -39793,7 +39793,7 @@
       "path": "site/website/src/content/docs/book/11-fibers-cheaper-than-threads/channels-preview.md",
       "title": "Channels preview",
       "authority": "informative",
-      "sourceHash": "56dbe0f7aa778783a4fc38cd582ba7080bd5024e4d915914025a3a31c749c7d3",
+      "sourceHash": "b936046ddab7bf577814d6b1351e1524925ec317098fde98cdc4c17472849d81",
       "standardLinks": [
         "/platform-spec/core-library/concurrency/concurrency-package/",
         "/platform-spec/language-meta/evaluation/fibers-and-spawn/adr/0004-cross-fiber-events-use-channels/",
@@ -39806,7 +39806,7 @@
       "path": "site/website/src/content/docs/book/11-fibers-cheaper-than-threads/corelib-concurrency.md",
       "title": "Corelib concurrency",
       "authority": "informative",
-      "sourceHash": "6464a0123363aeb8c88b5ad6e177c1134ed31c14b340cd9078d235cd61c121de",
+      "sourceHash": "3e5ff2db4b6015f00fd7946d58c476dfcb485e871b033927a55cf13b583fe3f2",
       "standardLinks": [
         "/platform-spec/core-library/concurrency/concurrency-package/",
         "/platform-spec/language-meta/evaluation/fibers-and-spawn/",
@@ -39820,7 +39820,7 @@
       "path": "site/website/src/content/docs/book/11-fibers-cheaper-than-threads/evaluation-model.md",
       "title": "Evaluation model",
       "authority": "informative",
-      "sourceHash": "b43be83bbff7d7f32edebb686b63f68caedf6ac15e673bafe58bcb74bfb13c70",
+      "sourceHash": "e5d43c1c28df44cc358d286ad0925ef39ba6b0f723cf59215861bdb68abb5a78",
       "standardLinks": [
         "/platform-spec/language-meta/evaluation/lambdas-and-closures/",
         "/platform-spec/core-library/concurrency/concurrency-package/",
@@ -39833,7 +39833,7 @@
       "path": "site/website/src/content/docs/book/11-fibers-cheaper-than-threads/fibers-and-spawn.md",
       "title": "Fibers and spawn",
       "authority": "informative",
-      "sourceHash": "97e78884cf4f680efaa0b91c51721edeae4b509778f6edfc9585dbb5da4ce858",
+      "sourceHash": "9c648f628bae2d05bbefd5045146cb61574a339d0929abfd12ef9350475426ea",
       "standardLinks": [
         "/platform-spec/language-meta/evaluation/fibers-and-spawn/",
         "/platform-spec/core-library/concurrency/concurrency-package/decisions-record/",
@@ -39926,7 +39926,7 @@
       "path": "site/website/src/content/docs/book/12-the-normative-bible/language-law-vs-implementation.md",
       "title": "Language law vs implementation",
       "authority": "informative",
-      "sourceHash": "956a5c641960398c62875a3c368ca7e70c762b65dfdb6f03750330840dfa449d",
+      "sourceHash": "83d5863543d9961ee2a24ba64b580790e7cb88a68c1070414514f8eabea400d2",
       "standardLinks": [
         "/platform-spec/language-meta/",
         "/platform-spec/compiler/",
@@ -39947,7 +39947,7 @@
       "path": "site/website/src/content/docs/book/12-the-normative-bible/proposed-vs-standard.md",
       "title": "Proposed vs Standard",
       "authority": "informative",
-      "sourceHash": "405a43f2f186267b4f5d7569941f077dd60968ff5ef2ab6852ddddcbf21a894c",
+      "sourceHash": "9542e82775e76ba1f821da16d26e4c46e959cd2ea475c6b0e9be7547f8562e7e",
       "standardLinks": [
         "/platform-spec/community/spec-maintenance/spec-authority-and-decisions/",
         "/platform-spec/community/spec-maintenance/feature-hub-article-bundle-template/",
@@ -39960,7 +39960,7 @@
       "path": "site/website/src/content/docs/book/12-the-normative-bible/spec-leads-code.md",
       "title": "Spec leads code",
       "authority": "informative",
-      "sourceHash": "1fe3655675b903d338e41b4325cb552020230a58a2bbd8be5f2ee42a8c877bc7",
+      "sourceHash": "8813a9b03a0049f95974fd682db72cac2c341767ec39cf0c8c9b1af29e6815b7",
       "standardLinks": [
         "/platform-spec/",
         "/platform-spec/community/spec-maintenance/spec-authority-and-decisions/",
@@ -40059,7 +40059,7 @@
       "path": "site/website/src/content/docs/book/13-reading-the-law/platform-spec-home.md",
       "title": "Platform spec home",
       "authority": "informative",
-      "sourceHash": "627b9c24ceea05a1bdf4051b86379308a5aab5b3b37e146d060886e607cd71ce",
+      "sourceHash": "bccde4f844a18ec558cd7777aaa27a26674886bfa8bb2f0e3b1f3a5cbdee4407",
       "standardLinks": [
         "/platform-spec/",
         "/platform-spec/community/spec-maintenance/release-and-versioning-policy/",
@@ -40087,7 +40087,7 @@
       "path": "site/website/src/content/docs/book/14-from-source-to-runs/aot-build.md",
       "title": "AOT build",
       "authority": "informative",
-      "sourceHash": "6c9c7b3112ae2b0b2b8464ab58ead14641259f7974d7ebb86656d5027adc3014",
+      "sourceHash": "5d3720233fc227ac55a64666fabb1538cd17edcb3b321ac2ec2c4ee111ee0725",
       "standardLinks": [
         "/platform-spec/compiler/build-pipeline/backends-jit-aot/",
         "/platform-spec/compiler/compiler-mods/mod-host-bridge/aot-artifact-contract/",
@@ -40167,7 +40167,7 @@
       "path": "site/website/src/content/docs/book/14-from-source-to-runs/pipeline-overview.md",
       "title": "Pipeline overview",
       "authority": "informative",
-      "sourceHash": "e92562820a13c97b61f806e9ddae5f143fe35faa522e849a8ed69d5aed7398ff",
+      "sourceHash": "1ce011790aa083aa46573ec6d3cb91c380558355319016a8e2986176751d1671",
       "standardLinks": [
         "/platform-spec/compiler/build-pipeline/",
         "/platform-spec/tooling/cli/build-analyze-run-contract/",
@@ -40180,7 +40180,7 @@
       "path": "site/website/src/content/docs/book/14-from-source-to-runs/semantic-pipeline.md",
       "title": "Semantic pipeline",
       "authority": "informative",
-      "sourceHash": "8c991b3f9a3ac71a87941b1e82631de2e633f55239cb0d0a758abf61d50dfd48",
+      "sourceHash": "e3f122fe2b74851b88228abc798a7ae068ee8111b7d520a664ac43a83ed721d0",
       "standardLinks": [
         "/platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/",
         "/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/",
@@ -40207,7 +40207,7 @@
       "path": "site/website/src/content/docs/book/15-mods-plugins-with-consequences/generator-analyzer-rewriter.md",
       "title": "Generator, Analyzer, Rewriter",
       "authority": "informative",
-      "sourceHash": "b596a26cd8e00ad063d6e876b062c00ac0299f23b66302259c53d92187b1a767",
+      "sourceHash": "19e761e812d602509a728d776a8065cbb0998796c8603e64061c3a7a96ba5ecc",
       "standardLinks": [
         "/platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/",
         "/platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/",
@@ -40233,7 +40233,7 @@
       "path": "site/website/src/content/docs/book/15-mods-plugins-with-consequences/mod-sdk.md",
       "title": "Mod SDK",
       "authority": "informative",
-      "sourceHash": "222d74e44dd17ff6de3427c821a6fd53cbb8d835dfb5987fad3acee99d3b9cf8",
+      "sourceHash": "74df8d8c9b28b5f320d3a1e1486ad3fb9cbbe097b6ea9a23db43b2a95d6c7eca",
       "standardLinks": [
         "/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/",
         "/platform-spec/compiler/compiler-mods/",
@@ -40248,7 +40248,7 @@
       "path": "site/website/src/content/docs/book/15-mods-plugins-with-consequences/pipeline-phases.md",
       "title": "Pipeline phases",
       "authority": "informative",
-      "sourceHash": "24be99ada5d23b6233655a423482feec43005f92c63340edbb236b5e53c67b24",
+      "sourceHash": "7b99ee9bd95bfa244d962966c0165fa73bef7b859786afbf30e1220005bf864b",
       "standardLinks": [
         "/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/",
         "/platform-spec/compiler/compiler-mods/mod-host-bridge/flow-and-algorithm/",
@@ -40298,7 +40298,7 @@
       "path": "site/website/src/content/docs/book/16-corelib-batteries-with-opinions/index.mdx",
       "title": "Corelib: batteries with opinions",
       "authority": "informative",
-      "sourceHash": "7cc0cb93a141dc6625b12a1618051c8c30bd03a12e1eec8670f0b11866de641f",
+      "sourceHash": "1de45a7a5a22aea17541d68c8b5cc90c938fd390bb363104c403c549ca8fe9f2",
       "standardLinks": [
         "/platform-spec/"
       ],
@@ -40309,7 +40309,7 @@
       "path": "site/website/src/content/docs/book/16-corelib-batteries-with-opinions/injection-and-resolution.md",
       "title": "Injection and resolution",
       "authority": "informative",
-      "sourceHash": "22c64fbca1f5f03cc79ea7d75eb6b7336863130eccfa5871dd51f0da49daadc5",
+      "sourceHash": "96f80370bb230728a2397f39f00365719525aa4d6589cac52723147f724b738b",
       "standardLinks": [
         "/platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/",
         "/platform-spec/compiler/resolution-and-projects/"
@@ -40321,7 +40321,7 @@
       "path": "site/website/src/content/docs/book/16-corelib-batteries-with-opinions/runtime-backed-surfaces.md",
       "title": "Runtime-backed surfaces",
       "authority": "informative",
-      "sourceHash": "bb8018e7dee174a5a5bba29ccbc3d4a4b45d8129a7049152e5634fd912521d7c",
+      "sourceHash": "522ae40ee0cb75530697c33aee19780b9d4b806eb94faa64f75dfb47a53a5a2c",
       "standardLinks": [
         "/platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/",
         "/platform-spec/core-library/stability-and-api-shape/"
@@ -40345,7 +40345,7 @@
       "path": "site/website/src/content/docs/book/17-execution-abi-host-runtime/abi-and-host.md",
       "title": "ABI and host",
       "authority": "informative",
-      "sourceHash": "886eeb5d168f7dc998d8b02e6f8694084651d2eb6adac3f212b02b88ebff89eb",
+      "sourceHash": "7f778d8b4bdaba0fd319d6f2336b4c38d3e4b4f0afa967719cfb2dda420ab798",
       "standardLinks": [
         "/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/",
         "/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/"
@@ -40381,7 +40381,7 @@
       "path": "site/website/src/content/docs/book/17-execution-abi-host-runtime/index.mdx",
       "title": "Execution: ABI, host, and runtime",
       "authority": "informative",
-      "sourceHash": "fd93262c3902fcaf6455ac7a01dd85381e1c58f696244bf9bc92cc6ab6da1ca4",
+      "sourceHash": "ac2ed4f9f81bcc9e43e9d6782519c0a921be0f51e86f12d20abff2e30faae3b4",
       "standardLinks": [
         "/platform-spec/",
         "/platform-spec/execution/"
@@ -40404,7 +40404,7 @@
       "path": "site/website/src/content/docs/book/17-execution-abi-host-runtime/runtime-fibers.md",
       "title": "Runtime fibers",
       "authority": "informative",
-      "sourceHash": "fc9a315b9da2d40fa30265a1f22c4cbb704098b5f8ba469b439f291d642ab4e8",
+      "sourceHash": "b79308261e49fa1ddfb084342411af82723f577f35130736648a8452fb7e9715",
       "standardLinks": [
         "/platform-spec/community/project-inception/adr/0008-fibers-not-async-await/",
         "/platform-spec/execution/runtime/fiber-scheduler-and-stacks/",
@@ -40442,7 +40442,7 @@
       "path": "site/website/src/content/docs/book/18-packages-without-npm-trauma/pckg-cli.md",
       "title": "The pckg CLI",
       "authority": "informative",
-      "sourceHash": "d6a5e42c921cf76d57edbe302f7ba0191628a40c3694eea1dbea2b3733fedcc1",
+      "sourceHash": "7bafc68aeacd3bf6fe31e71082347c733ea7415b9d77299937dd91fd44376f9b",
       "standardLinks": [
         "/platform-spec/tooling/registry-client/",
         "/platform-spec/tooling/registry-client/pckg-client-contract/"
@@ -40463,7 +40463,7 @@
       "path": "site/website/src/content/docs/book/18-packages-without-npm-trauma/registry-versions.md",
       "title": "Registry-assigned versions",
       "authority": "informative",
-      "sourceHash": "f462400537ed90abbc393a7484dc66f27360620588650054d1266059024c7ca7",
+      "sourceHash": "2d378d14485735a6d77e0de85477452499ccd3e6a51b4304531ca23cfe8408b2",
       "standardLinks": [
         "/platform-spec/tooling/registry-client/package-kinds/",
         "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/"
@@ -40613,7 +40613,7 @@
       "path": "site/website/src/content/docs/book/21-ffi-and-forbidden-friendships/index.mdx",
       "title": "FFI and other forbidden friendships",
       "authority": "informative",
-      "sourceHash": "51edc76c42d134824dc06c1335e6dc75504bb77ed80815e720af03375a24e337",
+      "sourceHash": "50c1aca749b2788283dc3035af17b7ea30b28dffdb5fe4a1bf02e6c149c1140e",
       "standardLinks": [
         "/platform-spec/",
         "/platform-spec/language-meta/interop/",
@@ -40696,7 +40696,7 @@
       "path": "site/website/src/content/docs/book/22-so-you-want-to-contribute/index.mdx",
       "title": "So you want to contribute, huh?",
       "authority": "informative",
-      "sourceHash": "fb827b8ccf48d57cef3a294a1c59028880b39b8b8ba7dd1e083762eba243e34a",
+      "sourceHash": "f7e1c955a8085f2ef793df440a0714d3455cabeda4aa6e686a6c60c8ef62ecf5",
       "standardLinks": [
         "/platform-spec/community/spec-maintenance/"
       ],
@@ -40728,7 +40728,7 @@
       "path": "site/website/src/content/docs/book/appendix-spec-map.md",
       "title": "Appendix: Spec Map",
       "authority": "informative",
-      "sourceHash": "71ddf0d8a768f8b636cc99b61faff2e142c5cfc8312d99e186963c771d16b75e",
+      "sourceHash": "ff52ea2205f95d72d0315d81062a618cfa621e39efccd7c4e768d37df66c3090",
       "standardLinks": [
         "/platform-spec/tooling/cli/",
         "/platform-spec/tooling/cli/build-analyze-run-contract/",
