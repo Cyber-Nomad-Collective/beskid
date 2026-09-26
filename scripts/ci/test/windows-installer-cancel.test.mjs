@@ -52,3 +52,22 @@ try {
   const result = spawnSync("pwsh", ["-NoProfile", "-File", runner], { encoding: "utf8", timeout: 10000 });
   assert.equal(result.status, 0, result.stderr || result.stdout);
 });
+
+test("cleanup commands have a hard deadline even when a native command hangs", (t) => {
+  const dir = mkdtempSync(join(tmpdir(), "beskid-cancel-command-"));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  const fixture = join(dir, "idle.ps1");
+  const runner = join(dir, "runner.ps1");
+  writeFileSync(fixture, "Start-Sleep -Seconds 30\n");
+  writeFileSync(runner, `
+. '${helper.pathname}'
+try {
+  Invoke-BoundedCommand -FilePath 'pwsh' -ArgumentLine '-NoProfile -File ${fixture}' -TimeoutMs 300 | Out-Null
+  throw 'sleeping command unexpectedly completed'
+} catch {
+  if ($_.Exception.Message -notmatch 'timed out') { throw }
+}
+`);
+  const result = spawnSync("pwsh", ["-NoProfile", "-File", runner], { encoding: "utf8", timeout: 5000 });
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+});

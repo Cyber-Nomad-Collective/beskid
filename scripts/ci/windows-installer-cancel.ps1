@@ -1,7 +1,49 @@
 # Monitor Burn acquisition and close its progress window. A failed monitor
 # terminates the exact launched process tree before returning to the smoke.
-function Get-InstallerDescendantIds([int]$rootId) {
-  $all = @(Get-CimInstance Win32_Process)
+function Invoke-BoundedCommand([string]$filePath, [string]$argumentLine, [int]$timeoutMs) {
+  if ($timeoutMs -le 0) { throw 'Command timeout must be positive' }
+  $startInfo = New-Object System.Diagnostics.ProcessStartInfo
+  $startInfo.FileName = $filePath
+  $startInfo.Arguments = $argumentLine
+  $startInfo.UseShellExecute = $false
+  $startInfo.RedirectStandardOutput = $true
+  $startInfo.RedirectStandardError = $true
+  $process = New-Object System.Diagnostics.Process
+  $process.StartInfo = $startInfo
+  $started = $false
+  try {
+    if (-not $process.Start()) { throw "Could not start $filePath" }
+    $started = $true
+    $stdout = $process.StandardOutput.ReadToEndAsync()
+    $stderr = $process.StandardError.ReadToEndAsync()
+    if (-not $process.WaitForExit($timeoutMs)) {
+      $process.Kill()
+      if (-not $process.WaitForExit(2000)) { throw "$filePath timed out and could not be stopped" }
+      throw "$filePath timed out after $timeoutMs ms"
+    }
+    if (-not $stdout.Wait(2000) -or -not $stderr.Wait(2000)) { throw "$filePath output drain timed out" }
+    return [pscustomobject]@{ ExitCode=$process.ExitCode; Stdout=$stdout.Result; Stderr=$stderr.Result }
+  } finally {
+    if ($started -and -not $process.HasExited) {
+      $process.Kill()
+      [void]$process.WaitForExit(2000)
+    }
+    $process.Dispose()
+  }
+}
+
+function Get-CleanupRemainingMs([datetime]$deadline) {
+  $remaining = [int]($deadline - [DateTime]::UtcNow).TotalMilliseconds
+  if ($remaining -le 0) { throw 'Installer cleanup exceeded its deadline' }
+  return [Math]::Min($remaining, 5000)
+}
+
+function Get-InstallerDescendantIds([int]$rootId, [int]$timeoutMs = 5000) {
+  $script = 'Get-CimInstance Win32_Process | Select-Object ProcessId,ParentProcessId | ConvertTo-Json -Compress'
+  $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($script))
+  $snapshot = Invoke-BoundedCommand 'powershell.exe' "-NoProfile -NonInteractive -EncodedCommand $encoded" $timeoutMs
+  if ($snapshot.ExitCode -ne 0) { throw "Process enumeration failed: $($snapshot.Stderr)" }
+  $all = @($snapshot.Stdout | ConvertFrom-Json)
   $ids = @($rootId)
   for ($index = 0; $index -lt $ids.Count; $index++) {
     $parentId = $ids[$index]
@@ -12,21 +54,26 @@ function Get-InstallerDescendantIds([int]$rootId) {
 
 function Stop-InstallerProcessTree([System.Diagnostics.Process]$process) {
   if ($env:OS -eq 'Windows_NT') {
+    $deadline = [DateTime]::UtcNow.AddSeconds(20)
     $ids = @($process.Id)
     $scanFailed = $false
-    try { $ids += @(Get-InstallerDescendantIds $process.Id) }
+    try { $ids += @(Get-InstallerDescendantIds $process.Id (Get-CleanupRemainingMs $deadline)) }
     catch { $scanFailed = $true }
+    $killFailed = $false
     foreach ($id in @($ids | Select-Object -Unique | Sort-Object -Descending)) {
-      & taskkill.exe /PID $id /T /F *> $null
+      try { [void](Invoke-BoundedCommand 'taskkill.exe' "/PID $id /T /F" (Get-CleanupRemainingMs $deadline)) }
+      catch { $killFailed = $true }
     }
     if ($scanFailed) { throw 'Could not enumerate installer descendants during cleanup' }
-    $remaining = @(Get-CimInstance Win32_Process | Where-Object { $ids -contains $_.ProcessId })
-    if ($remaining.Count) { throw "Could not stop installer process tree: $($remaining.ProcessId -join ',')" }
+    $remaining = @(Get-InstallerDescendantIds $process.Id (Get-CleanupRemainingMs $deadline))
+    $process.Refresh()
+    if ($killFailed -or -not $process.HasExited -or $remaining.Count) { throw "Could not stop installer process tree: $($remaining -join ',')" }
   } else {
     $process.Refresh()
     if (-not $process.HasExited) { $process.Kill($true) }
   }
-  if (-not $process.WaitForExit(10000)) { throw "Installer process $($process.Id) did not stop within ten seconds" }
+  $waitMs = if ($env:OS -eq 'Windows_NT') { Get-CleanupRemainingMs $deadline } else { 10000 }
+  if (-not $process.WaitForExit($waitMs)) { throw "Installer process $($process.Id) did not stop within cleanup deadline" }
 }
 
 function Invoke-DownloadCancellation(
