@@ -14,22 +14,19 @@ Authority: [Specification authority and embedded decisions](/platform-spec/commu
 
 ```mermaid
 gitGraph
-  accTitle: Spec change then implementation change
-  accDescr: A branch changes the specification and merges to main, then an implementation branch carries compiler, corelib or tooling changes with conformance tests and OpenSpec validation before merging.
+  accTitle: Spec change and implementation in one change set
+  accDescr: A design gap or bug starts one branch. The branch carries the OpenSpec change with its spec delta, then the compiler, corelib or tooling changes, conformance tests and OpenSpec validation, and merges to main together.
   commit id: "design gap or bug"
-  branch spec
-  commit id: "spec PR"
-  checkout main
-  merge spec
-  branch implementation
+  branch change
+  commit id: "openspec change and spec delta"
   commit id: "compiler, corelib, tooling"
   commit id: "conformance tests"
   commit id: "openspec validate"
   checkout main
-  merge implementation
+  merge change
 ```
 
-**Text equivalent:** A design gap or bug leads to a spec change merged first, then an implementation change with conformance tests and OpenSpec validation.
+**Text equivalent:** A design gap or bug leads to one change set. It carries the OpenSpec change with its spec delta, then the implementation, conformance tests and OpenSpec validation, and merges together.
 
 1. Classify the topic ([language law vs implementation](/book/12-the-normative-bible/language-law-vs-implementation/)).
 2. Extend the owning **feature hub** or article—no circular "canonical chapter is this page" stubs.

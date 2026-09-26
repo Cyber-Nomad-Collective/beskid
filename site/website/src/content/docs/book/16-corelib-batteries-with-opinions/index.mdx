@@ -41,7 +41,7 @@ The sources under `compiler/corelib/packages` are split into these packages.
 ```mermaid
 architecture-beta
   accTitle: Corelib packages
-  accDescr: The corelib sources are split into foundation, runtime, concurrency, console, network, http, interop, glue and compiler-sdk packages.
+  accDescr: The corelib sources are split into foundation, runtime, concurrency, console, network, http, interop, glue, compiler-sdk and pest-gen-schema packages.
   group packages(server)[compiler/corelib/packages]
   service foundation(server)[foundation] in packages
   service runtime(server)[runtime] in packages
@@ -52,6 +52,7 @@ architecture-beta
   service interop(server)[interop] in packages
   service glue(server)[glue] in packages
   service compiler_sdk(server)[compiler-sdk] in packages
+  service pest_gen_schema(server)[pest-gen-schema] in packages
   foundation:R --> L:network
   network:R --> L:http
 ```

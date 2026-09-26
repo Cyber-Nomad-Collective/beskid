@@ -18,15 +18,15 @@ sequenceDiagram
   participant GH as GitHub Releases
   participant Site as Website sync
   participant User as You
-  CI->>CI: Tag v* resolves channel and rolling semver
+  CI->>CI: Manual release run on main resolves channel and semver
   CI->>CI: Build matrix binaries
-  CI->>GH: Publish cli-stable or cli-unstable with cli-version.txt
+  CI->>GH: Publish immutable cli-v<version>, then cli-stable or cli-unstable with cli-version.txt
   Site->>GH: sync:cli-version reads the version
   Site-->>User: Downloads page and install scripts
   User->>GH: Install script fetches the channel binary
 ```
 
-**Text equivalent:** Compiler CI resolves a tagged release channel, builds the platform binaries, and publishes the release assets. The website then reads the release metadata and shows the matching download and install choices, and the install script fetches the binary from the release.
+**Text equivalent:** A manually started release run of Compiler CI resolves the release channel and version, builds the platform binaries, and publishes the release assets to an immutable tag and then the rolling channel tag. The website then reads the release metadata and shows the matching download and install choices, and the install script fetches the binary from the release.
 
 The website can sync displayed version from GitHub via `pnpm sync:cli-version` (see `packages/trudoc/scripts/sync-cli-version.mjs`), which updates `site/website/src/data/cli-version.json` and aligns `compiler/crates/beskid_cli/Cargo.toml` when you develop in the superrepo.
 

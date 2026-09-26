@@ -26,15 +26,16 @@ Corelib splits into **interlinked workspace packages** (not one monolithic `IO.b
 ```mermaid
 flowchart TD
   accTitle: Corelib layout
-  accDescr: Your application depends on corelib packages, which split into contract packages, higher-level console packages and syscall-backed runtime packages.
+  accDescr: Your application depends on corelib packages, which split into foundation packages, higher-level console packages and syscall-backed runtime packages.
   APP[Your App] --> CL[corelib packages]
-  CL --> CT["Contracts: Query.Contracts, Option"]
+  CL --> CT["Foundation: Option, Query"]
   CL --> CO[Higher-level console packages]
   CL --> RT["Runtime packages: syscall-backed I/O"]
   CO --> RT
+  RT --> CT
 ```
 
-**Text equivalent:** Your application depends on corelib packages: contracts such as `Option<T>`, higher-level console packages, and runtime packages with syscall-backed I/O. The console packages build on the runtime packages.
+**Text equivalent:** Your application depends on corelib packages: foundation (such as `Option<T>`), higher-level console packages, and runtime packages with syscall-backed I/O. The console packages build on the runtime packages, and the runtime packages build on foundation.
 
 ## Docs and `api.json`
 

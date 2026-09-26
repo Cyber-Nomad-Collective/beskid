@@ -50,10 +50,10 @@ flowchart LR
   root --> K[Package]
   root --> H[Shell and tools]
   S --> S1["parse, tree, analyze, doc, format, clif"]
-  B --> B1["build, run, test, repl, corelib, runtime-kit"]
-  P --> P1["fetch, lock, update, graph, new"]
+  B --> B1["build, run, test, repl, corelib, runtime-kit, mod"]
+  P --> P1["fetch, lock, update, graph, new, import"]
   K --> K1["pckg"]
-  H --> H1["hi, lsp, up, validate-bsol, migrate-bsol"]
+  H --> H1["dev, hi, lsp, up, validate-bsol, migrate-bsol"]
 ```
 
 ### Diagram text
