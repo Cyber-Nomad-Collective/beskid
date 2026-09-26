@@ -13,17 +13,17 @@ From [Compiler Mod SDK — pipeline interaction](/docs/standard/language-meta/me
 ```mermaid
 flowchart TB
   accTitle: Compiler Mod phase order
-  accDescr: Mod collection, generation, analysis, and rewriting finish before semantic processing continues into code generation.
+  accDescr: Mod collection and generation run first, then semantic rules, then mod analysis and rewriting, before lowering.
   collect[mod.collect — Collector scopes targets]
   generate[mod.generate — merge + reparse loops]
+  semantic[Semantic rules and composition.resolve]
   analyze[mod.analyze — diagnostics on merged program]
   rewrite[mod.rewrite — apply fixes]
-  semantic[Semantic rules continue]
-  lower[codegen.lower]
-  collect --> generate --> analyze --> rewrite --> semantic --> lower
+  lower[lower]
+  collect --> generate --> semantic --> analyze --> rewrite --> lower
 ```
 
-**Text equivalent:** The host collects Mod contracts, merges generated source, analyzes the merged program, and applies approved rewrites. Semantic processing then continues to code generation.
+**Text equivalent:** The host collects Mod contracts and merges generated source. Semantic processing and composition resolution run next. The host then analyzes the merged program, applies approved rewrites, and lowering follows.
 
 ## Host modules (`beskid_analysis::mod_host`)
 
