@@ -16,6 +16,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Add a Windows installer-matrix recorder and structural evidence validator;
   block manual release publication until disposable-VM provenance and trusted
   evidence transfer are integrated.
+- Automate the disposable-VM installer cancel smoke during Burn payload
+  acquisition and require ordered download/cancellation evidence in the gate.
 
 ### Added
 

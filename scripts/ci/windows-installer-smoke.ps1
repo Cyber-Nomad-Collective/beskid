@@ -21,7 +21,7 @@ if (-not [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentit
   throw 'Run installer smoke from an elevated shell on a disposable VM'
 }
 $failure = @('offline','hash-failure','cancel') -contains $Scenario
-if ($Scenario -eq 'cancel') { throw 'Automated Burn UI cancellation is not implemented; cancel evidence cannot pass the release gate' }
+if ($failure -and $ResumeAfterReboot) { throw "$Scenario cannot resume after reboot" }
 foreach ($path in @($SetupExe,$Msi,$LockFile)) { if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { throw "Missing input: $path" } }
 New-Item -ItemType Directory -Force -Path $OutputDir | Out-Null
 $setupHash = (Get-FileHash -LiteralPath $SetupExe -Algorithm SHA256).Hash.ToLowerInvariant()
@@ -80,6 +80,41 @@ function Invoke-FreshCli([string]$verb) {
   return $true
 }
 
+function Invoke-DownloadCancellation([string]$setup, [string[]]$arguments, [string]$logPath) {
+  # Passive Burn shows its progress window and starts the chain without a human click.
+  $process = Start-Process -FilePath $setup -ArgumentList $arguments -PassThru
+  $deadline = [DateTime]::UtcNow.AddMinutes(10)
+  $acquisition = $null
+  while ([DateTime]::UtcNow -lt $deadline) {
+    $process.Refresh()
+    if ($process.HasExited) { throw "Cancel fixture exited before a bundle download began: $($process.ExitCode)" }
+    if (Test-Path -LiteralPath $logPath -PathType Leaf) {
+      $body = Get-Content -LiteralPath $logPath -Raw
+      $matches = [regex]::Matches($body, 'i338: Acquiring package: (VcRedistX64|VsBuildTools2022|LlvmX64), payload: ([A-Za-z0-9._-]+)')
+      if ($matches.Count) {
+        $acquisition = $matches[$matches.Count - 1]
+        $payload = $acquisition.Groups[2].Value
+        if ($body -match ('i336: Acquired payload: ' + [regex]::Escape($payload))) {
+          throw "Cancel fixture download completed before UI cancellation: $payload"
+        }
+        break
+      }
+    }
+    Start-Sleep -Milliseconds 100
+  }
+  if (-not $acquisition) { throw "Cancel fixture did not reach a Burn download within ten minutes; see $logPath" }
+  $process.Refresh()
+  if ($process.HasExited -or $process.MainWindowHandle -eq [IntPtr]::Zero -or -not $process.CloseMainWindow()) {
+    throw 'Cancel fixture could not close the visible Burn progress window during download'
+  }
+  if (-not $process.WaitForExit(120000)) { throw "Burn did not exit within two minutes after UI cancellation; see $logPath" }
+  return [pscustomobject]@{
+    ExitCode=$process.ExitCode;
+    Package=$acquisition.Groups[1].Value;
+    Payload=$acquisition.Groups[2].Value
+  }
+}
+
 $pendingPath = Join-Path $OutputDir "$Scenario.pending.json"
 $rebootVerified = $false
 if ($ResumeAfterReboot) {
@@ -115,6 +150,8 @@ if ($Scenario -eq 'upgrade') {
 }
 
 $log = Join-Path $OutputDir "$Scenario.log"
+$cancelEvidence = $null
+if ($Scenario -eq 'cancel' -and (Test-Path -LiteralPath $log)) { throw "Cancel smoke requires a fresh log path: $log" }
 if ($ResumeAfterReboot) {
   $observedSetupHash = $pending.observed_setup_sha256
   $exitCode = 3010
@@ -126,11 +163,16 @@ if ($ResumeAfterReboot) {
   }
   $observedSetupHash = (Get-FileHash -LiteralPath $runSetup -Algorithm SHA256).Hash.ToLowerInvariant()
   if ($Scenario -eq 'hash-failure' -and $observedSetupHash -eq $setupHash) { throw 'Hash-failure fixture must differ from release setup' }
-  $arguments = @('/quiet','/norestart','/log',"`"$log`"")
+  $arguments = @($(if ($Scenario -eq 'cancel') { '/passive' } else { '/quiet' }),'/norestart','/log',"`"$log`"")
   if ($Scenario -eq 'uninstall') { $arguments += '/uninstall' }
   elseif ($Scenario -eq 'repair-deselect') { $arguments += @('/repair','InstallDeveloperTools=0') }
   else { $arguments += '/install'; $arguments += $(if ($Scenario -in @('developer','community','preexisting','upgrade')) { 'InstallDeveloperTools=1' } else { 'InstallDeveloperTools=0' }) }
-  $result = Start-Process -FilePath $runSetup -ArgumentList $arguments -Wait -PassThru
+  if ($Scenario -eq 'cancel') {
+    $cancelEvidence = Invoke-DownloadCancellation $runSetup $arguments $log
+    $result = $cancelEvidence
+  } else {
+    $result = Start-Process -FilePath $runSetup -ArgumentList $arguments -Wait -PassThru
+  }
   $exitCode = $result.ExitCode
   if ($exitCode -eq 3010) {
     if ($failure) { throw "$Scenario returned reboot-required instead of the expected failure; see $log" }
@@ -146,8 +188,16 @@ if ($ResumeAfterReboot) {
   if ($failure) {
     if ($exitCode -eq 0) { throw "$Scenario unexpectedly succeeded; see $log" }
     $body = Get-Content -LiteralPath $log -Raw
-    $marker = if ($Scenario -eq 'offline') { 'download|network|internet' } else { 'hash|checksum|digest' }
+    $marker = if ($Scenario -eq 'offline') { 'download|network|internet' } elseif ($Scenario -eq 'cancel') { '0x800704c7|user cancel(?:ed|led)|user exit' } else { 'hash|checksum|digest' }
     if ($body -notmatch $marker) { throw "$Scenario log lacks the expected failure marker" }
+    if ($Scenario -eq 'cancel') {
+      $acquisition = 'i338: Acquiring package: ' + [regex]::Escape($cancelEvidence.Package) + ', payload: ' + [regex]::Escape($cancelEvidence.Payload)
+      $start = [regex]::Match($body, $acquisition)
+      $cancel = [regex]::Match($body, '0x800704c7|user cancel(?:ed|led)|user exit', [Text.RegularExpressions.RegexOptions]::IgnoreCase)
+      if (-not $start.Success -or -not $cancel.Success -or $cancel.Index -le $start.Index) { throw 'Cancel fixture lacks ordered Burn download and cancellation evidence' }
+      $completed = [regex]::Match($body, ('i336: Acquired payload: ' + [regex]::Escape($cancelEvidence.Payload)))
+      if ($completed.Success -and $completed.Index -lt $cancel.Index) { throw 'Cancel fixture payload was already acquired before cancellation' }
+    }
   } elseif ($exitCode -ne 0) { throw "$Scenario setup failed with exit code $exitCode; see $log" }
 }
 $after = Get-State
@@ -187,6 +237,11 @@ $report = [ordered]@{
   sdk_version=$after.sdk; llvm_version=$after.llvm; lld_link_executed=$after.lld;
   cli=$cli; fresh_environment=$true; reboot_verified=$rebootVerified; prior_version=$PriorVersion;
   installed_version=$installedVersionText
+}
+if ($Scenario -eq 'cancel') {
+  $report.cancel_trigger = 'burn-window-close'
+  $report.download_package = $cancelEvidence.Package
+  $report.download_payload = $cancelEvidence.Payload
 }
 $json = $report | ConvertTo-Json -Depth 8
 [System.IO.File]::WriteAllText((Join-Path $OutputDir "$Scenario.json"), $json, (New-Object System.Text.UTF8Encoding($false)))

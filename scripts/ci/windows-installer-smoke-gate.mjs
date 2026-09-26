@@ -9,6 +9,7 @@ const screenshots = ["welcome", "options", "progress", "success", "failure", "ms
   .flatMap(page => [`${page}-100`, `${page}-150`]);
 const hashPattern = /^[0-9a-f]{64}$/;
 const vendorIds = ["VcRedistX64", "VsBuildTools2022", "LlvmX64"];
+const burnCancellation = /(?:0x800704c7|user cancel(?:ed|led)|user exit)/i;
 
 function requireValue(condition, message) { if (!condition) throw new Error(message); }
 function file(dir, name) {
@@ -45,8 +46,23 @@ try {
     requireValue(typeof report.setup_log === "string" && report.setup_log === `${scenario}.log`, `${scenario}: missing setup log`);
     file(dir, report.setup_log);
     const log = readFileSync(join(dir, report.setup_log), "utf8");
-    const marker = scenario === "offline" ? /download|network|internet/i : scenario === "hash-failure" ? /hash|checksum|digest/i : scenario === "cancel" ? /cancel|user exit/i : null;
+    const marker = scenario === "offline" ? /download|network|internet/i : scenario === "hash-failure" ? /hash|checksum|digest/i : null;
     if (marker) requireValue(marker.test(log), `${scenario}: failure log lacks expected marker`);
+    if (scenario === "cancel") {
+      requireValue(report.cancel_trigger === "burn-window-close", "cancel: missing automated UI trigger");
+      requireValue(vendorIds.includes(report.download_package), "cancel: missing locked download package");
+      requireValue(typeof report.download_payload === "string" && /^[A-Za-z0-9._-]+$/.test(report.download_payload), "cancel: missing download payload");
+      const escapedPayload = report.download_payload.replaceAll(".", "\\.");
+      const acquisition = new RegExp(`i338: Acquiring package: ${report.download_package}, payload: ${escapedPayload}(?:,|\\s|$)`, "i");
+      const acquiredAt = log.search(acquisition);
+      requireValue(acquiredAt >= 0, "cancel: missing matching Burn acquisition");
+      const canceledAt = log.search(burnCancellation);
+      requireValue(canceledAt >= 0, "cancel: missing Burn cancellation confirmation");
+      requireValue(canceledAt > acquiredAt, "cancel: Burn cancellation was not after download acquisition");
+      const completed = new RegExp(`i336: Acquired payload: ${escapedPayload}(?:,|\\s|$)`, "i");
+      const completedAt = log.search(completed);
+      requireValue(completedAt < 0 || completedAt > canceledAt, "cancel: payload was already acquired before cancellation");
+    }
     requireValue(Number.isInteger(report.setup_exit_code), `${scenario}: missing setup exit code`);
     if (failures.has(scenario)) requireValue(report.setup_exit_code !== 0 && report.setup_exit_code !== 3010, `${scenario}: unexpected setup exit code`);
     else {

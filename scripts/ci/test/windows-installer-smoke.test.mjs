@@ -11,7 +11,9 @@ const scenarios = ["runtime", "developer", "community", "preexisting", "offline"
 const hash = "a".repeat(64);
 
 function evidence(dir, scenario, overrides = {}) {
-  writeFileSync(join(dir, `${scenario}.log`), `Burn log: ${scenario} ${scenario === "hash-failure" ? "hash mismatch" : scenario === "offline" ? "download failed" : scenario === "cancel" ? "cancelled" : "completed"}\n`);
+  writeFileSync(join(dir, `${scenario}.log`), scenario === "cancel"
+    ? "i338: Acquiring package: VcRedistX64, payload: VcRedistX64, download from: https://example.invalid/vendor.exe\nError 0x800704c7: User canceled installation.\n"
+    : `Burn log: ${scenario} ${scenario === "hash-failure" ? "hash mismatch" : scenario === "offline" ? "download failed" : "completed"}\n`);
   for (const image of ["welcome-100", "welcome-150", "options-100", "options-150", "progress-100", "progress-150", "success-100", "success-150", "failure-100", "failure-150", "msi-directory-100", "msi-directory-150"]) {
     writeFileSync(join(dir, `${image}.png`), "screenshot fixture");
   }
@@ -21,6 +23,7 @@ function evidence(dir, scenario, overrides = {}) {
     setup_sha256: hash, msi_sha256: hash, setup_log: `${scenario}.log`,
     observed_setup_sha256: scenario === "hash-failure" ? "b".repeat(64) : hash,
     setup_exit_code: scenario === "offline" || scenario === "hash-failure" || scenario === "cancel" ? 1 : 0,
+    ...(scenario === "cancel" ? { cancel_trigger: "burn-window-close", download_package: "VcRedistX64", download_payload: "VcRedistX64" } : {}),
     beskid_installed: !["offline", "hash-failure", "cancel", "uninstall"].includes(scenario),
     vendor_retained: true,
     community_unchanged: true,
@@ -40,11 +43,32 @@ function run(dir) {
 }
 function rejects(dir, pattern) { const result = run(dir); assert.notEqual(result.status, 0); assert.match(result.stderr, pattern); }
 
-test("fault recorder executes the prepared setup and refuses unautomated cancellation", () => {
+test("fault recorder executes the prepared setup and automates cancellation during download", () => {
   const source = readFileSync(recorder, "utf8");
   assert.match(source, /Start-Process -FilePath \$runSetup/);
-  assert.match(source, /if \(\$Scenario -eq 'cancel'\) \{ throw/);
+  assert.match(source, /Invoke-DownloadCancellation/);
+  assert.doesNotMatch(source, /Automated Burn UI cancellation is not implemented/);
   assert.doesNotMatch(source, /ObservedLog|ObservedExitCode/);
+});
+
+test("cancel evidence requires download-phase UI cancellation and Burn confirmation", (t) => {
+  const dir = mkdtempSync(join(tmpdir(), "beskid-installer-smoke-"));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  for (const scenario of scenarios) evidence(dir, scenario);
+  assert.equal(run(dir).status, 0, run(dir).stderr);
+  evidence(dir, "cancel", { cancel_trigger: undefined });
+  rejects(dir, /cancel.*trigger/);
+  evidence(dir, "cancel", { download_package: "" });
+  rejects(dir, /cancel.*download package/);
+  evidence(dir, "cancel");
+  writeFileSync(join(dir, "cancel.log"), "Error 0x800704c7: User canceled installation.\n");
+  rejects(dir, /cancel.*acquisition/);
+  writeFileSync(join(dir, "cancel.log"), "Error 0x800704c7: User canceled installation.\ni338: Acquiring package: VcRedistX64, payload: VcRedistX64\n");
+  rejects(dir, /cancel.*after download/);
+  writeFileSync(join(dir, "cancel.log"), "Command Line: /log C:\\smoke\\cancel.log\ni338: Acquiring package: VcRedistX64, payload: VcRedistX64\nError 0x80070002: Download failed.\n");
+  rejects(dir, /cancel.*confirmation/);
+  writeFileSync(join(dir, "cancel.log"), "i338: Acquiring package: VcRedistX64, payload: VcRedistX64\ni336: Acquired payload: VcRedistX64\nError 0x800704c7: User canceled installation.\n");
+  rejects(dir, /cancel.*already acquired/);
 });
 
 test("installer release gate requires every real Windows scenario", (t) => {
