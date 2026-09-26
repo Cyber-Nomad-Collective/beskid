@@ -7,7 +7,7 @@ tableOfContents: true
 If two fibers need to exchange data, they use a channel. Not a shared array with a `Mutex` around it, not a flag one of them polls. A channel.
 
 ```beskid
-use Concurrency.Channel;
+use Std.Concurrency.Channel;
 
 Channel<Request> queue = Channel<Request>.Create();
 

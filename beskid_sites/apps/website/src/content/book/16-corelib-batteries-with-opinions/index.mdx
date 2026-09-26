@@ -24,6 +24,6 @@ corelib/
     └── pest-gen-schema/          grammar generation support
 ```
 
-Three things follow from that layout. The resolver injects `corelib` into every project, so you never declare it and `Core.*` is reachable without an import. `beskid doc` generates the API reference from the same `///` comments the language server shows on hover, so there is one documentation source and it cannot drift from the signatures. And when something in `Core.IO.ReadExact` surprises you, you open `Core/IO/IO.bd` and read thirty lines of Beskid, because that is what it is.
+Three things follow from that layout. The resolver injects `corelib` into every project, so you never declare it, and application code imports it under the `Std` root, as in `use Std.Core.Output;`. `beskid doc` generates the API reference from the same `///` comments the language server shows on hover, so there is one documentation source and it cannot drift from the signatures. And when something in `Core.IO.ReadExact` surprises you, you open `Core/IO/IO.bd` and read thirty lines of Beskid, because that is what it is.
 
 The chapter covers the `corelib` command for getting that tree on disk, how injection and discovery work, the I/O, networking, and HTTP packages that arrived together, the console package, the documentation pipeline, and which surfaces are thin wrappers over runtime builtins versus pure Beskid.

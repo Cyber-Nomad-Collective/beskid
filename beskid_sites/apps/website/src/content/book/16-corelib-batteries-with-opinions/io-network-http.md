@@ -30,6 +30,8 @@ Anything that is a `Stream` and a `Disposable` works with the scoped `use` state
 
 ## `Network`
 
+The snippets below use the module paths as the corelib sources spell them, unrooted. How a project reaches the `Network` and `Http` packages is not settled by this page, so check the import form against your toolchain.
+
 ```beskid
 use Network.Dns;
 use Network.Tcp.TcpListener;

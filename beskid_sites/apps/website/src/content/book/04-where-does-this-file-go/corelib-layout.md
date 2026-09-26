@@ -25,7 +25,7 @@ Corelib splits into **interlinked workspace packages**, not one monolithic `IO.b
 - **concurrency**, **console**, **network**, **http**: opt-in packages for their respective domains
 - **interop**, **glue**, **compiler-sdk**, **pest-gen-schema**: tooling-facing packages
 
-`Core.*` is **implicit**: the resolver injects `corelib`'s foundation package into every project, so `Option<T>` and friends resolve with no `use` at all. The other packages (`Network`, `Http`, `Concurrency`, `Console`, ...) are ordinary dependencies and need an explicit `use` like anything else.
+The resolver injects `corelib` into every project, so you never declare it, but its modules are not in scope on their own. Application code reaches them under the `Std` root: `use Std.Core.Optional;`, `use Std.Core.Output;`, `use Std.Concurrency.Fiber;`. Inside the corelib packages themselves, and in projects that depend on the `corelib` package by name, the same modules are written without the root (`use Core.Results;`), which is why the corelib sources you read look different from your own.
 
 ## Docs and `api.json`
 

@@ -34,6 +34,6 @@ If `which` points somewhere unexpected, the shell is running whichever `beskid` 
 
 ## Corelib is implicit, not installed
 
-The standard library (`Core.*`, e.g. `Core.Output`, `Core.Optional`) is available to every project automatically; the resolver injects the corelib package for you, so you never write a `use` statement to reach it. There is nothing to install here.
+The standard library (`Core.*`, e.g. `Core.Output`, `Core.Optional`) is available to every project automatically; the resolver injects the corelib package for you, so you never declare it as a dependency. You still import what you use, under the `Std` root, for example `use Std.Core.Output;`. There is nothing to install here.
 
 If you are developing the standard library itself, `beskid corelib [--output dir]` copies the embedded corelib tree to disk so you have something to edit, and `BESKID_CORELIB_SOURCE` points the resolver at that materialized tree instead of the embedded one (see [CLI command reference](/book/reference/cli/command-reference/)). Application code never needs either.

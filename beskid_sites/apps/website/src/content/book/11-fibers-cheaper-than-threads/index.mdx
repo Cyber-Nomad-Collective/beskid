@@ -7,9 +7,9 @@ tableOfContents: true
 Threads are expensive. `async`/`await` is threads with extra syntax, two colors of function, and a decade of conference talks explaining why your `ConfigureAwait(false)` was in the wrong place. Beskid has `spawn`, which gives you a cooperative fiber and a typed handle, and channels, which are how fibers talk. That is the whole surface.
 
 ```beskid
-use Concurrency.Fiber;
-use Concurrency.Channel;
-use Core.Output;
+use Std.Concurrency.Fiber;
+use Std.Concurrency.Channel;
+use Std.Core.Output;
 
 i64 Sum(Channel<i64> input) {
     mut i64 total = 0_i64;
