@@ -1,7 +1,8 @@
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot '..\windows-installer-process.ps1')
 $psi = New-Object System.Diagnostics.ProcessStartInfo
-$psi.FileName = (Get-Command pwsh).Source
+$hostExe = if ($PSVersionTable.PSEdition -eq 'Desktop') { 'powershell.exe' } elseif ($env:OS -eq 'Windows_NT') { 'pwsh.exe' } else { 'pwsh' }
+$psi.FileName = Join-Path $PSHOME $hostExe
 $psi.Arguments = '-NoProfile -Command "[Console]::Error.Write((''e'' * 1048576)); [Console]::Out.Write((''o'' * 1048576))"'
 $psi.UseShellExecute = $false
 $psi.RedirectStandardOutput = $true
