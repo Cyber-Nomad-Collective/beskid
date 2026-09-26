@@ -16,6 +16,8 @@ Normative hub: [FFI and extern](/platform-spec/language-meta/interop/ffi-and-ext
 
 ```mermaid
 flowchart LR
+  accTitle: Extern boundary
+  accDescr: A Beskid callable crosses ABI profile rules to reach a native library or runtime export.
   beskid[Beskid callable]
   abi[ABI profile rules]
   native[Native library or runtime export]

@@ -25,9 +25,9 @@ Exact flags evolve with the CLI—cross-check [CLI command reference](/book/refe
 4. **Compare locked vs floating resolution** — `--frozen` / `--locked` when dependency drift is suspect.
 
 ```mermaid
-accTitle: Diagnostic isolation workflow
-accDescr: Reproduce a problem in the CLI, minimize the input, identify the failing phase, and check the Standard and diagnostic code.
 flowchart TD
+  accTitle: Diagnostic isolation workflow
+  accDescr: Reproduce a problem in the CLI, minimize the input, identify the failing phase, and check the Standard and diagnostic code.
   bug[Weird behavior] --> cli[Reproduce with CLI]
   cli --> small[Minimize file/target]
   small --> phase[Identify failing phase]

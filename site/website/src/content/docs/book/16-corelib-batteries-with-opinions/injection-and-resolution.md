@@ -14,8 +14,8 @@ You do not "add corelib like any other dependency" in the happy path. The analys
 
 ```mermaid
 flowchart TD
-  proj[Project.proj] --> graph[Resolution graph]
-  graph --> inj[Inject corelib]
+  proj[Project.proj] --> resolved[Resolution graph]
+  resolved --> inj[Inject corelib]
   inj --> canon[Canonical beskid_corelib tree]
   dev[BESKID_CORELIB_SOURCE override] -.-> canon
 ```

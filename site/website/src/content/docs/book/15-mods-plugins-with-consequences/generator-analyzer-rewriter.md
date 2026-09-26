@@ -31,6 +31,27 @@ Result<TTargetNode, FixError> Rewrite(TSourceNode sourceNode);
 
 Replaces any valid node with any other valid typed node—power with responsibility. Conflicts → diagnostics, not silent corruption.
 
+```mermaid
+sequenceDiagram
+  accTitle: Host calls into a Mod
+  accDescr: The host asks the Collector for targets, loops Generate calls with merge and reparse, asks the Analyzer for diagnostics and fixes, and applies the Rewriter to a node.
+  participant H as Mod host
+  participant M as Mod contracts
+  H->>M: Collector.Collect(request)
+  M-->>H: CollectTargetSet
+  loop up to maxGeneratorRounds
+    H->>M: Generator.Generate(request)
+    M-->>H: typed AST contribution
+    H->>H: merge and reparse
+  end
+  H->>M: Analyzer.Analyze(request)
+  M-->>H: diagnostics and quick fixes
+  H->>M: Rewriter.Rewrite(sourceNode)
+  M-->>H: Result of target node or FixError
+```
+
+**Text equivalent:** The host collects targets, then repeats generate, merge and reparse up to `maxGeneratorRounds`. It then runs the analyzer for diagnostics and fixes and applies the rewriter, which returns a `Result` with the target node or a `FixError`.
+
 ## Conflict policy
 
 Scheduling and determinism: [Incremental scheduling and determinism](/docs/standard/compiler/compiler-mods/incremental-scheduling-determinism/). When two mods fight over the same node, the host picks a documented winner or fails—read the ADRs before betting production on undocumented merge luck.

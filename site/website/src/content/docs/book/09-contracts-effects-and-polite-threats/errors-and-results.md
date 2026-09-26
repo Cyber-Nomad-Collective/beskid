@@ -16,6 +16,8 @@ Normative rules: [Error handling](/platform-spec/language-meta/contracts-and-eff
 
 ```mermaid
 flowchart LR
+  accTitle: Postfix question mark on a Result
+  accDescr: A Result expression passes through the postfix question mark: Ok continues with the success value and Err returns from the enclosing callable.
   expr[Expression with Result type]
   q[Postfix ?]
   ok[Continue with success value]

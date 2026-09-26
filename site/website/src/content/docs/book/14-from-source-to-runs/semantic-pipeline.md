@@ -22,9 +22,9 @@ After optional **generate/merge/reparse**, mods run **analyze** and **rewrite** 
 - [Analysis, query, and diagnostics facades](/docs/standard/compiler/compiler-mods/analysis-query-diagnostics-facade/)
 
 ```mermaid
-accTitle: Semantic processing order
-accDescr: Parsed syntax passes through Mod generation, semantic rules, optional rewrites, and then code generation.
 flowchart LR
+  accTitle: Semantic processing order
+  accDescr: Parsed syntax passes through Mod generation, semantic rules, optional rewrites, and then code generation.
   parse[Parsed AST]
   gen[mod.generate + merge]
   sem[Semantic rules]

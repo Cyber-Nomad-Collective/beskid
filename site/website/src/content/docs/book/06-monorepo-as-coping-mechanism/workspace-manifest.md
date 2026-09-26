@@ -26,16 +26,25 @@ Legacy **`Workspace.proj`** is rejected (**E1895**); rename to a `.bws` file (fo
 ## Minimal mental picture
 
 ```mermaid
-accTitle: Workspace membership
-accDescr: A bws workspace declares application and library members, and each member has its own bproj manifest.
-flowchart TD
-  W[CoreLib.bws] --> M1[member app]
-  W --> M2[member lib]
-  M1 --> P1[app.bproj]
-  M2 --> P2[lib.bproj]
+erDiagram
+  accTitle: Workspace manifest relationships
+  accDescr: A bws workspace declares members, overrides and registries; each member points to a bproj project, which defines targets and dependencies.
+  WORKSPACE ||--o{ MEMBER : declares
+  WORKSPACE ||--o{ OVERRIDE : "sets version policy"
+  WORKSPACE ||--o{ REGISTRY : lists
+  MEMBER ||--|| PROJECT : "path to bproj"
+  PROJECT ||--|{ TARGET : defines
+  PROJECT ||--o{ DEPENDENCY : declares
+  WORKSPACE {
+    string file "CoreLib.bws"
+    string defaultTestMember
+  }
+  PROJECT {
+    string file "app.bproj or lib.bproj"
+  }
 ```
 
-**Text equivalent:** `CoreLib.bws` lists the application and library members. Each member resolves to its own `.bproj` manifest.
+**Text equivalent:** A `.bws` workspace declares members, shared overrides and registries. Each member points at its own `.bproj` project, and that project defines targets and dependencies.
 
 ## Guides and spec
 

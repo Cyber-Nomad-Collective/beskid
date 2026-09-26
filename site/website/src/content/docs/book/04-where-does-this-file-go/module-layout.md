@@ -32,7 +32,9 @@ Map `domain.feature` → `domain/feature.bd` or nested folders as your tree conv
 
 ```mermaid
 flowchart TD
-  R[project.root / Src] --> F1[net/http.bd]
+  accTitle: Source files to module paths
+  accDescr: Files under the project source root map to module declarations such as net.http and net.http.client.
+  R["project.root / Src"] --> F1[net/http.bd]
   R --> F2[net/http/client.bd]
   F1 --> M1[mod net.http]
   F2 --> M2[mod net.http.client]

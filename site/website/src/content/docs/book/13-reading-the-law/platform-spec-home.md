@@ -12,6 +12,8 @@ Use the home page to select the domain that owns a question, not to infer a rule
 
 ```mermaid
 flowchart TB
+  accTitle: Platform specification domains
+  accDescr: The platform specification home leads to six domains, language meta, compiler, execution, core library, tooling and community.
   home[Platform specification]
   lm[Language meta]
   comp[Compiler]
@@ -26,6 +28,8 @@ flowchart TB
   home --> tool
   home --> comm
 ```
+
+**Text equivalent:** The home page leads to six domains: language meta, compiler, execution, core library, tooling and community.
 
 ## Reader chrome
 

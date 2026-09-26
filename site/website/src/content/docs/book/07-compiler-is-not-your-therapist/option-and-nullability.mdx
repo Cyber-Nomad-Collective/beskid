@@ -30,11 +30,22 @@ Do not model failure as `Option`—use `Result`-shaped enums for errors ([error 
 Use `match` on options (see [enums and match](/platform-spec/language-meta/type-system/enums-and-match/)). Calling methods on a maybe-absent value without narrowing is a compile error—not a Friday production mystery.
 
 ```mermaid
-flowchart TD
-  V[Value] --> M{match Option}
-  M -->|None| H0[handle absent]
-  M -->|Some| H1[use inner T]
+classDiagram
+  accTitle: Option as an enumeration
+  accDescr: Option of T is an enumeration with the variants Some and None, and a match on it handles both.
+  class Option~T~ {
+    <<enumeration>>
+    Some(T)
+    None
+  }
+  class MatchExpression {
+    handles None as absent
+    handles Some as inner T
+  }
+  MatchExpression ..> Option : narrows
 ```
+
+**Text equivalent:** `Option<T>` is an enumeration with variants `Some(T)` and `None`. A `match` narrows it, handling the absent case and using the inner `T` in the present case.
 
 ## Normative decisions
 

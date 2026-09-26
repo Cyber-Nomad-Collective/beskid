@@ -25,7 +25,9 @@ Instance calls resolve per [method dispatch](/platform-spec/language-meta/type-s
 
 ```mermaid
 flowchart TD
-  Q[Need absence?] -->|yes| O[Option T]
+  accTitle: Choosing a type for absence or failure
+  accDescr: Use Option of T when a value may be absent, a Result-shaped enum for failure, and a plain T when neither applies.
+  Q[Need absence?] -->|yes| O["Option T"]
   Q -->|failure| R[Result-shaped enum]
   Q -->|never| V[plain T]
 ```

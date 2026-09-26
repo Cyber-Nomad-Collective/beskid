@@ -11,18 +11,23 @@ We tell ourselves each generation **stands on the shoulders of giants**. In prac
 ## A compressed history of "getting further from the machine"
 
 ```mermaid
-flowchart TB
-  assembly["Assembly — you are the machine (sort of)"]
-  macros["Macros — copy-paste with consequences"]
-  c["C — portable enough, segfaults included"]
-  cpp["C++ — C with extra steps and a standards committee"]
-  vms["Managed VMs — write once, run anywhere (terms and conditions apply)"]
-  jit["JIT — optimize what you actually ran, eventually"]
-  highlevel["High-level — express intent, pray the runtime agrees"]
-  frameworks["Frameworks — express intent in the framework's dialect"]
-  lowcode["Low-code — express intent with buggy, react-flow bootstrapped nodes"]
-
-  assembly --> macros --> c --> cpp --> vms --> jit --> highlevel --> frameworks --> lowcode
+timeline
+  accTitle: From assembly to low-code
+  accDescr: Stages of moving further from the machine, from assembly through native languages and managed runtimes to frameworks and low-code.
+  title Getting further from the machine
+  section Machine level
+    Assembly : you are the machine (sort of)
+    Macros : copy-paste with consequences
+  section Native languages
+    C : portable enough, segfaults included
+    C++ : C with extra steps and a standards committee
+  section Managed runtimes
+    Managed VMs : write once, run anywhere (terms and conditions apply)
+    JIT : optimize what you actually ran, eventually
+  section Intent first
+    High-level : express intent, pray the runtime agrees
+    Frameworks : express intent in the framework's dialect
+    Low-code : express intent with buggy, react-flow bootstrapped nodes
 ```
 
 Each step traded **control** for **reach**:

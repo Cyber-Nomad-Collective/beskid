@@ -20,6 +20,29 @@ Normative feature: [Fibers and spawn](/platform-spec/language-meta/evaluation/fi
 
 The handle exposes **`OnCancelled`** as an event on the **child fiber handle**, not on the entry callable. Cancellation flows: **Cancel** → observe **OnCancelled** → **Join** / channel errors per the [decisions record](/platform-spec/core-library/concurrency/concurrency-package/decisions-record/).
 
+The handle is move-only. `Join` and `Detach` consume it, while `Cancel` only requests cancellation and leaves the handle usable.
+
+```mermaid
+stateDiagram-v2
+  accTitle: Fiber handle lifecycle
+  accDescr: A spawned fiber runs and can be cancelled. It ends as completed, cancelled, panicked or stack overflow and is then consumed by Join, or the handle is consumed early by Detach.
+  [*] --> Running: spawn
+  Running --> Running: Cancel requests cancellation
+  Running --> Completed: returns a value
+  Running --> Cancelled: cancellation observed
+  Running --> Panicked: child panics
+  Running --> StackOverflow: stack limit exceeded
+  Running --> Detached: Detach
+  Completed --> Joined: Join returns Ok
+  Cancelled --> Joined: Join returns Err Cancelled
+  Panicked --> Joined: Join returns Err Panicked
+  StackOverflow --> Joined: Join returns Err StackOverflow
+  Joined --> [*]
+  Detached --> [*]
+```
+
+**Text equivalent:** `spawn` starts a running fiber. `Cancel` may be called repeatedly while it runs. The fiber ends as completed, cancelled, panicked or stack overflow, and `Join` consumes the handle with the matching `Result`. `Detach` consumes the handle without joining and waives the shutdown join.
+
 ## Semantic rules (cheat sheet)
 
 | Rule | Consequence |

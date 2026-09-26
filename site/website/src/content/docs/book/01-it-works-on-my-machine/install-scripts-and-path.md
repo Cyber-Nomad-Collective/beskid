@@ -29,9 +29,9 @@ beskid --version
 If `which` points somewhere unexpected, you have competition:
 
 ```mermaid
-accTitle: PATH command selection
-accDescr: The shell selects the first Beskid command on PATH; an old or incompatible command causes misleading diagnostics.
 flowchart TD
+  accTitle: PATH command selection
+  accDescr: The shell selects the first Beskid command on PATH; an old or incompatible command causes misleading diagnostics.
   A[You type beskid] --> B{Which binary wins?}
   B -->|First on PATH| C[That binary runs]
   B -->|Wrong one| D[Old version / wrong arch / shell function]

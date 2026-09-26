@@ -22,13 +22,13 @@ Enum-like manifest fields (`kind`, `source`) are usually written **without** quo
 From the current working directory, tools walk upward (or accept explicit flags) to locate `App.bproj`. Workspace-aware flows also understand `Workspace.bws` members.
 
 ```mermaid
-accTitle: Project manifest discovery
-accDescr: The command walks from the current directory to find a bproj manifest, then uses its lockfile and materialized dependencies.
 flowchart TD
+  accTitle: Project manifest discovery
+  accDescr: The command walks from the current directory to find a bproj manifest, then uses its lockfile and materialized dependencies.
   cwd[Current directory] --> up[Walk parents]
-  up --> found{App.bproj?}
+  up --> found{"App.bproj?"}
   found -->|yes| root[Project root]
-  found -->|no| fail[Explicit --project required]
+  found -->|no| fail["Explicit --project required"]
   root --> lock[Project.lock + obj/beskid]
 ```
 

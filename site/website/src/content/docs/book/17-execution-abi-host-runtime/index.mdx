@@ -26,12 +26,21 @@ This chapter maps the [Execution](/platform-spec/execution/) domain to `beskid_a
 | [Conformance evidence](/book/17-execution-abi-host-runtime/conformance-evidence/) | Tests and spec traceability. |
 
 ```mermaid
-flowchart TB
-  codegen[beskid_codegen / engine] --> abi[beskid_abi]
-  abi --> rt[beskid_runtime]
-  rt --> os[OS / syscalls]
-  lang[Language-meta evaluation] --> rt
+architecture-beta
+  accTitle: Execution layers
+  accDescr: Generated code from the codegen and engine crates calls through the beskid_abi contract into runtime services, which reach the operating system through syscalls.
+  group gen(server)[Generated code]
+  service codegen(server)[beskid_codegen and beskid_engine] in gen
+  group contract(server)[Execution contract]
+  service abi(server)[beskid_abi] in contract
+  service rt(server)[Runtime services] in contract
+  service os(internet)[OS and syscalls]
+  codegen:R --> L:abi
+  abi:R --> L:rt
+  rt:R --> L:os
 ```
+
+**Text equivalent:** Code produced by `beskid_codegen` and `beskid_engine` crosses the `beskid_abi` contract into runtime services, which call the operating system.
 
 ## Next
 

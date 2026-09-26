@@ -23,6 +23,8 @@ The language **rejects** reserved `async` / `await` tokens. Structured concurren
 
 ```mermaid
 flowchart TB
+  accTitle: Spawn, channel and join
+  accDescr: The main fiber spawns a child, the child sends through a channel, and the main fiber joins the handle.
   main[Main fiber]
   child[spawn child]
   ch[Channel T]

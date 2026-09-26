@@ -59,9 +59,9 @@ The similarity is intentional. The divergence is **where validation lives**.
 HCL separates syntax from provider semantics across many tools. Beskid separates syntax from manifest semantics across **one crate** (`beskid_bsol`) and **downstream lowering**—the same split you see between parse and semantic analysis for `.bd`, just on a smaller document.
 
 ```mermaid
-accTitle: BSOL and Beskid validation spines
-accDescr: BSOL validates manifests before project lowering, while Beskid source passes through syntax, semantic facts, and code generation.
 flowchart LR
+  accTitle: BSOL and Beskid validation spines
+  accDescr: BSOL validates manifests before project lowering, while Beskid source passes through syntax, semantic facts, and code generation.
   subgraph bsol [beskid_bsol]
     pest[bsol.pest]
     ast[BsolDocument]
@@ -73,13 +73,13 @@ flowchart LR
   subgraph analysis [beskid_analysis projects stack]
     lower[parser.rs lowering]
     model[ProjectManifest]
-    graph[Resolver / lockfile]
-    val --> lower --> model --> graph
+    resolver["Resolver / lockfile"]
+    val --> lower --> model --> resolver
   end
-  subgraph bd [Beskid .bd stack — same spine idea]
+  subgraph bd ["Beskid .bd stack, same spine idea"]
     parse[Parse Program]
     sem[Semantic rules]
-    ir[TypedProgram / CodegenInput / codegen]
+    ir["TypedProgram / CodegenInput / codegen"]
     parse --> sem --> ir
   end
 ```

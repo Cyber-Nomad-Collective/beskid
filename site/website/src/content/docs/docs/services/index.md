@@ -34,19 +34,27 @@ The root Auth README says that pckg and Nexus use the Auth hub. That claim confl
 The diagram shows the public service and authentication topology.
 
 ```mermaid
-flowchart LR
+architecture-beta
   accTitle: Public service and authentication topology
   accDescr: Readers use public services. Tracker and Learn connect to the Auth hub. pckg uses trusted forward-auth. Caddy and Authentik protect Nexus.
-  U[User] --> W[Website]
-  U --> L[Learn]
-  U --> P[pckg]
-  U --> T[Tracker]
-  U --> N[Nexus]
-  T --> A[Auth hub]
-  L -. configured pairing .-> A
-  P -. protected browser routes .-> F[Trusted forward-auth]
-  N -. protected route .-> C[Caddy]
-  C --> K[Authentik]
+  service user(internet)[User]
+  group edge(cloud)[Public services]
+  service website(server)[Website] in edge
+  service learn(server)[Learn] in edge
+  service pckg(server)[pckg] in edge
+  service tracker(server)[Tracker] in edge
+  service nexus(server)[Nexus] in edge
+  group authn(cloud)[Authentication]
+  service hub(server)[Auth hub] in authn
+  service fwd(server)[Trusted forward auth] in authn
+  service caddy(server)[Caddy] in authn
+  service authentik(server)[Authentik] in authn
+  user:R --> L:website
+  tracker:B --> T:hub
+  learn:B --> T:hub
+  pckg:B --> T:fwd
+  nexus:B --> T:caddy
+  caddy:R --> L:authentik
 ```
 
 ### Diagram text

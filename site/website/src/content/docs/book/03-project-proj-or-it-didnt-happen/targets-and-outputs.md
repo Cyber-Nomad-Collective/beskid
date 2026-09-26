@@ -30,9 +30,9 @@ beskid test --project ./App.bproj --target Tests
 ```
 
 ```mermaid
-accTitle: Project targets and dependencies
-accDescr: One bproj manifest defines application and test targets that share the resolved dependency graph.
 flowchart TD
+  accTitle: Project targets and dependencies
+  accDescr: One bproj manifest defines application and test targets that share the resolved dependency graph.
   P[App.bproj] --> T1[target App]
   P --> T2[target Tests]
   P --> D[dependencies]

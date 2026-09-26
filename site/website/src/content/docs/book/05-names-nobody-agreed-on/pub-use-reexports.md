@@ -33,7 +33,9 @@ Consumers import from `myapp.api`, not from twenty leaf modules.
 
 ```mermaid
 flowchart LR
-  INT[internal modules] --> API[api.bd pub use]
+  accTitle: Re-export boundary
+  accDescr: Internal modules are re-exported through an api module with pub use, and applications import from that api module.
+  INT[internal modules] --> API["api.bd pub use"]
   API --> APP[application imports]
 ```
 

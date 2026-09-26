@@ -37,18 +37,26 @@ Use a browser and an internet connection. Choose a lesson goal before you start.
 The feedback loop shows when to read a diagnostic, use a hint, and continue.
 
 ```mermaid
-flowchart LR
+sequenceDiagram
   accTitle: Lesson-check feedback loop
-  accDescr: Select a lesson, edit source, and run a check. Read diagnostics. Use a hint only when you need more help. Continue after success.
-  A[Select lesson] --> B[Edit source]
-  B --> C[Run check]
-  C --> D{Check result}
-  D -->|Diagnostic| E[Read diagnostic]
-  E --> F{Need a hint?}
-  F -->|Yes| G[Use hint]
-  F -->|No| B
-  G --> B
-  D -->|Success| H[Continue]
+  accDescr: The learner edits source and runs a check. The check returns a diagnostic or success. The learner reads the diagnostic, optionally uses a hint, and edits again, or continues after success.
+  participant L as Learner
+  participant B as Browser lesson
+  L->>B: Select lesson
+  loop Until the check succeeds
+    L->>B: Edit source
+    L->>B: Run check
+    alt Diagnostic
+      B-->>L: Diagnostic
+      opt Need a hint
+        L->>B: Use hint
+        B-->>L: Hint
+      end
+    else Success
+      B-->>L: Success
+    end
+  end
+  L->>B: Continue to next lesson
 ```
 
 ### Diagram text

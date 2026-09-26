@@ -26,9 +26,9 @@ Start by choosing the boundary you need, then read the applicable profile before
 | [Export and callbacks](/book/21-ffi-and-forbidden-friendships/export-and-callbacks/) | Hosting Beskid from native code. |
 
 ```mermaid
-accTitle: Foreign interface selection
-accDescr: Beskid extern declarations select either the user-facing C ABI profile or the runtime-only Rust ABI profile.
 flowchart LR
+  accTitle: Foreign interface selection
+  accDescr: Beskid extern declarations select either the user-facing C ABI profile or the runtime-only Rust ABI profile.
   bd[Beskid code] --> extern[extern / import]
   extern --> cabi[C ABI profile]
   extern --> rabi[Rust ABI profile]

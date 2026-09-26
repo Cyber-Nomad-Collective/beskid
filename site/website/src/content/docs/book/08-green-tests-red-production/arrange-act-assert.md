@@ -10,9 +10,11 @@ You do not need a Beskid port of xUnit's 47 base classes. You need **readable fa
 
 ```mermaid
 flowchart LR
-  arrange[Arrange — inputs, fixtures, temp files]
-  act[Act — call the unit under test]
-  assert[Assert — corelib helpers or explicit checks]
+  accTitle: Arrange, act, assert
+  accDescr: A test arranges inputs, acts by calling the unit under test, then asserts with corelib helpers or explicit checks.
+  arrange["Arrange: inputs, fixtures, temp files"]
+  act["Act: call the unit under test"]
+  assert["Assert: corelib helpers or explicit checks"]
   arrange --> act --> assert
 ```
 

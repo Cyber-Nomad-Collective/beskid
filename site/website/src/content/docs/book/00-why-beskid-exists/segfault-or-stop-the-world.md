@@ -8,9 +8,11 @@ Memory management is where languages stop pretending to be philosophy and start 
 
 ```mermaid
 flowchart TD
+  accTitle: Memory management trade-offs
+  accDescr: Manual memory, garbage collection and ownership each lead to a different cost, while Go's small runtime with a collector is the daily-driver sweet spot.
   M[Manual malloc/free] --> S[Segfault roulette]
   G[GC runtime] --> P[Pause the business]
-  O[Ownership / RAII] --> C[Compile-time essays]
+  O["Ownership / RAII"] --> C[Compile-time essays]
   GO[Go: small runtime + GC] --> D[Daily driver sweet spot]
 ```
 

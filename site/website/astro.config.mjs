@@ -7,6 +7,7 @@ import react from '@astrojs/react';
 import starlight from '@astrojs/starlight';
 import embeds from 'astro-embed/integration';
 import mermaid from 'astro-mermaid';
+import mdx from '@astrojs/mdx';
 import { docsShellCustomCss } from '@beskid/beskid-ui/shell-css';
 import trudoc from 'trudoc/integration';
 import { createRemarkArchCodeFence } from 'trudoc/scripts/remark-arch-code-fence.mjs';
@@ -15,6 +16,7 @@ import { remarkRepoLinkFence } from 'trudoc/scripts/remark-repo-link-fence.mjs';
 import { loadBeskidGrammar } from 'trudoc/grammars/load-beskid-grammar.mjs';
 import { beskidUiRoot } from './src/lib/beskid-ui-root.mjs';
 import { remarkBeskidDirectives } from './src/lib/remark-beskid-directives.mjs';
+import { remarkMermaidMdx } from './src/lib/remark-mermaid-mdx.mjs';
 import { createLegacyStandardRedirects } from './src/lib/standard-routes.mjs';
 import { docsNavigation } from './src/data/docs-navigation';
 
@@ -101,6 +103,13 @@ function siteRedirects() {
 }
 
 // https://astro.build/config
+const siteRemarkPlugins = [
+	remarkBeskidDirectives,
+	createRemarkArchCodeFence(),
+	remarkRepoLinkFence({ repo: 'Cyber-Nomad-Collective/beskid' }),
+	remarkInlineRepoPaths({ repo: 'Cyber-Nomad-Collective/beskid' }),
+];
+
 export default defineConfig({
 	site: 'https://beskid-lang.org',
 	trailingSlash: 'always',
@@ -128,12 +137,7 @@ export default defineConfig({
 		...siteRedirects(),
 	},
 	markdown: {
-		remarkPlugins: [
-			remarkBeskidDirectives,
-			createRemarkArchCodeFence(),
-			remarkRepoLinkFence({ repo: 'Cyber-Nomad-Collective/beskid' }),
-			remarkInlineRepoPaths({ repo: 'Cyber-Nomad-Collective/beskid' }),
-		],
+		remarkPlugins: siteRemarkPlugins,
 		shikiConfig: {
 			langs: /** @type {any} */ ([beskidGrammar]),
 			langAlias: {
@@ -191,6 +195,14 @@ export default defineConfig({
 			customCss: docsShellCustomCss,
 			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/Cyber-Nomad-Collective/beskid' }],
 			sidebar: docsNavigation,
+		}),
+		// Configured explicitly, and after starlight() (Expressive Code must precede
+		// mdx()). The MDX integration reads the legacy markdown.* options, so GFM
+		// tables and Mermaid fences must be enabled here or every .mdx page loses them.
+		mdx({
+			optimize: true,
+			gfm: true,
+			remarkPlugins: [...siteRemarkPlugins, remarkMermaidMdx],
 		}),
 	],
 });

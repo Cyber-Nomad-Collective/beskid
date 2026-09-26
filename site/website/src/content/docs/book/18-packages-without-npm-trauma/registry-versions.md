@@ -6,6 +6,27 @@ tableOfContents: true
 
 Every `.bpk` carries its exact semantic version in artifact-root `package.json`. `beskid pckg pack` selects that version from the package baseline or an explicit release plan; `beskid pckg upload` reads it from the artifact and sends it unchanged. The registry validates the version and refuses to replace different bytes at an existing package/version coordinate.
 
+```mermaid
+erDiagram
+  accTitle: Registry package model
+  accDescr: A package record has many immutable versions, each version is stored as one bpk artifact, and a library artifact contains generated api.json docs.
+  PACKAGE ||--o{ VERSION : has
+  VERSION ||--|| ARTIFACT : "stored as"
+  ARTIFACT ||--o| API_DOCS : contains
+  PACKAGE {
+    string name
+    bool isPublic
+  }
+  VERSION {
+    string semver
+  }
+  ARTIFACT {
+    string checksum
+  }
+```
+
+**Text equivalent:** A package has many versions. Each version is one immutable `.bpk` artifact, and a library artifact contains its generated `api.json` docs.
+
 ## What you declare vs what you get
 
 | Package source / release plan owns | Registry / lockfile owns |

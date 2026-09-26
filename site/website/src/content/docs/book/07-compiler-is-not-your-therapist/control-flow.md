@@ -19,6 +19,8 @@ Standard conditional binding—exact grammar in [lexical and syntax](/platform-s
 
 ```mermaid
 flowchart TD
+  accTitle: Match arms
+  accDescr: A match on an enum or Option dispatches to one arm, and the arms must be exhaustive.
   E[enum or Option] --> M[match]
   M --> A1[arm 1]
   M --> A2[arm 2]

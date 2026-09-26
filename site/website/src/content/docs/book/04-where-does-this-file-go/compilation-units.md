@@ -12,6 +12,8 @@ A **target** selects an entry and pulls in the module graph needed to build it. 
 
 ```mermaid
 flowchart BT
+  accTitle: Compilation unit reachability
+  accDescr: The entry file imports other modules, which can reach a path dependency library.
   E[entry Main.bd] --> M1[imports / uses]
   M1 --> M2[other modules]
   M2 --> DEP[path dependency Lib]

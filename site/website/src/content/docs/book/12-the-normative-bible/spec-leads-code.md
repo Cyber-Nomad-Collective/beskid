@@ -13,13 +13,23 @@ Authority: [Specification authority and embedded decisions](/platform-spec/commu
 ## Practical workflow
 
 ```mermaid
-flowchart LR
-  gap[Design gap or bug]
-  spec[Spec PR — language-meta or domain feature]
-  impl[Compiler / corelib / tooling PR]
-  verify[Conformance + OpenSpec validate]
-  gap --> spec --> impl --> verify
+gitGraph
+  accTitle: Spec change then implementation change
+  accDescr: A branch changes the specification and merges to main, then an implementation branch carries compiler, corelib or tooling changes with conformance tests and OpenSpec validation before merging.
+  commit id: "design gap or bug"
+  branch spec
+  commit id: "spec PR"
+  checkout main
+  merge spec
+  branch implementation
+  commit id: "compiler, corelib, tooling"
+  commit id: "conformance tests"
+  commit id: "openspec validate"
+  checkout main
+  merge implementation
 ```
+
+**Text equivalent:** A design gap or bug leads to a spec change merged first, then an implementation change with conformance tests and OpenSpec validation.
 
 1. Classify the topic ([language law vs implementation](/book/12-the-normative-bible/language-law-vs-implementation/)).
 2. Extend the owning **feature hub** or article—no circular "canonical chapter is this page" stubs.
