@@ -11,6 +11,17 @@ Spec pages carry **`status`** metadata. Treat it like a fire rating on a door—
 | **Proposed** | Incomplete or unstable; do not cite as enforceable language law |
 | **Standard** | Enforceable contract at this Git revision; needs decisions + verification anchors |
 
+```mermaid
+stateDiagram-v2
+  accTitle: Spec maturity status
+  accDescr: A page starts as Proposed and becomes Standard when the gates are met. A Standard bundle that loses its normative prose, anchors or decisions is downgraded to Proposed.
+  [*] --> Proposed
+  Proposed --> Standard: gates met
+  Standard --> Proposed: placeholder-only or circular stub found
+```
+
+**Text equivalent:** New material is Proposed. It becomes Standard once it has normative prose, verification anchors and decisions. Placeholder-only or circular bundles must return to Proposed.
+
 From [Specification authority](/platform-spec/community/spec-maintenance/spec-authority-and-decisions/).
 
 ## Standard gates

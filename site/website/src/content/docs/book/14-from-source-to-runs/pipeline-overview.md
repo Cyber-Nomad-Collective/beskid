@@ -7,9 +7,9 @@ tableOfContents: true
 Mirror of the normative [Build pipeline overview](/docs/standard/compiler/build-pipeline/)—same flow, book voice.
 
 ```mermaid
-accTitle: Current compilation and execution pipeline
-accDescr: Resolution and syntax produce a typed program, CodegenInput drives ISLE emission, and the result goes to AOT commands or the JIT test and REPL paths.
 flowchart TB
+  accTitle: Current compilation and execution pipeline
+  accDescr: Resolution and syntax produce a typed program, CodegenInput drives ISLE emission, and the result goes to AOT commands or the JIT test and REPL paths.
   resolve[Project resolution]
   assemble[program.assemble]
   parse[Parse and syntax diagnostics]

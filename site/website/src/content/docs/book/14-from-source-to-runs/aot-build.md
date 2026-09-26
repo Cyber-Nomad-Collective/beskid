@@ -18,9 +18,9 @@ Mods are **not** interpreted Beskid scripts in the compiler process. The host lo
 - [Mod AOT-only registration ADR](/docs/standard/compiler/compiler-mods/mod-host-bridge/adr/0003-mod-aot-only-registration/)
 
 ```mermaid
-accTitle: Compiler Mod AOT artifact
-accDescr: Beskid Mod source is AOT-built into an object and descriptor that the analysis host loads.
 flowchart TB
+  accTitle: Compiler Mod AOT artifact
+  accDescr: Beskid Mod source is AOT-built into an object and descriptor that the analysis host loads.
   modSrc[Mod Beskid sources]
   aot[beskid_aot build mod]
   artifact[mod.descriptor.json + native object]

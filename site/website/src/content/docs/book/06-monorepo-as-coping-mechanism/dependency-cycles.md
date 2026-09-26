@@ -9,9 +9,9 @@ Cycles are how monorepos learn humility. The resolver builds a **DAG**—if you 
 ## Healthy layering
 
 ```mermaid
-accTitle: Acyclic dependency order
-accDescr: The application depends on core, and core depends on utility, without a reverse edge.
 flowchart BT
+  accTitle: Acyclic dependency order
+  accDescr: The application depends on core, and core depends on utility, without a reverse edge.
   UTIL[util lib] --> CORE[core lib]
   CORE --> APP[app]
 ```
@@ -21,9 +21,9 @@ flowchart BT
 Forbidden emotional support:
 
 ```mermaid
-accTitle: Forbidden dependency cycle
-accDescr: Project A depends on project B while project B also depends on project A.
 flowchart LR
+  accTitle: Forbidden dependency cycle
+  accDescr: Project A depends on project B while project B also depends on project A.
   A[project A] --> B[project B]
   B --> A
 ```

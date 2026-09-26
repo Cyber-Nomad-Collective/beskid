@@ -23,10 +23,10 @@ Commit **per-project** `Project.lock` files (and workspace-level lock artifacts 
 Start simple: build `App` + run `Test` target for each member you ship.
 
 ```mermaid
-accTitle: Frozen workspace CI
-accDescr: CI verifies frozen dependency state once, then builds and tests each workspace member.
 flowchart TD
-  CI[CI pipeline] --> L[lock/fetch --frozen]
+  accTitle: Frozen workspace CI
+  accDescr: CI verifies frozen dependency state once, then builds and tests each workspace member.
+  CI[CI pipeline] --> L["lock/fetch --frozen"]
   L --> B1[build member A]
   L --> B2[build member B]
   B1 --> T1[test member A]

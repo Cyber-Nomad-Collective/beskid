@@ -37,9 +37,9 @@ Use the canonical [Contributing guide](/docs/contributing/) for repository setup
 </Aside>
 
 ```mermaid
-accTitle: Spec-first contribution flow
-accDescr: A behavior idea changes the Standard before code and focused tests, while the informative Book links back to the Standard.
 flowchart TD
+  accTitle: Spec-first contribution flow
+  accDescr: A behavior idea changes the Standard before code and focused tests, while the informative Book links back to the Standard.
   idea[Behavior change idea] --> spec[Platform-spec delta]
   spec --> code[Compiler / runtime / tooling]
   code --> tests[focused test crate / e2e]

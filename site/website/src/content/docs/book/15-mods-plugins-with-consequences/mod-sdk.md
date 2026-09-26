@@ -18,6 +18,34 @@ Full normative article: [Compiler Mod SDK](/docs/standard/language-meta/metaprog
 | `Rewriter<TSource, TTarget>` | `Result<TTarget, FixError> Rewrite(...)` |
 | `AttributeGenerator` | Exported attributes (e.g. serialization mods) |
 
+```mermaid
+classDiagram
+  accTitle: Mod SDK contracts
+  accDescr: The compiler-sdk package declares the Collector, Generator, Analyzer, Rewriter and AttributeGenerator contracts, each with one entry method.
+  class Collector {
+    <<contract>>
+    Collect(CollectRequest) CollectTargetSet
+  }
+  class Generator {
+    <<contract>>
+    Generate(GenerationRequest) GeneratedSyntaxContribution
+  }
+  class Analyzer {
+    <<contract>>
+    Analyze(AnalysisRequest) AnalysisResult
+  }
+  class Rewriter~TSourceNode, TTargetNode~ {
+    <<contract>>
+    Rewrite(TSourceNode) Result
+  }
+  class AttributeGenerator {
+    <<contract>>
+    Attributes(AttributeGenerationRequest) AttributeDeclarationSet
+  }
+```
+
+**Text equivalent:** Each SDK contract has one entry method. `Collector` returns a target set, `Generator` a typed syntax contribution, `Analyzer` diagnostics with fixes, `Rewriter` a `Result` of the target node, and `AttributeGenerator` a set of attribute declarations.
+
 ## Beskid.Syntax
 
 - **`Node`** is a contract; traversal uses **`NodeRef`** `{ syntaxGenerationId, nodeId }`

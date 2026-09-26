@@ -16,6 +16,8 @@ tableOfContents: true
 
 ```mermaid
 flowchart TB
+  accTitle: Compile-time effects to runtime
+  accDescr: Mod work produces a merged typed AST, which passes through the semantic pipeline before runtime execution.
   mod[Mod collect / generate / analyze]
   ast[Merged typed AST]
   sem[Semantic pipeline]

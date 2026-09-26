@@ -30,6 +30,8 @@ Normative policy: [Conformance evidence](/platform-spec/compiler/conformance/con
 
 ```mermaid
 flowchart TB
+  accTitle: Unit tests versus conformance suites
+  accDescr: Your test items run through the CLI, while compiler conformance suites check the platform spec contracts and are not replaced by user tests.
   userTests[Your test items in .bd files]
   cli[beskid dev build test]
   conformance[beskid_tests / beskid_e2e_tests in compiler CI]

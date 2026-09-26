@@ -34,6 +34,8 @@ beskid dev syntax tree tiny.bd
 
 ```mermaid
 flowchart LR
+  accTitle: Front-end phases
+  accDescr: A source file passes through lexical analysis, syntax parsing and semantic analysis.
   SRC[.bd file] --> LEX[lexical]
   LEX --> PAR[syntax parse]
   PAR --> SEM[semantic]

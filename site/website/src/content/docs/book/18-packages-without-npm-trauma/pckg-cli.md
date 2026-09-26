@@ -28,6 +28,24 @@ beskid pckg upload acme.math --artifact acme.math.bpk
 3. **Server-side validation** — manifest integrity, checksum match, review/moderation policy enforcement
 4. **Catalog update** — version appears in search and listing endpoints; project fetch/lock flows can resolve it
 
+```mermaid
+sequenceDiagram
+  accTitle: Pack and upload to the registry
+  accDescr: The author packs a bpk artifact with the CLI, the CLI uploads it to the registry, the registry validates and adds it to the catalog, and the CLI reports the result.
+  actor Author
+  participant CLI as beskid pckg
+  participant Reg as pckg registry
+  Author->>CLI: pack
+  CLI-->>Author: .bpk artifact with exact version
+  Author->>CLI: upload
+  CLI->>Reg: POST /api/packages/name/versions
+  Reg->>Reg: validate manifest, checksum, policy
+  Reg-->>CLI: version published
+  CLI-->>Author: Published name@version
+```
+
+**Text equivalent:** `pack` produces the artifact with its exact version. `upload` posts version, checksum and bytes to the registry, which validates them and adds the version to the catalog.
+
 The registry does not assign a different version during upload. Package/version coordinates are immutable: publish a new artifact version instead of replacing existing bytes.
 
 ## Authentication

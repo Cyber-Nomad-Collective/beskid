@@ -31,16 +31,16 @@ The optional grouped discovery aliases are documented once on the [`beskid dev` 
 | `pckg` | Registry client when you publish packages |
 
 ```mermaid
-accTitle: Concise CLI workflow
-accDescr: File commands inspect source, then project commands prepare dependencies before build, run, and test.
 flowchart TD
+  accTitle: Concise CLI workflow
+  accDescr: File commands inspect source, then project commands prepare dependencies before build, run, and test.
   subgraph day1 [Day one]
-    P[parse/tree] --> A[analyze]
+    P["parse / tree"] --> A[analyze]
     A --> F[format]
   end
   subgraph project [With App.bproj]
-    A --> Fetch[fetch/lock]
-    Fetch --> B[build/run/test]
+    A --> Fetch["fetch / lock"]
+    Fetch --> B["build / run / test"]
   end
 ```
 

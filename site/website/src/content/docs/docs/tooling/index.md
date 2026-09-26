@@ -41,18 +41,19 @@ Install Beskid and open a terminal in the source or project directory. Run `besk
 7. Add `--plain` to analysis, build, run, and test commands in logs or automation.
 
 ```mermaid
-flowchart TD
+flowchart LR
   accTitle: CLI taxonomy
-  accDescr: The Beskid CLI routes work by domain. Choose syntax, build, project, or package commands for the task.
-  A[beskid] --> B[Syntax]
-  A --> C[Build]
-  A --> D[Project]
-  A --> E[Package]
-  B --> B1[analyze format doc]
-  C --> C1[build run]
-  C --> C2[test engine]
-  D --> D1[fetch lock update graph]
-  E --> E1[pckg]
+  accDescr: The Beskid CLI groups commands by domain. Syntax, build, project, package, and shell command groups each hold the commands for that task.
+  root[beskid] --> S[Syntax]
+  root --> B[Build]
+  root --> P[Project]
+  root --> K[Package]
+  root --> H[Shell and tools]
+  S --> S1["parse, tree, analyze, doc, format, clif"]
+  B --> B1["build, run, test, repl, corelib, runtime-kit"]
+  P --> P1["fetch, lock, update, graph, new"]
+  K --> K1["pckg"]
+  H --> H1["hi, lsp, up, validate-bsol, migrate-bsol"]
 ```
 
 ### Diagram text

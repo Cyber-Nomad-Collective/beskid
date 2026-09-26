@@ -24,16 +24,26 @@ CI should prefer **reproducible** resolution:
 - `--locked` — enforce lock consistency (see per-command docs for exact semantics)
 
 ```mermaid
-accTitle: Project dependency resolution
-accDescr: A bproj manifest enters the resolver, which writes the lockfile and materialized dependency tree used by frozen CI.
-flowchart LR
-  M[App.bproj] --> R[Resolver]
-  R --> L[Project.lock]
-  R --> O[obj/beskid materialized]
-  L --> CI[CI with --frozen]
+sequenceDiagram
+  accTitle: Project dependency resolution
+  accDescr: The fetch and lock commands read the bproj manifest through the resolver, materialize dependencies under obj/beskid and sync Project.lock, and frozen CI fails if the lock would change.
+  participant You
+  participant CLI as beskid CLI
+  participant Res as Resolver
+  participant Lock as Project.lock
+  participant Obj as obj/beskid
+  participant CI as CI with --frozen
+  You->>CLI: fetch
+  CLI->>Res: Resolve App.bproj
+  Res->>Obj: Materialize dependencies
+  You->>CLI: lock
+  CLI->>Res: Resolve App.bproj
+  Res->>Lock: Synchronize with current resolution
+  CI->>Lock: Read recorded state
+  Lock-->>CI: Fail if the lock would change
 ```
 
-**Text equivalent:** The resolver reads `App.bproj`, synchronizes `Project.lock`, and materializes dependencies under `obj/beskid`. CI uses `--frozen` to require the recorded state.
+**Text equivalent:** `fetch` resolves `App.bproj` and materializes dependencies under `obj/beskid`. `lock` synchronizes `Project.lock` with the current resolution. CI runs with `--frozen` and fails if the lock would change.
 
 ## When the lock changes
 

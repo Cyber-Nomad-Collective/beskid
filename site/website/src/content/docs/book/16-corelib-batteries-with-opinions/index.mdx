@@ -27,12 +27,36 @@ If you expected a monolithic `System.IO` graveyard, adjust expectations now.
 
 ```mermaid
 flowchart LR
+  accTitle: Corelib delivery
+  accDescr: The CLI injects corelib sources, doc generation produces api.json for pckg registry docs, and runtime-backed surfaces feed the same sources.
   CLI[beskid CLI] --> inj[Corelib injection]
-  inj --> src[beskid_corelib sources]
+  inj --> src[Corelib sources]
   src --> doc[beskid dev syntax doc / api.json]
   doc --> pckg[pckg registry docs]
-  runtime[beskid_runtime] --> src
+  runtime[Runtime-backed surfaces] --> src
 ```
+
+The sources under `compiler/corelib/packages` are split into these packages.
+
+```mermaid
+architecture-beta
+  accTitle: Corelib packages
+  accDescr: The corelib sources are split into foundation, runtime, concurrency, console, network, http, interop, glue and compiler-sdk packages.
+  group packages(server)[compiler/corelib/packages]
+  service foundation(server)[foundation] in packages
+  service runtime(server)[runtime] in packages
+  service concurrency(server)[concurrency] in packages
+  service console(server)[console] in packages
+  service network(server)[network] in packages
+  service http(server)[http] in packages
+  service interop(server)[interop] in packages
+  service glue(server)[glue] in packages
+  service compiler_sdk(server)[compiler-sdk] in packages
+  foundation:R --> L:network
+  network:R --> L:http
+```
+
+**Text equivalent:** The packages are foundation, runtime, concurrency, console, network, http, interop, glue and compiler-sdk. Arrows point from a package to the package that depends on it: `network` depends on `foundation`, and `http` depends on `network`.
 
 ## Next
 

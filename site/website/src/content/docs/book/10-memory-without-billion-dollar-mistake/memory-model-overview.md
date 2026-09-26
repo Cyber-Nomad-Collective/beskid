@@ -28,6 +28,8 @@ Reference types and arrays live on the **GC-managed heap**. The runtime uses a c
 
 ```mermaid
 flowchart TB
+  accTitle: Memory model areas
+  accDescr: Stack activations and the GC heap hold values, fibers are scheduled cooperatively, and channels carry cross-fiber payloads.
   stack[Stack activations — locals, spans]
   heap[GC heap — objects, arrays]
   fibers[Fibers — cooperative scheduling]

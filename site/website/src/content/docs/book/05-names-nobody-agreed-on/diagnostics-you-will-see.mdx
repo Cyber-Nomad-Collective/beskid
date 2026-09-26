@@ -52,6 +52,8 @@ CLI and LSP share miette-style reports. Read:
 
 ```mermaid
 flowchart TD
+  accTitle: Triage a name diagnostic
+  accDescr: Read the span and message, then decide whether the fix is an import, a visibility boundary or module layout.
   D[Diagnostic] --> R[Read span + message]
   R --> C{Import or visibility?}
   C -->|import| U[Fix use / alias]

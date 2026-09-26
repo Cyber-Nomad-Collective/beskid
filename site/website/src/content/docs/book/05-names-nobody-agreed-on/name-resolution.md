@@ -15,6 +15,8 @@ Name resolution is the compiler answering **which declaration did you mean?** Wh
 
 ```mermaid
 flowchart TD
+  accTitle: Name lookup order
+  accDescr: A name reference is checked against local bindings first, then enclosing scopes, imports and module scope.
   N[Name reference] --> L{Local binding?}
   L -->|yes| OK[Use local]
   L -->|no| E[Enclosing scopes]

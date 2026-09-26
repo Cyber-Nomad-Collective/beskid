@@ -54,9 +54,9 @@ beskid tree hello.bd
 Formatting is the fastest way to settle bike-shed wars. `tree` is the ASCII tourist map of the AST—useful when you suspect the parser saw your file differently than you did.
 
 ```mermaid
-accTitle: First source checks
-accDescr: Parse is the first check; tree and analyze inspect the result, and format follows successful analysis.
 flowchart LR
+  accTitle: First source checks
+  accDescr: Parse is the first check; tree and analyze inspect the result, and format follows successful analysis.
   parse[syntax parse] --> tree[syntax tree]
   parse --> analyze[syntax analyze]
   analyze --> format[syntax format]

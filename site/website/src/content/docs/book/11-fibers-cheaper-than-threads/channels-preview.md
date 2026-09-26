@@ -13,13 +13,19 @@ If two fibers need to talk, they use a **channel**. They do not share a mutable 
 - Errors and cancellation surface through **`Result`** on join/receive paths per [Concurrency package](/platform-spec/core-library/concurrency/concurrency-package/).
 
 ```mermaid
-flowchart LR
-  f1[Fiber A]
-  f2[Fiber B]
-  ch[Channel T]
-  f1 -->|Send| ch
-  ch -->|Receive| f2
+sequenceDiagram
+  accTitle: Channel send and receive between two fibers
+  accDescr: Fiber B receives from a channel and waits cooperatively until Fiber A sends a value, then continues with that value.
+  participant A as Fiber A
+  participant C as Channel of T
+  participant B as Fiber B
+  B->>C: Receive
+  Note over B,C: B waits cooperatively while the channel is empty
+  A->>C: Send value
+  C-->>B: value
 ```
+
+**Text equivalent:** Fiber B calls Receive and waits cooperatively. When Fiber A sends a value, the channel hands it to Fiber B.
 
 ## ADR-backed choices
 

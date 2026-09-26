@@ -15,9 +15,9 @@ Resolution is not magic—it is a **DAG walk** with a lockfile receipt.
 5. Build dependencies before dependents.
 
 ```mermaid
-accTitle: Dependency build order
-accDescr: Dependency A is required by dependency B, and dependency B is required by the application target.
 flowchart TD
+  accTitle: Dependency build order
+  accDescr: Dependency A is required by dependency B, and dependency B is required by the application target.
   D1[Dep A Lib] --> D2[Dep B Lib]
   D2 --> APP[App target]
 ```

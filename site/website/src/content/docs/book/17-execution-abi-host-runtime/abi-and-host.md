@@ -10,8 +10,10 @@ Extern dispatch policy lives separately: [Extern dispatch and policy](/platform-
 
 ```mermaid
 sequenceDiagram
+  accTitle: Program crossing the ABI
+  accDescr: A Beskid program calls builtin and fiber operations on the runtime services, calls extern functions on the native host under an ABI profile, and the runtime reaches the host through a syscall bridge.
   participant App as Beskid program
-  participant RT as beskid_runtime
+  participant RT as Runtime services
   participant Host as Native host
   App->>RT: builtin / fiber op
   App->>Host: extern (ABI profile)

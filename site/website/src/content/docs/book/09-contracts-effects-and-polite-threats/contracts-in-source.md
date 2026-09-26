@@ -42,6 +42,46 @@ contract ReadWrite : Readable
 
 Embedding flattens requirements; implementers satisfy the expanded surface once.
 
+The corelib byte-stream contracts show the pattern. `Stream` lists the read, write and close members, and `TcpStream` in the network package conforms to it together with the single-purpose contracts.
+
+```mermaid
+classDiagram
+  accTitle: Core.IO contracts and a conforming type
+  accDescr: The Reader, Writer, Closer and Disposable contracts each declare one operation, Stream declares read, write and close, and TcpStream lists all of them as conformances.
+  class Reader {
+    <<contract>>
+    Read(destination, offset, count) Result
+  }
+  class Writer {
+    <<contract>>
+    Write(source, offset, count) Result
+  }
+  class Closer {
+    <<contract>>
+    Close() Result
+  }
+  class Stream {
+    <<contract>>
+    Read(destination, offset, count) Result
+    Write(source, offset, count) Result
+    Close() Result
+  }
+  class Disposable {
+    <<contract>>
+    Dispose() Result
+  }
+  class TcpStream {
+    word handle
+  }
+  TcpStream ..|> Stream
+  TcpStream ..|> Reader
+  TcpStream ..|> Writer
+  TcpStream ..|> Closer
+  TcpStream ..|> Disposable
+```
+
+**Text equivalent:** `Reader`, `Writer`, `Closer` and `Disposable` are one-operation contracts. `Stream` declares read, write and close. `TcpStream` lists `Stream`, `Reader`, `Writer`, `Closer` and `Disposable` in its conformance list.
+
 ## Not Mod SDK contracts
 
 | Surface | Purpose |

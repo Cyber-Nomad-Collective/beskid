@@ -11,9 +11,9 @@ Mods insert **between parse and lowering**—after you have syntax, before you p
 From [Compiler Mod SDK — pipeline interaction](/docs/standard/language-meta/metaprogramming/compiler-mod-sdk/):
 
 ```mermaid
-accTitle: Compiler Mod phase order
-accDescr: Mod collection, generation, analysis, and rewriting finish before semantic processing continues into code generation.
 flowchart TB
+  accTitle: Compiler Mod phase order
+  accDescr: Mod collection, generation, analysis, and rewriting finish before semantic processing continues into code generation.
   collect[mod.collect — Collector scopes targets]
   generate[mod.generate — merge + reparse loops]
   analyze[mod.analyze — diagnostics on merged program]

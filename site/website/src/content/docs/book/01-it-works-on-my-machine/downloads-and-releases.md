@@ -11,19 +11,22 @@ Beskid does not ask you to compile from source on day one unless you want to. Th
 A verified release operator publishes prebuilt binaries to **GitHub Releases** on [beskid_compiler](https://github.com/Cyber-Nomad-Collective/beskid_compiler) (`cli-stable`/`cli-unstable`, `cli-version.txt`, immutable `cli-v*`). Native builds and provenance use the same repository scripts in Woodpecker and manual releases. Install scripts under the website (`site/website/public/`) and the [Downloads](/downloads/) page consume a channel-specific rolling tag.
 
 ```mermaid
-accTitle: Compiler release to download page
-accDescr: Compiler CI creates release assets, then the website publishes the verified version and install choices.
-flowchart TD
-  subgraph ci [Compiler CI]
-    T[Git tags v*] --> V[Release workflow resolves channel + rolling semver]
-    V --> B[Build matrix binaries]
-    B --> R[Release cli-stable / cli-unstable + cli-version.txt]
-  end
-  R --> S[site sync:cli-version]
-  S --> D[Downloads page + install scripts]
+sequenceDiagram
+  accTitle: Compiler release to download page
+  accDescr: Compiler CI resolves the channel, builds binaries and publishes GitHub release assets; the website sync reads the version and the Downloads page and install scripts serve it to users.
+  participant CI as Compiler CI
+  participant GH as GitHub Releases
+  participant Site as Website sync
+  participant User as You
+  CI->>CI: Tag v* resolves channel and rolling semver
+  CI->>CI: Build matrix binaries
+  CI->>GH: Publish cli-stable or cli-unstable with cli-version.txt
+  Site->>GH: sync:cli-version reads the version
+  Site-->>User: Downloads page and install scripts
+  User->>GH: Install script fetches the channel binary
 ```
 
-**Text equivalent:** Compiler CI resolves a tagged release channel, builds the platform binaries, and publishes the release assets. The website then reads the release metadata and shows the matching download and install choices.
+**Text equivalent:** Compiler CI resolves a tagged release channel, builds the platform binaries, and publishes the release assets. The website then reads the release metadata and shows the matching download and install choices, and the install script fetches the binary from the release.
 
 The website can sync displayed version from GitHub via `pnpm sync:cli-version` (see `packages/trudoc/scripts/sync-cli-version.mjs`), which updates `site/website/src/data/cli-version.json` and aligns `compiler/crates/beskid_cli/Cargo.toml` when you develop in the superrepo.
 
