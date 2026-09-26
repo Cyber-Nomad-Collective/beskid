@@ -76,6 +76,10 @@ close the connection; `HttpServer.Receive` does not send that response.
 HTTP client and server operations SHALL use only `Network.TcpStream`,
 `Network.TcpListener`, and Foundation `Core.IO`. They MUST NOT expose a native
 socket value or implement a protocol-specific exact read/write loop.
+In v0.5 `HttpServer.Accept` SHALL use an unbounded TCP accept and SHALL NOT
+introduce an HTTP-specific deadline argument or timer. A caller-configured
+typed `TcpStream` read/write deadline SHALL still govern HTTP's `Core.IO`
+operations on that stream.
 `HttpError::Transport` SHALL carry the Foundation `TransferFailure` cause
 received from `Core.IO` and MUST NOT add an HTTP-specific transport cause.
 `IoError::ReadFailed(cause)` and `WriteFailed(cause)` map to
@@ -95,3 +99,9 @@ received from `Core.IO` and MUST NOT add an HTTP-specific transport cause.
 - **GIVEN** a stream read that fails with `IoError::ReadFailed(TransferFailure::PeerReset())`
 - **WHEN** `Client.Send` or `HttpServer.Receive` reports the failure
 - **THEN** it returns `HttpError::Transport(TransferFailure::PeerReset())`
+
+#### Scenario: configured TCP deadline reaches HTTP without another timer
+
+- **GIVEN** an HTTP operation on a `TcpStream` whose typed read deadline expires
+- **WHEN** `Core.IO` returns `IoError::ReadFailed(TransferFailure::TimedOut())`
+- **THEN** the HTTP operation returns `HttpError::Transport(TransferFailure::TimedOut())` without creating an HTTP-owned wait

@@ -5,6 +5,12 @@ writes flow through `Core.IO.Read`, `ReadExact`, and `WriteAll`; HTTP adds no
 socket API and no partial-transfer retry loop. A `HttpServer` owns a
 `TcpListener` and returns accepted `TcpStream` values to the owner scheduler,
 whose routing and cancellation semantics remain Network's responsibility.
+In v0.5 HTTP adds no separate deadline parameter: `HttpServer.Accept` asks
+`TcpListener.Accept` for an unbounded wait, while callers may set typed TCP
+read/write deadlines on a stream before an HTTP exchange. A timed-out stream
+operation remains a Foundation transport cause, not an HTTP timer or timeout
+mechanism. Any later HTTP-specific deadline policy must use
+`Core.Time.Deadline` rather than a raw clock value.
 
 The parser treats headers as ASCII octets, never as a lossy Unicode line
 format. It requires CRLF delimiters, rejects control bytes and whitespace in
