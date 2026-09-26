@@ -15,6 +15,7 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'windows-installer-process.ps1')
+. (Join-Path $PSScriptRoot 'windows-installer-cancel.ps1')
 . (Join-Path $PSScriptRoot 'windows-installer-vendor.ps1')
 if ($env:OS -ne 'Windows_NT') { throw 'Windows installer smoke requires a real Windows VM' }
 if (-not [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent().IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
@@ -80,38 +81,26 @@ function Invoke-FreshCli([string]$verb) {
   return $true
 }
 
-function Invoke-DownloadCancellation([string]$setup, [string[]]$arguments, [string]$logPath) {
-  # Passive Burn shows its progress window and starts the chain without a human click.
-  $process = Start-Process -FilePath $setup -ArgumentList $arguments -PassThru
-  $deadline = [DateTime]::UtcNow.AddMinutes(10)
-  $acquisition = $null
-  while ([DateTime]::UtcNow -lt $deadline) {
-    $process.Refresh()
-    if ($process.HasExited) { throw "Cancel fixture exited before a bundle download began: $($process.ExitCode)" }
-    if (Test-Path -LiteralPath $logPath -PathType Leaf) {
-      $body = Get-Content -LiteralPath $logPath -Raw
-      $matches = [regex]::Matches($body, 'i338: Acquiring package: (VcRedistX64|VsBuildTools2022|LlvmX64), payload: ([A-Za-z0-9._-]+)')
-      if ($matches.Count) {
-        $acquisition = $matches[$matches.Count - 1]
-        $payload = $acquisition.Groups[2].Value
-        if ($body -match ('i336: Acquired payload: ' + [regex]::Escape($payload))) {
-          throw "Cancel fixture download completed before UI cancellation: $payload"
-        }
-        break
-      }
+function Invoke-CancelSmoke([string]$setup, [string[]]$arguments, [string]$logPath, $beforeState) {
+  try {
+    # Passive Burn starts the chain and shows its progress window.
+    $process = Start-Process -FilePath $setup -ArgumentList $arguments -PassThru
+    $evidence = Invoke-DownloadCancellation -Process $process -LogPath $logPath
+    if ($evidence.ExitCode -eq 0 -or $evidence.ExitCode -eq 3010) { throw "Cancel fixture returned unexpected exit code $($evidence.ExitCode)" }
+    $body = Get-Content -LiteralPath $logPath -Raw
+    $acquisition = 'i338: Acquiring package: ' + [regex]::Escape($evidence.Package) + ', payload: ' + [regex]::Escape($evidence.Payload)
+    $start = [regex]::Match($body, $acquisition)
+    $cancel = [regex]::Match($body, '0x800704c7|user cancel(?:ed|led)|user exit', [Text.RegularExpressions.RegexOptions]::IgnoreCase)
+    if (-not $start.Success -or -not $cancel.Success -or $cancel.Index -le $start.Index) { throw 'Cancel fixture lacks ordered Burn download and cancellation evidence' }
+    $completed = [regex]::Match($body, ('i336: Acquired payload: ' + [regex]::Escape($evidence.Payload)))
+    if ($completed.Success -and $completed.Index -lt $cancel.Index) { throw 'Cancel fixture payload was already acquired before cancellation' }
+    return $evidence
+  } finally {
+    $afterAttempt = Get-State
+    if ($afterAttempt.installed) { throw 'Cancel attempt left Beskid installed' }
+    foreach ($name in @('vc','msvc','sdk','llvm')) {
+      if ($beforeState[$name] -and -not $afterAttempt[$name]) { throw "Cancel attempt removed existing $name prerequisite" }
     }
-    Start-Sleep -Milliseconds 100
-  }
-  if (-not $acquisition) { throw "Cancel fixture did not reach a Burn download within ten minutes; see $logPath" }
-  $process.Refresh()
-  if ($process.HasExited -or $process.MainWindowHandle -eq [IntPtr]::Zero -or -not $process.CloseMainWindow()) {
-    throw 'Cancel fixture could not close the visible Burn progress window during download'
-  }
-  if (-not $process.WaitForExit(120000)) { throw "Burn did not exit within two minutes after UI cancellation; see $logPath" }
-  return [pscustomobject]@{
-    ExitCode=$process.ExitCode;
-    Package=$acquisition.Groups[1].Value;
-    Payload=$acquisition.Groups[2].Value
   }
 }
 
@@ -168,7 +157,7 @@ if ($ResumeAfterReboot) {
   elseif ($Scenario -eq 'repair-deselect') { $arguments += @('/repair','InstallDeveloperTools=0') }
   else { $arguments += '/install'; $arguments += $(if ($Scenario -in @('developer','community','preexisting','upgrade')) { 'InstallDeveloperTools=1' } else { 'InstallDeveloperTools=0' }) }
   if ($Scenario -eq 'cancel') {
-    $cancelEvidence = Invoke-DownloadCancellation $runSetup $arguments $log
+    $cancelEvidence = Invoke-CancelSmoke $runSetup $arguments $log $before
     $result = $cancelEvidence
   } else {
     $result = Start-Process -FilePath $runSetup -ArgumentList $arguments -Wait -PassThru

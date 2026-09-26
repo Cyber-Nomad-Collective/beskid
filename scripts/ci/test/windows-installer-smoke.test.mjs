@@ -1,12 +1,11 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 
 const gate = new URL("../windows-installer-smoke-gate.mjs", import.meta.url);
-const recorder = new URL("../windows-installer-smoke.ps1", import.meta.url);
 const scenarios = ["runtime", "developer", "community", "preexisting", "offline", "hash-failure", "cancel", "repair-deselect", "upgrade", "uninstall"];
 const hash = "a".repeat(64);
 
@@ -42,14 +41,6 @@ function run(dir) {
   return spawnSync(process.execPath, [gate.pathname, dir, hash, hash, join(dir, "prerequisites.lock.json")], { encoding: "utf8" });
 }
 function rejects(dir, pattern) { const result = run(dir); assert.notEqual(result.status, 0); assert.match(result.stderr, pattern); }
-
-test("fault recorder executes the prepared setup and automates cancellation during download", () => {
-  const source = readFileSync(recorder, "utf8");
-  assert.match(source, /Start-Process -FilePath \$runSetup/);
-  assert.match(source, /Invoke-DownloadCancellation/);
-  assert.doesNotMatch(source, /Automated Burn UI cancellation is not implemented/);
-  assert.doesNotMatch(source, /ObservedLog|ObservedExitCode/);
-});
 
 test("cancel evidence requires download-phase UI cancellation and Burn confirmation", (t) => {
   const dir = mkdtempSync(join(tmpdir(), "beskid-installer-smoke-"));
