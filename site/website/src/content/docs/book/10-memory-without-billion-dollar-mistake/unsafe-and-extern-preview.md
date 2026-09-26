@@ -26,7 +26,7 @@ flowchart LR
 
 ## Host-facing: Rust `unsafe`
 
-Inside `compiler/crates/beskid_runtime`, builtins use `#[unsafe(no_mangle)] pub extern "C-unwind"`—see [Builtins and symbols](/platform-spec/execution/abi-and-host/builtins-and-symbols/). That is **platform maintenance**, not a tutorial pattern for app authors.
+Inside `compiler/crates/beskid_abi` and the runtime sources under `compiler/runtime`, builtins use `#[unsafe(no_mangle)] pub extern "C-unwind"`—see [Builtins and symbols](/platform-spec/execution/abi-and-host/builtins-and-symbols/). That is **platform maintenance**, not a tutorial pattern for app authors.
 
 ## JIT and dynamic loading (engine)
 

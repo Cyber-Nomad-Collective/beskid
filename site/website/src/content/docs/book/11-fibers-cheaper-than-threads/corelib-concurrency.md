@@ -28,7 +28,7 @@ Corelib lives in the **`corelib`** package identity (`compiler/corelib` / `beski
 
 ## Workspace crates (implementation)
 
-Lowering and runtime tie to `beskid_codegen`, `beskid_engine`, `beskid_runtime`, and `abfall` for GC while fibers run—see [Crate-to-spec anchors](/platform-spec/compiler/implementation-map/crate-to-spec-anchors/).
+Lowering and runtime tie to `beskid_codegen`, `beskid_engine`, `beskid_abi`, and `abfall` for GC while fibers run—see [Crate-to-spec anchors](/platform-spec/compiler/implementation-map/crate-to-spec-anchors/).
 
 ## Next chapter
 

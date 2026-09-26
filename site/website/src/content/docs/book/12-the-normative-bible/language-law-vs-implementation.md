@@ -14,7 +14,7 @@ Ask: *"Which crate phase does that?"* → **[Compiler](/platform-spec/compiler/)
 | --- | --- | --- |
 | Syntax, types, contracts, memory, spawn | language-meta | `beskid_analysis`, `beskid_codegen` |
 | Manifests, CLI commands, LSP UX | tooling | `beskid_cli`, `beskid_lsp` |
-| Runtime ABI, scheduler, GC | execution | `beskid_runtime`, `beskid_engine`, `beskid_abi` |
+| Runtime ABI, scheduler, GC | execution | `beskid_engine`, `beskid_abi` |
 | Standard library API | core-library | `corelib` packages in `compiler/corelib` |
 
 Implementation domains **defer** with `relatedTopics`—they do not redefine normative tables copied from language-meta ([Spec authority](/platform-spec/community/spec-maintenance/spec-authority-and-decisions/)).

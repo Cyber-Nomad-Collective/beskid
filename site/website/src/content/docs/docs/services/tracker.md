@@ -28,7 +28,7 @@ Tracker is the delivery authority for versions, roadmap tasks, and bugs. Its SQL
 | Audience | Platform users read status. Maintainers manage delivery records. Operators preserve the database. |
 | Public boundary | `https://tracker.beskid-lang.org`. |
 | Local boundary | The service listens on `http://localhost:3000` in the reference container. |
-| Authentication | Tracker uses the central Auth hub for GitHub sign-in and pairing. |
+| Authentication | Tracker signs users in through Authentik behind the shared Caddy edge. |
 | Persistent state | SQLite persists below `TRACKER_DATA_DIR` in the `tracker-data` volume. |
 | Container image | `ghcr.io/cyber-nomad-collective/beskid-tracker`. |
 | Health check | `GET /api/health` on port `3000`. |

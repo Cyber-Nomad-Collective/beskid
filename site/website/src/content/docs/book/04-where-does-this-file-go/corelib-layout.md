@@ -20,7 +20,7 @@ CLI ensures bundled corelib is available on launch; override with `BESKID_CORELI
 
 Corelib splits into **interlinked workspace packages** (not one monolithic `IO.bd` dumping ground):
 
-- Primitive types and contracts near `Query.Contracts` (including `Option<T>`)
+- Primitive types and contracts in the foundation package under `Core` (including `Option<T>`)
 - Runtime syscall-backed I/O under runtime packages; higher console work in dedicated packages (see platform [core library](/platform-spec/core-library/) domain)
 
 ```mermaid

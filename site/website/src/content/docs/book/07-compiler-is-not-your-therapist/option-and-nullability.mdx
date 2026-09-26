@@ -10,7 +10,7 @@ If you type `null` expecting sympathy, you will receive diagnostics instead.
 
 ## `Option<T>` only
 
-Optional presence **must** use `Option<T>` (corelib `Query.Contracts.Option`) or an explicit `enum` with a dedicated absent variant at API boundaries.
+Optional presence **must** use `Option<T>` (corelib `Core.Optional.Option`) or an explicit `enum` with a dedicated absent variant at API boundaries.
 
 - **Forbidden:** `null`, `optional` keyword, `?T` sugar
 - **Present / absent:** `Option<T>::Some(x)` / `Option<T>::None` (exact constructors per corelib)

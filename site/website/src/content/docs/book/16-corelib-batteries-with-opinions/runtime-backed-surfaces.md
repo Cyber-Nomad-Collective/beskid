@@ -9,7 +9,7 @@ Not every stdlib function is a pure Beskid algorithm you can read over coffee. S
 ## How to tell
 
 - Platform-spec marks runtime-backed areas explicitly—start at [Runtime-backed corelib surfaces](/platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/).
-- Implementation lives split between `beskid_corelib` packages and `packages/runtime` / `beskid_runtime`—the book is not a substitute for the crate map in [chapter 13](/book/13-reading-the-law/).
+- Implementation lives split between `beskid_corelib` packages and `packages/runtime` and `beskid_abi`—the book is not a substitute for the crate map in [chapter 13](/book/13-reading-the-law/).
 
 ## Stability
 

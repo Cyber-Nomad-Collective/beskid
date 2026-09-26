@@ -40,7 +40,7 @@ flowchart TB
 | --- | --- |
 | `beskid_analysis` | Spawn typing, capture diagnostics |
 | `beskid_codegen` | `fiber_spawn`, stack maps |
-| `beskid_engine` / `beskid_runtime` | Scheduler, stacks |
+| `beskid_engine` / `beskid_abi` | Scheduler, stacks |
 
 ## Area hub
 

@@ -20,7 +20,7 @@ Rust's ownership story is brilliant **for Rust**. Beskid's story is: **GC + stat
 - Lifetime parameters on every struct
 - `unsafe` blocks in application code as a daily tool
 
-The **compiler host** is Rust (`beskid_analysis`, `beskid_runtime`, …) and uses Rust's ownership internally. Your Beskid sources target the **language memory model**, not `rustc`'s borrow checker.
+The **compiler host** is Rust (`beskid_analysis`, `beskid_engine`, …) and uses Rust's ownership internally. Your Beskid sources target the **language memory model**, not `rustc`'s borrow checker.
 
 ## Closures and captures
 
