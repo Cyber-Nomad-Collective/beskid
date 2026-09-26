@@ -10,31 +10,24 @@ param(
   [string]$ProgramProject,
   [string]$PriorVersion,
   [string]$ObservedSetupExe,
-  [string]$ObservedLog,
-  [int]$ObservedExitCode = 0,
+  [switch]$ResumeAfterReboot,
   [string]$InstallRoot = "${env:ProgramFiles}\Beskid"
 )
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot 'windows-installer-process.ps1')
+. (Join-Path $PSScriptRoot 'windows-installer-vendor.ps1')
 if ($env:OS -ne 'Windows_NT') { throw 'Windows installer smoke requires a real Windows VM' }
 if (-not [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent().IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
   throw 'Run installer smoke from an elevated shell on a disposable VM'
 }
 $failure = @('offline','hash-failure','cancel') -contains $Scenario
+if ($Scenario -eq 'cancel') { throw 'Automated Burn UI cancellation is not implemented; cancel evidence cannot pass the release gate' }
 foreach ($path in @($SetupExe,$Msi,$LockFile)) { if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { throw "Missing input: $path" } }
 New-Item -ItemType Directory -Force -Path $OutputDir | Out-Null
 $setupHash = (Get-FileHash -LiteralPath $SetupExe -Algorithm SHA256).Hash.ToLowerInvariant()
 $msiHash = (Get-FileHash -LiteralPath $Msi -Algorithm SHA256).Hash.ToLowerInvariant()
 $lock = Get-Content -LiteralPath $LockFile -Raw | ConvertFrom-Json
-$vendor = @()
-foreach ($item in $lock.packages) {
-  $path = Join-Path $VendorAuditDir $item.name
-  if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { throw "Missing vendor audit payload: $path" }
-  $actual = (Get-FileHash -LiteralPath $path -Algorithm SHA512).Hash.ToLowerInvariant()
-  $size = (Get-Item -LiteralPath $path).Length
-  if ($actual -ne $item.sha512 -or $size -ne $item.size) { throw "Vendor hash/size mismatch: $($item.id)" }
-  $vendor += [ordered]@{ id=$item.id; version=$item.version; sha512=$actual; size=$size }
-}
-if ($vendor.Count -ne 3) { throw 'Expected exactly three locked vendor payloads' }
+$vendor = @(Read-LockedVendorPayloads $lock $VendorAuditDir)
 
 function Get-State {
   $installedExe = Join-Path $InstallRoot 'bin\beskid.exe'
@@ -80,17 +73,28 @@ function Invoke-FreshCli([string]$verb) {
   $psi.RedirectStandardError = $true
   $psi.EnvironmentVariables['PATH'] = [Environment]::GetEnvironmentVariable('Path','Machine') + ';' + [Environment]::GetEnvironmentVariable('Path','User')
   foreach ($name in @('INCLUDE','LIB','LIBPATH','VCToolsInstallDir','VCINSTALLDIR','WindowsSdkDir','WindowsSDKVersion')) { $psi.EnvironmentVariables.Remove($name) }
-  $process = [System.Diagnostics.Process]::Start($psi)
-  $stdout = $process.StandardOutput.ReadToEnd()
-  $stderr = $process.StandardError.ReadToEnd()
-  $process.WaitForExit()
-  Set-Content -LiteralPath (Join-Path $OutputDir "$Scenario-$verb.log") -Value ($stdout + $stderr)
-  if ($process.ExitCode -ne 0) { return $false }
-  if ($verb -eq 'test') { return $stdout -match '"passed"\s*:\s*[1-9][0-9]*' }
+  $result = Invoke-BoundedProcess $psi 600000
+  Set-Content -LiteralPath (Join-Path $OutputDir "$Scenario-$verb.log") -Value ($result.Stdout + $result.Stderr)
+  if ($result.TimedOut -or $result.ExitCode -ne 0) { return $false }
+  if ($verb -eq 'test') { return $result.Stdout -match '"passed"\s*:\s*[1-9][0-9]*' }
   return $true
 }
 
-$before = Get-State
+$pendingPath = Join-Path $OutputDir "$Scenario.pending.json"
+$rebootVerified = $false
+if ($ResumeAfterReboot) {
+  if (-not (Test-Path -LiteralPath $pendingPath -PathType Leaf)) { throw "Missing reboot continuation record: $pendingPath" }
+  $pending = Get-Content -LiteralPath $pendingPath -Raw | ConvertFrom-Json
+  if ($pending.scenario -ne $Scenario -or $pending.setup_sha256 -ne $setupHash -or $pending.msi_sha256 -ne $msiHash) {
+    throw 'Reboot continuation does not match this installer and scenario'
+  }
+  $currentBoot = (Get-CimInstance Win32_OperatingSystem).LastBootUpTime
+  if ($currentBoot -le [datetime]$pending.boot_utc) { throw 'Windows has not rebooted since setup requested it' }
+  $before = $pending.before
+  $rebootVerified = $true
+} else {
+  $before = Get-State
+}
 if ($Scenario -in @('runtime','developer','offline','hash-failure','cancel') -and $before.installed) { throw "$Scenario requires a VM without Beskid installed" }
 if ($Scenario -eq 'runtime' -and ($before.msvc -or $before.sdk -or $before.llvm)) { throw 'Runtime-only scenario requires no preexisting developer tools' }
 if ($Scenario -eq 'developer' -and ($before.msvc -or $before.sdk -or $before.llvm)) { throw 'Developer scenario requires no preexisting developer tools' }
@@ -101,33 +105,50 @@ if ($Scenario -eq 'upgrade' -and (-not $before.installed -or -not $PriorVersion)
 if ($Scenario -eq 'uninstall' -and -not $before.installed) { throw 'Uninstall scenario requires an installed Beskid' }
 $priorVersionText = ''
 if ($Scenario -eq 'upgrade') {
-  $priorVersionText = (& (Join-Path $InstallRoot 'bin\beskid.exe') --version | Out-String)
-  if ($priorVersionText -notmatch [regex]::Escape($PriorVersion)) { throw "Installed Beskid version does not match -PriorVersion $PriorVersion" }
+  if ($ResumeAfterReboot) {
+    $priorVersionText = $pending.prior_version_text
+    if (-not $priorVersionText -or $priorVersionText -notmatch [regex]::Escape($PriorVersion)) { throw 'Reboot continuation lacks the prior Beskid version' }
+  } else {
+    $priorVersionText = (& (Join-Path $InstallRoot 'bin\beskid.exe') --version | Out-String)
+    if ($priorVersionText -notmatch [regex]::Escape($PriorVersion)) { throw "Installed Beskid version does not match -PriorVersion $PriorVersion" }
+  }
 }
 
 $log = Join-Path $OutputDir "$Scenario.log"
-if ($failure) {
-  if (-not $ObservedSetupExe -or -not (Test-Path -LiteralPath $ObservedSetupExe -PathType Leaf) -or
-      -not $ObservedLog -or -not (Test-Path -LiteralPath $ObservedLog -PathType Leaf) -or $ObservedExitCode -eq 0) {
-    throw "$Scenario requires the actual setup EXE, failure log, and nonzero exit code from the prepared fault run"
-  }
-  $observedSetupHash = (Get-FileHash -LiteralPath $ObservedSetupExe -Algorithm SHA256).Hash.ToLowerInvariant()
-  if ($Scenario -eq 'hash-failure' -and $observedSetupHash -eq $setupHash) { throw 'Hash-failure scenario requires an altered fixture bundle' }
-  if ($Scenario -ne 'hash-failure' -and $observedSetupHash -ne $setupHash) { throw "$Scenario must run the released setup EXE" }
-  Copy-Item -LiteralPath $ObservedLog -Destination $log -Force
-  $body = Get-Content -LiteralPath $log -Raw
-  $marker = switch ($Scenario) { 'offline' { 'download|network|internet' } 'hash-failure' { 'hash|checksum|digest' } 'cancel' { 'cancel|user exit' } }
-  if ($body -notmatch $marker) { throw "$Scenario log lacks the expected failure marker" }
-  $exitCode = $ObservedExitCode
+if ($ResumeAfterReboot) {
+  $observedSetupHash = $pending.observed_setup_sha256
+  $exitCode = 3010
 } else {
-  $observedSetupHash = $setupHash
+  $runSetup = $SetupExe
+  if ($Scenario -eq 'hash-failure') {
+    if (-not $ObservedSetupExe -or -not (Test-Path -LiteralPath $ObservedSetupExe -PathType Leaf)) { throw 'Hash-failure scenario requires an altered fixture bundle EXE' }
+    $runSetup = $ObservedSetupExe
+  }
+  $observedSetupHash = (Get-FileHash -LiteralPath $runSetup -Algorithm SHA256).Hash.ToLowerInvariant()
+  if ($Scenario -eq 'hash-failure' -and $observedSetupHash -eq $setupHash) { throw 'Hash-failure fixture must differ from release setup' }
   $arguments = @('/quiet','/norestart','/log',"`"$log`"")
   if ($Scenario -eq 'uninstall') { $arguments += '/uninstall' }
   elseif ($Scenario -eq 'repair-deselect') { $arguments += @('/repair','InstallDeveloperTools=0') }
   else { $arguments += '/install'; $arguments += $(if ($Scenario -in @('developer','community','preexisting','upgrade')) { 'InstallDeveloperTools=1' } else { 'InstallDeveloperTools=0' }) }
-  $result = Start-Process -FilePath $SetupExe -ArgumentList $arguments -Wait -PassThru
+  $result = Start-Process -FilePath $runSetup -ArgumentList $arguments -Wait -PassThru
   $exitCode = $result.ExitCode
-  if ($exitCode -ne 0) { throw "$Scenario setup failed with exit code $exitCode; see $log" }
+  if ($exitCode -eq 3010) {
+    if ($failure) { throw "$Scenario returned reboot-required instead of the expected failure; see $log" }
+    $pending = [ordered]@{
+      scenario=$Scenario; setup_sha256=$setupHash; msi_sha256=$msiHash;
+      observed_setup_sha256=$observedSetupHash;
+      boot_utc=(Get-CimInstance Win32_OperatingSystem).LastBootUpTime.ToString('o'); before=$before;
+      prior_version_text=$priorVersionText
+    }
+    [IO.File]::WriteAllText($pendingPath, ($pending | ConvertTo-Json -Depth 8), (New-Object System.Text.UTF8Encoding($false)))
+    throw "$Scenario requires a Windows reboot; rerun with -ResumeAfterReboot after restart"
+  }
+  if ($failure) {
+    if ($exitCode -eq 0) { throw "$Scenario unexpectedly succeeded; see $log" }
+    $body = Get-Content -LiteralPath $log -Raw
+    $marker = if ($Scenario -eq 'offline') { 'download|network|internet' } else { 'hash|checksum|digest' }
+    if ($body -notmatch $marker) { throw "$Scenario log lacks the expected failure marker" }
+  } elseif ($exitCode -ne 0) { throw "$Scenario setup failed with exit code $exitCode; see $log" }
 }
 $after = Get-State
 $shouldInstall = -not $failure -and $Scenario -ne 'uninstall'
@@ -164,7 +185,7 @@ $report = [ordered]@{
   vendor_retained=$true; community_unchanged=($after.community_signature -eq $before.community_signature);
   vc_version=$after.vc; msvc_version=$after.msvc;
   sdk_version=$after.sdk; llvm_version=$after.llvm; lld_link_executed=$after.lld;
-  cli=$cli; fresh_environment=$true; prior_version=$PriorVersion;
+  cli=$cli; fresh_environment=$true; reboot_verified=$rebootVerified; prior_version=$PriorVersion;
   installed_version=$installedVersionText
 }
 $json = $report | ConvertTo-Json -Depth 8

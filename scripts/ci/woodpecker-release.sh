@@ -159,11 +159,11 @@ smoke_dir="${BESKID_WINDOWS_INSTALLER_SMOKE_DIR:-}"
   echo 'BESKID_WINDOWS_INSTALLER_SMOKE_DIR must contain approved disposable-VM evidence before publication' >&2
   exit 1
 }
-windows_setup="beskid-${version}-windows-amd64.exe"
-windows_msi="beskid-${version}-windows-amd64.msi"
-node "$scripts/windows-installer-smoke-gate.mjs" "$smoke_dir" \
-  "$(sha256sum "$assets/$windows_setup" | cut -d' ' -f1)" \
-  "$(sha256sum "$assets/$windows_msi" | cut -d' ' -f1)"
+# The structural validator can be run by an operator, but cannot authenticate
+# the VM or the transfer path. Keep publication closed until that provenance
+# is supplied by trusted CI integration.
+echo 'Windows installer smoke evidence has no CI-attested disposable-VM provenance or trusted transfer path; publication is blocked' >&2
+exit 1
 
 for stream in cli lsp bundle; do
   bash "$scripts/publish-release-stream.sh" "$stream" "$version" "$compiler_sha" "$assets" immutable stable "$state"

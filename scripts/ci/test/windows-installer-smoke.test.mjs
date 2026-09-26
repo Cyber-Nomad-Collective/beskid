@@ -1,11 +1,12 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 
 const gate = new URL("../windows-installer-smoke-gate.mjs", import.meta.url);
+const recorder = new URL("../windows-installer-smoke.ps1", import.meta.url);
 const scenarios = ["runtime", "developer", "community", "preexisting", "offline", "hash-failure", "cancel", "repair-deselect", "upgrade", "uninstall"];
 const hash = "a".repeat(64);
 
@@ -23,7 +24,7 @@ function evidence(dir, scenario, overrides = {}) {
     beskid_installed: !["offline", "hash-failure", "cancel", "uninstall"].includes(scenario),
     vendor_retained: true,
     community_unchanged: true,
-    vendor: ["VcRedistX64", "VsBuildTools2022", "LlvmX64"].map(id => ({ id, sha512: "c".repeat(128), size: 100 })),
+    vendor: ["VcRedistX64", "VsBuildTools2022", "LlvmX64"].map(id => ({ id, version: "1.2.3", sha512: "c".repeat(128), size: 100 })),
     vc_version: "14.44.35211.0", msvc_version: scenario === "runtime" ? "" : "14.44.35207", sdk_version: scenario === "runtime" ? "" : "10.0.26100.0", llvm_version: scenario === "runtime" ? "" : "22.1.8",
     prior_version: scenario === "upgrade" ? "0.4.743" : "", installed_version: scenario === "upgrade" ? "beskid 0.4.744" : "",
     lld_link_executed: true, fresh_environment: true, cli: { test: true, build: true, run: true },
@@ -32,8 +33,19 @@ function evidence(dir, scenario, overrides = {}) {
   }));
 }
 
-function run(dir) { return spawnSync(process.execPath, [gate.pathname, dir, hash, hash], { encoding: "utf8" }); }
+function run(dir) {
+  const lock = { schemaVersion: 1, packages: ["VcRedistX64", "VsBuildTools2022", "LlvmX64"].map(id => ({ id, version: "1.2.3", name: `${id}.exe`, sha512: "c".repeat(128), size: 100 })) };
+  writeFileSync(join(dir, "prerequisites.lock.json"), JSON.stringify(lock));
+  return spawnSync(process.execPath, [gate.pathname, dir, hash, hash, join(dir, "prerequisites.lock.json")], { encoding: "utf8" });
+}
 function rejects(dir, pattern) { const result = run(dir); assert.notEqual(result.status, 0); assert.match(result.stderr, pattern); }
+
+test("fault recorder executes the prepared setup and refuses unautomated cancellation", () => {
+  const source = readFileSync(recorder, "utf8");
+  assert.match(source, /Start-Process -FilePath \$runSetup/);
+  assert.match(source, /if \(\$Scenario -eq 'cancel'\) \{ throw/);
+  assert.doesNotMatch(source, /ObservedLog|ObservedExitCode/);
+});
 
 test("installer release gate requires every real Windows scenario", (t) => {
   const dir = mkdtempSync(join(tmpdir(), "beskid-installer-smoke-"));
@@ -60,6 +72,8 @@ test("installer release gate rejects missing developer tools, CLI smoke, and syn
   rejects(dir, /fresh environment/);
   evidence(dir, "developer", { vendor: [] });
   rejects(dir, /vendor hash/);
+  evidence(dir, "developer", { vendor: ["VcRedistX64", "VsBuildTools2022", "LlvmX64"].map(id => ({ id, version: "1.2.3", sha512: "d".repeat(128), size: 100 })) });
+  rejects(dir, /locked vendor/);
   evidence(dir, "developer");
   evidence(dir, "community", { community_unchanged: false });
   rejects(dir, /Community changed/);
@@ -87,4 +101,14 @@ test("installer release gate rejects hash mismatch and missing screenshots", (t)
   evidence(dir, "runtime");
   rmSync(join(dir, "welcome-150.png"));
   rejects(dir, /missing evidence file: welcome-150.png/);
+});
+
+test("reboot-required setup needs verified post-reboot resume", (t) => {
+  const dir = mkdtempSync(join(tmpdir(), "beskid-installer-smoke-"));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  for (const scenario of scenarios) evidence(dir, scenario);
+  evidence(dir, "developer", { setup_exit_code: 3010, reboot_verified: false });
+  rejects(dir, /reboot verification/);
+  evidence(dir, "developer", { setup_exit_code: 3010, reboot_verified: true });
+  assert.equal(run(dir).status, 0, run(dir).stderr);
 });

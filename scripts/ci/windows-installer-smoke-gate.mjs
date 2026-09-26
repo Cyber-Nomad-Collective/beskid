@@ -18,10 +18,15 @@ function file(dir, name) {
 function version(value) { return typeof value === "string" && /^\d+(?:\.\d+)+$/.test(value); }
 
 try {
-  requireValue(process.argv.length === 5, "usage: windows-installer-smoke-gate.mjs <evidence-dir> <setup-sha256> <msi-sha256>");
+  requireValue(process.argv.length === 6, "usage: windows-installer-smoke-gate.mjs <evidence-dir> <setup-sha256> <msi-sha256> <checked-in-prerequisites.lock.json>");
   const dir = resolve(process.argv[2]);
   const expectedSetup = process.argv[3], expectedMsi = process.argv[4];
   requireValue(hashPattern.test(expectedSetup) && hashPattern.test(expectedMsi), "expected SHA-256 values must be lowercase hex");
+  const lock = JSON.parse(readFileSync(resolve(process.argv[5]), "utf8"));
+  requireValue(lock.schemaVersion === 1 && Array.isArray(lock.packages) && lock.packages.length === 3, "invalid prerequisite lock");
+  for (const [index, item] of lock.packages.entries()) {
+    requireValue(item.id === vendorIds[index] && version(item.version) && /^[0-9a-f]{128}$/.test(item.sha512) && Number.isSafeInteger(item.size) && item.size > 0, "invalid locked vendor metadata");
+  }
   const reports = [];
   let vendorHashes;
   for (const scenario of scenarios) {
@@ -43,13 +48,19 @@ try {
     const marker = scenario === "offline" ? /download|network|internet/i : scenario === "hash-failure" ? /hash|checksum|digest/i : scenario === "cancel" ? /cancel|user exit/i : null;
     if (marker) requireValue(marker.test(log), `${scenario}: failure log lacks expected marker`);
     requireValue(Number.isInteger(report.setup_exit_code), `${scenario}: missing setup exit code`);
-    requireValue(failures.has(scenario) ? report.setup_exit_code !== 0 : report.setup_exit_code === 0, `${scenario}: unexpected setup exit code`);
+    if (failures.has(scenario)) requireValue(report.setup_exit_code !== 0 && report.setup_exit_code !== 3010, `${scenario}: unexpected setup exit code`);
+    else {
+      requireValue(report.setup_exit_code === 0 || report.setup_exit_code === 3010, `${scenario}: unexpected setup exit code`);
+      if (report.setup_exit_code === 3010) requireValue(report.reboot_verified === true, `${scenario}: missing reboot verification`);
+    }
     requireValue(report.beskid_installed === (!failures.has(scenario) && scenario !== "uninstall"), `${scenario}: wrong Beskid installation state`);
     requireValue(report.vendor_retained === true, `${scenario}: shared vendor prerequisite was removed`);
     if (scenario === "community") requireValue(report.community_unchanged === true, "community: VS Community changed during Build Tools setup");
     requireValue(Array.isArray(report.vendor) && report.vendor.length === 3, `${scenario}: missing vendor hash evidence`);
     for (const [index, vendor] of report.vendor.entries()) {
       requireValue(vendor.id === vendorIds[index] && /^[0-9a-f]{128}$/.test(vendor.sha512) && Number.isSafeInteger(vendor.size) && vendor.size > 0, `${scenario}: invalid vendor hash evidence`);
+      const expected = lock.packages[index];
+      requireValue(vendor.version === expected.version && vendor.sha512 === expected.sha512 && vendor.size === expected.size, `${scenario}: locked vendor metadata mismatch for ${vendor.id}`);
     }
     const currentVendorHashes = report.vendor.map(item => `${item.id}:${item.sha512}:${item.size}`).join("|");
     requireValue(vendorHashes === undefined || vendorHashes === currentVendorHashes, `${scenario}: vendor hash evidence changed across scenarios`);
@@ -77,7 +88,7 @@ try {
   for (const shot of screenshots) {
     file(dir, `${shot}.png`);
   }
-  process.stdout.write(`${JSON.stringify({ schema_version: 1, status: "passed", scenarios: reports })}\n`);
+  process.stdout.write(`${JSON.stringify({ schema_version: 1, status: "structurally-valid-unattested", scenarios: reports })}\n`);
 } catch (error) {
   process.stderr.write(`Windows installer smoke: ${error.message}\n`);
   process.exit(1);
