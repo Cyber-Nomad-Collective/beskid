@@ -172,11 +172,39 @@ if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=true CI_PIPELINE_NUMBER=72 CI_C
 fi
 test ! -s "$tmp/gh.log" || fail 'untrusted publication reached GitHub'
 
+# Trusted publication still requires disposable-VM installer evidence.
+: >"$tmp/gh.log"
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=true CI_PIPELINE_NUMBER=721 CI_COMMIT_SHA="$source_sha" \
+  CI_PIPELINE_EVENT=manual CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
+  GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
+  bash "$script" "$build_run" "$version" 2>"$tmp/missing-smoke.err"; then
+  fail 'publication without Windows installer smoke evidence was accepted'
+fi
+grep -Fq 'BESKID_WINDOWS_INSTALLER_SMOKE_DIR' "$tmp/missing-smoke.err" || fail 'missing installer smoke gate was not diagnosed'
+test ! -s "$tmp/gh.log" || fail 'missing installer smoke gate reached GitHub'
+
+# Synthetic evidence exercises the publication gate without installing software.
+smoke_dir="$tmp/smoke-evidence"
+mkdir "$smoke_dir"
+node - "$smoke_dir" "$(sha "$tmp/rootfs/woodpecker-handoff/windows/incoming/${build_run}-${source_sha}/windows/beskid-${version}-windows-amd64.exe")" \
+  "$(sha "$tmp/rootfs/woodpecker-handoff/windows/incoming/${build_run}-${source_sha}/windows/beskid-${version}-windows-amd64.msi")" <<'NODE'
+const fs=require('node:fs'),path=require('node:path');
+const [dir,setup,msi]=process.argv.slice(2);
+const cases=['runtime','developer','community','preexisting','offline','hash-failure','cancel','repair-deselect','upgrade','uninstall'];
+for(const page of ['welcome','options','progress','success','failure','msi-directory']) for(const scale of [100,150])fs.writeFileSync(path.join(dir,`${page}-${scale}.png`),'test screenshot');
+for(const scenario of cases){
+  const failure=['offline','hash-failure','cancel'].includes(scenario),installed=!failure&&scenario!=='uninstall';
+  fs.writeFileSync(path.join(dir,`${scenario}.log`),`${scenario} ${scenario==='hash-failure'?'hash mismatch':scenario==='offline'?'download failed':scenario==='cancel'?'cancelled':'completed'}\n`);
+  fs.writeFileSync(path.join(dir,`${scenario}.json`),JSON.stringify({schema_version:1,scenario,real_windows_vm:true,passed:true,machine_name:'TEST-VM',recorded_utc:'2026-09-26T12:00:00Z',setup_sha256:setup,msi_sha256:msi,observed_setup_sha256:scenario==='hash-failure'?'b'.repeat(64):setup,setup_log:`${scenario}.log`,setup_exit_code:failure?1:0,beskid_installed:installed,vendor_retained:true,community_unchanged:true,vendor:['VcRedistX64','VsBuildTools2022','LlvmX64'].map(id=>({id,sha512:'c'.repeat(128),size:100})),vc_version:'14.44.35211.0',msvc_version:scenario==='runtime'?'':'14.44.35207',sdk_version:scenario==='runtime'?'':'10.0.26100.0',llvm_version:scenario==='runtime'?'':'22.1.8',lld_link_executed:true,fresh_environment:true,cli:{test:true,build:true,run:true},prior_version:scenario==='upgrade'?'0.4.743':'',installed_version:scenario==='upgrade'?'beskid 0.4.744':''}));
+}
+NODE
+
 # The real entrypoint drives the canonical publisher: every immutable stream,
 # immutable installers, every rolling stream, then rolling installers.
 : >"$tmp/gh.log"
 WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=true CI_PIPELINE_NUMBER=73 CI_COMMIT_SHA="$source_sha" \
   CI_PIPELINE_EVENT=manual CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
+  BESKID_WINDOWS_INSTALLER_SMOKE_DIR="$smoke_dir" \
   GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
   bash "$script" "$build_run" "$version"
 cli_immutable="$(grep -n '^release create cli-v' "$tmp/gh.log" | cut -d: -f1)"
@@ -194,6 +222,7 @@ grep -Fq 'beskid_homebrew/contents/Formula/beskid.rb' "$tmp/gh.log" || fail 'Hom
 : >"$tmp/gh.log"
 WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=true CI_PIPELINE_NUMBER=74 CI_COMMIT_SHA="$source_sha" \
   CI_PIPELINE_EVENT=manual CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
+  BESKID_WINDOWS_INSTALLER_SMOKE_DIR="$smoke_dir" \
   GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
   bash "$script" "$build_run" "$version"
 if grep -Eq "^release (create|upload|edit) (cli-v|lsp-v|v${version})" "$tmp/gh.log"; then
@@ -206,6 +235,7 @@ printf 'different bytes\n' >"$tmp/remote/cli-v${version}/beskid-${version}-amd64
 : >"$tmp/gh.log"
 if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=true CI_PIPELINE_NUMBER=75 CI_COMMIT_SHA="$source_sha" \
   CI_PIPELINE_EVENT=manual CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
+  BESKID_WINDOWS_INSTALLER_SMOKE_DIR="$smoke_dir" \
   GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
   bash "$script" "$build_run" "$version" 2>"$tmp/remote-mismatch.err"; then
   fail 'different immutable installer was accepted'

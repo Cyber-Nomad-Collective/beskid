@@ -13,6 +13,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 - Generate all Windows installer artwork through the distribution brand-asset
   script before Woodpecker builds the MSI and setup EXE.
+- Require disposable Windows installer-matrix evidence before manual release
+  publication, including vendor hashes, native-tool versions, CLI smoke, and
+  branded-page screenshots.
 
 ### Added
 

@@ -154,6 +154,17 @@ if [[ "${BESKID_PUBLISH_RELEASE:-0}" == 0 ]]; then
   exit 0
 fi
 
+smoke_dir="${BESKID_WINDOWS_INSTALLER_SMOKE_DIR:-}"
+[[ -n "$smoke_dir" && -d "$smoke_dir" ]] || {
+  echo 'BESKID_WINDOWS_INSTALLER_SMOKE_DIR must contain approved disposable-VM evidence before publication' >&2
+  exit 1
+}
+windows_setup="beskid-${version}-windows-amd64.exe"
+windows_msi="beskid-${version}-windows-amd64.msi"
+node "$scripts/windows-installer-smoke-gate.mjs" "$smoke_dir" \
+  "$(sha256sum "$assets/$windows_setup" | cut -d' ' -f1)" \
+  "$(sha256sum "$assets/$windows_msi" | cut -d' ' -f1)"
+
 for stream in cli lsp bundle; do
   bash "$scripts/publish-release-stream.sh" "$stream" "$version" "$compiler_sha" "$assets" immutable stable "$state"
 done
