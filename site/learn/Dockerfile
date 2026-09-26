@@ -21,8 +21,10 @@ RUN pnpm install --frozen-lockfile --filter beskid-learn...
 COPY site/learn/ ./site/learn/
 RUN pnpm --dir site/learn run build
 
-# wasmtime 41.x in the compiler lockfile requires rustc >= 1.90.
-FROM rust:1.90 AS rust
+# The compiler lockfile's Cranelift and Wasmtime crates track recent stable rustc (the
+# failing pin was 1.90 while the lockfile needed 1.96). Follow the floating rust:1 tag
+# like pckg/Dockerfile does instead of pinning a minor version that goes stale.
+FROM rust:1-bookworm AS rust
 WORKDIR /workspace
 
 # Canonical ABI-v5 runtime-kit staging compiles native context, TLS, and host shims with clang.
