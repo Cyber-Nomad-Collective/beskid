@@ -196,8 +196,11 @@ fs.writeFileSync(path.join(dir,'prerequisites.lock.json'),JSON.stringify({schema
 for(const page of ['welcome','options','progress','success','failure','msi-directory']) for(const scale of [100,150])fs.writeFileSync(path.join(dir,`${page}-${scale}.png`),'test screenshot');
 for(const scenario of cases){
   const failure=['offline','hash-failure','cancel'].includes(scenario),installed=!failure&&scenario!=='uninstall';
-  fs.writeFileSync(path.join(dir,`${scenario}.log`),`${scenario} ${scenario==='hash-failure'?'hash mismatch':scenario==='offline'?'download failed':scenario==='cancel'?'cancelled':'completed'}\n`);
-  fs.writeFileSync(path.join(dir,`${scenario}.json`),JSON.stringify({schema_version:1,scenario,real_windows_vm:true,passed:true,machine_name:'TEST-VM',recorded_utc:'2026-09-26T12:00:00Z',setup_sha256:setup,msi_sha256:msi,observed_setup_sha256:scenario==='hash-failure'?'b'.repeat(64):setup,setup_log:`${scenario}.log`,setup_exit_code:failure?1:0,beskid_installed:installed,vendor_retained:true,community_unchanged:true,vendor,vc_version:'14.44.35211.0',msvc_version:scenario==='runtime'?'':'14.44.35207',sdk_version:scenario==='runtime'?'':'10.0.26100.0',llvm_version:scenario==='runtime'?'':'22.1.8',lld_link_executed:true,fresh_environment:true,cli:{test:true,build:true,run:true},prior_version:scenario==='upgrade'?'0.4.743':'',installed_version:scenario==='upgrade'?'beskid 0.4.744':''}));
+  const log=scenario==='cancel'
+    ? 'i338: Acquiring package: VcRedistX64, payload: VcRedistX64.exe, download\nUser cancelled\n'
+    : `${scenario} ${scenario==='hash-failure'?'hash mismatch':scenario==='offline'?'download failed':'completed'}\n`;
+  fs.writeFileSync(path.join(dir,`${scenario}.log`),log);
+  fs.writeFileSync(path.join(dir,`${scenario}.json`),JSON.stringify({schema_version:1,scenario,real_windows_vm:true,passed:true,machine_name:'TEST-VM',recorded_utc:'2026-09-26T12:00:00Z',setup_sha256:setup,msi_sha256:msi,observed_setup_sha256:scenario==='hash-failure'?'b'.repeat(64):setup,setup_log:`${scenario}.log`,setup_exit_code:failure?1:0,beskid_installed:installed,vendor_retained:true,community_unchanged:true,vendor,vc_version:'14.44.35211.0',msvc_version:scenario==='runtime'?'':'14.44.35207',sdk_version:scenario==='runtime'?'':'10.0.26100.0',llvm_version:scenario==='runtime'?'':'22.1.8',lld_link_executed:true,fresh_environment:true,cli:{test:true,build:true,run:true},prior_version:scenario==='upgrade'?'0.4.743':'',installed_version:scenario==='upgrade'?'beskid 0.4.744':'',...(scenario==='cancel'?{cancel_trigger:'burn-window-close',download_package:'VcRedistX64',download_payload:'VcRedistX64.exe'}:{})}));
 }
 NODE
 node "$root/scripts/ci/windows-installer-smoke-gate.mjs" "$smoke_dir" \

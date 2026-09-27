@@ -30,6 +30,10 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Keep the Woodpecker release test's synthetic cancel evidence aligned with
+  the required Burn acquisition and user-cancellation markers, so its
+  fail-closed publication assertion runs to completion.
+
 - Preserve explicit `[Export]` metadata through syntax-assembly lowering, so
   native C fixtures link their declared ABI symbols instead of internal syntax
   identities; declare every direct C fixture entrypoint explicitly and keep
