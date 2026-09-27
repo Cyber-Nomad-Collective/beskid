@@ -105,6 +105,14 @@ cancel`; no earlier report was rejected. Evidence is retained locally under
    remaining fault is narrower than general process-environment propagation.
    A second focused shim run (`v05-integration-2-dns-shim-assert-r2.log`)
    reproduced the same exit-1/no-shim-branch result in 44 seconds.
+   Source inspection narrows the next diagnostic: the runtime test gates the
+   shim on `Environment.Has`, whose only implementation calls
+   `Option.HasValue(TryGet(name))` with an inferred type argument. The existing
+   environment tests check only absent/empty values, and the only tested
+   `Option.HasValue<string>` call is also for `None`. A positive-value test
+   should distinguish `TryGet` returning `None`, generic `HasValue<string>`
+   mishandling `Some`, and the inferred call in `Has`; no one of these is yet
+   established as the root cause.
 7. The contract-system change still requires `This` substitution through a
    generic bound at its monomorphized use site. Bound admission exists, but
    the corresponding end-to-end scenario and task 3.6 remain open. Generic
