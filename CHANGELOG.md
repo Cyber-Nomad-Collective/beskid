@@ -30,6 +30,11 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Build release bundles with both debug and release ABI-v5 runtime kits and
+  the CLI's own marker-bearing Corelib workspace at the installed discovery
+  path, so packaged build/run/test commands work without environment overrides.
+- Construct a Windows principal before checking installer-smoke elevation,
+  allowing the real-VM acceptance run to reach setup.
 - Keep the Woodpecker release test's synthetic cancel evidence aligned with
   the required Burn acquisition and user-cancellation markers, so its
   fail-closed publication assertion runs to completion.

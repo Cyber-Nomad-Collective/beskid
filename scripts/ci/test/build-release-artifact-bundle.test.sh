@@ -3,7 +3,7 @@ set -euo pipefail
 
 root="$(cd "$(dirname "$0")/../../.." && pwd)"
 builder="${root}/scripts/ci/build-release-artifact.sh"
-extractor="${root}/beskid_distrib/scripts/extract-release-bundle.sh"
+extractor="${BESKID_DISTRIB_ROOT:-${root}/beskid_distrib}/scripts/extract-release-bundle.sh"
 tmp="$(mktemp -d)"
 trap 'rm -rf "${tmp}"' EXIT
 
@@ -21,6 +21,7 @@ done
 printf '# fixture lock\n' >"${tmp}/root/compiler/Cargo.lock"
 printf 'project { name = "corelib" }\n' >"${tmp}/root/compiler/corelib/beskid_corelib/corelib.bproj"
 printf 'project { name = "foundation" }\n' >"${tmp}/root/compiler/corelib/packages/foundation/foundation.bproj"
+printf 'workspace { name = "corelib" }\n' >"${tmp}/root/compiler/corelib/CoreLib.bws"
 
 cat >"${tmp}/bin/cargo" <<'SH'
 #!/usr/bin/env bash
@@ -33,7 +34,24 @@ done
 mkdir -p "target/${target}/release"
 extension=''; [[ "${target}" == x86_64-pc-windows-msvc ]] && extension=.exe
 for binary in beskid_cli beskid_lsp beskid-up; do
-  printf '#!/usr/bin/env bash\nexit 0\n' >"target/${target}/release/${binary}${extension}"
+  if [[ "${binary}" == beskid_cli ]]; then
+    cat >"target/${target}/release/${binary}${extension}" <<'CLI'
+#!/usr/bin/env bash
+set -euo pipefail
+if [[ "${1:-}" == runtime-kit && "${2:-}" == build-native-host ]]; then
+  target="$(basename "$(dirname "$(dirname "$0")")")"
+  mkdir -p "${BESKID_RUNTIME_PREFIX}/lib/beskid-runtime/abi-5/${target}/release"
+  printf '{}\n' >"${BESKID_RUNTIME_PREFIX}/lib/beskid-runtime/abi-5/${target}/release/abi.json"
+  exit 0
+fi
+[[ "${1:-}" == corelib ]] || exit 1
+mkdir -p "${BESKID_CORELIB_ROOT}"
+cp -a corelib/CoreLib.bws corelib/beskid_corelib corelib/packages "${BESKID_CORELIB_ROOT}/"
+printf '%064d\n' 0 >"${BESKID_CORELIB_ROOT}/.beskid-bundle.sha256"
+CLI
+  else
+    printf '#!/usr/bin/env bash\nexit 0\n' >"target/${target}/release/${binary}${extension}"
+  fi
   chmod +x "target/${target}/release/${binary}${extension}"
 done
 SH
@@ -50,7 +68,7 @@ cat >"${tmp}/root/compiler/scripts/stage-native-runtime-kit.sh" <<'SH'
 set -euo pipefail
 target_path="$(dirname "$(dirname "${BESKID_CLI_BIN}")")"
 target="$(basename "${target_path}")"
-runtime="${BESKID_RUNTIME_PREFIX}/lib/beskid-runtime/abi-5/${target}/release"
+runtime="${BESKID_RUNTIME_PREFIX}/lib/beskid-runtime/abi-5/${target}/${BESKID_RUNTIME_KIT_PROFILE}"
 rm -rf "${BESKID_RUNTIME_PREFIX}/lib/beskid-runtime/abi-5"
 mkdir -p "${runtime}"
 printf '{}\n' >"${runtime}/abi.json"
@@ -69,8 +87,12 @@ assert_bundle() {
     test -x "${extracted}/bin/${binary}${extension}"
   done
   test -f "${extracted}/lib/beskid-runtime/abi-5/${target}/release/abi.json"
-  test -f "${extracted}/beskid_corelib/corelib.bproj"
-  test -f "${extracted}/packages/foundation/foundation.bproj"
+  test -f "${extracted}/lib/beskid-runtime/abi-5/${target}/debug/abi.json"
+  test -f "${extracted}/beskid_corelib/.beskid-bundle.sha256"
+  test -f "${extracted}/beskid_corelib/CoreLib.bws"
+  test -f "${extracted}/beskid_corelib/beskid_corelib/corelib.bproj"
+  test -f "${extracted}/beskid_corelib/packages/foundation/foundation.bproj"
+  test ! -e "${extracted}/packages"
   grep -Fxq 1.2.3 "${extracted}/release-version.txt"
   test ! -e "${extracted}/native-runtime-kit"
   test ! -e "${extracted}/beskid_cli${extension}"

@@ -18,7 +18,8 @@ $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'windows-installer-cancel.ps1')
 . (Join-Path $PSScriptRoot 'windows-installer-vendor.ps1')
 if ($env:OS -ne 'Windows_NT') { throw 'Windows installer smoke requires a real Windows VM' }
-if (-not [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent().IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+$principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
   throw 'Run installer smoke from an elevated shell on a disposable VM'
 }
 $failure = @('offline','hash-failure','cancel') -contains $Scenario

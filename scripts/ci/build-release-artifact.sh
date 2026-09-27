@@ -96,9 +96,15 @@ esac
 if [[ "$PACKAGE" == "beskid_bundle" ]]; then
   runtime_prefix="${ROOT}/compiler/target/native-runtime-kit"
   BESKID_RUNTIME_PREFIX="${runtime_prefix}" \
-    BESKID_RUNTIME_KIT_PROFILE=release \
+    BESKID_RUNTIME_KIT_PROFILE=debug \
     BESKID_CLI_BIN="${ROOT}/compiler/target/${TARGET}/release/beskid_cli${binary_extension}" \
     bash ./scripts/stage-native-runtime-kit.sh
+  # Ordinary installed `beskid build` and `beskid run` select the debug kit.
+  # The release kit is additional; stage-native-runtime-kit.sh clears its
+  # destination, so publish this profile with the CLI without clearing debug.
+  BESKID_RUNTIME_PREFIX="${runtime_prefix}" \
+    "${ROOT}/compiler/target/${TARGET}/release/beskid_cli${binary_extension}" \
+    runtime-kit build-native-host --prefix "${runtime_prefix}" --profile release
 
   release_stage="$(mktemp -d)"
   bundle_dir="${release_stage}/beskid-${RELEASE_VERSION}-${TARGET}"
@@ -113,15 +119,35 @@ if [[ "$PACKAGE" == "beskid_bundle" ]]; then
   chmod 0755 "${bundle_dir}/bin/beskid${binary_extension}" \
     "${bundle_dir}/bin/beskid_lsp${binary_extension}" \
     "${bundle_dir}/bin/beskid-up${binary_extension}"
-  [[ -f "${runtime_prefix}/lib/beskid-runtime/abi-5/${TARGET}/release/abi.json" ]] || {
-    echo "Native runtime kit omitted ${TARGET}/release/abi.json" >&2
+  for profile in debug release; do
+    [[ -f "${runtime_prefix}/lib/beskid-runtime/abi-5/${TARGET}/${profile}/abi.json" ]] || {
+      echo "Native runtime kit omitted ${TARGET}/${profile}/abi.json" >&2
+      exit 1
+    }
+  done
+  cp -a "${runtime_prefix}/lib" "${bundle_dir}/lib"
+  # Materialize the CLI's exact embedded Corelib workspace, including its
+  # integrity marker. Installed discovery resolves <prefix>/beskid_corelib as
+  # the *workspace* root; copying only the aggregate project there creates an
+  # unrecognized, unmanaged directory and blocks the first installed command.
+  BESKID_CORELIB_ROOT="${bundle_dir}/beskid_corelib" \
+    "${bundle_dir}/bin/beskid${binary_extension}" corelib --output "${bundle_dir}/beskid_corelib"
+  [[ -f "${bundle_dir}/beskid_corelib/.beskid-bundle.sha256" ]] || {
+    echo 'Bundled Corelib workspace is missing its integrity marker' >&2
     exit 1
   }
-  [[ -f corelib/beskid_corelib/corelib.bproj ]] || { echo 'Compiler corelib is incomplete' >&2; exit 1; }
-  [[ -d corelib/packages ]] || { echo 'Compiler bundled packages are missing' >&2; exit 1; }
-  cp -a "${runtime_prefix}/lib" "${bundle_dir}/lib"
-  cp -a corelib/beskid_corelib "${bundle_dir}/beskid_corelib"
-  cp -a corelib/packages "${bundle_dir}/packages"
+  [[ -f "${bundle_dir}/beskid_corelib/CoreLib.bws" ]] || {
+    echo 'Bundled Corelib workspace is missing CoreLib.bws' >&2
+    exit 1
+  }
+  [[ -f "${bundle_dir}/beskid_corelib/beskid_corelib/corelib.bproj" ]] || {
+    echo 'Bundled Corelib workspace is missing its aggregate project' >&2
+    exit 1
+  }
+  [[ -d "${bundle_dir}/beskid_corelib/packages" ]] || {
+    echo 'Bundled Corelib workspace is missing its packages' >&2
+    exit 1
+  }
   printf '%s\n' "${RELEASE_VERSION}" >"${bundle_dir}/release-version.txt"
   tar -C "${release_stage}" -czf "${ROOT}/${ASSET_NAME}" "$(basename "$bundle_dir")"
   echo "built ${ASSET_NAME} (Beskid ${RELEASE_VERSION} bundle for ${TARGET})"
