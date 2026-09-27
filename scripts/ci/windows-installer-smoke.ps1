@@ -47,11 +47,11 @@ function Get-State {
   foreach ($instance in $buildTools) {
     if (-not $instance.installationPath) { continue }
     $versions = @(Get-ChildItem -LiteralPath (Join-Path $instance.installationPath 'VC\Tools\MSVC') -Directory -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name)
-    if ($versions.Count) { $msvcVersion = ($versions | Sort-Object -Descending)[0]; break }
+    if ($versions.Count) { $msvcVersion = @($versions | Sort-Object -Descending)[0]; break }
   }
   $sdkRoot = Join-Path ${env:ProgramFiles(x86)} 'Windows Kits\10\Lib'
   $sdkVersions = @(Get-ChildItem -LiteralPath $sdkRoot -Directory -ErrorAction SilentlyContinue | Where-Object { Test-Path (Join-Path $_.FullName 'um\x64\kernel32.lib') } | Select-Object -ExpandProperty Name)
-  $sdkVersion = if ($sdkVersions.Count) { ($sdkVersions | Sort-Object -Descending)[0] } else { '' }
+  $sdkVersion = if ($sdkVersions.Count) { @($sdkVersions | Sort-Object -Descending)[0] } else { '' }
   $lld = Join-Path ${env:ProgramFiles} 'LLVM\bin\lld-link.exe'
   $llvmVersion = ''
   $lldExecuted = $false

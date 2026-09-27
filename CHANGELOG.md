@@ -35,6 +35,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   path, so packaged build/run/test commands work without environment overrides.
 - Construct a Windows principal before checking installer-smoke elevation,
   allowing the real-VM acceptance run to reach setup.
+- Record complete MSVC and Windows SDK version names when only one version is
+  installed, rather than indexing the first character of a PowerShell scalar.
 - Keep the Woodpecker release test's synthetic cancel evidence aligned with
   the required Burn acquisition and user-cancellation markers, so its
   fail-closed publication assertion runs to completion.
