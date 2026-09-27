@@ -84,7 +84,16 @@ cancel`; no earlier report was rejected. Evidence is retained locally under
 3. The release script intentionally refuses publication even if structural
    Windows evidence is complete: no trusted disposable-VM provenance and
    transfer path is integrated with Woodpecker. Do not bypass that fail-closed
-   check or give Woodpecker publication credentials.
+   check or give Woodpecker publication credentials. The Windows build pipeline
+   runs on the ordinary Windows agent (`.woodpecker/windows.yml`), whereas the
+   Linux release agent runs on the builder (`.woodpecker/release.yml`). The
+   builder currently has the approved disposable clone as an active VM service,
+   but `windows-installer-smoke-gate.mjs` only checks self-reported VM identity
+   and artifact hashes; it cannot authenticate the VM or evidence transport.
+   A host-attested disposable-VM execution and transfer design is therefore
+   still required before the hard stop in `woodpecker-release.sh` can be
+   replaced. Do not treat the nine existing scenario records as trusted CI
+   evidence merely because they pass structural validation.
 4. Final committed-source CI artifacts, qualified release-state evidence, and
    approved main-branch merges/pushes are not yet available.
 5. The HTTP implementation accepts HTAB and obs-text field values while the
