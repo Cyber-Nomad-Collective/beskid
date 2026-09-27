@@ -30,3 +30,19 @@ payload until a successful send completes.
 - **GIVEN** a UDP socket with one pending send
 - **WHEN** a second fiber attempts `SendTo` with its own payload
 - **THEN** the second call returns `NetworkError::Busy`, retains its payload ownership, and creates no second reactor wait
+
+### Requirement: UDP operations accept explicit typed deadlines
+Each UDP send and receive variant SHALL accept an explicit
+`Option<Core.Time.Deadline>`. An absent value SHALL register an unbounded
+wait; expiry SHALL return `NetworkError::TimedOut()` without closing the
+socket, splitting a datagram, or transferring ownership of an unsent payload.
+The deadline SHALL participate in the same one-winner transition as
+readiness, cancellation, and close. No UDP operation SHALL accept an untagged
+`Instant`, raw integer deadline, or native timer handle.
+
+**Stable ID:** `BSP-REQ-3C2E8F7714A0`
+
+#### Scenario: Timed-out send retains its payload
+- **GIVEN** a UDP send whose explicit deadline expires before the datagram is sent
+- **WHEN** the send completes
+- **THEN** it returns `NetworkError::TimedOut()` exactly once and retains caller ownership of the payload

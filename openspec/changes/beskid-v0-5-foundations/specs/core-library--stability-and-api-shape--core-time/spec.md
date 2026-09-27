@@ -3,7 +3,12 @@
 ### Requirement: Core.Time exposes relative scheduler sleep
 The `corelib_foundation` package's `Core.Time` hub SHALL expose `Sleep(Duration duration) -> Core.Results.Result<unit, TimerError>`. `TimerError` SHALL be a closed enum containing exactly the payload-free variants `InvalidDuration()`, `DeadlineOverflow()`, `Unavailable()`, and `Cancelled()`, distinct from civil-input `TimeError` and fiber lifecycle errors. Elapsed sleep SHALL be success, not a timeout error. The call SHALL require a scheduler-owned fiber for registration; an ordinary host entry with an otherwise valid request SHALL receive `Unavailable`, without a blocking-thread fallback or implicitly spawned helper. The API SHALL expose no timer handle, disposal obligation, or `Concurrency.Sleep` alias.
 
-This change SHALL introduce only relative `Sleep(Duration)`. Public `SleepUntil(Instant)` SHALL remain deferred until a checked or opaque monotonic deadline domain can enforce the canonical Core.Time `Clock domain separation` requirement: the current untagged `Instant` cannot distinguish realtime input from monotonic input. Internal absolute scheduler deadlines remain the existing timer input.
+`Sleep` SHALL remain a relative-duration operation. This change also introduces
+the separate opaque monotonic `Deadline` value for explicitly bounded I/O;
+it SHALL NOT accept an untagged `Instant` as a deadline. Public
+`SleepUntil(Instant)` SHALL remain unavailable because the current `Instant`
+cannot distinguish realtime input from monotonic input. Internal absolute
+scheduler deadlines remain the existing timer input.
 
 **Stable ID:** `BSP-REQ-D613601481B2`
 
@@ -21,6 +26,36 @@ This change SHALL introduce only relative `Sleep(Duration)`. Public `SleepUntil(
 - **GIVEN** an `Instant` whose representation has no enforceable clock-domain identity
 - **WHEN** a caller attempts to use a public `Core.Time.SleepUntil(Instant)` API from this change
 - **THEN** no such public API SHALL be provided
+
+### Requirement: Core.Time constructs opaque monotonic deadlines
+`Core.Time.Deadline.After(Duration)` SHALL return
+`Result<Deadline, TimerError>` by sampling the monotonic clock exactly once
+after rejecting a negative duration. It SHALL reject a failed or negative
+sample as `Unavailable`, check `duration.nanos > I64_MAX - now` as
+`DeadlineOverflow` before addition, and otherwise represent the absolute
+monotonic value `now + duration.nanos`. Zero duration SHALL be valid and
+MAY already be expired when an operation receives it. A `Deadline` SHALL
+not be constructible from an `Instant` or an arbitrary raw integer through
+the public API. Its representation MAY be passed to the existing scheduler
+wait service by canonical Foundation/Network code but MUST NOT be exposed as
+a public native handle or a caller-supplied raw deadline parameter.
+
+**Stable ID:** `BSP-REQ-8F3C56D2B410`
+
+#### Scenario: Negative duration is rejected before sampling
+- **GIVEN** a Duration with negative nanoseconds
+- **WHEN** `Deadline.After` is called
+- **THEN** it SHALL return `Error(TimerError::InvalidDuration())` without reading the clock or registering a wait
+
+#### Scenario: Deadline constructor checks the upper boundary
+- **GIVEN** a nonnegative monotonic sample `now`
+- **WHEN** the duration exceeds `I64_MAX - now`
+- **THEN** `Deadline.After` SHALL return `Error(TimerError::DeadlineOverflow())` without overflowing or registering a wait
+
+#### Scenario: Realtime values cannot enter a network deadline
+- **GIVEN** a caller has a public `Instant` from the realtime clock or a raw integer
+- **WHEN** it constructs a typed network deadline
+- **THEN** neither value SHALL be accepted as a `Deadline`; only checked monotonic construction SHALL be available
 
 ### Requirement: Sleep validates a checked monotonic deadline
 `Sleep` SHALL reject `duration.nanos < 0` as `InvalidDuration` before reading the clock or registering a wait. For a nonnegative duration it SHALL read the monotonic clock once; a failed or negative sample SHALL return `Unavailable` before registration. For a nonnegative sample `now`, it SHALL check `duration.nanos > I64_MAX - now` before addition and return `DeadlineOverflow` if true. Only then SHALL it compute `now + duration.nanos` and submit that absolute deadline to the existing scheduler sleep entry. These rules validate the received Duration; they do not redefine or recover overflow in duration constructors before the call.

@@ -29,3 +29,19 @@ is interrupted.
 - **GIVEN** a resolver job that is still running after its caller cancels
 - **WHEN** the host resolver later returns addresses
 - **THEN** the caller remains cancelled, receives no second completion, and the result is discarded after accounting is released
+
+### Requirement: DNS resolution accepts an explicit typed deadline
+`Network.Dns.Resolve` SHALL accept an explicit optional
+`Core.Time.Deadline`. An absent deadline SHALL register an unbounded wait.
+If the deadline wins, the caller SHALL receive `NetworkError::TimedOut()`
+exactly once, while the host resolver job MAY continue. Its eventual result
+MUST be discarded and Foundation active-external-wait accounting MUST remain
+until that job exits. A DNS deadline MUST NOT be supplied as an untagged
+`Instant`, raw integer, or native timer handle.
+
+**Stable ID:** `BSP-REQ-89D73064B5F1`
+
+#### Scenario: Deadline wins before a late resolver result
+- **GIVEN** a DNS resolver job still running when its explicit deadline expires
+- **WHEN** the job later returns addresses
+- **THEN** the caller remains timed out, receives no second completion, and accounting is released only after the job exits
