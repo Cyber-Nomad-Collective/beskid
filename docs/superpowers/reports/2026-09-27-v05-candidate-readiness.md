@@ -132,7 +132,16 @@ cancel`; no earlier report was rejected. Evidence is retained locally under
 7. The contract-system change still requires `This` substitution through a
    generic bound at its monomorphized use site. Bound admission exists, but
    the corresponding end-to-end scenario and task 3.6 remain open. Generic
-   receiver field-chain and impl-owner cases lack focused coverage.
+   receiver field-chain and impl-owner cases lack focused coverage. In the
+   current compiler source, `contract_member_receiver` explicitly returns
+   `None` when a parameter annotation names an enclosing generic parameter;
+   `method_declaration_for_member_receiver` then only seeks a concrete
+   nominal declaration. The existing specialization test proves that a
+   non-conforming argument is rejected at a `where` bound, while another test
+   proves that an *unconstrained* generic does not acquire contract members.
+   Neither proves the specified `where T: C` member call resolves and
+   monomorphizes. This is a missing behavior/evidence seam, not a workspace
+   build failure.
 
 The automatic release watcher is paused. The original Windows VM disk is
 untouched; disposable overlays are retained and have not been deleted.
