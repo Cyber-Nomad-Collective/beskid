@@ -97,7 +97,12 @@ cancel`; no earlier report was rejected. Evidence is retained locally under
    unless the blocked-resolver branch appears in the JIT trace. The builder
    run in `v05-integration-2-dns-shim-assert.log` reported 1/1 test passed but
    exited 1 with `DNS deadline shim scenario was not compiled`; this is an
-   unresolved release gate, not a passing deadline test.
+   unresolved release gate, not a passing deadline test. A separate probe set
+   `BESKID_DEFINITELY_NOT_SET_XYZ=1` and ran `SystemEnvironmentTests`: the
+   existing `env_get_missing_var_returns_not_found` assertion trapped as
+   expected (`v05-integration-2-positive-env-probe.log`, exit 101). Thus a
+   present environment value reaches the JIT's `Environment.Get` path; the
+   remaining fault is narrower than general process-environment propagation.
 7. The contract-system change still requires `This` substitution through a
    generic bound at its monomorphized use site. Bound admission exists, but
    the corresponding end-to-end scenario and task 3.6 remain open. Generic
