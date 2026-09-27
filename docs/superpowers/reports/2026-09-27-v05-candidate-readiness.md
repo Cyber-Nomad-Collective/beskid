@@ -78,6 +78,13 @@ cancel`; no earlier report was rejected. Evidence is retained locally under
    remained after that attempt. The tested VM was gracefully shut down and a
    consistent disposable child clone (`disposable-08.qcow2`) is now booted for
    an interactive run; no password is handled by the agent.
+   The cleanup diagnostic has a specific cause: `Invoke-DownloadCancellation`
+   throws its original monitor error in `try`, then calls
+   `Stop-InstallerProcessTree` from `finally`; if cleanup also throws,
+   PowerShell reports only the cleanup exception. A minimal PowerShell
+   reproduction confirmed that `finally` replaces the primary exception.
+   The Windows helper source on the disposable VM hashes identically to the
+   checked-out helper (`8c86811a...`), so this is not a stale-source mismatch.
 2. Twelve branded installer screenshots (welcome, options, progress, success,
    failure, and MSI directory at 100% and 150% scaling) need capture and human
    inspection. None has been claimed as verified.
