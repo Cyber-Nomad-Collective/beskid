@@ -8,7 +8,7 @@ been pushed or merged to `main`, and no v0.5 release asset has been published.
 - Superrepo integration branch `codex/windows-prereqs-task4-root` now also contains
   the v0.5 networking/HTTP spec integration (`53e8ef36`) and the regenerated
   catalog for this checkout (`5f9603e5`). This report is on the same branch.
-- Compiler branch `codex/v05-release-integration-2`: `bae45419`.
+- Compiler branch `codex/v05-release-integration-2`: `b887e58f`.
 - Corelib branch `codex/v05-corelib-integration-2`: `a4fcb34`.
 - Distribution branch `codex/windows-prereqs-task4-docs`: `652f839`.
 - The superrepo commit pins the compiler and distribution gitlinks. The compiler
@@ -92,9 +92,12 @@ cancel`; no earlier report was rejected. Evidence is retained locally under
    exact policy is awaiting confirmation before code and tests change.
 6. The deterministic Linux DNS deadline shim is not yet evidenced. A focused
    rerun confirmed `BESKID_DNS_DEADLINE_SHIM=1` in the CLI process environment,
-   but the test still compiled/executed its ordinary-resolution branch. A
-   passing `NetworkNativeTests` target therefore does not prove the blocked
-   resolver's late-result accounting.
+   but the test still compiled/executed its ordinary-resolution branch. The
+   diagnostic script now filters to the DNS-deadline test and fails closed
+   unless the blocked-resolver branch appears in the JIT trace. The builder
+   run in `v05-integration-2-dns-shim-assert.log` reported 1/1 test passed but
+   exited 1 with `DNS deadline shim scenario was not compiled`; this is an
+   unresolved release gate, not a passing deadline test.
 7. The contract-system change still requires `This` substitution through a
    generic bound at its monomorphized use site. Bound admission exists, but
    the corresponding end-to-end scenario and task 3.6 remain open. Generic
