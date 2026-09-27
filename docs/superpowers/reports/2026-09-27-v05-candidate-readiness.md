@@ -5,7 +5,9 @@ been pushed or merged to `main`, and no v0.5 release asset has been published.
 
 ## Source identity
 
-- Superrepo integration branch `codex/windows-prereqs-task4-root`: `0cb9513e`.
+- Superrepo integration branch `codex/windows-prereqs-task4-root` now also contains
+  the v0.5 networking/HTTP spec integration (`53e8ef36`) and the regenerated
+  catalog for this checkout (`5f9603e5`). This report is on the same branch.
 - Compiler branch `codex/v05-release-integration-2`: `bae45419`.
 - Corelib branch `codex/v05-corelib-integration-2`: `a4fcb34`.
 - Distribution branch `codex/windows-prereqs-task4-docs`: `652f839`.
@@ -27,6 +29,11 @@ been pushed or merged to `main`, and no v0.5 release asset has been published.
 The first Linux full-workspace run failed because the test invocation pointed
 `BESKID_CORELIB_ROOT` at a nonexistent directory. The corrected rerun passed.
 Do not treat that earlier environment error as a compiler regression.
+
+The integrated OpenSpec networking and HTTP changes both pass strict OpenSpec
+validation. The regenerated catalog passes `validate-standard`,
+`validate-book-traceability`, and `validate-layouts` in this checkout. These
+checks validate specification structure, not the remaining behavioral scenarios.
 
 ## Local artifact probes
 
@@ -67,6 +74,18 @@ cancel`; no earlier report was rejected. Evidence is retained locally under
    check or give Woodpecker publication credentials.
 4. Final committed-source CI artifacts, qualified release-state evidence, and
    approved main-branch merges/pushes are not yet available.
+5. The HTTP implementation accepts HTAB and obs-text field values while the
+   integrated v0.5 requirement says ASCII values without control bytes. The
+   exact policy is awaiting confirmation before code and tests change.
+6. The deterministic Linux DNS deadline shim is not yet evidenced. A focused
+   rerun confirmed `BESKID_DNS_DEADLINE_SHIM=1` in the CLI process environment,
+   but the test still compiled/executed its ordinary-resolution branch. A
+   passing `NetworkNativeTests` target therefore does not prove the blocked
+   resolver's late-result accounting.
+7. The contract-system change still requires `This` substitution through a
+   generic bound at its monomorphized use site. Bound admission exists, but
+   the corresponding end-to-end scenario and task 3.6 remain open. Generic
+   receiver field-chain and impl-owner cases lack focused coverage.
 
 The automatic release watcher is paused. The original Windows VM disk is
 untouched; disposable overlays are retained and have not been deleted.
