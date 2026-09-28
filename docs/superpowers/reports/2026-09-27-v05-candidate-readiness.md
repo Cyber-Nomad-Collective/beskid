@@ -145,3 +145,110 @@ cancel`; no earlier report was rejected. Evidence is retained locally under
 
 The automatic release watcher is paused. The original Windows VM disk is
 untouched; disposable overlays are retained and have not been deleted.
+
+## Update, 2026-09-28
+
+The user completed an interactive install on disposable VM 08. The bundle log
+reports that the VS Build Tools package ran, the MSI completed successfully,
+and Burn finished with result `0x0`. In a fresh SSH session without `BESKID_*`
+overrides, the installed `C:\Program Files\Beskid\bin\beskid.exe` reported
+version 0.5.0 and successfully ran the `test`, `build`, and `run` smoke inputs;
+the resolved Corelib paths pointed under `C:\Program Files\Beskid`. This is
+additional local installation evidence, not a release-pipeline scenario record
+or proof of the clean prerequisite-download path: VC++ and LLVM were already
+present. A pending-file-rename registry entry from VS setup remains, although
+Burn reported `restart: None` and the smoke commands worked without a reboot.
+
+The bundle Options page has a disconnected install-location field. Its theme
+declares an `InstallFolder` edit box, but the bundle declares no matching
+default variable and passes no `INSTALLDIR` property to the MSI. The Burn log
+records an empty `InstallFolder`; the MSI installed to its own default path.
+The default install passing does not validate a user-selected path. This is a
+new installer release blocker requiring a test-first WiX correction and an
+interactive default/custom-path check on disposable overlays.
+
+Disposable VM 09 was created from the offline VM 07 backing image and booted
+without touching installed VM 08. Its pre-install snapshot already contains
+MSVC Build Tools, the Windows SDK, and LLVM, so it does not provide a real
+vendor-download cancellation window. VM 09 was then shut down cleanly; its
+overlay is retained. Removing developer components from VM 09 for this test
+awaits user approval. The cancel scenario remains unproven.
+
+The HTTP policy is no longer an open interpretation question: the integrated
+v0.5 requirement says `ASCII header values without control bytes`. The current
+codec and `HttpValidationTests` accept HTAB and obs-text, contradicting that
+requirement. The code/test correction awaits approval of the bounded design.
+
+Local rechecks of `windows-installer-smoke.test.mjs` passed 5/5 and
+`woodpecker-release.test.sh` passed. Those prove the structural/negative
+checks, not the missing real cancellation evidence or release provenance.
+`woodpecker-release.sh` still has an unconditional publication stop after
+checking for the smoke directory; it deliberately does not authenticate or
+consume self-reported VM evidence. The trusted disposable-VM execution and
+transfer design remains an architectural release gate.
+
+## Update, 2026-09-28: corrected bundle on disposable VM 09
+
+The corrected WiX v4 bundle was built on Windows and copied to disposable VM
+09. Its SHA-256 is `19779b271c7602e9ae1505e2631dd88d767ffca93382cad7b1f572d92398a748`.
+The user installed it interactively with `InstallDeveloperTools=1`. The Burn
+log at `C:\Users\Administrator\AppData\Local\Temp\Beskid_20260928125144.log`
+records a real `VsBuildTools2022` download from the locked Microsoft URL,
+payload verification, VS installation exit `0x0`, MSI installation exit
+`0x0`, and overall apply result `0x0` with no requested restart. VC++ x64
+14.44 and LLVM 22.1.8 were already installed, so this run does not prove
+their download paths. Build Tools 17.14.41 appeared after installation;
+the Windows SDK library version is 10.0.26100.0. The MSI received
+`INSTALLDIR="C:\Program Files\\Beskid"`, and the installed files reside in
+`C:\Program Files\Beskid`.
+
+In a fresh key-only SSH PowerShell process with `BESKID_*`, `INCLUDE`, `LIB`,
+`LIBPATH`, VS and SDK environment overrides removed, and `PATH` reconstructed
+from machine and user values, the installed `beskid.exe` reported 0.5.0.
+Its real test-harness fixture passed 3 tests and skipped 1 (`TEST_EXIT=0`);
+the smoke-project fixture built an executable (`BUILD_EXIT=0`) and ran it
+(`RUN_EXIT=0`). The installed `lld-link.exe --version` also executed.
+
+This is a successful local opt-in install and ordinary-shell CLI smoke, but
+it is not the clean ten-scenario installer matrix or CI-attested release
+evidence. In particular, the blank/custom install-path UI, cancellation
+during a vendor download, 100%/150% branded-page screenshots, repair,
+upgrade, uninstall, and final committed-source CI are not yet proven by
+this run. Do not treat it as publication approval.
+
+## Update, 2026-09-28: Linux DNS deadline evidence
+
+The integrated Linux candidate's uninstrumented CLI passed the full Corelib
+matrix (81/81) and runtime matrix (7/7). Both still printed
+`release eligible: false` because the source checkout was dirty and not a
+committed-source release attestation.
+
+The deterministic DNS deadline test was not taking the ordinary branch as
+the earlier report inferred. A resolver interposer showed that the same test
+process entered the blocked lookup, observed it, released it, and completed
+the late host job. The old diagnostic script checked for a function name in
+the JIT progress display, which samples names and omitted the executed
+function while displaying an unexecuted one. Compiler commit `831d8475`
+now verifies resolver-emitted markers instead. The real Linux check exited
+0 with all three markers and 1/1 test passed; a no-marker negative check
+exited 1. This closes the DNS deadline evidence gap, not the remaining
+generic-contract, exact-source, cross-platform, or publication gates.
+
+The generic-contract gap is broader than item 7 above: the normative
+OpenSpec change still has unchecked tasks 2.7 (`GenericBoundNotSatisfied`
+diagnostic), 3.6 (bounded receiver method resolution), and 3.7
+(`ContractDispatch` to static implementation dispatch). Its task 3.5 also
+explicitly defers bound-site `This` and `T::Item` substitution, despite
+normative scenarios for both. A release-completion audit must cover these
+requirements rather than treating a single resolver edit as sufficient.
+
+## Update, 2026-09-28: HTTP source recheck
+
+Blocker 5 above is stale for the current Corelib candidate. Commits
+`49972a2` and `a289712` implement and test strict IPv6 Host separators and
+ASCII field values without control bytes. `HttpValidationTests.bd` now
+rejects malformed literals such as `[:::::::]`, HTAB in header values, DEL,
+and high octets on both parse and serialization paths; `Codec.bd`'s
+`FieldValue` admits only SP and visible ASCII. The subsequent full Linux
+Corelib matrix passed 81/81, but this remains candidate evidence until a
+clean committed-source release run binds the test result to these commits.

@@ -228,8 +228,9 @@ own task, before `This` (slice 7).
   offline (2026-09-23). See the plan doc's "Status" section
   (`docs/superpowers/plans/2026-09-22-v05-contract-system.md`) for the
   exact resume state before running this.
-- [ ] 5.4 Run `pnpm run openspec:validate` and confirm the OpenSpec
-  standard validates. Not run.
+- [x] 5.4 Run `pnpm run openspec:validate` and confirm the OpenSpec
+  standard validates. Verified 2026-09-28 on the integration checkout:
+  exit 0, strict validation 218/218 items.
 - [x] 5.5 Run `cargo test -p beskid_isle` and confirm ISLE is unaffected.
   Green, all tests pass -- confirms `DirectCallee::SpecializedItem` is only
   minted from a successful specialization, so the where-bound check (3.3)
