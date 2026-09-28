@@ -37,7 +37,7 @@ flowchart LR
 
 ## `beskid analyze`
 
-Runs analysis without requiring a successful JIT—your CI friend for "no, you cannot call that."
+Runs analysis without requiring a successful JIT: your CI friend for "no, you cannot call that."
 
 Book reference: [Semantic analysis](/book/reference/analysis/semantic-analysis/), [Semantic rules](/book/reference/analysis/semantic-rules/).
 

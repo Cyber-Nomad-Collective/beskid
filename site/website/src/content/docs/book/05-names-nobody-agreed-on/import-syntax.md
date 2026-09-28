@@ -1,6 +1,6 @@
 ---
 title: "Import syntax"
-description: use declarations, aliases, and public re-exports in Beskid source."
+description: "use declarations, aliases, and public re-exports in Beskid source."
 tableOfContents: true
 ---
 
@@ -14,9 +14,9 @@ use net.http.Client as HttpClient;
 pub use net.http.Client;
 ```
 
-- **Direct import** — bring a symbol into scope.
-- **Alias** — local name differs from the original (`as`).
-- **`pub use`** — re-export through the current module boundary.
+- **Direct import**: bring a symbol into scope.
+- **Alias**: local name differs from the original (`as`).
+- **`pub use`**: re-export through the current module boundary.
 
 ## File-scoped modules
 

@@ -1,5 +1,5 @@
 ---
-title: "PATH not found — tooling anyway"
+title: "PATH not found: tooling anyway"
 description: File types, CLI discovery, VS Code + LSP, logging flags, and where the reference manuals hide.
 tableOfContents: true
 ---

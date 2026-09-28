@@ -18,7 +18,7 @@ Typical uses:
 
 ## Debug flags
 
-Compiler logging and phase traces align with `beskid_pipeline` phase IDs—see [Pipeline composition](/docs/standard/compiler/pipeline-composition/) and book chapter [02 tooling — logging](/book/02-path-not-found-tooling-anyway/logging-and-debug-flags/) for operator-facing flags.
+Compiler logging and phase traces align with `beskid_pipeline` phase IDs. See [Pipeline composition](/docs/standard/compiler/pipeline-composition/) and book chapter [02 tooling: logging](/book/02-path-not-found-tooling-anyway/logging-and-debug-flags/) for operator-facing flags.
 
 ## Spec anchors
 
@@ -27,8 +27,8 @@ Compiler logging and phase traces align with `beskid_pipeline` phase IDs—see [
 
 ## What CLIF is not
 
-- Not a substitute for semantic diagnostics—fix types first.
-- Not a public stability contract for third-party tools—IR details may shift with Cranelift updates.
+- Not a substitute for semantic diagnostics: fix types first.
+- Not a public stability contract for third-party tools: IR details may shift with Cranelift updates.
 
 ## Next chapter
 

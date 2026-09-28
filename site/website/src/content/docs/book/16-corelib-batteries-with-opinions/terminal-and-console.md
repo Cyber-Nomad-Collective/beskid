@@ -1,10 +1,10 @@
 ---
 title: "Terminal and console"
-description: Higher-level console APIs sit above syscall-backed I/O—ANSI belongs in corelib, not in every sample main.
+description: Higher-level console APIs sit above syscall-backed I/O. ANSI belongs in corelib, not in every sample main.
 tableOfContents: true
 ---
 
-Low-level syscall-backed I/O lives under the runtime `System` split (`Input`, `Output`, `Error`). **Console** work—colors, line discipline, the stuff you actually want when printing—belongs in dedicated corelib packages (for example `corelib_console`), not a monolithic `IO.bd` that became a junk drawer.
+Low-level syscall-backed I/O lives under the runtime `System` split (`Input`, `Output`, `Error`). **Console** work (colors, line discipline, the stuff you actually want when printing) belongs in dedicated corelib packages (for example `corelib_console`), not a monolithic `IO.bd` that became a junk drawer.
 
 ## Practical guidance
 

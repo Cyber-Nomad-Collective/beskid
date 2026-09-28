@@ -10,7 +10,7 @@ The compiler workspace is Rust. Its current public command path includes **`besk
 
 1. Read [Implementation map / crate-to-spec anchors](/docs/standard/compiler/implementation-map/crate-to-spec-anchors/).
 2. Read chapter [14. From source to something that runs](/book/14-from-source-to-runs/) for pipeline mental model.
-3. Use **`beskid_pipeline`** phase IDs for progress—do not sprinkle ad-hoc logging in library crates.
+3. Use **`beskid_pipeline`** phase IDs for progress. Do not sprinkle ad-hoc logging in library crates.
 
 ## Tests
 

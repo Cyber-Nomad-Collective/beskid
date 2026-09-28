@@ -69,20 +69,20 @@ If package is moderated before public availability, wait for approval status in 
 
 <Aside type="caution">
 
-**"Package not found"** — create the package record through `POST /api/packages` before uploading its first artifact.
+**"Package not found"**: create the package record through `POST /api/packages` before uploading its first artifact.
 
-**"Authentication succeeded but upload failed"** — the credential lacks publish scope or package ownership. Contact a registry admin.
+**"Authentication succeeded but upload failed"**: the credential lacks publish scope or package ownership. Contact a registry admin.
 
-**"No deterministic entrypoint"** — pack can't resolve the project entrypoint. Ensure exactly one root `.bproj` exists, or exactly one `.bd` file exists under the source tree.
+**"No deterministic entrypoint"**: pack can't resolve the project entrypoint. Ensure exactly one root `.bproj` exists, or exactly one `.bd` file exists under the source tree.
 
-**"Checksum mismatch"** — the `--checksum-sha256` flag doesn't match the artifact. Regenerate: `shasum -a 256 package.bpk`.
+**"Checksum mismatch"**: the `--checksum-sha256` flag doesn't match the artifact. Regenerate: `shasum -a 256 package.bpk`.
 
 </Aside>
 
 ## See also
 
-- [pckg command reference](/book/reference/cli/commands/pckg/) — full subcommand and flag reference
-- [Packages without npm trauma](/book/18-packages-without-npm-trauma/) — chapter overview and concepts
-- [The pckg CLI](/book/18-packages-without-npm-trauma/pckg-cli/) — tutorial walkthrough of `beskid pckg`
-- [Doc and api.json](/book/16-corelib-batteries-with-opinions/doc-and-api-json/) — generated API docs for pckg ingestion
-- [Package public surface](/book/19-public-api-that-survives-review/package-public-surface/) — what registry consumers see
+- [pckg command reference](/book/reference/cli/commands/pckg/): full subcommand and flag reference
+- [Packages without npm trauma](/book/18-packages-without-npm-trauma/): chapter overview and concepts
+- [The pckg CLI](/book/18-packages-without-npm-trauma/pckg-cli/): tutorial walkthrough of `beskid pckg`
+- [Doc and api.json](/book/16-corelib-batteries-with-opinions/doc-and-api-json/): generated API docs for pckg ingestion
+- [Package public surface](/book/19-public-api-that-survives-review/package-public-surface/): what registry consumers see

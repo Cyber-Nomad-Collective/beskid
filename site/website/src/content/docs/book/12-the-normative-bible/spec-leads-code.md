@@ -1,6 +1,6 @@
 ---
 title: "Spec leads code"
-description: Update normative platform-spec before—or with—observable compiler and runtime changes.
+description: Update normative platform-spec before, or together with, observable compiler and runtime changes.
 tableOfContents: true
 ---
 
@@ -29,7 +29,7 @@ gitGraph
 **Text equivalent:** A design gap or bug leads to one change set. It carries the OpenSpec change with its spec delta, then the implementation, conformance tests and OpenSpec validation, and merges together.
 
 1. Classify the topic ([language law vs implementation](/book/12-the-normative-bible/language-law-vs-implementation/)).
-2. Extend the owning **feature hub** or article—no circular "canonical chapter is this page" stubs.
+2. Extend the owning **feature hub** or article: no circular "canonical chapter is this page" stubs.
 3. Anchor crates in [implementation map](/platform-spec/compiler/implementation-map/) when touching `compiler/`.
 4. Land tests in `beskid_tests` / `beskid_e2e_tests` when behavior is platform-wide.
 

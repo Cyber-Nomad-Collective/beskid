@@ -4,7 +4,7 @@ description: Manifests, targets, dependencies, lockfiles, and the resolver graph
 tableOfContents: true
 ---
 
-Every serious Beskid program anchors on **`App.bproj`** at the project root—not a twelve-page YAML poem, not a solution file with six nested repos and a prayer.
+Every serious Beskid program anchors on **`App.bproj`** at the project root, not a twelve-page YAML poem, not a solution file with six nested repos and a prayer.
 
 This chapter is the mental model for **what** you are building (targets), **what** you depend on (dependencies), and **how** tooling orders work before codegen.
 
@@ -29,7 +29,7 @@ Use the canonical [Projects guide](/docs/projects/) to create a project, select 
 
 ## Previous
 
-[02. PATH not found — tooling anyway](/book/02-path-not-found-tooling-anyway/)
+[02. PATH not found: tooling anyway](/book/02-path-not-found-tooling-anyway/)
 
 ## Next
 

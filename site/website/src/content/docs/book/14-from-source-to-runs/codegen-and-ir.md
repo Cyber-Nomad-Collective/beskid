@@ -23,7 +23,7 @@ Typed emitter/transform contracts: [Typed emitter and transforms](/docs/standard
 
 ## Fibers and builtins
 
-Spawn lowers to `fiber_spawn`; builtins align with [Builtins and symbols](/docs/standard/execution/abi-and-host/builtins-and-symbols/)—codegen must not invent alternate calling conventions.
+Spawn lowers to `fiber_spawn`; builtins align with [Builtins and symbols](/docs/standard/execution/abi-and-host/builtins-and-symbols/). Codegen must not invent alternate calling conventions.
 
 ## Next
 

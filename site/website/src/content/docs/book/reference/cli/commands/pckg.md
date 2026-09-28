@@ -52,13 +52,13 @@ Builds a `.bpk` zip from a package source tree.
 
 Typical flags:
 
-- `--package <id>` — package id written into the generated root `package.json` inside the artifact
-- `--source <dir>` — directory to pack (defaults to `.`)
-- `--output <path.bpk>` — artifact path to create
-- `--version <semver>` (optional) — if omitted, the CLI picks the next patch over the higher of `package.json`’s version (when present) and the last version recorded for this package in the version state file (see below); if provided, it must be strictly greater than that auto-resolved version
-- `--version-state-file <path>` (optional) — JSON map of package id → last packed version; default is `<source>/.beskid/pckg-version-state.json`
-- `--package-kind <auto|tool>` — profile override; default `auto`
-- `--skip-docs` — skip generation but still validate and include prepared API docs
+- `--package <id>`: package id written into the generated root `package.json` inside the artifact
+- `--source <dir>`: directory to pack (defaults to `.`)
+- `--output <path.bpk>`: artifact path to create
+- `--version <semver>` (optional): if omitted, the CLI picks the next patch over the higher of `package.json`’s version (when present) and the last version recorded for this package in the version state file (see below); if provided, it must be strictly greater than that auto-resolved version
+- `--version-state-file <path>` (optional): JSON map of package id → last packed version; default is `<source>/.beskid/pckg-version-state.json`
+- `--package-kind <auto|tool>`: profile override; default `auto`
+- `--skip-docs`: skip generation but still validate and include prepared API docs
 
 On success the CLI prints a line of the form `Resolved package version: <semver>` (the version embedded in the packed `package.json`).
 
@@ -99,11 +99,11 @@ already-published package/version coordinate.
 
 Optional upload flags:
 
-- `--checksum-sha256 <hex>` — must match the artifact when provided
+- `--checksum-sha256 <hex>`: must match the artifact when provided
 
 On success, when the API returns version details, the CLI prints:
 
-- `PCKG_PUBLISHED_VERSION=<semver>` — stable line for scripts and CI (for example the corelib publish script parses this)
+- `PCKG_PUBLISHED_VERSION=<semver>`: stable line for scripts and CI (for example the corelib publish script parses this)
 - a human-readable summary including the published version, checksum, size,
   and timestamps
 
@@ -113,11 +113,11 @@ Other subcommands that target a specific release (`download`, `yank`, `unyank`) 
 
 These apply to all `beskid pckg` subcommands (see `beskid pckg --help` for the full list):
 
-- `--base-url <url>` — pckg HTTP root (also `BESKID_PCKG_URL`)
-- `--bearer-token` or `--api-key` — authentication (also `BESKID_PCKG_TOKEN` / `BESKID_PCKG_API_KEY`); otherwise the CLI can load a saved publisher key from `--config-file` (default `.beskid/pckg/repositories.json`, written by `beskid pckg configure`)
-- `--timeout-secs <seconds>` — request timeout; default `30`
-- `--config-file <path>` — repository config; default `.beskid/pckg/repositories.json`
-- `-v`, `--verbose` — print connection, authentication-presence, and timing diagnostics
+- `--base-url <url>`: pckg HTTP root (also `BESKID_PCKG_URL`)
+- `--bearer-token` or `--api-key`: authentication (also `BESKID_PCKG_TOKEN` / `BESKID_PCKG_API_KEY`); otherwise the CLI can load a saved publisher key from `--config-file` (default `.beskid/pckg/repositories.json`, written by `beskid pckg configure`)
+- `--timeout-secs <seconds>`: request timeout; default `30`
+- `--config-file <path>`: repository config; default `.beskid/pckg/repositories.json`
+- `-v`, `--verbose`: print connection, authentication-presence, and timing diagnostics
 
 The default `--base-url` is `https://pckg.beskid-lang.org`. `--bearer-token` and `--api-key` conflict.
 
@@ -166,13 +166,13 @@ beskid pckg upload my-lib --artifact ./my-lib.bpk
 
 ## See also
 
-- [The pckg CLI](/book/18-packages-without-npm-trauma/pckg-cli/) — historical registry command flow and concepts
-- [Publish a package](/docs/packages/publish/) — verified workflow
-- [Consume a package](/docs/packages/consume/) — resolve, lock, and materialize a registry dependency
-- [Credentials and recovery](/docs/packages/credentials-and-recovery/) — protect and rotate publisher credentials
-- [Packages without npm trauma](/book/18-packages-without-npm-trauma/) — chapter overview and concepts
-- [Doc and api.json](/book/16-corelib-batteries-with-opinions/doc-and-api-json/) — generated API docs packed with `.bpk`
-- [Package public surface](/book/19-public-api-that-survives-review/package-public-surface/) — what registry consumers see
-- [CLI command reference](/book/reference/cli/command-reference/) — all subcommands
+- [The pckg CLI](/book/18-packages-without-npm-trauma/pckg-cli/): historical registry command flow and concepts
+- [Publish a package](/docs/packages/publish/): verified workflow
+- [Consume a package](/docs/packages/consume/): resolve, lock, and materialize a registry dependency
+- [Credentials and recovery](/docs/packages/credentials-and-recovery/): protect and rotate publisher credentials
+- [Packages without npm trauma](/book/18-packages-without-npm-trauma/): chapter overview and concepts
+- [Doc and api.json](/book/16-corelib-batteries-with-opinions/doc-and-api-json/): generated API docs packed with `.bpk`
+- [Package public surface](/book/19-public-api-that-survives-review/package-public-surface/): what registry consumers see
+- [CLI command reference](/book/reference/cli/command-reference/): all subcommands
 
 [← Back to CLI command reference](/book/reference/cli/command-reference/)

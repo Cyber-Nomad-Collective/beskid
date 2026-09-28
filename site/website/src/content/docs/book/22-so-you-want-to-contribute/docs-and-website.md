@@ -6,8 +6,8 @@ tableOfContents: true
 
 Public docs live in **`site/website`**. Two reader areas only:
 
-- **[Platform specification](/docs/standard/)** — normative
-- **[Beskid Book](/book/)** — informative tutorial (this file tree)
+- **[Platform specification](/docs/standard/)**: normative
+- **[Beskid Book](/book/)**: informative tutorial (this file tree)
 
 Use **pnpm** for local workflows:
 

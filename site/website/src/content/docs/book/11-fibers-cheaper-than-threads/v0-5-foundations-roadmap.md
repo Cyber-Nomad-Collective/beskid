@@ -4,7 +4,7 @@ description: "A non-normative release plan for the execution and core-library wo
 tableOfContents: true
 ---
 
-:::caution[Planned release work — not a shipped API reference]
+:::caution[Planned release work: not a shipped API reference]
 This page records the
 v0.5 Foundations delivery boundary as of the current planning revision. It does
 not define language or core-library behaviour, and it does not promise that the

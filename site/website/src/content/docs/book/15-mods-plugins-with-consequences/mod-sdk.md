@@ -4,7 +4,7 @@ description: compiler-sdk package, Beskid.Syntax mirror, Collector contract hier
 tableOfContents: true
 ---
 
-The **`compiler-sdk`** package is the Beskid-side API for mods—contracts and `Beskid.Syntax` operations, not string templates.
+The **`compiler-sdk`** package is the Beskid-side API for mods: contracts and `Beskid.Syntax` operations, not string templates.
 
 Full normative article: [Compiler Mod SDK](/docs/standard/language-meta/metaprogramming/compiler-mod-sdk/).
 
@@ -50,9 +50,9 @@ classDiagram
 
 - **`Node`** is a contract; traversal uses **`NodeRef`** `{ syntaxGenerationId, nodeId }`
 - **`Beskid.Compiler.Query`** + fluent DSL (`Select`, `WhereKind`, `Replace`, …)
-- **No source text emission**—hosts merge typed trees, then re-parse under bounds
+- **No source text emission**: hosts merge typed trees, then re-parse under bounds
 
-Generated mirrors come from `beskid_ast_reflect_gen`—Rust AST is canonical; SDK sources are not hand-duplicated parallel syntax.
+Generated mirrors come from `beskid_ast_reflect_gen`. Rust AST is canonical; SDK sources are not hand-duplicated parallel syntax.
 
 ## Rust host areas
 

@@ -1,6 +1,6 @@
 ---
 title: "Visibility basics"
-description: Private by default, pub exports, and not leaking every helper across the monorepo."
+description: "Private by default, pub exports, and not leaking every helper across the monorepo."
 tableOfContents: true
 ---
 
@@ -19,7 +19,7 @@ Use boundary modules (`api.bd`, `mod service;` files) to:
 
 ## File-scoped modules tighten the story
 
-When `mod domain.feature;` owns a file, everything top-level in that file shares the module scope—additional `mod` declarations are disallowed to prevent nested chaos.
+When `mod domain.feature;` owns a file, everything top-level in that file shares the module scope. Additional `mod` declarations are disallowed to prevent nested chaos.
 
 ## Smell table
 

@@ -1,10 +1,10 @@
 ---
 title: "Monorepo as coping mechanism"
-description: Workspace.bws, shared overrides, cycles, and CI that does not lie."
+description: "Workspace.bws, shared overrides, cycles, and CI that does not lie."
 tableOfContents: true
 ---
 
-One repo, many Beskid projects, one shared policy—because copy-pasting `App.bproj` into every microservice is a lifestyle choice you can refuse.
+One repo, many Beskid projects, one shared policy, because copy-pasting `App.bproj` into every microservice is a lifestyle choice you can refuse.
 
 Use [Workspace selection](/docs/projects/workspaces/) for the current `.bws` procedure and failure recovery.
 

@@ -47,7 +47,7 @@ Maintainer reference: authoritative URLs for **v0.3 FFI**. Use when updating lin
 
 ## Stdlib policy
 
-**WinAPI** / stdcall is **out of scope** for stdlib Standard — see [platform tier matrix](/platform-spec/language-meta/interop/c-abi-profile/platform-tier-matrix/).
+**WinAPI** / stdcall is **out of scope** for stdlib Standard. See [platform tier matrix](/platform-spec/language-meta/interop/c-abi-profile/platform-tier-matrix/).
 
 ## Replacement notes
 

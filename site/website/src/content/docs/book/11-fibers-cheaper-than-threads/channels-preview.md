@@ -1,10 +1,10 @@
 ---
 title: "Channels preview"
-description: Move data between fibers with Channel send and receive—not shared mutable stacks.
+description: Move data between fibers with Channel send and receive, not shared mutable stacks.
 tableOfContents: true
 ---
 
-If two fibers need to talk, they use a **channel**. They do not share a mutable stack and hope for the best—that pattern already has a body count in other languages.
+If two fibers need to talk, they use a **channel**. They do not share a mutable stack and hope for the best: that pattern already has a body count in other languages.
 
 ## Model
 
@@ -29,15 +29,15 @@ sequenceDiagram
 
 ## ADR-backed choices
 
-Cross-fiber events use channels, not ad-hoc flags—see [ADR: cross-fiber events use channels](/platform-spec/language-meta/evaluation/fibers-and-spawn/adr/0004-cross-fiber-events-use-channels/).
+Cross-fiber events use channels, not ad-hoc flags. See [ADR: cross-fiber events use channels](/platform-spec/language-meta/evaluation/fibers-and-spawn/adr/0004-cross-fiber-events-use-channels/).
 
 ## Mutex and WaitGroup
 
-**Mutex** and **WaitGroup** coordinate invariants—they are **not** a substitute for channel payload transfer. If you are passing data, use a channel; if you are guarding a critical section, use the primitives the spec names.
+**Mutex** and **WaitGroup** coordinate invariants; they are **not** a substitute for channel payload transfer. If you are passing data, use a channel; if you are guarding a critical section, use the primitives the spec names.
 
 ## Memory interaction
 
-Shared **heap** objects still follow [Memory and references](/platform-spec/language-meta/memory-model/memory-and-references/)—channels are how you avoid data races without pretending Beskid is C++.
+Shared **heap** objects still follow [Memory and references](/platform-spec/language-meta/memory-model/memory-and-references/); channels are how you avoid data races without pretending Beskid is C++.
 
 ## Next
 

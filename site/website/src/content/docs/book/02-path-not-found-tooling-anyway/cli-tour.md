@@ -54,7 +54,7 @@ When a manifest exists, prefer explicit roots while learning:
 beskid analyze --project ./App.bproj --target App
 ```
 
-`--frozen` / `--locked` participate in resolution policy—see [fetch](/book/reference/cli/commands/fetch/) and [lock](/book/reference/cli/commands/lock/).
+`--frozen` / `--locked` participate in resolution policy: see [fetch](/book/reference/cli/commands/fetch/) and [lock](/book/reference/cli/commands/lock/).
 
 ## Next
 

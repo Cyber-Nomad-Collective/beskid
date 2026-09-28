@@ -1,6 +1,6 @@
 ---
 title: "Generator, Analyzer, Rewriter"
-description: What each mod contract may change—and what happens when they disagree.
+description: What each mod contract may change, and what happens when they disagree.
 tableOfContents: true
 ---
 
@@ -10,7 +10,7 @@ Three roles, one merged program. Order matters; host merge is **bounded** and **
 
 - Emits **typed AST** fragments only.
 - Host merges, **re-parses**, repeats up to `maxGeneratorRounds`.
-- Incremental by default—don't regenerate the universe per keystroke.
+- Incremental by default: don't regenerate the universe per keystroke.
 
 Spec: [Typed emitter and transforms](/docs/standard/compiler/compiler-mods/typed-emitter-and-transforms/).
 
@@ -18,18 +18,18 @@ Spec: [Typed emitter and transforms](/docs/standard/compiler/compiler-mods/typed
 
 - Runs on **host + generated** code after semantic snapshot exists.
 - Emits diagnostics; may register **rewrites as fixes**.
-- Must not assume generated code is "second class"—it's all one program now.
+- Must not assume generated code is "second class": it's all one program now.
 
 Spec: [Analysis, query, and diagnostics facades](/docs/standard/compiler/compiler-mods/analysis-query-diagnostics-facade/).
 
 ## Rewriter
 
 ```beskid
-// Conceptual shape — see SDK for exact signatures
+// Conceptual shape: see SDK for exact signatures
 Result<TTargetNode, FixError> Rewrite(TSourceNode sourceNode);
 ```
 
-Replaces any valid node with any other valid typed node—power with responsibility. Conflicts → diagnostics, not silent corruption.
+Replaces any valid node with any other valid typed node: power with responsibility. Conflicts → diagnostics, not silent corruption.
 
 ```mermaid
 sequenceDiagram
@@ -54,7 +54,7 @@ sequenceDiagram
 
 ## Conflict policy
 
-Scheduling and determinism: [Incremental scheduling and determinism](/docs/standard/compiler/compiler-mods/incremental-scheduling-determinism/). When two mods fight over the same node, the host picks a documented winner or fails—read the ADRs before betting production on undocumented merge luck.
+Scheduling and determinism: [Incremental scheduling and determinism](/docs/standard/compiler/compiler-mods/incremental-scheduling-determinism/). When two mods fight over the same node, the host picks a documented winner or fails. Read the ADRs before betting production on undocumented merge luck.
 
 ## Next
 

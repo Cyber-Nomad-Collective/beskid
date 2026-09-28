@@ -4,7 +4,7 @@ description: Resolution, semantic facts, typed code generation, AOT execution, a
 tableOfContents: true
 ---
 
-Mirror of the normative [Build pipeline overview](/docs/standard/compiler/build-pipeline/)—same flow, book voice.
+Mirror of the normative [Build pipeline overview](/docs/standard/compiler/build-pipeline/): same flow, book voice.
 
 ```mermaid
 flowchart TB
@@ -42,7 +42,7 @@ flowchart TB
 
 ## CLI entry
 
-`beskid build`, `beskid run`, `beskid analyze` orchestrate subsets—contract: [Build / analyze / run](/docs/standard/tooling/cli/build-analyze-run-contract/).
+`beskid build`, `beskid run`, `beskid analyze` orchestrate subsets. Contract: [Build / analyze / run](/docs/standard/tooling/cli/build-analyze-run-contract/).
 
 ## Diagnostics parity
 

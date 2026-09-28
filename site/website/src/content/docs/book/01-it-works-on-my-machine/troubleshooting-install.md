@@ -20,9 +20,9 @@ Fixes:
 
 You installed successfully and the shell still cannot see it.
 
-1. `echo $PATH` — is the install bin directory present?
+1. `echo $PATH`: is the install bin directory present?
 2. New terminal after editing `~/.bashrc` / `~/.zshrc`.
-3. `type beskid` — is a shell alias/function shadowing the binary?
+3. `type beskid`: is a shell alias/function shadowing the binary?
 
 ## Version mismatch (CLI vs LSP vs project)
 
@@ -59,4 +59,4 @@ Open an issue with that block. Accusing the borrow checker is optional.
 
 ## Next chapter
 
-[02. PATH not found — tooling anyway](/book/02-path-not-found-tooling-anyway/)
+[02. PATH not found: tooling anyway](/book/02-path-not-found-tooling-anyway/)

@@ -32,7 +32,7 @@ The website can sync displayed version from GitHub via `pnpm sync:cli-version` (
 
 ## What you get per platform
 
-Typical release artifacts include the `beskid` CLI for common OS/arch pairs (Linux, macOS, Windows—exact matrix follows CI). Platform packages (`.deb`, `.msi`, `.dmg`, Homebrew) and container images are also available; see [Downloads](/downloads/) for the full list.
+Typical release artifacts include the `beskid` CLI for common OS/arch pairs (Linux, macOS, Windows; exact matrix follows CI). Platform packages (`.deb`, `.msi`, `.dmg`, Homebrew) and container images are also available; see [Downloads](/downloads/) for the full list.
 
 User-facing docs may also mention `cdn.beskid-lang.org` for direct binary fetch; treat the Downloads page as the curated entry.
 
@@ -47,7 +47,7 @@ User-facing docs may also mention `cdn.beskid-lang.org` for direct binary fetch;
 ## Normative pointers
 
 - [CLI distribution and install](/docs/standard/tooling/cli-and-distribution/) (platform spec tooling area)
-- [Downloads page](/downloads/) — install tabs and command blocks
+- [Downloads page](/downloads/): install tabs and command blocks
 
 ## Next
 

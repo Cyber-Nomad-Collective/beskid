@@ -99,4 +99,4 @@ For `source = registry`:
 - Parse and validate manifests in the `beskid_analysis` crate (`projects::parse_manifest` / `parse_workspace_manifest`), then build the dependency DAG with `daggy` and preserve unresolved non-path dependency nodes for policy diagnostics.
 - Materialize resolved dependencies into `obj/beskid/deps/src` before compile stages.
 - Editor support: VS Code uses the `beskid-proj` language id for `*.bproj`; the Beskid LSP publishes diagnostics and context-aware completions on manifest files.
-- Symbol visibility: explicit `use` imports only—see [Explicit use, no prelude](/docs/standard/tooling/manifests-and-lockfiles/adr/0006-explicit-use-no-prelude/).
+- Symbol visibility: explicit `use` imports only. See [Explicit use, no prelude](/docs/standard/tooling/manifests-and-lockfiles/adr/0006-explicit-use-no-prelude/).

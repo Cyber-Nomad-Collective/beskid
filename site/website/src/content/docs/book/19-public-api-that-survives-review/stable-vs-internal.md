@@ -1,6 +1,6 @@
 ---
 title: "Stable vs internal"
-description: Not everything in a public repo is a public API—tiers matter for corelib and your packages.
+description: Not everything in a public repo is a public API. Tiers matter for corelib and your packages.
 tableOfContents: true
 ---
 

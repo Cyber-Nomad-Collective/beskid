@@ -1,19 +1,19 @@
 ---
 title: "Workspace manifest"
-description: ".bws structure—identity, members, overrides, registries."
+description: ".bws structure: identity, members, overrides, registries."
 tableOfContents: true
 ---
 
-**`.bws`** workspace manifests coordinate multi-project repos. They do not replace per-member **`.bproj`** files—they declare members and shared resolver policy.
+**`.bws`** workspace manifests coordinate multi-project repos. They do not replace per-member **`.bproj`** files: they declare members and shared resolver policy.
 
 Legacy **`Workspace.proj`** is rejected (**E1895**); rename to a `.bws` file (for example `CoreLib.bws`).
 
 ## Building blocks
 
-- **`workspace { ... }`** — workspace identity and resolver policy; extras such as **`defaultTestMember`** select the member when you pass the workspace path without `--workspace-member`
-- **`member "<label>" { path = "..." }`** — adds a project at `path`; optional extras (`package`, `description`, `category`, `tags`) are publish/editor metadata merged from the workspace manifest
-- **`override "<dep>" { version = "..." }`** — shared registry version policy
-- **`registry "<name>" { url = "..." }`** — centralized registry endpoints
+- **`workspace { ... }`**: workspace identity and resolver policy; extras such as **`defaultTestMember`** select the member when you pass the workspace path without `--workspace-member`
+- **`member "<label>" { path = "..." }`**: adds a project at `path`; optional extras (`package`, `description`, `category`, `tags`) are publish/editor metadata merged from the workspace manifest
+- **`override "<dep>" { version = "..." }`**: shared registry version policy
+- **`registry "<name>" { url = "..." }`**: centralized registry endpoints
 
 ## Why bother
 

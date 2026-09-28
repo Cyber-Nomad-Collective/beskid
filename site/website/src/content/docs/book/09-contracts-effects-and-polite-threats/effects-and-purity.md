@@ -4,13 +4,13 @@ description: Where Beskid tracks compile-time effects vs runtime IO, spawn, and 
 tableOfContents: true
 ---
 
-"Effects" in Beskid are not a monad tutorial. They are **boundaries**: what happens at compile time in mods, what happens at runtime in fibers and syscalls, and what the type system can prove before you ship.
+"Effects" in Beskid draws boundaries, not a monad tutorial: what happens at compile time in mods, what happens at runtime in fibers and syscalls, and what the type system can prove before you ship.
 
 ## Compile-time effects (mods and macros)
 
 [Metaprogramming](/platform-spec/language-meta/metaprogramming/metaprogramming/) is explicit:
 
-- Mod work runs through **AOT-compiled** `type: Mod` artifacts—no interpreted Beskid at compile time except via linked mod entrypoints.
+- Mod work runs through **AOT-compiled** `type: Mod` artifacts (no interpreted Beskid at compile time except via linked mod entrypoints).
 - Generators emit **typed AST**; analyzers register rewrites; hosts merge and re-parse under bounded rounds.
 - Those effects are **compile-time only**; they become ordinary program semantics after lowering.
 
@@ -27,7 +27,7 @@ flowchart TB
 
 ## Runtime effects
 
-User-visible runtime behavior—**spawn**, channel IO, syscall-backed console, FFI—lives under [Evaluation](/platform-spec/language-meta/evaluation/), [Execution runtime](/platform-spec/execution/runtime/), and [Core library](/platform-spec/core-library/). The language does not pretend `println` is pure; it routes IO through documented surfaces ([panic-io and syscalls](/platform-spec/execution/runtime/panic-io-and-syscalls/)).
+User-visible runtime behavior (**spawn**, channel IO, syscall-backed console, FFI) lives under [Evaluation](/platform-spec/language-meta/evaluation/), [Execution runtime](/platform-spec/execution/runtime/), and [Core library](/platform-spec/core-library/). The language does not pretend `println` is pure; it routes IO through documented surfaces ([panic-io and syscalls](/platform-spec/execution/runtime/panic-io-and-syscalls/)).
 
 ## Purity (pragmatic, not academic)
 

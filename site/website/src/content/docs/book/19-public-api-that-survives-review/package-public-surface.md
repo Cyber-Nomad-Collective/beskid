@@ -1,6 +1,6 @@
 ---
 title: "Package public surface"
-description: What registry consumers see is what you exported and documented—not your folder tree.
+description: What registry consumers see is what you exported and documented, not your folder tree.
 tableOfContents: true
 ---
 

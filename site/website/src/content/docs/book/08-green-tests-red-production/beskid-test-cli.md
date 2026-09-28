@@ -22,9 +22,9 @@ beskid dev build test Src/Harness.bd --include-tag fast --group analysis
 beskid dev build test Src/Harness.bd --exclude-tag slow
 ```
 
-- **`--include-tag`** — run only tests whose `meta.tags` contain a tag (repeatable).
-- **`--exclude-tag`** — drop tests with matching tags.
-- **`--group`** — prefix match on `meta.group`.
+- **`--include-tag`**: run only tests whose `meta.tags` contain a tag (repeatable).
+- **`--exclude-tag`**: drop tests with matching tags.
+- **`--group`**: prefix match on `meta.group`.
 
 ## Machine-readable output
 
@@ -32,11 +32,11 @@ beskid dev build test Src/Harness.bd --exclude-tag slow
 beskid dev build test Src/Harness.bd --json
 ```
 
-Buckets: `passed`, `failed`, `skipped`, `filtered_out`. CI parsers should treat **skipped** separately from **failed**—unless your team uses skip as passive-aggressive deletion, in which case fix the culture, not the JSON.
+Buckets: `passed`, `failed`, `skipped`, `filtered_out`. CI parsers should treat **skipped** separately from **failed**, unless your team uses skip as passive-aggressive deletion, in which case fix the culture, not the JSON.
 
 ## Wiring to analysis
 
-`beskid dev build test` shares project resolution with `beskid dev build compile` and `beskid dev syntax analyze`: same graph, same lockfile story. If resolution fails, no tests run—by design.
+`beskid dev build test` shares project resolution with `beskid dev build compile` and `beskid dev syntax analyze`: same graph, same lockfile story. If resolution fails, no tests run, by design.
 
 ## Normative tooling
 

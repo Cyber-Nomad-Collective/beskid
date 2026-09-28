@@ -1,10 +1,10 @@
 ---
 title: "Platform spec home"
-description: Start at /platform-spec/—domains, areas, features, and reader chrome.
+description: Start at /platform-spec/, domains, areas, features, and reader chrome.
 tableOfContents: true
 ---
 
-Open [/platform-spec/](/platform-spec/). That is the normative front door—no version prefix in the URL, Git as the axis ([Release policy](/platform-spec/community/spec-maintenance/release-and-versioning-policy/)).
+Open [/platform-spec/](/platform-spec/). That is the normative front door: no version prefix in the URL, Git as the axis ([Release policy](/platform-spec/community/spec-maintenance/release-and-versioning-policy/)).
 
 Use the home page to select the domain that owns a question, not to infer a rule from a tile title. Each domain leads to areas and feature hubs where the governing material is linked.
 
@@ -33,7 +33,7 @@ flowchart TB
 
 ## Reader chrome
 
-Platform-spec pages use dedicated reader UI (tabs, ADRs, architecture graphs)—not the book's chapter rail. Expect:
+Platform-spec pages use dedicated reader UI (tabs, ADRs, architecture graphs), not the book's chapter rail. Expect:
 
 - **Current document** / **Articles** / **ADRs** / **Architecture** tabs on feature hubs
 - `status: Standard` vs `Proposed` in headers

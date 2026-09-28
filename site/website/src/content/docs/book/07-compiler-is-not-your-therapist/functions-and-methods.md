@@ -1,14 +1,14 @@
 ---
 title: "Functions and methods"
-description: Functions, methods, contracts, and calls without nullable receivers."
+description: "Functions, methods, contracts, and calls without nullable receivers."
 tableOfContents: true
 ---
 
-Functions do work. Methods attach behavior to types. Contracts document what callers may assume—read the platform spec before treating this page as law.
+Functions do work. Methods attach behavior to types. Contracts document what callers may assume: read the platform spec before treating this page as law.
 
 ## Functions
 
-Top-level and scoped functions declare parameters and return types (inference may fill gaps where allowed). Keep signatures honest at API edges—internals can be messier, but not `Option`-as-error-swallowing messier.
+Top-level and scoped functions declare parameters and return types (inference may fill gaps where allowed). Keep signatures honest at API edges: internals can be messier, but not `Option`-as-error-swallowing messier.
 
 ## Methods and receivers
 
@@ -16,7 +16,7 @@ Instance methods dispatch on nominal types per [method dispatch](/platform-spec/
 
 ## Contracts and effects
 
-Public APIs often use **contracts** (interfaces) with documented effects—see [contracts](/platform-spec/language-meta/contracts-and-effects/contracts/) and [error handling](/platform-spec/language-meta/contracts-and-effects/error-handling/).
+Public APIs often use **contracts** (interfaces) with documented effects: see [contracts](/platform-spec/language-meta/contracts-and-effects/contracts/) and [error handling](/platform-spec/language-meta/contracts-and-effects/error-handling/).
 
 ## Callable documentation
 
@@ -30,7 +30,7 @@ string greet(string name) {
 }
 ```
 
-Exact syntax keywords evolve—verify against spec if copy-paste fails parse.
+Exact syntax keywords evolve. Verify against spec if copy-paste fails parse.
 
 ## Next
 

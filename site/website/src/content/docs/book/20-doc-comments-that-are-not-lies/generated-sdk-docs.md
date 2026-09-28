@@ -1,6 +1,6 @@
 ---
 title: "Generated SDK docs"
-description: Compiler SDK syntax is generated—document semantics and invariants, not obvious identifiers.
+description: Compiler SDK syntax is generated; document semantics and invariants, not obvious identifiers.
 tableOfContents: true
 ---
 
@@ -10,7 +10,7 @@ tableOfContents: true
 - Do not restate identifier names and types already visible in the signature.
 - Never put `@arg` on struct fields that are not callable parameters.
 
-Mods and analyzers consume the same AST model—lying in SDK docs breaks more than hover text.
+Mods and analyzers consume the same AST model: lying in SDK docs breaks more than hover text.
 
 ## Keep generated and authored material distinct
 

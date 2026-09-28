@@ -7,7 +7,7 @@ tableOfContents: true
 Builds run per repository and submodule. When a pipeline is red, inspect the
 failed Woodpecker step and its retained log before guessing.
 
-Superrepo changes often need commits in **`compiler`**, **`pckg`**, or **`beskid_vscode`** first, then a submodule pointer bump—pushing only the parent repo is a classic way to achieve "green locally, red everywhere."
+Superrepo changes often need commits in **`compiler`**, **`pckg`**, or **`beskid_vscode`** first, then a submodule pointer bump. Pushing only the parent repo is a classic way to achieve "green locally, red everywhere."
 
 ## Website CI
 

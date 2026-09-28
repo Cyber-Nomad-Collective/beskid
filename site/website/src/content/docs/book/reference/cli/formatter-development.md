@@ -33,9 +33,9 @@ pub trait Emit {
 
 **Contract**
 
-- **`w`** — append-only sink; implementations compose smaller `emit` calls on child nodes instead of building intermediate strings (avoids quadratic concat patterns).
-- **`cx`** — mutable context; indent is pushed/popped around braced regions; policy helpers insert blank lines where the style guide requires.
-- **Return value** — `Ok(())` on success; `EmitError` wraps `fmt::Error` from the writer (typically only on OOM-style writer failures).
+- **`w`**: append-only sink; implementations compose smaller `emit` calls on child nodes instead of building intermediate strings (avoids quadratic concat patterns).
+- **`cx`**: mutable context; indent is pushed/popped around braced regions; policy helpers insert blank lines where the style guide requires.
+- **Return value**: `Ok(())` on success; `EmitError` wraps `fmt::Error` from the writer (typically only on OOM-style writer failures).
 
 Implement `Emit` for AST types (and sometimes for `Spanned<T>` wrappers) so the tree formats itself **structurally**: `Program` loops items and delegates to `Node`; `Node` matches on item kind; expressions delegate to subexpressions.
 
@@ -43,8 +43,8 @@ Implement `Emit` for AST types (and sometimes for `Spanned<T>` wrappers) so the 
 
 `EmitCtx` (same file) tracks:
 
-- **`indent: usize`** — logical nesting level; `write_indent` writes four spaces per level.
-- **`policy_blank_line_between_members`** — toggles extra newline policy between type/enum/contract members (tests may disable for tighter snapshots).
+- **`indent: usize`**: logical nesting level; `write_indent` writes four spaces per level.
+- **`policy_blank_line_between_members`**: toggles extra newline policy between type/enum/contract members (tests may disable for tighter snapshots).
 
 Common helpers used everywhere:
 
@@ -74,11 +74,11 @@ Policy bodies live in `format/policy.rs` so spacing rules stay centralized.
 
 ## Adding a new syntax node to the formatter
 
-1. **Parse / AST** — ensure the node exists on the concrete AST used by analysis.
-2. **`Emit` impl** — add `fn emit` in the most natural module (`expressions_emit.rs` vs `statements_emit.rs` vs `items/…`).
-3. **Delegate** — prefer `child.emit(w, cx)?` over duplicating indent logic.
-4. **Policy** — if the node introduces new vertical spacing needs, extend `policy.rs` and thread through `EmitCtx` rather than hard-coding double newlines at call sites.
-5. **Tests** — add `*.input.bd` / `*.expected.bd` under `crates/beskid_tests_surface/fixtures/format/`. The harness scans subdirectories. Run `cargo test -p beskid_tests_surface format` from `compiler/`. Woodpecker runs the same repository command.
+1. **Parse / AST**: ensure the node exists on the concrete AST used by analysis.
+2. **`Emit` impl**: add `fn emit` in the most natural module (`expressions_emit.rs` vs `statements_emit.rs` vs `items/…`).
+3. **Delegate**: prefer `child.emit(w, cx)?` over duplicating indent logic.
+4. **Policy**: if the node introduces new vertical spacing needs, extend `policy.rs` and thread through `EmitCtx` rather than hard-coding double newlines at call sites.
+5. **Tests**: add `*.input.bd` / `*.expected.bd` under `crates/beskid_tests_surface/fixtures/format/`. The harness scans subdirectories. Run `cargo test -p beskid_tests_surface format` from `compiler/`. Woodpecker runs the same repository command.
 
 ## Idempotence and grouped expressions
 

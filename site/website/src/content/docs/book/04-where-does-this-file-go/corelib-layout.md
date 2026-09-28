@@ -1,10 +1,10 @@
 ---
 title: "Corelib layout"
-description: Standard library packages, corelib identity, and where Beskid ships the std."
+description: "Standard library packages, corelib identity, and where Beskid ships the std."
 tableOfContents: true
 ---
 
-Application code is yours. **Corelib** is the shared floor—collections, contracts, options, the stuff you should not rewrite per repo.
+Application code is yours. **Corelib** is the shared floor: collections, contracts, options, the stuff you should not rewrite per repo.
 
 ## Identity
 
@@ -18,7 +18,7 @@ CLI ensures bundled corelib is available on launch; override with `BESKID_CORELI
 
 ## Layout mental model
 
-Corelib splits into **interlinked workspace packages** (not one monolithic `IO.bd` dumping ground):
+Corelib splits into **interlinked workspace packages**, not one monolithic `IO.bd` dumping ground:
 
 - Primitive types and contracts in the foundation package under `Core` (including `Option<T>`)
 - Runtime syscall-backed I/O under runtime packages; higher console work in dedicated packages (see platform [core library](/platform-spec/core-library/) domain)
@@ -39,12 +39,12 @@ flowchart TD
 
 ## Docs and `api.json`
 
-Compiler `doc` emission can place `api.json` and markdown under `.beskid/docs/`—registry and pckg treat structured API JSON as the primary contract. You consume std docs like any package docs, not a separate mythological website.
+Compiler `doc` emission can place `api.json` and markdown under `.beskid/docs/`. Registry and pckg treat structured API JSON as the primary contract. You consume std docs like any package docs, not a separate mythological website.
 
 ## Standard reference (informative)
 
 - [Core library domain](/platform-spec/core-library/)
-- [Types — Option](/platform-spec/language-meta/type-system/types/)
+- [Types: Option](/platform-spec/language-meta/type-system/types/)
 
 ## Next chapter
 

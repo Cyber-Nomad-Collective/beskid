@@ -4,16 +4,16 @@ description: type Mod projects, artifact-driven discovery, and what mods are not
 tableOfContents: true
 ---
 
-A **compiler mod** is a **`type: Mod`** package in the dependency graph whose compiled AOT artifact exports SDK **contract** implementations—generators, analyzers, rewriters—not random scripts the CLI `eval`s.
+A **compiler mod** is a **`type: Mod`** package in the dependency graph whose compiled AOT artifact exports SDK **contract** implementations (generators, analyzers, rewriters), not random scripts the CLI `eval`s.
 
 ## Not these things
 
 | Thing | Mod? |
 | --- | --- |
 | Rust proc-macro inside `beskid_analysis` | Host implementation detail |
-| Language `macro` items | [Language macros](/docs/standard/language-meta/metaprogramming/macros/) — parallel feature |
-| User `contract Disposable` | Structural type contract—different namespace |
-| `meta { }` blocks in old designs | Removed—`Collector` owns scope |
+| Language `macro` items | [Language macros](/docs/standard/language-meta/metaprogramming/macros/), a parallel feature |
+| User `contract Disposable` | Structural type contract, different namespace |
+| `meta { }` blocks in old designs | Removed, `Collector` owns scope |
 
 ## Discovery
 
@@ -24,7 +24,7 @@ Manifest **`attachTo`** folklore is dead. During **`mod.load`** the host:
 3. Reads `mod.descriptor.json` / export table
 4. Schedules `(contractId, typeId, entrySymbol)` tuples
 
-Duplicates → **E1829** / **E1851–E1870** before collect runs ([Compiler Mod SDK — discovery](/docs/standard/language-meta/metaprogramming/compiler-mod-sdk/#contract-discovery-normative)).
+Duplicates → **E1829** / **E1851–E1870** before collect runs ([Compiler Mod SDK: discovery](/docs/standard/language-meta/metaprogramming/compiler-mod-sdk/#contract-discovery-normative)).
 
 ## Compiler never in Beskid
 

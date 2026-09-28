@@ -1,6 +1,6 @@
 ---
 title: "pub use re-exports"
-description: Building a stable public API surface without dumping every internal module."
+description: "Building a stable public API surface without dumping every internal module."
 tableOfContents: true
 ---
 
@@ -29,7 +29,7 @@ Consumers import from `myapp.api`, not from twenty leaf modules.
 ## When re-exports hurt
 
 - Re-exporting everything `pub` in core because you were lazy
-- Accidentally `pub use` internal helpers—now they are semver
+- Accidentally `pub use` internal helpers, and now they are semver
 
 ```mermaid
 flowchart LR
@@ -41,7 +41,7 @@ flowchart LR
 
 ## Relation to project `root_namespace`
 
-`root_namespace` in `Project.proj` is metadata for package naming conventions—it does **not** replace module paths in source. Keep module declarations honest.
+`root_namespace` in `Project.proj` is metadata for package naming conventions. It does **not** replace module paths in source. Keep module declarations honest.
 
 ## Next
 

@@ -25,7 +25,7 @@ This command is available as `beskid doc`.
 The root object includes:
 
 - **`schemaVersion`**: integer `4` (consumers must gate on this field; `3` remains supported without v4-only fields).
-- **`navigationModel`**: `"graph-v1"` when resolution succeeded — build navigation from **`parentId`** / **`memberIds`** only, not from splitting `qualifiedName`.
+- **`navigationModel`**: `"graph-v1"` when resolution succeeded. Build navigation from **`parentId`** / **`memberIds`** only, not from splitting `qualifiedName`.
 - **`generator`**, **`source`**, **`items`**: metadata and a flat list of **all resolved API symbols** (documented or not).
 
 Each item includes location, visibility, `kind`, names, graph ids, and compiler-derived **`signature`**, **`typeAnnotation`** fields (`fieldType`, `returnType`, `parameters`), plus optional documentation:

@@ -22,7 +22,7 @@ A builtin symbol is a symbol the compiler knows about before parsing any user co
 
 The type signature: `fn(string) -> void`. The compiler knows this. When your code calls `print("hello")`, the compiler doesn't infer the type of `print` from usage. It already knows, and it checks that you passed a string, not an integer, not a struct, not a closure. The error message if you get it wrong comes from the builtin's known signature, not from type inference.
 
-The dispatch tag: `INTEROP_DISPATCH_PRINT`. The interop table maps dispatch tags to runtime handlers. When the compiled program executes, it doesn't call a function pointer. It calls through the interop dispatch envelope: the runtime looks up `DISPATCH_PRINT` in a table populated at startup by the host OS integration layer. The compiler knows the tag. The runtime knows the handler. The host OS provides the implementation. Three layers, one symbol.
+The symbol itself is the dispatch tag: `SYM_SYS_PRINT` is an entry in the compiler's `BUILTIN_SPECS` table, not a name it resolves by convention. When the compiled program executes, it doesn't call a function pointer it inferred. It calls through the interop dispatch envelope keyed on that entry, which the runtime resolves to a handler installed at startup by the host OS integration layer. The compiler knows the symbol. The runtime knows the handler. The host OS provides the implementation. Three layers, one symbol.
 
 ## The three pioneers
 
@@ -34,7 +34,7 @@ SYM_STR_LEN: returns the byte length of a string. Before this, the compiler had 
 
 ## The return type fix
 
-INTEROP_DISPATCH_USIZE had a bug. It returned i32 instead of i64. On 32-bit platforms, this was correct. On 64-bit platforms (which is every platform Beskid targets) it truncated string lengths to 32 bits. A string longer than 4 GB would report the wrong length. Beskid programs are unlikely to allocate 4 GB strings in 2026. But the bug wasn't about likelihood. It was about the contract: `usize` means the platform's size type. On a 64-bit platform, `usize` is 64 bits. The interop dispatch returned 32 bits. The contract was broken. Nobody noticed until string length operations started returning wrong values in edge-case tests. The fix was one line: `i32` → `i64`. The lesson: interop boundaries are where type system assumptions meet platform reality. Check the widths.
+`SYM_INTEROP_DISPATCH_USIZE` had a bug. Its spec declared a pointer-shaped return (`AbiReturnKind::Ptr`) for a value that is a plain 64-bit count, not an address. A `usize` result treated as a pointer is a contract mismatch waiting for the wrong code path to touch it: the ABI layer no longer agreed with itself about what kind of value was coming back. Nobody noticed until dispatch-return handling for size-typed builtins started disagreeing with callers in edge-case tests. The fix was one line: the return kind changed from `Ptr` to `I64`. The lesson: interop boundaries are where a spec's declared shape and the value's actual shape can quietly drift apart. Check the tags, not just the bits.
 
 ## The extern contract validation skip
 

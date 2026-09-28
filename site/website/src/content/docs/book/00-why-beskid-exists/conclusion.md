@@ -1,6 +1,6 @@
 ---
 title: "Conclusion"
-description: Why Beskid exists, synthesized—and where to go next.
+description: Why Beskid exists, synthesized, and where to go next.
 tableOfContents: true
 ---
 
@@ -16,8 +16,8 @@ We are not building:
 
 We are building:
 
-- A language where **features are language features**—iterators, metaprogramming, compile-time truth—not ten layers of corelib indirection.
-- **IoC in the compiler**, not IoC frameworks: explicit, verifiable, compiled—not injected because we can.
+- A language where **features are language features** (iterators, metaprogramming, compile-time truth), not ten layers of corelib indirection.
+- **IoC in the compiler**, not IoC frameworks: explicit, verifiable, compiled, not injected because we can.
 - **AOT-native output** without IL handcuffs and the stagnation tax that follows.
 - Opinionated defaults that respect **daily driving** (Go's honesty) without accepting **large-codebase drift** (Go's convention vacuum).
 
