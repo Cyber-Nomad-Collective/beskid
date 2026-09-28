@@ -51,6 +51,18 @@ superseded by the later span-heap task 6.11; this audit does not ask to restore
   case passed on JIT, AOT, and native kit, but does not assert the missing
   `WriteAll` cause payload. These passes do not close the narrower missing
   assertions identified above.
+- On the same source snapshot, `cargo test -j 4 -p beskid_engine --test
+  heap_growth_native -- --nocapture --test-threads=4` passed 13/13. The log
+  includes JIT/AOT/native-kit growth, size-class sweep and span reuse, deep
+  recursion and fiber-root cases, a diagnosable root-stack failure, and the
+  cap and stress cases currently implemented. It does not settle the
+  328-versus-200 layout or R4-versus-R5 design mismatch, nor prove the
+  negative/structural cases absent from the current harness.
+- The exact-source `beskid_abi` test
+  `runtime_source::tests::heap_source_constants_match_the_manifest_heap_layouts`
+  passed 1/1. This establishes parity for its enumerated files only;
+  `Gc/Span.bd`, `Gc/Marking.bd`, and `Gc/Verify.bd` are not enumerated by that
+  test, so the task 6.2 inventory remains open.
 - Passing local macOS Rust workspace and Corelib/runtime matrices are recorded
   in [candidate readiness](2026-09-27-v05-candidate-readiness.md), with their
   actual revisions and eligibility limits. They are not substituted for the
