@@ -344,3 +344,21 @@ Corelib were rewritten with checkout-local paths during the run, and an
 untracked engine `obj/` directory was generated. These artifacts were not
 discarded. This proves the macOS runtime tests passed; it does not establish
 a clean, source-bound release gate.
+
+## Update, 2026-09-28: networking deadline coverage audit
+
+The integrated networking task 5.1c remains open despite green Linux and
+macOS matrices. Current focused tests cover `Deadline.After` zero, negative,
+and overflow cases (`system/TimeTests.bd`), TCP read timeout/reuse, pending
+read-timer clear, accept timeout/reuse, UDP receive timeout/reuse, one
+close/accept/deadline winner, and the deterministic Linux DNS late-result
+case. The runtime's `NetworkNativeTests.bd` has nine named network tests;
+the Corelib TCP/UDP/DNS fixtures add the public API cases.
+
+The current named fixtures do not prove TCP write-deadline behavior,
+pending-write timer replacement/clear, UDP send timeout with unsent-payload
+ownership, or repeated deadline/readiness/close races for each operation and
+target. The macOS 7/7 result ran the ordinary DNS path, not the Linux-only
+blocked-resolver shim. Task 5.1c and target-conformance task 5.2 should not
+be checked from the matrix counts alone; add focused cases and repeat the
+race evidence on Linux epoll, macOS kqueue, and Windows IOCP.
