@@ -362,3 +362,12 @@ target. The macOS 7/7 result ran the ordinary DNS path, not the Linux-only
 blocked-resolver shim. Task 5.1c and target-conformance task 5.2 should not
 be checked from the matrix counts alone; add focused cases and repeat the
 race evidence on Linux epoll, macOS kqueue, and Windows IOCP.
+
+The earlier networking audit's manifest-parity test gap is narrower now:
+`beskid_codegen/tests/codegen_input/runtime_intrinsics.rs` has a negative test
+that adds an unregistered network intrinsic and expects `ManifestDrift` at the
+shared `CodegenInput` boundary, before JIT or AOT lowering. The ABI test also
+checks the private network intrinsic inventory and the manifest/C/Corelib
+status order. Those tests are included in the previously passing full Rust
+workspace matrices; task 2.1 still needs its separate public-symbol and
+generated-registry audit before being closed wholesale.
