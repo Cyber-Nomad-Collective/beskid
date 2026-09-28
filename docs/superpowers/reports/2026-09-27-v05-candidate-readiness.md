@@ -325,12 +325,15 @@ fixture explicitly expects `publishable=true` and synthetic
 `success` input with no stage reports. Thus the current contract test codifies
 the missing-evidence behavior instead of rejecting it.
 
-The existing `scripts/ci/corelib-gate.sh` is not ready to be wired into the
-current candidate unchanged: its required-file list includes
-`packages/foundation/src/Core/Syscall/Syscall.bd`, absent from Corelib
-`a289712`. The active canonical Corelib quality/target contract must be
-reconciled before the gate runs. No release-pipeline code was changed by this
-audit, and no fabricated green test report is accepted as qualification.
+The `scripts/ci/corelib-gate.sh` required-file list includes
+`packages/foundation/src/Core/Syscall/Syscall.bd`; this file **does exist** at
+the candidate Corelib workspace root (`compiler/corelib/packages/...`). An
+earlier reading accidentally checked beneath `beskid_corelib/packages` and
+incorrectly called the gate stale. The gate has not been run in the current
+source-bound Woodpecker flow, so it still needs real execution and an
+authenticated result, but its required-file check is not a known blocker.
+No release-pipeline code was changed by this audit, and no fabricated green
+test report is accepted as qualification.
 
 ## Update, 2026-09-28: macOS runtime matrix complete
 
