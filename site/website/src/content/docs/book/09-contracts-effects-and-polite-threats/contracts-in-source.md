@@ -24,7 +24,7 @@ Normative detail: [Contracts](/platform-spec/language-meta/contracts-and-effects
 
 ## Conformance lists
 
-Types declare **`type Name : I, J { ... }`**. The compiler checks every required member (**E1601–E1607**). Conflicting embeddings from two contracts **must** error—no C#-style diamond denial as a lifestyle.
+Types declare **`type Name : I, J { ... }`**. The compiler checks every required member (**E1601–E1607**). Conflicting embeddings from two contracts **must** error: no C#-style diamond denial as a lifestyle.
 
 ## Embeddings
 

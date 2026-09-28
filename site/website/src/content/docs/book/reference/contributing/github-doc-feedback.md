@@ -31,7 +31,7 @@ Set the following public env vars in deployment (or local `.env`):
 - `PUBLIC_GISCUS_INPUT_POSITION`
 - `PUBLIC_GISCUS_LANG`
 - `PUBLIC_GISCUS_EMIT_METADATA` (usually `0`)
-- `PUBLIC_GISCUS_THEME` — `sync` follows the site theme toggle; or set e.g. `preferred_color_scheme` to match the snippet from giscus.app
+- `PUBLIC_GISCUS_THEME`: `sync` follows the site theme toggle, or set e.g. `preferred_color_scheme` to match the snippet from giscus.app
 
 Reference defaults are in `site/website/.env.example`.
 

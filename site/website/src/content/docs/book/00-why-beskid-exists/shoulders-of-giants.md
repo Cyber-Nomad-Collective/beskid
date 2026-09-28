@@ -1,6 +1,6 @@
 ---
 title: "Are we really standing on the shoulders of giants?"
-description: From assembly to VMs—how abstraction stacked up and which traps language designers keep stepping in.
+description: From assembly to VMs, how abstraction stacked up and which traps language designers keep stepping in.
 tableOfContents: true
 ---
 
@@ -34,7 +34,7 @@ Each step traded **control** for **reach**:
 
 - **Assembly** gave truth and pain.
 - **C** gave portability and manual memory.
-- **Java / .NET** pushed toward **virtual machines** so hardware details could be ignored—until they could not (GC pauses, container memory, AOT revivals).
+- **Java / .NET** pushed toward **virtual machines** so hardware details could be ignored, until they could not (GC pauses, container memory, AOT revivals).
 - **JIT** promised peak performance without ahead-of-time commitment; you paid in warmup, complexity, and "works on my machine" bytecode.
 
 The **run anywhere** dream was real enough to reshape hiring. It also **abstracted languages into runtimes** until the runtime became the real product (CLR, JVM), and the language became syntax for feeding it.
@@ -49,7 +49,7 @@ The **run anywhere** dream was real enough to reshape hiring. It also **abstract
 
 "If Rust is hard, hard must mean good." Sometimes hard means **your tool is fighting your actual workload**.
 
-![Shrug — false equivalence](https://media.giphy.com/media/vWLNXXfc59qlLNarde/giphy.gif)
+![Shrug: false equivalence](https://media.giphy.com/media/vWLNXXfc59qlLNarde/giphy.gif)
 
 ### 3. Feature creep as compassion
 
@@ -67,7 +67,7 @@ When the VM is the platform, language innovation becomes **workarounds**:
 - Value types as a decade-long project
 - Async as state machine rewrite theater
 
-![Mind blown — VM workarounds](https://miro.medium.com/v2/resize:fit:1400/format:webp/1*39VCzgw4wzMlbmefvLI1lg.jpeg)
+![Mind blown: VM workarounds](https://miro.medium.com/v2/resize:fit:1400/format:webp/1*39VCzgw4wzMlbmefvLI1lg.jpeg)
 
 Beskid pushes **assembly output without IL handcuffs** and **compile-time power** because we are tired of negotiating with a runtime that updates slower than the language.
 
@@ -75,12 +75,12 @@ Beskid pushes **assembly output without IL handcuffs** and **compile-time power*
 
 Each layer promises you can forget below. Then production reminds you: **GC**, **thread pools**, **HTTP/2**, and **disk** still exist. You just debug them with worse symbols.
 
-![This is fine — production fog](https://preview.redd.it/debugthedebugger-v0-m5tbvgn1tije1.jpeg?auto=webp&s=31c1ecdaca567c4910b0c7f7f238667603479b17)
+![This is fine: production fog](https://preview.redd.it/debugthedebugger-v0-m5tbvgn1tije1.jpeg?auto=webp&s=31c1ecdaca567c4910b0c7f7f238667603479b17)
 
 ## Giants or ladders?
 
 Shoulders of giants implies **visibility**. Abstraction towers imply **fog**.
 
-Beskid is not anti-abstraction. It is anti-**unpaid** abstraction: layers you did not choose, cannot see in the binary, and cannot remove when the business rule is simple but the stack is not.
+Beskid isn't anti-abstraction, it's anti-**unpaid** abstraction: layers you did not choose, cannot see in the binary, and cannot remove when the business rule is simple but the stack is not.
 
 Next: [1.7 segfault or not to segfault](/book/00-why-beskid-exists/segfault-or-not-to-segfault/).

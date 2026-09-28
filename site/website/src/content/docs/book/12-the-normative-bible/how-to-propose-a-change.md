@@ -38,7 +38,7 @@ Update `compiler/` (or corelib/tooling) and refresh [crate-to-spec anchors](/pla
 
 ## 5. Informative follow-up
 
-Update book chapters or [reference](/book/reference/) when tutorials should reflect the new world—**after** normative text lands.
+Update book chapters or [reference](/book/reference/) when tutorials should reflect the new world, **after** normative text lands.
 
 ## Community hub
 

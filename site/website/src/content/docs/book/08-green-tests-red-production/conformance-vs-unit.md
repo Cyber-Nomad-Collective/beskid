@@ -6,8 +6,8 @@ tableOfContents: true
 
 Two different questions:
 
-1. **Does my package behave?** — your `test` items, your CI job.
-2. **Does Beskid still mean what the spec says?** — `beskid_tests`, `beskid_e2e_tests`, and the [Conformance](/platform-spec/compiler/conformance/) area.
+1. **Does my package behave?** That is your `test` items, your CI job.
+2. **Does Beskid still mean what the spec says?** That is `beskid_tests`, `beskid_e2e_tests`, and the [Conformance](/platform-spec/compiler/conformance/) area.
 
 Confusing them is how you ship a green app on a red language.
 

@@ -1,10 +1,10 @@
 ---
 title: "Fetch, lock, update"
-description: Dependency resolution, Project.lock, frozen builds, and staying reproducible."
+description: "Dependency resolution, Project.lock, frozen builds, and staying reproducible."
 tableOfContents: true
 ---
 
-Manifests declare intent. **Locks** declare what actually happened—so CI and your laptop stop arguing.
+Manifests declare intent. **Locks** declare what actually happened, so CI and your laptop stop arguing.
 
 ## The trio
 
@@ -20,8 +20,8 @@ Reference: [fetch](/book/reference/cli/commands/fetch/), [lock](/book/reference/
 
 CI should prefer **reproducible** resolution:
 
-- `--frozen` — fail if lock would change
-- `--locked` — enforce lock consistency (see per-command docs for exact semantics)
+- `--frozen`: fail if lock would change
+- `--locked`: enforce lock consistency (see per-command docs for exact semantics)
 
 ```mermaid
 sequenceDiagram
@@ -57,7 +57,7 @@ Do **not** `.gitignore` the lock because "it is generated" unless you enjoy prod
 
 ## Path-only era (v1)
 
-With `source = path`, drift can mean different local folders. With `source = registry`, inspect the selected active version in `Project.lock`. Workspaces add shared override policy—chapter [06](/book/06-monorepo-as-coping-mechanism/).
+With `source = path`, drift can mean different local folders. With `source = registry`, inspect the selected active version in `Project.lock`. Workspaces add shared override policy: chapter [06](/book/06-monorepo-as-coping-mechanism/).
 
 ## Standard reference (informative)
 

@@ -29,14 +29,14 @@ Identify your service task. Check the public service status and record the page 
 2. Select [Learn](/docs/services/learn/), [pckg](/docs/services/pckg/), [Tracker](/docs/services/tracker/), or [Nexus](/docs/services/nexus/).
 3. Use [Health and monitoring](/docs/operations/health-and-monitoring/) if a service does not respond.
 
-The root Auth README says that pckg and Nexus use the Auth hub. That claim conflicts with the pinned, service-owned contracts and is under reconciliation. This page follows the service-owned contracts: pckg uses a separate trusted forward-auth boundary, and Nexus uses Caddy with Authentik.
+The production Compose file has no Auth hub service. It routes browser sign-in through Authentik behind the shared Caddy edge. Tracker and Nexus require an Authentik session on every route. Learn and pckg keep their catalogues public and forward only requests that carry an Authentik session. This page follows the production Compose file.
 
 The diagram shows the public service and authentication topology.
 
 ```mermaid
 architecture-beta
   accTitle: Public service and authentication topology
-  accDescr: Readers use public services. Tracker and Learn connect to the Auth hub. pckg uses trusted forward-auth. Caddy and Authentik protect Nexus.
+  accDescr: Readers use public services. Caddy forward-auth to Authentik protects Tracker and Nexus. Learn and pckg use the same forward-auth for requests with an Authentik session.
   service user(internet)[User]
   group edge(cloud)[Public services]
   service website(server)[Website] in edge
@@ -45,14 +45,12 @@ architecture-beta
   service tracker(server)[Tracker] in edge
   service nexus(server)[Nexus] in edge
   group authn(cloud)[Authentication]
-  service hub(server)[Auth hub] in authn
-  service fwd(server)[Trusted forward auth] in authn
   service caddy(server)[Caddy] in authn
   service authentik(server)[Authentik] in authn
   user:R --> L:website
-  tracker:B --> T:hub
-  learn:B --> T:hub
-  pckg:B --> T:fwd
+  tracker:B --> T:caddy
+  learn:B --> T:caddy
+  pckg:B --> T:caddy
   nexus:B --> T:caddy
   caddy:R --> L:authentik
 ```
@@ -62,11 +60,11 @@ architecture-beta
 | Service | Public function | Authentication relationship |
 | --- | --- | --- |
 | Website | Provides public guidance and the Docs. | Public reading does not require sign-in. |
-| Auth hub | Performs GitHub OAuth and issues paired-service handoffs. | Tracker and configured Learn sessions use this boundary. |
-| Learn | Runs interactive learning checks. | Its deployment can use configured auth-hub pairing values. |
-| pckg | Serves package metadata and package artifacts. | CLI publication uses registry bearer keys. Protected browser routes require a separate trusted forward-auth boundary. |
-| Tracker | Publishes delivery status and bugs from its own data. | It uses the Auth hub for GitHub sign-in. |
-| Nexus | Presents a repository graph and an MCP endpoint. | Caddy and Authentik form its pinned forward-auth boundary. |
+| Authentik | Performs GitHub OAuth and the forward-auth check for the shared Caddy edge. | It is the only browser sign-in path in the production Compose file. |
+| Learn | Runs interactive learning checks. | The catalogue is public. Requests with an Authentik session are forwarded for identity headers. |
+| pckg | Serves package metadata and package artifacts. | CLI publication uses registry bearer keys. The catalogue is public. Requests with an Authentik session are forwarded for identity headers. |
+| Tracker | Publishes delivery status and bugs from its own data. | Caddy and Authentik protect every route. |
+| Nexus | Presents a repository graph and an MCP endpoint. | Caddy and Authentik protect every route. |
 
 ## Limits
 

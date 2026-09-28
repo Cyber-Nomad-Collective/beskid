@@ -4,7 +4,7 @@ description: Build pipeline, front-end, semantic pipeline, mods, conformance, an
 tableOfContents: true
 ---
 
-[Compiler](/platform-spec/compiler/) documents the **reference compiler workspace**—phases, diagnostics parity, and mod host contracts—without redefining language semantics.
+[Compiler](/platform-spec/compiler/) documents the **reference compiler workspace** (phases, diagnostics parity, and mod host contracts) without redefining language semantics.
 
 Use this domain when the question concerns the reference implementation's processing, diagnostics, or conformance evidence. For the meaning of a source program, return to [language meta](/platform-spec/language-meta/); an implementation detail is not automatically language law.
 
@@ -24,17 +24,17 @@ Use this domain when the question concerns the reference implementation's proces
 
 From `compiler/Cargo.toml` members most readers touch:
 
-- `beskid_analysis` — parse, resolve, semantic rules, mod host
-- `beskid_codegen` — lowering to `CodegenArtifact`
-- `beskid_engine` — JIT `run_entrypoint`
-- `beskid_aot` — AOT build and link
-- `beskid_cli` — commands
-- `beskid_pipeline` — shared phase IDs
-- `beskid_tests`, `beskid_e2e_tests` — conformance
+- `beskid_analysis`: parse, resolve, semantic rules, mod host
+- `beskid_codegen`: lowering to `CodegenArtifact`
+- `beskid_engine`: JIT `run_entrypoint`
+- `beskid_aot`: AOT build and link
+- `beskid_cli`: commands
+- `beskid_pipeline`: shared phase IDs
+- `beskid_tests`, `beskid_e2e_tests`: conformance
 
 ## Pipeline composition
 
-Rust-only host composition (IoC) is **not** Beskid mod syntax—see [Pipeline composition](/platform-spec/compiler/pipeline-composition/).
+Rust-only host composition (IoC) is **not** Beskid mod syntax. See [Pipeline composition](/platform-spec/compiler/pipeline-composition/).
 
 ## How to follow a compiler question
 

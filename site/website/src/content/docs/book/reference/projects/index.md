@@ -68,9 +68,9 @@ Dependency sources in the current contract:
 
 ## Related docs
 
-- `./scaffolding.md` — `beskid new`, template sources, corelib on instantiated projects
-- `./manifest.md` — manifest schema
-- `./examples.md` — sample manifests
-- `./resolution.md` — graph and resolution rules
-- `./build-workflow.md` — resolve/materialize/build lifecycle
-- `./lockfile.md` — lockfile behavior
+- `./scaffolding.md`: `beskid new`, template sources, corelib on instantiated projects
+- `./manifest.md`: manifest schema
+- `./examples.md`: sample manifests
+- `./resolution.md`: graph and resolution rules
+- `./build-workflow.md`: resolve/materialize/build lifecycle
+- `./lockfile.md`: lockfile behavior

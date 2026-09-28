@@ -1,10 +1,10 @@
 ---
 title: "Tree and resolution"
-description: Dependency DAG, build order, and debugging resolution without guessing."
+description: "Dependency DAG, build order, and debugging resolution without guessing."
 tableOfContents: true
 ---
 
-Resolution is not magic—it is a **DAG walk** with a lockfile receipt.
+Resolution isn't magic, it's a **DAG walk** with a lockfile receipt.
 
 ## Build lifecycle (deterministic sketch)
 
@@ -29,7 +29,7 @@ flowchart TD
 - `beskid tree` on a `.bd` file shows AST shape (parser-level).
 - Project graphs: use reference [resolution](/book/reference/projects/resolution/) and CLI project introspection flags documented on [tree command](/book/reference/cli/commands/tree/) where applicable to manifests.
 
-When resolution fails, read the diagnostic **first**—path dependencies love typos (`../Wrong`).
+When resolution fails, read the diagnostic **first**: path dependencies love typos (`../Wrong`).
 
 ## Workspace members
 

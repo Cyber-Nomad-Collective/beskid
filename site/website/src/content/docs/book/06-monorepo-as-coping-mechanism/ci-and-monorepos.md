@@ -1,6 +1,6 @@
 ---
 title: "CI and monorepos"
-description: Frozen lock validation, matrix builds per member, and reproducible workspace CI."
+description: "Frozen lock validation, matrix builds per member, and reproducible workspace CI."
 tableOfContents: true
 ---
 
@@ -10,7 +10,7 @@ CI for monorepos is where "works on my machine" goes to die publicly. Good.
 
 Run `lock` / `fetch` in CI with `--frozen` (or project-equivalent flags) so manifest drift fails the pipeline instead of production.
 
-Commit **per-project** `Project.lock` files (and workspace-level lock artifacts if your layout uses them—follow [lockfile guide](/book/reference/projects/lockfile/)).
+Commit **per-project** `Project.lock` files (and workspace-level lock artifacts if your layout uses them, following the [lockfile guide](/book/reference/projects/lockfile/)).
 
 ## Matrix strategy
 
@@ -40,7 +40,7 @@ Checkout must include all member folders referenced by relative paths. Shallow c
 
 ## Website / superrepo note
 
-The Beskid superrepo itself is an aggregate of submodules—your application monorepo is a smaller cousin. Same lesson: **pin tool versions** (`beskid --version` in logs).
+The Beskid superrepo itself is an aggregate of submodules; your application monorepo is a smaller cousin. Same lesson: **pin tool versions** (`beskid --version` in logs).
 
 ## Reference
 

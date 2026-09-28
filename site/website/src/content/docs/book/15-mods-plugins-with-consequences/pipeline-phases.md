@@ -4,26 +4,26 @@ description: mod.collect through mod.rewrite in the host pipeline and beskid_pip
 tableOfContents: true
 ---
 
-Mods insert **between parse and lowering**—after you have syntax, before you pretend Cranelift will save you.
+Mods insert **between parse and lowering**: after you have syntax, before you pretend Cranelift will save you.
 
 ## Author-facing order
 
-From [Compiler Mod SDK — pipeline interaction](/docs/standard/language-meta/metaprogramming/compiler-mod-sdk/):
+From [Compiler Mod SDK: pipeline interaction](/docs/standard/language-meta/metaprogramming/compiler-mod-sdk/):
 
 ```mermaid
 flowchart TB
   accTitle: Compiler Mod phase order
-  accDescr: Mod collection, generation, analysis, and rewriting finish before semantic processing continues into code generation.
-  collect[mod.collect — Collector scopes targets]
-  generate[mod.generate — merge + reparse loops]
-  analyze[mod.analyze — diagnostics on merged program]
-  rewrite[mod.rewrite — apply fixes]
-  semantic[Semantic rules continue]
-  lower[codegen.lower]
-  collect --> generate --> analyze --> rewrite --> semantic --> lower
+  accDescr: Mod collection and generation run first, then semantic rules, then mod analysis and rewriting, before lowering.
+  collect[mod.collect: Collector scopes targets]
+  generate[mod.generate: merge + reparse loops]
+  semantic[Semantic rules and composition.resolve]
+  analyze[mod.analyze: diagnostics on merged program]
+  rewrite[mod.rewrite: apply fixes]
+  lower[lower]
+  collect --> generate --> semantic --> analyze --> rewrite --> lower
 ```
 
-**Text equivalent:** The host collects Mod contracts, merges generated source, analyzes the merged program, and applies approved rewrites. Semantic processing then continues to code generation.
+**Text equivalent:** The host collects Mod contracts and merges generated source. Semantic processing and composition resolution run next. The host then analyzes the merged program, applies approved rewrites, and lowering follows.
 
 ## Host modules (`beskid_analysis::mod_host`)
 
@@ -39,11 +39,11 @@ Map: [Mod host bridge flow](/docs/standard/compiler/compiler-mods/mod-host-bridg
 
 ## `beskid_pipeline`
 
-Rust host composition shares **phase IDs** across CLI, analysis, and codegen services—avoid ad-hoc logging strings in random crates ([Pipeline composition](/docs/standard/compiler/pipeline-composition/), [Stage ordering](/docs/standard/compiler/build-pipeline/stage-ordering/)).
+Rust host composition shares **phase IDs** across CLI, analysis, and codegen services. Avoid ad-hoc logging strings in random crates ([Pipeline composition](/docs/standard/compiler/pipeline-composition/), [Stage ordering](/docs/standard/compiler/build-pipeline/stage-ordering/)).
 
 ## IoC note
 
-Dependency injection inside the Rust host is **compile-time** and read-only to mods/SDK—do not expect to register services from Beskid mod code.
+Dependency injection inside the Rust host is **compile-time** and read-only to mods/SDK. Do not expect to register services from Beskid mod code.
 
 ## Where to go next
 

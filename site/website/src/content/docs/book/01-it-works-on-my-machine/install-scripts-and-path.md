@@ -17,7 +17,7 @@ The Downloads page exposes platform tabs with a copy-paste command block. Script
 
 Follow the tab for your platform on [Downloads](/downloads/); do not cargo-cult a macOS curl line on WSL unless you enjoy surprise architecture mismatches.
 
-## PATH — the silent failure mode
+## PATH: the silent failure mode
 
 After install, open a **new** terminal (or `source` your profile). Then:
 
@@ -50,7 +50,7 @@ Common fixes:
 
 On launch, the CLI ensures the **bundled corelib** tree is available and may print a short message when it materializes or updates a copy. Override with `BESKID_CORELIB_SOURCE` when developing against a different corelib checkout (see [CLI command reference](/book/reference/cli/command-reference/)).
 
-That is not "install failed"—it is the toolchain making standard library sources reachable.
+That isn't "install failed," it's the toolchain making standard library sources reachable.
 
 ## Next
 

@@ -4,6 +4,12 @@ description: "Beskid uses Apache-2.0 for the compiler, runtime, tools, and reusa
 date: 2026-09-08
 blogStatus: released
 release: Licensing
+cover:
+  src: "/blog-covers/open-compiler-open-services.jpg"
+  alt: "An open gate in an electric fence line."
+  sourceHref: "https://commons.wikimedia.org/wiki/File:Open_gate_in_electric_fence_-_geograph.org.uk_-_999036.jpg"
+  sourceLabel: "Greg Morss, CC BY-SA 2.0"
+
 ---
 
 A programming language sits on both sides of a boundary. The compiler and runtime should be easy to adopt, embed, study, and ship. A hosted service should remain open when someone modifies it and offers that modified version to users over a network.

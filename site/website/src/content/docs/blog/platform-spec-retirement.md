@@ -4,6 +4,11 @@ description: "Beskid now serves its public documentation from one main-site Docs
 date: 2026-09-07
 blogStatus: released
 release: Documentation
+cover:
+  src: "/blog-covers/platform-spec-retirement.jpg"
+  alt: "Painting of a mountain ridge and valley in the Sierra Nevada."
+  sourceHref: "https://commons.wikimedia.org/wiki/File:Among_the_Sierra_Nevada,_California-saam_1977.107.1.jpg"
+  sourceLabel: "Albert Bierstadt, CC0"
 ---
 
 Beskid has a simple shape. The compiler makes the language. The tools let people use it. The documentation must let people find the truth without changing sites, applications, or mental models.

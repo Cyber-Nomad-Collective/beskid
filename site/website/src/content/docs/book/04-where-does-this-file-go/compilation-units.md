@@ -1,10 +1,10 @@
 ---
 title: "Compilation units"
-description: What gets compiled per target, entry modules, and dependency compilation order."
+description: "What gets compiled per target, entry modules, and dependency compilation order."
 tableOfContents: true
 ---
 
-A **target** selects an entry and pulls in the module graph needed to build it. You do not "compile the repo" as an undifferentiated blob—unless you enjoy O(n²) surprise.
+A **target** selects an entry and pulls in the module graph needed to build it. You do not "compile the repo" as an undifferentiated blob, unless you enjoy O(n²) surprise.
 
 ## Entry-driven builds
 
@@ -21,13 +21,13 @@ flowchart BT
 
 ## Libraries vs apps
 
-- **`App`** — you care about runnable output and main lifecycle.
-- **`Lib`** — you care about exported surface consumed by other projects.
-- **`Test`** — harness entry; keeps test-only modules out of production graphs when structured well.
+- **`App`**: you care about runnable output and main lifecycle.
+- **`Lib`**: you care about exported surface consumed by other projects.
+- **`Test`**: harness entry; keeps test-only modules out of production graphs when structured well.
 
 ## Multiple targets, multiple graphs
 
-Targets can share source files but differ in entry and dependency sets. Changing one target's `entry` does not magically retarget another—explicit `--target` always.
+Targets can share source files but differ in entry and dependency sets. Changing one target's `entry` does not magically retarget another: pass `--target` explicitly, always.
 
 ## Analyzer vs builder
 

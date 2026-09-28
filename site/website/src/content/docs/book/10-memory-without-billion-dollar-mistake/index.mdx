@@ -1,14 +1,14 @@
 ---
 title: "Memory without another billion-dollar mistake"
-description: Locals, GC heap, ref/out, and an honest preview of FFI—without pretending we are Rust.
+description: Locals, GC heap, ref/out, and an honest preview of FFI, without pretending we are Rust.
 tableOfContents: true
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
-Another billion-dollar mistake is treating **one** memory strategy as moral law. Beskid picks: stack activations, **GC-managed heap**, `ref`/`out`, and rules for fibers—documented in [Language meta memory model](/platform-spec/language-meta/memory-model/) and realized in [Execution runtime memory](/platform-spec/execution/runtime/memory-and-gc-runtime-contract/).
+Another billion-dollar mistake is treating **one** memory strategy as moral law. Beskid picks: stack activations, **GC-managed heap**, `ref`/`out`, and rules for fibers, documented in [Language meta memory model](/platform-spec/language-meta/memory-model/) and realized in [Execution runtime memory](/platform-spec/execution/runtime/memory-and-gc-runtime-contract/).
 
-We are not shipping "just use Rust" as the user tutorial. We are shipping **predictable language law** and a collector you can reason about.
+Instead of shipping "just use Rust" as the user tutorial, we ship **predictable language law** and a collector you can reason about.
 
 ## What you will find here
 

@@ -28,7 +28,7 @@ unit Main() {
 beskid parse hello.bd
 ```
 
-You should get a debug AST view, not a stack trace about missing manifests. If parse fails on syntax you copied from this book, the book is wrong—file an issue.
+You should get a debug AST view, not a stack trace about missing manifests. If parse fails on syntax you copied from this book, the book is wrong: file an issue.
 
 ## Analyze (semantic pass)
 
@@ -51,7 +51,7 @@ beskid format hello.bd
 beskid tree hello.bd
 ```
 
-Formatting is the fastest way to settle bike-shed wars. `tree` is the ASCII tourist map of the AST—useful when you suspect the parser saw your file differently than you did.
+Formatting is the fastest way to settle bike-shed wars. `tree` is the ASCII tourist map of the AST, useful when you suspect the parser saw your file differently than you did.
 
 ```mermaid
 flowchart LR

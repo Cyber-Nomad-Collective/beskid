@@ -4,9 +4,9 @@ description: When the runtime traps, when contracts fail at compile time, and ho
 tableOfContents: true
 ---
 
-**Contract failure** is a compile-time diagnostic—you fix the type or member before shipping.
+**Contract failure** is a compile-time diagnostic: you fix the type or member before shipping.
 
-**Panic** is a runtime trap for invariant violations, failed host assumptions, or policy-defined unwinds at boundaries—not a replacement for `Result`.
+**Panic** is a runtime trap for invariant violations, failed host assumptions, or policy-defined unwinds at boundaries, not a replacement for `Result`.
 
 ## Compile-time: contracts win early
 
@@ -33,7 +33,7 @@ Do not catch panic in application Beskid as if it were Java. If you need control
 
 ## Mod analyzers
 
-`Analyzer` mods emit diagnostics and fixes—they do not throw into your runtime. Host merge either accepts typed rewrites or fails closed ([Mod host bridge](/platform-spec/compiler/compiler-mods/mod-host-bridge/)).
+`Analyzer` mods emit diagnostics and fixes; they do not throw into your runtime. Host merge either accepts typed rewrites or fails closed ([Mod host bridge](/platform-spec/compiler/compiler-mods/mod-host-bridge/)).
 
 ## Next chapter
 

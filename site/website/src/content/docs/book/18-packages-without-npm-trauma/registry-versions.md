@@ -34,7 +34,7 @@ erDiagram
 | Package id, targets, and the next artifact version | Immutable package/version storage |
 | Source-workspace dependency paths | Exact registry dependency pins in the packed artifact and lockfile |
 
-Source `.bproj` files may use local `path` dependencies while developing a workspace. A release packer must replace those in the artifact with exact `registry` dependencies from the coordinated publication plan; installed artifacts never depend on sibling checkout paths. Treat `Project.lock` as truth for consumer CI reproducibility—chapter 06 workspace material covers multi-project graphs.
+Source `.bproj` files may use local `path` dependencies while developing a workspace. A release packer must replace those in the artifact with exact `registry` dependencies from the coordinated publication plan; installed artifacts never depend on sibling checkout paths. Treat `Project.lock` as truth for consumer CI reproducibility; chapter 06 workspace material covers multi-project graphs.
 
 ## Spec
 

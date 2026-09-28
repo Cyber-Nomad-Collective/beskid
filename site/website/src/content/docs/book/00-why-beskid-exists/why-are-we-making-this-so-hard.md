@@ -1,6 +1,6 @@
 ---
 title: "Why are we making this so hard?"
-description: Most software is business records with lipstick—and the industry sells cathedrals to serve them.
+description: Most software is business records with lipstick, and the industry sells cathedrals to serve them.
 tableOfContents: true
 ---
 
@@ -35,7 +35,7 @@ Because **complexity sells**:
 - Hiring managers signal maturity with **buzzwords**.
 - Developers protect craft pride with **patterns** (see [1.4 SOLID, DRY, and DDD](/book/00-why-beskid-exists/solid-dry-and-ddd/)).
 
-![Sales pitch — complexity sells](https://i.ytimg.com/vi/BWKOVX-74Z0/maxresdefault.jpg)
+![Sales pitch: complexity sells](https://i.ytimg.com/vi/BWKOVX-74Z0/maxresdefault.jpg)
 
 Quick realization times do not favor **deleting layers**. They favor **adding another service** so this quarter's roadmap turns green.
 
@@ -45,9 +45,9 @@ Quick realization times do not favor **deleting layers**. They favor **adding an
 
 **Shipping:** one transaction, one audit log, one email, go home.
 
-![That would be great — ship the row](https://media.giphy.com/media/2si2On9NsGOYxk0g58/giphy.gif)
+![That would be great: ship the row](https://media.giphy.com/media/2si2On9NsGOYxk0g58/giphy.gif)
 
-Beskid is not anti-structure. It is anti-**structure you cannot see in the build artifact**. If your architecture only exists in PowerPoint, it is not architecture—it is fan fiction.
+Beskid isn't anti-structure, it's anti-**structure you cannot see in the build artifact**. If your architecture only exists in PowerPoint, that's not architecture, it's fan fiction.
 
 
 ## The boring bar Beskid sets
@@ -56,8 +56,8 @@ Beskid is not anti-structure. It is anti-**structure you cannot see in the build
 - Prefer **compile-time clarity** over runtime mystery.
 - Keep tooling fast enough that **CI and local dev** stay honest.
 
-If your problem is genuinely novel—finite element solvers, game engines, codecs—use Rust, C++, or Zig and be happy. Beskid is not auditioning for that job.
+If your problem is genuinely novel (finite element solvers, game engines, codecs), use Rust, C++, or Zig and be happy. Beskid is not auditioning for that job.
 
-![Noted — use the right tool](https://i.imgflip.com/7vcab7.jpg)
+![Noted: use the right tool](https://i.imgflip.com/7vcab7.jpg)
 
 Next: [1.9 Conclusion](/book/00-why-beskid-exists/conclusion/).

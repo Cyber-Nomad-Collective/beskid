@@ -35,6 +35,14 @@ export const collections = {
 				blogStatus: z.enum(blogStatuses).optional(),
 				date: z.coerce.date().optional(),
 				release: z.string().optional(),
+				cover: z
+					.object({
+						src: z.string().min(1),
+						alt: z.string().min(1),
+						sourceHref: z.string().min(1),
+						sourceLabel: z.string().min(1),
+					})
+					.optional(),
 				...docsContract.partial().shape,
 				pageKind: z.enum(docsPageKinds).optional(),
 				diagramPolicy: z.enum(docsDiagramPolicies).optional(),

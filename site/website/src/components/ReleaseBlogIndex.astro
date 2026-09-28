@@ -6,7 +6,10 @@ import { BlogPostCard } from './blog/BlogPostCard.tsx';
 const entries =
 	(await getCollection('docs')).filter(
 		(entry): entry is typeof entry & { data: typeof entry.data & { blogStatus: BlogStatus; date: Date } } =>
-			entry.id.startsWith('blog/') && entry.data.blogStatus !== undefined && entry.data.date !== undefined,
+			entry.id.startsWith('blog/') &&
+			(!import.meta.env.PROD || !entry.data.draft) &&
+			entry.data.blogStatus !== undefined &&
+			entry.data.date !== undefined,
 	);
 const entriesByDate = sortBlogEntries(entries);
 const recent = entriesByDate.slice(0, 5);
@@ -18,42 +21,6 @@ const dateFormatter = new Intl.DateTimeFormat('en', {
 	year: 'numeric',
 });
 
-const RECENT_IMAGES = {
-	'platform-spec-retirement': {
-		src: 'https://upload.wikimedia.org/wikipedia/commons/4/4c/Among_the_Sierra_Nevada%2C_California-saam_1977.107.1.jpg',
-		alt: 'Sierra Nevada mountain landscape.',
-		sourceHref: 'https://commons.wikimedia.org/wiki/File:Among_the_Sierra_Nevada,_California-saam_1977.107.1.jpg',
-		sourceLabel: 'Smithsonian Open Access, CC0',
-	},
-	'beskid-runtime-honesty-arc': {
-		src: 'https://commons.wikimedia.org/wiki/Special:FilePath/NASAComputerRoom7090.NARA.jpg?width=1200',
-		alt: 'NASA IBM 7090 computer room.',
-		sourceHref: 'https://commons.wikimedia.org/wiki/File:NASAComputerRoom7090.NARA.jpg',
-		sourceLabel: 'NASA, public domain',
-	},
-	'compiler-04-parse-recovery': {
-		src: 'https://commons.wikimedia.org/wiki/Special:FilePath/IBM_3151_terminal.jpg?width=1200',
-		alt: 'IBM 3151 terminal.',
-		sourceHref: 'https://commons.wikimedia.org/wiki/File:IBM_3151_terminal.jpg',
-		sourceLabel: 'CC0',
-	},
-	'design-07-draft-contexts': {
-		src: 'https://commons.wikimedia.org/wiki/Special:FilePath/Engineering_drawing-dessin_de_definition.png?width=1200',
-		alt: 'Engineering drawing.',
-		sourceHref: 'https://commons.wikimedia.org/wiki/File:Engineering_drawing-dessin_de_definition.png',
-		sourceLabel: 'Public domain',
-	},
-	'tooling-01-bun-to-pnpm': {
-		src: 'https://commons.wikimedia.org/wiki/Special:FilePath/PLATO4kb.jpg?width=1200',
-		alt: 'PLATO IV terminal keyboard.',
-		sourceHref: 'https://commons.wikimedia.org/wiki/File:PLATO4kb.jpg',
-		sourceLabel: 'Public domain',
-	},
-};
-
-function imageFor(id: string) {
-	return RECENT_IMAGES[id as keyof typeof RECENT_IMAGES] ?? RECENT_IMAGES['platform-spec-retirement'];
-}
 ---
 
 <section class="blog" aria-label="Blog">
@@ -70,7 +37,7 @@ function imageFor(id: string) {
 		<ol class="blog__recent-list">
 		{recent.map((entry) => (
 			<li>
-				<BlogPostCard title={entry.data.title} description={entry.data.description} href={`/${entry.id}/`} date={dateFormatter.format(entry.data.date)} dateTime={entry.data.date.toISOString()} release={entry.data.release} image={imageFor(entry.id)} variant="recent" />
+				<BlogPostCard title={entry.data.title} description={entry.data.description} href={`/${entry.id}/`} date={dateFormatter.format(entry.data.date)} dateTime={entry.data.date.toISOString()} release={entry.data.release} image={entry.data.cover} variant="recent" />
 			</li>
 		))}
 		</ol>
@@ -86,7 +53,7 @@ function imageFor(id: string) {
 		<ol class="blog__list">
 		{archive.map((entry) => (
 			<li>
-				<BlogPostCard title={entry.data.title} description={entry.data.description} href={`/${entry.id}/`} date={dateFormatter.format(entry.data.date)} dateTime={entry.data.date.toISOString()} release={entry.data.release} variant="compact" />
+				<BlogPostCard title={entry.data.title} description={entry.data.description} href={`/${entry.id}/`} date={dateFormatter.format(entry.data.date)} dateTime={entry.data.date.toISOString()} release={entry.data.release} image={entry.data.cover} variant="compact" />
 			</li>
 		))}
 		</ol>

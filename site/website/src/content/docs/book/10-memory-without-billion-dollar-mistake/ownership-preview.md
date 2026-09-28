@@ -4,7 +4,7 @@ description: What Beskid takes from ownership thinking without importing Rust's 
 tableOfContents: true
 ---
 
-Rust's ownership story is brilliant **for Rust**. Beskid's story is: **GC + static rules + spawn capture checks**—enough discipline to avoid the worst footguns without forcing `<'a>` on business logic.
+Rust's ownership story is brilliant **for Rust**. Beskid's story is: **GC + static rules + spawn capture checks**, enough discipline to avoid the worst footguns without forcing `<'a>` on business logic.
 
 ## What we kept (ideas, not syntax)
 
@@ -20,15 +20,15 @@ Rust's ownership story is brilliant **for Rust**. Beskid's story is: **GC + stat
 - Lifetime parameters on every struct
 - `unsafe` blocks in application code as a daily tool
 
-The **compiler host** is Rust (`beskid_analysis`, `beskid_runtime`, …) and uses Rust's ownership internally. Your Beskid sources target the **language memory model**, not `rustc`'s borrow checker.
+The **compiler host** is Rust (`beskid_analysis`, `beskid_engine`, …) and uses Rust's ownership internally. Your Beskid sources target the **language memory model**, not `rustc`'s borrow checker.
 
 ## Closures and captures
 
-Closures capture environment values; the compiler roots captures for **GC** when lowering `spawn`. If a capture would let stack memory outlive its frame across fibers, you get a diagnostic—not a silent segfault gift basket ([Fibers and spawn semantic rules](/platform-spec/language-meta/evaluation/fibers-and-spawn/)).
+Closures capture environment values; the compiler roots captures for **GC** when lowering `spawn`. If a capture would let stack memory outlive its frame across fibers, you get a diagnostic, not a silent segfault gift basket ([Fibers and spawn semantic rules](/platform-spec/language-meta/evaluation/fibers-and-spawn/)).
 
 ## When you need Rust-level control
 
-Put it behind **`extern`** / native libraries with a documented ABI profile, or contribute to `compiler/crates/`—do not demand `unsafe` in Beskid because C# had `unsafe` and nobody learned anyway.
+Put it behind **`extern`** / native libraries with a documented ABI profile, or contribute to `compiler/crates/`. Do not demand `unsafe` in Beskid because C# had `unsafe` and nobody learned anyway.
 
 ## Standard reference (informative)
 

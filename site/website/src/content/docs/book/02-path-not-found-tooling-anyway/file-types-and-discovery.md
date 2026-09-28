@@ -34,7 +34,7 @@ flowchart TD
 
 **Text equivalent:** The CLI walks upward from the current directory to find a `.bproj` manifest. If discovery fails, pass `--project`. A resolved project uses `Project.lock` and `obj/beskid` dependency materialization.
 
-CLI commands that need a resolved entrypoint accept optional `--project`, `--target`, and `--workspace-member`, plus `--frozen` / `--locked` where resolution applies—see [CLI command reference](/book/reference/cli/command-reference/).
+CLI commands that need a resolved entrypoint accept optional `--project`, `--target`, and `--workspace-member`, plus `--frozen` / `--locked` where resolution applies: see [CLI command reference](/book/reference/cli/command-reference/).
 
 ## Language services use the same graph
 

@@ -42,7 +42,7 @@ access for production.
 | --- | --- | --- |
 | Website | Successful HTTP status for `/`. | Site container and proxy logs. |
 | Learn | Successful HTTP status for `/api/health`. | One safe lesson check and runtime-kit evidence. |
-| Tracker | Successful HTTP status for `/api/health`. | SQLite volume and Auth hub configuration. |
+| Tracker | Successful HTTP status for `/api/health`. | SQLite volume and Authentik forward-auth configuration. |
 | Nexus | Successful HTTP status for `/api/health`. | Proxy trust boundary and `nexus-data`. |
 | pckg | Successful HTTP status for `/health/ready`. | PostgreSQL connectivity and artifact volume. |
 

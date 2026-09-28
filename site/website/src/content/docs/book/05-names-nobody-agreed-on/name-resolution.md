@@ -1,10 +1,10 @@
 ---
 title: "Name resolution"
-description: Scope-first lookup, import precedence, and ambiguity errors."
+description: "Scope-first lookup, import precedence, and ambiguity errors."
 tableOfContents: true
 ---
 
-Name resolution is the compiler answering **which declaration did you mean?** When the answer is "more than one," you get an ambiguity error—this is a feature.
+Name resolution is the compiler answering **which declaration did you mean?** When the answer is "more than one," you get an ambiguity error. That is a feature.
 
 ## Expression lookup order
 
@@ -26,7 +26,7 @@ flowchart TD
 
 ## Ambiguity
 
-If two imports provide the same **unaliased** name, the compiler errors. Fix with `as` aliases—do not rely on import order to "win."
+If two imports provide the same **unaliased** name, the compiler errors. Fix with `as` aliases; do not rely on import order to "win."
 
 ## Imports do not override locals
 

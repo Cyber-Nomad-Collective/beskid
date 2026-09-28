@@ -15,14 +15,14 @@ When debugging "why is this slow," look for:
 - Which phase repeats (resolution vs semantic vs codegen)
 - Whether you are analyzing the whole workspace vs one target
 
-Exact flags evolve with the CLI—cross-check [CLI command reference](/book/reference/cli/command-reference/) and per-command pages (`analyze`, `build`, `run`).
+Exact flags evolve with the CLI: cross-check [CLI command reference](/book/reference/cli/command-reference/) and per-command pages (`analyze`, `build`, `run`).
 
 ## Practical habits
 
-1. **Reproduce with CLI first** — smaller surface than editor caches.
-2. **Shrink the project** — one target, one file, one diagnostic.
-3. **Record versions** — `beskid --version`, extension version, git commit if local build.
-4. **Compare locked vs floating resolution** — `--frozen` / `--locked` when dependency drift is suspect.
+1. **Reproduce with CLI first**: smaller surface than editor caches.
+2. **Shrink the project**: one target, one file, one diagnostic.
+3. **Record versions**: `beskid --version`, extension version, git commit if local build.
+4. **Compare locked vs floating resolution**: `--frozen` / `--locked` when dependency drift is suspect.
 
 ```mermaid
 flowchart TD

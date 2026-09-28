@@ -10,7 +10,7 @@ Beskid memory law answers three questions without hand-waving:
 2. What is **heap** and who collects it?
 3. What may **fibers** share without data races cosplaying as features?
 
-Normative article: [Memory and references](/platform-spec/language-meta/memory-model/memory-and-references/). Collector algorithms defer to [Memory and GC runtime contract](/platform-spec/execution/runtime/memory-and-gc-runtime-contract/) (the `/execution/` tree is a legacy bridge—platform-spec is authoritative).
+Normative article: [Memory and references](/platform-spec/language-meta/memory-model/memory-and-references/). Collector algorithms defer to [Memory and GC runtime contract](/platform-spec/execution/runtime/memory-and-gc-runtime-contract/) (the `/execution/` tree is a legacy bridge; platform-spec is authoritative).
 
 ## Locals and mutability
 
@@ -19,7 +19,7 @@ Normative article: [Memory and references](/platform-spec/language-meta/memory-m
 
 ## Heap and GC
 
-Reference types and arrays live on the **GC-managed heap**. The runtime uses a concurrent collector story (tri-color heap work lives under `abfall` in the workspace—see execution ADRs like [ABFALL tri-color heap](/platform-spec/execution/runtime/memory-and-gc-runtime-contract/adr/0006-abfall-tri-color-heap/)).
+Reference types and arrays live on the **GC-managed heap**. The runtime uses a concurrent collector story (tri-color heap work lives under `abfall` in the workspace; see execution ADRs like [ABFALL tri-color heap](/platform-spec/execution/runtime/memory-and-gc-runtime-contract/adr/0006-abfall-tri-color-heap/)).
 
 ## Parameter passing
 
@@ -30,10 +30,10 @@ Reference types and arrays live on the **GC-managed heap**. The runtime uses a c
 flowchart TB
   accTitle: Memory model areas
   accDescr: Stack activations and the GC heap hold values, fibers are scheduled cooperatively, and channels carry cross-fiber payloads.
-  stack[Stack activations — locals, spans]
-  heap[GC heap — objects, arrays]
-  fibers[Fibers — cooperative scheduling]
-  channels[Channels — cross-fiber payloads]
+  stack[Stack activations: locals, spans]
+  heap[GC heap: objects, arrays]
+  fibers[Fibers: cooperative scheduling]
+  channels[Channels: cross-fiber payloads]
   stack --> heap
   fibers --> channels
   heap --> fibers

@@ -1,6 +1,6 @@
 ---
 title: "Names nobody agreed on"
-description: Imports, resolution order, re-exports, and the diagnostics you will see constantly."
+description: "Imports, resolution order, re-exports, and the diagnostics you will see constantly."
 tableOfContents: true
 ---
 

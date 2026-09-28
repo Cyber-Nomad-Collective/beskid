@@ -1,6 +1,6 @@
 ---
 title: "Foreign libraries"
-description: Import native libraries through tooling contracts—not random linker flags in a README footnote.
+description: Import native libraries through tooling contracts, not random linker flags in a README footnote.
 tableOfContents: true
 ---
 

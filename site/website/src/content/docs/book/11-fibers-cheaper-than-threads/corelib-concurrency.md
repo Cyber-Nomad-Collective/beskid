@@ -1,6 +1,6 @@
 ---
 title: "Corelib concurrency"
-description: The corelib_concurrency package—Fiber, Channel, Join, and where to read normative API law.
+description: The corelib_concurrency package, covering Fiber, Channel, Join, and where to read normative API law.
 tableOfContents: true
 ---
 
@@ -12,23 +12,23 @@ Normative hub: [Concurrency package](/platform-spec/core-library/concurrency/con
 
 Expected surfaces (names per spec):
 
-- **`Fiber<T>`** — spawn handle, `OnCancelled`, join/cancel operations
-- **`Channel<T>`** — cross-fiber messaging
-- **WaitGroup**, **Hub** — structured coordination
+- **`Fiber<T>`**: spawn handle, `OnCancelled`, join/cancel operations
+- **`Channel<T>`**: cross-fiber messaging
+- **WaitGroup**, **Hub**: structured coordination
 
-Corelib lives in the **`corelib`** package identity (`compiler/corelib` / `beskid_corelib` workspace)—not a random Rust crate beside the compiler.
+Corelib lives in the **`corelib`** package identity (`compiler/corelib` / `beskid_corelib` workspace), not a random Rust crate beside the compiler.
 
 ## Split of responsibility
 
 | Layer | Owns |
 | --- | --- |
-| [Language meta — Fibers and spawn](/platform-spec/language-meta/evaluation/fibers-and-spawn/) | `spawn` syntax, diagnostics, capture rules |
-| [Execution — Fiber scheduler](/platform-spec/execution/runtime/fiber-scheduler-and-stacks/) | Stacks, scheduler, shutdown join |
-| [Core library — Concurrency package](/platform-spec/core-library/concurrency/concurrency-package/) | User-facing structs and methods |
+| [Language meta: Fibers and spawn](/platform-spec/language-meta/evaluation/fibers-and-spawn/) | `spawn` syntax, diagnostics, capture rules |
+| [Execution: Fiber scheduler](/platform-spec/execution/runtime/fiber-scheduler-and-stacks/) | Stacks, scheduler, shutdown join |
+| [Core library: Concurrency package](/platform-spec/core-library/concurrency/concurrency-package/) | User-facing structs and methods |
 
 ## Workspace crates (implementation)
 
-Lowering and runtime tie to `beskid_codegen`, `beskid_engine`, `beskid_runtime`, and `abfall` for GC while fibers run—see [Crate-to-spec anchors](/platform-spec/compiler/implementation-map/crate-to-spec-anchors/).
+Lowering and runtime tie to `beskid_codegen`, `beskid_engine`, `beskid_abi`, and `abfall` for GC while fibers run; see [Crate-to-spec anchors](/platform-spec/compiler/implementation-map/crate-to-spec-anchors/).
 
 ## Next chapter
 

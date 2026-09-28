@@ -1,6 +1,6 @@
 ---
 title: "segfault or stop-the-world"
-description: Manual memory, garbage collection, RAII, ownership—and why Go is almost the right default.
+description: Manual memory, garbage collection, RAII, ownership, and why Go is almost the right default.
 tableOfContents: true
 ---
 
@@ -16,7 +16,7 @@ flowchart TD
   GO[Go: small runtime + GC] --> D[Daily driver sweet spot]
 ```
 
-## Manual memory — freedom and felony
+## Manual memory: freedom and felony
 
 `malloc` / `free` (and friends) put **you** in charge.
 
@@ -26,7 +26,7 @@ flowchart TD
 
 Manual memory is correct for **kernels, drivers, and tight embed**. It is a **liability** for the average business service maintained by rotating humans.
 
-## Garbage collection — the industry's pacifier
+## Garbage collection: the industry's pacifier
 
 GC says: **keep allocating; we will clean up later.**
 
@@ -36,14 +36,14 @@ GC says: **keep allocating; we will clean up later.**
 
 Java and .NET normalized GC for enterprise. That was a legitimate trade: **ship features**, pay **ops tax** later.
 
-## RAII and ownership — discipline as language feature
+## RAII and ownership: discipline as language feature
 
-**RAII** (C++): destruction tied to scope—deterministic cleanup if you structured life correctly.
+**RAII** (C++): destruction tied to scope, deterministic cleanup if you structured life correctly.
 
-**Ownership** (Rust): compile-time rules so you cannot double-free—also you cannot double-mutate-borrow without the compiler sending a **personal essay**.
+**Ownership** (Rust): compile-time rules so you cannot double-free. Also you cannot double-mutate-borrow without the compiler sending a **personal essay**.
 
 
-Rust's model is intellectually beautiful. The management layer of your company does not care about your **double mutable borrow** drama. They care that **invoice #4471** updated twice because two handlers raced—GC or not, ownership or not, **that** is the bug that gets you paged.
+Rust's model is intellectually beautiful. The management layer of your company does not care about your **double mutable borrow** drama. They care that **invoice #4471** updated twice because two handlers raced. GC or not, ownership or not, **that** is the bug that gets you paged.
 
 Ownership solves **memory** and some **concurrency** classes. It does not solve **organizational** concurrency: two teams, one database, no design doc.
 
@@ -71,8 +71,8 @@ Go proves most teams want **GC and a small runtime**, not a proof assistant. Bes
 
 ## Where Beskid lands (preview)
 
-- **AOT-native** output—performance without JIT surprise bills.
-- **Compile-time metaprogramming** over reflection—power without opaque runtime discovery.
+- **AOT-native** output: performance without JIT surprise bills.
+- **Compile-time metaprogramming** over reflection: power without opaque runtime discovery.
 - Memory strategy aligned with **application reality**, not kernel driver reality (details in platform-spec execution/core-library hubs).
 
 Next: [1.8 Why are we making this so hard?](/book/00-why-beskid-exists/why-are-we-making-this-so-hard/).

@@ -1,5 +1,5 @@
 ---
-title: "BSOL — structured config without YAML trauma"
+title: "BSOL: structured config without YAML trauma"
 description: The meta-language behind .bproj manifests, schema profiles, and why it feels like HCL until the compiler gets honest.
 tableOfContents: true
 ---
@@ -33,7 +33,7 @@ resource "aws_instance" "web" {
 }
 ```
 
-BSOL uses the same **mental model**—block kind, optional label, body of assignments—without pretending to be Terraform:
+BSOL uses the same **mental model** (block kind, optional label, body of assignments) without pretending to be Terraform:
 
 ```text
 MyApp {
@@ -56,7 +56,7 @@ The similarity is intentional. The divergence is **where validation lives**.
 | Semantics | Provider / app logic | `beskid_analysis::projects` lowering + E18xx contract band |
 | IDE | Often string heuristics | LSP walks **span-backed AST** from `parse_bsol_document` |
 
-HCL separates syntax from provider semantics across many tools. Beskid separates syntax from manifest semantics across **one crate** (`beskid_bsol`) and **downstream lowering**—the same split you see between parse and semantic analysis for `.bd`, just on a smaller document.
+HCL separates syntax from provider semantics across many tools. Beskid separates syntax from manifest semantics across **one crate** (`beskid_bsol`) and **downstream lowering**, the same split you see between parse and semantic analysis for `.bd`, just on a smaller document.
 
 ```mermaid
 flowchart LR
@@ -86,7 +86,7 @@ flowchart LR
 
 **Text equivalent:** BSOL source uses the BSOL parser to become a `BsolDocument`, then a schema profile validates it before project lowering and graph resolution. Beskid source uses a separate source parser before semantic facts and code generation. The two paths have analogous parse-and-validate spines; they do not share one parser.
 
-Both paths share the platform rule: **one spine, no shadow parsers**. Manifest files are not special-cased with ad hoc regex in the LSP; they go through BSOL first, then contract validation—mirroring how `.bd` goes through parse, then semantic rules.
+Both paths share the platform rule: **one spine, no shadow parsers**. Manifest files are not special-cased with ad hoc regex in the LSP; they go through BSOL first, then contract validation, mirroring how `.bd` goes through parse, then semantic rules.
 
 ## Generic blocks, declared rules
 
@@ -96,11 +96,11 @@ Older manifest parsers hard-coded block kinds in the grammar (`target`, `depende
 - **Profile** answers: which blocks and fields are legal for *this* file type?
 - **Lowering** answers: what does it *mean* for builds and locks?
 
-That three-layer split matches how the rest of the compiler treats syntax vs semantics—BSOL is the config-side version of "parse succeeds, semantic pass may still fail."
+That three-layer split matches how the rest of the compiler treats syntax vs semantics: BSOL is the config-side version of "parse succeeds, semantic pass may still fail."
 
-## `@schemaless` — when you need a raw `{ ... }` pocket
+## `@schemaless`: when you need a raw `{ ... }` pocket
 
-Most blocks are structured. Occasionally a profile needs an **opaque body**—content the parser does not interpret as assignments (embedded snippets, foreign syntax, migration shims).
+Most blocks are structured. Occasionally a profile needs an **opaque body**: content the parser does not interpret as assignments (embedded snippets, foreign syntax, migration shims).
 
 Mark the block with **`@schemaless`** before `{`:
 
@@ -114,7 +114,7 @@ patch @schemaless {
 
 The profile rule must opt in with `schemaless = true`. Parser stores the inner text in `schemaless_body`; validation skips field rules; downstream code decides what to do with the raw string.
 
-Structured blocks and schemaless blocks can coexist in one document—same as mixing strict types and `extern` escape hatches in the main language, but for config.
+Structured blocks and schemaless blocks can coexist in one document, same as mixing strict types and `extern` escape hatches in the main language, but for config.
 
 ## Where to read next
 

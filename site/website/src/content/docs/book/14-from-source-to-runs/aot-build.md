@@ -4,7 +4,7 @@ description: beskid_aot artifacts, linking, and why compiler mods are AOT-only.
 tableOfContents: true
 ---
 
-**AOT** emits native objects you can link and ship—required for **`type: Mod`** packages the host loads at compile time.
+**AOT** emits native objects you can link and ship, required for **`type: Mod`** packages the host loads at compile time.
 
 ## Crate
 
@@ -32,7 +32,7 @@ flowchart TB
 
 ## CLI
 
-`beskid build` selects targets and backends per manifest—see [build command reference](/book/reference/cli/commands/build/).
+`beskid build` selects targets and backends per manifest. See [build command reference](/book/reference/cli/commands/build/).
 
 ## Next
 

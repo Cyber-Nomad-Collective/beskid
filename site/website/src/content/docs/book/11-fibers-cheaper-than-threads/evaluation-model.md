@@ -4,7 +4,7 @@ description: How Beskid callables run, how closures capture, and why there is no
 tableOfContents: true
 ---
 
-Evaluation in Beskid is **callable-centric**: functions, methods, closures—with control flow and types checked before lowering. Concurrency is **explicit spawn**, not hidden schedulers behind `await`.
+Evaluation in Beskid is **callable-centric**: functions, methods, closures, with control flow and types checked before lowering. Concurrency is **explicit spawn**, not hidden schedulers behind `await`.
 
 ## Callables and closures
 
@@ -40,7 +40,7 @@ flowchart TB
 | --- | --- |
 | `beskid_analysis` | Spawn typing, capture diagnostics |
 | `beskid_codegen` | `fiber_spawn`, stack maps |
-| `beskid_engine` / `beskid_runtime` | Scheduler, stacks |
+| `beskid_engine` / `beskid_abi` | Scheduler, stacks |
 
 ## Area hub
 

@@ -1,6 +1,6 @@
 ---
 title: "Lexical basics"
-description: Tokens, identifiers, comments, and the syntax skeleton before semantics."
+description: "Tokens, identifiers, comments, and the syntax skeleton before semantics."
 tableOfContents: true
 ---
 
@@ -21,7 +21,7 @@ File-scoped `mod` must appear as the first top-level item when used. The parser 
 
 ## Documentation comments
 
-`///` doc comments attach to declarations; `@arg` belongs on **callable parameters** only—not fields you felt like documenting. Tutorial on docs arrives later; normative: [documentation comments](/platform-spec/language-meta/surface-syntax/documentation-comments/).
+`///` doc comments attach to declarations; `@arg` belongs on **callable parameters** only, not fields you felt like documenting. Tutorial on docs arrives later; normative: [documentation comments](/platform-spec/language-meta/surface-syntax/documentation-comments/).
 
 ## Escape hatch
 

@@ -14,11 +14,11 @@ Targets are how you tell the truth about **what** gets built. A repo without tar
 | `Lib` | Library surface consumed by dependents |
 | `Test` | Test harness entry for `beskid test` |
 
-`kind` and `source` on dependencies are enum-like—prefer unquoted identifiers (`App`, `path`) for tooling alignment.
+`kind` and `source` on dependencies are enum-like: prefer unquoted identifiers (`App`, `path`) for tooling alignment.
 
 ## Entry paths
 
-`entry` is relative to `project.root` (default `Src`). If you set `root = "src"` because you hate consistency, every entry path moves with it—do not mix mental models.
+`entry` is relative to `project.root` (default `Src`). If you set `root = "src"` because you hate consistency, every entry path moves with it, so do not mix mental models.
 
 ## Multiple targets
 

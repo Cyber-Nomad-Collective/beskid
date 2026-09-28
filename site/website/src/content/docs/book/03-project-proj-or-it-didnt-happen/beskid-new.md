@@ -1,6 +1,6 @@
 ---
 title: "beskid new"
-description: Templates for projects, workspaces, and items—scaffolding without copy-paste archaeology.
+description: Templates for projects, workspaces, and items, scaffolding without copy-paste archaeology.
 tableOfContents: true
 ---
 
@@ -24,16 +24,16 @@ From an empty directory (flags exact names in reference):
 beskid new console --name MyApp --output ./MyApp
 ```
 
-`console` is a template short name. The required `--output` flag selects the destination. The generated manifest filename follows its project `name`, so this example should produce `MyApp.bproj`, a source tree, and entry paths that resolve. If it does not, your template checkout is stale—not your moral failure.
+`console` is a template short name. The required `--output` flag selects the destination. The generated manifest filename follows its project `name`, so this example should produce `MyApp.bproj`, a source tree, and entry paths that resolve. If it does not, your template checkout is stale, not your moral failure.
 
 ## Corelib on new projects
 
-New projects expect the standard library to be reachable—tooling may materialize corelib via bundled templates (`corelib` command). When developing corelib itself, point `BESKID_CORELIB_SOURCE` at your checkout.
+New projects expect the standard library to be reachable: tooling may materialize corelib via bundled templates (`corelib` command). When developing corelib itself, point `BESKID_CORELIB_SOURCE` at your checkout.
 
 ## When *not* to use templates
 
 - You are merging into an existing repo with established layout conventions.
-- You are converting a foreign build system—read [resolution](/book/reference/projects/resolution/) before forcing paths.
+- You are converting a foreign build system, read [resolution](/book/reference/projects/resolution/) before forcing paths.
 
 ## Next
 

@@ -30,8 +30,8 @@ If you skipped [Why Beskid Exists](/book/00-why-beskid-exists/), nobody is judgi
 
 ## Start here
 
-[Downloads and rolling releases](/book/01-it-works-on-my-machine/downloads-and-releases/) — or jump straight to [First smoke test](/book/01-it-works-on-my-machine/first-smoke-test/) if someone already installed the CLI for you.
+[Downloads and rolling releases](/book/01-it-works-on-my-machine/downloads-and-releases/), or jump straight to [First smoke test](/book/01-it-works-on-my-machine/first-smoke-test/) if someone already installed the CLI for you.
 
 ## Next chapter
 
-[02. PATH not found — tooling anyway](/book/02-path-not-found-tooling-anyway/) — editors, LSP, and the CLI surface you will live in daily.
+[02. PATH not found: tooling anyway](/book/02-path-not-found-tooling-anyway/) covers editors, LSP, and the CLI surface you will live in daily.

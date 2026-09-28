@@ -1,6 +1,6 @@
 ---
 title: "Git as version axis"
-description: Platform-spec is versioned by commit—not by version segments in URLs.
+description: Platform-spec is versioned by commit, not by version segments in URLs.
 tableOfContents: true
 ---
 
@@ -11,7 +11,7 @@ Policy: [Release and versioning policy](/platform-spec/community/spec-maintenanc
 ## Stable URLs, moving prose
 
 - Paths like `/platform-spec/language-meta/contracts-and-effects/contracts/` stay stable across releases.
-- Behavioral change edits the page body, `lastReviewed`, ADR status, and embedded decisions—not the URL.
+- Behavioral change edits the page body, `lastReviewed`, ADR status, and embedded decisions, not the URL.
 
 ## Rolling integration
 

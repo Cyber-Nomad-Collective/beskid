@@ -4,7 +4,7 @@ description: Grammar, parser, typed syntax facts, and diagnostics in the current
 tableOfContents: true
 ---
 
-The front-end turns text into a structured program representation—or gives you **actionable syntax diagnostics** instead of "error on line 1."
+The front-end turns text into a structured program representation, or gives you **actionable syntax diagnostics** instead of "error on line 1."
 
 ## Spec areas
 
@@ -28,7 +28,7 @@ Before parse, **effective roots** come from manifests and workspace resolution:
 
 ## `beskid parse`
 
-Exercises front-end slices without full codegen—useful for grammar work, insufficient for shipping.
+Exercises front-end slices without full codegen: useful for grammar work, insufficient for shipping.
 
 ## Next
 

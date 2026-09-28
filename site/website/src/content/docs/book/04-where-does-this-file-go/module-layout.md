@@ -1,6 +1,6 @@
 ---
 title: "Module layout"
-description: File-scoped mod declarations, directory mapping, and cohesive folder structure."
+description: "File-scoped mod declarations, directory mapping, and cohesive folder structure."
 tableOfContents: true
 ---
 
@@ -16,7 +16,7 @@ Optional file-scoped form at the top of a file:
 mod net.http;
 ```
 
-That declares the **entire file** lives in `net.http`. Additional `mod` declarations are **not allowed** in that file—boundaries stay explicit.
+That declares the **entire file** lives in `net.http`. Additional `mod` declarations are **not allowed** in that file: boundaries stay explicit.
 
 ## Inline vs file-scoped
 
@@ -28,7 +28,7 @@ That declares the **entire file** lives in `net.http`. Additional `mod` declarat
 
 ## Folder patterns
 
-Map `domain.feature` → `domain/feature.bd` or nested folders as your tree convention demands—stay consistent within a repo so imports do not become a personality test.
+Map `domain.feature` → `domain/feature.bd` or nested folders as your tree convention demands. Stay consistent within a repo so imports do not become a personality test.
 
 ```mermaid
 flowchart TD

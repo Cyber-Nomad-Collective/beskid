@@ -4,7 +4,7 @@ description: Build Mod projects, produce AOT artifacts, and wire them into consu
 tableOfContents: true
 ---
 
-Mods ship like other Beskid packages—manifest, graph, lockfile—but consumers only load them if **AOT output exists** for the active target.
+Mods ship like other Beskid packages (manifest, graph, lockfile), but consumers only load them if **AOT output exists** for the active target.
 
 ## Workflow sketch
 

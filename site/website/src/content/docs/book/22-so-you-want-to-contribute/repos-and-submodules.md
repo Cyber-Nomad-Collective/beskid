@@ -4,7 +4,7 @@ description: Where compiler, pckg, VS Code extension, and corelib actually live 
 tableOfContents: true
 ---
 
-The **beskid** superrepo aggregates submodules—especially **`compiler`**, **`pckg`**, and **`beskid_vscode`**. Corelib is a nested submodule under `compiler/corelib` (`beskid_standard`), not a top-level sibling.
+The **beskid** superrepo aggregates submodules, especially **`compiler`**, **`pckg`**, and **`beskid_vscode`**. Corelib is a nested submodule under `compiler/corelib` (`beskid_standard`), not a top-level sibling.
 
 ## Typical layout
 

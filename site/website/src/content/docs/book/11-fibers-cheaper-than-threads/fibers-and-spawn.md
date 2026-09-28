@@ -8,11 +8,11 @@ tableOfContents: true
 Fiber<i32> worker = spawn DoWork(42);
 ```
 
-`spawn` is not "fire a thread." It schedules a **cooperative fiber** with a typed handle.
+`spawn` schedules a **cooperative fiber** with a typed handle, not "fire a thread."
 
 ## Types
 
-Every `spawn` expression **must** type-check to **`Fiber<T>`** where `T` is the entry callable's return type (`Concurrency.Fiber` in `corelib_concurrency`). You do not get `T` directly from `spawn`—use **`Join`**.
+Every `spawn` expression **must** type-check to **`Fiber<T>`** where `T` is the entry callable's return type (`Concurrency.Fiber` in `corelib_concurrency`). You do not get `T` directly from `spawn`; use **`Join`**.
 
 Normative feature: [Fibers and spawn](/platform-spec/language-meta/evaluation/fibers-and-spawn/).
 
@@ -49,7 +49,7 @@ stateDiagram-v2
 | --- | --- |
 | Stack references must not escape `spawn` | `StackReferenceEscapesSpawn` diagnostic |
 | **Detach** waives shutdown join | Otherwise runtime joins non-detached children when `main` returns |
-| Cross-fiber payload | **Channels only** — not mutex-as-mailbox |
+| Cross-fiber payload | **Channels only**, not mutex-as-mailbox |
 
 ## Lowering
 

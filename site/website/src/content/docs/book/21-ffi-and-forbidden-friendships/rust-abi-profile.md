@@ -1,6 +1,6 @@
 ---
 title: "Rust ABI profile"
-description: Runtime-facing Rust ABI—not arbitrary crate imports.
+description: Runtime-facing Rust ABI, not arbitrary crate imports.
 tableOfContents: true
 ---
 

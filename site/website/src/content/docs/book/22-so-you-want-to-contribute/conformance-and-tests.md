@@ -9,8 +9,8 @@ tableOfContents: true
 ## Habits that help
 
 - Add or update a test when you fix a spec MUST.
-- Do not disable flaky tests without a linked issue—fix root cause (see pckg Server.Tests parallelization policy in workspace notes).
-- Language-user tests live in source as `test` items—chapter 08.
+- Do not disable flaky tests without a linked issue: fix root cause (see pckg Server.Tests parallelization policy in workspace notes).
+- Language-user tests live in source as `test` items (chapter 08).
 
 ## Reference
 
