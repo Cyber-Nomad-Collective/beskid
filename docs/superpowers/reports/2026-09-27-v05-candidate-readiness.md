@@ -319,6 +319,11 @@ Corelib test gates. `woodpecker-aggregate-release.mjs` synthesizes only
 from three successful platform builds without a compiler/Corelib matrix
 report. This is a qualification bug in the state artifact, even though
 `woodpecker-release.sh` currently has a separate publication hard stop.
+The local `build-release-state.test.sh` suite exits 0 while its stable-path
+fixture explicitly expects `publishable=true` and synthetic
+`["compiler-rust-gate", "lsp-command-contract-gate"]` labels from a literal
+`success` input with no stage reports. Thus the current contract test codifies
+the missing-evidence behavior instead of rejecting it.
 
 The existing `scripts/ci/corelib-gate.sh` is not ready to be wired into the
 current candidate unchanged: its required-file list includes
