@@ -14,8 +14,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Generate all Windows installer artwork through the distribution brand-asset
   script before Woodpecker builds the MSI and setup EXE.
 - Add a Windows installer-matrix recorder and structural evidence validator;
-  block manual release publication until disposable-VM provenance and trusted
-  evidence transfer are integrated.
+  block manual release publication without disposable-VM provenance and trusted
+  evidence transfer, except for an explicit release-owner scenario-test waiver
+  bound to the final source commit and exact setup executable SHA-256.
 - Automate the disposable-VM installer cancel smoke during Burn payload
   acquisition and require ordered download/cancellation evidence in the gate.
 

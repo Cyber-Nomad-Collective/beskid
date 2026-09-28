@@ -220,4 +220,91 @@ fi
 grep -Fq 'no CI-attested disposable-VM provenance' "$tmp/unattested-smoke.err" || fail 'unattested evidence was not diagnosed'
 test ! -s "$tmp/gh.log" || fail 'unattested installer evidence reached GitHub'
 
+# An explicit owner decision is a separate manual-only route. It must name
+# this exact source and setup executable, and only then reach publication.
+waiver="$tmp/windows-owner-waiver.json"
+setup_digest="$(sha "$tmp/rootfs/woodpecker-handoff/windows/incoming/${build_run}-${source_sha}/windows/beskid-${version}-windows-amd64.exe")"
+jq -n --arg source "$source_sha" --arg version "$version" --arg setup "$setup_digest" \
+  '{schema_version:1,decision:"release-owner-installer-test-waiver",scope:"windows-installer-scenario-tests-only",source_commit:$source,version:$version,installer_sha256:$setup,approved_utc:"2026-09-28T00:00:00Z"}' >"$waiver"
+: >"$tmp/gh.log"
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=true CI_PIPELINE_NUMBER=74 CI_COMMIT_SHA="$source_sha" \
+  CI_PIPELINE_EVENT=manual CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
+  BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_FILE="$waiver" \
+  GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
+  bash "$script" "$build_run" "$version" 2>"$tmp/owner-waiver.err"; then
+  :
+fi
+test -s "$tmp/gh.log" || fail 'matching owner waiver did not pass the installer publication gate'
+state="$tmp/rootfs/woodpecker-output/releases/74-${source_sha}/qualified/release-state.json"
+jq -e --arg source "$source_sha" --arg setup "$setup_digest" \
+  '.windows_installer_acceptance.source_commit == $source and .windows_installer_acceptance.installer_sha256 == $setup and .windows_installer_acceptance.scope == "windows-installer-scenario-tests-only"' \
+  "$state" >/dev/null || fail 'qualified release state omitted the scoped owner waiver'
+
+# A manual Woodpecker run can supply the same decision record as a pipeline
+# variable, without requiring a pre-existing file inside the short-lived job.
+: >"$tmp/gh.log"
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=true CI_PIPELINE_NUMBER=741 CI_COMMIT_SHA="$source_sha" \
+  CI_PIPELINE_EVENT=manual CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
+  BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_JSON="$(jq -c . "$waiver")" \
+  GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
+  bash "$script" "$build_run" "$version" 2>"$tmp/inline-waiver.err"; then
+  :
+fi
+test -s "$tmp/gh.log" || fail 'matching inline owner waiver did not pass the installer publication gate'
+
+# A record copied from another source revision cannot authorize GitHub calls.
+jq '.source_commit="0000000000000000000000000000000000000000"' "$waiver" >"$tmp/wrong-source-waiver.json"
+: >"$tmp/gh.log"
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=true CI_PIPELINE_NUMBER=75 CI_COMMIT_SHA="$source_sha" \
+  CI_PIPELINE_EVENT=manual CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
+  BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_FILE="$tmp/wrong-source-waiver.json" \
+  GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
+  bash "$script" "$build_run" "$version" 2>"$tmp/wrong-source-waiver.err"; then
+  fail 'owner waiver for another source was accepted'
+fi
+test ! -s "$tmp/gh.log" || fail 'wrong-source owner waiver reached GitHub'
+
+jq '.installer_sha256="0000000000000000000000000000000000000000000000000000000000000000"' "$waiver" >"$tmp/wrong-installer-waiver.json"
+: >"$tmp/gh.log"
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=true CI_PIPELINE_NUMBER=76 CI_COMMIT_SHA="$source_sha" \
+  CI_PIPELINE_EVENT=manual CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
+  BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_FILE="$tmp/wrong-installer-waiver.json" \
+  GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
+  bash "$script" "$build_run" "$version" 2>"$tmp/wrong-installer-waiver.err"; then
+  fail 'owner waiver for another installer was accepted'
+fi
+test ! -s "$tmp/gh.log" || fail 'wrong-installer owner waiver reached GitHub'
+
+ln -s "$waiver" "$tmp/linked-waiver.json"
+: >"$tmp/gh.log"
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=true CI_PIPELINE_NUMBER=77 CI_COMMIT_SHA="$source_sha" \
+  CI_PIPELINE_EVENT=manual CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
+  BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_FILE="$tmp/linked-waiver.json" \
+  GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
+  bash "$script" "$build_run" "$version" 2>"$tmp/linked-waiver.err"; then
+  fail 'symlinked owner waiver was accepted'
+fi
+test ! -s "$tmp/gh.log" || fail 'symlinked owner waiver reached GitHub'
+
+jq '.scope="all-release-gates"' "$waiver" >"$tmp/wide-waiver.json"
+: >"$tmp/gh.log"
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=true CI_PIPELINE_NUMBER=78 CI_COMMIT_SHA="$source_sha" \
+  CI_PIPELINE_EVENT=manual CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
+  BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_FILE="$tmp/wide-waiver.json" \
+  GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
+  bash "$script" "$build_run" "$version" 2>"$tmp/wide-waiver.err"; then
+  fail 'owner waiver with broader scope was accepted'
+fi
+test ! -s "$tmp/gh.log" || fail 'broader owner waiver reached GitHub'
+
+: >"$tmp/gh.log"
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=true CI_PIPELINE_NUMBER=79 CI_COMMIT_SHA="$source_sha" \
+  CI_PIPELINE_EVENT=pull_request CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
+  BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_FILE="$waiver" \
+  GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
+  bash "$script" "$build_run" "$version" 2>"$tmp/nonmanual-waiver.err"; then
+  fail 'owner waiver authorized a nonmanual publication'
+fi
+test ! -s "$tmp/gh.log" || fail 'nonmanual owner waiver reached GitHub'
+
 echo 'woodpecker release tests OK'

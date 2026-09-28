@@ -63,6 +63,31 @@ calling the existing stream publisher. A changed `main` cannot consume an older
 build: rebuild from the selected revision. Immutable release retries must be
 byte-identical; conflicting assets are not overwritten.
 
+### Owner-scoped Windows installer test waiver
+
+The Windows installer scenario matrix is normally a release gate. For a release
+where the owner explicitly waives that matrix, the protected manual `main`
+publisher accepts one decision record via
+`BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_JSON` (or, for a local manual invocation,
+`BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_FILE`). This is a waiver, **not** a claim
+of VM attestation or passing tests. It does not bypass the three-platform build
+results, source identity, handoff checksums, package-result checksums, or the
+manual-only publisher guard. Without a matching record, publication remains
+blocked; structural smoke evidence alone is not trusted VM provenance.
+
+Review the final `main` commit and the exact setup executable in the Windows
+handoff from the chosen build run. Supply this JSON as the protected manual
+pipeline variable, replacing the example values with the reviewed facts:
+
+```json
+{"schema_version":1,"decision":"release-owner-installer-test-waiver","scope":"windows-installer-scenario-tests-only","source_commit":"<40-character final main SHA>","version":"<stable version>","installer_sha256":"<64-character SHA-256 of the Windows setup EXE>","approved_utc":"<UTC timestamp, YYYY-MM-DDTHH:MM:SSZ>"}
+```
+
+The script validates exact fields, source commit, version, and SHA-256 against
+the checksum-validated setup file, then embeds the decision in
+`release-state.json` as `windows_installer_acceptance`. This record carries no
+credential and should never be represented as completed installer-test evidence.
+
 ### Open VSX extension publication
 
 Open VSX is a separate protected manual publisher. It builds the Linux x64 LSP

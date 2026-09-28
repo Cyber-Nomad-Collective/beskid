@@ -252,3 +252,26 @@ and high octets on both parse and serialization paths; `Codec.bd`'s
 `FieldValue` admits only SP and visible ASCII. The subsequent full Linux
 Corelib matrix passed 81/81, but this remains candidate evidence until a
 clean committed-source release run binds the test result to these commits.
+
+## Update, 2026-09-28: scoped installer waiver and template diagnosis
+
+The release owner explicitly waived the remaining Windows installer scenario
+tests. The manual publisher now has a separate, fail-closed waiver route: a
+decision record must match the final source commit, stable version, and exact
+SHA-256 of the checksum-validated Windows setup EXE. It records the narrow
+`windows-installer-scenario-tests-only` scope in qualified
+`release-state.json`; it does not assert that the scenarios or VM attestation
+passed. A missing, stale, broader, or symlinked waiver is rejected before any
+GitHub call. The Woodpecker release contract suite passed locally after its
+macOS fixture was updated to the current two-profile runtime-kit bundle
+layout. This is code/fixture evidence, not a production publication result;
+the final source commit and artifact hash are not yet available for a real
+waiver record.
+
+An installed macOS CLI 0.4.745 reproduces `beskid new install
+beskid.templates.lib` failing with E2001, missing `.beskid/template.json`.
+Source tracing shows pack promotes that file to artifact-root `template.json`,
+while the template extractor still requires the original authoring path.
+`beskid new lib` without `-o` is a separate usage error: the output directory
+is required. The pack/extract mismatch remains to be fixed and verified
+against a packed template before release.

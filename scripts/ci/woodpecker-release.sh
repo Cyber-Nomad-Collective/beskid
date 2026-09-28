@@ -154,16 +154,41 @@ if [[ "${BESKID_PUBLISH_RELEASE:-0}" == 0 ]]; then
   exit 0
 fi
 
-smoke_dir="${BESKID_WINDOWS_INSTALLER_SMOKE_DIR:-}"
-[[ -n "$smoke_dir" && -d "$smoke_dir" ]] || {
-  echo 'BESKID_WINDOWS_INSTALLER_SMOKE_DIR must contain approved disposable-VM evidence before publication' >&2
+owner_waiver_file="${BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_FILE:-}"
+owner_waiver_json="${BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_JSON:-}"
+if [[ -n "$owner_waiver_file" || -n "$owner_waiver_json" ]]; then
+  [[ -z "$owner_waiver_file" || -z "$owner_waiver_json" ]] || {
+    echo 'provide only one Windows installer owner waiver input' >&2; exit 1;
+  }
+  # This manual-only exception records the release owner's decision, not a
+  # claim that the unrun scenario matrix passed. Bind it to the checked-out
+  # source and to the exact installer already verified by package-result.
+  if [[ -n "$owner_waiver_file" ]]; then
+    owner_waiver="$(node "$scripts/windows-installer-owner-waiver.mjs" "$owner_waiver_file" \
+      "$source_sha" "$version" "$assets/beskid-${version}-windows-amd64.exe")"
+  else
+    owner_waiver="$(node "$scripts/windows-installer-owner-waiver.mjs" --json "$owner_waiver_json" \
+      "$source_sha" "$version" "$assets/beskid-${version}-windows-amd64.exe")"
+  fi
+  node - "$state" "$owner_waiver" <<'NODE'
+const {readFileSync,renameSync,writeFileSync}=require('node:fs');
+const [path,record]=process.argv.slice(2),state=JSON.parse(readFileSync(path,'utf8'));
+state.windows_installer_acceptance=JSON.parse(record);
+const temporary=`${path}.waiver.tmp`;
+writeFileSync(temporary,`${JSON.stringify(state,null,2)}\n`,{flag:'wx'});
+renameSync(temporary,path);
+NODE
+else
+  smoke_dir="${BESKID_WINDOWS_INSTALLER_SMOKE_DIR:-}"
+  [[ -n "$smoke_dir" && -d "$smoke_dir" ]] || {
+    echo 'BESKID_WINDOWS_INSTALLER_SMOKE_DIR or a Windows installer owner waiver is required before publication' >&2
+    exit 1
+  }
+  # Structural evidence alone does not authenticate the disposable VM or its
+  # transfer path. An attested path can be added separately in the future.
+  echo 'Windows installer smoke evidence has no CI-attested disposable-VM provenance or trusted transfer path; publication is blocked' >&2
   exit 1
-}
-# The structural validator can be run by an operator, but cannot authenticate
-# the VM or the transfer path. Keep publication closed until that provenance
-# is supplied by trusted CI integration.
-echo 'Windows installer smoke evidence has no CI-attested disposable-VM provenance or trusted transfer path; publication is blocked' >&2
-exit 1
+fi
 
 for stream in cli lsp bundle; do
   bash "$scripts/publish-release-stream.sh" "$stream" "$version" "$compiler_sha" "$assets" immutable stable "$state"

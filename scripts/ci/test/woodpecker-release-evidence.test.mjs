@@ -153,9 +153,12 @@ test("native packaging consumes the complete verified bundle", { skip: !["darwin
   const name = `beskid-${VERSION}-${target}`;
   const stage = join(root, "staging");
   const bundle = join(stage, name);
-  for (const dir of ["bin", `lib/beskid-runtime/abi-5/${target}/release`, "beskid_corelib", "packages"]) mkdirSync(join(bundle, dir), { recursive: true });
+  for (const dir of ["bin", `lib/beskid-runtime/abi-5/${target}/debug`, `lib/beskid-runtime/abi-5/${target}/release`, "beskid_corelib/beskid_corelib", "beskid_corelib/packages"]) mkdirSync(join(bundle, dir), { recursive: true });
   for (const binary of ["beskid", "beskid_lsp", "beskid-up"]) writeFileSync(join(bundle, "bin", binary), "#!/bin/sh\nexit 0\n", { mode: 0o755 });
-  writeFileSync(join(bundle, "beskid_corelib/corelib.bproj"), "fixture\n");
+  writeFileSync(join(bundle, "beskid_corelib/.beskid-bundle.sha256"), `${"0".repeat(64)}\n`);
+  writeFileSync(join(bundle, "beskid_corelib/CoreLib.bws"), "fixture\n");
+  writeFileSync(join(bundle, "beskid_corelib/beskid_corelib/corelib.bproj"), "fixture\n");
+  writeFileSync(join(bundle, `lib/beskid-runtime/abi-5/${target}/debug/abi.json`), "{}\n");
   writeFileSync(join(bundle, `lib/beskid-runtime/abi-5/${target}/release/abi.json`), "{}\n");
   writeFileSync(join(bundle, "release-version.txt"), `${VERSION}\n`);
   const archive = join(root, platform, `${name}.tar.gz`);
