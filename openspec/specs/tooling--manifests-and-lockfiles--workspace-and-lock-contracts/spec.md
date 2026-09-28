@@ -28,7 +28,7 @@ Values SHALL encode UTF-8 bytes canonically: ASCII letters, digits, and `._/:-@+
 - **THEN** parsing fails without reinterpretation or mutation
 
 ### Requirement: Portable lock path anchors
-Tooling SHALL encode every v2 file path with `/` separators on every host. `root_manifest` SHALL be relative to the lock directory and remain inside it. For `path` and `registry` sources, `project` SHALL be relative to the lock directory; for `corelib`, `project` SHALL be relative to the verified installed Corelib workspace root. `manifest` and `source_root` SHALL be relative to the resolved project. `materialized_root` SHALL be relative to the lock directory and resolve beneath `obj/beskid/deps/src`. Absolute paths, drive prefixes, UNC roots, empty segments, and unsafe traversal SHALL be rejected. A normalized `..` segment MAY appear only in a `path` project's explicitly declared external dependency path, and that target SHALL exist in the same relative layout after relocation.
+Tooling SHALL encode every v2 file path with `/` separators on every host. `root_manifest` SHALL be relative to the lock directory and remain inside it. For `path` and `registry` sources, `project` SHALL be relative to the lock directory; for `corelib`, `project` SHALL be relative to the verified installed Corelib workspace root. `manifest` and `source_root` SHALL be relative to the resolved project. When the resolved source root is the project directory itself, `source_root` SHALL be the single literal `.`; no other path field or path segment MAY use `.`. `materialized_root` SHALL be relative to the lock directory and resolve beneath `obj/beskid/deps/src`. Absolute paths, drive prefixes, UNC roots, empty segments, and unsafe traversal SHALL be rejected. A normalized `..` segment MAY appear only in a `path` project's explicitly declared external dependency path, and that target SHALL exist in the same relative layout after relocation.
 
 #### Scenario: Relocated project and Corelib installation
 - **GIVEN** a v2 lock and the same project graph moved to another checkout, with verified Corelib installed at a different local path
@@ -39,6 +39,11 @@ Tooling SHALL encode every v2 file path with `/` separators on every host. `root
 - **GIVEN** a manifest declaring a `../sibling` path dependency and a v2 lock for it
 - **WHEN** the project moves without the sibling in its declared relative layout
 - **THEN** resolution fails instead of selecting a registry package or trusting the lock's path alone
+
+#### Scenario: Source root is the project directory
+- **GIVEN** a resolved dependency whose source root is its project directory
+- **WHEN** tooling writes and reads its v2 lock entry
+- **THEN** it writes `source_root=.` and resolves that sole sentinel to the verified project directory without accepting dot segments in other path fields
 
 ### Requirement: Explicit lock migration and strict read-only policy
 `beskid lock` and `beskid update` SHALL be the only commands authorized to replace an existing v1 lock with v2, and SHALL derive the replacement from the current manifest graph rather than stale v1 absolute paths. Other consumers, including `build`, `run`, `test`, and LSP replay, SHALL reject a present v1 lock with an actionable migration diagnostic. Unknown headers and malformed v2 locks SHALL fail. A valid but stale v2 lock SHALL not be silently repaired by a non-update consumer. `--locked` and `--frozen` SHALL never write or rewrite a lock, even when a valid v2 lock is present; they SHALL reject missing, v1, or stale locks before writing any preparation output. When no lock exists, a normal unlocked build MAY create a v2 lock from the current graph. Only CLI lock mutation commands SHALL change an existing lock.
