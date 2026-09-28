@@ -307,8 +307,7 @@ fail-closed replay checks.
 ## Update, 2026-09-28: release-gate control-flow audit
 
 The portable-lock implementation plan is recorded in root commit `c73313bf`;
-product work awaits the plan review and execution-method choice. The macOS
-runtime matrix remains a live process, not a completed gate.
+product work awaits the plan review and execution-method choice.
 
 The Woodpecker release state has a source-bound test-evidence gap independent
 of the passing local Rust/Corelib runs. `.woodpecker/linux.yml` invokes
@@ -327,3 +326,16 @@ current candidate unchanged: its required-file list includes
 `a289712`. The active canonical Corelib quality/target contract must be
 reconciled before the gate runs. No release-pipeline code was changed by this
 audit, and no fabricated green test report is accepted as qualification.
+
+## Update, 2026-09-28: macOS runtime matrix complete
+
+The macOS arm64 runtime matrix on compiler `bdacf7fb` and Corelib `a289712`
+finished with exit 0: 7/7 targets passed, 0 failed. It used the candidate's
+verified native runtime kit and checked-out Corelib, with `RUST_MIN_STACK`
+set to 67,108,864 bytes and the command throttled through `nice -n 19`.
+Available disk space was 30 GiB at completion. The CLI still printed
+`release eligible: false`: tracked `Project.lock` files in both compiler and
+Corelib were rewritten with checkout-local paths during the run, and an
+untracked engine `obj/` directory was generated. These artifacts were not
+discarded. This proves the macOS runtime tests passed; it does not establish
+a clean, source-bound release gate.
