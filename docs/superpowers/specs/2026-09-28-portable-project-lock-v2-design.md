@@ -92,7 +92,12 @@ When a valid v2 lock exists, ordinary and strict resolution prefer its pinned
 registry version and verify the downloaded artifact's SHA-256 before
 extraction. An unavailable or mismatched pinned artifact fails closed; it does
 not fall back to a newer version. `beskid update` deliberately selects new
-versions and rewrites the lock. A path dependency's contents may change without
+versions and rewrites the lock. Registry download preflight streams compressed
+bytes into auto-cleaned scratch storage while hashing, rather than retaining
+every archive in memory. An archive larger than 64 MiB (67,108,864 bytes)
+fails before extraction or project preparation output, pinned or not. This
+matches the first-party registry's upload limit and bounds custom-registry
+responses. A path dependency's contents may change without
 a lock change, as with a live workspace source; its manifest-derived identity
 and relative location remain checked. Any future byte pinning of local source
 trees requires a separate explicit contract.

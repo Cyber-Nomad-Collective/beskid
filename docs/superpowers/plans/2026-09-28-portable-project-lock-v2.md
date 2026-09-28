@@ -19,6 +19,7 @@
 - Resolve `corelib` only against a verified installed Corelib workspace root; a name or lock claim never grants Corelib provenance.
 - Stable materialization IDs are SHA-256 of a length-delimited logical tuple, truncated to 128 bits; no machine path or `DefaultHasher` input.
 - Registry dependencies pin version and artifact SHA-256; missing or mismatched pins fail closed without choosing a newer version.
+- Registry preflight streams compressed archives into auto-cleaned scratch storage with a 64 MiB per-artifact cap; it rejects oversized responses before extraction or project preparation output.
 - `beskid lock` and `beskid update` may migrate v1 from the current manifest graph. Other consumers never silently migrate; `--locked` and `--frozen` write nothing.
 - Preserve user changes and unrelated generated files. Do not run heavy builds on this Mac; use the NixOS builder for them, and use macOS only with at least 20 GiB free.
 
@@ -86,7 +87,7 @@
 
 - [ ] **Step 1: Add failing local HTTP-fixture tests.** A pinned version remains selected when a newer version exists; changed bytes yield digest mismatch before extraction; missing version fails rather than falling back; update selects the new version and writes its digest. Keep network entirely local to the test.
 - [ ] **Step 2: Run `cargo test -p beskid_tests_projects --lib projects::registry_lock -- --nocapture` on the builder; expect red.**
-- [ ] **Step 3: Implement lock-first selection and digest verification.** Stop swallowing network/format errors when a pin exists; validate registry alias against current workspace rules.
+- [ ] **Step 3: Implement lock-first selection and digest verification.** Stop swallowing network/format errors when a pin exists; validate registry alias against current workspace rules. Stream into auto-cleaned scratch storage with a 64 MiB compressed-archive cap, hash before extraction, and retain only scratch handles through graph-wide destination preflight.
 - [ ] **Step 4: Run focused registry tests; expect green.** Commit registry slice.
 
 ### Task 5: Strict migration policy and safe LSP replay
