@@ -1,8 +1,11 @@
 ## 1. HTTP core library
 
 - [x] 1.1 Add the `corelib_http` package and aggregate registration.
-- [ ] 1.2 Implement bounded strict request/response parsing, chunk decoding,
+- [x] 1.2 Implement bounded strict request/response parsing, chunk decoding,
   canonical header handling, and serialization over Foundation byte helpers.
+  The integrated candidate's `HttpCodecTests`, `HttpSerializationTests`,
+  `HttpValidationTests`, and `HttpExchangeTests` are included in the full
+  Linux Corelib matrix (81/81); final exact-source evidence remains task 2.6.
 - [x] 1.3 Implement client and listener-backed server exchanges exclusively
   over `Network.TcpStream` and `Network.TcpListener`.
 - [x] 1.4 Enforce exactly one `Host` field per request
