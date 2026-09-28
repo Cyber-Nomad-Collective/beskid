@@ -21,12 +21,17 @@ The compiler SHALL treat each v2 `project`/`manifest`/`source_root` triple as a 
 - **THEN** it rejects the mismatch before replay, copying, or compilation
 
 ### Requirement: Stable and contained dependency materialization
-The compiler SHALL derive a dependency's materialized directory name from a canonical logical tuple of dependency name, source kind, and normalized portable source identity. It SHALL hash a length-delimited encoding of that tuple with SHA-256 and use a stable 128-bit suffix; machine paths and process- or platform-dependent hashes SHALL not enter the identity. Registry source identity SHALL additionally include registry alias, package name, resolved version, and artifact digest. The compiler SHALL reject duplicate destinations in one graph before copying. It SHALL use materialized roots only after canonical containment beneath its `obj/beskid/deps/src` directory; a symlink SHALL not turn a relative hint into an outside destination or source.
+The compiler SHALL derive a dependency's materialized directory name from a canonical logical tuple of dependency name, source kind, and normalized portable source identity. It SHALL encode the three UTF-8 fields in that order, each prefixed by its byte length as an unsigned 32-bit big-endian integer; lengths beyond that range SHALL fail. It SHALL SHA-256 hash the concatenated frames and use the lowercase hexadecimal encoding of the first 16 digest bytes as the stable 128-bit suffix. Machine paths and process- or platform-dependent hashes SHALL not enter the identity. Registry source identity SHALL additionally include registry alias, package name, resolved version, and artifact digest. The compiler SHALL reject duplicate destinations in one graph before copying. It SHALL use materialized roots only after canonical containment beneath its `obj/beskid/deps/src` directory; a symlink SHALL not turn a relative hint into an outside destination or source.
 
 #### Scenario: Stable materialization after relocation
 - **GIVEN** equivalent graphs in two checkout locations or on different supported hosts
 - **WHEN** the compiler prepares their dependencies
 - **THEN** it derives the same logical materialization directory names without hashing machine-local paths
+
+#### Scenario: Materialization hash test vector
+- **GIVEN** dependency name `alpha`, source kind `path`, and normalized portable source identity `libs/alpha`
+- **WHEN** the compiler hashes the three length-prefixed UTF-8 frames (`00000005616c70686100000004706174680000000a6c6962732f616c706861` in hex)
+- **THEN** the 128-bit lowercase hexadecimal suffix is `60e1eb5f56a307ee659d04846b6f78bf`
 
 #### Scenario: Duplicate or escaping destination
 - **GIVEN** two entries claiming one materialized destination or a symlink resolving outside the compiler-owned dependency directory

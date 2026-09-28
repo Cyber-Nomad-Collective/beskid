@@ -8,14 +8,19 @@ Workspace manifest and lockfile behavior for dependency resolution, reproducibil
 ## Requirements
 
 ### Requirement: Portable Project.lock v2 representation
-Tooling SHALL write `Project.lock` with the exact first line `# Project.lock v2`, followed by `root_manifest`, `project_name`, and dependency entries sorted deterministically by dependency identity. Every entry SHALL contain exactly the common fields `name`, `source`, `project`, `manifest`, `source_root`, and `materialized_root`; `source` SHALL be one of `path`, `corelib`, or `registry`. A `registry` entry SHALL additionally contain `registry`, `resolved_version`, and `artifact_digest`, where the digest has the form `sha256:` followed by exactly 64 lowercase hexadecimal digits. The line-oriented parser SHALL reject missing, duplicate, and unknown fields, unknown headers, and malformed entries; it SHALL never interpret v1 data as v2.
+Tooling SHALL write `Project.lock` as LF-terminated lines in this exact order: `# Project.lock v2`, `root_manifest=<value>`, `project_name=<value>`, `dependencies:`, then zero or more dependency lines sorted deterministically by dependency identity. Each dependency line SHALL begin with the literal `- ` and contain `key=value` fields joined by literal `;`, with no extra spaces. The common fields SHALL occur exactly once in this order: `name`, `source`, `project`, `manifest`, `source_root`, `materialized_root`. `source` SHALL be one of `path`, `corelib`, or `registry`. A `registry` line SHALL then append exactly `registry`, `resolved_version`, and `artifact_digest`, in that order; other source kinds SHALL NOT contain these fields. The digest SHALL have the form `sha256:` followed by exactly 64 lowercase hexadecimal digits. The parser SHALL reject missing, duplicate, unknown, or out-of-order fields, unknown headers, extra lines, and malformed entries; it SHALL never interpret v1 data as v2.
 
-Values SHALL encode UTF-8 bytes canonically: ASCII letters, digits, and `._/:-@+` appear literally, while every other byte is `%HH` with uppercase hexadecimal digits. The parser SHALL reject malformed UTF-8, unnecessary escapes of literal-safe bytes, lowercase hexadecimal escapes, raw field delimiters, and any other noncanonical encoding. Equivalent resolved graphs SHALL serialize to byte-identical locks independently of checkout or host location.
+Values SHALL encode UTF-8 bytes canonically: ASCII letters, digits, and `._/:-@+` appear literally, while every other byte is `%HH` with uppercase hexadecimal digits. The parser SHALL reject malformed UTF-8, unnecessary escapes of literal-safe bytes, lowercase hexadecimal escapes, raw `;` or `=` delimiters inside values, and any other noncanonical encoding. Equivalent resolved graphs SHALL serialize to byte-identical locks independently of checkout or host location.
 
 #### Scenario: Canonical v2 round trip
 - **GIVEN** one resolved graph containing path, Corelib, and registry dependencies
 - **WHEN** tooling writes and reads its lock on any supported host
 - **THEN** the header, required fields, source-specific registry pin, entry ordering, and encoded values remain canonical and deterministic
+
+#### Scenario: Ordered dependency record
+- **GIVEN** a path dependency with `name=alpha`, `project=libs/alpha`, `manifest=alpha.bproj`, `source_root=src`, and `materialized_root=obj/beskid/deps/src/alpha`
+- **WHEN** tooling serializes its entry
+- **THEN** the line is `- name=alpha;source=path;project=libs/alpha;manifest=alpha.bproj;source_root=src;materialized_root=obj/beskid/deps/src/alpha`
 
 #### Scenario: Malformed or ambiguous lock
 - **GIVEN** a lock with an unknown header, duplicate or unknown key, malformed digest, raw delimiter, invalid UTF-8, or noncanonical percent escape
@@ -36,7 +41,7 @@ Tooling SHALL encode every v2 file path with `/` separators on every host. `root
 - **THEN** resolution fails instead of selecting a registry package or trusting the lock's path alone
 
 ### Requirement: Explicit lock migration and strict read-only policy
-`beskid lock` and `beskid update` SHALL be the only commands authorized to replace an existing v1 lock with v2, and SHALL derive the replacement from the current manifest graph rather than stale v1 absolute paths. Other consumers, including `build`, `run`, `test`, and LSP replay, SHALL reject a present v1 lock with an actionable migration diagnostic. Unknown headers and malformed v2 locks SHALL fail. A valid but stale v2 lock SHALL not be silently repaired by a non-update consumer. `--locked` and `--frozen` SHALL reject missing, v1, or stale locks before writing any lock or preparation output. When no lock exists, a normal unlocked build MAY create a v2 lock from the current graph. Only CLI lock mutation commands SHALL change an existing lock.
+`beskid lock` and `beskid update` SHALL be the only commands authorized to replace an existing v1 lock with v2, and SHALL derive the replacement from the current manifest graph rather than stale v1 absolute paths. Other consumers, including `build`, `run`, `test`, and LSP replay, SHALL reject a present v1 lock with an actionable migration diagnostic. Unknown headers and malformed v2 locks SHALL fail. A valid but stale v2 lock SHALL not be silently repaired by a non-update consumer. `--locked` and `--frozen` SHALL never write or rewrite a lock, even when a valid v2 lock is present; they SHALL reject missing, v1, or stale locks before writing any preparation output. When no lock exists, a normal unlocked build MAY create a v2 lock from the current graph. Only CLI lock mutation commands SHALL change an existing lock.
 
 #### Scenario: Explicit v1 migration
 - **GIVEN** a v1 lock whose absolute paths refer to an old checkout
@@ -52,6 +57,11 @@ Tooling SHALL encode every v2 file path with `/` separators on every host. `root
 - **GIVEN** `--locked` or `--frozen` and a missing, v1, or stale lock
 - **WHEN** the command starts project preparation
 - **THEN** it fails before creating preparation output or changing lock bytes
+
+#### Scenario: Strict command accepts a valid v2 lock without writing it
+- **GIVEN** `--locked` or `--frozen` and a valid v2 lock matching the current graph
+- **WHEN** the command resolves and prepares the project
+- **THEN** it may use the locked graph but leaves the lock bytes and file metadata unchanged
 
 The v1 descriptions retained below are historical informative provenance. They do not define a currently accepted lock format.
 
