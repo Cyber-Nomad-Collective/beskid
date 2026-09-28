@@ -7,6 +7,58 @@ Compiler workspace graph, lock materialization, and resolution diagnostics (sche
 
 ## Requirements
 
+### Requirement: Graph-verified portable lock authority
+The compiler SHALL treat each v2 `project`/`manifest`/`source_root` triple as a portable description, not filesystem authority. It SHALL resolve the triple against its source-specific base, canonicalize existing paths, and compare the full dependency identity with the current `CompilePlan` before using locked roots. It SHALL reject copied same-name locks with different manifests, missing declared path dependencies, and symlink escapes. A `corelib` source SHALL be minted only from a dependency actually resolved beneath the verified canonical installed Corelib workspace root; neither a lock claim nor a similarly named directory SHALL grant Corelib provenance. Invalid ownership or graph identity SHALL fail without granting service-code authority.
+
+#### Scenario: Verified Corelib moves between machines
+- **GIVEN** the same v2 lock and two installations whose Corelib roots differ but are each verified
+- **WHEN** the compiler resolves the same manifest graph on each machine
+- **THEN** the `corelib` anchor resolves to the verified local installation and preserves the graph's logical identity
+
+#### Scenario: Forged or copied lock
+- **GIVEN** a lock copied from another same-name project, a swapped manifest, or an asserted Corelib source not present in the verified graph
+- **WHEN** the compiler validates it against the current `CompilePlan`
+- **THEN** it rejects the mismatch before replay, copying, or compilation
+
+### Requirement: Stable and contained dependency materialization
+The compiler SHALL derive a dependency's materialized directory name from a canonical logical tuple of dependency name, source kind, and normalized portable source identity. It SHALL hash a length-delimited encoding of that tuple with SHA-256 and use a stable 128-bit suffix; machine paths and process- or platform-dependent hashes SHALL not enter the identity. Registry source identity SHALL additionally include registry alias, package name, resolved version, and artifact digest. The compiler SHALL reject duplicate destinations in one graph before copying. It SHALL use materialized roots only after canonical containment beneath its `obj/beskid/deps/src` directory; a symlink SHALL not turn a relative hint into an outside destination or source.
+
+#### Scenario: Stable materialization after relocation
+- **GIVEN** equivalent graphs in two checkout locations or on different supported hosts
+- **WHEN** the compiler prepares their dependencies
+- **THEN** it derives the same logical materialization directory names without hashing machine-local paths
+
+#### Scenario: Duplicate or escaping destination
+- **GIVEN** two entries claiming one materialized destination or a symlink resolving outside the compiler-owned dependency directory
+- **WHEN** preparation validates their destinations
+- **THEN** it fails before copying or replaying content outside that directory
+
+### Requirement: Pinned registry artifacts
+When a valid v2 lock exists, ordinary and strict resolution SHALL select its exact pinned registry version and verify the downloaded archive's SHA-256 against `artifact_digest` before extraction. An unavailable pinned version or a digest mismatch SHALL fail without selecting a newer version or extracting the artifact. `beskid update` MAY deliberately select a newer version and SHALL write its new version and digest. Path dependencies SHALL remain live sources: their contents MAY change without a lock change, while their manifest-derived identity and relative location remain checked.
+
+#### Scenario: Newer registry version exists
+- **GIVEN** a valid v2 registry pin and a newer available version
+- **WHEN** ordinary or strict resolution prepares the dependency
+- **THEN** it requests the exact pinned version and retains its digest identity
+
+#### Scenario: Pinned artifact is unavailable or changed
+- **GIVEN** a pinned version is missing or its downloaded bytes have another SHA-256 digest
+- **WHEN** the compiler prepares the dependency
+- **THEN** it fails before extraction and does not fall back to another version
+
+### Requirement: Checked lock replay
+LSP and other replay consumers SHALL use a v2 materialized root only after lock ownership, full graph identity, and canonical containment checks. If a materialized directory is absent, they SHALL use current resolved source roots rather than claim a cache hit. The project explorer SHALL display resolved current paths rather than raw lock anchor tokens. A rejected replay SHALL not authorize an outside root or Corelib service source.
+
+#### Scenario: Valid prepared workspace
+- **GIVEN** a v2 lock matching the current graph and a contained materialized directory
+- **WHEN** LSP replays its dependency roots
+- **THEN** it uses the checked materialized root
+
+#### Scenario: Replay hint is absent or unsafe
+- **GIVEN** a missing materialized directory, copied lock, or symlink escape
+- **WHEN** LSP considers replay
+- **THEN** it uses the current resolved roots where valid, or reports the graph error, without treating the hint as a cache hit
+
 ### Requirement: Feature hub authority: Decision [D-COMP-PROJ-0010]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
 

@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "ea2428dbf1fbfdd86f81f8c9a0f627afaac2d3995d50127785ad332f1932c487",
+  "revision": "b1e7490d4f30fca0b49c11f2c11eff9a837fea9ebc24cebb1603139683e5ddb2",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
     "nodes": 1042,
     "capabilities": 197,
-    "requirements": 566,
+    "requirements": 573,
     "normativeSources": 304,
     "provisionalCapabilities": 52,
     "legacyArtifacts": 3189,
@@ -9961,6 +9961,50 @@
         "/platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/articles/verification-and-traceability/"
       ],
       "requirements": [
+        {
+          "id": "BSP-REQ-14BDC296B6BE",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--resolution-and-projects--workspace-and-lock-contracts/spec.md",
+          "sourceHash": "714478bedf2e78cdbbbc7000f5fbaef9b22b15eb6e2f0ab0184b077012b0b44c",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Graph-verified portable lock authority",
+          "anchor": "requirement-graph-verified-portable-lock-authority"
+        },
+        {
+          "id": "BSP-REQ-48E293EC0529",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--resolution-and-projects--workspace-and-lock-contracts/spec.md",
+          "sourceHash": "714478bedf2e78cdbbbc7000f5fbaef9b22b15eb6e2f0ab0184b077012b0b44c",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Stable and contained dependency materialization",
+          "anchor": "requirement-stable-and-contained-dependency-materialization"
+        },
+        {
+          "id": "BSP-REQ-1E9064329FDB",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--resolution-and-projects--workspace-and-lock-contracts/spec.md",
+          "sourceHash": "714478bedf2e78cdbbbc7000f5fbaef9b22b15eb6e2f0ab0184b077012b0b44c",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Pinned registry artifacts",
+          "anchor": "requirement-pinned-registry-artifacts"
+        },
+        {
+          "id": "BSP-REQ-18B8DFFDD06A",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--resolution-and-projects--workspace-and-lock-contracts/spec.md",
+          "sourceHash": "714478bedf2e78cdbbbc7000f5fbaef9b22b15eb6e2f0ab0184b077012b0b44c",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Checked lock replay",
+          "anchor": "requirement-checked-lock-replay"
+        },
         {
           "id": "BSP-REQ-C9A560B9D354",
           "title": "Feature hub authority: Decision [D-COMP-PROJ-0010]",
@@ -35574,6 +35618,39 @@
       ],
       "requirements": [
         {
+          "id": "BSP-REQ-5D3AD1E966A5",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--manifests-and-lockfiles--workspace-and-lock-contracts/spec.md",
+          "sourceHash": "041d87efd042b4660bee1ea4d5896db58727f2bd8f42c37cb19ba61359a35894",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Portable Project.lock v2 representation",
+          "anchor": "requirement-portable-project-lock-v2-representation"
+        },
+        {
+          "id": "BSP-REQ-21D40F891E3D",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--manifests-and-lockfiles--workspace-and-lock-contracts/spec.md",
+          "sourceHash": "041d87efd042b4660bee1ea4d5896db58727f2bd8f42c37cb19ba61359a35894",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Portable lock path anchors",
+          "anchor": "requirement-portable-lock-path-anchors"
+        },
+        {
+          "id": "BSP-REQ-DCEEFDE17B6E",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--manifests-and-lockfiles--workspace-and-lock-contracts/spec.md",
+          "sourceHash": "041d87efd042b4660bee1ea4d5896db58727f2bd8f42c37cb19ba61359a35894",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Explicit lock migration and strict read-only policy",
+          "anchor": "requirement-explicit-lock-migration-and-strict-read-only-policy"
+        },
+        {
           "id": "BSP-REQ-4CF0609B398D",
           "title": "Hub authority: Decision [D-TOOL-MAN-0001]",
           "anchor": "requirement-hub-authority-decision-d-tool-man-0001",
@@ -58825,7 +58902,7 @@
       "decision": null,
       "title": "Workspace and lock contracts",
       "status": "Standard",
-      "sourceHash": "06b4e1b0fb11e75682a903be62a31ff50ab09946ee2a16e85c3ba7928ae34c7f"
+      "sourceHash": "714478bedf2e78cdbbbc7000f5fbaef9b22b15eb6e2f0ab0184b077012b0b44c"
     },
     {
       "id": "BSP-CAP-9B3CB614FCB7",
@@ -60959,7 +61036,7 @@
       "decision": null,
       "title": "Workspace and lock contracts",
       "status": "Standard",
-      "sourceHash": "7f08314e4a021393bd279a96e9c38f3c038ebfda23ea10c6e1fb6b74b430f996"
+      "sourceHash": "041d87efd042b4660bee1ea4d5896db58727f2bd8f42c37cb19ba61359a35894"
     },
     {
       "id": "BSP-CAP-5A70F93AE083",

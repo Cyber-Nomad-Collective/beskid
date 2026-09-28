@@ -7,6 +7,54 @@ Workspace manifest and lockfile behavior for dependency resolution, reproducibil
 
 ## Requirements
 
+### Requirement: Portable Project.lock v2 representation
+Tooling SHALL write `Project.lock` with the exact first line `# Project.lock v2`, followed by `root_manifest`, `project_name`, and dependency entries sorted deterministically by dependency identity. Every entry SHALL contain exactly the common fields `name`, `source`, `project`, `manifest`, `source_root`, and `materialized_root`; `source` SHALL be one of `path`, `corelib`, or `registry`. A `registry` entry SHALL additionally contain `registry`, `resolved_version`, and `artifact_digest`, where the digest has the form `sha256:` followed by exactly 64 lowercase hexadecimal digits. The line-oriented parser SHALL reject missing, duplicate, and unknown fields, unknown headers, and malformed entries; it SHALL never interpret v1 data as v2.
+
+Values SHALL encode UTF-8 bytes canonically: ASCII letters, digits, and `._/:-@+` appear literally, while every other byte is `%HH` with uppercase hexadecimal digits. The parser SHALL reject malformed UTF-8, unnecessary escapes of literal-safe bytes, lowercase hexadecimal escapes, raw field delimiters, and any other noncanonical encoding. Equivalent resolved graphs SHALL serialize to byte-identical locks independently of checkout or host location.
+
+#### Scenario: Canonical v2 round trip
+- **GIVEN** one resolved graph containing path, Corelib, and registry dependencies
+- **WHEN** tooling writes and reads its lock on any supported host
+- **THEN** the header, required fields, source-specific registry pin, entry ordering, and encoded values remain canonical and deterministic
+
+#### Scenario: Malformed or ambiguous lock
+- **GIVEN** a lock with an unknown header, duplicate or unknown key, malformed digest, raw delimiter, invalid UTF-8, or noncanonical percent escape
+- **WHEN** a consumer parses it
+- **THEN** parsing fails without reinterpretation or mutation
+
+### Requirement: Portable lock path anchors
+Tooling SHALL encode every v2 file path with `/` separators on every host. `root_manifest` SHALL be relative to the lock directory and remain inside it. For `path` and `registry` sources, `project` SHALL be relative to the lock directory; for `corelib`, `project` SHALL be relative to the verified installed Corelib workspace root. `manifest` and `source_root` SHALL be relative to the resolved project. `materialized_root` SHALL be relative to the lock directory and resolve beneath `obj/beskid/deps/src`. Absolute paths, drive prefixes, UNC roots, empty segments, and unsafe traversal SHALL be rejected. A normalized `..` segment MAY appear only in a `path` project's explicitly declared external dependency path, and that target SHALL exist in the same relative layout after relocation.
+
+#### Scenario: Relocated project and Corelib installation
+- **GIVEN** a v2 lock and the same project graph moved to another checkout, with verified Corelib installed at a different local path
+- **WHEN** its anchors are resolved on Linux, macOS, or Windows
+- **THEN** the lock retains the same logical dependency identity and contains no machine-specific absolute path
+
+#### Scenario: External path layout is missing
+- **GIVEN** a manifest declaring a `../sibling` path dependency and a v2 lock for it
+- **WHEN** the project moves without the sibling in its declared relative layout
+- **THEN** resolution fails instead of selecting a registry package or trusting the lock's path alone
+
+### Requirement: Explicit lock migration and strict read-only policy
+`beskid lock` and `beskid update` SHALL be the only commands authorized to replace an existing v1 lock with v2, and SHALL derive the replacement from the current manifest graph rather than stale v1 absolute paths. Other consumers, including `build`, `run`, `test`, and LSP replay, SHALL reject a present v1 lock with an actionable migration diagnostic. Unknown headers and malformed v2 locks SHALL fail. A valid but stale v2 lock SHALL not be silently repaired by a non-update consumer. `--locked` and `--frozen` SHALL reject missing, v1, or stale locks before writing any lock or preparation output. When no lock exists, a normal unlocked build MAY create a v2 lock from the current graph. Only CLI lock mutation commands SHALL change an existing lock.
+
+#### Scenario: Explicit v1 migration
+- **GIVEN** a v1 lock whose absolute paths refer to an old checkout
+- **WHEN** `beskid lock` or `beskid update` runs against the current manifests
+- **THEN** it writes v2 using the newly resolved graph, without inferring paths from v1
+
+#### Scenario: Non-update consumer sees v1 or stale v2
+- **GIVEN** a present v1 lock or a v2 lock that no longer matches the current graph
+- **WHEN** `build`, `run`, `test`, or LSP consumes it
+- **THEN** the consumer reports migration or staleness and does not rewrite the lock
+
+#### Scenario: Strict command rejects a missing or invalid lock
+- **GIVEN** `--locked` or `--frozen` and a missing, v1, or stale lock
+- **WHEN** the command starts project preparation
+- **THEN** it fails before creating preparation output or changing lock bytes
+
+The v1 descriptions retained below are historical informative provenance. They do not define a currently accepted lock format.
+
 ### Requirement: Hub authority: Decision [D-TOOL-MAN-0001]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
 
