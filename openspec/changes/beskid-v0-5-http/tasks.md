@@ -5,7 +5,7 @@
   canonical header handling, and serialization over Foundation byte helpers.
 - [x] 1.3 Implement client and listener-backed server exchanges exclusively
   over `Network.TcpStream` and `Network.TcpListener`.
-- [ ] 1.4 Enforce exactly one `Host` field per request
+- [x] 1.4 Enforce exactly one `Host` field per request
   (`BSP-REQ-6CAA5AC6F4E3`): add `MissingHost()` and `InvalidHost()` to
   `compiler/corelib/packages/http/src/Http/Errors.bd`; add a private
   `Result<unit,HttpError> HostField(Header[] headers)` in `Http/Codec.bd`
@@ -17,7 +17,10 @@
   brackets). `MessageEnd` does not check `Host`. Document in the package
   README that `HttpServer.Receive` returns the typed error and the
   application answers `Types.EmptyResponse(u16(400), "Bad Request")` and
-  closes.
+  closes. Verified in the integrated Corelib candidate: `HostField` is
+  called by parsing and serialization, `HttpValidationTests` covers malformed
+  IPv6 literals and field octets, and the full Linux Corelib matrix passed
+  81/81. Final committed-source release evidence remains task 2.6.
 - [x] 1.5 Implement the RFC 9112 section 6.3 no-body rules through a typed
   role (`BSP-REQ-58182F687E87`): add
   `pub enum MessageRole { Request(), Response(), HeadResponse(), }` to
