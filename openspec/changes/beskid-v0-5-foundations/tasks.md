@@ -1,6 +1,6 @@
 ## 1. Validate the normative baseline
 
-- [ ] 1.1 Run `openspec validate beskid-v0-5-foundations --strict --no-interactive` and correct every change-layout or scenario error before implementation.
+- [ ] 1.1 Run `openspec validate beskid-v0-5-foundations --strict --no-interactive` and correct every change-layout or scenario error before implementation. Current integrated-branch validation exited 0 on 2026-09-28; the earlier pre-implementation timing is not established by this rerun.
 - [ ] 1.2 Preserve the acceptance matrix in `design.md`; each stable requirement ID MUST keep one named parser, semantic, runtime, corelib, JIT, AOT, or native proof target.
 
 ## 2. Introduce the language and corelib contracts
@@ -37,7 +37,7 @@
 - [ ] 5.1 Run `cargo test -p beskid_tests analysis::spawn`, generation-safe query tests, generated ISLE/codegen suites, and canonical runtime conformance fixtures from `compiler/`.
 - [ ] 5.2 Run focused JIT, AOT, and native runtime-kit fixtures for aggregate fiber results, `Channel<OwnedResource>` using a Foundation-local opaque disposable fixture, owner wake, timer cancellation, scoped `use`, bytes, encoding, and Core.IO.
 - [ ] 5.3 Run `just corelib`, `just compiler`, and the available native runtime-kit scheduler smoke from `compiler/`.
-- [ ] 5.4 Run `openspec validate beskid-v0-5-foundations --strict --no-interactive` and `bun run openspec:validate`; reserve release-wide catalog regeneration and publication for the final HTTP/release change.
+- [x] 5.4 Run `openspec validate beskid-v0-5-foundations --strict --no-interactive` and `bun run openspec:validate`; reserve release-wide catalog regeneration and publication for the final HTTP/release change. Both commands exited 0 on 2026-09-28; the repository-wide validation passed 218/218 items.
 - [ ] 5.5 Compile Foundation-local examples for spawn/join, aggregate fiber results, generic value/resource channels, owner-routed completion, timers, scoped `use`, bytes/encoding, and Core.IO through analysis, JIT, AOT, and every available native kit; do not depend on Networking or HTTP types.
 - [ ] 5.6 Start F4 with failing public API coverage in `compiler/crates/beskid_engine/tests/fixtures/timer_value_transfer.bd` and `source_timer_sleep_has_typed_outcomes_and_owned_registration` in `compiler/crates/beskid_engine/tests/fiber_value_transfer.rs`. Reuse the actual Core.Time closure plus TimerError and the existing JIT/static/shared execution helper. Require failure on the missing API rather than an unrelated import; then close every F4-S case from `design.md` by running `cargo test -p beskid_engine --test fiber_value_transfer source_timer_sleep_has_typed_outcomes_and_owned_registration -- --nocapture` and the full `fiber_value_transfer` harness.
 - [ ] 5.7 Extend `compiler/crates/beskid_engine/tests/fixtures/external_wait.c` through `external_wait_native.rs` with F4-R full legal shared-capacity admission using real handles, independent duplicate-registration rejection, full slot reuse, stale cancellation, and timer-winner integrity. Preserve deterministic heap advancement and existing shutdown/race evidence. Run `cargo test -p beskid_engine --test external_wait_native -- --nocapture` and `cargo test -p beskid_abi --test external_owner_transport -- --nocapture`; do not use C-ABI callback JIT coverage as public source evidence.
