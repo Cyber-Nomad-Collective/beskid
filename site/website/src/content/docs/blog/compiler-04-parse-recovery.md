@@ -25,26 +25,27 @@ This isn't just annoying. It's a productivity tax that compounds with project si
 
 ## The commit that changed everything
 
-On July 23, 2026, [commit `c765ef51`](https://github.com/opencp/beskid/commit/c765ef51) landed parse recovery in Beskid. The commit message is characteristically terse ("land parse recovery and ISLE float/unsigned gaps"), but the diff tells the real story. The parser no longer returns on first error. It finds a synchronization point, resets state, and keeps going.
+On July 23, 2026, [commit `c765ef51`](https://github.com/Cyber-Nomad-Collective/beskid/commit/c765ef51) pinned the compiler submodule to the commit that landed parse recovery in Beskid. The message is characteristically terse ("land parse recovery and ISLE float/unsigned gaps"), but the diff underneath tells the real story. The parser no longer returns on first error. It tries small text repairs at the error site and keeps going.
 
-The follow-up [commit `0486fabd`](https://github.com/opencp/beskid/commit/0486fabd) fixed an overflow in the recovery token buffer: the kind of bug that only shows up when you're collecting dozens of errors instead of just one.
+The follow-up [commit `0486fabd`](https://github.com/Cyber-Nomad-Collective/beskid/commit/0486fabd) advanced the compiler pin again for an overflow fix in the recovery pipeline: the kind of bug that only shows up when you're collecting dozens of candidate repairs instead of just one.
 
-Together, they form the design documented in [`docs/superpowers/specs/2026-07-23-parse-recovery-heuristics-design.md`](https://github.com/opencp/beskid/blob/main/docs/superpowers/specs/2026-07-23-parse-recovery-heuristics-design.md): the parse-recovery heuristics spec.
+Together, they land the design documented in [`docs/superpowers/specs/2026-07-23-parse-recovery-heuristics-design.md`](https://github.com/Cyber-Nomad-Collective/beskid/blob/main/docs/superpowers/specs/2026-07-23-parse-recovery-heuristics-design.md): the parse-recovery heuristics spec.
 
 ## How recovery actually works
 
-The mechanism is straightforward, even if the implementation is delicate. When the parser encounters a token it can't fit into the current production, it enters recovery mode. Instead of giving up, it scans ahead for a **synchronization point**: a token that unambiguously signals "the next thing starts here."
+Recovery is not panic mode. It does not throw tokens away until it recognizes a keyword. When the parser hits a token it can't fit into the current production, it generates a set of small **repair candidates**: insert a missing token, delete an unexpected one, or replace one token with another, each scored by how confidently it explains the error. It applies the best candidate, retries a strict parse, and repeats, capped so a genuinely broken file doesn't spin forever.
 
-What counts as a sync point?
+The candidates come from a handful of specialized generators, each covering a slice of the grammar:
 
-- **Semicolons.** Statement boundaries. If the parser is mid-expression and sees a semicolon, it knows the broken statement ended.
-- **Closing braces.** Block boundaries. `}` means "whatever was inside this scope is done." The parser pops the scope and resumes at the next statement.
-- **Module boundaries.** `module`, `import`, `export`: hard structural markers that reset the parsing context.
-- **Keyword statement starters.** `fn`, `let`, `if`, `for`, `while`, `return`: any token that can only begin a new statement.
+- **Delimiters.** Unclosed `(`, `[`, `{`, strings, and code fences get their closer inserted.
+- **Separators.** A missing `;`, `,`, `:`, `=>`, or `.` between two things that clearly belong together gets inserted.
+- **Items.** An incomplete `type`, `enum`, `impl`, `mod`, `use`, or `contract` declaration gets patched enough to keep parsing the rest of the item.
+- **Expressions.** Broken `match` arms, lambdas, literals, and calls get repaired locally.
+- **Sync boundaries.** When nothing local explains the error, recovery falls back to scanning forward for the next statement-starting keyword (`if`, `while`, `for`, `let`, `return`, and friends) or a closing brace, and inserts the missing terminator there instead of guessing at a fix mid-expression.
 
-When recovery finds a sync point, it discards the tokens between the error site and the sync point, resets the parser state to the nearest enclosing scope, and continues. The error is recorded. The parser moves on. The next statement gets parsed normally, and if it has errors too, those get reported as well.
+The error is recorded either way, the parser moves on, and the next statement parses normally. If it has errors too, those get reported as well.
 
-The result: instead of one error per compile, you get **all** errors per compile.
+The result: instead of one error per compile, you get all of them, up to a fixed cap per file.
 
 ## The LSP synergy
 
@@ -52,7 +53,7 @@ Parse recovery isn't just about batch compilation. It's the prerequisite for a c
 
 Before recovery, the language server could only show one red squiggle at a time, at the first broken token. Everything after that was invisible to the parser, which meant no diagnostics, no syntax highlighting, no intellisense. The editor went dark after the first mistake.
 
-With recovery, the LSP gets a complete(ish) AST no matter how many syntax errors exist. Red squiggles appear everywhere they're needed. Completions work in function bodies after a broken import. Hover types resolve in code that follows a missing brace. The editor stays useful even when the code is broken, which, if we're honest, is most of the time.
+With recovery, the LSP gets a complete(ish) AST no matter how many syntax errors exist. Red squiggles appear everywhere they're needed. Completions work in a method body after a broken `use` line. Hover types resolve in code that follows a missing brace. The editor stays useful even when the code is broken, which, if we're honest, is most of the time.
 
 ## The ISLE float/unsigned gap fix
 
@@ -62,7 +63,7 @@ One of the float literal edge cases: unsigned integer gaps in the tokenizer mean
 
 ## The therapist metaphor
 
-The Book chapter ["Read a diagnostic"](https://opencp.org/book/07-compiler-is-not-your-therapist/read-a-diagnostic) (in *The Compiler Is Not Your Therapist*) makes the point directly: a compiler that says "error on line 1" and stops is like a therapist who says "you seem sad" and ends the session. The useful work hasn't started.
+The Book chapter ["Read a diagnostic"](/book/07-compiler-is-not-your-therapist/read-a-diagnostic/) (in *The Compiler Is Not Your Therapist*) makes the point directly: a compiler that says "error on line 1" and stops is like a therapist who says "you seem sad" and ends the session. The useful work hasn't started.
 
 A good diagnostic is specific, local, and actionable. But a good diagnostic system is also **comprehensive**: it tells you everything that's wrong, not just the first thing. Parse recovery is how you get from "one specific error" to "all specific errors."
 

@@ -25,11 +25,11 @@ The syntax facade is how Beskid solves this: one compiler, two views of the prog
 
 The facade didn't appear fully formed. It accreted across five commits in July 2026:
 
-- **[`dc7ec5f5`](https://github.com/opencp/beskid/commit/dc7ec5f5)**: "LSP syntax documentation fact migration." The first crack: documentation facts (hover text, doc comments) moved from a separate LSP code path into the shared syntax-fact system.
-- **[`cd303402`](https://github.com/opencp/beskid/commit/cd303402)**: "LSP diagnostics syntax-fact migration." Diagnostics followed. Before this, the LSP had its own error-reporting logic that duplicated the compiler's. After: same diagnostic facts, different consumer.
-- **[`2ac36288`](https://github.com/opencp/beskid/commit/2ac36288)**: "merge LSP syntax facts." The unification commit: all the separately-migrated fact types came together under one facade API.
-- **[`444cfd80`](https://github.com/opencp/beskid/commit/444cfd80)**: "ForIteratorFact + LSP syntax intellisense." A specific fact type for for-loops, plus the intellisense integration that made completions work from syntax facts.
-- **[`840c8ebc`](https://github.com/opencp/beskid/commit/840c8ebc)**: "LSP syntax intellisense." The intellisense system fully operational: completions, hover, go-to-definition, all powered by the syntax facade rather than a fully-resolved AST.
+- **[`dc7ec5f5`](https://github.com/Cyber-Nomad-Collective/beskid/commit/dc7ec5f5)**: "LSP syntax documentation fact migration." The first crack: documentation facts (hover text, doc comments) moved from a separate LSP code path into the shared syntax-fact system.
+- **[`cd303402`](https://github.com/Cyber-Nomad-Collective/beskid/commit/cd303402)**: "LSP diagnostics syntax-fact migration." Diagnostics followed. Before this, the LSP had its own error-reporting logic that duplicated the compiler's. After: same diagnostic facts, different consumer.
+- **[`2ac36288`](https://github.com/Cyber-Nomad-Collective/beskid/commit/2ac36288)**: "merge LSP syntax facts." The unification commit: all the separately-migrated fact types came together under one facade API.
+- **[`444cfd80`](https://github.com/Cyber-Nomad-Collective/beskid/commit/444cfd80)**: "ForIteratorFact + LSP syntax intellisense." A specific fact type for for-loops, plus the intellisense integration that made completions work from syntax facts.
+- **[`840c8ebc`](https://github.com/Cyber-Nomad-Collective/beskid/commit/840c8ebc)**: "LSP syntax intellisense." The intellisense system fully operational: completions, hover, go-to-definition, all powered by the syntax facade rather than a fully-resolved AST.
 
 ## The problem: two consumers, one program representation
 
@@ -79,7 +79,7 @@ Same facts, different resolution. No duplication, no divergence.
 
 ## The Book chapter
 
-The Book chapter ["From source to runs"](https://opencp.org/book/compiler/from-source-to-runs) covers the AST facts graph in detail: how facts flow from parsing through resolution through typechecking, and how different consumers can tap into the graph at different stages. The syntax facade is the LSP's entry point into that graph: early enough to be fast, deep enough to be useful.
+The Book chapter ["From source to runs"](/book/14-from-source-to-runs/) covers the AST facts graph in detail: how facts flow from parsing through resolution through typechecking, and how different consumers can tap into the graph at different stages. The syntax facade is the LSP's entry point into that graph: early enough to be fast, deep enough to be useful.
 
 ## The principle
 

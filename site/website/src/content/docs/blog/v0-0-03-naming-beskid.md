@@ -51,4 +51,4 @@ The rename was not a branding exercise. It was the moment the prototype became a
 
 ## Provenance
 
-[Tracker record](https://github.com/Cyber-Nomad-Collective/beskid_tracker/blob/main/data/v0.0/version.json) · [rename commit](https://github.com/Cyber-Nomad-Collective/beskid/commit/3c82da5)
+[Tracker record](https://github.com/Cyber-Nomad-Collective/beskid_tracker/blob/main/data/v0.0/version.json) · [rename commit](https://github.com/Cyber-Nomad-Collective/beskid/commit/1d49ce54)

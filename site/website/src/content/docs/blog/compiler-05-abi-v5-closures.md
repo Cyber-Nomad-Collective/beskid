@@ -23,11 +23,11 @@ In July 2026, Beskid shipped ABI v5. It was the most politically charged change 
 
 ABI v5 didn't land in one commit. It landed in five, each addressing a different dimension of the contract:
 
-- **[`2b81a5b3`](https://github.com/opencp/beskid/commit/2b81a5b3)**: "advance compiler ABI and syntax closure integration." The flag-day commit that bumped the version number and told the compiler to emit the new calling conventions.
-- **[`9d9791a9`](https://github.com/opencp/beskid/commit/9d9791a9)**: "ABI-v5 capturing closure/spawn lowering tip." How closures are lowered when they cross a spawn boundary: the closure environment gets packed into a heap-allocated frame that the runtime can root for GC.
-- **[`51d15056`](https://github.com/opencp/beskid/commit/51d15056)**: "ABI-v5 closure environment runtime contract." The runtime side: what the GC expects to find in a closure frame, how the rooting works, where the captured variables live.
-- **[`dc5a57f8`](https://github.com/opencp/beskid/commit/dc5a57f8)**: "canonical ABI-v5 fiber spawn boundary." The spawn convention: when a fiber starts, what its initial stack frame looks like, how arguments are passed from the spawning fiber to the spawned one.
-- **[`927a0218`](https://github.com/opencp/beskid/commit/927a0218)**: "current-root helper normative migration for 0.4." The `current-root` helper (the function that tells the runtime "this is the root of the current fiber's stack") got a new calling convention. Every compiled program had to be rebuilt. CI caught the ones that weren't.
+- **[`2b81a5b3`](https://github.com/Cyber-Nomad-Collective/beskid/commit/2b81a5b3)**: "advance compiler ABI and syntax closure integration." The flag-day commit that bumped the version number and told the compiler to emit the new calling conventions.
+- **[`9d9791a9`](https://github.com/Cyber-Nomad-Collective/beskid/commit/9d9791a9)**: "ABI-v5 capturing closure/spawn lowering tip." How closures are lowered when they cross a spawn boundary: the closure environment gets packed into a heap-allocated frame that the runtime can root for GC.
+- **[`51d15056`](https://github.com/Cyber-Nomad-Collective/beskid/commit/51d15056)**: "ABI-v5 closure environment runtime contract." The runtime side: what the GC expects to find in a closure frame, how the rooting works, where the captured variables live.
+- **[`dc5a57f8`](https://github.com/Cyber-Nomad-Collective/beskid/commit/dc5a57f8)**: "canonical ABI-v5 fiber spawn boundary." The spawn convention: when a fiber starts, what its initial stack frame looks like, how arguments are passed from the spawning fiber to the spawned one.
+- **[`927a0218`](https://github.com/Cyber-Nomad-Collective/beskid/commit/927a0218)**: "current-root helper normative migration for 0.4." The `current-root` helper (the function that tells the runtime "this is the root of the current fiber's stack") got a new calling convention. Every compiled program had to be rebuilt. CI caught the ones that weren't.
 
 ## What ABI versioning actually means
 
@@ -60,7 +60,7 @@ The `current-root` helper migration is the perfect example. It's a single functi
 
 ## The Book chapters
 
-Two Book chapters are essential reading here. ["Execution: ABI, host, and runtime"](https://opencp.org/book/execution/abi-host-runtime) covers the contract in detail: what the ABI specifies, how the host interacts with compiled artifacts, what the runtime expects. ["Fibers and spawn"](https://opencp.org/book/execution/fibers-and-spawn) covers the spawn boundary specifically: how fibers are created, how arguments cross the boundary, what happens to the closure environment when a fiber starts executing.
+Two Book chapters are essential reading here. ["Execution: ABI, host, and runtime"](/book/17-execution-abi-host-runtime/) covers the contract in detail: what the ABI specifies, how the host interacts with compiled artifacts, what the runtime expects. ["Fibers and spawn"](/book/11-fibers-cheaper-than-threads/fibers-and-spawn/) covers the spawn boundary specifically: how fibers are created, how arguments cross the boundary, what happens to the closure environment when a fiber starts executing.
 
 Together they make the case that ABI design is infrastructure design. It's not the fun part of language work. It's the part where you make promises and keep them, sometimes for years, until the cost of keeping the promise exceeds the cost of breaking it.
 
