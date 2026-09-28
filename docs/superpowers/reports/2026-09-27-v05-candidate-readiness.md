@@ -295,11 +295,35 @@ Strict validation of the networking change passed, and `bun run
 openspec:validate` exited 0 with 218/218 items. HTTP strict validation also
 passed. These validate specification structure, not every runtime scenario.
 
-Portable `Project.lock` v2 is now an approved architectural direction and a
-written design awaiting release-owner review. Root commit `9874c50f` adds
+Portable `Project.lock` v2 is now an approved architectural direction and
+written design. Root commit `9874c50f` adds
 `docs/research/2026-09-28-portable-project-locks.md` and
 `docs/superpowers/specs/2026-09-28-portable-project-lock-v2-design.md`.
 No compiler behavior change or OpenSpec normative change has been made for v2
 yet. The design retains explicit v1 migration, portable Corelib anchoring,
 stable logical materialization IDs, registry version/digest pins, and
 fail-closed replay checks.
+
+## Update, 2026-09-28: release-gate control-flow audit
+
+The portable-lock implementation plan is recorded in root commit `c73313bf`;
+product work awaits the plan review and execution-method choice. The macOS
+runtime matrix remains a live process, not a completed gate.
+
+The Woodpecker release state has a source-bound test-evidence gap independent
+of the passing local Rust/Corelib runs. `.woodpecker/linux.yml` invokes
+`scripts/ci/test/run-woodpecker-tests.sh`, which runs CI migration contract
+fixtures, then the native build. It does not invoke the compiler Rust or
+Corelib test gates. `woodpecker-aggregate-release.mjs` synthesizes only
+`native-build` stage reports and passes the literal `success` gate argument to
+`build-release-state.sh`; for stable, that script can set `publishable=true`
+from three successful platform builds without a compiler/Corelib matrix
+report. This is a qualification bug in the state artifact, even though
+`woodpecker-release.sh` currently has a separate publication hard stop.
+
+The existing `scripts/ci/corelib-gate.sh` is not ready to be wired into the
+current candidate unchanged: its required-file list includes
+`packages/foundation/src/Core/Syscall/Syscall.bd`, absent from Corelib
+`a289712`. The active canonical Corelib quality/target contract must be
+reconciled before the gate runs. No release-pipeline code was changed by this
+audit, and no fabricated green test report is accepted as qualification.
