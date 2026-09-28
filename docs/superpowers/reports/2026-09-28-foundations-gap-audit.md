@@ -28,6 +28,29 @@ superseded by the later span-heap task 6.11; this audit does not ask to restore
 
 ## Evidence handling
 
+- A fresh Linux builder snapshot was populated with `git archive` from compiler
+  `bdacf7fb8d74b562f1ca1b3f17b30cc48451a596` and Corelib
+  `a289712663c37e82b5a80d2006d86f1de43fe79e`. This excludes the local
+  test-generated v1 lock edits and `obj/`; it is not the older, differing
+  `/workspace/compiler-v05-integration-2` snapshot. On 2026-09-28,
+  `cargo test -j 4 -p beskid_abi --test external_owner_transport -- --nocapture`
+  passed 1/1, and `cargo test -j 4 -p beskid_engine --test fiber_value_transfer
+  -- --nocapture` passed 8/8. The latter executed JIT, static, and shared
+  routes, including four fatal timer-status cases per route. The emitted
+  native-kit source hash was
+  `81a1e6e45e7a246f5f0b7a9d4948ad95beb0e66d33c614c0b5d4be51a0be5251`.
+  `external_wait_native` passed 1/1 on AOT, native-kit, and JIT callback routes,
+  including its 600-case owner/winner matrix. With `--test-threads=4` as well
+  as `-j 4`, `foundation_io_native` passed 26, failed 0, and ignored 6 staged
+  runtime-kit executable cases. A fresh `beskid_cli runtime-kit
+  build-native-host --profile debug` then produced the exact-source kit at
+  `/workspace/verify/foundation-kit-bdacf7fb`; rerunning the six with
+  `BESKID_RUNTIME_PREFIX` and `BESKID_RUNTIME_KIT_PROFILE=debug` passed 6/6.
+  Together the two runs cover all 32 tests, with no failures. The
+  `foundation_io_transfers_validate_ranges_and_handle_partial_eof_and_progress`
+  case passed on JIT, AOT, and native kit, but does not assert the missing
+  `WriteAll` cause payload. These passes do not close the narrower missing
+  assertions identified above.
 - Passing local macOS Rust workspace and Corelib/runtime matrices are recorded
   in [candidate readiness](2026-09-27-v05-candidate-readiness.md), with their
   actual revisions and eligibility limits. They are not substituted for the
