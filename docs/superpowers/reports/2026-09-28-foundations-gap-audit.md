@@ -63,6 +63,15 @@ superseded by the later span-heap task 6.11; this audit does not ask to restore
   passed 1/1. This establishes parity for its enumerated files only;
   `Gc/Span.bd`, `Gc/Marking.bd`, and `Gc/Verify.bd` are not enumerated by that
   test, so the task 6.2 inventory remains open.
+- The first exact-source Linux `cargo test --workspace --all-targets` invocation
+  omitted `BESKID_RUNTIME_PREFIX`. `extern_tests` then failed 0/2: the first
+  test could not discover an installed kit from Cargo's `debug/deps` executable
+  path, and the second observed its poisoned process-global mutex. Running
+  that exact test binary against the staged candidate kit with
+  `BESKID_RUNTIME_PREFIX=/workspace/verify/foundation-kit-bdacf7fb` passed
+  2/2. The unconfigured run was stopped; a fresh full run with the exact kit
+  prefix is the release evidence candidate. This is a confirmed harness
+  environment dependency, not evidence of an extern-codegen regression.
 - Passing local macOS Rust workspace and Corelib/runtime matrices are recorded
   in [candidate readiness](2026-09-27-v05-candidate-readiness.md), with their
   actual revisions and eligibility limits. They are not substituted for the
