@@ -275,3 +275,31 @@ while the template extractor still requires the original authoring path.
 `beskid new lib` without `-o` is a separate usage error: the output directory
 is required. The pack/extract mismatch remains to be fixed and verified
 against a packed template before release.
+
+## Update, 2026-09-28: template fix, macOS matrix, and portable lock design
+
+The previous template blocker is fixed on compiler candidate `bdacf7fb`.
+`beskid_template` now maps archive-root `template.json` back to the authoring
+`.beskid/template.json` location and rejects parent-path ZIP entries. Both
+regression tests failed before the change. The focused crate suite passed 5/5
+on Linux and 5/5 on macOS; the candidate macOS CLI rebuild exited 0.
+
+The macOS full Rust workspace run on candidate `8d31d9f6` exited 0 with
+2,684 tests passed and none failed. After the template fix was integrated, the
+macOS Corelib matrix passed 81/81. Its CLI summary still reported
+`release eligible: false`; generated tracked `Project.lock` files record
+checkout-specific absolute paths and are rewritten during tests. The macOS
+runtime matrix is in progress and has no final result in this update.
+
+Strict validation of the networking change passed, and `bun run
+openspec:validate` exited 0 with 218/218 items. HTTP strict validation also
+passed. These validate specification structure, not every runtime scenario.
+
+Portable `Project.lock` v2 is now an approved architectural direction and a
+written design awaiting release-owner review. Root commit `9874c50f` adds
+`docs/research/2026-09-28-portable-project-locks.md` and
+`docs/superpowers/specs/2026-09-28-portable-project-lock-v2-design.md`.
+No compiler behavior change or OpenSpec normative change has been made for v2
+yet. The design retains explicit v1 migration, portable Corelib anchoring,
+stable logical materialization IDs, registry version/digest pins, and
+fail-closed replay checks.
