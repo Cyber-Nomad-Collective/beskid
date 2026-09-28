@@ -56,7 +56,9 @@ All v2 file paths use `/` separators, independent of host OS. `root_manifest`
 is relative to the lock directory and may not escape it. `project` is relative
 to the lock directory for `path` and `registry`, or to the verified installed
 Corelib workspace root for `corelib`. `manifest` and `source_root` are relative
-to that resolved project. `materialized_root` is relative to the lock directory
+to that resolved project. A source root equal to the project directory uses the
+sole literal `source_root=.`; single-dot segments remain invalid in every other path
+field. `materialized_root` is relative to the lock directory
 and must resolve beneath `obj/beskid/deps/src`. Absolute paths, drive prefixes,
 UNC roots, empty path segments, and unsafe traversal are rejected. A `path`
 project may contain normalized `..` segments to reach an explicitly declared
