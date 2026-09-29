@@ -448,6 +448,20 @@ corelib_report_step "build beskid_cli (release)" \
 
 CLI="${COMPILER_ROOT}/target/release/beskid_cli"
 export BESKID_CLI_BIN="${CLI}"
+corelib_materialize_release_bundle() {
+  local source="${BESKID_CORELIB_SOURCE:?release Corelib source is required}"
+  local installed="${BESKID_CORELIB_ROOT:?release Corelib root is required}"
+  [[ "$source" != "$installed" && -d "$installed" && -z "$(find "$installed" -mindepth 1 -print -quit)" ]] || {
+    echo 'release Corelib install root must be distinct from source and empty' >&2
+    return 1
+  }
+  corelib_run_bounded_phase "materialize pinned Corelib bundle" "${CORELIB_MATERIALIZE_TIMEOUT:-120}" \
+    "$CLI" corelib --output "$installed"
+  node "$ROOT/scripts/ci/verify-release-corelib-bundle.mjs" --verify "$source" "$installed"
+}
+if [[ "${BESKID_RELEASE_MANAGED_CORELIB:-0}" == 1 ]]; then
+  corelib_report_step "materialize pinned Corelib bundle" corelib_materialize_release_bundle
+fi
 export BESKID_RUNTIME_PREFIX="${BESKID_RUNTIME_PREFIX:-${CARGO_TARGET_DIR:-${COMPILER_ROOT}/target}/native-runtime-kit}"
 export BESKID_RUNTIME_KIT_PROFILE=release
 corelib_report_step "stage native runtime kit" \

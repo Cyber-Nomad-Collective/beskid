@@ -8,11 +8,24 @@ source "${ROOT}/scripts/ci/test/lib/assert.sh"
 TMP="$(mktemp -d)"
 trap 'rm -rf "${TMP}"' EXIT
 
+# Rust PathBuf ordering compares path components, not the slash-separated
+# UTF-8 string. `Emitter/Contracts.bd` sorts before sibling `Emitter.bd`.
+ORDER_FIXTURE="${TMP}/fingerprint-order"
+mkdir -p "${ORDER_FIXTURE}/packages/Emitter" "${ORDER_FIXTURE}/beskid_corelib"
+printf 'workspace\n' > "${ORDER_FIXTURE}/CoreLib.bws"
+printf 'file\n' > "${ORDER_FIXTURE}/packages/Emitter.bd"
+printf 'child\n' > "${ORDER_FIXTURE}/packages/Emitter/Contracts.bd"
+printf 'project\n' > "${ORDER_FIXTURE}/beskid_corelib/corelib.bproj"
+assert_eq "64e0362c24229e5b78acab6bf33bf9a458e32e0be23fe9a7bbfec7782786981a" \
+  "$(node "${ROOT}/scripts/ci/verify-release-corelib-bundle.mjs" --fingerprint "${ORDER_FIXTURE}")" \
+  "bundle fingerprint matches Rust component-wise PathBuf ordering"
+
 make_fixture() {
   local fixture="$1" cargo_mode="$2"
   mkdir -p "${fixture}/scripts/ci" "${fixture}/compiler/corelib/beskid_corelib/tests/corelib_tests" \
     "${fixture}/bin"
   cp "${ROOT}/scripts/ci/corelib-gate.sh" "${fixture}/scripts/ci/corelib-gate.sh"
+  cp "${ROOT}/scripts/ci/verify-release-corelib-bundle.mjs" "${fixture}/scripts/ci/verify-release-corelib-bundle.mjs"
   chmod +x "${fixture}/scripts/ci/corelib-gate.sh"
 
   cat > "${fixture}/compiler/corelib/CoreLib.bws" <<'EOF'
@@ -71,6 +84,7 @@ EOF
     mkdir -p "$(dirname "${fixture}/compiler/corelib/${file}")"
     : > "${fixture}/compiler/corelib/${file}"
   done
+  printf 'lock-version = 2\n' > "${fixture}/compiler/corelib/packages/foundation/Project.lock"
   : > "${fixture}/compiler/Cargo.toml"
   mkdir -p "${fixture}/compiler/scripts"
   # shellcheck disable=SC2016 # Fixture script must expand these at runtime.
@@ -78,8 +92,32 @@ EOF
     > "${fixture}/compiler/scripts/stage-native-runtime-kit.sh"
   chmod +x "${fixture}/compiler/scripts/stage-native-runtime-kit.sh"
   if [[ "${cargo_mode}" == pass ]]; then
-    printf '#!/usr/bin/env bash\nset -euo pipefail\nmkdir -p target/release\nprintf "#!/usr/bin/env bash\\nset -euo pipefail\\nif IFS= read -r unexpected; then\\n  printf \\"unexpected inherited stdin: %%s\\\\n\\" \\"\\${unexpected}\\" >&2\\n  exit 64\\nfi\\nexit 0\\n" > target/release/beskid_cli\nchmod +x target/release/beskid_cli\n' \
-      > "${fixture}/bin/cargo"
+    cat > "${fixture}/bin/cargo" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+mkdir -p target/release
+cat > target/release/beskid_cli <<'CLI'
+#!/usr/bin/env bash
+set -euo pipefail
+if [[ "${1:-}" == corelib ]]; then
+  cp -R "$BESKID_CORELIB_SOURCE/packages" "$BESKID_CORELIB_ROOT/packages"
+  cp -R "$BESKID_CORELIB_SOURCE/beskid_corelib" "$BESKID_CORELIB_ROOT/beskid_corelib"
+  rm "$BESKID_CORELIB_ROOT/packages/foundation/Project.lock"
+  cp "$BESKID_CORELIB_SOURCE/CoreLib.bws" "$BESKID_CORELIB_ROOT/CoreLib.bws"
+  node "$BESKID_TEST_VERIFY_SCRIPT" --fingerprint "$BESKID_CORELIB_ROOT" > "$BESKID_CORELIB_ROOT/.beskid-bundle.sha256"
+  if [[ "${BESKID_TEST_TAMPER_MATERIALIZED:-0}" == 1 ]]; then
+    printf 'tampered\n' >> "$BESKID_CORELIB_ROOT/CoreLib.bws"
+  fi
+  exit 0
+fi
+if IFS= read -r unexpected; then
+  printf 'unexpected inherited stdin: %s\n' "$unexpected" >&2
+  exit 64
+fi
+exit 0
+CLI
+chmod +x target/release/beskid_cli
+EOF
   else
     printf '#!/usr/bin/env bash\nprintf "cargo fixture failure\\n" >&2\nexit 42\n' > "${fixture}/bin/cargo"
   fi
@@ -100,6 +138,37 @@ assert_contains "${PASS_MD}" "| quality checks | PASS |" "report records quality
 assert_contains "${PASS_MD}" "| build beskid_cli (release) | PASS |" "report records build command outcome"
 assert_contains "${PASS_MD}" "| stage native runtime kit | PASS |" "report records runtime staging outcome"
 assert_contains "${PASS_MD}" "| run Corelib tests | PASS |" "report records test command outcome"
+
+MANAGED_FIXTURE="${TMP}/managed"
+make_fixture "${MANAGED_FIXTURE}" pass
+mkdir "${MANAGED_FIXTURE}/installed"
+CORELIB_REPORT_DIR="${MANAGED_FIXTURE}/report" PATH="${MANAGED_FIXTURE}/bin:${PATH}" \
+  BESKID_RELEASE_MANAGED_CORELIB=1 BESKID_CORELIB_SOURCE="${MANAGED_FIXTURE}/compiler/corelib" \
+  BESKID_TEST_VERIFY_SCRIPT="${MANAGED_FIXTURE}/scripts/ci/verify-release-corelib-bundle.mjs" \
+  BESKID_CORELIB_ROOT="${MANAGED_FIXTURE}/installed" \
+  bash "${MANAGED_FIXTURE}/scripts/ci/corelib-gate.sh"
+assert_file_exists "${MANAGED_FIXTURE}/installed/.beskid-bundle.sha256" "managed bundle was materialized"
+test ! -e "${MANAGED_FIXTURE}/installed/packages/foundation/Project.lock" || fail "tracked lockfile was embedded"
+assert_contains "$(cat "${MANAGED_FIXTURE}/report/corelib-build-report.md")" \
+  "| materialize pinned Corelib bundle | PASS |" "provisioning is a reported gate stage"
+printf '%064d\n' 0 > "${MANAGED_FIXTURE}/installed/.beskid-bundle.sha256"
+if node "${MANAGED_FIXTURE}/scripts/ci/verify-release-corelib-bundle.mjs" --verify \
+  "${MANAGED_FIXTURE}/compiler/corelib" "${MANAGED_FIXTURE}/installed" >/dev/null 2>&1; then
+  fail "stale Corelib fingerprint marker must be rejected"
+fi
+
+TAMPER_FIXTURE="${TMP}/tamper"
+make_fixture "${TAMPER_FIXTURE}" pass
+mkdir "${TAMPER_FIXTURE}/installed"
+if CORELIB_REPORT_DIR="${TAMPER_FIXTURE}/report" PATH="${TAMPER_FIXTURE}/bin:${PATH}" \
+  BESKID_RELEASE_MANAGED_CORELIB=1 BESKID_CORELIB_SOURCE="${TAMPER_FIXTURE}/compiler/corelib" \
+  BESKID_TEST_VERIFY_SCRIPT="${TAMPER_FIXTURE}/scripts/ci/verify-release-corelib-bundle.mjs" \
+  BESKID_CORELIB_ROOT="${TAMPER_FIXTURE}/installed" BESKID_TEST_TAMPER_MATERIALIZED=1 \
+  bash "${TAMPER_FIXTURE}/scripts/ci/corelib-gate.sh" >"${TAMPER_FIXTURE}/stdout" 2>"${TAMPER_FIXTURE}/stderr"; then
+  fail "tampered managed bundle must fail the Corelib gate"
+fi
+assert_contains "$(cat "${TAMPER_FIXTURE}/report/corelib-build-report.md")" \
+  "| materialize pinned Corelib bundle | FAIL" "tampered bundle fails its reported stage"
 
 FAIL_FIXTURE="${TMP}/fail"
 make_fixture "${FAIL_FIXTURE}" fail

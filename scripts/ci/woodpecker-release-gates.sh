@@ -10,6 +10,7 @@ version="$(node "$root/scripts/ci/release-version.mjs" "$requested_version" --st
 source="$(git -C "$root" rev-parse HEAD)"
 compiler="$(git -C "$root" rev-parse HEAD:compiler)"
 gate_scripts="${WOODPECKER_RELEASE_GATE_SCRIPT_DIR:-$root/scripts/ci}"
+corelib_source="${WOODPECKER_RELEASE_GATE_CORELIB_SOURCE:-$root/compiler/corelib}"
 verify_source_inventory() {
   bash "$root/scripts/ci/release-source-inventory.sh" "$root" root
   bash "$root/scripts/ci/release-source-inventory.sh" "$root/compiler" compiler
@@ -17,8 +18,8 @@ verify_source_inventory() {
   bash "$root/scripts/ci/release-source-inventory.sh" "$root/beskid_bsol" bsol
 }
 if [[ -n "${CI_COMMIT_SHA:-}" || -n "${CI_PIPELINE_NUMBER:-}" || "${CI_SYSTEM_NAME:-}" == woodpecker ]]; then
-  [[ -z "${WOODPECKER_RELEASE_GATE_SCRIPT_DIR:-}" ]] || {
-    echo 'test-only release gate script override is forbidden in a pipeline' >&2; exit 2;
+  [[ -z "${WOODPECKER_RELEASE_GATE_SCRIPT_DIR:-}" && -z "${WOODPECKER_RELEASE_GATE_CORELIB_SOURCE:-}" ]] || {
+    echo 'test-only release gate overrides are forbidden in a pipeline' >&2; exit 2;
   }
   corelib="$(git -C "$root/compiler" rev-parse HEAD:corelib)"
   bsol="$(git -C "$root" rev-parse HEAD:beskid_bsol)"
@@ -38,6 +39,21 @@ if [[ -n "${CI_COMMIT_SHA:-}" || -n "${CI_PIPELINE_NUMBER:-}" || "${CI_SYSTEM_NA
   verify_source_inventory
 fi
 mkdir -p "$output"
+
+# Archive the exact Corelib Git tree for Cargo's embedded snapshot. A raw
+# archive is not an authorized installed Corelib root: the CLI must materialize
+# its embedded snapshot into a separate managed root before the matrix.
+gate_temp="$(mktemp -d "${TMPDIR:-/tmp}/beskid-release-gates.XXXXXX")"
+trap 'rm -rf -- "$gate_temp"' EXIT
+mkdir "$gate_temp/corelib"
+git -C "$corelib_source" archive HEAD | tar -xf - -C "$gate_temp/corelib"
+if [[ -n "$(find "$gate_temp/corelib" -type l -print -quit)" ]]; then
+  echo 'release Corelib source archive contains a symlink' >&2; exit 1
+fi
+export BESKID_CORELIB_SOURCE="$gate_temp/corelib"
+export BESKID_RUNTIME_PREFIX="$gate_temp/runtime-kit"
+export CARGO_TARGET_DIR="$root/compiler/target"
+unset BESKID_CLI_BIN
 
 sha256_file() {
   if command -v sha256sum >/dev/null 2>&1; then
@@ -74,7 +90,13 @@ run_gate() {
   fi
 }
 
+# Rust tests use the checked-out, pinned compiler-owned source path. That path
+# is the authority identity used by the compiler's Corelib service checks.
+export BESKID_CORELIB_ROOT="$root/compiler/corelib"
 run_gate compiler rust-gate compiler-rust-gate.sh
+mkdir "$gate_temp/installed-corelib"
+export BESKID_CORELIB_ROOT="$gate_temp/installed-corelib"
+export BESKID_RELEASE_MANAGED_CORELIB=1
 run_gate corelib matrix corelib-gate.sh
 if [[ -n "${CI_COMMIT_SHA:-}" || -n "${CI_PIPELINE_NUMBER:-}" || "${CI_SYSTEM_NAME:-}" == woodpecker ]]; then
   git -C "$root" diff --quiet
