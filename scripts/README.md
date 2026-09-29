@@ -36,6 +36,8 @@ repository-native maintenance.
 | [`publish-release-stream.sh`](ci/publish-release-stream.sh) | `gh release` for `cli-*` / `lsp-*` streams |
 | [`build-release-platform.sh`](ci/build-release-platform.sh) | Independent native CLI/LSP/bundle build with retained logs and structured failures |
 | [`build-release-state.sh`](ci/build-release-state.sh) | Stable/unstable publication eligibility and machine-readable release state |
+| [`woodpecker-release-gates.sh`](ci/woodpecker-release-gates.sh) | Source-bound compiler Rust and Corelib reports from the Linux build worker |
+| [`woodpecker-release.sh`](ci/woodpecker-release.sh) | Credential-free Woodpecker preparation and external manual publication entrypoint |
 | [`render-compiler-release-notes.sh`](ci/render-compiler-release-notes.sh) | Human-readable release notes generated from release state |
 | [`corelib-publish.sh`](ci/corelib-publish.sh) | Pack and publish the production corelib closure plus all first-party templates to pckg (`--dry-run` validates every artifact without secrets or registry mutation) |
 | [`open-vsx-publish.sh`](ci/open-vsx-publish.sh) | Open VSX publish (native) |

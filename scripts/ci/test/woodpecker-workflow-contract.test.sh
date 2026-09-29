@@ -47,6 +47,11 @@ for file in "${workflow_dir}/linux.yml" "${workflow_dir}/macos.yml" "${workflow_
   ! grep -Fq 'output}/package' "${file}"
 done
 grep -Fq 'BESKID_TASK == "build" || BESKID_TASK == "validate"' "${workflow_dir}/linux.yml"
+grep -Fq 'BESKID_TASK == "release"' "${workflow_dir}/release.yml"
+if grep -iqE 'from_secret|GH_TOKEN|BESKID_PUBLISH_RELEASE|release-publish' "${workflow_dir}/release.yml"; then
+  echo 'Woodpecker release preparation must not receive publication credentials or a publish route' >&2
+  exit 1
+fi
 
 # Open VSX is a protected, explicit publisher. The workflow must not inherit
 # credentials into an ordinary validation or native-build lane.

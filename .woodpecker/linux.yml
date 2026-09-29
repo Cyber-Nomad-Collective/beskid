@@ -21,7 +21,7 @@ steps:
     image: rust:1.98.1-bookworm@sha256:9a73a5088750b4c95158ab26629c854c3d6fc4b173cb7bc8079ad252d8ed7bfa
     commands:
       - apt-get update >/dev/null
-      - apt-get install -y --no-install-recommends ca-certificates clang git jq lld llvm mold nodejs openssh-client pkg-config libssl-dev >/dev/null
+      - apt-get install -y --no-install-recommends ca-certificates clang git jq lld llvm mold nodejs openssh-client pkg-config libssl-dev ripgrep >/dev/null
       - bash scripts/ci/init-submodules.sh beskid_distrib
       - bash scripts/ci/test/run-woodpecker-tests.sh
       - |
@@ -39,6 +39,7 @@ steps:
         fi
         output="/woodpecker-output/$${CI_PIPELINE_NUMBER}-$${CI_COMMIT_SHA}/linux"
         bash scripts/ci/woodpecker-build-platform.sh linux "$${release_version}" "$${output}"
+        bash scripts/ci/woodpecker-release-gates.sh "$${release_version}" "$${output}"
         package_output="$${output}-package"
         node scripts/ci/woodpecker-package-platform.mjs linux "$$(dirname "$${output}")" "$${package_output}"
         node -e 'const fs=require("fs"),p=process.argv[1],o=process.argv[2],r=JSON.parse(fs.readFileSync(p+"/package-result.json")); for(const a of r.artifacts) fs.copyFileSync(p+"/"+a.name,o+"/"+a.name); fs.copyFileSync(p+"/package-result.json",o+"/package-result.json")' "$${package_output}" "$${output}"

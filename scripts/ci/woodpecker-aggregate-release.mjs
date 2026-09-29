@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Local, non-publishing fan-in. Evidence must come from trusted workers.
 // Integrity checking is not authentication; never accept arbitrary uploaded evidence.
-import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { copyFileSync, lstatSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
@@ -17,6 +17,17 @@ function json(path, value) {
 }
 function validate(path) {
   return JSON.parse(run(process.execPath, [join(scripts, "woodpecker-release-evidence.mjs"), path]));
+}
+function copyGateEvidence(from, to) {
+  for (const component of ["compiler", "corelib"]) {
+    for (const suffix of ["json", "log"]) {
+      const name = `release-gate-${component}.${suffix}`;
+      const source = join(from, name);
+      const stat = lstatSync(source);
+      if (stat.isSymbolicLink() || !stat.isFile()) throw new Error(`invalid release gate artifact: ${name}`);
+      copyFileSync(source, join(to, name));
+    }
+  }
 }
 
 try {
@@ -39,6 +50,7 @@ try {
       copyFileSync(join(input, platform.platform, name), join(snapshot, platform.platform, name));
     }
   }
+  copyGateEvidence(join(input, "linux"), join(snapshot, "linux"));
   // Recheck the private snapshot so concurrent input changes cannot be promoted.
   const checked = validate(snapshot);
   if (JSON.stringify(checked) !== JSON.stringify(evidence)) throw new Error("evidence changed while snapshotting");
@@ -48,6 +60,10 @@ try {
   const reports = join(output, "gate-reports");
   mkdirSync(reports);
   mkdirSync(join(reports, "stages"));
+  for (const component of ["compiler", "corelib"]) {
+    copyFileSync(join(snapshot, "linux", `release-gate-${component}.json`), join(reports, "stages", `${component}.json`));
+    copyFileSync(join(snapshot, "linux", `release-gate-${component}.log`), join(reports, `release-gate-${component}.log`));
+  }
   for (const [index, platform] of checked.platforms.entries()) {
     json(join(reports, "stages", `${index}.json`), {
       component: platform.platform, stage: "native-build", platform: platform.target, status: "success",

@@ -11,6 +11,14 @@ gate_result="${5:?gate result}"
 output="${6:?output path}"
 shift 6
 
+sha256_file() {
+  if command -v sha256sum >/dev/null 2>&1; then
+    sha256sum "$1" | awk '{print $1}'
+  else
+    shasum -a 256 "$1" | awk '{print $1}'
+  fi
+}
+
 case "${channel}" in stable|unstable) ;; *) echo "unsupported channel: ${channel}" >&2; exit 1 ;; esac
 [[ "$#" -gt 0 ]] || { echo 'at least one platform result is required' >&2; exit 1; }
 
@@ -32,14 +40,17 @@ if [[ -n "${HANDOFF_RELEASE_URL:-}" ]]; then
 fi
 gate_diagnostics='[]'
 test_results='[]'
+stages_json='[]'
+stage_tree_safe=true
 if [[ -n "${GATE_REPORT_DIR:-}" && -d "${GATE_REPORT_DIR}/stages" ]]; then
+  if [[ -L "${GATE_REPORT_DIR}" || -L "${GATE_REPORT_DIR}/stages" ]]; then stage_tree_safe=false; fi
   stage_files=("${GATE_REPORT_DIR}"/stages/*.json)
   if [[ -e "${stage_files[0]}" ]]; then
+    for stage_file in "${stage_files[@]}"; do
+      if [[ -L "${stage_file}" || ! -f "${stage_file}" ]]; then stage_tree_safe=false; fi
+    done
     stages_json="$(jq -s 'sort_by(.component, .stage)' "${stage_files[@]}")"
-    test_results="$(jq '[.[] | {component, stage, platform, status, command, raw_log, job_id: null, job_url: null}]' <<<"${stages_json}")"
-  else
-    successful_tests='[]'
-    failed_tests='[]'
+    test_results="$(jq '[.[] | {component, stage, platform, status, exit_code, command, raw_log, raw_log_sha256, version, source, job_id: null, job_url: null}]' <<<"${stages_json}")"
   fi
   failure_files=("${GATE_REPORT_DIR}"/failures/*.json)
   if [[ -e "${failure_files[0]}" ]]; then
@@ -47,15 +58,34 @@ if [[ -n "${GATE_REPORT_DIR:-}" && -d "${GATE_REPORT_DIR}/stages" ]]; then
   fi
 fi
 
-if [[ "$(jq 'length' <<<"${test_results}")" -gt 0 ]]; then
-  successful_tests="$(jq '[.[] | select(.status == "success") | "\(.component):\(.stage)"] | unique | sort' <<<"${test_results}")"
-  failed_tests="$(jq '[.[] | select(.status == "failed") | "\(.component):\(.stage)"] | unique | sort' <<<"${test_results}")"
-elif [[ "${gate_result}" == success ]]; then
-  successful_tests='["compiler-rust-gate","lsp-command-contract-gate"]'
-  failed_tests='[]'
-else
-  successful_tests='[]'
-  failed_tests='["compiler-rust-gate","lsp-command-contract-gate"]'
+successful_tests="$(jq '[.[] | select(.status == "success") | "\(.component):\(.stage)"] | unique | sort' <<<"${test_results}")"
+failed_tests="$(jq '[.[] | select(.status == "failed") | "\(.component):\(.stage)"] | unique | sort' <<<"${test_results}")"
+
+qualified_gates=false
+if [[ "${channel}" == stable ]]; then
+  if [[ "${stage_tree_safe}" == true ]] && jq -e --arg version "${version}" --arg compiler "${compiler_sha}" --arg superrepo "${superrepo_sha}" '
+    def required($component; $stage):
+      [.[] | select(.component == $component and .stage == $stage)] as $matches |
+      ($matches | length) == 1 and
+      ($matches[0] | .schema_version == 1 and .status == "success" and .exit_code == 0 and
+        .version == $version and .source.compiler_commit == $compiler and
+        .source.superrepo_commit == $superrepo and
+        (.raw_log | type == "string" and test("^[A-Za-z0-9][A-Za-z0-9._-]*$")) and
+        (.raw_log_sha256 | type == "string" and test("^[0-9a-f]{64}$")));
+    required("compiler"; "rust-gate") and required("corelib"; "matrix")
+  ' <<<"${stages_json}" >/dev/null; then
+    qualified_gates=true
+    while IFS=$'\t' read -r log digest; do
+      log_path="${GATE_REPORT_DIR}/${log}"
+      if [[ -L "${log_path}" || ! -f "${log_path}" || "$(sha256_file "${log_path}")" != "${digest}" ]]; then
+        qualified_gates=false
+        break
+      fi
+    done < <(jq -r '.[] | select((.component == "compiler" and .stage == "rust-gate") or (.component == "corelib" and .stage == "matrix")) | [.raw_log, .raw_log_sha256] | @tsv' <<<"${stages_json}")
+  fi
+  if [[ "${qualified_gates}" != true ]]; then
+    echo 'stable release requires source-matched compiler Rust and Corelib matrix reports with verified logs' >&2
+  fi
 fi
 
 jq -n \
@@ -64,6 +94,7 @@ jq -n \
   --arg compiler_sha "${compiler_sha}" \
   --arg superrepo_sha "${superrepo_sha}" \
   --arg gate_result "${gate_result}" \
+  --argjson qualified_gates "${qualified_gates}" \
   --argjson results "${results_json}" \
   --argjson successful_tests "${successful_tests}" \
   --argjson failed_tests "${failed_tests}" \
@@ -90,7 +121,7 @@ jq -n \
     diagnostics: ($gate_diagnostics + [$results[] | .diagnostics[]?])
   }
   | .publishable = if $channel == "stable"
-      then ($gate_result == "success" and (.complete_platforms | length) == 3 and (.failed_platform_builds | length) == 0)
+      then ($gate_result == "success" and $qualified_gates and (.complete_platforms | length) == 3 and (.failed_platform_builds | length) == 0)
       else ((.complete_platforms | length) >= 1)
     end
   ' >"${output}"

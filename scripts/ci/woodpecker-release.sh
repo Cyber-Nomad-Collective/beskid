@@ -12,10 +12,16 @@ version="$(node "$scripts/release-version.mjs" "$requested_version" --stable-onl
 source_sha="$(git -C "$repo" rev-parse HEAD)"
 compiler_sha="$(git -C "$repo" rev-parse HEAD:compiler)"
 distrib_sha="$(git -C "$repo" rev-parse HEAD:beskid_distrib)"
-pipeline="${CI_PIPELINE_NUMBER:-}"
-[[ "$pipeline" =~ ^[1-9][0-9]*$ && "${CI_COMMIT_SHA:-}" == "$source_sha" ]] || {
+pipeline="${CI_PIPELINE_NUMBER:-manual-${build_run}}"
+[[ "$pipeline" =~ ^([1-9][0-9]*|manual-[1-9][0-9]*)$ ]] && \
+  [[ -z "${CI_COMMIT_SHA:-}" || "${CI_COMMIT_SHA}" == "$source_sha" ]] || {
   echo 'release pipeline/source identity does not match the checkout' >&2; exit 1;
 }
+if [[ "${CI_SYSTEM_NAME:-}" == woodpecker ]]; then
+  [[ "${CI_PIPELINE_NUMBER:-}" =~ ^[1-9][0-9]*$ && "${CI_COMMIT_SHA:-}" == "$source_sha" ]] || {
+    echo 'Woodpecker release preparation requires its own pipeline/source identity' >&2; exit 1;
+  }
+fi
 
 test_root="${WOODPECKER_RELEASE_TEST_ROOT:-}"
 if [[ -n "$test_root" && "${CI_SYSTEM_NAME:-}" == woodpecker ]]; then
@@ -26,8 +32,14 @@ output_root="${test_root%/}/woodpecker-output"
 [[ -n "$test_root" ]] || { handoff_root=/woodpecker-handoff; output_root=/woodpecker-output; }
 
 if [[ "${BESKID_PUBLISH_RELEASE:-0}" == 1 ]]; then
-  [[ "${CI:-}" == true && "${CI_PIPELINE_EVENT:-}" == manual && "${CI_COMMIT_BRANCH:-}" == main && -n "${GH_TOKEN:-}" ]] || {
-    echo 'publication requires CI manual main and GH_TOKEN' >&2; exit 1;
+  [[ "${CI_SYSTEM_NAME:-}" != woodpecker && "${BESKID_MANUAL_PUBLISH:-0}" == 1 && -n "${GH_TOKEN:-}" ]] || {
+    echo 'publication requires an external manual publisher and GH_TOKEN' >&2; exit 1;
+  }
+  [[ "${CI:-}" != true && "$(git -C "$repo" branch --show-current)" == main ]] || {
+    echo 'manual publication requires a clean local main checkout' >&2; exit 1;
+  }
+  [[ -z "$(git -C "$repo" status --porcelain --untracked-files=normal --ignore-submodules=all)" ]] || {
+    echo 'manual publication requires a clean local main checkout' >&2; exit 1;
   }
 elif [[ "${BESKID_PUBLISH_RELEASE:-0}" != 0 ]]; then
   echo 'BESKID_PUBLISH_RELEASE must be 0 or 1' >&2; exit 2
@@ -85,6 +97,12 @@ for role in "${roles[@]}"; do
     "$release/input/$role/platform-result-${target}.json" \
     "$release/input/$role/woodpecker-build-result.json" \
     "$release/input/$role/SHA256SUMS" "$release/native/$role/"
+  if [[ "$role" == linux ]]; then
+    for component in compiler corelib; do
+      cp "$release/input/linux/release-gate-${component}.json" \
+        "$release/input/linux/release-gate-${component}.log" "$release/native/linux/"
+    done
+  fi
 done
 
 qualified="$release/qualified"

@@ -3,8 +3,8 @@
 Woodpecker 3.18.1 on `bdziam.dev` runs beskid builds. Linux performs normal
 validation. Linux, macOS, and Windows perform native target builds and local
 installer packaging; their output is durable and named by pipeline and source
-SHA. A protected manual `main` release prepares the existing aggregate by
-default and publishes only when explicitly opted in.
+SHA. A manual `main` Woodpecker release prepares the existing aggregate; it
+has no publication credentials.
 
 No workflow deploys production. The rootless platform-image job is optional.
 Marketplace, Homebrew, and OCI publishing use the existing canonical manual
@@ -21,9 +21,8 @@ The macOS worker needs the official arm64 agent, Git, Node, jq,
 tar, Rust 1.98.1, Xcode tools, and Homebrew LLVM; it writes under
 `~/Library/Application Support/Woodpecker/beskid-output`.
 
-Keep agent secrets in host-managed files and publisher credentials in protected
-Woodpecker secrets, never tracked files or custom pipeline variables. Publisher
-secrets are bound only to the manual step that needs them.
+Keep agent handoff keys in host-managed files. Keep publisher credentials
+outside Woodpecker and never place them in tracked files or pipeline variables.
 
 Native clone uses the `plugin-git` executable from Woodpecker plugin-git 2.10.1
 on each account's PATH, not a Docker image. Agents connect with TLS to
@@ -55,9 +54,13 @@ woodpecker-cli pipeline create Cyber-Nomad-Collective/beskid --branch main \
 ```
 
 `release` only prepares local output and needs no publisher credential.
-After reviewing it, use the same arguments with `BESKID_TASK=release-publish`
-to explicitly publish from `main`. The workflow binds `compiler_release_token`
-only to that step. The script checks the source SHA, compiler/distribution
+After reviewing the prepared state and exact artifact hashes, run
+`scripts/ci/woodpecker-release.sh <build-run> <version>` from a clean local
+`main` checkout on the trusted manual release host, with
+`BESKID_MANUAL_PUBLISH=1`, `BESKID_PUBLISH_RELEASE=1`, and `GH_TOKEN` supplied
+to that process outside Woodpecker. The host must have the selected handoffs
+at `/woodpecker-handoff` and a durable `/woodpecker-output` directory. The
+script checks the source SHA, compiler/distribution
 gitlinks, version, all three targets, upload completion, and checksums before
 calling the existing stream publisher. A changed `main` cannot consume an older
 build: rebuild from the selected revision. Immutable release retries must be
@@ -66,18 +69,18 @@ byte-identical; conflicting assets are not overwritten.
 ### Owner-scoped Windows installer test waiver
 
 The Windows installer scenario matrix is normally a release gate. For a release
-where the owner explicitly waives that matrix, the protected manual `main`
+where the owner explicitly waives that matrix, the external manual `main`
 publisher accepts one decision record via
-`BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_JSON` (or, for a local manual invocation,
-`BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_FILE`). This is a waiver, **not** a claim
+`BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_JSON` or
+`BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_FILE`. This is a waiver, **not** a claim
 of VM attestation or passing tests. It does not bypass the three-platform build
 results, source identity, handoff checksums, package-result checksums, or the
 manual-only publisher guard. Without a matching record, publication remains
 blocked; structural smoke evidence alone is not trusted VM provenance.
 
 Review the final `main` commit and the exact setup executable in the Windows
-handoff from the chosen build run. Supply this JSON as the protected manual
-pipeline variable, replacing the example values with the reviewed facts:
+handoff from the chosen build run. Supply this JSON to the manual publisher,
+replacing the example values with the reviewed facts:
 
 ```json
 {"schema_version":1,"decision":"release-owner-installer-test-waiver","scope":"windows-installer-scenario-tests-only","source_commit":"<40-character final main SHA>","version":"<stable version>","installer_sha256":"<64-character SHA-256 of the Windows setup EXE>","approved_utc":"<UTC timestamp, YYYY-MM-DDTHH:MM:SSZ>"}

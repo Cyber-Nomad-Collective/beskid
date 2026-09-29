@@ -12,7 +12,7 @@ clone:
 steps:
   - name: prepare-release
     image: node:22.16.0-bookworm
-    commands: &release-commands
+    commands:
       - apt-get update >/dev/null
       - apt-get install -y --no-install-recommends ca-certificates gh git jq openssh-client >/dev/null
       - bash scripts/ci/woodpecker-fetch-handoffs.sh "$${BESKID_BUILD_PIPELINE_NUMBER:?select build run}" "$${CI_COMMIT_SHA}" /woodpecker-handoff
@@ -20,20 +20,7 @@ steps:
     when:
       - evaluate: 'BESKID_TASK == "release"'
 
-  - name: publish-release
-    image: node:22.16.0-bookworm
-    environment:
-      BESKID_PUBLISH_RELEASE: "1"
-      GH_TOKEN:
-        from_secret: compiler_release_token
-    commands: *release-commands
-    when:
-      - event: manual
-        branch: main
-        evaluate: 'BESKID_TASK == "release-publish"'
-
-# Preparation has no credentials. Publication uses the same entrypoint and is
-# selected explicitly; no compiler release is published by push or tag.
+# Woodpecker prepares release evidence without publication credentials.
 when:
   - event: manual
-    evaluate: 'BESKID_TASK == "release" || BESKID_TASK == "release-publish"'
+    evaluate: 'BESKID_TASK == "release"'

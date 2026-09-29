@@ -109,6 +109,19 @@ function createFixture(overrides = {}) {
   return root;
 }
 
+function writeGateFixture(root) {
+  for (const [component, stage] of [["compiler", "rust-gate"], ["corelib", "matrix"]]) {
+    const log = `release-gate-${component}.log`;
+    const content = `${component} gate fixture passed\n`;
+    writeFileSync(join(root, "linux", log), content);
+    writeJson(join(root, "linux", `release-gate-${component}.json`), {
+      schema_version: 1, component, stage, platform: "linux", version: VERSION,
+      source: SOURCE, status: "success", exit_code: 0, command: "fixture gate",
+      raw_log: log, raw_log_sha256: sha256(content),
+    });
+  }
+}
+
 function runValidator(root) {
   return spawnSync(process.execPath, [validatorPath.pathname, root], {
     encoding: "utf8",
@@ -195,24 +208,65 @@ test("packaging rejects evidence for another checkout before output creation", (
   assert.equal(existsSync(output), false);
 });
 
-test("aggregation snapshots validated artifacts and records only observed gates", (t) => {
+test("aggregation refuses to qualify native builds without compiler and Corelib gate reports", (t) => {
   const root = createFixture();
   const output = join(root, "aggregate");
   t.after(() => rmSync(root, { recursive: true, force: true }));
   const args = [aggregatePath.pathname, root, output, VERSION, SOURCE.superrepo_commit, SOURCE.compiler_commit];
   const result = spawnSync(process.execPath, args, { encoding: "utf8" });
-  assert.equal(result.status, 0, result.stderr);
-  const state = JSON.parse(readFileSync(join(output, "release-state.json")));
-  assert.equal(state.publishable, true);
-  assert.deepEqual(state.tests.successful, ["linux:native-build", "macos:native-build", "windows:native-build"]);
-  assert.equal(state.complete_platforms.length, 3);
-  assert.equal(readFileSync(join(output, "assets", "beskid-linux-amd64"), "utf8"), "linux-cli");
-  const manifest = JSON.parse(readFileSync(join(output, "assets", "beskid-release.json")));
-  assert.equal(manifest.commit, SOURCE.compiler_commit);
-  assert.equal(manifest.bundles.length, 3);
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /release-gate-compiler.json/);
   const again = spawnSync(process.execPath, args, { encoding: "utf8" });
   assert.notEqual(again.status, 0, "must not replace an existing transaction");
 });
+
+test("aggregation carries source-bound gate logs into qualified release state", (t) => {
+  const root = createFixture();
+  writeGateFixture(root);
+  const output = join(root, "aggregate");
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  const result = spawnSync(process.execPath, [aggregatePath.pathname, root, output, VERSION, SOURCE.superrepo_commit, SOURCE.compiler_commit], { encoding: "utf8" });
+  assert.equal(result.status, 0, result.stderr);
+  const state = JSON.parse(readFileSync(join(output, "release-state.json")));
+  assert.equal(state.publishable, true);
+  assert.deepEqual(state.tests.successful, ["compiler:rust-gate", "corelib:matrix", "linux:native-build", "macos:native-build", "windows:native-build"]);
+  assert.equal(state.tests.results.find(entry => entry.component === "corelib").raw_log_sha256,
+    sha256("corelib gate fixture passed\n"));
+  assert.equal(readFileSync(join(output, "gate-reports", "release-gate-corelib.log"), "utf8"), "corelib gate fixture passed\n");
+});
+
+for (const [name, mutate, expected] of [
+  ["stale gate source", root => {
+    const path = join(root, "linux", "release-gate-corelib.json");
+    const report = JSON.parse(readFileSync(path, "utf8"));
+    report.source.compiler_commit = "c".repeat(40);
+    writeJson(path, report);
+  }, /source-matched compiler Rust and Corelib matrix reports/],
+  ["symlinked gate report", root => {
+    const path = join(root, "linux", "release-gate-corelib.json");
+    const external = join(root, "external-corelib.json");
+    writeFileSync(external, readFileSync(path));
+    rmSync(path);
+    symlinkSync(external, path);
+  }, /invalid release gate artifact/],
+  ["tampered gate log", root => {
+    writeFileSync(join(root, "linux", "release-gate-corelib.log"), "altered after gate execution\n");
+  }, /source-matched compiler Rust and Corelib matrix reports/],
+]) {
+  test(`aggregation rejects ${name} before qualification`, (t) => {
+    const root = createFixture();
+    writeGateFixture(root);
+    mutate(root);
+    t.after(() => rmSync(root, { recursive: true, force: true }));
+    const output = join(root, "aggregate");
+    const result = spawnSync(process.execPath, [aggregatePath.pathname, root, output, VERSION, SOURCE.superrepo_commit, SOURCE.compiler_commit], { encoding: "utf8" });
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, expected);
+    if (existsSync(join(output, "release-state.json"))) {
+      assert.equal(JSON.parse(readFileSync(join(output, "release-state.json"))).publishable, false);
+    }
+  });
+}
 
 test("aggregation rejects wrong requested source and failed evidence before creating output", (t) => {
   const root = createFixture();

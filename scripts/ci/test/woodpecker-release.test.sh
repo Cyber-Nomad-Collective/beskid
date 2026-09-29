@@ -1,14 +1,23 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-root="$(cd "$(dirname "$0")/../../.." && pwd)"
-script="$root/scripts/ci/woodpecker-release.sh"
+source_root="$(cd "$(dirname "$0")/../../.." && pwd)"
 tmp="$(mktemp -d)"
+tmp="$(cd "$tmp" && pwd -P)"
 trap 'rm -rf "$tmp"' EXIT
+root="$tmp/repo"
+git init -q -b main "$root"
+mkdir -p "$root/scripts"
+cp -R "$source_root/scripts/ci" "$root/scripts/"
+compiler_sha="$(git -C "$source_root" rev-parse HEAD:compiler)"
+distrib_sha="$(git -C "$source_root" rev-parse HEAD:beskid_distrib)"
+git -C "$root" add scripts/ci
+git -C "$root" update-index --add --cacheinfo "160000,$compiler_sha,compiler"
+git -C "$root" update-index --add --cacheinfo "160000,$distrib_sha,beskid_distrib"
+git -C "$root" -c user.name='Release test' -c user.email='release-test@example.invalid' commit -qm fixture
+script="$root/scripts/ci/woodpecker-release.sh"
 version=0.4.744
 source_sha="$(git -C "$root" rev-parse HEAD)"
-compiler_sha="$(git -C "$root" rev-parse HEAD:compiler)"
-distrib_sha="$(git -C "$root" rev-parse HEAD:beskid_distrib)"
 build_run=41
 
 fail() { echo "FAIL: $*" >&2; exit 1; }
@@ -64,6 +73,18 @@ write_role() {
     --arg bundle "$(sha "$installer_dir/beskid-${version}-${target}.tar.gz")" --argjson artifacts "$artifacts" \
     '{schema_version:1,platform:$role,target:$target,version:$version,source:{superrepo_commit:$source,compiler_commit:$compiler},distrib_commit:$distrib,bundle_sha256:$bundle,status:"success",published:false,artifacts:$artifacts}' \
     >"$installer_dir/package-result.json"
+  if [[ "$role" == linux ]]; then
+    for item in 'compiler rust-gate' 'corelib matrix'; do
+      read -r component stage <<<"$item"
+      log="release-gate-${component}.log"
+      printf 'fixture %s gate executed\n' "$component" >"$installer_dir/$log"
+      jq -n --arg component "$component" --arg stage "$stage" \
+        --arg version "$version" --arg source "$source_sha" --arg compiler "$compiler_sha" \
+        --arg log "$log" --arg digest "$(sha "$installer_dir/$log")" \
+        '{schema_version:1,component:$component,stage:$stage,platform:"linux",version:$version,source:{superrepo_commit:$source,compiler_commit:$compiler},status:"success",exit_code:0,command:"fixture gate",raw_log:$log,raw_log_sha256:$digest}' \
+        >"$installer_dir/release-gate-${component}.json"
+    done
+  fi
   (
     cd "$installer_dir"
     find . -maxdepth 1 -type f ! -name 'UPLOAD_*' -exec basename {} \; | LC_ALL=C sort | while IFS= read -r name; do shasum -a 256 "$name"; done
@@ -136,6 +157,23 @@ test "$(jq -r '.distribution.homebrew_formula.name' "$output/release-state.json"
   fail 'release state omitted the Homebrew formula'
 test ! -s "$tmp/gh.log" || fail 'prepare mode reached GitHub'
 
+# The handoff itself can be complete while the source-bound compiler report is
+# absent. That run must fail before reaching any publication call.
+linux_input="$tmp/rootfs/woodpecker-handoff/linux/incoming/${build_run}-${source_sha}/linux"
+rm "$linux_input/release-gate-compiler.json"
+(
+  cd "$linux_input"
+  find . -maxdepth 1 -type f ! -name 'UPLOAD_*' -exec basename {} \; | LC_ALL=C sort | while IFS= read -r name; do shasum -a 256 "$name"; done
+) >"$linux_input/UPLOAD_SHA256SUMS"
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=701 CI_COMMIT_SHA="$source_sha" \
+  GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
+  bash "$script" "$build_run" "$version" 2>"$tmp/missing-gate.err"; then
+  fail 'release preparation accepted a handoff without compiler gate evidence'
+fi
+grep -Fq 'release-gate-compiler.json' "$tmp/missing-gate.err" || fail 'missing compiler gate was not diagnosed'
+test ! -s "$tmp/gh.log" || fail 'missing compiler gate reached GitHub'
+write_role linux
+
 # A handoff checksum failure is rejected before a transaction is created.
 printf 'tampered\n' >>"$tmp/rootfs/woodpecker-handoff/linux/incoming/${build_run}-${source_sha}/linux/beskid-${version}-amd64.deb"
 touch "$tmp/rootfs/woodpecker-handoff/linux/incoming/${build_run}-${source_sha}/linux/UPLOAD_COMPLETE"
@@ -164,7 +202,27 @@ grep -Fq 'installer checksum mismatch' "$tmp/package-tamper.err" || fail 'packag
 write_role linux
 
 # Publish mode must fail closed before GitHub unless it is a trusted manual main build.
+export BESKID_MANUAL_PUBLISH=1
 : >"$tmp/gh.log"
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=true CI_PIPELINE_NUMBER=720 CI_COMMIT_SHA="$source_sha" \
+  CI_PIPELINE_EVENT=manual CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
+  GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
+  bash "$script" "$build_run" "$version" 2>"$tmp/spoofed-main.err"; then
+  fail 'spoofed CI manual/main values authorized publication'
+fi
+grep -Fq 'clean local main checkout' "$tmp/spoofed-main.err" || fail 'spoofed publication was not rejected by real Git state'
+test ! -s "$tmp/gh.log" || fail 'spoofed publication reached GitHub'
+
+printf 'not in the release commit\n' >"$root/untracked-source.bd"
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=false CI_PIPELINE_NUMBER=722 CI_COMMIT_SHA="$source_sha" \
+  GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
+  bash "$script" "$build_run" "$version" 2>"$tmp/dirty-main.err"; then
+  fail 'dirty local main authorized publication with test root'
+fi
+grep -Fq 'clean local main checkout' "$tmp/dirty-main.err" || fail 'dirty checkout rejection was not diagnosed'
+test ! -s "$tmp/gh.log" || fail 'dirty checkout reached GitHub'
+rm "$root/untracked-source.bd"
+
 if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=true CI_PIPELINE_NUMBER=72 CI_COMMIT_SHA="$source_sha" \
   CI_PIPELINE_EVENT=pull_request CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
   PATH="$tmp/bin:$PATH" bash "$script" "$build_run" "$version"; then
@@ -174,7 +232,7 @@ test ! -s "$tmp/gh.log" || fail 'untrusted publication reached GitHub'
 
 # Trusted publication still requires disposable-VM installer evidence.
 : >"$tmp/gh.log"
-if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=true CI_PIPELINE_NUMBER=721 CI_COMMIT_SHA="$source_sha" \
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=false CI_PIPELINE_NUMBER=721 CI_COMMIT_SHA="$source_sha" \
   CI_PIPELINE_EVENT=manual CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
   GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
   bash "$script" "$build_run" "$version" 2>"$tmp/missing-smoke.err"; then
@@ -210,7 +268,7 @@ node "$root/scripts/ci/windows-installer-smoke-gate.mjs" "$smoke_dir" \
 
 # Synthetic evidence must never authorize production publication.
 : >"$tmp/gh.log"
-if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=true CI_PIPELINE_NUMBER=73 CI_COMMIT_SHA="$source_sha" \
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=false CI_PIPELINE_NUMBER=73 CI_COMMIT_SHA="$source_sha" \
   CI_PIPELINE_EVENT=manual CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
   BESKID_WINDOWS_INSTALLER_SMOKE_DIR="$smoke_dir" \
   GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
@@ -227,7 +285,7 @@ setup_digest="$(sha "$tmp/rootfs/woodpecker-handoff/windows/incoming/${build_run
 jq -n --arg source "$source_sha" --arg version "$version" --arg setup "$setup_digest" \
   '{schema_version:1,decision:"release-owner-installer-test-waiver",scope:"windows-installer-scenario-tests-only",source_commit:$source,version:$version,installer_sha256:$setup,approved_utc:"2026-09-28T00:00:00Z"}' >"$waiver"
 : >"$tmp/gh.log"
-if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=true CI_PIPELINE_NUMBER=74 CI_COMMIT_SHA="$source_sha" \
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=false CI_PIPELINE_NUMBER=74 CI_COMMIT_SHA="$source_sha" \
   CI_PIPELINE_EVENT=manual CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
   BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_FILE="$waiver" \
   GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
@@ -243,7 +301,7 @@ jq -e --arg source "$source_sha" --arg setup "$setup_digest" \
 # A manual Woodpecker run can supply the same decision record as a pipeline
 # variable, without requiring a pre-existing file inside the short-lived job.
 : >"$tmp/gh.log"
-if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=true CI_PIPELINE_NUMBER=741 CI_COMMIT_SHA="$source_sha" \
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=false CI_PIPELINE_NUMBER=741 CI_COMMIT_SHA="$source_sha" \
   CI_PIPELINE_EVENT=manual CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
   BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_JSON="$(jq -c . "$waiver")" \
   GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
@@ -255,7 +313,7 @@ test -s "$tmp/gh.log" || fail 'matching inline owner waiver did not pass the ins
 # A record copied from another source revision cannot authorize GitHub calls.
 jq '.source_commit="0000000000000000000000000000000000000000"' "$waiver" >"$tmp/wrong-source-waiver.json"
 : >"$tmp/gh.log"
-if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=true CI_PIPELINE_NUMBER=75 CI_COMMIT_SHA="$source_sha" \
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=false CI_PIPELINE_NUMBER=75 CI_COMMIT_SHA="$source_sha" \
   CI_PIPELINE_EVENT=manual CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
   BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_FILE="$tmp/wrong-source-waiver.json" \
   GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
@@ -266,7 +324,7 @@ test ! -s "$tmp/gh.log" || fail 'wrong-source owner waiver reached GitHub'
 
 jq '.installer_sha256="0000000000000000000000000000000000000000000000000000000000000000"' "$waiver" >"$tmp/wrong-installer-waiver.json"
 : >"$tmp/gh.log"
-if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=true CI_PIPELINE_NUMBER=76 CI_COMMIT_SHA="$source_sha" \
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=false CI_PIPELINE_NUMBER=76 CI_COMMIT_SHA="$source_sha" \
   CI_PIPELINE_EVENT=manual CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
   BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_FILE="$tmp/wrong-installer-waiver.json" \
   GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
@@ -277,7 +335,7 @@ test ! -s "$tmp/gh.log" || fail 'wrong-installer owner waiver reached GitHub'
 
 ln -s "$waiver" "$tmp/linked-waiver.json"
 : >"$tmp/gh.log"
-if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=true CI_PIPELINE_NUMBER=77 CI_COMMIT_SHA="$source_sha" \
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=false CI_PIPELINE_NUMBER=77 CI_COMMIT_SHA="$source_sha" \
   CI_PIPELINE_EVENT=manual CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
   BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_FILE="$tmp/linked-waiver.json" \
   GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
@@ -288,7 +346,7 @@ test ! -s "$tmp/gh.log" || fail 'symlinked owner waiver reached GitHub'
 
 jq '.scope="all-release-gates"' "$waiver" >"$tmp/wide-waiver.json"
 : >"$tmp/gh.log"
-if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=true CI_PIPELINE_NUMBER=78 CI_COMMIT_SHA="$source_sha" \
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=false CI_PIPELINE_NUMBER=78 CI_COMMIT_SHA="$source_sha" \
   CI_PIPELINE_EVENT=manual CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
   BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_FILE="$tmp/wide-waiver.json" \
   GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
