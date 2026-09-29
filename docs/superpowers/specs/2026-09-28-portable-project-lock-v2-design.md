@@ -106,8 +106,11 @@ folding; aliases are rejected across hosts, even if the current host would
 store both names separately. Non-portable Windows components, including
 reserved device names and trailing dots or spaces, are rejected. Directory
 entries must have empty payloads and pass integrity validation; they are not
-skipped during full-archive checks. Preflight rejects more than 10,000 ZIP
-entries, an entry name longer than 4,096 UTF-8 bytes, or more than 256
+skipped during full-archive checks. Preflight counts raw central-directory
+records, including duplicate names, and rejects more than 10,000 ZIP entries
+before the ZIP library can coalesce names. ZIP64 is rejected in v0.5 because
+its entry count would otherwise bypass this bound. It also rejects an entry
+name longer than 4,096 UTF-8 bytes, or more than 256
 components per name before building path-prefix indexes. Retained path-prefix
 key bytes have a cumulative 64 MiB (67,108,864 byte) budget, separate from
 compressed and uncompressed archive limits, so a small deeply nested ZIP

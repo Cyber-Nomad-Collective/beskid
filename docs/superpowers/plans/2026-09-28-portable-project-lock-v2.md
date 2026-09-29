@@ -21,7 +21,7 @@
 - Registry dependencies pin version and artifact SHA-256; missing or mismatched pins fail closed without choosing a newer version.
 - Registry preflight streams compressed archives into auto-cleaned scratch storage with a 64 MiB per-artifact cap; it rejects oversized responses before extraction or project preparation output.
 - Registry extraction validates and stages the complete ZIP before changing a materialized package, rejects conflicting/special paths, and caps uncompressed output at 512 MiB per entry and 1 GiB total; failures preserve the prior package and lock.
-- Registry ZIP preflight rejects more than 10,000 entries, names longer than 4,096 UTF-8 bytes, paths deeper than 256 components, or cumulative retained prefix-key bytes above 64 MiB. It rejects Unicode-normalized full-case-fold aliases and non-portable Windows components before publication.
+- Registry ZIP preflight rejects more than 10,000 raw central-directory entries (including duplicate names), ZIP64 archives, names longer than 4,096 UTF-8 bytes, paths deeper than 256 components, or cumulative retained prefix-key bytes above 64 MiB. It rejects Unicode-normalized full-case-fold aliases and non-portable Windows components before publication.
 - Digest-derived registry roots are immutable: rename fully staged output only into an absent root; reuse an existing root only after full path/type/byte equivalence, otherwise fail closed without modifying it.
 - `beskid lock` and `beskid update` may migrate v1 from the current manifest graph. Other consumers never silently migrate; `--locked` and `--frozen` write nothing.
 - Preserve user changes and unrelated generated files. Do not run heavy builds on this Mac; use the NixOS builder for them, and use macOS only with at least 20 GiB free.
