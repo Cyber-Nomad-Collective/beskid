@@ -39,7 +39,7 @@ The compiler SHALL derive a dependency's materialized directory name from a cano
 - **THEN** it fails before copying or replaying content outside that directory
 
 ### Requirement: Pinned registry artifacts
-When a valid v2 lock exists, ordinary and strict resolution SHALL select its exact pinned registry version and verify the downloaded archive's SHA-256 against `artifact_digest` before extraction. An unavailable pinned version or a digest mismatch SHALL fail without selecting a newer version or extracting the artifact. `beskid update` MAY deliberately select a newer version and SHALL write its new version and digest. The compiler SHALL stream each compressed registry archive through auto-cleaned scratch storage while hashing, and SHALL reject an archive larger than 64 MiB (67,108,864 bytes) before extraction or project preparation output, regardless of pin or unresolved-warning policy. Path dependencies SHALL remain live sources: their contents MAY change without a lock change, while their manifest-derived identity and relative location remain checked.
+When a valid v2 lock exists, ordinary and strict resolution SHALL select its exact pinned registry version and verify the downloaded archive's SHA-256 against `artifact_digest` before extraction. An unavailable pinned version or a digest mismatch SHALL fail without selecting a newer version or extracting the artifact. `beskid update` MAY deliberately select a newer version and SHALL write its new version and digest. The compiler SHALL stream each compressed registry archive through auto-cleaned scratch storage while hashing, and SHALL reject an archive larger than 64 MiB (67,108,864 bytes) before extraction or project preparation output, regardless of pin or unresolved-warning policy. The compiler SHALL fully validate and stage an archive before changing its materialized package directory, SHALL reject conflicting or unsafe ZIP entries, and SHALL enforce both a 512 MiB (536,870,912 byte) per-entry and 1 GiB (1,073,741,824 byte) total uncompressed output limit during extraction. A rejected archive SHALL leave the prior materialized package unchanged and remove its scratch data. Path dependencies SHALL remain live sources: their contents MAY change without a lock change, while their manifest-derived identity and relative location remain checked.
 
 #### Scenario: Newer registry version exists
 - **GIVEN** a valid v2 registry pin and a newer available version
@@ -55,6 +55,11 @@ When a valid v2 lock exists, ordinary and strict resolution SHALL select its exa
 - **GIVEN** a registry response whose compressed archive exceeds 67,108,864 bytes
 - **WHEN** the compiler prepares it, with or without a lock pin
 - **THEN** it rejects the archive before extraction or project preparation output and removes its scratch data
+
+#### Scenario: Registry archive conflicts or expands beyond the output budget
+- **GIVEN** a registry ZIP with conflicting entry paths, a corrupt late entry, or uncompressed output above either limit
+- **WHEN** the compiler prepares the dependency
+- **THEN** it rejects the archive without changing the prior materialized package or Project.lock and removes staged output
 
 ### Requirement: Checked lock replay
 LSP and other replay consumers SHALL use a v2 materialized root only after lock ownership, full graph identity, and canonical containment checks. If a materialized directory is absent, they SHALL use current resolved source roots rather than claim a cache hit. The project explorer SHALL display resolved current paths rather than raw lock anchor tokens. A rejected replay SHALL not authorize an outside root or Corelib service source.

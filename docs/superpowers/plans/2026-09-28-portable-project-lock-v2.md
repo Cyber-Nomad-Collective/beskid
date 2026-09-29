@@ -20,6 +20,7 @@
 - Stable materialization IDs are SHA-256 of a length-delimited logical tuple, truncated to 128 bits; no machine path or `DefaultHasher` input.
 - Registry dependencies pin version and artifact SHA-256; missing or mismatched pins fail closed without choosing a newer version.
 - Registry preflight streams compressed archives into auto-cleaned scratch storage with a 64 MiB per-artifact cap; it rejects oversized responses before extraction or project preparation output.
+- Registry extraction validates and stages the complete ZIP before changing a materialized package, rejects conflicting/special paths, and caps uncompressed output at 512 MiB per entry and 1 GiB total; failures preserve the prior package and lock.
 - `beskid lock` and `beskid update` may migrate v1 from the current manifest graph. Other consumers never silently migrate; `--locked` and `--frozen` write nothing.
 - Preserve user changes and unrelated generated files. Do not run heavy builds on this Mac; use the NixOS builder for them, and use macOS only with at least 20 GiB free.
 
