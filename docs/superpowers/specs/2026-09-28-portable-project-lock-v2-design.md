@@ -100,7 +100,12 @@ matches the first-party registry's upload limit and bounds custom-registry
 responses. ZIP extraction validates and stages the complete archive before
 changing a materialized package. Conflicting or unsafe entries fail; streamed
 uncompressed output is limited to 512 MiB per entry and 1 GiB in total, with
-scratch output removed on failure and the previous package left intact. A path dependency's contents may change without
+scratch output removed on failure and the previous package left intact.
+Digest-derived registry directories are immutable: an absent directory
+receives the completely staged package by rename; an existing one is reused
+only if every path, type, and byte matches the staged package, otherwise
+resolution fails closed without overwriting or deleting it.
+A path dependency's contents may change without
 a lock change, as with a live workspace source; its manifest-derived identity
 and relative location remain checked. Any future byte pinning of local source
 trees requires a separate explicit contract.
