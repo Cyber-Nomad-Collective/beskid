@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "dcdbb9caaf5ee7580ec03df79256701dc51f08e84a0b72e34203b7f6083fbebd",
+  "revision": "b1590332b73625b3f3e5d802ede465a601d5a67607b8951b064732e66487580f",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -58902,7 +58902,7 @@
       "decision": null,
       "title": "Workspace and lock contracts",
       "status": "Standard",
-      "sourceHash": "727c972368a1d26ed2adb9eb321f7b88f9f54b0c8f64d3828c4017af513741c8"
+      "sourceHash": "eb7e0714f31d44b63dd927886bb5d99444b415ebf8886a3a37a94eb65853733b"
     },
     {
       "id": "BSP-CAP-9B3CB614FCB7",

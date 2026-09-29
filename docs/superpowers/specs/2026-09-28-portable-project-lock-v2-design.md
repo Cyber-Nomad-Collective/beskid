@@ -115,7 +115,9 @@ declared central-directory range must end immediately before that record,
 and a bounded structural walk must consume precisely that range and count
 precisely its declared raw file records. Alternate records in a ZIP comment,
 underreported counts, and truncated ranges fail closed before the ZIP library
-interprets the archive. It also rejects an entry
+interprets the archive. ZIP64 entry metadata and nonzero per-entry disk
+numbers are rejected even when the end-of-directory record appears ordinary;
+there is no multidisk registry ZIP profile in v0.5. It also rejects an entry
 name longer than 4,096 UTF-8 bytes, or more than 256
 components per name before building path-prefix indexes. Retained path-prefix
 key bytes have a cumulative 64 MiB (67,108,864 byte) budget, separate from
