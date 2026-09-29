@@ -48,6 +48,8 @@ Tooling SHALL encode every v2 file path with `/` separators on every host. `root
 ### Requirement: Explicit lock migration and strict read-only policy
 `beskid lock` and `beskid update` SHALL be the only commands authorized to replace an existing v1 lock with v2, and SHALL derive the replacement from the current manifest graph rather than stale v1 absolute paths. Other consumers, including `build`, `run`, `test`, and LSP replay, SHALL reject a present v1 lock with an actionable migration diagnostic. Unknown headers and malformed v2 locks SHALL fail. A valid but stale v2 lock SHALL not be silently repaired by a non-update consumer. `--locked` and `--frozen` SHALL never write or rewrite a lock, even when a valid v2 lock is present; they SHALL reject missing, v1, or stale locks before writing any preparation output. When no lock exists, a normal unlocked build MAY create a v2 lock from the current graph. Only CLI lock mutation commands SHALL change an existing lock.
 
+When ordinary warning-only registry resolution leaves a declared package unavailable, the v2 lock MAY omit that package's registry pin. A later ordinary preparation SHALL preserve that lock while the package remains unavailable; if the package becomes available, it SHALL require an explicit `beskid update` before materializing or adding the pin. Strict `--locked` and `--frozen` preparation SHALL reject a declared registry package without a pin before materialization.
+
 #### Scenario: Explicit v1 migration
 - **GIVEN** a v1 lock whose absolute paths refer to an old checkout
 - **WHEN** `beskid lock` or `beskid update` runs against the current manifests
@@ -67,6 +69,21 @@ Tooling SHALL encode every v2 file path with `/` separators on every host. `root
 - **GIVEN** `--locked` or `--frozen` and a valid v2 lock matching the current graph
 - **WHEN** the command resolves and prepares the project
 - **THEN** it may use the locked graph but leaves the lock bytes and file metadata unchanged
+
+#### Scenario: Unavailable unpinned registry remains warning-only on retry
+- **GIVEN** a declared registry package was unavailable during ordinary preparation and its v2 lock has no pin
+- **WHEN** ordinary preparation retries while the package is still unavailable
+- **THEN** it retains the warning-only result without changing the lock or prepared output
+
+#### Scenario: Previously unavailable package becomes available
+- **GIVEN** a declared registry package has no pin in an existing v2 lock
+- **WHEN** ordinary preparation can resolve the package
+- **THEN** it requires explicit `beskid update` before materializing that package or changing the lock
+
+#### Scenario: Strict preparation requires a registry pin
+- **GIVEN** a declared registry package has no pin in an existing v2 lock
+- **WHEN** `--locked` or `--frozen` starts preparation
+- **THEN** it fails before materializing the package or changing the lock
 
 The v1 descriptions retained below are historical informative provenance. They do not define a currently accepted lock format.
 

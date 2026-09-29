@@ -101,6 +101,11 @@ responses. ZIP extraction validates and stages the complete archive before
 changing a materialized package. Conflicting or unsafe entries fail; streamed
 uncompressed output is limited to 512 MiB per entry and 1 GiB in total, with
 scratch output removed on failure and the previous package left intact.
+An ordinary warning-only lookup may leave a declared registry package without
+a pin in an existing v2 lock. Repeated unavailable lookups retain the warning
+and leave that lock and preparation output unchanged. If the package later
+resolves, ordinary preparation requires `beskid update` before materializing
+or adding the pin. Strict locked/frozen preparation rejects the missing pin.
 Digest-derived registry directories are immutable: an absent directory
 receives the completely staged package by rename; an existing one is reused
 only if every path, type, and byte matches the staged package, otherwise
