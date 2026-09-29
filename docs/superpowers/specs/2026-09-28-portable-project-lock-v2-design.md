@@ -109,7 +109,13 @@ entries must have empty payloads and pass integrity validation; they are not
 skipped during full-archive checks. Preflight counts raw central-directory
 records, including duplicate names, and rejects more than 10,000 ZIP entries
 before the ZIP library can coalesce names. ZIP64 is rejected in v0.5 because
-its entry count would otherwise bypass this bound. It also rejects an entry
+its entry count would otherwise bypass this bound. An unambiguous
+end-of-central-directory record must be anchored at the archive end, its
+declared central-directory range must end immediately before that record,
+and a bounded structural walk must consume precisely that range and count
+precisely its declared raw file records. Alternate records in a ZIP comment,
+underreported counts, and truncated ranges fail closed before the ZIP library
+interprets the archive. It also rejects an entry
 name longer than 4,096 UTF-8 bytes, or more than 256
 components per name before building path-prefix indexes. Retained path-prefix
 key bytes have a cumulative 64 MiB (67,108,864 byte) budget, separate from
