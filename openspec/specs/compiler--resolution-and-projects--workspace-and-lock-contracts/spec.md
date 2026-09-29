@@ -43,6 +43,8 @@ When a valid v2 lock exists, ordinary and strict resolution SHALL select its exa
 
 The compiler SHALL treat Unicode-normalized, full-case-folded aliases for the same ZIP path as a conflict on every supported host, regardless of that host's case sensitivity. It SHALL reject ZIP path components that are non-portable on Windows, including reserved device names and trailing dots or spaces. Directory entries SHALL contain no payload and SHALL pass integrity validation rather than being skipped during full-archive checks. Before building path-prefix indexes or writing output, it SHALL reject archives with more than 10,000 raw central-directory entries (counting duplicate names), an entry name longer than 4,096 UTF-8 bytes, or more than 256 path components in one name. ZIP64 archives SHALL be rejected in v0.5 rather than accepted with an unknown entry count. The cumulative UTF-8 bytes retained for planned path-prefix keys SHALL not exceed 64 MiB (67,108,864 bytes). These preflight budgets SHALL apply independently of the compressed and uncompressed output limits.
 
+The registry dependency's `source_root` SHALL be derived from the ZIP's exact top-level path spelling, not from host filesystem case-insensitive lookup: a literal directory `src` selects `src`, otherwise a literal `Src` selects `Src`, and otherwise the package root selects `.`. Preflight and post-extraction derivation SHALL agree so the same pinned archive produces identical lock bytes across supported hosts.
+
 #### Scenario: Newer registry version exists
 - **GIVEN** a valid v2 registry pin and a newer available version
 - **WHEN** ordinary or strict resolution prepares the dependency
@@ -72,6 +74,11 @@ The compiler SHALL treat Unicode-normalized, full-case-folded aliases for the sa
 - **GIVEN** a registry ZIP below the compressed and uncompressed byte limits but with too many raw entries (including duplicate names), a ZIP64 entry-count marker, an overlong or overdeep entry path, or planned path-prefix keys beyond the cumulative budget
 - **WHEN** the compiler preflights its entries
 - **THEN** it rejects the archive before allocating an unbounded path index or changing the prior package or Project.lock
+
+#### Scenario: Registry source directory uses another case
+- **GIVEN** a pinned registry ZIP with a top-level directory spelled `SRC` rather than literal `src` or `Src`
+- **WHEN** Linux, macOS, or Windows prepares the dependency
+- **THEN** each host records `source_root=.` and neither preflight nor lock generation infers a different spelling from its filesystem
 
 #### Scenario: Existing materialization differs from the pinned artifact
 - **GIVEN** a valid pinned archive and an existing digest-derived package directory with changed bytes, extra paths, or unsafe file types

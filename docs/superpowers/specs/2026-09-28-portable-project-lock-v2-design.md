@@ -115,6 +115,11 @@ components per name before building path-prefix indexes. Retained path-prefix
 key bytes have a cumulative 64 MiB (67,108,864 byte) budget, separate from
 compressed and uncompressed archive limits, so a small deeply nested ZIP
 cannot exhaust memory while planning extraction.
+Registry source-root selection uses exact ZIP top-level path spelling rather
+than case-insensitive filesystem probes: literal `src` wins, then literal
+`Src`, otherwise the package root (`.`). Preflight and post-extraction use
+the same rule, including on Windows, so a `SRC` directory cannot produce a
+different lock there.
 An ordinary warning-only lookup may leave a declared registry package without
 a pin in an existing v2 lock. Repeated unavailable lookups retain the warning
 and leave that lock and preparation output unchanged. If the package later
