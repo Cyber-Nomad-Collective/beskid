@@ -102,7 +102,8 @@ changing a materialized package. Conflicting or unsafe entries fail; streamed
 uncompressed output is limited to 512 MiB per entry and 1 GiB in total, with
 scratch output removed on failure and the previous package left intact.
 ZIP paths are compared after Unicode compatibility normalization and full case
-folding; aliases are rejected across hosts, even if the current host would
+folding; exact duplicate raw names and normalized aliases are rejected across
+hosts before a ZIP library can coalesce names, even if the current host would
 store both names separately. Non-portable Windows components, including
 reserved device names and trailing dots or spaces, are rejected. Directory
 entries must have empty payloads and pass integrity validation; they are not
