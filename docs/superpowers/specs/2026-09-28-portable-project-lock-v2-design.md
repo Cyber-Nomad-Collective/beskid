@@ -101,6 +101,9 @@ responses. ZIP extraction validates and stages the complete archive before
 changing a materialized package. Conflicting or unsafe entries fail; streamed
 uncompressed output is limited to 512 MiB per entry and 1 GiB in total, with
 scratch output removed on failure and the previous package left intact.
+Case-only ZIP path aliases are rejected across hosts, even if the current host
+would store both names separately. Directory entries must have empty payloads
+and pass integrity validation; they are not skipped during full-archive checks.
 An ordinary warning-only lookup may leave a declared registry package without
 a pin in an existing v2 lock. Repeated unavailable lookups retain the warning
 and leave that lock and preparation output unchanged. If the package later
