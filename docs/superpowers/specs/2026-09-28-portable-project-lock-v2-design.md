@@ -104,7 +104,11 @@ scratch output removed on failure and the previous package left intact.
 ZIP paths are compared after Unicode compatibility normalization and full case
 folding; exact duplicate raw names and normalized aliases are rejected across
 hosts before a ZIP library can coalesce names, even if the current host would
-store both names separately. Non-portable Windows components, including
+store both names separately. Raw names must be valid UTF-8, non-ASCII names
+must carry the ZIP UTF-8 flag, Unicode Path override fields are unsupported,
+and local-header names must match their central-directory names. This avoids
+lossy UTF-8, CP437, or extra-field reinterpretation before alias checks.
+Non-portable Windows components, including
 reserved device names and trailing dots or spaces, are rejected. Directory
 entries must have empty payloads and pass integrity validation; they are not
 skipped during full-archive checks. Preflight counts raw central-directory
