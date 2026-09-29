@@ -101,9 +101,17 @@ responses. ZIP extraction validates and stages the complete archive before
 changing a materialized package. Conflicting or unsafe entries fail; streamed
 uncompressed output is limited to 512 MiB per entry and 1 GiB in total, with
 scratch output removed on failure and the previous package left intact.
-Case-only ZIP path aliases are rejected across hosts, even if the current host
-would store both names separately. Directory entries must have empty payloads
-and pass integrity validation; they are not skipped during full-archive checks.
+ZIP paths are compared after Unicode compatibility normalization and full case
+folding; aliases are rejected across hosts, even if the current host would
+store both names separately. Non-portable Windows components, including
+reserved device names and trailing dots or spaces, are rejected. Directory
+entries must have empty payloads and pass integrity validation; they are not
+skipped during full-archive checks. Preflight rejects more than 10,000 ZIP
+entries, an entry name longer than 4,096 UTF-8 bytes, or more than 256
+components per name before building path-prefix indexes. Retained path-prefix
+key bytes have a cumulative 64 MiB (67,108,864 byte) budget, separate from
+compressed and uncompressed archive limits, so a small deeply nested ZIP
+cannot exhaust memory while planning extraction.
 An ordinary warning-only lookup may leave a declared registry package without
 a pin in an existing v2 lock. Repeated unavailable lookups retain the warning
 and leave that lock and preparation output unchanged. If the package later
