@@ -6,6 +6,7 @@ import { copyFileSync, mkdirSync, readFileSync, writeFileSync, statSync } from "
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
+import { AssertCleanDistrib, AssertNoPrerequisitesLockOverride } from "./package-source-authority.mjs";
 const scripts = dirname(fileURLToPath(import.meta.url));
 const distrib = resolve(scripts, "../../beskid_distrib");
 function run(command, args, cwd, label) {
@@ -30,6 +31,8 @@ try {
   const expectedDistrib = run("git", ["rev-parse", "HEAD:beskid_distrib"], root, "distribution gitlink lookup failed").trim();
   const actualDistrib = run("git", ["rev-parse", "HEAD"], distrib, "distribution checkout lookup failed").trim();
   if (actualDistrib !== expectedDistrib) throw new Error("distribution checkout does not match source gitlink");
+  AssertCleanDistrib(distrib);
+  if (platform === "windows") AssertNoPrerequisitesLockOverride(process.env);
   const target = evidence.platforms.find(item => item.platform === platform);
   const archive = target.artifacts.find(item => item.name.endsWith(".tar.gz"));
   mkdirSync(output, { mode: 0o700 });
