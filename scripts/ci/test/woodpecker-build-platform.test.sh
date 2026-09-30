@@ -43,7 +43,7 @@ bundle_root="${bundle_asset%.tar.gz}"
 extension=''; [[ "${target}" == x86_64-pc-windows-msvc ]] && extension=.exe
 mkdir -p "${output}/${bundle_root}/bin" \
   "${output}/${bundle_root}/lib/beskid-runtime/abi-5/${target}/release" \
-  "${output}/${bundle_root}/beskid_corelib/beskid_corelib" "${output}/${bundle_root}/packages"
+  "${output}/${bundle_root}/beskid_corelib/beskid_corelib" "${output}/${bundle_root}/beskid_corelib/packages"
 touch "${output}/${bundle_root}/bin/beskid${extension}" \
   "${output}/${bundle_root}/bin/beskid_lsp${extension}" \
   "${output}/${bundle_root}/bin/beskid-up${extension}" \

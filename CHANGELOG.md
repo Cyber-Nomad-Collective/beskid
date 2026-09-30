@@ -36,6 +36,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Validate the release bundle's packages inside its marker-bearing Corelib
+  workspace, matching the archive produced by the native bundle builder.
 - Check the actual bundled Corelib workspace layout and integrity marker in
   the Woodpecker platform gate, matching the installed CLI's discovery path.
 - Give the serial Rust workspace release gate a bounded three-hour default
