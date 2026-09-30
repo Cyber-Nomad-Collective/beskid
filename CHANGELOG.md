@@ -36,6 +36,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Pin the compiler's current-bundle local installer fix for nested Corelib
+  packages and Windows executable names.
 - Validate the release bundle's packages inside its marker-bearing Corelib
   workspace, matching the archive produced by the native bundle builder.
 - Check the actual bundled Corelib workspace layout and integrity marker in
