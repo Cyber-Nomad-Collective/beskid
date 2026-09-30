@@ -74,7 +74,11 @@ try {
   const cases = [];
   for (const [id, target] of CASES) {
     const logName = `feature-${id.replaceAll(".", "-")}.json`;
-    const run = spawnSync(executable, ["test", "--plain", "--json", "--project", project, "--target", target], { encoding: "utf8", windowsHide: true });
+    const run = spawnSync(executable, ["test", "--plain", "--json", "--project", project, "--target", target, "--target-timeout", "900"], {
+      encoding: "utf8",
+      windowsHide: true,
+      maxBuffer: 16 * 1024 * 1024,
+    });
     let record;
     try { record = JSON.parse(run.stdout); }
     catch { writeFileSync(join(output, logName), `${JSON.stringify({ target, exit_code: run.status, stdout: run.stdout ?? "", stderr: run.stderr ?? "" }, null, 2)}\n`, { flag: "wx" }); fail(`${target} did not return JSON test evidence (exit ${run.status})`); }

@@ -453,7 +453,14 @@ test("native producer records all target results and binds the release runtime k
   const bundledKit = join(bundle, "lib/beskid-runtime/abi-5/x86_64-unknown-linux-gnu/release");
   writeFileSync(join(bundledKit, "abi.json"), "{}\n");
   const bundledCli = join(bundle, "bin/beskid");
-  const cliContents = "#!/bin/sh\ntarget=\nwhile [ \"$#\" -gt 0 ]; do if [ \"$1\" = --target ]; then shift; target=\"$1\"; fi; shift; done\nprintf '{\"target\":\"%s\",\"summary\":{\"passed\":1,\"failed\":0,\"skipped\":0,\"filtered_out\":0,\"timed_out\":0},\"tests\":[{\"qualified_name\":\"%s.passes\",\"outcome\":\"passed\"}]}\\n' \"$target\" \"$target\"\n";
+  const cliContents = `#!/usr/bin/env node
+const args = process.argv.slice(2);
+if (args[args.indexOf("--target-timeout") + 1] !== "900") process.exit(91);
+const target = args[args.indexOf("--target") + 1];
+const report = { target, summary: { passed: 1, failed: 0, skipped: 0, filtered_out: 0, timed_out: 0 }, tests: [{ qualified_name: target + ".passes", outcome: "passed" }] };
+if (target === "CoreBytesTests") report.padding = "x".repeat(2 * 1024 * 1024);
+process.stdout.write(JSON.stringify(report) + String.fromCharCode(10));
+`;
   writeFileSync(bundledCli, cliContents, { mode: 0o755 });
   writeFileSync(join(output, "beskid"), "#!/bin/sh\nexit 91\n", { mode: 0o755 });
   const digest = spawnSync(process.execPath, [runtimeDigestPath.pathname, bundledKit], { encoding: "utf8" });
@@ -470,6 +477,7 @@ test("native producer records all target results and binds the release runtime k
   assert.equal(feature.runtime_kit.sha256, digest.stdout.trim());
   assert.equal(feature.runtime_kit.abi_sha256, sha256("{}\n"));
   assert.equal(feature.cases[0].test_ids[0], "CoreBytesTests.passes", "the bundled CLI, not output/beskid, must be executed");
+  assert.ok(readFileSync(join(output, feature.cases[0].log)).length > 1024 * 1024, "reports larger than Node's default buffer must be retained");
 });
 
 test("native producer rejects a bundle runtime-kit mismatch", (t) => {
