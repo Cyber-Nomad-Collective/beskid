@@ -43,12 +43,14 @@ bundle_root="${bundle_asset%.tar.gz}"
 extension=''; [[ "${target}" == x86_64-pc-windows-msvc ]] && extension=.exe
 mkdir -p "${output}/${bundle_root}/bin" \
   "${output}/${bundle_root}/lib/beskid-runtime/abi-5/${target}/release" \
-  "${output}/${bundle_root}/beskid_corelib" "${output}/${bundle_root}/packages"
+  "${output}/${bundle_root}/beskid_corelib/beskid_corelib" "${output}/${bundle_root}/packages"
 touch "${output}/${bundle_root}/bin/beskid${extension}" \
   "${output}/${bundle_root}/bin/beskid_lsp${extension}" \
   "${output}/${bundle_root}/bin/beskid-up${extension}" \
   "${output}/${bundle_root}/lib/beskid-runtime/abi-5/${target}/release/abi.json" \
-  "${output}/${bundle_root}/beskid_corelib/corelib.bproj"
+  "${output}/${bundle_root}/beskid_corelib/CoreLib.bws" \
+  "${output}/${bundle_root}/beskid_corelib/.beskid-bundle.sha256" \
+  "${output}/${bundle_root}/beskid_corelib/beskid_corelib/corelib.bproj"
 printf '%s\n' "${version}" >"${output}/${bundle_root}/release-version.txt"
 tar -czf "${output}/${bundle_asset}" -C "${output}" "${bundle_root}"
 rm -rf "${output:?}/${bundle_root}"

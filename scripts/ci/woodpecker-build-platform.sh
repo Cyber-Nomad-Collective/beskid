@@ -110,7 +110,9 @@ for required in \
   "${bundle_root}/bin/beskid_lsp${bundle_extension}" \
   "${bundle_root}/bin/beskid-up${bundle_extension}" \
   "${bundle_root}/lib/beskid-runtime/abi-5/${target}/release/abi.json" \
-  "${bundle_root}/beskid_corelib/corelib.bproj" \
+  "${bundle_root}/beskid_corelib/CoreLib.bws" \
+  "${bundle_root}/beskid_corelib/.beskid-bundle.sha256" \
+  "${bundle_root}/beskid_corelib/beskid_corelib/corelib.bproj" \
   "${bundle_root}/packages/" \
   "${bundle_root}/release-version.txt"; do
   grep -Fxq "${required}" "${output_dir}/bundle-contents.log" || {

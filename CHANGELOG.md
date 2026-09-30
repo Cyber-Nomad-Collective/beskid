@@ -36,6 +36,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Check the actual bundled Corelib workspace layout and integrity marker in
+  the Woodpecker platform gate, matching the installed CLI's discovery path.
 - Give the serial Rust workspace release gate a bounded three-hour default
   instead of timing out a healthy full-platform test run after 30 minutes.
 - Build release bundles with both debug and release ABI-v5 runtime kits and
