@@ -90,14 +90,14 @@ run_gate() {
   fi
 }
 
-# Rust tests use the checked-out, pinned compiler-owned source path. That path
-# is the authority identity used by the compiler's Corelib service checks.
-export BESKID_CORELIB_ROOT="$root/compiler/corelib"
-run_gate compiler rust-gate compiler-rust-gate.sh
+# The Corelib gate materializes the pinned source into a verified managed root.
+# Rust tests must consume that same root so they do not replay stale lock graphs
+# from the raw checkout.
 mkdir "$gate_temp/installed-corelib"
 export BESKID_CORELIB_ROOT="$gate_temp/installed-corelib"
 export BESKID_RELEASE_MANAGED_CORELIB=1
 run_gate corelib matrix corelib-gate.sh
+run_gate compiler rust-gate compiler-rust-gate.sh
 if [[ -n "${CI_COMMIT_SHA:-}" || -n "${CI_PIPELINE_NUMBER:-}" || "${CI_SYSTEM_NAME:-}" == woodpecker ]]; then
   git -C "$root" diff --quiet
   git -C "$root/compiler" diff --quiet
