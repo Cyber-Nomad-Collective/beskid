@@ -6,7 +6,7 @@ cd "$(dirname "$0")/../../.."
 unset CI CI_SYSTEM_NAME CI_COMMIT_SHA CI_PIPELINE_NUMBER CI_COMMIT_BRANCH CI_PIPELINE_EVENT CI_COMMIT_TAG
 for suite in \
   build-release-platform build-release-state build-release-artifact-bundle publish-release-stream \
-  woodpecker-build-platform release-source-inventory woodpecker-release-gates woodpecker-workflow-contract woodpecker-standard-workflow \
+  woodpecker-build-platform release-source-inventory compiler-rust-gate-timeout woodpecker-release-gates woodpecker-workflow-contract woodpecker-standard-workflow \
   open-vsx-publish woodpecker-platform-images woodpecker-release \
   woodpecker-upload-handoff woodpecker-fetch-handoffs; do
   echo "Migration contract: ${suite}"

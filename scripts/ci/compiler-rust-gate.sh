@@ -69,8 +69,9 @@ run_runtime_phase() {
   run_bounded_phase "Native ABI-v5 runtime-kit staging and verification" "${BESKID_RUNTIME_KIT_TIMEOUT:-600}" \
     bash scripts/stage-native-runtime-kit.sh
 
-  # Tests run serially, so a deadlocked lowering test cannot consume the whole job.
-  local test_timeout="${BESKID_TEST_TIMEOUT:-1800}"
+  # Tests run serially. Leave room for the measured full suite while retaining
+  # a hard cap for a deadlocked lowering test.
+  local test_timeout="${BESKID_TEST_TIMEOUT:-10800}"
   if [[ "${test_timeout}" == "0" ]]; then
     cargo test --workspace --exclude beskid_e2e_tests -- --test-threads=1
     return

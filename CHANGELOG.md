@@ -34,6 +34,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Give the serial Rust workspace release gate a bounded three-hour default
+  instead of timing out a healthy full-platform test run after 30 minutes.
 - Build release bundles with both debug and release ABI-v5 runtime kits and
   the CLI's own marker-bearing Corelib workspace at the installed discovery
   path, so packaged build/run/test commands work without environment overrides.
