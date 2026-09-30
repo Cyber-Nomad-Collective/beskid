@@ -4,7 +4,7 @@
 
 **Goal:** Require source-bound native Foundations, Networking, and HTTP test evidence from each Woodpecker platform before the existing release aggregate can qualify.
 
-**Architecture:** Extend the existing three-platform handoff and evidence validator. Each native worker runs a fixed set of Corelib test targets against its staged release runtime kit, retains the raw per-target JSON logs, and emits a checksummed `feature-evidence-v1.json`. The aggregate verifies identity, kit and log digests, required case coverage, and the explicit v0.5 Glue exclusion before it copies and revalidates its private evidence snapshot.
+**Architecture:** Extend the existing three-platform handoff and evidence validator. Each native worker runs a fixed set of Corelib test targets using the CLI and ABI-v5 release kit inside the extracted bundle, retains the raw per-target JSON logs, and emits a checksummed `feature-evidence-v1.json`. The aggregate verifies identity, bundled-kit and log digests, complete passing case coverage, and the explicit v0.5 Glue exclusion before it copies and revalidates its private evidence snapshot.
 
 **Tech Stack:** Node.js, Bash, Woodpecker, `beskid_cli test --json`, SHA-256.
 

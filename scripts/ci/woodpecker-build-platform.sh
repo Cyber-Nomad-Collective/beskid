@@ -9,7 +9,7 @@ output_dir="${3:?absolute durable output directory}"
 
 root="$(cd "$(dirname "$0")/../.." && pwd)"
 if [[ -n "${CI_PIPELINE_NUMBER:-}" || -n "${CI_COMMIT_SHA:-}" ]]; then
-  for override in WOODPECKER_RELEASE_VERSION_VALIDATOR WOODPECKER_INIT_SUBMODULES_SCRIPT WOODPECKER_RELEASE_PLATFORM_SCRIPT WOODPECKER_FEATURE_EVIDENCE_SCRIPT WOODPECKER_RUNTIME_KIT_DIR WOODPECKER_VSWHERE; do
+  for override in WOODPECKER_RELEASE_VERSION_VALIDATOR WOODPECKER_INIT_SUBMODULES_SCRIPT WOODPECKER_RELEASE_PLATFORM_SCRIPT WOODPECKER_FEATURE_EVIDENCE_SCRIPT WOODPECKER_VSWHERE; do
     if printenv "${override}" >/dev/null; then
       echo "${override} is test-only and forbidden in a pipeline" >&2
       exit 2
@@ -125,7 +125,11 @@ done
 
 superrepo_sha="$(git -C "${root}" rev-parse HEAD)"
 compiler_sha="$(git -C "${root}/compiler" rev-parse HEAD 2>/dev/null || printf unavailable)"
-runtime_kit="${WOODPECKER_RUNTIME_KIT_DIR:-${root}/compiler/target/native-runtime-kit}"
+bundle_stage="${output_dir}/feature-bundle"
+mkdir -p "${bundle_stage}"
+tar -xzf "${bundle_path}" -C "${bundle_stage}"
+bundle_root="${bundle_stage}/beskid-${version}-${target}"
+runtime_kit="${bundle_root}/lib/beskid-runtime/abi-5/${target}/release"
 runtime_kit_sha="$(node "${root}/scripts/ci/woodpecker-runtime-kit-digest.mjs" "${runtime_kit}")"
 jq -n \
   --arg platform "${platform}" \
@@ -149,11 +153,8 @@ jq -n \
   }
 ' >"${output_dir}/woodpecker-build-result.json"
 
-bundle_stage="${output_dir}/feature-bundle"
-mkdir -p "${bundle_stage}"
-tar -xzf "${bundle_path}" -C "${bundle_stage}"
 node "${feature_evidence_runner}" \
-  "${platform}" "${version}" "${output_dir}" "${bundle_stage}/beskid-${version}-${target}" "${runtime_kit}"
+  "${platform}" "${version}" "${output_dir}" "${bundle_root}"
 rm -rf -- "${bundle_stage}"
 
 checksum_files=(

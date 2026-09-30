@@ -144,7 +144,7 @@ function writeFeatureFixture(root, platform) {
   const featureName = "feature-evidence-v1.json";
   const cases = FEATURE_CASES.map(([id, target]) => {
     const logName = `feature-${id.replaceAll(".", "-")}.json`;
-    const log = `${JSON.stringify({ target, summary: { passed: 1, failed: 0, skipped: 0 }, tests: [{ qualified_name: `${target}.passes`, outcome: "passed" }] })}\n`;
+    const log = `${JSON.stringify({ target, summary: { passed: 1, failed: 0, skipped: 0, filtered_out: 0, timed_out: 0 }, tests: [{ qualified_name: `${target}.passes`, outcome: "passed" }] })}\n`;
     writeFileSync(join(root, platform, logName), log);
     return { id, target, status: "success", log: logName, log_sha256: sha256(log), test_ids: [`${target}.passes`] };
   });
@@ -167,6 +167,15 @@ function writeFeatureFixture(root, platform) {
   oldLines.push(`${sha256(readFileSync(join(root, platform, featureName)))}  ${featureName}`);
   for (const item of cases) oldLines.push(`${sha256(readFileSync(join(root, platform, item.log)))}  ${item.log}`);
   writeFileSync(sumsPath, `${oldLines.join("\n")}\n`);
+}
+
+function updateChecksum(directory, name) {
+  const path = join(directory, "SHA256SUMS");
+  const lines = readFileSync(path, "utf8").trimEnd().split("\n");
+  const index = lines.findIndex(line => line.endsWith(`  ${name}`));
+  assert.notEqual(index, -1, `fixture checksum exists for ${name}`);
+  lines[index] = `${sha256(readFileSync(join(directory, name)))}  ${name}`;
+  writeFileSync(path, `${lines.join("\n")}\n`);
 }
 
 function runValidator(root) {
@@ -406,29 +415,104 @@ test("rejects unexecuted cases and a false Glue not-applicable reason", (t) => {
   assert.match(notApplicable.stderr, /Glue not_applicable reason does not match/);
 });
 
+test("validator rejects skipped tests and inconsistent summary counts", (t) => {
+  const skippedRoot = createFixture(), inconsistentRoot = createFixture();
+  for (const [root, mutate] of [
+    [skippedRoot, log => ({ ...log, summary: { passed: 1, failed: 0, skipped: 1, filtered_out: 0, timed_out: 0 }, tests: [...log.tests, { qualified_name: "NetworkDnsTests.skips", outcome: "skipped" }] })],
+    [inconsistentRoot, log => ({ ...log, summary: { passed: 2, failed: 0, skipped: 0, filtered_out: 0, timed_out: 0 } })],
+  ]) {
+    const directory = join(root, "linux"), logName = "feature-network-dns.json";
+    const log = JSON.parse(readFileSync(join(directory, logName), "utf8"));
+    writeJson(join(directory, logName), mutate(log));
+    const featurePath = join(directory, "feature-evidence-v1.json");
+    const feature = JSON.parse(readFileSync(featurePath, "utf8"));
+    feature.cases.find(item => item.id === "network.dns").log_sha256 = sha256(readFileSync(join(directory, logName)));
+    writeJson(featurePath, feature);
+    updateChecksum(directory, logName);
+    updateChecksum(directory, "feature-evidence-v1.json");
+  }
+  t.after(() => {
+    rmSync(skippedRoot, { recursive: true, force: true });
+    rmSync(inconsistentRoot, { recursive: true, force: true });
+  });
+  const skipped = runValidator(skippedRoot), inconsistent = runValidator(inconsistentRoot);
+  assert.notEqual(skipped.status, 0);
+  assert.match(skipped.stderr, /contains skipped, filtered, timed-out, or failed tests/);
+  assert.notEqual(inconsistent.status, 0);
+  assert.match(inconsistent.stderr, /summary counts do not match tests/);
+});
+
 test("native producer records all target results and binds the release runtime kit", (t) => {
   const root = mkdtempSync(join(tmpdir(), "beskid-feature-producer-"));
   t.after(() => rmSync(root, { recursive: true, force: true }));
-  const output = join(root, "output"), bundle = join(root, "bundle"), kit = join(root, "kit");
+  const output = join(root, "output"), bundle = join(root, "bundle");
   mkdirSync(output); mkdirSync(join(bundle, "beskid_corelib"), { recursive: true });
-  mkdirSync(join(kit, "lib/beskid-runtime/abi-5/x86_64-unknown-linux-gnu/release"), { recursive: true });
+  mkdirSync(join(bundle, "bin"), { recursive: true });
+  mkdirSync(join(bundle, "lib/beskid-runtime/abi-5/x86_64-unknown-linux-gnu/release"), { recursive: true });
   writeFileSync(join(bundle, "beskid_corelib/CoreLib.bws"), "fixture\n");
-  writeFileSync(join(kit, "lib/beskid-runtime/abi-5/x86_64-unknown-linux-gnu/release/abi.json"), "{}\n");
-  const executable = join(output, "beskid");
-  writeFileSync(executable, "#!/bin/sh\ntarget=\nwhile [ \"$#\" -gt 0 ]; do if [ \"$1\" = --target ]; then shift; target=\"$1\"; fi; shift; done\nprintf '{\"target\":\"%s\",\"tests\":[{\"qualified_name\":\"%s.passes\",\"outcome\":\"passed\"}]}\\n' \"$target\" \"$target\"\n", { mode: 0o755 });
-  const digest = spawnSync(process.execPath, [runtimeDigestPath.pathname, kit], { encoding: "utf8" });
+  const bundledKit = join(bundle, "lib/beskid-runtime/abi-5/x86_64-unknown-linux-gnu/release");
+  writeFileSync(join(bundledKit, "abi.json"), "{}\n");
+  const bundledCli = join(bundle, "bin/beskid");
+  const cliContents = "#!/bin/sh\ntarget=\nwhile [ \"$#\" -gt 0 ]; do if [ \"$1\" = --target ]; then shift; target=\"$1\"; fi; shift; done\nprintf '{\"target\":\"%s\",\"summary\":{\"passed\":1,\"failed\":0,\"skipped\":0,\"filtered_out\":0,\"timed_out\":0},\"tests\":[{\"qualified_name\":\"%s.passes\",\"outcome\":\"passed\"}]}\\n' \"$target\" \"$target\"\n";
+  writeFileSync(bundledCli, cliContents, { mode: 0o755 });
+  writeFileSync(join(output, "beskid"), "#!/bin/sh\nexit 91\n", { mode: 0o755 });
+  const digest = spawnSync(process.execPath, [runtimeDigestPath.pathname, bundledKit], { encoding: "utf8" });
   assert.equal(digest.status, 0, digest.stderr);
   writeJson(join(output, "woodpecker-build-result.json"), {
     platform: "linux", target: PLATFORMS.linux.target, version: VERSION, source: SOURCE,
     runtime_kit_sha256: digest.stdout.trim(),
   });
-  const result = spawnSync(process.execPath, [featureProducerPath.pathname, "linux", VERSION, output, bundle, kit], { encoding: "utf8" });
+  const result = spawnSync(process.execPath, [featureProducerPath.pathname, "linux", VERSION, output, bundle], { encoding: "utf8" });
   assert.equal(result.status, 0, result.stderr);
   const feature = JSON.parse(readFileSync(join(output, "feature-evidence-v1.json"), "utf8"));
   assert.equal(feature.cases.length, FEATURE_CASES.length);
   assert.deepEqual(feature.cases.map(item => item.id), FEATURE_CASES.map(([id]) => id));
   assert.equal(feature.runtime_kit.sha256, digest.stdout.trim());
   assert.equal(feature.runtime_kit.abi_sha256, sha256("{}\n"));
+  assert.equal(feature.cases[0].test_ids[0], "CoreBytesTests.passes", "the bundled CLI, not output/beskid, must be executed");
+});
+
+test("native producer rejects a bundle runtime-kit mismatch", (t) => {
+  const root = mkdtempSync(join(tmpdir(), "beskid-feature-kit-mismatch-"));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  const output = join(root, "output"), bundle = join(root, "bundle"), stagedKit = join(root, "staged-kit");
+  mkdirSync(output); mkdirSync(join(bundle, "beskid_corelib"), { recursive: true });
+  mkdirSync(join(bundle, "bin"), { recursive: true });
+  const kitPath = join(bundle, "lib/beskid-runtime/abi-5/x86_64-unknown-linux-gnu/release");
+  mkdirSync(kitPath, { recursive: true }); mkdirSync(stagedKit, { recursive: true });
+  writeFileSync(join(bundle, "beskid_corelib/CoreLib.bws"), "fixture\n");
+  writeFileSync(join(kitPath, "abi.json"), "bundled kit\n");
+  writeFileSync(join(stagedKit, "abi.json"), "staged kit\n");
+  const fakeCli = join(bundle, "bin/beskid");
+  writeFileSync(fakeCli, "#!/bin/sh\nexit 0\n", { mode: 0o755 });
+  const stagedDigest = spawnSync(process.execPath, [runtimeDigestPath.pathname, stagedKit], { encoding: "utf8" });
+  assert.equal(stagedDigest.status, 0, stagedDigest.stderr);
+  writeJson(join(output, "woodpecker-build-result.json"), { platform: "linux", target: PLATFORMS.linux.target, version: VERSION, source: SOURCE, runtime_kit_sha256: stagedDigest.stdout.trim() });
+  const result = spawnSync(process.execPath, [featureProducerPath.pathname, "linux", VERSION, output, bundle], { encoding: "utf8" });
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /bundle runtime-kit digest does not match build result/);
+});
+
+test("native producer rejects skipped test records even when one test passes", (t) => {
+  const root = mkdtempSync(join(tmpdir(), "beskid-feature-skipped-"));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  const output = join(root, "output"), bundle = join(root, "bundle");
+  mkdirSync(output); mkdirSync(join(bundle, "beskid_corelib"), { recursive: true });
+  mkdirSync(join(bundle, "bin"), { recursive: true });
+  const kitPath = join(bundle, "lib/beskid-runtime/abi-5/x86_64-unknown-linux-gnu/release");
+  mkdirSync(kitPath, { recursive: true });
+  writeFileSync(join(bundle, "beskid_corelib/CoreLib.bws"), "fixture\n"); writeFileSync(join(kitPath, "abi.json"), "{}\n");
+  const fakeCli = join(bundle, "bin/beskid");
+  const report = "{\"target\":\"CoreBytesTests\",\"summary\":{\"passed\":1,\"failed\":0,\"skipped\":1,\"filtered_out\":0,\"timed_out\":0},\"tests\":[{\"qualified_name\":\"CoreBytesTests.passes\",\"outcome\":\"passed\"},{\"qualified_name\":\"CoreBytesTests.skips\",\"outcome\":\"skipped\"}]}";
+  writeFileSync(fakeCli, `#!/bin/sh\nprintf '%s\\n' '${report}'\n`, { mode: 0o755 });
+  writeFileSync(join(output, "beskid"), "#!/bin/sh\nexit 91\n", { mode: 0o755 });
+  const digest = spawnSync(process.execPath, [runtimeDigestPath.pathname, kitPath], { encoding: "utf8" });
+  const runtimeDigest = digest.stdout.trim();
+  writeJson(join(output, "woodpecker-build-result.json"), { platform: "linux", target: PLATFORMS.linux.target, version: VERSION, source: SOURCE, runtime_kit_sha256: runtimeDigest });
+  const result = spawnSync(process.execPath, [featureProducerPath.pathname, "linux", VERSION, output, bundle], { encoding: "utf8" });
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /contains skipped, filtered, timed-out, or failed tests/);
+  assert.equal(existsSync(join(output, "feature-evidence-v1.json")), false);
 });
 
 test("rejects missing cases, identity drift, and modified feature logs", (t) => {
@@ -444,7 +528,7 @@ test("rejects missing cases, identity drift, and modified feature logs", (t) => 
   identityRecord.runtime_kit.sha256 = "f".repeat(64);
   writeJson(identityPath, identityRecord);
   writeJson(join(tamperedLog, "macos", "feature-network-tcp.json"), {
-    target: "NetworkTcpTests", summary: { passed: 1, failed: 0, skipped: 0 }, tampered: true,
+    target: "NetworkTcpTests", summary: { passed: 1, failed: 0, skipped: 0, filtered_out: 0, timed_out: 0 }, tampered: true,
     tests: [{ qualified_name: "NetworkTcpTests.passes", outcome: "passed" }],
   });
   t.after(() => {

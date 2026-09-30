@@ -63,12 +63,6 @@ jq -n --arg target "${target}" --arg cli "${cli_asset}" --arg lsp "${lsp_asset}"
 EOF
 chmod +x "${TMP}/build-release-platform.sh"
 
-mkdir -p "${TMP}/runtime-kit/lib/beskid-runtime/abi-5/x86_64-unknown-linux-gnu/release" \
-  "${TMP}/runtime-kit/lib/beskid-runtime/abi-5/aarch64-apple-darwin/release" \
-  "${TMP}/runtime-kit/lib/beskid-runtime/abi-5/x86_64-pc-windows-msvc/release"
-printf '{}\n' >"${TMP}/runtime-kit/lib/beskid-runtime/abi-5/x86_64-unknown-linux-gnu/release/abi.json"
-printf '{}\n' >"${TMP}/runtime-kit/lib/beskid-runtime/abi-5/aarch64-apple-darwin/release/abi.json"
-printf '{}\n' >"${TMP}/runtime-kit/lib/beskid-runtime/abi-5/x86_64-pc-windows-msvc/release/abi.json"
 cat >"${TMP}/feature-evidence.mjs" <<'EOF'
 import { writeFileSync } from "node:fs";
 writeFileSync(`${process.argv[4]}/feature-evidence-v1.json`, '{"fixture":true}\n');
@@ -81,7 +75,6 @@ assert_platform() {
     WOODPECKER_INIT_SUBMODULES_SCRIPT="${TMP}/init-submodules.sh" \
     WOODPECKER_RELEASE_PLATFORM_SCRIPT="${TMP}/build-release-platform.sh" \
     WOODPECKER_FEATURE_EVIDENCE_SCRIPT="${TMP}/feature-evidence.mjs" \
-    WOODPECKER_RUNTIME_KIT_DIR="${TMP}/runtime-kit" \
     bash "${SCRIPT}" "${platform}" 1.2.3 "${output}" >"${TMP}/${platform}.log"
   output="$(cd "${output}" && pwd -P)"
 
@@ -127,7 +120,6 @@ if FAKE_INIT_LOG="${TMP}/failed-init.log" \
   WOODPECKER_INIT_SUBMODULES_SCRIPT="${TMP}/init-submodules.sh" \
   WOODPECKER_RELEASE_PLATFORM_SCRIPT="${TMP}/build-release-platform.sh" \
   WOODPECKER_FEATURE_EVIDENCE_SCRIPT="${TMP}/feature-evidence.mjs" \
-  WOODPECKER_RUNTIME_KIT_DIR="${TMP}/runtime-kit" \
   bash "${SCRIPT}" linux 1.2.3 "${TMP}/failed-result" >/dev/null 2>&1; then
   echo 'failed structured platform result unexpectedly accepted' >&2
   exit 1

@@ -223,9 +223,21 @@ function validateFeatures(directory, definition, expectedSource, expectedVersion
     if (checksums.get(expectedLog) !== item.log_sha256) fail(`${definition.platform} ${expectedLog} checksum mismatch`);
     const log = readJson(join(directory, expectedLog), `${definition.platform} ${expectedLog}`);
     if (log.target !== required.target || !Array.isArray(log.tests)) fail(`${definition.platform} ${required.id} log target or tests are invalid`);
-    const passed = log.tests.filter(test => test?.outcome === "passed").map(test => test.qualified_name);
-    if (log.tests.some(test => test?.outcome !== "passed" && test?.outcome !== "skipped") || passed.length === 0) {
-      fail(`${definition.platform} ${required.id} contains failed, unexecuted, or empty test evidence`);
+    if (log.summary === null || Array.isArray(log.summary) || typeof log.summary !== "object") fail(`${definition.platform} ${required.id} summary is missing or invalid`);
+    const outcomes = { passed: 0, failed: 0, skipped: 0, filtered_out: 0, timed_out: 0 };
+    for (const test of log.tests) {
+      if (test === null || Array.isArray(test) || typeof test !== "object" || !Object.hasOwn(outcomes, test.outcome) || typeof test.qualified_name !== "string" || test.qualified_name.length === 0) {
+        fail(`${definition.platform} ${required.id} contains an invalid test record`);
+      }
+      outcomes[test.outcome] += 1;
+    }
+    exactKeys(log.summary, Object.keys(outcomes), `${definition.platform} ${required.id} summary`);
+    for (const [name, count] of Object.entries(outcomes)) {
+      if (!Number.isSafeInteger(log.summary[name]) || log.summary[name] < 0 || log.summary[name] !== count) fail(`${definition.platform} ${required.id} summary counts do not match tests`);
+    }
+    const passed = log.tests.filter(test => test.outcome === "passed").map(test => test.qualified_name);
+    if (log.tests.length === 0 || outcomes.passed === 0 || outcomes.failed + outcomes.skipped + outcomes.filtered_out + outcomes.timed_out > 0) {
+      fail(`${definition.platform} ${required.id} contains skipped, filtered, timed-out, or failed tests`);
     }
     if (JSON.stringify([...passed].sort()) !== JSON.stringify([...item.test_ids].sort())) fail(`${definition.platform} ${required.id} executed test IDs do not match its log`);
   }

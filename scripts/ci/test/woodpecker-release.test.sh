@@ -55,7 +55,7 @@ write_role() {
   )
   for item in "${feature_cases[@]}"; do
     id="${item%%:*}"; test_target="${item#*:}"; log="feature-${id//./-}.json"
-    jq -n --arg target "$test_target" '{target:$target,tests:[{qualified_name:($target+".passes"),outcome:"passed"}]}' >"$installer_dir/$log"
+    jq -n --arg target "$test_target" '{target:$target,summary:{passed:1,failed:0,skipped:0,filtered_out:0,timed_out:0},tests:[{qualified_name:($target+".passes"),outcome:"passed"}]}' >"$installer_dir/$log"
     cases="$(jq --arg id "$id" --arg target "$test_target" --arg log "$log" --arg digest "$(sha "$installer_dir/$log")" \
       '. + [{id:$id,target:$target,status:"success",log:$log,log_sha256:$digest,test_ids:[$target+".passes"]}]' <<<"$cases")"
   done
