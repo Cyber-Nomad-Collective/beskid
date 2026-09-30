@@ -36,6 +36,10 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Pin the compiler's ABI-v5 manifest validation fix for the strict Linux
+  release Clippy gate.
+- Pin the Corelib HTTP regression that rejects a duplicate `Host` before
+  waiting for the declared request body.
 - Pin the compiler's concurrent AOT test-isolation fix so macOS workspace
   validation no longer races through duplicate temporary source paths.
 - Pin the compiler's current-bundle local installer fix for nested Corelib
