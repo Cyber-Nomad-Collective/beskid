@@ -24,7 +24,7 @@ fail() { echo "FAIL: $*" >&2; exit 1; }
 sha() { shasum -a 256 "$1" | awk '{print $1}'; }
 
 write_role() {
-  local role="$1" target cli lsp installer_dir
+  local role="$1" target cli lsp installer_dir runtime_sha abi_sha cases='[]' item id test_target log
   case "$role" in
     linux) target=x86_64-unknown-linux-gnu; cli=beskid-linux-amd64; lsp=beskid_lsp-linux-amd64 ;;
     macos) target=aarch64-apple-darwin; cli=beskid-darwin-arm64; lsp=beskid_lsp-darwin-arm64 ;;
@@ -32,6 +32,8 @@ write_role() {
   esac
   installer_dir="$tmp/rootfs/woodpecker-handoff/$role/incoming/${build_run}-${source_sha}/$role"
   mkdir -p "$installer_dir"
+  runtime_sha="$(printf '%s-runtime-kit' "$role" | shasum -a 256 | awk '{print $1}')"
+  abi_sha="$(printf '%s-abi' "$role" | shasum -a 256 | awk '{print $1}')"
   printf '%s-cli\n' "$role" >"$installer_dir/$cli"
   printf '%s-lsp\n' "$role" >"$installer_dir/$lsp"
   printf '%s-bundle\n' "$role" >"$installer_dir/beskid-${version}-${target}.tar.gz"
@@ -41,13 +43,34 @@ write_role() {
     >"$installer_dir/platform-result-${target}.json"
   jq -n --arg role "$role" --arg target "$target" --arg version "$version" \
     --arg source "$source_sha" --arg compiler "$compiler_sha" \
-    '{schema_version:1,platform:$role,target:$target,version:$version,channel:"stable",source:{superrepo_commit:$source,compiler_commit:$compiler},platform_result_status:"success",published:false}' \
+    --arg runtime_sha "$runtime_sha" \
+    '{schema_version:1,platform:$role,target:$target,version:$version,channel:"stable",source:{superrepo_commit:$source,compiler_commit:$compiler},runtime_kit_sha256:$runtime_sha,platform_result_status:"success",published:false}' \
     >"$installer_dir/woodpecker-build-result.json"
+  local feature_cases=(
+    foundations.core_bytes:CoreBytesTests foundations.encoding_utf8:CoreEncodingUtf8Tests foundations.time:SystemTimeTests
+    foundations.fibers:ConcurrencyFiberHandleTests foundations.channels:ConcurrencyChannelApiTests
+    network.types:NetworkTypesTests network.dns:NetworkDnsTests network.tcp:NetworkTcpTests network.udp:NetworkUdpTests
+    network.scope:NetworkScopeTests network.shutdown:NetworkShutdownLeakTests network.disposable:NetworkDisposableTests
+    http.codec:HttpCodecTests http.validation:HttpValidationTests http.serialization:HttpSerializationTests http.exchange:HttpExchangeTests
+  )
+  for item in "${feature_cases[@]}"; do
+    id="${item%%:*}"; test_target="${item#*:}"; log="feature-${id//./-}.json"
+    jq -n --arg target "$test_target" '{target:$target,tests:[{qualified_name:($target+".passes"),outcome:"passed"}]}' >"$installer_dir/$log"
+    cases="$(jq --arg id "$id" --arg target "$test_target" --arg log "$log" --arg digest "$(sha "$installer_dir/$log")" \
+      '. + [{id:$id,target:$target,status:"success",log:$log,log_sha256:$digest,test_ids:[$target+".passes"]}]' <<<"$cases")"
+  done
+  jq -n --arg role "$role" --arg target "$target" --arg version "$version" \
+    --arg source "$source_sha" --arg compiler "$compiler_sha" --arg runtime "$runtime_sha" --arg abi "$abi_sha" \
+    --arg glue_reason 'Glue bindings are outside the v0.5 release contract; generated Rust/.NET bindings remain deferred to v0.6.' \
+    --argjson cases "$cases" \
+    '{schema_version:1,platform:$role,target:$target,version:$version,source:{superrepo_commit:$source,compiler_commit:$compiler},runtime_kit:{profile:"release",target:$target,sha256:$runtime,abi_sha256:$abi},cases:$cases,not_applicable:{glue:{status:"not_applicable",reason:$glue_reason}}}' \
+    >"$installer_dir/feature-evidence-v1.json"
   (
     cd "$installer_dir"
-    for name in "$cli" "$lsp" "beskid-${version}-${target}.tar.gz" "platform-result-${target}.json" woodpecker-build-result.json; do
+    for name in "$cli" "$lsp" "beskid-${version}-${target}.tar.gz" "platform-result-${target}.json" woodpecker-build-result.json feature-evidence-v1.json; do
       shasum -a 256 "$name"
     done
+    for name in feature-*.json; do [[ "$name" == feature-evidence-v1.json ]] || shasum -a 256 "$name"; done
   ) >"$installer_dir/SHA256SUMS"
 
   local installers=()

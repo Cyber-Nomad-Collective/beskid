@@ -9,7 +9,7 @@ output_dir="${3:?absolute durable output directory}"
 
 root="$(cd "$(dirname "$0")/../.." && pwd)"
 if [[ -n "${CI_PIPELINE_NUMBER:-}" || -n "${CI_COMMIT_SHA:-}" ]]; then
-  for override in WOODPECKER_RELEASE_VERSION_VALIDATOR WOODPECKER_INIT_SUBMODULES_SCRIPT WOODPECKER_RELEASE_PLATFORM_SCRIPT WOODPECKER_VSWHERE; do
+  for override in WOODPECKER_RELEASE_VERSION_VALIDATOR WOODPECKER_INIT_SUBMODULES_SCRIPT WOODPECKER_RELEASE_PLATFORM_SCRIPT WOODPECKER_FEATURE_EVIDENCE_SCRIPT WOODPECKER_RUNTIME_KIT_DIR WOODPECKER_VSWHERE; do
     if printenv "${override}" >/dev/null; then
       echo "${override} is test-only and forbidden in a pipeline" >&2
       exit 2
@@ -22,6 +22,7 @@ fi
 version_validator="${WOODPECKER_RELEASE_VERSION_VALIDATOR:-${root}/scripts/ci/release-version.mjs}"
 init_submodules="${WOODPECKER_INIT_SUBMODULES_SCRIPT:-${root}/scripts/ci/init-submodules.sh}"
 platform_builder="${WOODPECKER_RELEASE_PLATFORM_SCRIPT:-${root}/scripts/ci/build-release-platform.sh}"
+feature_evidence_runner="${WOODPECKER_FEATURE_EVIDENCE_SCRIPT:-${root}/scripts/ci/woodpecker-feature-evidence.mjs}"
 
 for command in git jq node tar; do
   command -v "${command}" >/dev/null 2>&1 || {
@@ -124,13 +125,16 @@ done
 
 superrepo_sha="$(git -C "${root}" rev-parse HEAD)"
 compiler_sha="$(git -C "${root}/compiler" rev-parse HEAD 2>/dev/null || printf unavailable)"
+runtime_kit="${WOODPECKER_RUNTIME_KIT_DIR:-${root}/compiler/target/native-runtime-kit}"
+runtime_kit_sha="$(node "${root}/scripts/ci/woodpecker-runtime-kit-digest.mjs" "${runtime_kit}")"
 jq -n \
   --arg platform "${platform}" \
   --arg target "${target}" \
   --arg version "${version}" \
   --arg output_path "${output_dir}" \
   --arg superrepo_sha "${superrepo_sha}" \
-  --arg compiler_sha "${compiler_sha}" '
+  --arg compiler_sha "${compiler_sha}" \
+  --arg runtime_kit_sha "${runtime_kit_sha}" '
   {
     schema_version: 1,
     platform: $platform,
@@ -139,10 +143,18 @@ jq -n \
     channel: "stable",
     output_path: $output_path,
     source: {superrepo_commit: $superrepo_sha, compiler_commit: $compiler_sha},
+    runtime_kit_sha256: $runtime_kit_sha,
     platform_result_status: "success",
     published: false
   }
 ' >"${output_dir}/woodpecker-build-result.json"
+
+bundle_stage="${output_dir}/feature-bundle"
+mkdir -p "${bundle_stage}"
+tar -xzf "${bundle_path}" -C "${bundle_stage}"
+node "${feature_evidence_runner}" \
+  "${platform}" "${version}" "${output_dir}" "${bundle_stage}/beskid-${version}-${target}" "${runtime_kit}"
+rm -rf -- "${bundle_stage}"
 
 checksum_files=(
   "${cli_asset}"
@@ -150,7 +162,12 @@ checksum_files=(
   "${bundle_asset}"
   "platform-result-${target}.json"
   woodpecker-build-result.json
+  feature-evidence-v1.json
 )
+for case_log in "${output_dir}"/feature-*.json; do
+  case_log_name="$(basename "${case_log}")"
+  [[ "${case_log_name}" == feature-evidence-v1.json ]] || checksum_files+=("${case_log_name}")
+done
 (
   cd "${output_dir}"
   if command -v sha256sum >/dev/null 2>&1; then

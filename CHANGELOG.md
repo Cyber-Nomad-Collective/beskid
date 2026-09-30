@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Require every Woodpecker native handoff to include source-bound v0.5
+  Foundation, Networking, HTTP, and runtime-kit conformance evidence, and
+  retain those verified records in the release snapshot.
 - Generate all Windows installer artwork through the distribution brand-asset
   script before Woodpecker builds the MSI and setup EXE.
 - Add a Windows installer-matrix recorder and structural evidence validator;

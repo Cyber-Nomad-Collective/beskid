@@ -9,6 +9,8 @@ import test from "node:test";
 const validatorPath = new URL("../woodpecker-release-evidence.mjs", import.meta.url);
 const aggregatePath = new URL("../woodpecker-aggregate-release.mjs", import.meta.url);
 const packagePath = new URL("../woodpecker-package-platform.mjs", import.meta.url);
+const featureProducerPath = new URL("../woodpecker-feature-evidence.mjs", import.meta.url);
+const runtimeDigestPath = new URL("../woodpecker-runtime-kit-digest.mjs", import.meta.url);
 
 test("Windows packaging derives all installer artwork from the distribution generator", () => {
   const source = readFileSync(packagePath, "utf8");
@@ -41,6 +43,17 @@ const PLATFORMS = {
     lsp: "beskid_lsp-windows-amd64.exe",
   },
 };
+const FEATURE_CASES = [
+  ["foundations.core_bytes", "CoreBytesTests"], ["foundations.encoding_utf8", "CoreEncodingUtf8Tests"],
+  ["foundations.time", "SystemTimeTests"], ["foundations.fibers", "ConcurrencyFiberHandleTests"],
+  ["foundations.channels", "ConcurrencyChannelApiTests"], ["network.types", "NetworkTypesTests"],
+  ["network.dns", "NetworkDnsTests"], ["network.tcp", "NetworkTcpTests"], ["network.udp", "NetworkUdpTests"],
+  ["network.scope", "NetworkScopeTests"], ["network.shutdown", "NetworkShutdownLeakTests"],
+  ["network.disposable", "NetworkDisposableTests"], ["http.codec", "HttpCodecTests"],
+  ["http.validation", "HttpValidationTests"], ["http.serialization", "HttpSerializationTests"],
+  ["http.exchange", "HttpExchangeTests"],
+];
+const GLUE_REASON = "Glue bindings are outside the v0.5 release contract; generated Rust/.NET bindings remain deferred to v0.6.";
 
 function sha256(value) {
   return createHash("sha256").update(value).digest("hex");
@@ -76,6 +89,7 @@ function writePlatform(root, platform, overrides = {}, source = SOURCE, version 
     version,
     channel: "stable",
     source,
+    runtime_kit_sha256: sha256(`${platform}-runtime-kit`),
     platform_result_status: "success",
     published: false,
     ...overrides.buildResult,
@@ -99,12 +113,15 @@ function writePlatform(root, platform, overrides = {}, source = SOURCE, version 
   return directory;
 }
 
-function createFixture(overrides = {}) {
+function createFixture(overrides = {}, { includeFeatures = true } = {}) {
   const root = mkdtempSync(join(tmpdir(), "beskid-woodpecker-evidence-"));
   const source = overrides.source ?? SOURCE;
   const version = overrides.version ?? VERSION;
   for (const platform of Object.keys(PLATFORMS)) {
     writePlatform(root, platform, overrides[platform] ?? {}, source, version);
+  }
+  if (includeFeatures) {
+    for (const platform of Object.keys(PLATFORMS)) writeFeatureFixture(root, platform);
   }
   return root;
 }
@@ -120,6 +137,36 @@ function writeGateFixture(root) {
       raw_log: log, raw_log_sha256: sha256(content),
     });
   }
+}
+
+function writeFeatureFixture(root, platform) {
+  const buildResult = JSON.parse(readFileSync(join(root, platform, "woodpecker-build-result.json"), "utf8"));
+  const featureName = "feature-evidence-v1.json";
+  const cases = FEATURE_CASES.map(([id, target]) => {
+    const logName = `feature-${id.replaceAll(".", "-")}.json`;
+    const log = `${JSON.stringify({ target, summary: { passed: 1, failed: 0, skipped: 0 }, tests: [{ qualified_name: `${target}.passes`, outcome: "passed" }] })}\n`;
+    writeFileSync(join(root, platform, logName), log);
+    return { id, target, status: "success", log: logName, log_sha256: sha256(log), test_ids: [`${target}.passes`] };
+  });
+  const kitSha = sha256(`${platform}-runtime-kit`);
+  const feature = {
+    schema_version: 1,
+    platform,
+    target: PLATFORMS[platform].target,
+    version: buildResult.version,
+    source: buildResult.source,
+    runtime_kit: { profile: "release", target: PLATFORMS[platform].target, sha256: buildResult.runtime_kit_sha256, abi_sha256: sha256(`${platform}-abi`) },
+    cases,
+    not_applicable: { glue: { status: "not_applicable", reason: GLUE_REASON } },
+  };
+  writeJson(join(root, platform, featureName), {
+    ...feature,
+  });
+  const sumsPath = join(root, platform, "SHA256SUMS");
+  const oldLines = readFileSync(sumsPath, "utf8").trim().split("\n");
+  oldLines.push(`${sha256(readFileSync(join(root, platform, featureName)))}  ${featureName}`);
+  for (const item of cases) oldLines.push(`${sha256(readFileSync(join(root, platform, item.log)))}  ${item.log}`);
+  writeFileSync(sumsPath, `${oldLines.join("\n")}\n`);
 }
 
 function runValidator(root) {
@@ -233,6 +280,9 @@ test("aggregation carries source-bound gate logs into qualified release state", 
   assert.equal(state.tests.results.find(entry => entry.component === "corelib").raw_log_sha256,
     sha256("corelib gate fixture passed\n"));
   assert.equal(readFileSync(join(output, "gate-reports", "release-gate-corelib.log"), "utf8"), "corelib gate fixture passed\n");
+  assert.equal(existsSync(join(output, "evidence", "linux", "feature-evidence-v1.json")), true);
+  const validated = JSON.parse(readFileSync(join(output, "validated-evidence.json"), "utf8"));
+  assert.equal(validated.platforms[0].features.cases.length, FEATURE_CASES.length);
 });
 
 for (const [name, mutate, expected] of [
@@ -283,7 +333,7 @@ test("aggregation rejects wrong requested source and failed evidence before crea
   assert.equal(existsSync(output), false);
 });
 
-test("accepts complete matching platform and gate evidence", (t) => {
+test("accepts complete matching platform, feature and gate evidence", (t) => {
   const root = createFixture();
   t.after(() => rmSync(root, { recursive: true, force: true }));
 
@@ -295,6 +345,122 @@ test("accepts complete matching platform and gate evidence", (t) => {
   assert.equal(evidence.version, VERSION);
   assert.deepEqual(evidence.source, SOURCE);
   assert.deepEqual(evidence.platforms.map(({ platform }) => platform), ["linux", "macos", "windows"]);
+  assert.equal(evidence.platforms[0].features.cases[0].id, "foundations.core_bytes");
+  assert.equal(evidence.platforms[0].features.not_applicable.glue.status, "not_applicable");
+});
+
+test("rejects build-only platform handoffs without feature evidence", (t) => {
+  const root = createFixture({}, { includeFeatures: false });
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  const result = runValidator(root);
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /SHA256SUMS is missing feature-evidence-v1\.json/);
+});
+
+test("rejects source, version, and target drift in feature evidence", (t) => {
+  const root = createFixture();
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  const featurePath = join(root, "linux", "feature-evidence-v1.json");
+  const feature = JSON.parse(readFileSync(featurePath, "utf8"));
+  feature.version = "9.9.9";
+  writeJson(featurePath, feature);
+  let result = runValidator(root);
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /feature evidence version does not match/);
+
+  feature.version = VERSION;
+  feature.source.compiler_commit = "c".repeat(40);
+  writeJson(featurePath, feature);
+  result = runValidator(root);
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /feature source\.compiler_commit does not match linux/);
+
+  feature.source = SOURCE;
+  feature.target = "aarch64-apple-darwin";
+  writeJson(featurePath, feature);
+  result = runValidator(root);
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /feature evidence target does not match/);
+});
+
+test("rejects unexecuted cases and a false Glue not-applicable reason", (t) => {
+  const unexecutedRoot = createFixture();
+  const glueRoot = createFixture();
+  const featurePath = join(unexecutedRoot, "linux", "feature-evidence-v1.json");
+  const feature = JSON.parse(readFileSync(featurePath, "utf8"));
+  feature.cases[0].test_ids = [];
+  writeJson(featurePath, feature);
+  const gluePath = join(glueRoot, "linux", "feature-evidence-v1.json");
+  const glue = JSON.parse(readFileSync(gluePath, "utf8"));
+  glue.not_applicable.glue.reason = "not implemented";
+  writeJson(gluePath, glue);
+  t.after(() => {
+    rmSync(unexecutedRoot, { recursive: true, force: true });
+    rmSync(glueRoot, { recursive: true, force: true });
+  });
+  const unexecuted = runValidator(unexecutedRoot);
+  const notApplicable = runValidator(glueRoot);
+  assert.notEqual(unexecuted.status, 0);
+  assert.match(unexecuted.stderr, /has no unique executed test IDs/);
+  assert.notEqual(notApplicable.status, 0);
+  assert.match(notApplicable.stderr, /Glue not_applicable reason does not match/);
+});
+
+test("native producer records all target results and binds the release runtime kit", (t) => {
+  const root = mkdtempSync(join(tmpdir(), "beskid-feature-producer-"));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  const output = join(root, "output"), bundle = join(root, "bundle"), kit = join(root, "kit");
+  mkdirSync(output); mkdirSync(join(bundle, "beskid_corelib"), { recursive: true });
+  mkdirSync(join(kit, "lib/beskid-runtime/abi-5/x86_64-unknown-linux-gnu/release"), { recursive: true });
+  writeFileSync(join(bundle, "beskid_corelib/CoreLib.bws"), "fixture\n");
+  writeFileSync(join(kit, "lib/beskid-runtime/abi-5/x86_64-unknown-linux-gnu/release/abi.json"), "{}\n");
+  const executable = join(output, "beskid");
+  writeFileSync(executable, "#!/bin/sh\ntarget=\nwhile [ \"$#\" -gt 0 ]; do if [ \"$1\" = --target ]; then shift; target=\"$1\"; fi; shift; done\nprintf '{\"target\":\"%s\",\"tests\":[{\"qualified_name\":\"%s.passes\",\"outcome\":\"passed\"}]}\\n' \"$target\" \"$target\"\n", { mode: 0o755 });
+  const digest = spawnSync(process.execPath, [runtimeDigestPath.pathname, kit], { encoding: "utf8" });
+  assert.equal(digest.status, 0, digest.stderr);
+  writeJson(join(output, "woodpecker-build-result.json"), {
+    platform: "linux", target: PLATFORMS.linux.target, version: VERSION, source: SOURCE,
+    runtime_kit_sha256: digest.stdout.trim(),
+  });
+  const result = spawnSync(process.execPath, [featureProducerPath.pathname, "linux", VERSION, output, bundle, kit], { encoding: "utf8" });
+  assert.equal(result.status, 0, result.stderr);
+  const feature = JSON.parse(readFileSync(join(output, "feature-evidence-v1.json"), "utf8"));
+  assert.equal(feature.cases.length, FEATURE_CASES.length);
+  assert.deepEqual(feature.cases.map(item => item.id), FEATURE_CASES.map(([id]) => id));
+  assert.equal(feature.runtime_kit.sha256, digest.stdout.trim());
+  assert.equal(feature.runtime_kit.abi_sha256, sha256("{}\n"));
+});
+
+test("rejects missing cases, identity drift, and modified feature logs", (t) => {
+  const missingCase = createFixture();
+  const identityDrift = createFixture();
+  const tamperedLog = createFixture();
+  const missingPath = join(missingCase, "linux", "feature-evidence-v1.json");
+  const missingRecord = JSON.parse(readFileSync(missingPath));
+  missingRecord.cases = [];
+  writeJson(missingPath, missingRecord);
+  const identityPath = join(identityDrift, "windows", "feature-evidence-v1.json");
+  const identityRecord = JSON.parse(readFileSync(identityPath));
+  identityRecord.runtime_kit.sha256 = "f".repeat(64);
+  writeJson(identityPath, identityRecord);
+  writeJson(join(tamperedLog, "macos", "feature-network-tcp.json"), {
+    target: "NetworkTcpTests", summary: { passed: 1, failed: 0, skipped: 0 }, tampered: true,
+    tests: [{ qualified_name: "NetworkTcpTests.passes", outcome: "passed" }],
+  });
+  t.after(() => {
+    rmSync(missingCase, { recursive: true, force: true });
+    rmSync(identityDrift, { recursive: true, force: true });
+    rmSync(tamperedLog, { recursive: true, force: true });
+  });
+  const missing = runValidator(missingCase);
+  const identity = runValidator(identityDrift);
+  const tampered = runValidator(tamperedLog);
+  assert.notEqual(missing.status, 0);
+  assert.match(missing.stderr, /missing required conformance cases/);
+  assert.notEqual(identity.status, 0);
+  assert.match(identity.stderr, /runtime-kit digest does not match build result/);
+  assert.notEqual(tampered.status, 0);
+  assert.match(tampered.stderr, /checksum mismatch for feature-network-tcp\.json/);
 });
 
 test("rejects mismatched source provenance", (t) => {

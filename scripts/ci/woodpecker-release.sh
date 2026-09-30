@@ -97,6 +97,10 @@ for role in "${roles[@]}"; do
     "$release/input/$role/platform-result-${target}.json" \
     "$release/input/$role/woodpecker-build-result.json" \
     "$release/input/$role/SHA256SUMS" "$release/native/$role/"
+  cp "$release/input/$role/feature-evidence-v1.json" "$release/native/$role/"
+  for feature_log in "$release/input/$role"/feature-*.json; do
+    [[ "${feature_log##*/}" == feature-evidence-v1.json ]] || cp "$feature_log" "$release/native/$role/"
+  done
   if [[ "$role" == linux ]]; then
     for component in compiler corelib; do
       cp "$release/input/linux/release-gate-${component}.json" \
