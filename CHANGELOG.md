@@ -11,6 +11,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Pin the reconciled v0.5 compiler/Corelib and distribution sources for the
+  final native release matrix.
 - Require every Woodpecker native handoff to include source-bound v0.5
   Foundation, Networking, HTTP, and runtime-kit conformance evidence, and
   retain those verified records in the release snapshot.
