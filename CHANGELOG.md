@@ -36,6 +36,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Pin the compiler's concurrent AOT test-isolation fix so macOS workspace
+  validation no longer races through duplicate temporary source paths.
 - Pin the compiler's current-bundle local installer fix for nested Corelib
   packages and Windows executable names.
 - Validate the release bundle's packages inside its marker-bearing Corelib
