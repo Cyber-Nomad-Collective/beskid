@@ -36,6 +36,10 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Fail closed when the first-party template checker exits successfully without
+  reporting all seven generated-project results and invalid-parser evidence;
+  keep publisher credentials out of that subprocess and resolve relative
+  template roots before invoking it.
 - Include the v0.5 Network and HTTP packages in Corelib publication, and check
   registry readiness through the public package API used by the publisher.
 - Pin the compiler's ABI-v5 manifest validation fix for the strict Linux

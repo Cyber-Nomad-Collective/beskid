@@ -34,7 +34,7 @@ assert_contains "${RUNNER}" 'installed artifact retains a non-registry dependenc
   "publication rejects artifacts that retain source-workspace dependency paths"
 assert_contains "${RUNNER}" 'template summary does not match template.json' \
   "publication validates template metadata agreement before registry mutation"
-assert_contains "${RUNNER}" 'runTemplateQualityGate(cliBin, templatesRoot, corelibRoot);' \
+assert_contains "${RUNNER}" 'runTemplateQualityGate(cliBin, templatesRoot, corelibRoot)' \
   "publication runs generated-template quality before registry mutation"
 assert_contains "${RUNNER}" 'BESKID_PCKG_URL: baseUrl.href' \
   "the canonical compiler client receives the selected registry endpoint"

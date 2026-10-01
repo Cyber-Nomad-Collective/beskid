@@ -4,6 +4,7 @@ set -euo pipefail
 root="$(cd "$(dirname "$0")/../../.." && pwd)"
 
 node --test "${root}/scripts/ci/test/license-policy.test.mjs"
+node --test "${root}/scripts/ci/test/template-quality-gate.test.mjs"
 node "${root}/scripts/ci/check-license-policy.mjs" --root "${root}"
 
 for script in \

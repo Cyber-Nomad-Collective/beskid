@@ -20,6 +20,7 @@ import {
 } from "node:fs";
 import { basename, join } from "node:path";
 import { tmpdir } from "node:os";
+import { runTemplateQualityGate } from "./template-quality-gate.mjs";
 
 const CORELIB_REPOSITORY_BASE =
   "https://github.com/Cyber-Nomad-Collective/beskid_compiler/tree/main/corelib";
@@ -144,18 +145,6 @@ function resolveTemplatesRoot() {
     throw new Error(`beskid_templates.bws not found under ${root}`);
   }
   return root;
-}
-
-function runTemplateQualityGate(cliBin, templatesRoot, corelibRoot) {
-  const script = join(templatesRoot, "ci", "quality.py");
-  if (!existsSync(script)) {
-    throw new Error(`First-party template quality gate is missing: ${script}`);
-  }
-  execFileSync("python3", [script, "--cli", cliBin, "--verify-invalid-fixture"], {
-    cwd: templatesRoot,
-    env: { ...process.env, BESKID_CORELIB_ROOT: corelibRoot },
-    stdio: "inherit",
-  });
 }
 
 function corelibInventory(workspaceRoot) {
@@ -577,7 +566,7 @@ async function main() {
   const templatesRoot = resolveTemplatesRoot();
   const corelibPackages = corelibInventory(corelibRoot);
   const templatePackages = templateInventory(templatesRoot);
-  runTemplateQualityGate(cliBin, templatesRoot, corelibRoot);
+  process.stdout.write(runTemplateQualityGate(cliBin, templatesRoot, corelibRoot));
   const allPackages = [...corelibPackages, ...templatePackages];
 
   const plans = new Map();
