@@ -1,5 +1,5 @@
 {
-  "sourceRevision": "aacd4fd13596c9e433ebb8387e66457babee7316",
+  "sourceRevision": "9ea116736ffce14c53957897628489081e750f70",
   "sourceBlobs": {
     "crates/beskid_cli/src/cli.rs": "cbf4e05517492e7532bc8f76a4dd468bf151a96c",
     "crates/beskid_cli/src/cli/app.rs": "3bcdc4b579c28f6d6fa5d945a1fc56aa12c73ff2",
