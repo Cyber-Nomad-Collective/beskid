@@ -9,7 +9,7 @@ output_dir="${3:?absolute durable output directory}"
 
 root="$(cd "$(dirname "$0")/../.." && pwd)"
 if [[ -n "${CI_PIPELINE_NUMBER:-}" || -n "${CI_COMMIT_SHA:-}" ]]; then
-  for override in WOODPECKER_RELEASE_VERSION_VALIDATOR WOODPECKER_INIT_SUBMODULES_SCRIPT WOODPECKER_RELEASE_PLATFORM_SCRIPT WOODPECKER_FEATURE_EVIDENCE_SCRIPT WOODPECKER_VSWHERE; do
+  for override in WOODPECKER_RELEASE_VERSION_VALIDATOR WOODPECKER_INIT_SUBMODULES_SCRIPT WOODPECKER_RELEASE_PLATFORM_SCRIPT WOODPECKER_FEATURE_EVIDENCE_SCRIPT WOODPECKER_CLI_SURFACE_GATE_SCRIPT WOODPECKER_CLI_SURFACE_CORELIB_VERIFIER WOODPECKER_VSWHERE; do
     if printenv "${override}" >/dev/null; then
       echo "${override} is test-only and forbidden in a pipeline" >&2
       exit 2
@@ -23,6 +23,8 @@ version_validator="${WOODPECKER_RELEASE_VERSION_VALIDATOR:-${root}/scripts/ci/re
 init_submodules="${WOODPECKER_INIT_SUBMODULES_SCRIPT:-${root}/scripts/ci/init-submodules.sh}"
 platform_builder="${WOODPECKER_RELEASE_PLATFORM_SCRIPT:-${root}/scripts/ci/build-release-platform.sh}"
 feature_evidence_runner="${WOODPECKER_FEATURE_EVIDENCE_SCRIPT:-${root}/scripts/ci/woodpecker-feature-evidence.mjs}"
+cli_surface_gate="${WOODPECKER_CLI_SURFACE_GATE_SCRIPT:-${root}/compiler/scripts/ci/cli_surface_gate.py}"
+corelib_verifier="${WOODPECKER_CLI_SURFACE_CORELIB_VERIFIER:-${root}/scripts/ci/verify-release-corelib-bundle.mjs}"
 
 for command in git jq node tar; do
   command -v "${command}" >/dev/null 2>&1 || {
@@ -133,6 +135,8 @@ tar -xzf "${bundle_path}" -C "${bundle_stage}"
 bundle_root="${bundle_stage}/beskid-${version}-${target}"
 runtime_kit="${bundle_root}/lib/beskid-runtime/abi-5/${target}/release"
 runtime_kit_sha="$(node "${root}/scripts/ci/woodpecker-runtime-kit-digest.mjs" "${runtime_kit}")"
+corelib_fingerprint="$(tr -d '\r\n' <"${bundle_root}/beskid_corelib/.beskid-bundle.sha256")"
+[[ "${corelib_fingerprint}" =~ ^[a-f0-9]{64}$ ]] || { echo 'invalid release Corelib fingerprint' >&2; exit 1; }
 jq -n \
   --arg platform "${platform}" \
   --arg target "${target}" \
@@ -157,6 +161,26 @@ jq -n \
 
 node "${feature_evidence_runner}" \
   "${platform}" "${version}" "${output_dir}" "${bundle_root}"
+if [[ "${platform}" == linux ]]; then
+  command -v python3 >/dev/null 2>&1 || { echo 'Linux CLI surface gate requires Python 3' >&2; exit 2; }
+  [[ -f "${cli_surface_gate}" ]] || { echo "missing reviewed CLI surface gate: ${cli_surface_gate}" >&2; exit 1; }
+  node "${corelib_verifier}" --verify "${root}/compiler/corelib" "${bundle_root}/beskid_corelib" \
+    >"${output_dir}/cli-surface-corelib-verify.log"
+  cli_sha="$(node -e 'const fs=require("fs"),crypto=require("crypto");process.stdout.write(crypto.createHash("sha256").update(fs.readFileSync(process.argv[1])).digest("hex"))' "${cli_path}")"
+  BESKID_RUNTIME_PREFIX="${bundle_root}" python3 "${cli_surface_gate}" "${cli_path}" \
+    --expected-sha256 "${cli_sha}" \
+    --corelib-root "${bundle_root}/beskid_corelib" \
+    --expected-corelib-fingerprint "${corelib_fingerprint}" \
+    --json "${output_dir}/cli-surface-evidence-v1.json" \
+    >"${output_dir}/cli-surface-gate.log" 2>&1
+  node "${root}/scripts/ci/woodpecker-cli-surface-evidence.mjs" create \
+    "${output_dir}/cli-surface-evidence-v1.json" "${cli_path}" \
+    "${output_dir}/cli-surface-receipt-v1.json" "${version}" \
+    "${superrepo_sha}" "${compiler_sha}" "${runtime_kit_sha}" "${corelib_fingerprint}"
+  jq --arg corelib "${corelib_fingerprint}" '.corelib_fingerprint = $corelib' \
+    "${output_dir}/woodpecker-build-result.json" >"${output_dir}/woodpecker-build-result.json.tmp"
+  mv "${output_dir}/woodpecker-build-result.json.tmp" "${output_dir}/woodpecker-build-result.json"
+fi
 rm -rf -- "${bundle_stage}"
 
 checksum_files=(
@@ -167,6 +191,9 @@ checksum_files=(
   woodpecker-build-result.json
   feature-evidence-v1.json
 )
+if [[ "${platform}" == linux ]]; then
+  checksum_files+=(cli-surface-evidence-v1.json cli-surface-receipt-v1.json)
+fi
 for case_log in "${output_dir}"/feature-*.json; do
   case_log_name="$(basename "${case_log}")"
   [[ "${case_log_name}" == feature-evidence-v1.json ]] || checksum_files+=("${case_log_name}")

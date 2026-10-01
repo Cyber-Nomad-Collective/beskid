@@ -85,6 +85,18 @@ try {
     { ...process.env, GATE_REPORT_DIR: reports, HANDOFF_RELEASE_URL: "" });
   const state = JSON.parse(readFileSync(join(output, "release-state.json"), "utf8"));
   if (!state.publishable) throw new Error("aggregate is not publishable");
+  const linux = checked.platforms.find(platform => platform.platform === "linux");
+  const receipt = JSON.parse(readFileSync(join(snapshot, "linux", "cli-surface-receipt-v1.json"), "utf8"));
+  const receiptArtifact = linux.artifacts.find(artifact => artifact.name === "cli-surface-receipt-v1.json");
+  state.cli_surface = {
+    status: "success", receipt: receiptArtifact.name, receipt_sha256: receiptArtifact.sha256,
+    evidence: receipt.evidence, evidence_sha256: receipt.evidence_sha256,
+    binary: receipt.binary, binary_sha256: receipt.binary_sha256,
+    runtime_kit_sha256: receipt.runtime_kit_sha256,
+    corelib_fingerprint: receipt.corelib_fingerprint,
+    source: receipt.source, counts: receipt.counts,
+  };
+  writeFileSync(join(output, "release-state.json"), `${JSON.stringify(state, null, 2)}\n`);
   process.stdout.write(`${JSON.stringify({ output, version, source: checked.source, published: false })}\n`);
 } catch (error) {
   process.stderr.write(`release aggregation: ${error.message}\n`);

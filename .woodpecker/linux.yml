@@ -21,7 +21,7 @@ steps:
     image: rust:1.98.1-bookworm@sha256:9a73a5088750b4c95158ab26629c854c3d6fc4b173cb7bc8079ad252d8ed7bfa
     commands:
       - apt-get update >/dev/null
-      - apt-get install -y --no-install-recommends ca-certificates clang git jq lld llvm mold nodejs openssh-client pkg-config libssl-dev ripgrep >/dev/null
+      - apt-get install -y --no-install-recommends ca-certificates clang git jq lld llvm mold nodejs openssh-client pkg-config libssl-dev python3 ripgrep >/dev/null
       - bash scripts/ci/init-submodules.sh beskid_distrib
       - bash scripts/ci/test/run-woodpecker-tests.sh
       - |

@@ -13,7 +13,9 @@
  */
 import { createHash } from "node:crypto";
 import { lstatSync, readFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
+import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 
 const PLATFORMS = [
   {
@@ -57,6 +59,7 @@ const FEATURE_CASES = [
   { id: "http.exchange", target: "HttpExchangeTests" },
 ];
 const GLUE_NOT_APPLICABLE_REASON = "Glue bindings are outside the v0.5 release contract; generated Rust/.NET bindings remain deferred to v0.6.";
+const scripts = dirname(fileURLToPath(import.meta.url));
 
 function fail(message) {
   throw new Error(message);
@@ -267,6 +270,7 @@ function validatePlatform(root, definition, expectedSource, expectedVersion) {
   const resultName = `platform-result-${definition.target}.json`;
   const bundle = `beskid-${expectedVersion}-${definition.target}.tar.gz`;
   const expectedArtifacts = [definition.cli, definition.lsp, bundle, resultName, "woodpecker-build-result.json", "feature-evidence-v1.json", ...FEATURE_CASES.map(({ id }) => featureLogName(id))];
+  if (definition.platform === "linux") expectedArtifacts.push("cli-surface-evidence-v1.json", "cli-surface-receipt-v1.json");
   const buildResult = readJson(join(directory, "woodpecker-build-result.json"), `${definition.platform} build result`);
   if (buildResult.schema_version !== 1) fail(`${definition.platform} build result schema_version must be 1`);
   if (buildResult.platform !== definition.platform) fail(`${definition.platform} build result platform does not match directory`);
@@ -300,11 +304,19 @@ function validatePlatform(root, definition, expectedSource, expectedVersion) {
 
   const checksums = readChecksums(join(directory, "SHA256SUMS"), definition.platform, expectedArtifacts);
   const features = validateFeatures(directory, definition, expectedSource, expectedVersion, buildResult, checksums);
+  const artifacts = expectedArtifacts.map((name) => checksumFile(directory, definition.platform, name, checksums));
+  if (definition.platform === "linux") {
+    if (!SHA256.test(buildResult.corelib_fingerprint)) fail("linux build result Corelib fingerprint must be SHA-256");
+    const cli = spawnSync(process.execPath, [join(scripts, "woodpecker-cli-surface-evidence.mjs"), "validate",
+      directory, expectedVersion, source.superrepo_commit, source.compiler_commit,
+      buildResult.runtime_kit_sha256, buildResult.corelib_fingerprint], { encoding: "utf8" });
+    if (cli.error || cli.status !== 0) fail(`linux CLI surface receipt failed: ${cli.error?.message || cli.stderr.trim()}`);
+  }
   return {
     platform: definition.platform,
     target: definition.target,
     features,
-    artifacts: expectedArtifacts.map((name) => checksumFile(directory, definition.platform, name, checksums)),
+    artifacts,
   };
 }
 

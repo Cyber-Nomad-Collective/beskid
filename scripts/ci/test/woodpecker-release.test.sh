@@ -32,6 +32,9 @@ write_role() {
   esac
   installer_dir="$tmp/rootfs/woodpecker-handoff/$role/incoming/${build_run}-${source_sha}/$role"
   mkdir -p "$installer_dir"
+  if [[ "$role" == linux ]]; then
+    rm -f "$installer_dir/cli-surface-evidence-v1.json" "$installer_dir/cli-surface-receipt-v1.json"
+  fi
   runtime_sha="$(printf '%s-runtime-kit' "$role" | shasum -a 256 | awk '{print $1}')"
   abi_sha="$(printf '%s-abi' "$role" | shasum -a 256 | awk '{print $1}')"
   printf '%s-cli\n' "$role" >"$installer_dir/$cli"
@@ -44,7 +47,7 @@ write_role() {
   jq -n --arg role "$role" --arg target "$target" --arg version "$version" \
     --arg source "$source_sha" --arg compiler "$compiler_sha" \
     --arg runtime_sha "$runtime_sha" \
-    '{schema_version:1,platform:$role,target:$target,version:$version,channel:"stable",source:{superrepo_commit:$source,compiler_commit:$compiler},runtime_kit_sha256:$runtime_sha,platform_result_status:"success",published:false}' \
+    '{schema_version:1,platform:$role,target:$target,version:$version,channel:"stable",source:{superrepo_commit:$source,compiler_commit:$compiler},runtime_kit_sha256:$runtime_sha,platform_result_status:"success",published:false} | if $role == "linux" then .corelib_fingerprint = ("d" * 64) else . end' \
     >"$installer_dir/woodpecker-build-result.json"
   local feature_cases=(
     foundations.core_bytes:CoreBytesTests foundations.encoding_utf8:CoreEncodingUtf8Tests foundations.time:SystemTimeTests
@@ -65,12 +68,28 @@ write_role() {
     --argjson cases "$cases" \
     '{schema_version:1,platform:$role,target:$target,version:$version,source:{superrepo_commit:$source,compiler_commit:$compiler},runtime_kit:{profile:"release",target:$target,sha256:$runtime,abi_sha256:$abi},cases:$cases,not_applicable:{glue:{status:"not_applicable",reason:$glue_reason}}}' \
     >"$installer_dir/feature-evidence-v1.json"
+  if [[ "$role" == linux ]]; then
+    jq -n --arg binary "$installer_dir/$cli" --arg digest "$(sha "$installer_dir/$cli")" --arg corelib "$(printf '%064d' 0 | tr '0' 'd')" '
+      {schema:"beskid.cli-surface.v1",binary:$binary,binary_sha256:$digest,corelib_fingerprint:$corelib,
+       source_provenance:{status:"unverified",commit:null,external_receipt_required:true},release_qualified:false,
+       counts:{pass:3,fail:0,setup_skip:0,uncovered:0,inventory_only:0},
+       contracts:{hi_unknown:{exit:2,unknown_subcommand:true,control_bytes:[]},new_tui_rejected:{exit:2,not_advertised:true,unexpected_argument:true,control_bytes:[]},graph_tui_advertised:true},
+       rows:[{path:"parse",kind:"leaf",status:"pass",exit:0,expected_exit:0,control_bytes:[]},
+             {path:"graph --tui",kind:"scenario",status:"pass",exit:0,expected_exit:0,timed_out:false,rendered_project:true,transcript_base64:"dHVp"},
+             {path:"analyze --plain PTY",kind:"scenario",status:"pass",exit:0,expected_exit:0,timed_out:false,line_output:true,summary_seen:true,transcript_base64:"bGluZQ=="}]}' \
+      >"$installer_dir/cli-surface-evidence-v1.json"
+    node "$root/scripts/ci/woodpecker-cli-surface-evidence.mjs" create \
+      "$installer_dir/cli-surface-evidence-v1.json" "$installer_dir/$cli" \
+      "$installer_dir/cli-surface-receipt-v1.json" "$version" "$source_sha" "$compiler_sha" \
+      "$runtime_sha" "$(printf '%064d' 0 | tr '0' 'd')"
+  fi
   (
     cd "$installer_dir"
     for name in "$cli" "$lsp" "beskid-${version}-${target}.tar.gz" "platform-result-${target}.json" woodpecker-build-result.json feature-evidence-v1.json; do
       shasum -a 256 "$name"
     done
     for name in feature-*.json; do [[ "$name" == feature-evidence-v1.json ]] || shasum -a 256 "$name"; done
+    if [[ "$role" == linux ]]; then shasum -a 256 cli-surface-evidence-v1.json cli-surface-receipt-v1.json; fi
   ) >"$installer_dir/SHA256SUMS"
 
   local installers=()
@@ -195,6 +214,22 @@ if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=701 CI_COMMIT_S
 fi
 grep -Fq 'release-gate-compiler.json' "$tmp/missing-gate.err" || fail 'missing compiler gate was not diagnosed'
 test ! -s "$tmp/gh.log" || fail 'missing compiler gate reached GitHub'
+write_role linux
+
+# The CLI inventory and PTY gate is a required Linux handoff component.
+linux_input="$tmp/rootfs/woodpecker-handoff/linux/incoming/${build_run}-${source_sha}/linux"
+rm "$linux_input/cli-surface-receipt-v1.json"
+(
+  cd "$linux_input"
+  find . -maxdepth 1 -type f ! -name 'UPLOAD_*' -exec basename {} \; | LC_ALL=C sort | while IFS= read -r name; do shasum -a 256 "$name"; done
+) >"$linux_input/UPLOAD_SHA256SUMS"
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=702 CI_COMMIT_SHA="$source_sha" \
+  GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
+  bash "$script" "$build_run" "$version" 2>"$tmp/missing-cli-receipt.err"; then
+  fail 'release preparation accepted handoff without CLI surface receipt'
+fi
+grep -Fq 'cli-surface-receipt-v1.json' "$tmp/missing-cli-receipt.err" || fail 'missing CLI receipt was not diagnosed'
+test ! -s "$tmp/gh.log" || fail 'missing CLI receipt reached GitHub'
 write_role linux
 
 # A handoff checksum failure is rejected before a transaction is created.

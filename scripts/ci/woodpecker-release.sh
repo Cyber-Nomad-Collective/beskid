@@ -102,6 +102,8 @@ for role in "${roles[@]}"; do
     [[ "${feature_log##*/}" == feature-evidence-v1.json ]] || cp "$feature_log" "$release/native/$role/"
   done
   if [[ "$role" == linux ]]; then
+    cp "$release/input/linux/cli-surface-evidence-v1.json" \
+      "$release/input/linux/cli-surface-receipt-v1.json" "$release/native/linux/"
     for component in compiler corelib; do
       cp "$release/input/linux/release-gate-${component}.json" \
         "$release/input/linux/release-gate-${component}.log" "$release/native/linux/"

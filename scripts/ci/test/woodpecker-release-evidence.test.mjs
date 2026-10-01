@@ -11,6 +11,7 @@ const aggregatePath = new URL("../woodpecker-aggregate-release.mjs", import.meta
 const packagePath = new URL("../woodpecker-package-platform.mjs", import.meta.url);
 const featureProducerPath = new URL("../woodpecker-feature-evidence.mjs", import.meta.url);
 const runtimeDigestPath = new URL("../woodpecker-runtime-kit-digest.mjs", import.meta.url);
+const cliReceiptPath = new URL("../woodpecker-cli-surface-evidence.mjs", import.meta.url);
 
 test("Windows packaging derives all installer artwork from the distribution generator", () => {
   const source = readFileSync(packagePath, "utf8");
@@ -90,6 +91,7 @@ function writePlatform(root, platform, overrides = {}, source = SOURCE, version 
     channel: "stable",
     source,
     runtime_kit_sha256: sha256(`${platform}-runtime-kit`),
+    ...(platform === "linux" ? { corelib_fingerprint: "d".repeat(64) } : {}),
     platform_result_status: "success",
     published: false,
     ...overrides.buildResult,
@@ -123,7 +125,39 @@ function createFixture(overrides = {}, { includeFeatures = true } = {}) {
   if (includeFeatures) {
     for (const platform of Object.keys(PLATFORMS)) writeFeatureFixture(root, platform);
   }
+  writeCliFixture(root);
   return root;
+}
+
+function writeCliFixture(root) {
+  const directory = join(root, "linux");
+  const binary = join(directory, PLATFORMS.linux.cli);
+  const result = JSON.parse(readFileSync(join(directory, "woodpecker-build-result.json"), "utf8"));
+  const evidence = {
+    schema: "beskid.cli-surface.v1", binary, binary_sha256: sha256(readFileSync(binary)),
+    corelib_fingerprint: result.corelib_fingerprint,
+    source_provenance: { status: "unverified", commit: null, external_receipt_required: true }, release_qualified: false,
+    counts: { pass: 3, fail: 0, setup_skip: 0, uncovered: 0, inventory_only: 0 },
+    contracts: { hi_unknown: { exit: 2, unknown_subcommand: true, control_bytes: [] },
+      new_tui_rejected: { exit: 2, not_advertised: true, unexpected_argument: true, control_bytes: [] }, graph_tui_advertised: true },
+    rows: [
+      { path: "parse", kind: "leaf", status: "pass", exit: 0, expected_exit: 0, control_bytes: [] },
+      { path: "graph --tui", kind: "scenario", status: "pass", exit: 0, expected_exit: 0, timed_out: false, rendered_project: true, transcript_base64: "dHVp" },
+      { path: "analyze --plain PTY", kind: "scenario", status: "pass", exit: 0, expected_exit: 0, timed_out: false, line_output: true, summary_seen: true, transcript_base64: "bGluZQ==" },
+    ],
+  };
+  const evidencePath = join(directory, "cli-surface-evidence-v1.json");
+  const receiptPath = join(directory, "cli-surface-receipt-v1.json");
+  writeJson(evidencePath, evidence);
+  const create = spawnSync(process.execPath, [cliReceiptPath.pathname, "create", evidencePath, binary, receiptPath,
+    result.version, /^[a-f0-9]{40}$/.test(result.source.superrepo_commit) ? result.source.superrepo_commit : SOURCE.superrepo_commit,
+    /^[a-f0-9]{40}$/.test(result.source.compiler_commit) ? result.source.compiler_commit : SOURCE.compiler_commit,
+    result.runtime_kit_sha256, result.corelib_fingerprint], { encoding: "utf8" });
+  assert.equal(create.status, 0, create.stderr);
+  for (const name of ["cli-surface-evidence-v1.json", "cli-surface-receipt-v1.json"]) {
+    const sumsPath = join(directory, "SHA256SUMS");
+    writeFileSync(sumsPath, `${readFileSync(sumsPath, "utf8")}${sha256(readFileSync(join(directory, name)))}  ${name}\n`);
+  }
 }
 
 function writeGateFixture(root) {
@@ -285,6 +319,11 @@ test("aggregation carries source-bound gate logs into qualified release state", 
   assert.equal(result.status, 0, result.stderr);
   const state = JSON.parse(readFileSync(join(output, "release-state.json")));
   assert.equal(state.publishable, true);
+  assert.equal(state.cli_surface.status, "success");
+  assert.equal(state.cli_surface.receipt_sha256,
+    sha256(readFileSync(join(output, "evidence", "linux", "cli-surface-receipt-v1.json"))));
+  assert.equal(state.cli_surface.evidence_sha256,
+    sha256(readFileSync(join(output, "evidence", "linux", "cli-surface-evidence-v1.json"))));
   assert.deepEqual(state.tests.successful, ["compiler:rust-gate", "corelib:matrix", "linux:native-build", "macos:native-build", "windows:native-build"]);
   assert.equal(state.tests.results.find(entry => entry.component === "corelib").raw_log_sha256,
     sha256("corelib gate fixture passed\n"));
@@ -292,6 +331,37 @@ test("aggregation carries source-bound gate logs into qualified release state", 
   assert.equal(existsSync(join(output, "evidence", "linux", "feature-evidence-v1.json")), true);
   const validated = JSON.parse(readFileSync(join(output, "validated-evidence.json"), "utf8"));
   assert.equal(validated.platforms[0].features.cases.length, FEATURE_CASES.length);
+});
+
+test("qualification rejects absent, uncovered, and tampered CLI surface evidence", (t) => {
+  for (const mutation of [
+    root => rmSync(join(root, "linux", "cli-surface-receipt-v1.json")),
+    root => {
+      const directory = join(root, "linux");
+      const path = join(directory, "cli-surface-evidence-v1.json");
+      const evidence = JSON.parse(readFileSync(path, "utf8"));
+      evidence.rows[0].status = "uncovered";
+      evidence.counts.pass = 2;
+      evidence.counts.uncovered = 1;
+      writeJson(path, evidence);
+      updateChecksum(directory, "cli-surface-evidence-v1.json");
+    },
+    root => {
+      const directory = join(root, "linux");
+      const path = join(directory, "cli-surface-receipt-v1.json");
+      const receipt = JSON.parse(readFileSync(path, "utf8"));
+      receipt.runtime_kit_sha256 = "e".repeat(64);
+      writeJson(path, receipt);
+      updateChecksum(directory, "cli-surface-receipt-v1.json");
+    },
+  ]) {
+    const root = createFixture();
+    t.after(() => rmSync(root, { recursive: true, force: true }));
+    mutation(root);
+    const result = runValidator(root);
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /CLI surface|cli-surface-receipt/);
+  }
 });
 
 for (const [name, mutate, expected] of [
