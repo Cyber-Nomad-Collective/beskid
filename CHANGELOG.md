@@ -11,6 +11,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Pin the reviewed first-party templates revision with generated-project,
+  Corelib-lock, and invalid-source verification before package publication.
 - Pin the reconciled v0.5 compiler/Corelib and distribution sources for the
   final native release matrix.
 - Require every Woodpecker native handoff to include source-bound v0.5
