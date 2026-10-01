@@ -51,6 +51,11 @@ touch "${output}/${bundle_root}/bin/beskid${extension}" \
   "${output}/${bundle_root}/beskid_corelib/CoreLib.bws" \
   "${output}/${bundle_root}/beskid_corelib/.beskid-bundle.sha256" \
   "${output}/${bundle_root}/beskid_corelib/beskid_corelib/corelib.bproj"
+if [[ "${FAKE_BUNDLE_CLI_MISMATCH:-0}" == 1 ]]; then
+  printf 'different packaged CLI\n' >"${output}/${bundle_root}/bin/beskid${extension}"
+else
+  cp "${output}/${cli_asset}" "${output}/${bundle_root}/bin/beskid${extension}"
+fi
 printf '%064d\n' 0 >"${output}/${bundle_root}/beskid_corelib/.beskid-bundle.sha256"
 printf '%s\n' "${version}" >"${output}/${bundle_root}/release-version.txt"
 tar -czf "${output}/${bundle_asset}" -C "${output}" "${bundle_root}"
@@ -72,7 +77,7 @@ writeFileSync(`${process.argv[4]}/feature-evidence-v1.json`, '{"fixture":true}\n
 EOF
 
 cat >"${TMP}/cli-gate.py" <<'EOF'
-import argparse, hashlib, json, pathlib
+import argparse, hashlib, os, pathlib, subprocess
 parser = argparse.ArgumentParser()
 parser.add_argument('binary', type=pathlib.Path)
 parser.add_argument('--json', type=pathlib.Path)
@@ -83,18 +88,8 @@ args = parser.parse_args()
 assert hashlib.sha256(args.binary.read_bytes()).hexdigest() == args.expected_sha256
 assert args.corelib_root.is_dir()
 assert args.corelib_root.joinpath('.beskid-bundle.sha256').read_text().strip() == args.expected_corelib_fingerprint
-rows = [
-    dict(path='parse', kind='leaf', status='pass', exit=0, expected_exit=0, control_bytes=[]),
-    dict(path='graph --tui', kind='scenario', status='pass', exit=0, expected_exit=0, timed_out=False, rendered_project=True, transcript_base64='dHVp'),
-    dict(path='analyze --plain PTY', kind='scenario', status='pass', exit=0, expected_exit=0, timed_out=False, line_output=True, summary_seen=True, transcript_base64='bGluZQ=='),
-]
-evidence = dict(schema='beskid.cli-surface.v1', binary=str(args.binary), binary_sha256=args.expected_sha256,
-    corelib_fingerprint=args.expected_corelib_fingerprint,
-    source_provenance=dict(status='unverified', commit=None, external_receipt_required=True), release_qualified=False,
-    counts={'pass': 3, 'fail': 0, 'setup_skip': 0, 'uncovered': 0, 'inventory_only': 0}, rows=rows,
-    contracts=dict(hi_unknown=dict(exit=2, unknown_subcommand=True, control_bytes=[]),
-        new_tui_rejected=dict(exit=2, not_advertised=True, unexpected_argument=True, control_bytes=[]), graph_tui_advertised=True))
-args.json.write_text(json.dumps(evidence) + '\n')
+args.json.write_bytes(subprocess.check_output(['node', os.environ['BESKID_CLI_FIXTURE_SCRIPT'],
+    str(args.binary), args.expected_sha256, args.expected_corelib_fingerprint]))
 EOF
 cat >"${TMP}/verify-corelib.mjs" <<'EOF'
 import { readFileSync } from "node:fs";
@@ -110,6 +105,7 @@ assert_platform() {
     WOODPECKER_FEATURE_EVIDENCE_SCRIPT="${TMP}/feature-evidence.mjs" \
     WOODPECKER_CLI_SURFACE_GATE_SCRIPT="${TMP}/cli-gate.py" \
     WOODPECKER_CLI_SURFACE_CORELIB_VERIFIER="${TMP}/verify-corelib.mjs" \
+    BESKID_CLI_FIXTURE_SCRIPT="${ROOT}/scripts/ci/test/cli-surface-fixture.mjs" \
     bash "${SCRIPT}" "${platform}" 1.2.3 "${output}" >"${TMP}/${platform}.log"
   output="$(cd "${output}" && pwd -P)"
 
@@ -185,6 +181,19 @@ if CI_PIPELINE_NUMBER=42 CI_COMMIT_SHA="$(git -C "${ROOT}" rev-parse HEAD)" \
 fi
 test ! -e "${TMP}/ci-fake-init"
 grep -q 'test-only' "${TMP}/ci-fake.log"
+
+if FAKE_INIT_LOG="${TMP}/mismatch-init.log" FAKE_BUNDLE_CLI_MISMATCH=1 \
+  WOODPECKER_INIT_SUBMODULES_SCRIPT="${TMP}/init-submodules.sh" \
+  WOODPECKER_RELEASE_PLATFORM_SCRIPT="${TMP}/build-release-platform.sh" \
+  WOODPECKER_FEATURE_EVIDENCE_SCRIPT="${TMP}/feature-evidence.mjs" \
+  WOODPECKER_CLI_SURFACE_GATE_SCRIPT="${TMP}/cli-gate.py" \
+  WOODPECKER_CLI_SURFACE_CORELIB_VERIFIER="${TMP}/verify-corelib.mjs" \
+  BESKID_CLI_FIXTURE_SCRIPT="${ROOT}/scripts/ci/test/cli-surface-fixture.mjs" \
+  bash "${SCRIPT}" linux 1.2.3 "${TMP}/mismatch-output" >"${TMP}/mismatch.log" 2>&1; then
+  echo 'Linux release accepted a bundle CLI differing from the gated CLI asset' >&2
+  exit 1
+fi
+grep -Fq 'bundle CLI differs from versioned CLI asset' "${TMP}/mismatch.log"
 
 if CI_PIPELINE_NUMBER=42 CI_COMMIT_SHA="$(git -C "${ROOT}" rev-parse HEAD)" \
   WOODPECKER_CLI_SURFACE_GATE_SCRIPT="${TMP}/cli-gate.py" \

@@ -69,14 +69,8 @@ write_role() {
     '{schema_version:1,platform:$role,target:$target,version:$version,source:{superrepo_commit:$source,compiler_commit:$compiler},runtime_kit:{profile:"release",target:$target,sha256:$runtime,abi_sha256:$abi},cases:$cases,not_applicable:{glue:{status:"not_applicable",reason:$glue_reason}}}' \
     >"$installer_dir/feature-evidence-v1.json"
   if [[ "$role" == linux ]]; then
-    jq -n --arg binary "$installer_dir/$cli" --arg digest "$(sha "$installer_dir/$cli")" --arg corelib "$(printf '%064d' 0 | tr '0' 'd')" '
-      {schema:"beskid.cli-surface.v1",binary:$binary,binary_sha256:$digest,corelib_fingerprint:$corelib,
-       source_provenance:{status:"unverified",commit:null,external_receipt_required:true},release_qualified:false,
-       counts:{pass:3,fail:0,setup_skip:0,uncovered:0,inventory_only:0},
-       contracts:{hi_unknown:{exit:2,unknown_subcommand:true,control_bytes:[]},new_tui_rejected:{exit:2,not_advertised:true,unexpected_argument:true,control_bytes:[]},graph_tui_advertised:true},
-       rows:[{path:"parse",kind:"leaf",status:"pass",exit:0,expected_exit:0,control_bytes:[]},
-             {path:"graph --tui",kind:"scenario",status:"pass",exit:0,expected_exit:0,timed_out:false,rendered_project:true,transcript_base64:"dHVp"},
-             {path:"analyze --plain PTY",kind:"scenario",status:"pass",exit:0,expected_exit:0,timed_out:false,line_output:true,summary_seen:true,transcript_base64:"bGluZQ=="}]}' \
+    node "$root/scripts/ci/test/cli-surface-fixture.mjs" \
+      "$installer_dir/$cli" "$(sha "$installer_dir/$cli")" "$(printf '%064d' 0 | tr '0' 'd')" \
       >"$installer_dir/cli-surface-evidence-v1.json"
     node "$root/scripts/ci/woodpecker-cli-surface-evidence.mjs" create \
       "$installer_dir/cli-surface-evidence-v1.json" "$installer_dir/$cli" \

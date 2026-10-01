@@ -6,6 +6,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
+import { cliSurfaceFixture } from "./cli-surface-fixture.mjs";
 
 const tool = fileURLToPath(new URL("../woodpecker-cli-surface-evidence.mjs", import.meta.url));
 const sha = data => createHash("sha256").update(data).digest("hex");
@@ -17,24 +18,7 @@ function fixture() {
   const dir = mkdtempSync(join(tmpdir(), "beskid-cli-receipt-"));
   const binary = join(dir, "beskid-linux-amd64");
   writeFileSync(binary, "versioned CLI bytes");
-  const evidence = {
-    schema: "beskid.cli-surface.v1", binary, binary_sha256: sha(readFileSync(binary)),
-    source_provenance: { status: "unverified", commit: null, external_receipt_required: true },
-    release_qualified: false, corelib_fingerprint: corelib,
-    counts: { pass: 3, fail: 0, setup_skip: 1, uncovered: 0, inventory_only: 1 },
-    contracts: {
-      hi_unknown: { expected_exit: 2, exit: 2, unknown_subcommand: true, control_bytes: [] },
-      new_tui_rejected: { expected_exit: 2, exit: 2, not_advertised: true, unexpected_argument: true, control_bytes: [] },
-      graph_tui_advertised: true,
-    },
-    rows: [
-      { path: "parse", kind: "leaf", status: "pass", exit: 0, expected_exit: 0, control_bytes: [], marker_seen: true },
-      { path: "graph --tui", kind: "scenario", status: "pass", exit: 0, expected_exit: 0, timed_out: false, rendered_project: true, transcript_base64: "dHVp" },
-      { path: "analyze --plain PTY", kind: "scenario", status: "pass", exit: 0, expected_exit: 0, timed_out: false, line_output: true, summary_seen: true, transcript_base64: "bGluZQ==" },
-      { path: "lsp install", kind: "leaf", status: "setup_skip", reason: "isolated fixture unavailable" },
-      { path: "lsp", kind: "branch", status: "inventory_only" },
-    ],
-  };
+  const evidence = cliSurfaceFixture(binary, sha(readFileSync(binary)), corelib);
   const evidencePath = join(dir, "cli-surface-evidence-v1.json");
   writeFileSync(evidencePath, `${JSON.stringify(evidence)}\n`);
   const receiptPath = join(dir, "cli-surface-receipt-v1.json");
@@ -43,6 +27,17 @@ function fixture() {
 }
 
 function run(args) { return spawnSync(process.execPath, [tool, ...args], { encoding: "utf8" }); }
+
+test("receipt rejects a truncated advertised command inventory", () => {
+  const item = fixture();
+  try {
+    item.evidence.rows = item.evidence.rows.filter(row => row.path !== "pckg whoami");
+    item.evidence.counts.pass--;
+    writeFileSync(item.evidencePath, `${JSON.stringify(item.evidence)}\n`);
+    assert.notEqual(run(item.args).status, 0);
+  }
+  finally { rmSync(item.dir, { recursive: true, force: true }); }
+});
 
 test("receipt binds successful CLI and PTY evidence to the versioned binary and pinned release inputs", () => {
   const item = fixture();
@@ -64,8 +59,8 @@ test("receipt binds successful CLI and PTY evidence to the versioned binary and 
 
 test("receipt rejects uncovered paths, failed PTY, and falsely claimed gate provenance", () => {
   for (const mutate of [
-    e => { e.counts.uncovered = 1; e.rows[3].status = "uncovered"; },
-    e => { e.rows[1].rendered_project = false; },
+    e => { e.counts.uncovered = 1; e.counts.setup_skip--; e.rows.find(row => row.path === "lsp install").status = "uncovered"; },
+    e => { e.rows.find(row => row.path === "graph --tui").rendered_project = false; },
     e => { e.source_provenance.status = "verified"; },
   ]) {
     const item = fixture();

@@ -5,6 +5,7 @@ import { spawnSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
+import { cliSurfaceFixture } from "./cli-surface-fixture.mjs";
 
 const validatorPath = new URL("../woodpecker-release-evidence.mjs", import.meta.url);
 const aggregatePath = new URL("../woodpecker-aggregate-release.mjs", import.meta.url);
@@ -133,19 +134,7 @@ function writeCliFixture(root) {
   const directory = join(root, "linux");
   const binary = join(directory, PLATFORMS.linux.cli);
   const result = JSON.parse(readFileSync(join(directory, "woodpecker-build-result.json"), "utf8"));
-  const evidence = {
-    schema: "beskid.cli-surface.v1", binary, binary_sha256: sha256(readFileSync(binary)),
-    corelib_fingerprint: result.corelib_fingerprint,
-    source_provenance: { status: "unverified", commit: null, external_receipt_required: true }, release_qualified: false,
-    counts: { pass: 3, fail: 0, setup_skip: 0, uncovered: 0, inventory_only: 0 },
-    contracts: { hi_unknown: { exit: 2, unknown_subcommand: true, control_bytes: [] },
-      new_tui_rejected: { exit: 2, not_advertised: true, unexpected_argument: true, control_bytes: [] }, graph_tui_advertised: true },
-    rows: [
-      { path: "parse", kind: "leaf", status: "pass", exit: 0, expected_exit: 0, control_bytes: [] },
-      { path: "graph --tui", kind: "scenario", status: "pass", exit: 0, expected_exit: 0, timed_out: false, rendered_project: true, transcript_base64: "dHVp" },
-      { path: "analyze --plain PTY", kind: "scenario", status: "pass", exit: 0, expected_exit: 0, timed_out: false, line_output: true, summary_seen: true, transcript_base64: "bGluZQ==" },
-    ],
-  };
+  const evidence = cliSurfaceFixture(binary, sha256(readFileSync(binary)), result.corelib_fingerprint);
   const evidencePath = join(directory, "cli-surface-evidence-v1.json");
   const receiptPath = join(directory, "cli-surface-receipt-v1.json");
   writeJson(evidencePath, evidence);
@@ -340,8 +329,8 @@ test("qualification rejects absent, uncovered, and tampered CLI surface evidence
       const directory = join(root, "linux");
       const path = join(directory, "cli-surface-evidence-v1.json");
       const evidence = JSON.parse(readFileSync(path, "utf8"));
-      evidence.rows[0].status = "uncovered";
-      evidence.counts.pass = 2;
+      evidence.rows.find(row => row.path === "parse").status = "uncovered";
+      evidence.counts.pass = 53;
       evidence.counts.uncovered = 1;
       writeJson(path, evidence);
       updateChecksum(directory, "cli-surface-evidence-v1.json");

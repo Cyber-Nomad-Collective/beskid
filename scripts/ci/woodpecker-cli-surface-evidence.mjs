@@ -4,6 +4,7 @@
 import { createHash } from "node:crypto";
 import { lstatSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, join, resolve } from "node:path";
+import { EXPECTED_ROWS } from "./cli-surface-inventory.mjs";
 
 const SHA = /^[a-f0-9]{64}$/;
 const COMMIT = /^[a-f0-9]{40}$/;
@@ -47,6 +48,11 @@ function validateGate(evidence, binarySha, corelibFingerprint) {
         (row.control_bytes && row.control_bytes.length !== 0))) fail(`${row.path} did not pass cleanly`);
     if (row.status === "setup_skip" && !row.reason) fail(`${row.path} has no setup-skip reason`);
     if (row.status === "inventory_only" && row.kind !== "branch") fail(`${row.path} is not a branch inventory row`);
+  }
+  if (byPath.size !== EXPECTED_ROWS.size) fail("CLI gate command inventory is incomplete or contains unexpected paths");
+  for (const [path, [kind, status]] of EXPECTED_ROWS) {
+    const row = byPath.get(path);
+    if (!row || row.kind !== kind || row.status !== status) fail(`CLI gate command inventory mismatch: ${path}`);
   }
   for (const [name, count] of Object.entries(counts)) equal(evidence.counts?.[name], count, `CLI gate ${name} count`);
   if (counts.fail !== 0 || counts.uncovered !== 0 || counts.pass === 0) fail("CLI gate has failed, uncovered, or no exercised paths");

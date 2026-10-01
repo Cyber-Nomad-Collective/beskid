@@ -133,6 +133,13 @@ bundle_stage="${output_dir}/feature-bundle"
 mkdir -p "${bundle_stage}"
 tar -xzf "${bundle_path}" -C "${bundle_stage}"
 bundle_root="${bundle_stage}/beskid-${version}-${target}"
+if [[ "${platform}" == linux ]]; then
+  [[ -f "${bundle_root}/bin/beskid" && ! -L "${bundle_root}/bin/beskid" ]] &&
+    cmp -s -- "${cli_path}" "${bundle_root}/bin/beskid" || {
+    echo 'bundle CLI differs from versioned CLI asset' >&2
+    exit 1
+  }
+fi
 runtime_kit="${bundle_root}/lib/beskid-runtime/abi-5/${target}/release"
 runtime_kit_sha="$(node "${root}/scripts/ci/woodpecker-runtime-kit-digest.mjs" "${runtime_kit}")"
 corelib_fingerprint="$(tr -d '\r\n' <"${bundle_root}/beskid_corelib/.beskid-bundle.sha256")"
