@@ -36,6 +36,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Include the v0.5 Network and HTTP packages in Corelib publication, and check
+  registry readiness through the public package API used by the publisher.
 - Pin the compiler's ABI-v5 manifest validation fix for the strict Linux
   release Clippy gate.
 - Pin the Corelib HTTP regression that rejects a duplicate `Host` before

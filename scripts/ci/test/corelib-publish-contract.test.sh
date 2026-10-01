@@ -7,10 +7,15 @@ ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 source "${ROOT}/scripts/ci/test/lib/assert.sh"
 
 RUNNER="$(cat "${ROOT}/scripts/ci/lib/corelib-publish-runner.mjs")"
+RUNNER_READY="$(sed -n '/^async function assertRegistryReady/,/^}/p' "${ROOT}/scripts/ci/lib/corelib-publish-runner.mjs")"
 PUBLISHER="$(cat "${ROOT}/scripts/ci/corelib-publish.sh")"
 
 assert_contains "${RUNNER}" '"interop"' \
   "the interop package is part of the production corelib inventory"
+assert_contains "${RUNNER}" '"network"' \
+  "the network package is part of the production corelib inventory"
+assert_contains "${RUNNER}" '"http"' \
+  "the HTTP package is part of the production corelib inventory"
 assert_contains "${RUNNER}" '"glue"' \
   "the glue package is part of the production corelib inventory"
 assert_contains "${RUNNER}" '"fiber_demo"' \
@@ -19,8 +24,8 @@ assert_contains "${RUNNER}" 'EXCLUDED_CORELIB_MEMBERS' \
   "development and test-only corelib members are explicitly excluded"
 assert_contains "${RUNNER}" 'Authorization: `Bearer ${token}`' \
   "publication uses the canonical bearer-key transport"
-assert_contains "${RUNNER}" 'health/ready' \
-  "registry readiness is checked before mutation"
+assert_contains "${RUNNER_READY}" 'new URL("api/packages", baseUrl)' \
+  "registry readiness checks the publicly routed package API before mutation"
 assert_contains "${RUNNER}" '["pckg", "upload", meta.registryName, "--artifact", meta.artifact]' \
   "publication delegates artifact upload to the canonical compiler client"
 assert_contains "${RUNNER}" 'source: "registry"' \

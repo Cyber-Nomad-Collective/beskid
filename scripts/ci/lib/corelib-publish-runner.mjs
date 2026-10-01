@@ -33,6 +33,8 @@ const PUBLISHED_CORELIB_MEMBERS = [
   "runtime",
   "console",
   "interop",
+  "network",
+  "http",
   "glue",
   "corelib",
 ];
@@ -477,11 +479,12 @@ async function responseText(response) {
 }
 
 async function assertRegistryReady(baseUrl) {
-  const response = await fetch(new URL("health/ready", baseUrl), { headers: { Accept: "application/json" } });
-  const body = await responseText(response);
-  if (!response.ok) throw new Error(`pckg readiness failed (HTTP ${response.status}): ${body}`);
-  const parsed = JSON.parse(body);
-  if (parsed.status !== "ok") throw new Error(`pckg readiness returned unexpected payload: ${body}`);
+  // The public pckg origin proxies /api/* to the registry, not /health/*.
+  // Exercise the same route that publication uses before any mutation.
+  const response = await fetch(new URL("api/packages", baseUrl), { headers: { Accept: "application/json" } });
+  const body = await response.text();
+  if (!response.ok) throw new Error(`pckg readiness failed (HTTP ${response.status}): ${body.slice(0, 2_000)}`);
+  if (!Array.isArray(JSON.parse(body))) throw new Error("pckg readiness returned an invalid package list");
 }
 
 async function existingPackagePlan(baseUrl, token, meta, bump) {
