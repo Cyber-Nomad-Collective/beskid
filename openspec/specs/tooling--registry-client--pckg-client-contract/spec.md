@@ -7,6 +7,19 @@ Contract surface for the Beskid package registry client crate used by tooling wo
 
 ## Requirements
 
+### Requirement: Browse validated artifact documentation
+The package browser SHALL index documentation and source paths from a validated artifact without rejecting the artifact solely because it contains safe unrelated entries such as lockfiles, icons, tests, grammars, or build metadata. Hidden or traversal paths under browsable roots MUST remain inaccessible. A request failure MUST be distinguishable from a genuinely empty documentation or source list in the pckg UI.
+
+#### Scenario: Corelib artifact has documentation and metadata
+- **GIVEN** a validated Corelib package artifact containing `README.md`, documentation, `Project.lock`, and tests
+- **WHEN** the package browser requests its documentation list
+- **THEN** the documentation entries are returned while unrelated safe entries are ignored
+
+#### Scenario: Documentation request fails
+- **GIVEN** the browser endpoint returns an error
+- **WHEN** the pckg documentation page renders
+- **THEN** it displays an error state rather than claiming no documentation was published
+
 ### Requirement: Hub authority: Decision [D-TOOL-PCKG-0001]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
 

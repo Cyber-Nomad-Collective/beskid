@@ -7,6 +7,14 @@ Interactive snippet evaluator backed by a persistent JIT engine session.
 
 ## Requirements
 
+### Requirement: Line-oriented REPL interaction
+`beskid repl` SHALL read and write complete lines on both terminals and redirected streams. It MUST NOT enter an alternate screen or require a keypress to exit after `:quit` or end-of-input.
+
+#### Scenario: Redirected snippets terminate
+- **GIVEN** snippets on standard input followed by end-of-input
+- **WHEN** the user runs `beskid repl`
+- **THEN** results are emitted as ordinary lines and the command exits without terminal-control sequences
+
 ### Requirement: Snippet evaluation without project graph
 `beskid repl` SHALL evaluate single expression or statement snippets through the same analysis front-end as other CLI commands, but MUST NOT wire `resolve_input` or the project graph. Project manifests, multi-file modules, and workspace graphs are out of scope for v1.
 

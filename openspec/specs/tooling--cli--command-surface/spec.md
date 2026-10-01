@@ -7,13 +7,31 @@ Normative command taxonomy for the Beskid CLI and behavior expectations per comm
 
 ## Requirements
 
+### Requirement: Ordinary terminal interaction
+Commands other than `graph --tui` MUST NOT enter the alternate screen or raw-input mode. When interaction is required, `new` SHALL use line-oriented prompts; a confirmed overwrite has the same scoped authority as `--force`, while a declined or noninteractive conflict leaves existing output unchanged. `new --tui` MUST NOT be offered. Commands MAY display bounded in-place progress bars on a TTY and SHALL preserve readable phase trees and final summaries. Redirected and `--plain` output MUST contain no cursor-control sequences.
+
+#### Scenario: Confirmed template overwrite
+- **GIVEN** an output path already exists and stdin is interactive
+- **WHEN** the user confirms the `new` overwrite prompt
+- **THEN** only that selected output is replaced and the command completes without a full-screen UI
+
+#### Scenario: Noninteractive template conflict
+- **GIVEN** an output path already exists and stdin is not interactive
+- **WHEN** the user runs `beskid new` without `--force`
+- **THEN** the command reports the conflict and leaves the output unchanged
+
 ### Requirement: Stable CLI command families
-The Beskid CLI SHALL expose stable command families for `run`, `build`, `test`, `repl`, `analyze`, `parse`, `format`, `clif`, `doc`, `corelib`, `lock`, `fetch`, `tree`, `update`, `hi` (pluggable dashboard shell), and `new` (project, workspace, and item templates).
+The Beskid CLI SHALL expose stable command families for `run`, `build`, `test`, `repl`, `analyze`, `parse`, `format`, `clif`, `doc`, `corelib`, `lock`, `fetch`, `tree`, `update`, `graph`, and `new` (project, workspace, and item templates). It MUST NOT expose the removed `hi` command.
 
 #### Scenario: Required families are present
 - **GIVEN** an installed Beskid CLI
 - **WHEN** a user lists or invokes top-level commands
-- **THEN** the stable families listed above are available, including `hi` and `new`
+- **THEN** the stable families listed above are available, including `graph` and `new`, and `hi` is absent
+
+#### Scenario: Removed Hi command is rejected
+- **GIVEN** an installed Beskid 0.5.1 CLI
+- **WHEN** a user invokes `beskid hi`
+- **THEN** ordinary unknown-subcommand diagnostics are returned without opening a terminal UI
 
 ### Requirement: Shared frontend for compilation commands
 Commands that invoke compilation SHALL route through shared frontend and analysis services to preserve diagnostic parity across the command surface.

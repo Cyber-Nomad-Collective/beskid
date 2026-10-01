@@ -7,6 +7,19 @@ Expected CLI behavior and outputs across build, analysis, and runtime execution 
 
 ## Requirements
 
+### Requirement: Line-oriented command progress
+Pipeline-backed commands SHALL report bounded progress and phase trees without entering an alternate screen or raw-input mode. On a TTY they MAY update progress bars in place but MUST leave a readable final summary and MUST NOT wait for a keypress after completion. `--plain` and non-TTY streams SHALL use deterministic newline-delimited output without cursor-control sequences. `beskid graph --tui` is the sole permitted full-screen terminal UI.
+
+#### Scenario: Interactive build returns after completion
+- **GIVEN** a project and an interactive terminal
+- **WHEN** `beskid build` completes
+- **THEN** the summary remains readable and control returns without a keypress or alternate-screen transition
+
+#### Scenario: Plain build is machine-readable
+- **GIVEN** the same project with redirected output
+- **WHEN** `beskid build --plain` completes
+- **THEN** progress and result lines contain no cursor-control sequences
+
 ### Requirement: Hub authority: Decision [D-TOOL-CLI-0001]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
 

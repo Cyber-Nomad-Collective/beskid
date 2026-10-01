@@ -7,6 +7,19 @@ Beskid template engine (`beskid.template.v1`), project and item templates, works
 
 ## Requirements
 
+### Requirement: Generated template output is valid and relocatable
+Template instantiation SHALL substitute symbols in both file contents and every output path component before writing. It MUST reject unresolved or unsafe generated paths before writing any output. For project templates, the generated v2 lockfile MUST identify the final generated manifest and include the verified Corelib closure; moving the whole generated checkout MUST preserve locked replay. First-party executable templates SHALL build and run after instantiation, and library templates SHALL build as libraries without requiring an entrypoint.
+
+#### Scenario: Non-default project name
+- **GIVEN** a first-party project template and a non-default project name
+- **WHEN** the template is instantiated and locked
+- **THEN** no output path contains a placeholder, the lockfile names the generated manifest, and the project builds in its declared kind
+
+#### Scenario: Unsafe generated path
+- **GIVEN** a template whose substituted output path escapes the destination
+- **WHEN** instantiation is requested
+- **THEN** it fails before writing any output
+
 ### Requirement: Beskid-native template engine schema: Decision [D-TOOL-SCAFF-0001]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
 

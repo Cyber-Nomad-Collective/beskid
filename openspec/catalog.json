@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "e62188ac23291e8f1f88d5df139319d2aea67adb82b3597ebbd4a2bab5e27bda",
+  "revision": "fe5c2b99050715ec73fdf7f9aac5225ce57c12198baa6a64b59739f193b04b3a",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
     "nodes": 1042,
     "capabilities": 197,
-    "requirements": 573,
+    "requirements": 575,
     "normativeSources": 304,
     "provisionalCapabilities": 52,
     "legacyArtifacts": 3189,
@@ -33309,6 +33309,17 @@
       ],
       "requirements": [
         {
+          "id": "BSP-REQ-D2F058AD6AD0",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--cli--build-analyze-run-contract/spec.md",
+          "sourceHash": "b4d814daef025773cdbc96e989ae48d364583eeae8ea451644438901712fa4a6",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Line-oriented command progress",
+          "anchor": "requirement-line-oriented-command-progress"
+        },
+        {
           "id": "BSP-REQ-3399DD008DB2",
           "title": "Hub authority: Decision [D-TOOL-CLI-0001]",
           "anchor": "requirement-hub-authority-decision-d-tool-cli-0001",
@@ -33598,6 +33609,17 @@
       ],
       "requirements": [
         {
+          "id": "BSP-REQ-183592927E57",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--cli--command-surface/spec.md",
+          "sourceHash": "74072d2a8a76d9f31726e88e75e1a405d8c01555363f9768b38bcbdbd077c586",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Ordinary terminal interaction",
+          "anchor": "requirement-ordinary-terminal-interaction"
+        },
+        {
           "id": "BSP-REQ-942B8B35A6BB",
           "legacySlug": null,
           "sourcePath": "openspec/specs/tooling--cli--command-surface/spec.md",
@@ -33704,48 +33726,15 @@
       ],
       "requirements": [
         {
-          "id": "BSP-REQ-22BE2EE63299",
+          "id": "BSP-REQ-10B58E4558BC",
           "legacySlug": null,
           "sourcePath": "openspec/specs/tooling--cli--hi-command/spec.md",
-          "sourceHash": "16808afc9debca15edba06018141aeb796fed6f160e0561e596c5396f4f42b33",
+          "sourceHash": "9f1f88991ff4cbcc5abf0d7fde1181f15aa07c20019f7d511be96ccfc97f6ce9",
           "status": "Standard",
           "normative": true,
           "migrationStatus": "extracted",
-          "title": "Hi command surface and scope resolution",
-          "anchor": "requirement-hi-command-surface-and-scope-resolution"
-        },
-        {
-          "id": "BSP-REQ-DF5190ECE178",
-          "legacySlug": null,
-          "sourcePath": "openspec/specs/tooling--cli--hi-command/spec.md",
-          "sourceHash": "16808afc9debca15edba06018141aeb796fed6f160e0561e596c5396f4f42b33",
-          "status": "Standard",
-          "normative": true,
-          "migrationStatus": "extracted",
-          "title": "Permanent shell chrome shortcuts",
-          "anchor": "requirement-permanent-shell-chrome-shortcuts"
-        },
-        {
-          "id": "BSP-REQ-FB824FB77C5D",
-          "legacySlug": null,
-          "sourcePath": "openspec/specs/tooling--cli--hi-command/spec.md",
-          "sourceHash": "16808afc9debca15edba06018141aeb796fed6f160e0561e596c5396f4f42b33",
-          "status": "Standard",
-          "normative": true,
-          "migrationStatus": "extracted",
-          "title": "Command palette CLI and contextual entries",
-          "anchor": "requirement-command-palette-cli-and-contextual-entries"
-        },
-        {
-          "id": "BSP-REQ-86D7CF61B734",
-          "legacySlug": null,
-          "sourcePath": "openspec/specs/tooling--cli--hi-command/spec.md",
-          "sourceHash": "16808afc9debca15edba06018141aeb796fed6f160e0561e596c5396f4f42b33",
-          "status": "Standard",
-          "normative": true,
-          "migrationStatus": "extracted",
-          "title": "Board.v2 layout load and save",
-          "anchor": "requirement-board-v2-layout-load-and-save"
+          "title": "Hi shell removed in 0.5.1",
+          "anchor": "requirement-hi-shell-removed-in-0-5-1"
         }
       ],
       "records": [
@@ -33807,6 +33796,17 @@
         "/platform-spec/tooling/cli/repl-command/"
       ],
       "requirements": [
+        {
+          "id": "BSP-REQ-46D96F945632",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--cli--repl-command/spec.md",
+          "sourceHash": "69fe800572c9d6f1544009670f1763c780b0fe6293edb7329599dc78bb756f10",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Line-oriented REPL interaction",
+          "anchor": "requirement-line-oriented-repl-interaction"
+        },
         {
           "id": "BSP-REQ-1814DAC37E0E",
           "legacySlug": null,
@@ -36457,6 +36457,17 @@
       ],
       "requirements": [
         {
+          "id": "BSP-REQ-22831092C297",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--project-scaffolding--project-templates/spec.md",
+          "sourceHash": "024ae1a46e408906cd163dec59a4f5f2c9d4fec77aa48c07055312031a7b3af9",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Generated template output is valid and relocatable",
+          "anchor": "requirement-generated-template-output-is-valid-and-relocatable"
+        },
+        {
           "id": "BSP-REQ-FB3A4BD6BB5D",
           "title": "Beskid-native template engine schema: Decision [D-TOOL-SCAFF-0001]",
           "anchor": "requirement-beskid-native-template-engine-schema-decision-d-tool-scaff-0001",
@@ -37610,6 +37621,17 @@
         "/platform-spec/tooling/registry-client/pckg-client-contract/articles/verification-and-traceability/"
       ],
       "requirements": [
+        {
+          "id": "BSP-REQ-7F56D3976EBF",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--registry-client--pckg-client-contract/spec.md",
+          "sourceHash": "e97fcde631c5966d3141236ffd26197a7be59035878f76b7fd76594a5cbd3716",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Browse validated artifact documentation",
+          "anchor": "requirement-browse-validated-artifact-documentation"
+        },
         {
           "id": "BSP-REQ-4C374A0F8991",
           "title": "Hub authority: Decision [D-TOOL-PCKG-0001]",
@@ -60706,7 +60728,7 @@
       "decision": null,
       "title": "Build, analyze, and run contract",
       "status": "Standard",
-      "sourceHash": "4ccd4cb3e8943a88fe3065fed18b95be8799e8ef2d0b3fb2e7c1978f0f6578f6"
+      "sourceHash": "b4d814daef025773cdbc96e989ae48d364583eeae8ea451644438901712fa4a6"
     },
     {
       "id": "BSP-CAP-DA123DD4F7F0",
@@ -60728,7 +60750,7 @@
       "decision": null,
       "title": "Command surface",
       "status": "Standard",
-      "sourceHash": "3a28c818ca47c02bfbb78a5b3aebbb1f9a73bc42f9ad1958c85273c9aeb3d3ca"
+      "sourceHash": "74072d2a8a76d9f31726e88e75e1a405d8c01555363f9768b38bcbdbd077c586"
     },
     {
       "id": "BSP-CAP-EDE0E71BF830",
@@ -60750,7 +60772,7 @@
       "decision": null,
       "title": "Hi command",
       "status": "Standard",
-      "sourceHash": "16808afc9debca15edba06018141aeb796fed6f160e0561e596c5396f4f42b33"
+      "sourceHash": "9f1f88991ff4cbcc5abf0d7fde1181f15aa07c20019f7d511be96ccfc97f6ce9"
     },
     {
       "id": "BSP-CAP-EC168DCD7411",
@@ -60772,7 +60794,7 @@
       "decision": null,
       "title": "REPL command",
       "status": "Standard",
-      "sourceHash": "3203647f6f86cfcfde760c74c16bf8b3e0d84178bc9de4e4086b798fd23aeb26"
+      "sourceHash": "69fe800572c9d6f1544009670f1763c780b0fe6293edb7329599dc78bb756f10"
     },
     {
       "id": "BSP-CAP-76964FA71797",
@@ -61146,7 +61168,7 @@
       "decision": null,
       "title": "Project templates",
       "status": "Standard",
-      "sourceHash": "ff296419de0c9b1904ae3d6a33e4d64668d7d620430968225abe138e4e415ddf"
+      "sourceHash": "024ae1a46e408906cd163dec59a4f5f2c9d4fec77aa48c07055312031a7b3af9"
     },
     {
       "id": "BSP-CAP-13DBD951E2CC",
@@ -61212,7 +61234,7 @@
       "decision": null,
       "title": "pckg client contract",
       "status": "Standard",
-      "sourceHash": "c385d56c52336d6c48be780cef068962d099db9991d5e6305268f2f4012c7d7c"
+      "sourceHash": "e97fcde631c5966d3141236ffd26197a7be59035878f76b7fd76594a5cbd3716"
     },
     {
       "id": "BSP-CAP-5A23843812F0",
