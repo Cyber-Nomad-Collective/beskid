@@ -351,7 +351,7 @@ const procedurePages = [
 	{
 		path: 'docs/services/index.md',
 		diagram: 'Public service and authentication topology',
-		diagramBranches: ['Website', 'Auth hub', 'Learn', 'pckg', 'Tracker', 'Nexus'],
+		diagramBranches: ['Website', 'Caddy', 'Authentik', 'Learn', 'pckg', 'Tracker', 'Nexus'],
 		equivalentConcepts: ['public guidance', 'GitHub OAuth', 'learning checks', 'package artifacts', 'delivery status', 'repository graph'],
 		sections: {
 			prerequisites: ['service task', 'public service status'],
@@ -1190,12 +1190,12 @@ test('service pages publish a complete verified operating contract', async () =>
 	}
 });
 
-test('service contracts retain critical pinned facts and disclose auth conflicts', async () => {
+test('service contracts retain critical pinned facts and the production auth topology', async () => {
 	const expectations = {
 		'docs/services/authentication.md': ['3143396b796d86c1a70a0bfb1aa4761b593bbae5/site/auth/README.md', 'GitHub OAuth', '/api/v1/health', '8090', 'auth-data', 'beskid-auth'],
 		'docs/services/learn.md': ['90c40a91fefa8150134663de120afcb1ef582f2a/site/learn/README.md', 'BESKID_BINARY', '/api/health', '80', 'no durable Learn volume', 'beskid-learn'],
 		'docs/services/pckg.md': ['beskid_pckg/blob/a490c7c7aa3fa7a7b28245e0c7564849d36eb19c/README.md', '/health/ready', '8082', 'PostgreSQL', 'pckg_packages', 'beskid-pckg', 'trusted forward-auth boundary'],
-		'docs/services/tracker.md': ['c7da5b60e70fe87b10b1b3cde7e91c39af32136a/README.md', '/api/health', '3000', 'SQLite', 'tracker-data', 'beskid-tracker', 'central Auth hub'],
+		'docs/services/tracker.md': ['c7da5b60e70fe87b10b1b3cde7e91c39af32136a/README.md', '/api/health', '3000', 'SQLite', 'tracker-data', 'beskid-tracker', 'Authentik', 'Caddy'],
 		'docs/services/nexus.md': ['eb207de7985ea110c1c0ea7e23f89dd94a66583d/COOLIFY.md', '/api/health', '8452', 'nexus-data', 'beskid-nexus', 'Caddy', 'Authentik'],
 	};
 	for (const [path, facts] of Object.entries(expectations)) {
@@ -1206,10 +1206,9 @@ test('service contracts retain critical pinned facts and disclose auth conflicts
 	const pckg = await loadPage(procedurePages.find((page) => page.path === 'docs/services/pckg.md'));
 	assert.equal(pckg.data.verified.revision, 'a490c7c7aa3fa7a7b28245e0c7564849d36eb19c');
 	const topology = await loadPage(procedurePages.find((page) => page.path === 'docs/services/index.md'));
-	assert.match(topology.body, /root Auth README/i);
-	assert.match(topology.body, /conflicts with the pinned, service-owned contracts/i);
-	assert.match(topology.body, /under reconciliation/i);
-	assert.match(topology.body, /pckg[^.]*separate trusted forward-auth boundary/i);
+	assert.match(topology.body, /production Compose file has no Auth hub service/i);
+	assert.match(topology.body, /Tracker and Nexus require an Authentik session on every route/i);
+	assert.match(topology.body, /Learn and pckg keep their catalogues public and forward only requests that carry an Authentik session/i);
 	assert.match(topology.body, /Nexus[^.]*Caddy[^.]*Authentik/i);
 });
 

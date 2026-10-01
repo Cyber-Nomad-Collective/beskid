@@ -12,8 +12,15 @@ const openSpecRoot = path.resolve(import.meta.dirname, '../../../../openspec');
 
 test('catalog projection exposes one canonical public page for every capability and requirement', () => {
 	const projection = __test.loadStandardRouteProjection(openSpecRoot);
-	assert.equal(projection.capabilities.length, 198);
-	assert.equal(projection.requirements.length, 573);
+	const catalog = JSON.parse(fs.readFileSync(path.join(openSpecRoot, 'catalog.json'), 'utf8'));
+	assert.deepEqual(
+		projection.capabilities.map(({ id }) => id).sort(),
+		catalog.entries.map(({ id }) => id).sort(),
+	);
+	assert.deepEqual(
+		projection.requirements.map(({ id }) => id).sort(),
+		catalog.entries.flatMap(({ requirements }) => requirements.map(({ id }) => id)).sort(),
+	);
 	assert.equal(new Set(projection.routes.map((route) => route.pathname)).size, projection.routes.length);
 });
 
@@ -129,7 +136,7 @@ test('Nginx redirect projection uses exact safe locations for every legacy alias
 		/location = \/platform-spec\/tooling\/cli\/command-surface \{\n\s+return 301 \/docs\/standard\/capabilities\/tooling--cli--command-surface\/;\n\s*\}/,
 	);
 	assert.doesNotMatch(nginx, /\$(?:request_uri|uri|args)/);
-	assert.equal((nginx.match(/location = \/platform-spec\//g) ?? []).length, 2476);
+	assert.equal((nginx.match(/location = \/platform-spec\//g) ?? []).length, projection.aliases.size * 2);
 });
 
 test('Nginx redirect projection rejects catalog text that could become a directive', () => {

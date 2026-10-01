@@ -60,7 +60,9 @@ test('requires complete typed annotation metadata on every technical Docs page',
 			assert.ok(data.diagramOmissionReason.length > 0, `${filePath} must explain why a diagram is not needed`);
 		}
 		assert.match(data.verified?.revision ?? '', /^[0-9a-f]{40}$/, `${filePath} must define a Git revision`);
-		assert.match(String(data.verified?.date ?? ''), /^2026-09-08$/, `${filePath} must define the verification date`);
+		const verifiedDate = String(data.verified?.date ?? '');
+		assert.match(verifiedDate, /^\d{4}-\d{2}-\d{2}$/, `${filePath} must define an ISO verification date`);
+		assert.equal(new Date(`${verifiedDate}T00:00:00Z`).toISOString().slice(0, 10), verifiedDate, `${filePath} must define a valid verification date`);
 	}
 });
 

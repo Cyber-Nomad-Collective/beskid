@@ -48,7 +48,8 @@ sequenceDiagram
     L->>B: Run check
     alt Diagnostic
       B-->>L: Diagnostic
-      opt Need a hint
+      L->>L: Read diagnostic
+      opt Need a hint?
         L->>B: Use hint
         B-->>L: Hint
       end
