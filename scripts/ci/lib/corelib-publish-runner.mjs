@@ -146,6 +146,18 @@ function resolveTemplatesRoot() {
   return root;
 }
 
+function runTemplateQualityGate(cliBin, templatesRoot, corelibRoot) {
+  const script = join(templatesRoot, "ci", "quality.py");
+  if (!existsSync(script)) {
+    throw new Error(`First-party template quality gate is missing: ${script}`);
+  }
+  execFileSync("python3", [script, "--cli", cliBin, "--verify-invalid-fixture"], {
+    cwd: templatesRoot,
+    env: { ...process.env, BESKID_CORELIB_ROOT: corelibRoot },
+    stdio: "inherit",
+  });
+}
+
 function corelibInventory(workspaceRoot) {
   const workspacePath = join(workspaceRoot, "CoreLib.bws");
   const workspaceText = readFileSync(workspacePath, "utf8");
@@ -565,6 +577,7 @@ async function main() {
   const templatesRoot = resolveTemplatesRoot();
   const corelibPackages = corelibInventory(corelibRoot);
   const templatePackages = templateInventory(templatesRoot);
+  runTemplateQualityGate(cliBin, templatesRoot, corelibRoot);
   const allPackages = [...corelibPackages, ...templatePackages];
 
   const plans = new Map();

@@ -19,7 +19,7 @@ steps:
         from_secret: compiler_release_token
     commands:
       - apt-get update >/dev/null
-      - apt-get install -y --no-install-recommends ca-certificates gh git jq unzip >/dev/null
+      - apt-get install -y --no-install-recommends ca-certificates gh git jq python3 unzip >/dev/null
       - bash scripts/ci/init-submodules.sh compiler beskid_bsol beskid_templates
       - |
         version="$${BESKID_COMPILER_RELEASE_VERSION:?set the verified compiler release version}"
