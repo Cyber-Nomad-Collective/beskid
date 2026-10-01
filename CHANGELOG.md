@@ -133,6 +133,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Removed
 
+- Remove the retired `beskid hi` command page and `new --tui` picker guidance
+  from the current CLI reference; document the line-oriented REPL while keeping
+  `graph --tui` in the command surface.
 - Remove CodeQL from Woodpecker, including its workflow, scanner scripts,
   tests, and release qualification requirement. No replacement scanner is enabled.
 

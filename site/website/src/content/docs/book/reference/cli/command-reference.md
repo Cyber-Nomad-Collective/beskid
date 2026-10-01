@@ -37,7 +37,6 @@ Unless noted, failures print a diagnostic report (miette) and exit non-zero.
 | [`new`](/book/reference/cli/commands/new/) | List, install, and instantiate project/workspace/item templates |
 | [`pckg`](/book/reference/cli/commands/pckg/) | **pckg** registry client: `pack` (`.bpk` with exact semver), `upload` (artifact-bound version), search, download, yank, … |
 | [`graph`](/book/reference/cli/commands/graph/) | Render project and workspace graphs |
-| [`hi`](/book/reference/cli/commands/hi/) | Open the project-aware terminal dashboard |
 | [`lsp`](/book/reference/cli/commands/lsp/) | Run or install the language server |
 | [`up`](/book/reference/cli/commands/up/) | Inspect and select direct-install versions |
 | [`validate-bsol`](/book/reference/cli/commands/validate-bsol/) | Validate a BSOL document against a profile |

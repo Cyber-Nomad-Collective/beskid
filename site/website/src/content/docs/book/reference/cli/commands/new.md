@@ -54,7 +54,7 @@ When the registry is configured, these packages are resolved from the package se
 | `--api-key <key>` | Registry API key (`BESKID_PCKG_API_KEY`) |
 
 Exactly one template selector is required: `SHORT_NAME`, `--package`, `--path`, or `--git`. The `--path` and `--git` forms are flags; they are not positional values for `install` or instantiate.
-For non-TUI instantiation, `-o` or `--output` is also required.
+For instantiation, `-o` or `--output` is also required.
 
 ## `beskid new list` flags
 
@@ -66,11 +66,9 @@ For non-TUI instantiation, `-o` or `--output` is also required.
 
 `beskid new install <PACKAGE_OR_SHORT>` also accepts `--path`, `--git`, `--git-ref`, `--git-subpath`, `--registry-url`, `--bearer-token`, and `--api-key`.
 
-Use `beskid new --tui` without a selector or subcommand to open the interactive template picker.
-
 ## Interactive behavior
 
-When stdin is a TTY, the CLI prompts for required symbols without CLI values, confirms overwrite when output exists (unless `--force`), and confirms proceed when the template version is yanked (unless `--allow-yanked`).
+When stdin is a TTY, the CLI uses line prompts for required symbols without CLI values, confirms overwrite when output exists (unless `--force`), and confirms proceed when the template version is yanked (unless `--allow-yanked`). A declined overwrite leaves existing files unchanged. In noninteractive use, provide required values and use `--force` only when overwriting is intended.
 
 ## Examples
 

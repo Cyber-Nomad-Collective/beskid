@@ -7,7 +7,7 @@ import test from 'node:test';
 
 const contentRoot = new URL('../content/docs/book/', import.meta.url);
 const siteRoot = new URL('../../', import.meta.url);
-const compilerRoot = fileURLToPath(new URL('../../../../compiler/', import.meta.url));
+const compilerRoot = process.env.BESKID_CLI_SOURCE_ROOT ?? fileURLToPath(new URL('../../../../compiler/', import.meta.url));
 const snapshot = JSON.parse(await readFile(new URL('../data/pinned-cli-reference.json', import.meta.url), 'utf8'));
 const scopedDirectories = [
 	'reference/cli',
@@ -26,6 +26,9 @@ const scopedDirectories = [
 const rootCommands = snapshot.commands.map(({ name }) => name);
 const pinnedSourceFiles = [
 	'crates/beskid_cli/src/cli.rs',
+	'crates/beskid_cli/src/cli/app.rs',
+	'crates/beskid_cli/src/cli/dev.rs',
+	'crates/beskid_cli/src/cli/docs.rs',
 	'crates/beskid_cli/src/project_args.rs',
 	'crates/beskid_cli/src/commands/analyze.rs',
 	'crates/beskid_cli/src/commands/build.rs',
@@ -36,7 +39,6 @@ const pinnedSourceFiles = [
 	'crates/beskid_cli/src/commands/fetch.rs',
 	'crates/beskid_cli/src/commands/format.rs',
 	'crates/beskid_cli/src/commands/graph.rs',
-	'crates/beskid_cli/src/commands/hi.rs',
 	'crates/beskid_cli/src/commands/import.rs',
 	'crates/beskid_cli/src/commands/lock.rs',
 	'crates/beskid_cli/src/commands/lsp.rs',
@@ -152,25 +154,44 @@ test('CLI reference has one Markdown page for every pinned root command and no e
 	assert.deepEqual(pages, [...rootCommands].sort());
 });
 
+test('current CLI guidance has no retired full-screen commands and keeps graph TUI', async () => {
+	const pages = (await commandPagePaths()).map(({ name }) => name);
+	assert.equal(pages.includes('hi'), false, 'the removed hi command must not have a live reference page');
+	assert.equal(rootCommands.includes('hi'), false, 'the pinned command inventory must omit hi');
+	const cliIndex = await readFile(new URL('reference/cli/index.md', contentRoot), 'utf8');
+	const commandIndex = await readFile(new URL('reference/cli/command-reference.md', contentRoot), 'utf8');
+	const newPage = await readFile(new URL('reference/cli/commands/new.md', contentRoot), 'utf8');
+	const replPage = await readFile(new URL('reference/cli/commands/repl.md', contentRoot), 'utf8');
+	const graphPage = await readFile(new URL('reference/cli/commands/graph.md', contentRoot), 'utf8');
+	for (const source of [cliIndex, commandIndex, newPage, replPage]) {
+		assert.doesNotMatch(source, /beskid hi|commands\/hi\/|new --tui|template picker|full-screen/i);
+	}
+	assert.match(replPage, /line-oriented/i);
+	assert.doesNotMatch(replPage, /otherwise, a terminal starts the interactive interface/i);
+	assert.match(graphPage, /--tui/);
+});
+
 test('pinned CLI fixture is tied to immutable source blobs and the root Clap enum', () => {
+	assert.equal(pinnedGit('rev-parse', 'HEAD'), snapshot.sourceRevision, 'source checkout must match the release pin');
 	assert.deepEqual(Object.keys(snapshot.sourceBlobs ?? {}).sort(), [...pinnedSourceFiles].sort());
 	for (const sourcePath of pinnedSourceFiles) {
 		const actualBlob = pinnedGit('rev-parse', `${snapshot.sourceRevision}:${sourcePath}`);
 		assert.equal(snapshot.sourceBlobs[sourcePath], actualBlob, `${sourcePath}: pinned blob changed`);
 	}
-	const cliSource = pinnedGit('show', `${snapshot.sourceRevision}:crates/beskid_cli/src/cli.rs`);
+	const cliSource = pinnedGit('show', `${snapshot.sourceRevision}:crates/beskid_cli/src/cli/app.rs`);
 	assert.deepEqual(enumVariants(cliSource, 'Commands'), rootCommands);
 });
 
 test('new command records output as a conditional requirement and pins its registry default', () => {
 	const command = snapshot.commands.find(({ name }) => name === 'new');
-	assert.equal((command.requiredFlags ?? []).includes('--output'), false, '--output is not required for the TUI picker');
+	assert.equal(command.flags.includes('--tui'), false, 'the template picker is removed');
+	assert.equal((command.requiredFlags ?? []).includes('--output'), false, '--output applies to instantiation only');
 	assert.deepEqual(command.conditionalRequirements, [
-		{ when: 'instantiate', requiredFlags: ['--output'], bypass: 'tui-picker' },
+		{ when: 'instantiate', requiredFlags: ['--output'] },
 	]);
 	assert.equal(command.defaults['--registry-url'], 'https://pckg.beskid-lang.org');
 	const source = pinnedGit('show', `${snapshot.sourceRevision}:crates/beskid_cli/src/commands/new.rs`);
-	assert.match(source, /args\.tui && args\.command\.is_none\(\) && args\.short_name\.is_none\(\)/);
+	assert.doesNotMatch(source, /\bpub tui\b|--tui|tui-picker/i);
 	assert.match(source, /flags\.output\.clone\(\)\.ok_or_else\([^\n]*--output` is required/);
 });
 
@@ -185,8 +206,8 @@ function collectContractTokens(command) {
 }
 
 test('every CLI page documents its pinned flags, arguments, subcommands, defaults, and an example', async () => {
-	assert.equal(snapshot.sourceRevision, '252aa528ac7ee01a64e49e9b88b32393206fbd71');
-	assert.equal(snapshot.commands.length, 26);
+	assert.equal(snapshot.sourceRevision, 'aacd4fd13596c9e433ebb8387e66457babee7316');
+	assert.equal(snapshot.commands.length, 25);
 	const pagePaths = new Map((await commandPagePaths()).map(({ name, relativePath }) => [name, relativePath]));
 	const failures = [];
 	for (const command of snapshot.commands) {
@@ -241,7 +262,7 @@ test('reviewed command contracts and terminology do not regress', async () => {
 	};
 	assert.match(files.cliTour, /commands\/dev\//, 'CLI tour must link the canonical alias map');
 	assert.doesNotMatch(files.cliTour, /dev build (?:run|compile\/run|compile\/run\/test)/, 'dev build has no run subcommand');
-	assert.match(files.newPage, /--tui/);
+	assert.doesNotMatch(files.newPage, /--tui/);
 	assert.match(files.newPage, /exactly one template selector is required/i);
 	assert.match(files.newPage, /(?:required[^\n]*--output|--output[^\n]*required)/i);
 	assert.doesNotMatch(files.newPage, /^\| [23] \|/m, 'new uses the standard non-zero error status, not invented categories');

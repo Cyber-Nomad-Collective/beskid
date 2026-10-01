@@ -28,6 +28,6 @@ beskid test --project path/to/App.bproj --plain
 beskid graph --project path/to/App.bproj --mermaid
 ```
 
-`beskid new` instantiation requires exactly one template selector and an output path. Use a short name such as `console`, or use one of `--package`, `--path`, and `--git`. See the [new command](/book/reference/cli/commands/new/) for `--tui` and registry authentication flags.
+`beskid new` instantiation requires exactly one template selector and an output path. Use a short name such as `console`, or use one of `--package`, `--path`, and `--git`. See the [new command](/book/reference/cli/commands/new/) for registry authentication flags and line-oriented prompts.
 
 Install prebuilt binaries from [Downloads](/downloads/) or build from the compiler repository.
