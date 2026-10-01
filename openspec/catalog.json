@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "fe5c2b99050715ec73fdf7f9aac5225ce57c12198baa6a64b59739f193b04b3a",
+  "revision": "cd7092b6cdbc3aae4ac31b8e2152378fe594fe40b4e2db97cdda2d42f7548cab",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -40911,7 +40911,7 @@
       "path": "site/website/src/content/docs/book/reference/cli/command-reference.md",
       "title": "CLI command reference",
       "authority": "informative",
-      "sourceHash": "03e1b14bd3bd2464a07ba2dd0e7a739a3beff65c9e854896a30083ce3440813c",
+      "sourceHash": "93594d2cf14f29b5c0fb2fa5412896dccd1b13ec61a3e3bb10fd508623a92ee4",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -40994,7 +40994,7 @@
       "path": "site/website/src/content/docs/book/reference/cli/commands/new.md",
       "title": "beskid new",
       "authority": "informative",
-      "sourceHash": "8ffdb8471b7328d51002a8e4812fd155bf08a7c129d456bbdf49611a3c419879",
+      "sourceHash": "d1deff318c621a5636dcf9f7ca853f82932b0c374f73a6890bd0b581a08e1045",
       "standardLinks": [
         "/platform-spec/tooling/project-scaffolding/beskid-new/",
         "/platform-spec/tooling/project-scaffolding/beskid-new/contracts-and-edge-cases/",
@@ -41076,7 +41076,7 @@
       "path": "site/website/src/content/docs/book/reference/cli/index.md",
       "title": "Beskid CLI",
       "authority": "informative",
-      "sourceHash": "5861a368c0e2bfadb7fd5cc6fc6db893ec0f0c8c02fd140947919dfbec055fc3",
+      "sourceHash": "8cdd56beb62d9606abfc99d349395c0735aadd50e3682c7dda51710b184e65c3",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
