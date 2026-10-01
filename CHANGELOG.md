@@ -43,7 +43,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 - Align website Docs gates with pinned Operations and CI sources, the
   Authentik/Caddy service topology, the Learn diagnostic loop, and the
-  validated OpenSpec catalog instead of stale fixed counts.
+  validated OpenSpec catalog instead of stale fixed counts; replace retired
+  Auth hub guidance with the pinned production authentication contract.
 - Fail closed when the first-party template checker exits successfully without
   reporting all seven generated-project results and invalid-parser evidence;
   keep publisher credentials out of that subprocess and resolve relative

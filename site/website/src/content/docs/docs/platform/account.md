@@ -1,6 +1,6 @@
 ---
 title: Use your Beskid account
-description: Sign in through the Hub and open the account page without performing service pairing.
+description: Sign in to a protected Beskid service through Authentik.
 pageKind: task
 diagramPolicy: not-needed
 diagramOmissionReason: The public sign-in and account procedure is a short linear sequence.
@@ -8,34 +8,34 @@ audience:
   - platform user
 authority:
   status: informative
-  sourceLabel: Pinned auth hub routes
-  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid/blob/3143396b796d86c1a70a0bfb1aa4761b593bbae5/site/auth/README.md
-  limits: This task covers public account use. It does not pair a service, configure OAuth, or disclose a service token.
+  sourceLabel: Pinned production Compose authentication contract
+  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid/blob/98ec5030dae564ed28ef34062726c2cc5d16b3c8/beskid_sites/deploy/docker-compose.yml
+  limits: This task covers browser sign-in only. It does not configure Authentik or change service access.
 verified:
-  revision: 3143396b796d86c1a70a0bfb1aa4761b593bbae5
-  date: 2026-09-08
+  revision: 98ec5030dae564ed28ef34062726c2cc5d16b3c8
+  date: 2026-10-01
 ---
 
-The Hub provides GitHub OAuth and a signed-in account page. This task does not pair a service and does not create a pairing code. It makes no claim about a specific service-auth topology.
+Authentik handles browser sign-in for protected Beskid services through the shared Caddy edge. Tracker and Nexus require a session. Learn and pckg keep their public catalogues available without one.
 
 ## Prerequisites
 
-Use a browser, an internet connection, and a GitHub account that you can sign in to. Do not enter a token or a pairing value into a public support request.
+Use a browser, an internet connection, and a GitHub account that you can sign in to. Do not send cookies, tokens, or private responses in a public support request.
 
 ## Actions
 
-1. Open [Hub sign-in](https://auth.beskid-lang.org/login?app=hub).
-2. Complete GitHub OAuth in the GitHub browser page.
-3. Open [your account](https://auth.beskid-lang.org/account).
-4. Review the signed-in account details that the page displays.
+1. Open [Tracker](https://tracker.beskid-lang.org/) or another protected Beskid service.
+2. Verify that the redirect reaches Authentik at `https://auth.beskid-lang.org`.
+3. Complete GitHub OAuth when Authentik offers that sign-in method.
+4. Return to the selected service after authentication.
 
 ## Expected result
 
-GitHub OAuth returns you to the Hub. The account page shows a signed-in account without exposing a service token or a pairing value.
+GitHub OAuth returns you to the selected service with a signed-in account. Access remains subject to that service's authorization rules.
 
 ## Recovery
 
-If sign-in does not return to the Hub, record the visible sign-in error and try the public sign-in route again. If the problem continues, use the [Authentication operator contract](/docs/services/authentication/) for service availability and authorized recovery. Do not ask an operator to disclose a secret.
+If sign-in does not return to the service, record the visible sign-in error and the public route. If the problem continues, use the [Authentication operator contract](/docs/services/authentication/) for service availability and authorized recovery. Do not ask an operator to disclose a secret.
 
 ## Next task
 

@@ -12,13 +12,15 @@ authority:
   status: informative
   sourceLabel: Pinned Tracker service contract
   sourceHref: https://github.com/Cyber-Nomad-Collective/beskid_tracker/blob/c7da5b60e70fe87b10b1b3cde7e91c39af32136a/README.md
-  limits: This page describes delivery data operation. OpenSpec remains the normative behavior authority.
+  limits: This page describes delivery data operation. The pinned Tracker README still describes an Auth hub; production Compose controls deployed authentication. OpenSpec remains normative for behavior.
 verified:
   revision: c7da5b60e70fe87b10b1b3cde7e91c39af32136a
   date: 2026-09-08
 ---
 
 Tracker is the delivery authority for versions, roadmap tasks, and bugs. Its SQLite database is the source of truth. GitHub Issues is only the external bug surface.
+
+The pinned Tracker README still describes an Auth hub, but the production Compose definition routes Tracker through Caddy forward-auth to Authentik. Use the [production authentication contract](/docs/services/authentication/) for sign-in recovery.
 
 ## Service contract
 

@@ -9,12 +9,12 @@ audience:
   - service operator
 authority:
   status: informative
-  sourceLabel: Pinned platform service contracts
-  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid/blob/90c40a91fefa8150134663de120afcb1ef582f2a/README.md
-  limits: This page summarizes public services. Service contracts and the Standard remain authoritative.
+  sourceLabel: Pinned production Compose service topology
+  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid/blob/98ec5030dae564ed28ef34062726c2cc5d16b3c8/beskid_sites/deploy/docker-compose.yml
+  limits: This page summarizes public services. The production Compose definition controls deployment topology; OpenSpec defines normative behavior.
 verified:
-  revision: 90c40a91fefa8150134663de120afcb1ef582f2a
-  date: 2026-09-08
+  revision: 98ec5030dae564ed28ef34062726c2cc5d16b3c8
+  date: 2026-10-01
 ---
 
 Beskid has separate services for guidance, identity, learning, packages, delivery, and repository graphs. Select a service task before you diagnose a public service status.
@@ -25,7 +25,7 @@ Identify your service task. Check the public service status and record the page 
 
 ## Choose a service guide
 
-1. Read [Authentication](/docs/services/authentication/) before you diagnose sign-in or service pairing.
+1. Read [Authentication](/docs/services/authentication/) before you diagnose sign-in or forward-auth.
 2. Select [Learn](/docs/services/learn/), [pckg](/docs/services/pckg/), [Tracker](/docs/services/tracker/), or [Nexus](/docs/services/nexus/).
 3. Use [Health and monitoring](/docs/operations/health-and-monitoring/) if a service does not respond.
 

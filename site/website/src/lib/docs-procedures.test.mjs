@@ -310,7 +310,7 @@ const procedurePages = [
 		path: 'docs/platform/account.md',
 		sections: {
 			prerequisites: ['GitHub account', 'browser'],
-			actions: ['https://auth.beskid-lang.org/login?app=hub', 'https://auth.beskid-lang.org/account'],
+			actions: ['https://tracker.beskid-lang.org/', 'GitHub OAuth'],
 			expectedResult: ['GitHub OAuth', 'signed-in account'],
 			recovery: ['sign-in', 'Authentication operator contract'],
 		},
@@ -361,7 +361,7 @@ const procedurePages = [
 		},
 	},
 	...[
-		['docs/services/authentication.md', 'GitHub OAuth', 'AUTH_HUB_PUBLIC_URL', 'pairing code', 'service token'],
+		['docs/services/authentication.md', 'GitHub OAuth', 'AUTHENTIK_SECRET_KEY', 'Caddy forward-auth', 'authentik-postgres-data'],
 		['docs/services/learn.md', 'interactive learning', 'BESKID_BINARY', '/api/health', 'temporary workspace'],
 		['docs/services/pckg.md', 'package registry', 'PCKG_DATABASE_URL', '/health/ready', 'PostgreSQL'],
 		['docs/services/tracker.md', 'delivery authority', 'TRACKER_DATA_DIR', '/api/health', 'SQLite'],
@@ -723,9 +723,9 @@ test('platform routes keep public user tasks separate from authenticated and ope
 	assert.deepEqual(platform.data.audience, ['platform user']);
 	assert.match(platform.body, /operator contract/i);
 	assert.deepEqual(account.data.audience, ['platform user']);
-	assert.match(account.body, /https:\/\/auth\.beskid-lang\.org\/login\?app=hub/);
-	assert.match(account.body, /https:\/\/auth\.beskid-lang\.org\/account/);
-	assert.match(account.body, /does not pair a service|does not create a pairing/i);
+	assert.match(account.body, /https:\/\/tracker\.beskid-lang\.org\//);
+	assert.match(account.body, /Authentik/i);
+	assert.doesNotMatch(account.body, /login\?app=hub|\/admin\/pairing|\/account\b/i);
 	assert.match(account.body, /Authentication operator contract/i);
 	assert.match(tracker.body, /https:\/\/tracker\.beskid-lang\.org\//);
 	assert.match(tracker.body, /https:\/\/tracker\.beskid-lang\.org\/bugs/);
@@ -1186,13 +1186,18 @@ test('service pages publish a complete verified operating contract', async () =>
 		for (const field of ['Purpose', 'Audience', 'Public boundary', 'Local boundary', 'Authentication', 'Persistent state', 'Container image', 'Health check', 'Deployment owner', 'Secret source', 'Monitoring', 'Recovery']) {
 			assert.ok(contract.includes(`| ${field} |`), `${page.path} must define ${field}`);
 		}
-		assert.match(contract, /ghcr\.io\/cyber-nomad-collective\/beskid-/);
+		assert.match(
+			contract,
+			page.path === 'docs/services/authentication.md'
+				? /ghcr\.io\/goauthentik\/server:2025\.10\.4/
+				: /ghcr\.io\/cyber-nomad-collective\/beskid-/,
+		);
 	}
 });
 
 test('service contracts retain critical pinned facts and the production auth topology', async () => {
 	const expectations = {
-		'docs/services/authentication.md': ['3143396b796d86c1a70a0bfb1aa4761b593bbae5/site/auth/README.md', 'GitHub OAuth', '/api/v1/health', '8090', 'auth-data', 'beskid-auth'],
+		'docs/services/authentication.md': ['98ec5030dae564ed28ef34062726c2cc5d16b3c8/beskid_sites/deploy/docker-compose.yml', 'GitHub OAuth', 'ak healthcheck', '9000', 'authentik-postgres-data', 'ghcr.io/goauthentik/server:2025.10.4'],
 		'docs/services/learn.md': ['90c40a91fefa8150134663de120afcb1ef582f2a/site/learn/README.md', 'BESKID_BINARY', '/api/health', '80', 'no durable Learn volume', 'beskid-learn'],
 		'docs/services/pckg.md': ['beskid_pckg/blob/a490c7c7aa3fa7a7b28245e0c7564849d36eb19c/README.md', '/health/ready', '8082', 'PostgreSQL', 'pckg_packages', 'beskid-pckg', 'trusted forward-auth boundary'],
 		'docs/services/tracker.md': ['c7da5b60e70fe87b10b1b3cde7e91c39af32136a/README.md', '/api/health', '3000', 'SQLite', 'tracker-data', 'beskid-tracker', 'Authentik', 'Caddy'],
@@ -1210,6 +1215,29 @@ test('service contracts retain critical pinned facts and the production auth top
 	assert.match(topology.body, /Tracker and Nexus require an Authentik session on every route/i);
 	assert.match(topology.body, /Learn and pckg keep their catalogues public and forward only requests that carry an Authentik session/i);
 	assert.match(topology.body, /Nexus[^.]*Caddy[^.]*Authentik/i);
+});
+
+test('authentication guidance follows production Compose and discloses the stale Tracker source', async () => {
+	const [authentication, account, services, platform, tracker] = await Promise.all([
+		'docs/services/authentication.md',
+		'docs/platform/account.md',
+		'docs/services/index.md',
+		'docs/platform/index.md',
+		'docs/services/tracker.md',
+	].map((path) => loadPage(procedurePages.find((page) => page.path === path))));
+	const composeSource = 'https://github.com/Cyber-Nomad-Collective/beskid/blob/98ec5030dae564ed28ef34062726c2cc5d16b3c8/beskid_sites/deploy/docker-compose.yml';
+	for (const page of [authentication, account, services]) {
+		assert.equal(page.data.authority.sourceHref, composeSource, `${page.path} must pin the production auth topology`);
+		assert.equal(page.data.verified.revision, '98ec5030dae564ed28ef34062726c2cc5d16b3c8');
+	}
+	assert.match(authentication.body, /AUTHENTIK_POSTGRES_PASSWORD/);
+	assert.match(authentication.body, /AUTHENTIK_SECRET_KEY/);
+	assert.match(authentication.body, /ak healthcheck/);
+	assert.match(authentication.body, /Caddy forward-auth/);
+	assert.match(tracker.body, /pinned Tracker README[^.]*Auth hub[^.]*production Compose[^.]*Authentik/i);
+	for (const page of [authentication, account, services, platform]) {
+		assert.doesNotMatch(page.body, /AUTH_HUB_PUBLIC_URL|\/admin\/pairing|login\?app=hub|auth-data|localhost:8090|pairing/i, `${page.path} must not prescribe retired hub operation`);
+	}
 });
 
 test('security-sensitive procedures protect secrets before operator actions', async () => {

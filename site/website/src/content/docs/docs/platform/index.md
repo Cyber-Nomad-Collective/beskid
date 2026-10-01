@@ -23,7 +23,7 @@ Use a browser and an internet connection. Identify the platform task that you ne
 
 ## Choose a platform task
 
-1. Open [Use your account](/docs/platform/account/) when you need the Hub sign-in or account page.
+1. Open [Use your account](/docs/platform/account/) when you need browser sign-in to a protected service.
 2. Open [Read Tracker](/docs/platform/tracker/) when you need delivery status or public bugs.
 3. Open [Report a bug](/docs/platform/report-bug/) when you have a reproducible problem.
 4. Open [Explore Nexus](/docs/platform/nexus/) when you need a repository graph.
@@ -44,7 +44,7 @@ flowchart TD
 
 ### Diagram text
 
-1. Use the account task for an account sign-in or account page.
+1. Use the account task for browser sign-in to a protected service.
 2. Use the Tracker task to read delivery status. This public task does not maintain a version or workstream.
 3. Use the bug task to report a reproducible problem after you sign in.
 4. Use the Nexus task to select an indexed repository graph and inspect it.
@@ -54,7 +54,7 @@ flowchart TD
 
 You have a selected task for the account, delivery status, bug, or repository graph. You know that service recovery belongs in the linked operator contract.
 
-If a public route fails, record its URL, time, and visible error. Give that record to the service operator. Do not provide a secret, pairing value, or private response body.
+If a public route fails, record its URL, time, and visible error. Give that record to the service operator. Do not provide a secret, session cookie, or private response body.
 
 ## Next steps
 
