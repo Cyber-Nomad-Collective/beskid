@@ -1,5 +1,4 @@
 import {
-	Button,
 	Card,
 	CardContent,
 	CardDescription,
@@ -14,6 +13,7 @@ import {
 	useSearch,
 } from "@tanstack/react-router";
 import { useState } from "react";
+import { PackageBrowseList } from "#/components/package-browse-list";
 import { pckgApi } from "#/lib/api";
 import { packageKindPresentation } from "#/lib/package-kind-presentation";
 
@@ -116,7 +116,6 @@ function PackageDocumentationPage() {
 			</section>
 		);
 
-	const documentation = docs.data ?? [];
 	return (
 		<section className="mx-auto max-w-6xl space-y-6 px-5 py-10">
 			<header className="flex flex-wrap items-end justify-between gap-4">
@@ -164,6 +163,11 @@ function PackageDocumentationPage() {
 					</CardContent>
 				</Card>
 			)}
+			{readme.isError && (
+				<p role="alert" className="text-sm text-destructive">
+					Could not load the README for this version.
+				</p>
+			)}
 			{structured.data?.metadata != null && (
 				<Card>
 					<CardHeader>
@@ -184,33 +188,29 @@ function PackageDocumentationPage() {
 					</CardDescription>
 				</CardHeader>
 				<CardContent className="space-y-2">
-					{documentation.length === 0 ? (
+					<PackageBrowseList
+						kind="documentation"
+						isPending={docs.isPending}
+						isError={docs.isError}
+						entries={docs.data}
+						onSelect={(path) => {
+							setDocPath(path);
+							void navigate({
+								to: "/docs/$package",
+								params: { package: packageName },
+								search: { version: selectedVersion, doc: path, source: selectedSource },
+							});
+						}}
+					/>
+					{doc.isPending && docPath && (
 						<p className="text-sm text-muted-foreground">
-							No documentation files were published.
+							Loading documentation file…
 						</p>
-					) : (
-						documentation.map((entry) => (
-							<Button
-								key={entry.path}
-								variant="outline"
-								className="flex w-full justify-between"
-								onClick={() => {
-									setDocPath(entry.path);
-									void navigate({
-										to: "/docs/$package",
-										params: { package: packageName },
-										search: {
-											version: selectedVersion,
-											doc: entry.path,
-											source: selectedSource,
-										},
-									});
-								}}
-							>
-								<span>{entry.path}</span>
-								<span className="text-muted-foreground">{entry.sizeBytes} B</span>
-							</Button>
-						))
+					)}
+					{doc.isError && (
+						<p role="alert" className="text-sm text-destructive">
+							Could not load the selected documentation file.
+						</p>
 					)}
 					{doc.data && (
 						<pre className="max-h-96 overflow-auto whitespace-pre-wrap rounded-md border border-border p-3 text-sm">
@@ -227,33 +227,27 @@ function PackageDocumentationPage() {
 					</CardDescription>
 				</CardHeader>
 				<CardContent className="space-y-2">
-					{(source.data ?? []).length === 0 ? (
-						<p className="text-sm text-muted-foreground">
-							No source files were published.
+					<PackageBrowseList
+						kind="source"
+						isPending={source.isPending}
+						isError={source.isError}
+						entries={source.data}
+						onSelect={(path) => {
+							setSourcePath(path);
+							void navigate({
+								to: "/docs/$package",
+								params: { package: packageName },
+								search: { version: selectedVersion, doc: selectedDoc, source: path },
+							});
+						}}
+					/>
+					{sourceFile.isPending && sourcePath && (
+						<p className="text-sm text-muted-foreground">Loading source file…</p>
+					)}
+					{sourceFile.isError && (
+						<p role="alert" className="text-sm text-destructive">
+							Could not load the selected source file.
 						</p>
-					) : (
-						(source.data ?? []).map((entry) => (
-							<Button
-								key={entry.path}
-								variant="outline"
-								className="flex w-full justify-between"
-								onClick={() => {
-									setSourcePath(entry.path);
-									void navigate({
-										to: "/docs/$package",
-										params: { package: packageName },
-										search: {
-											version: selectedVersion,
-											doc: selectedDoc,
-											source: entry.path,
-										},
-									});
-								}}
-							>
-								{entry.path}
-								<span className="text-muted-foreground">{entry.sizeBytes} B</span>
-							</Button>
-						))
 					)}
 					{sourceFile.data && (
 						<pre className="max-h-96 overflow-auto whitespace-pre-wrap rounded-md border border-border p-3 text-sm">
