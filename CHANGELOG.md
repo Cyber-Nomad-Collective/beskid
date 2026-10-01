@@ -45,6 +45,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Refresh a managed legacy Corelib install to the exact 0.5.1 embedded bundle
+  instead of retaining it because its old project version compares higher.
 - Align website Docs gates with pinned Operations and CI sources, the
   Authentik/Caddy service topology, the Learn diagnostic loop, and the
   validated OpenSpec catalog instead of stale fixed counts; replace retired
