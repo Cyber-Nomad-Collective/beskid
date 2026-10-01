@@ -206,7 +206,7 @@ function collectContractTokens(command) {
 }
 
 test('every CLI page documents its pinned flags, arguments, subcommands, defaults, and an example', async () => {
-	assert.equal(snapshot.sourceRevision, '9ea116736ffce14c53957897628489081e750f70');
+	assert.equal(snapshot.sourceRevision, 'e9709da96f5e8426650dafcf91cdfc0807771c23');
 	assert.equal(snapshot.commands.length, 25);
 	const pagePaths = new Map((await commandPagePaths()).map(({ name, relativePath }) => [name, relativePath]));
 	const failures = [];
