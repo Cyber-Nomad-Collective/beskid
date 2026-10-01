@@ -19,7 +19,7 @@ Use this task to make a readiness decision. Record facts from the linked sources
 
 ## Prerequisites
 
-State your intended use. Use a supported host: Linux on AMD64, macOS on ARM64, or Windows on AMD64. Prepare a record for links, release tags, command output, and open questions.
+State your intended use. Use a supported host: Linux on AMD64, macOS on ARM64, or Windows on AMD64. Prepare a record for links, release tags, command output, and open questions. Tracker service evidence requires an Authentik session; stop if you cannot obtain one for a selected service check.
 
 ## Actions
 

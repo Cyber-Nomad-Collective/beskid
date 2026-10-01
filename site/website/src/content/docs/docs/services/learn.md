@@ -27,7 +27,7 @@ Beskid Learn provides interactive learning and runs real CLI checks against temp
 | Audience | Learners use lessons. Service operators verify the CLI-backed runtime. |
 | Public boundary | `https://learn.beskid-lang.org`. |
 | Local boundary | `pnpm run dev --port 4173` starts the frontend. The production container uses port `80`. |
-| Authentication | The platform Compose contract accepts auth-hub and Learn session settings. Do not assume sign-in when these settings are absent. |
+| Authentication | The lesson catalogue is public. Caddy uses Authentik forward-auth only for requests carrying an Authentik session. |
 | Persistent state | Learner checks use a temporary workspace. The production Compose contract declares no durable Learn volume. |
 | Container image | `ghcr.io/cyber-nomad-collective/beskid-learn`. |
 | Health check | `GET /api/health` on the service port. |

@@ -39,4 +39,4 @@ If sign-in does not return to the service, record the visible sign-in error and 
 
 ## Next task
 
-Open [Read Tracker](/docs/platform/tracker/) for public delivery status, or [Explore Nexus](/docs/platform/nexus/) for a public repository graph.
+Open [Read Tracker](/docs/platform/tracker/) for delivery status, or [Explore Nexus](/docs/platform/nexus/) for a repository graph after sign-in.

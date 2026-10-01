@@ -36,13 +36,14 @@ to `cr.beskid-lang.org` and Watchtower is healthy.
 4. Confirm all five immutable tags exist as `cr.beskid-lang.org/beskid/<lane>:sha-<full-sha>`.
 5. Confirm each controlled `production` tag resolves to the intended image.
 6. Inspect Watchtower logs for a successful reconciliation of `website`, `learn`, `tracker`, `nexus`, and `pckg`.
-7. Run the public health checks documented in [Health and monitoring](/docs/operations/health-and-monitoring/).
-8. Record the immutable tag, reconciliation timestamp, and public result for each service.
+7. Run the signed-in public route and internal container checks documented in [Health and monitoring](/docs/operations/health-and-monitoring/).
+8. Record the immutable tag, reconciliation timestamp, and verification result for each service.
 
 ## Expected result
 
 The recorded Woodpecker source SHA matches every immutable image tag, Watchtower
-reports the corresponding reconciliation, and each public service is healthy.
+reports the corresponding reconciliation, and each required public route and
+internal container check is healthy.
 No CI job performed a production container action.
 
 ## Recovery
@@ -53,7 +54,7 @@ endpoint status. Promotion and promoter-cleanup failures occur after manifest
 finalization, so use that artifact to identify any partially advanced tag set.
 Pause Watchtower if continued reconciliation is unsafe. The production operator
 can retag the last known-good immutable `sha-*` image as `production`; CI has no
-authority to perform that recovery. Repeat the public health checks afterward.
+authority to perform that recovery. Repeat the production health checks afterward.
 
 ## Next task
 

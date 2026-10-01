@@ -15,7 +15,7 @@ verified:
   date: 2026-09-08
 ---
 
-Use this guide to select a public platform task. Read public information before you sign in. Use an operator contract only for service operation, not ordinary product use.
+Use this guide to select a platform task. Tracker and Nexus require Authentik sign-in before reading; use an operator contract only for service operation.
 
 ## Orientation
 
@@ -24,7 +24,7 @@ Use a browser and an internet connection. Identify the platform task that you ne
 ## Choose a platform task
 
 1. Open [Use your account](/docs/platform/account/) when you need browser sign-in to a protected service.
-2. Open [Read Tracker](/docs/platform/tracker/) when you need delivery status or public bugs.
+2. Open [Read Tracker](/docs/platform/tracker/) when you need delivery status or bug records after sign-in.
 3. Open [Report a bug](/docs/platform/report-bug/) when you have a reproducible problem.
 4. Open [Explore Nexus](/docs/platform/nexus/) when you need a repository graph.
 5. Open the linked operator contract only when the public route needs service recovery.
@@ -58,4 +58,4 @@ If a public route fails, record its URL, time, and visible error. Give that reco
 
 ## Next steps
 
-Open [Use your account](/docs/platform/account/) to begin with the Hub, or open [Read Tracker](/docs/platform/tracker/) to read delivery status.
+Open [Use your account](/docs/platform/account/) for Authentik sign-in, or open [Read Tracker](/docs/platform/tracker/) to read delivery status after sign-in.

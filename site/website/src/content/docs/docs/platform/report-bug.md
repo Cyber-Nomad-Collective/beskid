@@ -1,6 +1,6 @@
 ---
 title: Report a public bug
-description: Report a reproducible problem from the public Tracker bug list after you sign in.
+description: Report a reproducible problem after signing in to Tracker through Authentik.
 pageKind: task
 diagramPolicy: not-needed
 diagramOmissionReason: The public bug-report form is a short linear procedure.
@@ -16,7 +16,7 @@ verified:
   date: 2026-09-08
 ---
 
-The [public bug list](https://tracker.beskid-lang.org/bugs) is visible without sign-in. You must sign in to report a bug. Tracker synchronizes eligible `bug` issues with GitHub; it does not use GitHub for roadmap maintenance.
+Tracker requires an Authentik session before you can read the [bug list](https://tracker.beskid-lang.org/bugs) or report a bug. Tracker synchronizes eligible `bug` issues with GitHub; it does not use GitHub for roadmap maintenance.
 
 ## Prerequisites
 
@@ -24,9 +24,9 @@ Use a browser and prepare a reproducible problem with its observed result, expec
 
 ## Actions
 
-1. Open the [public bug list](https://tracker.beskid-lang.org/bugs).
-2. Search the public bug list for the reproducible problem.
-3. Select **Sign in** when you need to create a report.
+1. Open the [Tracker bug list](https://tracker.beskid-lang.org/bugs).
+2. Select **Sign in** through Authentik before reading the list.
+3. Search the bug list for the reproducible problem.
 4. Select an area in the Tracker report form.
 5. Select a sub-area for the selected area.
 6. Enter a required Summary that identifies the problem.
@@ -37,12 +37,12 @@ Use a browser and prepare a reproducible problem with its observed result, expec
 
 ## Expected result
 
-Tracker shows a bug report for the reproducible problem in the public bug list. The report contains a Summary, Expected behavior, Actual behavior, and Reproduction steps without a secret.
+Tracker shows a bug report for the reproducible problem in the signed-in bug list. The report contains a Summary, Expected behavior, Actual behavior, and Reproduction steps without a secret.
 
 ## Recovery
 
-If Tracker shows no signed-in account, complete the public sign-in flow and return to the public bug list. If the report form does not load, record the visible error and use the [Tracker operator contract](/docs/services/tracker/) for service recovery. Do not create a version or workstream to report a bug.
+If Tracker shows no signed-in account, complete Authentik sign-in and return to the bug list. If the report form does not load, record the visible error and use the [Tracker operator contract](/docs/services/tracker/) for service recovery. Do not create a version or workstream to report a bug.
 
 ## Next task
 
-Open [Read Tracker](/docs/platform/tracker/) to follow delivery status, or open [Use your account](/docs/platform/account/) to review the Hub account page.
+Open [Read Tracker](/docs/platform/tracker/) to follow delivery status, or open [Use your account](/docs/platform/account/) for the Authentik sign-in procedure.

@@ -11,7 +11,7 @@ authority:
   status: security-sensitive
   sourceLabel: Pinned pckg service contract
   sourceHref: https://github.com/Cyber-Nomad-Collective/beskid_pckg/blob/a490c7c7aa3fa7a7b28245e0c7564849d36eb19c/README.md
-  limits: This page does not authorize registry mutations or disclose database or bearer credentials.
+  limits: This page does not authorize registry mutations or disclose credentials. Production Compose controls edge authentication and deployment.
 verified:
   revision: a490c7c7aa3fa7a7b28245e0c7564849d36eb19c
   date: 2026-09-08
@@ -27,11 +27,11 @@ Keep database and publisher credentials in OpenBao or an approved secret manager
 | Audience | Consumers browse and download. Authorized package authors publish. Operators maintain storage. |
 | Public boundary | `https://pckg.beskid-lang.org`; public catalogue and download routes can remain available. |
 | Local boundary | The reference service listens on `http://localhost:8082` and uses a local PostgreSQL service. |
-| Authentication | CLI publication uses pckg bearer keys. Protected browser mutations fail closed without a trusted forward-auth boundary. |
+| Authentication | The public catalogue remains available without a session. Caddy forwards Authentik identity for requests carrying an Authentik session; protected browser mutations fail closed without one. CLI publication uses pckg bearer keys. |
 | Persistent state | PostgreSQL stores registry records. `pckg_packages` stores package artifacts at `/app/packages`. |
 | Container image | `ghcr.io/cyber-nomad-collective/beskid-pckg`. |
 | Health check | `GET /health/ready` on port `8082`. |
-| Deployment owner | Root platform delivery builds the Rust service and web client, then Coolify runs the Compose profile. |
+| Deployment owner | Root platform delivery builds the Rust service and web client; standalone production Compose and Watchtower run the controlled image tag. |
 | Secret source | OpenBao path `secret/beskid/<lane>/pckg`; it supplies the canonical `PCKG_DATABASE_URL`. |
 | Monitoring | Readiness, PostgreSQL health, and publication errors identify the failing boundary. |
 | Recovery | Restore database and artifact volume as one consistent set. Roll back the image digest on a runtime regression. |

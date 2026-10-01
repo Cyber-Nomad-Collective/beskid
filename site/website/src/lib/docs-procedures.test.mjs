@@ -318,12 +318,12 @@ const procedurePages = [
 	{
 		path: 'docs/platform/tracker.md',
 		diagram: 'Tracker delivery and bug authority',
-		diagramBranches: ['Public reader', 'Tracker delivery data', 'OpenSpec normative authority', 'GitHub bug transport', 'Signed-in maintenance'],
-		equivalentConcepts: ['public reader', 'Tracker', 'OpenSpec', 'GitHub', 'Signed-in'],
+		diagramBranches: ['Signed-in reader', 'Tracker delivery data', 'OpenSpec normative authority', 'GitHub bug transport', 'Signed-in maintenance'],
+		equivalentConcepts: ['signed-in reader', 'Tracker', 'OpenSpec', 'GitHub', 'Authorized maintenance'],
 		sections: {
 			prerequisites: ['browser', 'delivery version', 'sign-in', 'collaborator', 'repository owner', 'org admin'],
 			actions: ['https://tracker.beskid-lang.org/', 'https://tracker.beskid-lang.org/bugs', '/docs/platform/report-bug/'],
-			expectedResult: ['delivery timeline', 'public bugs'],
+			expectedResult: ['delivery timeline', 'bugs'],
 			recovery: ['public route', 'Tracker operator contract'],
 		},
 	},
@@ -332,15 +332,15 @@ const procedurePages = [
 		sections: {
 			prerequisites: ['reproducible problem', 'browser'],
 			actions: ['https://tracker.beskid-lang.org/bugs', 'Sign in', 'Select an area', 'Select a sub-area', 'required Summary', 'Expected behavior', 'Actual behavior', 'Reproduction steps'],
-			expectedResult: ['bug report', 'public bug list', 'Summary', 'Expected behavior', 'Actual behavior', 'Reproduction steps'],
+			expectedResult: ['bug report', 'signed-in bug list', 'Summary', 'Expected behavior', 'Actual behavior', 'Reproduction steps'],
 			recovery: ['no signed-in account', 'Tracker operator contract'],
 		},
 	},
 	{
 		path: 'docs/platform/nexus.md',
 		diagram: 'Nexus reader, administrator, and MCP boundary',
-		diagramBranches: ['Public reader', 'Repository selector', 'Graph navigation', 'Code references', 'Process flows', 'Standard links', 'Authentik administrator', 'MCP client', 'Machine graph queries'],
-		equivalentConcepts: ['public reader', 'repository', 'graph', 'code references', 'Process flows', 'Standard links', 'administrator', 'MCP client', 'machine graph queries'],
+		diagramBranches: ['Signed-in reader', 'Repository selector', 'Graph navigation', 'Code references', 'Process flows', 'Standard links', 'Authentik administrator', 'MCP client', 'Machine graph queries'],
+		equivalentConcepts: ['signed-in reader', 'repository', 'graph', 'code references', 'Process flows', 'Standard links', 'administrator', 'MCP client', 'machine graph queries'],
 		sections: {
 			prerequisites: ['browser', 'trusted Nexus origin', 'indexed repository'],
 			actions: ['<verified Nexus origin>/', '<verified Nexus origin>/?repo=<catalog-id>', 'Search symbols', 'Process flows', 'Beskid Standard'],
@@ -407,7 +407,7 @@ const procedurePages = [
 		sections: {
 			prerequisites: ['expected immutable image identity', 'Obtain monitoring'],
 			actions: ['/api/health', '/health/ready'],
-			expectedResult: ['successful HTTP status', 'deployment window'],
+			expectedResult: ['healthy internal checks', 'Authentik sign-in', 'deployment window'],
 			recovery: ['correlation evidence', 'production operator'],
 		},
 	},
@@ -738,7 +738,7 @@ test('platform routes keep public user tasks separate from authenticated and ope
 	assert.match(tracker.body, /repository owner[^.]*org admin[^.]*roadmap\/spec-approval\/\*/i);
 	assert.match(reportBug.body, /https:\/\/tracker\.beskid-lang\.org\/bugs/);
 	assert.match(reportBug.body, /sign in/i);
-	assert.match(reportBug.body, /public bug/i);
+	assert.match(reportBug.body, /bug report/i);
 	for (const instruction of ['Select an area', 'Select a sub-area', 'required Summary', 'Expected behavior', 'Actual behavior', 'Reproduction steps']) {
 		assert.ok(section(reportBug.body, 'Actions').includes(instruction), `bug report actions must explain ${instruction}`);
 	}
@@ -752,7 +752,7 @@ test('platform routes keep public user tasks separate from authenticated and ope
 	}
 	assert.match(nexus.body, /Authentik administrator/i);
 	const nexusRoles = accessibleDiagram(nexus);
-	for (const role of ['Public reader', 'Authentik administrator', 'MCP client']) {
+	for (const role of ['Signed-in reader', 'Authentik administrator', 'MCP client']) {
 		assert.match(nexusRoles.diagram, new RegExp(role), `Nexus diagram must keep ${role} separate`);
 		assert.match(nexusRoles.equivalent, new RegExp(role, 'i'), `Nexus text equivalent must explain ${role}`);
 	}
@@ -1199,7 +1199,7 @@ test('service contracts retain critical pinned facts and the production auth top
 	const expectations = {
 		'docs/services/authentication.md': ['98ec5030dae564ed28ef34062726c2cc5d16b3c8/beskid_sites/deploy/docker-compose.yml', 'GitHub OAuth', 'ak healthcheck', '9000', 'authentik-postgres-data', 'ghcr.io/goauthentik/server:2025.10.4'],
 		'docs/services/learn.md': ['90c40a91fefa8150134663de120afcb1ef582f2a/site/learn/README.md', 'BESKID_BINARY', '/api/health', '80', 'no durable Learn volume', 'beskid-learn'],
-		'docs/services/pckg.md': ['beskid_pckg/blob/a490c7c7aa3fa7a7b28245e0c7564849d36eb19c/README.md', '/health/ready', '8082', 'PostgreSQL', 'pckg_packages', 'beskid-pckg', 'trusted forward-auth boundary'],
+		'docs/services/pckg.md': ['beskid_pckg/blob/a490c7c7aa3fa7a7b28245e0c7564849d36eb19c/README.md', '/health/ready', '8082', 'PostgreSQL', 'pckg_packages', 'beskid-pckg', 'Authentik session', 'fail closed'],
 		'docs/services/tracker.md': ['c7da5b60e70fe87b10b1b3cde7e91c39af32136a/README.md', '/api/health', '3000', 'SQLite', 'tracker-data', 'beskid-tracker', 'Authentik', 'Caddy'],
 		'docs/services/nexus.md': ['eb207de7985ea110c1c0ea7e23f89dd94a66583d/COOLIFY.md', '/api/health', '8452', 'nexus-data', 'beskid-nexus', 'Caddy', 'Authentik'],
 	};
@@ -1238,6 +1238,51 @@ test('authentication guidance follows production Compose and discloses the stale
 	for (const page of [authentication, account, services, platform]) {
 		assert.doesNotMatch(page.body, /AUTH_HUB_PUBLIC_URL|\/admin\/pairing|login\?app=hub|auth-data|localhost:8090|pairing/i, `${page.path} must not prescribe retired hub operation`);
 	}
+});
+
+test('Tracker and Nexus reader and health guidance respect production forward-auth', async () => {
+	const [trackerReader, bugReport, nexusReader, trackerService, nexusService, monitoring, deployment, learnService, pckgService, platform, evaluation, compose] = await Promise.all([
+		'docs/platform/tracker.md',
+		'docs/platform/report-bug.md',
+		'docs/platform/nexus.md',
+		'docs/services/tracker.md',
+		'docs/services/nexus.md',
+		'docs/operations/health-and-monitoring.md',
+		'docs/operations/deployment.md',
+		'docs/services/learn.md',
+		'docs/services/pckg.md',
+		'docs/platform/index.md',
+		'docs/evaluate/index.md',
+	].map((path) => loadPage(procedurePages.find((page) => page.path === path))).concat(readFile(new URL('beskid_sites/deploy/docker-compose.yml', root), 'utf8')));
+	const production = parse(compose, { merge: true });
+	for (const service of ['tracker', 'nexus']) {
+		assert.equal(production.services[service].labels['caddy_0.route.1_forward_auth'], 'authentik-server:9000');
+		assert.equal(production.services[service].labels['caddy_0.route.1_forward_auth.uri'], '/outpost.goauthentik.io/auth/caddy');
+	}
+	assert.equal(production.services.learn.labels['caddy_0.route_1'], '@learn_authentik_session');
+	assert.equal(production.services.pckg.labels['caddy_0.route_1'], '@pckg_authentik_session');
+	for (const page of [trackerReader, bugReport, nexusReader]) {
+		assert.match(page.body, /Authentik session/i, `${page.path} must require a session before reading`);
+		assert.doesNotMatch(page.body, /without sign-in|does not require a sign-in|Hub account page/i, `${page.path} must not promise anonymous reading or retired account routes`);
+	}
+	assert.match(section(trackerService.body, 'Actions'), /internal[^.]*\/api\/health/i);
+	assert.doesNotMatch(section(trackerService.body, 'Actions'), /https:\/\/tracker\.beskid-lang\.org\/api\/health/);
+	assert.match(monitoring.body, /Tracker[^.]*internal[^.]*\/api\/health/i);
+	assert.match(monitoring.body, /Nexus[^.]*internal[^.]*\/api\/health/i);
+	assert.match(monitoring.body, /anonymous[^.]*redirect[^.]*health/i);
+	assert.match(deployment.body, /internal container checks/i);
+	assert.doesNotMatch(deployment.body, /public health checks|each public service is healthy/i);
+	assert.match(nexusService.body, /signed-in graph reading/i);
+	assert.match(nexusService.body, /container[^.]*internal[^.]*8452/i);
+	assert.doesNotMatch(nexusService.body, /Compose binds `127\.0\.0\.1:8452`/);
+	assert.match(learnService.body, /lesson catalogue is public/i);
+	assert.match(learnService.body, /requests carrying an Authentik session/i);
+	assert.doesNotMatch(learnService.body, /auth-hub/i);
+	assert.match(pckgService.body, /public catalogue/i);
+	assert.match(pckgService.body, /Authentik session/i);
+	assert.doesNotMatch(pckgService.body, /Coolify/i);
+	assert.match(evaluation.body, /Tracker[^.]*Authentik session/i);
+	assert.doesNotMatch(platform.body, /Hub account page|begin with the Hub/i);
 });
 
 test('security-sensitive procedures protect secrets before operator actions', async () => {

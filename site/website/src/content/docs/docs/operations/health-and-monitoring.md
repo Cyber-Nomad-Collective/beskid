@@ -9,46 +9,49 @@ audience:
   - maintainer
 authority:
   status: informative
-  sourceLabel: Standalone production deployment checks
-  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid/blob/1c48165332356625e6ce1e273ac8c84e46c8a195/beskid_sites/deploy/deploy.sh
-  limits: Endpoint success proves availability only. It does not prove complete application correctness.
+  sourceLabel: Pinned production Compose health and authentication contract
+  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid/blob/98ec5030dae564ed28ef34062726c2cc5d16b3c8/beskid_sites/deploy/docker-compose.yml
+  limits: A public sign-in redirect does not prove backend health. Container checks prove availability only, not complete application correctness.
 verified:
-  revision: 1c48165332356625e6ce1e273ac8c84e46c8a195
-  date: 2026-09-08
+  revision: 98ec5030dae564ed28ef34062726c2cc5d16b3c8
+  date: 2026-10-01
 ---
 
 Use separate Woodpecker publication and Watchtower reconciliation evidence for
 image identity. A health handler does not expose registry tag identity. Use the
-health response and monitoring timestamp only for availability evidence. Do
-not include cookies, tokens, or private response bodies.
+health response and monitoring timestamp only for availability evidence. An
+anonymous Tracker or Nexus request redirects through Caddy to Authentik and
+cannot prove backend health. Do not include cookies, tokens, or
+private response bodies.
 
 ## Prerequisites
 
 Record the expected immutable image identity from Woodpecker. Record the
 Watchtower reconciliation time from the production operator. Obtain monitoring
-access for production.
+and production container health access.
 
 ## Actions
 
 1. Check the Website at `/`.
 2. Check Learn at `/api/health`.
-3. Check Tracker at `/api/health`.
-4. Check Nexus at `/api/health`.
+3. Inspect Tracker's internal `/api/health` container healthcheck.
+4. Inspect Nexus's internal `/api/health` container healthcheck.
 5. Check pckg at `/health/ready`.
-6. Compare the public check times with container and Watchtower logs.
-7. Inspect the same reconciliation window at `monitor.beskid-lang.org`.
+6. Verify the signed-in Tracker and Nexus routes through Authentik.
+7. Compare the public and internal check times with Watchtower logs.
+8. Inspect the same reconciliation window at `monitor.beskid-lang.org`.
 
 | Boundary | Healthy evidence | Next diagnostic |
 | --- | --- | --- |
 | Website | Successful HTTP status for `/`. | Site container and proxy logs. |
 | Learn | Successful HTTP status for `/api/health`. | One safe lesson check and runtime-kit evidence. |
-| Tracker | Successful HTTP status for `/api/health`. | SQLite volume and Authentik forward-auth configuration. |
-| Nexus | Successful HTTP status for `/api/health`. | Proxy trust boundary and `nexus-data`. |
+| Tracker | Healthy internal `/api/health` container check and signed-in route. | SQLite volume and Authentik forward-auth configuration. |
+| Nexus | Healthy internal `/api/health` container check and signed-in route. | Proxy trust boundary and `nexus-data`. |
 | pckg | Successful HTTP status for `/health/ready`. | PostgreSQL connectivity and artifact volume. |
 
 ## Expected result
 
-Every required route returns a successful HTTP status. Container and public evidence agree on the deployment window. Separate release and deployment evidence identifies the expected images.
+Public Website, Learn, and pckg routes respond. Tracker and Nexus report healthy internal checks and load after Authentik sign-in. Container and public evidence agree on the deployment window. Separate release and deployment evidence identifies the expected images.
 
 ## Recovery
 

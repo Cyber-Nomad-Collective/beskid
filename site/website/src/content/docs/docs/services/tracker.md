@@ -33,7 +33,7 @@ The pinned Tracker README still describes an Auth hub, but the production Compos
 | Authentication | Tracker signs users in through Authentik behind the shared Caddy edge. |
 | Persistent state | SQLite persists below `TRACKER_DATA_DIR` in the `tracker-data` volume. |
 | Container image | `ghcr.io/cyber-nomad-collective/beskid-tracker`. |
-| Health check | `GET /api/health` on port `3000`. |
+| Health check | The container runs an internal `GET /api/health` on port `3000`; the public route requires Authentik. |
 | Deployment owner | Root platform delivery publishes the image. The Tracker service owns delivery data. |
 | Secret source | OpenBao path `secret/beskid/<lane>/tracker`. |
 | Monitoring | Health status, webhook results, and reconciliation output cover runtime and synchronization. |
@@ -45,19 +45,19 @@ Confirm the selected delivery version and the configured `TRACKER_DATA_DIR`. Tre
 
 ## Actions
 
-1. Verify the service contract at `https://tracker.beskid-lang.org/api/health`.
-2. Record the health response status.
+1. Inspect the Tracker container health state against the service contract's internal `GET /api/health` on port `3000`.
+2. Record the internal healthcheck status.
 3. Verify that the configured volume contains the active SQLite database.
 4. Run the read-only reconciliation plan before an import or bug synchronization change.
 
 ## Expected result
 
-The `/api/health` request succeeds. SQLite remains the delivery authority, and GitHub synchronization affects only eligible bugs.
+The internal `/api/health` check succeeds. An anonymous request to the public route receives the Authentik sign-in redirect, which is not backend health evidence. SQLite remains the delivery authority, and GitHub synchronization affects only eligible bugs.
 
 ## Recovery
 
-If the health request fails, inspect the volume mount and session configuration. If reconciliation differs from the expected plan, stop the mutation. Then restore the SQLite backup, redeploy the prior image, and replay only verified bug events.
+If the internal healthcheck fails, inspect the volume mount and session configuration. If reconciliation differs from the expected plan, stop the mutation. Then restore the SQLite backup, redeploy the prior image, and replay only verified bug events.
 
 ## Next task
 
-For public delivery reading, see [Read Tracker](/docs/platform/tracker/). For authorized delivery changes, [change the Standard without changing delivery ownership](/docs/contributing/standard-changes/).
+For signed-in delivery reading, see [Read Tracker](/docs/platform/tracker/). For authorized delivery changes, [change the Standard without changing delivery ownership](/docs/contributing/standard-changes/).
