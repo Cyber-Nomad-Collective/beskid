@@ -32,7 +32,9 @@ The website can sync displayed version from GitHub via `pnpm sync:cli-version` (
 
 ## What you get per platform
 
-Typical release artifacts include the `beskid` CLI for common OS/arch pairs (Linux, macOS, Windows; exact matrix follows CI). Platform packages (`.deb`, `.msi`, `.dmg`, Homebrew) and container images are also available; see [Downloads](/downloads/) for the full list.
+Release artifacts include the `beskid` CLI for Linux amd64, macOS arm64, and Windows amd64. Maintained platform packages are Debian/Ubuntu `.deb`, Windows `.msi` and `.exe`, macOS `.dmg`, and Homebrew. The [Downloads](/downloads/) page lists only artifacts present in published release metadata.
+
+Toolchain container recipes exist in `beskid_distrib/docker`, but no current pipeline builds or publishes those images. They are local-build recipes, not a published download channel. The platform application images used for deployment are a separate workflow. Snap and AUR are not maintained installation channels.
 
 User-facing docs may also mention `cdn.beskid-lang.org` for direct binary fetch; treat the Downloads page as the curated entry.
 

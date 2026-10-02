@@ -1,4 +1,4 @@
-# Installs the Beskid CLI raw binary. Platform packages (.msi, .exe, .deb, .dmg, Snap, Homebrew)
+# Installs the Beskid CLI raw binary. Platform packages (.msi, .exe, .deb, .dmg, Homebrew)
 # are also available — see https://beskid-lang.org/downloads/ for alternatives.
 $ErrorActionPreference = "Stop"
 

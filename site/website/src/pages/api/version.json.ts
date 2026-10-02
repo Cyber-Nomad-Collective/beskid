@@ -131,7 +131,9 @@ export async function GET({ url: requestUrl }: { url: URL }) {
 			});
 		}
 
-		const payload: VersionPayload = {
+		// Toolchain OCI recipes have no publication lane. Do not derive image
+		// availability from a native release version or unqualified metadata.
+		const payload: Omit<VersionPayload, "containerImages"> = {
 			version,
 			source: `github:${state.channel}`,
 			assets,
@@ -139,10 +141,6 @@ export async function GET({ url: requestUrl }: { url: URL }) {
 			installScript: {
 				sh: `curl -fsSL https://beskid-lang.org/install.sh | BESKID_RELEASE_TAG=${selectedTag} bash`,
 				ps: `$env:BESKID_RELEASE_TAG='${selectedTag}'; iwr https://beskid-lang.org/install.ps1 -useb | iex`,
-			},
-			containerImages: {
-				base: `ghcr.io/cyber-nomad-collective/beskid:${version}`,
-				runner: `ghcr.io/cyber-nomad-collective/beskid-runner:${version}`,
 			},
 		};
 
