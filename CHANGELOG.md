@@ -48,6 +48,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Require the protected package publisher to use the immutable, digest-verified
+  full release bundle, pinned-source-verified Corelib, and matching runtime
+  prefix; remove raw compiler and local Cargo-build fallbacks.
 - Require clean tracked root and editor source and the committed VS Code
   gitlink before packaging verified native editor releases.
 - Remove the unsafe Woodpecker Open VSX source-rebuild workflow and publisher;
