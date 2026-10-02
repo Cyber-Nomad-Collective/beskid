@@ -70,6 +70,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 - Pin the reviewed compiler repair that preserves verified installed Corelib
   service authority after the original compiler build checkout is absent.
+- Block the exact relocation-unqualified 0.5.1 compiler source before native,
+  Open VSX, or Microsoft Marketplace publication reads credentials or invokes
+  transport, while preserving the independent disabled Marketplace guard.
 - Harden Marketplace-only editor derivative provenance with raw-path symlink
   checks, exact approved source pins, non-metadata inventory comparison,
   repeated-run determinism coverage, and encoding-safe XML DTD rejection.

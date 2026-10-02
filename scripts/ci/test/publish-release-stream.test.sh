@@ -91,6 +91,20 @@ fi
 
 echo 'publish release stream tests OK'
 
+# A source hold is stronger than old publishable state and must run before the
+# publisher asks for GH_TOKEN or invokes any GitHub transport.
+held_compiler='1bd7bdee81d59ef14339e6a6c2ce18eb36585238'
+jq --arg compiler "${held_compiler}" '.version="0.5.1" | .provenance.compiler_commit=$compiler' \
+  "${TMP}/release-state.json" >"${TMP}/held-state.json"
+: >"${TMP}/gh.log"
+if env -u GH_TOKEN GH_LOG="${TMP}/gh.log" GH_NOTES="${TMP}/notes.md" PATH="${TMP}/bin:${PATH}" \
+  bash "${SCRIPT}" cli 0.5.1 "${held_compiler}" "${TMP}/assets" immutable unstable "${TMP}/held-state.json" \
+  2>"${TMP}/held.err"; then
+  fail "known-bad source passed the native publisher"
+fi
+grep -Eiq 'publication hold.*0\.5\.1.*1bd7bdee' "${TMP}/held.err" || fail "source hold was not diagnosed before GH_TOKEN"
+test ! -s "${TMP}/gh.log" || fail "held source reached GitHub"
+
 # A successful state for another version must never reach GitHub.
 : >"${TMP}/gh.log"
 if GH_LOG="${TMP}/gh.log" GH_NOTES="${TMP}/notes.md" PATH="${TMP}/bin:${PATH}" GH_TOKEN=test-token \

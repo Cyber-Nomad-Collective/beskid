@@ -23,6 +23,7 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[2]
 APPROVAL = ROOT / "scripts/ci/editor-marketplace-approvals/0.5.1.json"
 SOURCE_HISTORY = ROOT / "scripts/ci/woodpecker-source-history.sh"
+SOURCE_ELIGIBILITY = ROOT / "scripts/ci/release-publication-eligibility.mjs"
 TARGETS = {
     "linux-x64": ("x86_64-unknown-linux-gnu", "beskid_lsp"),
     "darwin-arm64": ("aarch64-apple-darwin", "beskid_lsp"),
@@ -56,6 +57,15 @@ def UniqueObject(pairs):
 def ReadJson(data):
     Require(len(data) <= MAX_JSON, "JSON exceeds size bound")
     return json.loads(data, object_pairs_hook=UniqueObject)
+
+
+def CheckSource(version, compiler_commit):
+    environment = {key: os.environ[key] for key in ("PATH", "HOME", "SYSTEMROOT") if key in os.environ}
+    result = subprocess.run(["node", str(SOURCE_ELIGIBILITY), "check-source", version, compiler_commit],
+                            env=environment, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    message = result.stderr.strip()
+    Require(result.returncode == 0, message if message.startswith("publication hold") else
+            "publication source eligibility check failed")
 
 
 def StreamDigest(file, limit):
@@ -270,6 +280,8 @@ def Upload(argv, env):
 
 
 def Publish(approval, editors, native, root, context, ovsx, results_file, read_registry=None, upload=Upload):
+    VerifyApproval(approval)
+    CheckSource(approval["version"], approval["source"]["compiler_commit"])
     VerifyContext(context, root)
     VerifyRelease(approval, editors, native, root)
     Require(bool(context.get("OVSX_PAT", "").strip()), "OVSX_PAT is missing")
@@ -342,8 +354,9 @@ def DownloadAsset(record, assets, name, path, limit, expected_digest=None):
 
 
 def Prepare(approval, snapshot, root, context):
-    VerifyContext(context, root)
     VerifyApproval(approval)
+    CheckSource(approval["version"], approval["source"]["compiler_commit"])
+    VerifyContext(context, root)
     VerifySource(approval, root)
     Require(not context.get("OVSX_PAT") and not context.get("OVSX_TOKEN"), "preparation must not receive publisher credentials")
     snapshot.mkdir(mode=0o700)

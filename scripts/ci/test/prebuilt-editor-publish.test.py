@@ -132,6 +132,18 @@ class PublisherTests(unittest.TestCase):
             self.context, "/pinned/ovsx", self.root / "results.json",
             read_registry=self.read_registry, upload=self.upload)
 
+    def hold_source(self):
+        held = "1bd7bdee81d59ef14339e6a6c2ce18eb36585238"
+        self.git("update-index", "--cacheinfo", "160000," + held + ",compiler")
+        self.git("commit", "-qm", "held source")
+        source = self.git("rev-parse", "HEAD").strip()
+        self.approval["source"].update(superrepo_commit=source, compiler_commit=held,
+                                       publisher_base_commit=source)
+        self.state["version"] = "0.5.1"
+        self.state["provenance"].update(superrepo_commit=source, compiler_commit=held)
+        self.context["CI_COMMIT_SHA"] = source
+        self.save_state()
+
     def test_verifies_complete_real_zip_and_standalone_lsp_set(self):
         self.assertEqual(len(self.verify()), 3)
 
@@ -146,6 +158,29 @@ class PublisherTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.publish()
         self.assertEqual(self.uploads, [])
+
+    def test_held_source_blocks_prepare_before_any_github_read(self):
+        self.hold_source()
+        requested = []
+        with patch.object(self.api, "Request", lambda *args, **kwargs: requested.append(args)):
+            with self.assertRaises(ValueError) as failure:
+                self.api.Prepare(self.approval, self.root / "held-snapshot", self.root, self.context)
+        self.assertIn("publication hold", str(failure.exception).lower())
+        self.assertEqual(requested, [])
+        self.assertFalse((self.root / "held-snapshot").exists())
+
+    def test_held_source_rechecks_before_registry_or_upload(self):
+        self.hold_source()
+        registry_reads = []
+        uploads = []
+        with self.assertRaises(ValueError) as failure:
+            self.api.Publish(self.approval, self.editors, self.native, self.root, self.context,
+                "/pinned/ovsx", self.root / "held-results.json",
+                read_registry=lambda entry: registry_reads.append(entry),
+                upload=lambda argv, env: uploads.append((argv, env)))
+        self.assertIn("publication hold", str(failure.exception).lower())
+        self.assertEqual(registry_reads, [])
+        self.assertEqual(uploads, [])
 
     def test_rejects_unapproved_vsix_digest(self):
         with (self.editors / self.approval["targets"][0]["asset"]).open("ab") as file:
