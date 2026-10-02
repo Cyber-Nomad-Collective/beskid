@@ -45,10 +45,17 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Added
 
-- Add a manual main-only Woodpecker Open VSX publisher for the three reviewed
-  prebuilt 0.5.1 VSIX packages, with immutable native/source/archive
-  verification before step-local credential access and fail-closed
-  partial-publication reporting.
+- Add a protected manual Woodpecker publisher for the exact approved 0.5.1
+  Microsoft Marketplace derivatives, with secret-free immutable preflight,
+  lockfile-pinned `vsce`, sanitized host qualification, and durable attempt
+  receipts that preserve uncertain partial failures; keep transport disabled
+  after relocation testing disqualified the immutable 0.5.1 compiler/LSP.
+- Add a bounded Marketplace-only VSIX derivative packager for the verified
+  `beskid-lang` publisher, with separate per-target approval receipts and
+  unchanged Open VSX `beskid` artifacts.
+- Add a manual main-only Woodpecker Open VSX publisher for the three reviewed prebuilt
+  0.5.1 VSIX packages, with immutable native/source/archive verification before
+  step-local credential access and fail-closed partial-publication reporting.
 - Prepare the maintained VS Code and Zed packages with coordinated 0.5.1
   authoring metadata and the initial Zed registry submission instructions.
 - Package editor releases from native release evidence with exact version,
@@ -61,6 +68,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Harden Marketplace-only editor derivative provenance with raw-path symlink
+  checks, exact approved source pins, non-metadata inventory comparison,
+  repeated-run determinism coverage, and encoding-safe XML DTD rejection.
 - Require the protected package publisher to use the immutable, digest-verified
   full release bundle, pinned-source-verified Corelib, and matching runtime
   prefix; remove raw compiler and local Cargo-build fallbacks.
