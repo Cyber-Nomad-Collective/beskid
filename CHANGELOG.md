@@ -36,6 +36,11 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Added
 
+- Prepare the maintained VS Code and Zed packages with coordinated 0.5.1
+  authoring metadata and the initial Zed registry submission instructions.
+- Package editor releases from native release evidence with exact version,
+  source, target, and checksum checks, without rebuilding compiler sources.
+
 - Add a protected manual Woodpecker publisher for the Linux x64 Beskid VS Code
   extension on Open VSX.
 - Add a bounded native-test child runner that can supply literal stdin while

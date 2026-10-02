@@ -158,13 +158,13 @@ surface for which the SDK has no host capability.
 
 ### Release readiness
 
-Registry publication fails closed unless the compiler repository exposes an
+Before submitting the registry pull request, verify the compiler repository exposes an
 `lsp-stable` release containing `lsp-version.txt`, `release-state.json`, and all
 three platform assets listed above. The release state must describe a
 publishable stable build with successful gates, three complete platforms, and
 the exact compiler commit pinned by the tagged root repository. A missing
 release (including an HTTP 404), incomplete state, provenance mismatch, or
-missing asset blocks the publication job before the registry action.
+missing asset blocks registry submission.
 Maintainers must repair the stable release; the workflow does not substitute
 `lsp-unstable` or advertise a clean-machine download that cannot succeed.
 During such an outage, development can continue with an explicit binary
@@ -172,8 +172,6 @@ override or a PATH-installed `beskid_lsp`/`beskid`.
 
 ### Initial registry publication
 
-The community publication action updates an extension that already exists in
-`zed-industries/extensions`; it cannot create Beskid's first registry entry.
 After the exact root commit is public on a branch, manually tested as a Zed
 development extension, and backed by a complete `lsp-stable` release, the
 initial registry pull request must add the root Beskid repository as the
@@ -183,24 +181,17 @@ initial registry pull request must add the root Beskid repository as the
 [beskid]
 submodule = "extensions/beskid"
 path = "editors/zed"
-version = "0.4.0"
+version = "0.5.1"
 ```
 
 Run `pnpm sort-extensions` in the registry checkout before opening the pull
 request. The version above must exactly match this package's `extension.toml`.
-Once Zed maintainers merge the initial entry, future releases use the guarded
-tag workflow: bump the manifest, merge and test the public root commit, verify
-`lsp-stable`, then push the matching `v<version>` tag. Publication rejects a tag
-whose version differs from `editors/zed/extension.toml`. The workflow updates
-the registry gitlink at `extensions/beskid`; the registry's `path` field
-selects this nested package. Maintainers must first configure `COMMITTER_TOKEN`
-with the community action's documented cross-repository `repo` and `workflow`
-scopes. With no fixed `push-to` repository, the action creates or reuses that
-committer's fork of `zed-industries/extensions` instead of targeting a missing
-organization fork. The workflow pins the reviewed community action source at
-[`11b0e4805c1f4382a4bb3b1a9b17be328e1559c3`](https://github.com/huacnlee/zed-extension-action/commit/11b0e4805c1f4382a4bb3b1a9b17be328e1559c3)
-and grants the repository `GITHUB_TOKEN` read-only contents access; registry
-writes use only the separately configured committer token.
+Once Zed maintainers merge the initial entry, submit subsequent updates as
+registry pull requests that advance the `extensions/beskid` gitlink and the
+matching `extensions.toml` version. The registry's `path` field selects this
+nested package. This repository has no automatic Zed tag-publication workflow.
+Follow the official [Zed publication instructions](https://zed.dev/docs/extensions/publishing-extensions)
+and preserve the exact tested root revision in each registry submission.
 
 ## Verify the package
 
@@ -211,9 +202,8 @@ bash scripts/ci/test/zed-extension-package.test.sh
 bash scripts/ci/test/zed-language-assets.test.sh
 ```
 
-The publication workflow runs both gates, validates the complete stable LSP
-release and its compiler provenance, and checks the tag against the manifest
-version before updating the `extensions/beskid` registry gitlink. The package
+Run both gates and validate the complete stable LSP release and its compiler
+provenance before updating the `extensions/beskid` registry gitlink. The package
 gate also compares the BSOL manifest pin with the staged gitlink and initialized
 checkout, so a coordinated grammar update can be verified before it is
 committed. Initial publication follows the manual registry pull-request
