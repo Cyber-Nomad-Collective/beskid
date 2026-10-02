@@ -14,6 +14,11 @@ reviewing the target outputs.
   explicit opt-in from `main` with the release token publishes; immutable
   streams precede rolling aliases.
 - Rootless platform-image building is an optional manual job, not deployment.
+- Root Woodpecker owns validation and reviewed GitHub Packages publication for
+  the exact pinned shared-web and Tree-sitter submodules. Preparation is
+  token-free and publication consumes only checksum-verified prebuilt bytes;
+  every package phase rejects tracked or untracked root-source contamination,
+  and the superseded owned submodule GitHub workflows are removed.
 - Existing canonical manual packaging, OpenVSX, Zed, Homebrew, and OCI recipes
   remain optional operator work. They are not release acceptance gates.
 
@@ -28,6 +33,13 @@ durable-output paths, and approved SSH transport. Keep publisher credentials
 outside Git, bind each only to its publisher, and rotate them in the host secret
 store. Final `main` promotion requires human approval after inspecting all
 three target outputs and their source/version/checksum records.
+
+The JavaScript package publishers require the repository secret
+`github_packages_publish_token`, provisioned by a repository administrator
+with real GitHub Packages write grants for both `@cyber-nomad-collective` and
+`@beskid`. The migration neither provisions nor verifies those grants. Manual
+task selection, a secret bearing the expected name, and successful token-free
+preparation are not evidence that either namespace permits publication.
 
 The complete-release bundle contract has fixture-tested repair, but no real
 three-native-target release is verified. If the old flat bundle reappears,
