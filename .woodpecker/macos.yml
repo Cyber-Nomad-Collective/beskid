@@ -15,8 +15,7 @@ steps:
     commands:
       - |
         if [ "$${CI_PIPELINE_EVENT}" = tag ]; then
-          if [ "$${CI_COMMIT_TAG#v}" = "$${CI_COMMIT_TAG}" ] || ! node scripts/ci/release-version.mjs "$${CI_COMMIT_TAG#v}" --stable-only >/dev/null; then
-            echo "Ignoring non-release tag $${CI_COMMIT_TAG}"
+          if ! bash scripts/ci/woodpecker-release-tag-guard.sh "$${CI_COMMIT_TAG}" --check-only; then
             exit 0
           fi
           release_version="$${CI_COMMIT_TAG#v}"

@@ -1,6 +1,6 @@
 # Beskid Superrepo
 
-[![Open VSX publish](https://github.com/Cyber-Nomad-Collective/beskid/actions/workflows/editor-marketplace-publish.yml/badge.svg?branch=main)](https://github.com/Cyber-Nomad-Collective/beskid/actions/workflows/editor-marketplace-publish.yml?query=branch%3Amain)
+[![Open VSX](https://img.shields.io/open-vsx/v/beskid/beskid-vscode?label=Open%20VSX&logo=openvsx)](https://open-vsx.org/extension/beskid/beskid-vscode)
 [![CLI (rolling)](https://img.shields.io/github/v/tag/Cyber-Nomad-Collective/beskid_compiler/cli-stable?label=CLI&logo=github)](https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/tag/cli-stable)
 [![VS Code on Open VSX](https://img.shields.io/open-vsx/v/beskid/beskid-vscode?label=VS%20Code&logo=openvsx)](https://open-vsx.org/extension/beskid/beskid-vscode)
 [![Last commit](https://img.shields.io/github/last-commit/Cyber-Nomad-Collective/beskid/main?label=superrepo&logo=github)](https://github.com/Cyber-Nomad-Collective/beskid/commits/main/)
@@ -55,7 +55,7 @@ beskid/                          ← you are here (aggregate root)
 │   ├── website/                 ← Astro + Starlight informative Book/docs
 │   └── auth/                    ← GitHub OAuth hub for tracker, nexus, pckg
 ├── scripts/                     ← setup-environment.sh, install-deps.sh, CI helpers
-└── .github/workflows/           ← Manual editor-marketplace publication
+└── .woodpecker/                 ← Native builds and reviewed editor publication
 ```
 
 ## Submodules and READMEs
@@ -67,7 +67,7 @@ Each row links to the README in that tree. Clone submodules before following tho
 | `compiler/` | Rust workspace: `beskid` CLI, compiler crates, `beskid_lsp`, package client | [compiler/README.md](compiler/README.md) |
 | `compiler/corelib/` | Standard library (nested submodule: `corelib`, foundation, runtime, Mod SDK) | [compiler/corelib/README.md](compiler/corelib/README.md) |
 | `pckg/` | Rust registry HTTP API, React UI, PostgreSQL, Docker Compose for local dev | [pckg/README.md](pckg/README.md) |
-| `beskid_vscode/` | Official VS Code extension; reviewed prebuilt packages publish through a manual marketplace workflow | [beskid_vscode/README.md](beskid_vscode/README.md) |
+| `beskid_vscode/` | Official VS Code extension; reviewed prebuilt packages publish through the manual Woodpecker editor lane | [beskid_vscode/README.md](beskid_vscode/README.md) |
 | `beskid_tracker/` | SQLite roadmap/kanban and public bugs; GitHub synchronization is bug-only | [beskid_tracker/README.md](beskid_tracker/README.md) |
 | `beskid_nexus/` | Interactive repo graph explorer; MCP at `/api/mcp` | [beskid_nexus/README.md](beskid_nexus/README.md) |
 | `beskid_web_common/` | `@cyber-nomad-collective/trudoc`, `@beskid/beskid-ui`, auth client packages | [beskid_web_common/README.md](beskid_web_common/README.md) |
@@ -85,13 +85,14 @@ Each row links to the README in that tree. Clone submodules before following tho
 | `site/website/` | Astro dev server and informative Beskid Book/docs | [site/website/README.md](site/website/README.md) |
 | `site/auth/` | Central GitHub OAuth; one app handoff to tracker, nexus, pckg | [site/auth/README.md](site/auth/README.md) |
 | `scripts/` | Toolchain install (`repo-deps.json`), submodule sync, setup wizard entry | [scripts/README.md](scripts/README.md) |
-| `.github/` | GitHub metadata and manual editor-marketplace publication | [.github/README.md](.github/README.md) |
+| `.github/` | GitHub metadata and repository-native maintenance notes | [.github/README.md](.github/README.md) |
 
 Woodpecker is the native build service and prepares checksummed release artifacts.
 Stable compiler publication is a separate reviewed manual operation. Platform
 application images are built through the protected Woodpecker publication task;
-Watchtower in `beskid_sites/deploy` reconciles production. GitHub's manual editor
-workflow publishes verified prebuilt VSIX files, not native compiler builds.
+Watchtower in `beskid_sites/deploy` reconciles production. The manual
+Woodpecker `editor.yml` lane publishes verified prebuilt VSIX files, not native
+compiler builds.
 
 ## Getting started
 

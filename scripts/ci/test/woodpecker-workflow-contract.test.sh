@@ -41,8 +41,7 @@ for file in "${workflow_dir}/macos.yml" "${workflow_dir}/windows.yml"; do
 done
 
 for file in "${workflow_dir}/linux.yml" "${workflow_dir}/macos.yml" "${workflow_dir}/windows.yml"; do
-  grep -Fq 'release-version.mjs' "${file}"
-  grep -Fq 'Ignoring non-release tag' "${file}"
+  grep -Fq 'woodpecker-release-tag-guard.sh "$${CI_COMMIT_TAG}" --check-only' "${file}"
 done
 
 for file in "${workflow_dir}/linux.yml" "${workflow_dir}/macos.yml" "${workflow_dir}/windows.yml"; do
