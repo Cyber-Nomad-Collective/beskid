@@ -356,14 +356,18 @@ class PublisherTests(unittest.TestCase):
                     "repository": marketplace.REPOSITORY, "tag": "editor-marketplace-v0.5.2",
                     "source_commit": self.approval["source"]["superrepo_commit"]},
                 "extension": {"id": "beskid-lang.beskid-vscode", "publisher": "beskid-lang", "name": "beskid-vscode",
-                    "version": "0.5.2", "qualified_target": "darwin-arm64", "target_set": list(marketplace.TARGETS),
-                    "qualified_derivative_sha256": contract["derivative_sha256"]["darwin-arm64"],
-                    "lsp_sha256": self.approval["targets"][1]["lsp_sha256"]},
+                    "version": "0.5.2", "qualified_target": "linux-x64", "target_set": list(marketplace.TARGETS),
+                    "qualified_derivative_sha256": contract["derivative_sha256"]["linux-x64"],
+                    "lsp_sha256": self.approval["targets"][0]["lsp_sha256"]},
+                "host": {"platform": "linux", "arch": "x64", "vscode_version": "1.96.0"},
                 "checks": {"extension_active": True, "workspace_count": 0, "language_id": "beskid",
                     "formatter_self_id": "beskid-lang.beskid-vscode", "formatter_edit_count": 4,
-                    "formatter_input_sha256": marketplace.FORMATTER_INPUT_SHA256,
-                    "formatter_output_sha256": marketplace.FORMATTER_OUTPUT_SHA256, "formatter_applied": True}}
+                    "formatter_input_sha256": "7fe52aa5d9a9f32c7eb046142f348ef55ab91afdb93e8aed7fb3851269ea282b",
+                    "formatter_output_sha256": "208a141dc9119b749d77c81c931bead1bc9a7168c95271397737867fb9f99b80",
+                    "formatter_applied": True, "formatter_saved": True}}
         (stage / marketplace.HOST_QUALIFICATION_NAME).write_text(json.dumps(host))
+        # Synthetic fixture bytes cannot have the immutable production binary digest.
+        marketplace.HOST_CONTRACTS["0.5.2"]["lsp_sha256"] = self.approval["targets"][0]["lsp_sha256"]
         with patch.object(marketplace, "VERSION", "0.5.2"), \
              patch.object(marketplace, "RELEASE_TAG", "editor-marketplace-v0.5.2"), \
              patch.object(marketplace, "APPROVED_SOURCE", self.approval["source"]), \
@@ -406,19 +410,21 @@ class PublisherTests(unittest.TestCase):
                 marketplace.VerifyHostQualification(changed, receipt, contract)
             raw = {"schema_version": 1, "status": "success", "source": copy.deepcopy(receipt["source"]),
                 "source_commit": receipt["source"]["superrepo_commit"], "compiler_commit": self.compiler,
-                "derivative_sha256": contract["derivative_sha256"]["darwin-arm64"],
+                "derivative_sha256": contract["derivative_sha256"]["linux-x64"],
                 "extension_id": "beskid-lang.beskid-vscode", "publisher": "beskid-lang",
                 "extension_version": "0.5.2", "formatter_self_id": "beskid-lang.beskid-vscode",
-                "server_sha256": self.approval["targets"][1]["lsp_sha256"], "extension_active": True,
+                "server_sha256": self.approval["targets"][0]["lsp_sha256"], "extension_active": True,
                 "workspace_count": 0, "language_id": "beskid", "formatter_edit_count": 4,
-                "before": "pub i32 Main() { return 42; }\n",
-                "after": "pub i32 Main()\n{\n    return 42;\n}\n"}
+                "qualified_target": "linux-x64", "platform": "linux", "arch": "x64",
+                "vscode_version": "1.96.0", "formatter_applied": True, "formatter_saved": True,
+                "before": "pub i32 Formatter() { return 42; }\n",
+                "after": "pub i32 Formatter()\n{\n    return 42;\n}\n"}
             raw_path = self.root / "synthetic-raw-host.json"
-            with patch.object(marketplace, "HOST_LSP_SHA256", raw["server_sha256"]):
+            with patch.dict(marketplace.HOST_CONTRACTS["0.5.2"], lsp_sha256=raw["server_sha256"]):
                 raw_path.write_text(json.dumps(raw))
                 raw_contract = dict(contract, original_host_receipt_sha256=self.digest(raw_path))
                 result = marketplace.SanitizeHostReceipt(raw_path, stage / "marketplace-approval.json",
-                    stage / receipt["targets"][1]["derivative_asset"], self.root / "synthetic-host-proof.json", raw_contract)
+                    stage / receipt["targets"][0]["derivative_asset"], self.root / "synthetic-host-proof.json", raw_contract)
                 self.assertEqual(result["source"], self.approval["source"])
                 for mutate in (lambda d: d["source"].pop("native_superrepo_commit"),
                                lambda d: d["source"].update(native_superrepo_commit=self.context["CI_COMMIT_SHA"]),
@@ -430,7 +436,7 @@ class PublisherTests(unittest.TestCase):
                     raw_contract["original_host_receipt_sha256"] = self.digest(raw_path)
                     with self.assertRaises(ValueError):
                         marketplace.SanitizeHostReceipt(raw_path, stage / "marketplace-approval.json",
-                            stage / receipt["targets"][1]["derivative_asset"], self.root / "rejected-host-proof.json", raw_contract)
+                            stage / receipt["targets"][0]["derivative_asset"], self.root / "rejected-host-proof.json", raw_contract)
                     self.assertFalse((self.root / "rejected-host-proof.json").exists())
             (stage / receipt["targets"][-1]["derivative_asset"]).write_bytes(b"changed last derivative")
             with self.assertRaises(ValueError):

@@ -48,6 +48,20 @@ HOST_QUALIFICATION_NAME = "marketplace-host-qualification.json"
 ATTEMPT_RECEIPT_NAME = "marketplace-publication-attempt.json"
 PUBLICATION_HOLD = ("0.5.1 is not publication-eligible: the qualified compiler/LSP does not preserve "
                     "Corelib intrinsic authority after relocation; require a new immutable version and approval")
+HOST_CONTRACTS = {
+    "0.5.1": {"target": "darwin-arm64", "lsp_sha256": HOST_LSP_SHA256,
+              "input_sha256": FORMATTER_INPUT_SHA256, "output_sha256": FORMATTER_OUTPUT_SHA256},
+    "0.5.2": {"target": "linux-x64",
+              "lsp_sha256": "750443a35fb4623623230ff147f2610f52c826d0f17c2ded98a91370ec03ea9f",
+              "input_sha256": "7fe52aa5d9a9f32c7eb046142f348ef55ab91afdb93e8aed7fb3851269ea282b",
+              "output_sha256": "208a141dc9119b749d77c81c931bead1bc9a7168c95271397737867fb9f99b80",
+              "host": {"platform": "linux", "arch": "x64", "vscode_version": "1.96.0"}},
+}
+
+
+def HostContract():
+    # Version selection is the only selector; callers cannot override host provenance.
+    return HOST_CONTRACTS[VERSION]
 
 
 def AssetName(target):
@@ -80,7 +94,10 @@ def SelectProductionVersion(version):
     APPROVED_SOURCE = copy.deepcopy(original["source"])
     ASSETS = {AssetName(target): target for target in TARGETS}
     EXPECTED_STAGE_NAMES = set(ASSETS) | {"marketplace-approval.json", HOST_QUALIFICATION_NAME}
-    HOST_LSP_SHA256 = next(x["lsp_sha256"] for x in original["targets"] if x["target"] == "darwin-arm64")
+    HOST_LSP_SHA256 = HostContract()["lsp_sha256"]
+    Require(next(x["lsp_sha256"] for x in original["targets"]
+                 if x["target"] == HostContract()["target"]) == HOST_LSP_SHA256,
+            "approved host LSP differs from tracked host contract")
     PRODUCTION_CONTRACT = {
         "approval_sha256": None, "derivative_sha256": {}, "assets": ASSETS,
         "original_host_receipt_sha256": None, "originals": copy.deepcopy(original["targets"]),
@@ -224,8 +241,13 @@ def VerifyVsix(path, entry, contract):
 
 
 def VerifyHostQualification(qualification, approval, contract):
-    Require(set(qualification) == {"schema_version", "kind", "status", "original_receipt_sha256",
-                                   "marketplace_approval_sha256", "release", "source", "extension", "checks"},
+    host = HostContract()
+    fields = {"schema_version", "kind", "status", "original_receipt_sha256",
+              "marketplace_approval_sha256", "release", "source", "extension", "checks"}
+    if VERSION == "0.5.2":
+        fields.add("host")
+        Require(qualification.get("host") == host["host"], "host qualification platform/version differs")
+    Require(set(qualification) == fields,
             "host qualification fields differ")
     Require(qualification.get("schema_version") == 1 and
             qualification.get("kind") == "beskid-marketplace-local-host-qualification" and
@@ -239,19 +261,24 @@ def VerifyHostQualification(qualification, approval, contract):
                                                "source_commit": APPROVED_SOURCE["superrepo_commit"]},
             "host qualification release origin differs")
     extension = qualification.get("extension", {})
-    darwin = next(entry for entry in approval["targets"] if entry["target"] == "darwin-arm64")
+    entry = next(entry for entry in approval["targets"] if entry["target"] == host["target"])
+    if VERSION == "0.5.2":
+        Require(entry["lsp_sha256"] == host["lsp_sha256"], "host qualification LSP differs")
     Require(extension == {
         "id": "beskid-lang.beskid-vscode", "publisher": PUBLISHER, "name": NAME, "version": VERSION,
-        "qualified_target": "darwin-arm64",
-        "qualified_derivative_sha256": contract["derivative_sha256"]["darwin-arm64"],
-        "target_set": list(TARGETS), "lsp_sha256": darwin["lsp_sha256"],
+        "qualified_target": host["target"],
+        "qualified_derivative_sha256": contract["derivative_sha256"][host["target"]],
+        "target_set": list(TARGETS), "lsp_sha256": entry["lsp_sha256"],
     }, "host qualification extension evidence differs")
-    Require(qualification.get("checks") == {
+    checks = {
         "extension_active": True, "workspace_count": 0, "language_id": "beskid",
         "formatter_self_id": "beskid-lang.beskid-vscode", "formatter_edit_count": 4,
-        "formatter_input_sha256": FORMATTER_INPUT_SHA256,
-        "formatter_output_sha256": FORMATTER_OUTPUT_SHA256, "formatter_applied": True,
-    }, "strict formatter qualification differs")
+        "formatter_input_sha256": host["input_sha256"],
+        "formatter_output_sha256": host["output_sha256"], "formatter_applied": True,
+    }
+    if VERSION == "0.5.2":
+        checks["formatter_saved"] = True
+    Require(qualification.get("checks") == checks, "strict formatter qualification differs")
 
 
 def VerifyStage(stage, contract=None):
@@ -398,23 +425,30 @@ def SanitizeHostReceipt(raw_path, approval_path, derivative_path, output, contra
     Require(FileDigest(approval_path, PACKAGER.MAX_JSON) == contract["approval_sha256"],
             "Marketplace approval receipt digest mismatch")
     entries = VerifyApproval(approval, contract)
-    darwin = next(entry for entry in entries if entry["target"] == "darwin-arm64")
+    host = HostContract()
+    entry = next(entry for entry in entries if entry["target"] == host["target"])
     if VERSION == "0.5.2":
         Require(raw.get("source") == APPROVED_SOURCE and
-                raw.get("derivative_sha256") == contract["derivative_sha256"]["darwin-arm64"],
+                raw.get("derivative_sha256") == contract["derivative_sha256"][host["target"]],
                 "original host proof does not bind the complete two-root source and derivative")
-    Require(FileDigest(derivative_path) == contract["derivative_sha256"]["darwin-arm64"],
+        Require(raw.get("qualified_target") == host["target"] and
+                all(raw.get(field) == value for field, value in host["host"].items()) and
+                raw.get("formatter_applied") is True and raw.get("formatter_saved") is True,
+                "actual derivative host platform/version or applied/saved evidence differs")
+        Require(entry["lsp_sha256"] == host["lsp_sha256"], "host qualification LSP differs")
+        VerifyVsix(derivative_path, entry, contract)
+    Require(FileDigest(derivative_path) == contract["derivative_sha256"][host["target"]],
             "host-qualified derivative digest mismatch")
     Require(raw.get("schema_version") == 1 and raw.get("status") == "success" and
             raw.get("source_commit") == APPROVED_SOURCE["superrepo_commit"] and
             raw.get("compiler_commit") == APPROVED_SOURCE["compiler_commit"] and
             raw.get("extension_id") == "beskid-lang.beskid-vscode" and raw.get("publisher") == PUBLISHER and
             raw.get("extension_version") == VERSION and raw.get("formatter_self_id") == "beskid-lang.beskid-vscode" and
-            raw.get("server_sha256") == HOST_LSP_SHA256 and raw.get("extension_active") is True and
+            raw.get("server_sha256") == host["lsp_sha256"] and raw.get("extension_active") is True and
             raw.get("workspace_count") == 0 and raw.get("language_id") == "beskid" and
             raw.get("formatter_edit_count") == 4 and
-            hashlib.sha256(raw.get("before", "").encode()).hexdigest() == FORMATTER_INPUT_SHA256 and
-            hashlib.sha256(raw.get("after", "").encode()).hexdigest() == FORMATTER_OUTPUT_SHA256,
+            hashlib.sha256(raw.get("before", "").encode()).hexdigest() == host["input_sha256"] and
+            hashlib.sha256(raw.get("after", "").encode()).hexdigest() == host["output_sha256"],
             "original strict formatter proof differs")
     result = {
         "schema_version": 1, "kind": "beskid-marketplace-local-host-qualification", "status": "success",
@@ -424,14 +458,17 @@ def SanitizeHostReceipt(raw_path, approval_path, derivative_path, output, contra
                     "source_commit": APPROVED_SOURCE["superrepo_commit"]},
         "source": APPROVED_SOURCE,
         "extension": {"id": "beskid-lang.beskid-vscode", "publisher": PUBLISHER, "name": NAME,
-                      "version": VERSION, "qualified_target": "darwin-arm64",
-                      "qualified_derivative_sha256": contract["derivative_sha256"]["darwin-arm64"],
-                      "target_set": list(TARGETS), "lsp_sha256": darwin["lsp_sha256"]},
+                      "version": VERSION, "qualified_target": host["target"],
+                      "qualified_derivative_sha256": contract["derivative_sha256"][host["target"]],
+                      "target_set": list(TARGETS), "lsp_sha256": entry["lsp_sha256"]},
         "checks": {"extension_active": True, "workspace_count": 0, "language_id": "beskid",
                    "formatter_self_id": "beskid-lang.beskid-vscode", "formatter_edit_count": 4,
-                   "formatter_input_sha256": FORMATTER_INPUT_SHA256,
-                   "formatter_output_sha256": FORMATTER_OUTPUT_SHA256, "formatter_applied": True},
+                   "formatter_input_sha256": host["input_sha256"],
+                   "formatter_output_sha256": host["output_sha256"], "formatter_applied": True},
     }
+    if VERSION == "0.5.2":
+        result["host"] = copy.deepcopy(host["host"])
+        result["checks"]["formatter_saved"] = True
     with output.open("x") as destination:
         destination.write(json.dumps(result, indent=2) + "\n")
     return result

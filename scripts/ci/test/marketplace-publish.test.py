@@ -307,5 +307,178 @@ class MarketplacePublishTests(unittest.TestCase):
             self._write_vsix(path, target, executable, lsp, publisher="beskid")
 
 
+class LinuxMarketplaceHostTests(unittest.TestCase):
+    """Exercise real staged bytes; only synthetic server hash substitutes for a native binary."""
+
+    def setUp(self):
+        spec = importlib.util.spec_from_file_location("linux_marketplace_publish", SCRIPT)
+        self.api = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.api)
+        self.api.SelectProductionVersion("0.5.2")
+        self.tmp = tempfile.TemporaryDirectory(prefix="beskid-linux-host-")
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+        self.stage = self.root / "stage"
+        self.stage.mkdir(mode=0o700)
+        self.contract = copy.deepcopy(self.api.PRODUCTION_CONTRACT)
+        self.contract["publication_enabled"] = True
+        entries = []
+        for original in self.contract["originals"]:
+            target = original["target"]
+            path = self.stage / self.api.AssetName(target)
+            server = ("fixture-server-" + target).encode()
+            with zipfile.ZipFile(path, "w") as archive:
+                archive.writestr("extension/package.json", json.dumps({
+                    "name": "beskid-vscode", "publisher": "beskid-lang", "version": "0.5.2",
+                    "contributes": {"configurationDefaults": {"[beskid]": {
+                        "editor.defaultFormatter": "beskid-lang.beskid-vscode"}}}}))
+                archive.writestr("extension.vsixmanifest", '<PackageManifest><Metadata><Identity '
+                    'Publisher="beskid-lang" Id="beskid-vscode" Version="0.5.2" '
+                    f'TargetPlatform="{target}"/></Metadata></PackageManifest>')
+                archive.writestr(f"extension/server/{target}/{self.api.TARGETS[target]}", server)
+            entry = dict(original, version="0.5.2", target_platform=target,
+                         original_asset=original["asset"], original_sha256=original["sha256"],
+                         derivative_asset=path.name, derivative_sha256=MarketplacePublishTests._sha(path),
+                         original_inventory_sha256="2" * 64, non_metadata_inventory_equal=True,
+                         identity="beskid-lang.beskid-vscode")
+            entry["lsp_sha256"] = hashlib.sha256(server).hexdigest()
+            original["lsp_sha256"] = entry["lsp_sha256"]
+            entry["derivative_inventory_sha256"] = hashlib.sha256(json.dumps(
+                MarketplacePublishTests._inventory(path), sort_keys=True).encode()).hexdigest()
+            entries.append(entry)
+        self.contract["derivative_sha256"] = {x["target"]: x["derivative_sha256"] for x in entries}
+        self.approval = dict(schema_version=1, channel="marketplace", publisher="beskid-lang",
+            name="beskid-vscode", version="0.5.2", formatter_self_id="beskid-lang.beskid-vscode",
+            source=copy.deepcopy(self.api.APPROVED_SOURCE),
+            original_approval="scripts/ci/editor-marketplace-approvals/0.5.2.json", targets=entries)
+        self.approval_path = self.stage / "marketplace-approval.json"
+        self.write_json(self.approval_path, self.approval)
+        self.contract["approval_sha256"] = MarketplacePublishTests._sha(self.approval_path)
+        self.raw = dict(schema_version=1, status="success", source=copy.deepcopy(self.api.APPROVED_SOURCE),
+            source_commit="e06d6b4b1e7e06a602bcf0b575e9fc05d921106b",
+            compiler_commit="95c203ff12639b25e2c67b08da531e3715fef4c2",
+            derivative_sha256=self.contract["derivative_sha256"]["linux-x64"],
+            extension_id="beskid-lang.beskid-vscode", publisher="beskid-lang", extension_version="0.5.2",
+            formatter_self_id="beskid-lang.beskid-vscode", server_sha256=entries[0]["lsp_sha256"],
+            extension_active=True, workspace_count=0, language_id="beskid", formatter_edit_count=4,
+            qualified_target="linux-x64", platform="linux", arch="x64", vscode_version="1.96.0",
+            formatter_applied=True, formatter_saved=True,
+            before="pub i32 Formatter() { return 42; }\n",
+            after="pub i32 Formatter()\n{\n    return 42;\n}\n")
+        self.raw_path = self.root / "raw.json"
+        self.output = self.stage / self.api.HOST_QUALIFICATION_NAME
+        # The synthetic server is never promoted into the production contract.
+        self.api.HOST_CONTRACTS["0.5.2"]["lsp_sha256"] = entries[0]["lsp_sha256"]
+
+    @staticmethod
+    def write_json(path, value):
+        path.write_text(json.dumps(value, indent=2) + "\n")
+
+    def sanitize(self, rebind_raw=True):
+        self.write_json(self.raw_path, self.raw)
+        if rebind_raw:
+            self.contract["original_host_receipt_sha256"] = MarketplacePublishTests._sha(self.raw_path)
+        return self.api.SanitizeHostReceipt(self.raw_path, self.approval_path,
+            self.stage / self.api.AssetName("linux-x64"), self.output, self.contract)
+
+    def test_linux_derivative_receipt_sanitizes_and_verifies_complete_stage(self):
+        result = self.sanitize()
+        self.assertEqual(result["extension"]["qualified_target"], "linux-x64")
+        self.assertEqual(result["extension"]["lsp_sha256"], self.raw["server_sha256"])
+        self.assertEqual(result["host"], {"platform": "linux", "arch": "x64", "vscode_version": "1.96.0"})
+        self.assertTrue(result["checks"]["formatter_saved"])
+        self.api.VerifyStage(self.stage, self.contract)
+
+    def test_linux_raw_evidence_rejects_wrong_platform_source_server_and_formatter(self):
+        changes = [("qualified_target", "darwin-arm64"), ("platform", "darwin"), ("arch", "arm64"),
+            ("vscode_version", "1.95.0"), ("extension_version", "0.5.1"), ("server_sha256", "f" * 64),
+            ("source", {k: v for k, v in self.raw["source"].items() if k != "native_superrepo_commit"}),
+            ("derivative_sha256", "f" * 64), ("formatter_applied", False), ("formatter_saved", False),
+            ("formatter_edit_count", 3), ("before", self.raw["before"] + " "),
+            ("after", self.raw["after"] + " ")]
+        for field, value in changes:
+            with self.subTest(field=field):
+                original = self.raw[field]
+                self.raw[field] = value
+                with self.assertRaises(ValueError):
+                    self.sanitize()
+                self.assertFalse(self.output.exists())
+                self.raw[field] = original
+        for field in ("source", "qualified_target", "formatter_applied", "formatter_saved"):
+            with self.subTest(missing=field):
+                original = self.raw.pop(field)
+                with self.assertRaises(ValueError):
+                    self.sanitize()
+                self.raw[field] = original
+
+    def test_linux_raw_and_derivative_digest_mutations_fail_closed(self):
+        self.contract["original_host_receipt_sha256"] = "f" * 64
+        with self.assertRaisesRegex(ValueError, "receipt digest"):
+            self.sanitize(rebind_raw=False)
+        derivative = self.stage / self.api.AssetName("linux-x64")
+        derivative.write_bytes(derivative.read_bytes() + b"mutated")
+        with self.assertRaisesRegex(ValueError, "derivative digest"):
+            self.sanitize()
+
+    def test_linux_sanitized_receipt_rejects_wrong_target_host_and_saved_evidence(self):
+        result = self.sanitize()
+        for section, field, value in (("extension", "qualified_target", "darwin-arm64"),
+            ("host", "platform", "darwin"), ("checks", "formatter_saved", False)):
+            with self.subTest(field=field):
+                mutated = copy.deepcopy(result)
+                mutated[section][field] = value
+                with self.assertRaises(ValueError):
+                    self.api.VerifyHostQualification(mutated, self.approval, self.contract)
+
+    def test_linux_embedded_server_is_verified_even_with_rebound_archive_digests(self):
+        path = self.stage / self.api.AssetName("linux-x64")
+        with zipfile.ZipFile(path) as archive:
+            content = {name: archive.read(name) for name in archive.namelist()}
+        content["extension/server/linux-x64/beskid_lsp"] = b"wrong server"
+        with zipfile.ZipFile(path, "w") as archive:
+            for name, data in content.items():
+                archive.writestr(name, data)
+        entry = self.approval["targets"][0]
+        entry["derivative_sha256"] = MarketplacePublishTests._sha(path)
+        entry["derivative_inventory_sha256"] = hashlib.sha256(json.dumps(
+            MarketplacePublishTests._inventory(path), sort_keys=True).encode()).hexdigest()
+        self.contract["derivative_sha256"]["linux-x64"] = entry["derivative_sha256"]
+        self.raw["derivative_sha256"] = entry["derivative_sha256"]
+        self.write_json(self.approval_path, self.approval)
+        self.contract["approval_sha256"] = MarketplacePublishTests._sha(self.approval_path)
+        with self.assertRaisesRegex(ValueError, "embedded LSP"):
+            self.sanitize()
+
+    def test_qualified_linux_stage_keeps_complete_set_and_preflight_secret_guard(self):
+        self.sanitize()
+        context = dict(CI_PIPELINE_EVENT="manual", CI_COMMIT_BRANCH="main",
+            CI_REPO="Cyber-Nomad-Collective/beskid", CI_COMMIT_SHA="a" * 40, VSCE_PAT="test-only")
+        with self.assertRaisesRegex(ValueError, "preflight must not receive"):
+            self.api.Preflight(self.stage, self.root / "attempt", context, self.contract)
+        path = self.stage / self.api.AssetName("win32-x64")
+        path.write_bytes(path.read_bytes() + b"changed last target")
+        with self.assertRaisesRegex(ValueError, "derivative digest"):
+            self.api.VerifyStage(self.stage, self.contract)
+
+    def test_production_host_pin_rejects_synthetic_server_without_substitution(self):
+        self.api.HOST_CONTRACTS["0.5.2"]["lsp_sha256"] = (
+            "750443a35fb4623623230ff147f2610f52c826d0f17c2ded98a91370ec03ea9f")
+        with self.assertRaisesRegex(ValueError, "host qualification LSP"):
+            self.sanitize()
+
+    def test_unqualified_production_stops_before_inputs_secrets_and_transport(self):
+        api = self.api
+        with self.assertRaisesRegex(ValueError, "qualifications pending"):
+            api.SanitizeHostReceipt(self.raw_path, self.approval_path, self.root / "absent",
+                                    self.output)
+        with self.assertRaisesRegex(ValueError, "qualifications pending"):
+            api.Preflight(self.stage, self.root / "attempt", {})
+        def forbidden(*args):
+            self.fail("publisher must not run")
+        with self.assertRaisesRegex(ValueError, "qualifications pending"):
+            api.Publish(self.root / "absent", {"VSCE_PAT": "test-only"}, runner=forbidden)
+        self.assertFalse((self.root / "attempt").exists())
+
+
 if __name__ == "__main__":
     unittest.main()

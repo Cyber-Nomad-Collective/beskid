@@ -11,6 +11,10 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Bind 0.5.2 Marketplace host qualification to Linux x64, VS Code 1.96.0,
+  the approved Linux LSP, and the applied and saved Formatter fixture. Keep
+  production disabled pending fresh derivative approval and host evidence;
+  preserve the held 0.5.1 macOS contract.
 - Bind the bounded 0.5.2 editor publication route to separate exact native and
   editor source roots, preserving original artifact digests and the held 0.5.1
   contract. Keep production blocked pending genuine native source gates,

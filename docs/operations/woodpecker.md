@@ -231,6 +231,21 @@ non-metadata entry inventories.
 
 ### Microsoft Marketplace publication
 
+The bounded 0.5.2 route requires a fresh Linux x64 derivative receipt from
+VS Code 1.96.0. Its host target is tracked in the publisher contract and cannot
+be selected by a caller. The raw receipt must include the complete approved
+two-root `source`, the actual `derivative_sha256` and `server_sha256`,
+`qualified_target: linux-x64`, `platform: linux`, `arch: x64`,
+`vscode_version: 1.96.0`, `formatter_applied: true`, and `formatter_saved: true`.
+It must record four edits and the exact saved transformation from
+`pub i32 Formatter() { return 42; }\n` to
+`pub i32 Formatter()\n{\n    return 42;\n}\n`. The runner must collect platform
+and version from the actual host, apply and save the edits, and reread the
+saved bytes. An original VSIX receipt is not derivative qualification.
+The approval, derivative and raw receipt digest qualifications remain missing,
+so production stays disabled before staged input or publication credentials
+are consumed. The following 0.5.1 procedure is historical and remains held.
+
 > **Release hold (2026-10-02):** do not stage or dispatch this task for 0.5.1.
 > The qualified compiler/LSP does not preserve Corelib intrinsic authority
 > after relocation to a clean consumer host, so the 0.5.1 Marketplace
