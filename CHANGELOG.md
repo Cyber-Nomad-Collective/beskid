@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Correct release-channel documentation to distinguish manual prebuilt editor
+  publication, Woodpecker native builds, Watchtower deployment, and the pending
+  initial Zed registry listing.
 - Pin the reviewed 0.5.1 compiler integration candidate, including the
   line-oriented CLI, template authoring locks, package browsing, and
   command-surface regression gate.

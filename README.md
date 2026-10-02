@@ -1,6 +1,6 @@
 # Beskid Superrepo
 
-[![Open VSX publish](https://github.com/Cyber-Nomad-Collective/beskid/actions/workflows/publish-open-vsx.yml/badge.svg?branch=main)](https://github.com/Cyber-Nomad-Collective/beskid/actions/workflows/publish-open-vsx.yml?query=branch%3Amain)
+[![Open VSX publish](https://github.com/Cyber-Nomad-Collective/beskid/actions/workflows/editor-marketplace-publish.yml/badge.svg?branch=main)](https://github.com/Cyber-Nomad-Collective/beskid/actions/workflows/editor-marketplace-publish.yml?query=branch%3Amain)
 [![CLI (rolling)](https://img.shields.io/github/v/tag/Cyber-Nomad-Collective/beskid_compiler/cli-stable?label=CLI&logo=github)](https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/tag/cli-stable)
 [![VS Code on Open VSX](https://img.shields.io/open-vsx/v/beskid/beskid-vscode?label=VS%20Code&logo=openvsx)](https://open-vsx.org/extension/beskid/beskid-vscode)
 [![Last commit](https://img.shields.io/github/last-commit/Cyber-Nomad-Collective/beskid/main?label=superrepo&logo=github)](https://github.com/Cyber-Nomad-Collective/beskid/commits/main/)
@@ -49,12 +49,13 @@ beskid/                          ← you are here (aggregate root)
 ├── beskid_web_common/           ← Shared TS: trudoc, beskid-ui, auth client
 ├── beskid_treesitter/           ← Tree-sitter grammar (synced from compiler Pest)
 ├── beskid_templates/            ← First-party `beskid.templates.*` scaffolds
-├── beskid_infra/                ← Coolify Compose deploy, OpenBao, monitoring
+├── beskid_infra/                ← Secrets and monitoring support
+├── beskid_sites/deploy/         ← Standalone production Compose + Watchtower
 ├── site/
 │   ├── website/                 ← Astro + Starlight informative Book/docs
 │   └── auth/                    ← GitHub OAuth hub for tracker, nexus, pckg
 ├── scripts/                     ← setup-environment.sh, install-deps.sh, CI helpers
-└── .github/workflows/           ← Container images, Open VSX, Coolify compose deploy
+└── .github/workflows/           ← Manual editor-marketplace publication
 ```
 
 ## Submodules and READMEs
@@ -66,24 +67,31 @@ Each row links to the README in that tree. Clone submodules before following tho
 | `compiler/` | Rust workspace: `beskid` CLI, compiler crates, `beskid_lsp`, package client | [compiler/README.md](compiler/README.md) |
 | `compiler/corelib/` | Standard library (nested submodule: `corelib`, foundation, runtime, Mod SDK) | [compiler/corelib/README.md](compiler/corelib/README.md) |
 | `pckg/` | Rust registry HTTP API, React UI, PostgreSQL, Docker Compose for local dev | [pckg/README.md](pckg/README.md) |
-| `beskid_vscode/` | Official VS Code extension; Open VSX publish runs from superrepo CI | [beskid_vscode/README.md](beskid_vscode/README.md) |
+| `beskid_vscode/` | Official VS Code extension; reviewed prebuilt packages publish through a manual marketplace workflow | [beskid_vscode/README.md](beskid_vscode/README.md) |
 | `beskid_tracker/` | SQLite roadmap/kanban and public bugs; GitHub synchronization is bug-only | [beskid_tracker/README.md](beskid_tracker/README.md) |
 | `beskid_nexus/` | Interactive repo graph explorer; MCP at `/api/mcp` | [beskid_nexus/README.md](beskid_nexus/README.md) |
 | `beskid_web_common/` | `@cyber-nomad-collective/trudoc`, `@beskid/beskid-ui`, auth client packages | [beskid_web_common/README.md](beskid_web_common/README.md) |
 | `beskid_treesitter/` | `@cyber-nomad-collective/beskid-tree-sitter` grammar for editors and tooling | [beskid_treesitter/README.md](beskid_treesitter/README.md) |
 | `beskid_templates/` | Published project/workspace/item templates (`beskid.templates.*`) | [beskid_templates/README.md](beskid_templates/README.md) |
-| `beskid_infra/` | Coolify Compose stack, OpenBao secrets, production deploy | [beskid_infra/README.md](beskid_infra/README.md) |
+| `beskid_infra/` | Secrets and monitoring support; not the production deployment authority | [beskid_infra/README.md](beskid_infra/README.md) |
 
 ### In-repo (not submodules)
 
 | Path | Role | README |
 | --- | --- | --- |
-| `site/` | Docs site + auth hub; Docker Compose for Coolify/GHCR | [site/README.md](site/README.md) |
+| `site/` | Docs site and auth source; production runtime is in `beskid_sites/deploy` | [site/README.md](site/README.md) |
+| `beskid_sites/deploy/` | Standalone production Compose, private registry and Watchtower | [beskid_sites/deploy/README.md](beskid_sites/deploy/README.md) |
 | `openspec/` | Canonical standard capabilities, change proposals, and migration catalog | [GUIDE.md](GUIDE.md) |
 | `site/website/` | Astro dev server and informative Beskid Book/docs | [site/website/README.md](site/website/README.md) |
 | `site/auth/` | Central GitHub OAuth; one app handoff to tracker, nexus, pckg | [site/auth/README.md](site/auth/README.md) |
 | `scripts/` | Toolchain install (`repo-deps.json`), submodule sync, setup wizard entry | [scripts/README.md](scripts/README.md) |
-| `.github/` | Workflow index for container images, Open VSX, Coolify compose | [.github/README.md](.github/README.md) |
+| `.github/` | GitHub metadata and manual editor-marketplace publication | [.github/README.md](.github/README.md) |
+
+Woodpecker is the native build service and prepares checksummed release artifacts.
+Stable compiler publication is a separate reviewed manual operation. Platform
+application images are built through the protected Woodpecker publication task;
+Watchtower in `beskid_sites/deploy` reconciles production. GitHub's manual editor
+workflow publishes verified prebuilt VSIX files, not native compiler builds.
 
 ## Getting started
 

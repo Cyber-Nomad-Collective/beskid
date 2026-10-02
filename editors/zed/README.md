@@ -8,8 +8,11 @@ authority for semantic and workspace behavior.
 
 ## Install
 
-Install **Beskid** from Zed's Extensions view. The extension recognizes `.bd`
-source files, `.bproj` and `.bws` manifests, and standalone `.bsol` documents.
+The initial registry submission is pending; this source package is not yet listed
+in Zed's Extensions view. Use the development installation below until the
+registry pull request is merged and the listing is verified. The extension
+recognizes `.bd` source files, `.bproj` and `.bws` manifests, and standalone `.bsol`
+documents.
 
 To load this checkout for development:
 
