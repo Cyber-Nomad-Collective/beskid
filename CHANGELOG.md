@@ -16,6 +16,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   payload verification and channel publication remain required.
 - Align the human-owned initial Zed registry submission example with 0.5.2;
   do not reuse the old registry version when submitting the corrected package.
+- Rebuild the packaged Zed WASI component from the corrected 0.5.2 metadata;
+  verify the component, pinned grammar assets, and package round trip before
+  the separate human-owned initial registry submission.
 - Move shared-web and Tree-sitter validation and reviewed GitHub Packages
   publication from submodule GitHub workflows to root Woodpecker, using exact
   gitlinks, frozen installs, token-free checksum-bound package preparation, and
