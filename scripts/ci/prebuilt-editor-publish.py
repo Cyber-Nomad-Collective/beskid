@@ -277,7 +277,7 @@ def Request(url, limit, missing=False):
 
 
 def RegistryPackage(entry, approval):
-    url = REGISTRY + "/api/beskid/beskid-vscode/" + entry["target"] + "/0.5.1"
+    url = REGISTRY + "/api/beskid/beskid-vscode/" + entry["target"] + "/" + approval["version"]
     data = Request(url, MAX_JSON, missing=True)
     if data is None:
         return None

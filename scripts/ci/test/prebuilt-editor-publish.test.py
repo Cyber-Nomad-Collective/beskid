@@ -699,6 +699,55 @@ class PublisherTests(unittest.TestCase):
         with patch.object(self.api, "Request", lambda *args, **kwargs: json.dumps(metadata).encode()), self.assertRaises(ValueError):
             self.api.RegistryPackage(self.approval["targets"][0], self.approval)
 
+    def test_registry_request_uses_selected_immutable_version_and_target(self):
+        for version, expected_url in (
+            ("0.5.1", "https://open-vsx.org/api/beskid/beskid-vscode/linux-x64/0.5.1"),
+            ("0.5.2", "https://open-vsx.org/api/beskid/beskid-vscode/linux-x64/0.5.2"),
+        ):
+            with self.subTest(version=version):
+                if version == "0.5.2":
+                    self.two_roots()
+                entry = self.approval["targets"][0]
+                download = "https://open-vsx.org/package/" + entry["asset"]
+                content = (self.editors / entry["asset"]).read_bytes()
+                calls = []
+                def request(url, limit, missing=False):
+                    calls.append((url, limit, missing))
+                    if len(calls) == 1:
+                        return json.dumps({"namespace": "beskid", "name": "beskid-vscode", "version": version,
+                            "targetPlatform": "linux-x64", "files": {"download": download}}).encode()
+                    self.assertEqual(url, download)
+                    return content
+                with patch.object(self.api, "Request", side_effect=request):
+                    self.assertEqual(self.api.RegistryPackage(entry, self.approval), content)
+                self.assertEqual(calls, [(expected_url, self.api.MAX_JSON, True),
+                                         (download, self.api.MAX_VSIX, False)])
+
+    def test_selected_registry_last_metadata_or_read_failure_precedes_first_upload(self):
+        self.two_roots()
+        entries = self.approval["targets"]
+        for failure in ("metadata", "read"):
+            with self.subTest(failure=failure):
+                inspected = []
+                def request(url, limit, missing=False):
+                    if "/api/" in url:
+                        self.assertTrue(url.endswith("/0.5.2"))
+                        target = url.split("/")[-2]
+                        inspected.append(target)
+                        entry = next(x for x in entries if x["target"] == target)
+                        if target == entries[-1]["target"] and failure == "read":
+                            raise ValueError("fixture registry read rejected")
+                        version = "0.5.1" if target == entries[-1]["target"] else "0.5.2"
+                        return json.dumps({"namespace": "beskid", "name": "beskid-vscode", "version": version,
+                            "targetPlatform": target, "files": {"download": "https://open-vsx.org/" + entry["asset"]}}).encode()
+                    return (self.editors / url.rsplit("/", 1)[1]).read_bytes()
+                with patch.object(self.api, "Request", side_effect=request):
+                    with self.assertRaisesRegex(ValueError, "metadata mismatch|fixture registry read rejected"):
+                        self.api.Publish(self.approval, self.editors, self.native, self.root, self.context,
+                            "/pinned/ovsx", self.root / "registry-results.json", upload=self.upload)
+                self.assertEqual(inspected, [x["target"] for x in entries])
+                self.assertEqual(self.uploads, [])
+
     def test_prepare_requires_static_native_compiler_repository(self):
         self.approval["native_release"]["repository"] = "Cyber-Nomad-Collective/beskid"
         with self.assertRaises(ValueError):

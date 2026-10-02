@@ -86,6 +86,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Read Open VSX metadata for the selected immutable editor version during
+  publication preflight and post-upload verification.
 - Pin the reviewed compiler repair that preserves verified installed Corelib
   service authority after the original compiler build checkout is absent.
 - Block the exact relocation-unqualified 0.5.1 compiler source before native,
