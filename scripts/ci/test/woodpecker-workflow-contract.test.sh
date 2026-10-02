@@ -53,22 +53,11 @@ if grep -iqE 'from_secret|GH_TOKEN|BESKID_PUBLISH_RELEASE|release-publish' "${wo
   exit 1
 fi
 
-# Open VSX is a protected, explicit publisher. The workflow must not inherit
-# credentials into an ordinary validation or native-build lane.
-open_vsx_workflow="${workflow_dir}/open-vsx.yml"
-test -f "${open_vsx_workflow}"
-grep -Fq 'BESKID_TASK == "open-vsx-publish"' "${open_vsx_workflow}"
-grep -Fq 'role: beskid-linux' "${open_vsx_workflow}"
-grep -Fq 'event: manual' "${open_vsx_workflow}"
-grep -Fq 'branch: main' "${open_vsx_workflow}"
-grep -Fq 'from_secret: open_vsx_token' "${open_vsx_workflow}"
-grep -Fq 'BESKID_OPEN_VSX_PUBLISH: "1"' "${open_vsx_workflow}"
-grep -Fq 'init-submodules.sh compiler beskid_bsol beskid_vscode' "${open_vsx_workflow}"
-grep -Fq 'open-vsx-publish.sh linux-x64 beskid_lsp' "${open_vsx_workflow}"
-grep -Fq 'BESKID_RELEASE_VERSION:?set stable version' "${open_vsx_workflow}"
-grep -Fq 'nodejs' "${open_vsx_workflow}"
-grep -Fq '"$${bun_archive}"' "${open_vsx_workflow}"
-! grep -Fq '"${bun_archive}"' "${open_vsx_workflow}"
+# Marketplace releases consume reviewed native evidence on the trusted manual
+# release host. The retired source-build lane must never regain credentials.
+test ! -e "${workflow_dir}/open-vsx.yml"
+test ! -e "${ROOT}/scripts/ci/open-vsx-publish.sh"
+! grep -riEq 'open_vsx_token|OVSX_TOKEN|open-vsx-publish|ovsx publish' "${workflow_dir}"
 
 # This contract owns only native build and standard validation lanes. Editor,
 # security and protected publishing lanes have separate policy contracts;

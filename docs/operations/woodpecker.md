@@ -93,31 +93,33 @@ credential and should never be represented as completed installer-test evidence.
 
 ### Open VSX extension publication
 
-Open VSX is a separate protected manual publisher. It builds the Linux x64 LSP
-from the checked-out compiler gitlink and publishes the matching target-specific
-VSIX. It never runs for push, tag, pull-request, or ordinary build workflows.
+Prepare target-specific editor packages on the trusted manual release host
+from the checksum-verified native release evidence. The root and VS Code
+tracked source must be clean, and the checked-out editor revision must match
+the committed root gitlink. The native source revision must be an ancestor of
+the editor release revision with the same compiler pin. No marketplace workflow
+runs in Woodpecker; the former source-rebuild publisher has been removed.
 
-Create the Woodpecker repository secret named `open_vsx_token` from the Open VSX
-publisher credential. Keep it restricted to the repository and do not expose it
-to pull requests. The workflow reads it only in the `publish-open-vsx` step;
-the token must never be placed in a pipeline variable, tracked file, or build
-log.
-
-Use the stable compiler release version that matches the checked-out compiler
-gitlink. For the current release this is `0.4.746`:
+The native evidence root contains its canonical `linux`, `macos`, and `windows`
+directories. Package each target from a separate clean editor checkout:
 
 ```bash
-woodpecker-cli pipeline create Cyber-Nomad-Collective/beskid --branch main \
-  --var BESKID_TASK=open-vsx-publish --var BESKID_RELEASE_VERSION=0.4.746
+node scripts/ci/package-editor-release.mjs linux-x64 \
+  /absolute/native-evidence-root <reviewed-native-root-commit>
 ```
 
-After a successful pipeline, verify the exact registry version instead of
-relying solely on the job result:
+The versioned VSIX under `beskid_vscode/dist` embeds the exact verified native
+LSP and declares its marketplace target. Review its digest and contents before
+submitting that file to Open VSX or Visual Studio Marketplace. Supply the
+existing publisher credential only to the external manual publication process;
+never transfer it into Woodpecker, tracked files, or pipeline variables.
+
+After authorized publication, verify the exact registry version and target:
 
 ```bash
 curl --fail --silent --show-error \
-  https://open-vsx.org/api/beskid/beskid-vscode/0.4.746 | jq -e \
-  '.version == "0.4.746" and .files.download | contains("linux-x64")'
+  https://open-vsx.org/api/beskid/beskid-vscode/0.5.1 | jq -e \
+  '.version == "0.5.1" and (.files.download | contains("linux-x64"))'
 ```
 
 The SFTP inbox is `/var/lib/woodpecker-handoff/<role>/incoming/<build>-<sha>/<role>`.

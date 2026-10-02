@@ -190,7 +190,7 @@ Once Zed maintainers merge the initial entry, submit subsequent updates as
 registry pull requests that advance the `extensions/beskid` gitlink and the
 matching `extensions.toml` version. The registry's `path` field selects this
 nested package. This repository has no automatic Zed tag-publication workflow.
-Follow the official [Zed publication instructions](https://zed.dev/docs/extensions/publishing-extensions)
+Follow the official [Zed publication instructions](https://zed.dev/docs/extensions/publishing/overview)
 and preserve the exact tested root revision in each registry submission.
 
 ## Verify the package

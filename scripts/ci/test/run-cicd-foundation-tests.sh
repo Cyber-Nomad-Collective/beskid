@@ -13,7 +13,6 @@ for script in \
   build-release-state.sh \
   compiler-rust-gate.sh \
   corelib-publish.sh \
-  open-vsx-publish.sh \
   publish-release-stream.sh; do
   bash -n "${root}/scripts/ci/${script}"
 done

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Package the already-verified native release LSP without rebuilding compiler sources.
 import { execFileSync } from "node:child_process";
+import { realpathSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { resolveEditorAuthoringVersion } from "./editor-version.mjs";
@@ -10,6 +11,25 @@ const platforms = {
   "darwin-arm64": { lane: "macos", target: "aarch64-apple-darwin", asset: "beskid_lsp-darwin-arm64" },
   "win32-x64": { lane: "windows", target: "x86_64-pc-windows-msvc", asset: "beskid_lsp-windows-amd64.exe" },
 };
+
+export function attestEditorSource(root) {
+  const extensionRoot = join(root, "beskid_vscode");
+  const git = (checkout, ...args) => execFileSync("git", ["-C", checkout, ...args], { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }).trim();
+  try {
+    git(root, "diff", "--quiet", "--ignore-submodules=dirty", "HEAD");
+    git(root, "diff", "--cached", "--quiet");
+  } catch { throw new Error("editor release requires clean tracked root source"); }
+  if (realpathSync(git(extensionRoot, "rev-parse", "--show-toplevel")) !== realpathSync(extensionRoot)) {
+    throw new Error("editor release requires an initialized VS Code checkout");
+  }
+  if (git(extensionRoot, "rev-parse", "HEAD") !== git(root, "rev-parse", "HEAD:beskid_vscode")) {
+    throw new Error("VS Code checkout does not match the root gitlink");
+  }
+  try {
+    git(extensionRoot, "diff", "--quiet", "HEAD");
+    git(extensionRoot, "diff", "--cached", "--quiet");
+  } catch { throw new Error("editor release requires clean tracked VS Code source"); }
+}
 
 export function resolveVerifiedEditorLsp({ evidence, evidenceRoot, platformKey, version, sourceCommit, compilerCommit }) {
   const platform = platforms[platformKey];
@@ -38,6 +58,7 @@ function main() {
   if (!platform) throw new Error("unsupported editor release platform");
   const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
   const extensionRoot = join(root, "beskid_vscode");
+  attestEditorSource(root);
   const git = (...args) => execFileSync("git", ["-C", root, ...args], { encoding: "utf8" }).trim();
   const sourceCommit = git("rev-parse", `${nativeSourceCommit}^{commit}`);
   git("merge-base", "--is-ancestor", sourceCommit, "HEAD");

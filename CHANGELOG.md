@@ -41,14 +41,17 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Package editor releases from native release evidence with exact version,
   source, target, and checksum checks, without rebuilding compiler sources.
 
-- Add a protected manual Woodpecker publisher for the Linux x64 Beskid VS Code
-  extension on Open VSX.
 - Add a bounded native-test child runner that can supply literal stdin while
   concurrently draining stdout and stderr, plus a staged Foundation regression
   that records direct redirected-standard-stream behavior separately from the
   runtime-kit smoke matrix.
 
 ### Fixed
+
+- Require clean tracked root and editor source and the committed VS Code
+  gitlink before packaging verified native editor releases.
+- Remove the unsafe Woodpecker Open VSX source-rebuild workflow and publisher;
+  prepare marketplace artifacts from reviewed native release evidence instead.
 
 - Refresh a managed legacy Corelib install to the exact 0.5.1 embedded bundle
   instead of retaining it because its old project version compares higher.
