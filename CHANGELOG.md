@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Prepare Zed and VS Code authoring metadata for the owner-approved corrected
+  0.5.2 release without replacing immutable 0.5.1 artifacts. Final native
+  payload verification and channel publication remain required.
 - Move shared-web and Tree-sitter validation and reviewed GitHub Packages
   publication from submodule GitHub workflows to root Woodpecker, using exact
   gitlinks, frozen installs, token-free checksum-bound package preparation, and

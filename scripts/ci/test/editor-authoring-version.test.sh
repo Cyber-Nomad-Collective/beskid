@@ -20,7 +20,7 @@ if node "${resolver}" "${tmp}" "${tmp}/beskid_vscode" 2>"${tmp}/drift.err"; then
 fi
 grep -Fq 'editor authoring versions must agree' "${tmp}/drift.err"
 
-[[ "$(node "${resolver}" "${root}" "${root}/beskid_vscode")" == "0.5.1" ]]
+[[ "$(node "${resolver}" "${root}" "${root}/beskid_vscode")" == "0.5.2" ]]
 grep -Fq 'aarch64-apple-darwin|x86_64-apple-darwin' "${root}/scripts/ci/build-release-artifact.sh"
 grep -Fq 'trap restore_release_versions EXIT' "${root}/scripts/ci/build-release-artifact.sh"
 [[ "$(grep -Fc 'trap ' "${root}/scripts/ci/build-release-artifact.sh")" == 1 ]]
