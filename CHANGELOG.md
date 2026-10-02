@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Promote existing rolling release tags only when GitHub proves the current
+  target is an ancestor of the qualified compiler commit; reject unknown or
+  divergent targets before release mutation and use non-forced tag updates.
 - Correct release-channel documentation to distinguish manual prebuilt editor
   publication, Woodpecker native builds, Watchtower deployment, and the pending
   initial Zed registry listing.

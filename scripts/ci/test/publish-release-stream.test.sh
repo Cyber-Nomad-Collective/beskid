@@ -19,6 +19,22 @@ for argument in "$@"; do
 done
 case "$1 $2" in
   "api repos/"*)
+    if [[ "$*" == *'/compare/'* ]]; then
+      case "${GH_COMPARE_STATUS:-ahead}" in
+        unknown) exit 1 ;;
+        *) printf '{"status":"%s"}\n' "${GH_COMPARE_STATUS:-ahead}" ;;
+      esac
+      exit 0
+    fi
+    if [[ "$*" == *'/git/ref/tags/cli-stable'* && "${GH_ROLLING_REF_UNKNOWN:-0}" == 1 ]]; then
+      exit 1
+    fi
+    if [[ "$*" == *'/git/ref/tags/cli-stable'* ]]; then
+      printf '{"object":{"type":"%s","sha":"%s"}}\n' \
+        "${GH_ROLLING_REF_TYPE:-commit}" \
+        "${GH_ROLLING_REF_SHA:-0123456789abcdef0123456789abcdef01234567}"
+      exit 0
+    fi
     printf '{"object":{"type":"commit","sha":"%s"}}\n' "${GH_REF_SHA:-0123456789abcdef0123456789abcdef01234567}"
     ;;
   "release view")
@@ -124,6 +140,31 @@ if grep -Eq '^release (edit|upload|create)' "${TMP}/gh.log"; then fail "stable d
 
 jq '.version="1.2.2"' "${TMP}/stable-state.json" >"${TMP}/remote/release-state.json"
 : >"${TMP}/gh.log"
-GH_LOG="${TMP}/gh.log" GH_NOTES="${TMP}/notes.md" GH_EXISTING=1 GH_REMOTE_DIR="${TMP}/remote" PATH="${TMP}/bin:${PATH}" GH_TOKEN=test-token \
+GH_LOG="${TMP}/gh.log" GH_NOTES="${TMP}/notes.md" GH_EXISTING=1 GH_REMOTE_DIR="${TMP}/remote" GH_ROLLING_REF_TYPE=tag GH_ROLLING_REF_SHA=2222222222222222222222222222222222222222 GH_REF_SHA=1111111111111111111111111111111111111111 GH_COMPARE_STATUS=ahead PATH="${TMP}/bin:${PATH}" GH_TOKEN=test-token \
   bash "${SCRIPT}" cli 1.2.3 0123456789abcdef0123456789abcdef01234567 "${TMP}/assets" rolling stable "${TMP}/stable-state.json"
 grep -Fq 'api --method PATCH repos/Cyber-Nomad-Collective/beskid_compiler/git/refs/tags/cli-stable' "${TMP}/gh.log" || fail "rolling git ref did not move"
+grep -Fq -- '-F force=false' "${TMP}/gh.log" || fail "rolling git ref update was forced"
+if grep -Fq -- '-F force=true' "${TMP}/gh.log"; then fail "rolling git ref update still permits force"; fi
+
+# A non-ancestor rolling target must be rejected before release metadata or
+# assets are edited, and before the tag PATCH is attempted.
+for status in behind diverged; do
+  : >"${TMP}/gh.log"
+  if GH_LOG="${TMP}/gh.log" GH_NOTES="${TMP}/notes.md" GH_EXISTING=1 GH_REMOTE_DIR="${TMP}/remote" GH_ROLLING_REF_SHA=1111111111111111111111111111111111111111 GH_COMPARE_STATUS="${status}" PATH="${TMP}/bin:${PATH}" GH_TOKEN=test-token \
+    bash "${SCRIPT}" cli 1.2.3 0123456789abcdef0123456789abcdef01234567 "${TMP}/assets" rolling stable "${TMP}/stable-state.json"; then
+    fail "rolling ${status} target was accepted"
+  fi
+  if grep -Eq '^release (edit|upload|create)|^api --method PATCH' "${TMP}/gh.log"; then
+    fail "rolling ${status} target mutated release state"
+  fi
+done
+
+# An unresolvable rolling tag target is fail-closed before any mutation.
+: >"${TMP}/gh.log"
+if GH_LOG="${TMP}/gh.log" GH_NOTES="${TMP}/notes.md" GH_EXISTING=1 GH_REMOTE_DIR="${TMP}/remote" GH_ROLLING_REF_UNKNOWN=1 PATH="${TMP}/bin:${PATH}" GH_TOKEN=test-token \
+  bash "${SCRIPT}" cli 1.2.3 0123456789abcdef0123456789abcdef01234567 "${TMP}/assets" rolling stable "${TMP}/stable-state.json"; then
+  fail "rolling unknown target was accepted"
+fi
+if grep -Eq '^release (edit|upload|create)|^api --method PATCH' "${TMP}/gh.log"; then
+  fail "rolling unknown target mutated release state"
+fi

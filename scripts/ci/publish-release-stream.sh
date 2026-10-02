@@ -138,6 +138,55 @@ verify_immutable_tag() {
   done
 }
 
+resolve_rolling_tag_commit() {
+  local object type sha depth=0
+  object="$(gh api "repos/${REPO}/git/ref/tags/${rolling_tag}")" || {
+    echo "unable to resolve existing rolling tag ${rolling_tag}" >&2
+    return 1
+  }
+  while :; do
+    type="$(jq -r '.object.type' <<<"${object}")"
+    sha="$(jq -r '.object.sha' <<<"${object}")"
+    [[ "${sha}" =~ ^[0-9a-f]{40}$ ]] || {
+      echo "invalid rolling tag object for ${rolling_tag}" >&2
+      return 1
+    }
+    if [[ "${type}" == commit ]]; then
+      printf '%s\n' "${sha}"
+      return 0
+    fi
+    [[ "${type}" == tag && "${depth}" -lt 8 ]] || {
+      echo "unsupported rolling tag object chain for ${rolling_tag}" >&2
+      return 1
+    }
+    depth=$((depth + 1))
+    object="$(gh api "repos/${REPO}/git/tags/${sha}")" || {
+      echo "unable to resolve rolling tag object ${sha}" >&2
+      return 1
+    }
+  done
+}
+
+verify_rolling_tag_ancestry() {
+  local previous_commit compare_status
+  previous_commit="$(resolve_rolling_tag_commit)" || return 1
+  if [[ "${previous_commit}" == "${COMPILER_SHA}" ]]; then
+    echo "Rolling release ${rolling_tag} already targets ${COMPILER_SHA}; ancestry check is idempotent."
+    return 0
+  fi
+  compare_status="$(gh api "repos/${REPO}/compare/${previous_commit}...${COMPILER_SHA}" | jq -r '.status')" || {
+    echo "unable to verify rolling tag ancestry for ${rolling_tag}" >&2
+    return 1
+  }
+  case "${compare_status}" in
+    ahead) ;;
+    *)
+      echo "rolling tag ${rolling_tag} is not an ancestor of ${COMPILER_SHA} (compare status: ${compare_status})" >&2
+      return 1
+      ;;
+  esac
+}
+
 # Immutable tag: create if missing, then upload assets. This always happens
 # before the caller can advance rolling aliases.
 if [[ "$PHASE" == "immutable" || "$PHASE" == "both" ]]; then
@@ -190,13 +239,17 @@ if [[ "$PHASE" == "rolling" || "$PHASE" == "both" ]]; then
         [[ "${previous_compiler}" == "${COMPILER_SHA}" ]] || { echo 'same stable version refers to another compiler commit' >&2; exit 1; }
       fi
     fi
+    # Validate the current tag target before changing release metadata or
+    # uploading replacement assets. Existing rolling aliases may only advance
+    # along the compiler history; never rewrite a divergent or unknown tag.
+    verify_rolling_tag_ancestry
     # Uploading replacement assets does not move the tag; retarget it so the
     # rolling release metadata and assets describe the same compiler build.
     gh release edit "$rolling_tag" --repo "$REPO" --target "$COMPILER_SHA" --notes-file "${notes_file}"
     gh release upload "$rolling_tag" --repo "$REPO" "${assets[@]}" --clobber
     # Editing release metadata alone does not retarget an existing Git tag.
     gh api --method PATCH "repos/${REPO}/git/refs/tags/${rolling_tag}" \
-      -f "sha=${COMPILER_SHA}" -F force=true >/dev/null
+      -f "sha=${COMPILER_SHA}" -F force=false >/dev/null
   else
     gh release create "$rolling_tag" --repo "$REPO" --target "$COMPILER_SHA" \
       --title "$rolling_title" --notes-file "${notes_file}" "${assets[@]}"
