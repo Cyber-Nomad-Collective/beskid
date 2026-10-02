@@ -60,6 +60,7 @@ fi
 # Marketplace releases consume reviewed native evidence on the trusted manual
 # Woodpecker host. Only the final publish step receives the existing secret.
 test -f "${workflow_dir}/editor.yml"
+test -f "${workflow_dir}/javascript.yml"
 test ! -e "${ROOT}/scripts/ci/open-vsx-publish.sh"
 test ! -e "${ROOT}/.github/workflows/editor-marketplace-publish.yml"
 grep -Fq 'event: manual' "${workflow_dir}/editor.yml"
@@ -73,6 +74,8 @@ grep -Fq 'npm install --prefix' "${workflow_dir}/editor.yml"
 test "$(grep -c 'npm install --prefix' "${workflow_dir}/editor.yml")" -eq 1
 ! grep -Fq 'rm -rf "$${snapshot}"' "${workflow_dir}/editor.yml"
 ! grep -Eq 'GITHUB_EVENT_NAME|GITHUB_REF|GITHUB_REPOSITORY|OVSX_TOKEN' "${workflow_dir}/editor.yml"
+test "$(grep -c 'from_secret: github_packages_publish_token' "${workflow_dir}/javascript.yml")" -eq 2
+! grep -Eq 'GITHUB_TOKEN|NPM_TOKEN|GH_TOKEN' "${workflow_dir}/javascript.yml"
 grep -Fq 'apt-get install -y --no-install-recommends ca-certificates clang gh git jq python3 unzip' "${workflow_dir}/pckg.yml"
 
 # This contract owns only native build and standard validation lanes. Editor,

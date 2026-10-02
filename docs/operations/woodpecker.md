@@ -118,6 +118,45 @@ The native build workflows accept only exact stable semantic-version `vX.Y.Z`
 tags (or their explicit manual build task); editor staging tags such as
 `editor-v0.5.1` never enter a native build path.
 
+### First-party JavaScript package publication
+
+Shared web packages and the Tree-sitter package are validated from their exact
+root-pinned submodule revisions by `.woodpecker/javascript.yml`. Ordinary push
+and pull-request validation receives no publisher credential. The reviewed
+manual publishers are separate tasks:
+
+```bash
+woodpecker-cli pipeline create Cyber-Nomad-Collective/beskid --branch main \
+  --var BESKID_TASK=shared-packages-publish
+woodpecker-cli pipeline create Cyber-Nomad-Collective/beskid --branch main \
+  --var BESKID_TASK=treesitter-publish
+```
+
+Do not supply a version variable. Each lane accepts only the stable package
+identities and versions authored in the root-pinned manifests. Preparation
+validates the lockfile and build, rewrites resolvable local sibling references
+only in staged metadata, rejects other local references and symlinks in package
+source that can enter the published inventory, excludes dependency-store trees
+while retaining built `dist` output, and writes checksum-bound tarballs under
+`/woodpecker-output/javascript-<pipeline>-<commit>/<lane>/`. It runs without a
+publisher credential. The final step verifies the same root source, gitlink,
+receipt, checksum inventory, and immutable tarball bytes before invoking
+`npm publish --ignore-scripts`.
+
+A repository administrator must provision the existing manual secret name
+`github_packages_publish_token` with actual GitHub Packages write grants for
+both `@cyber-nomad-collective` and `@beskid`. This migration does not create,
+copy, inspect, or verify that token or either namespace grant. Do not run a
+publisher until an administrator has confirmed those permissions and the
+source revision and package inventory have been reviewed. Only each final
+publish step receives the secret as `NODE_AUTH_TOKEN`.
+
+Publication fails closed if a version already exists, the registry preflight is
+ambiguous, the credential is absent, or an artifact changes. A second registry
+check immediately precedes every upload. If a later package fails, the durable
+`publish-results.json` retains the completed and failed attempts for operator
+review; rerun from a new pipeline snapshot only after resolving the cause.
+
 The native evidence root contains its canonical `linux`, `macos`, and `windows`
 directories. Package each target from a separate clean editor checkout:
 

@@ -1,0 +1,131 @@
+labels:
+  platform: linux/amd64
+  backend: docker
+  role: beskid-linux
+
+clone:
+  git:
+    image: woodpeckerci/plugin-git:2.10.1
+    settings:
+      depth: 0
+      recursive: false
+
+steps:
+  - name: shared-packages
+    image: node:22.16.0-bookworm
+    commands:
+      - apt-get update >/dev/null
+      - apt-get install -y --no-install-recommends ca-certificates git >/dev/null
+      - bash scripts/ci/init-submodules.sh beskid_web_common
+      - corepack enable
+      - corepack prepare pnpm@10.17.1 --activate
+      - bash scripts/ci/woodpecker-javascript.sh shared
+    when:
+      - event: [push, pull_request]
+
+  - name: treesitter
+    image: node:22.16.0-bookworm
+    commands:
+      - apt-get update >/dev/null
+      - apt-get install -y --no-install-recommends build-essential ca-certificates curl git python3 unzip >/dev/null
+      - curl --fail --silent --show-error --location --output /tmp/bun.zip https://github.com/oven-sh/bun/releases/download/bun-v1.3.0/bun-linux-x64-baseline.zip
+      - printf '77336611905b9e876e52924f8b1a57e72669cf10541dc1e11269d2c9371f9e45  /tmp/bun.zip\n' | sha256sum --check -
+      - unzip -q /tmp/bun.zip -d /tmp/bun
+      - install -m 0755 /tmp/bun/bun-linux-x64-baseline/bun /usr/local/bin/bun
+      - ln -s /usr/local/bin/bun /usr/local/bin/bunx
+      - npm install --global --ignore-scripts --no-audit --no-fund node-gyp@12.1.0
+      - bash scripts/ci/init-submodules.sh beskid_treesitter
+      - bash scripts/ci/woodpecker-javascript.sh treesitter
+    when:
+      - event: [push, pull_request]
+
+  - name: prepare-shared-packages
+    image: node:22.16.0-bookworm
+    commands:
+      - apt-get update >/dev/null
+      - apt-get install -y --no-install-recommends ca-certificates git >/dev/null
+      - bash scripts/ci/init-submodules.sh beskid_web_common
+      - corepack enable
+      - corepack prepare pnpm@10.17.1 --activate
+      - bash scripts/ci/woodpecker-javascript.sh shared
+      - snapshot="/woodpecker-output/javascript-$${CI_PIPELINE_NUMBER}-$${CI_COMMIT_SHA}/shared"
+      - node scripts/ci/prebuilt-javascript-publish.mjs prepare shared "$${snapshot}"
+      - node scripts/ci/prebuilt-javascript-publish.mjs verify shared "$${snapshot}"
+    when:
+      - event: manual
+        ref: refs/heads/main
+        evaluate: 'BESKID_TASK == "shared-packages-publish"'
+
+  - name: publish-shared-packages
+    image: node:22.16.0-bookworm
+    environment:
+      NODE_AUTH_TOKEN:
+        from_secret: github_packages_publish_token
+    commands:
+      - apt-get update >/dev/null
+      - apt-get install -y --no-install-recommends ca-certificates git >/dev/null
+      - bash scripts/ci/init-submodules.sh beskid_web_common
+      - snapshot="/woodpecker-output/javascript-$${CI_PIPELINE_NUMBER}-$${CI_COMMIT_SHA}/shared"
+      - node scripts/ci/prebuilt-javascript-publish.mjs verify shared "$${snapshot}"
+      - node scripts/ci/prebuilt-javascript-publish.mjs publish shared "$${snapshot}"
+      - test -s "$${snapshot}/publish-results.json"
+    when:
+      - event: manual
+        ref: refs/heads/main
+        evaluate: 'BESKID_TASK == "shared-packages-publish"'
+
+  - name: validate-treesitter-release
+    image: node:22.16.0-bookworm
+    commands:
+      - apt-get update >/dev/null
+      - apt-get install -y --no-install-recommends build-essential ca-certificates curl git python3 unzip >/dev/null
+      - curl --fail --silent --show-error --location --output /tmp/bun.zip https://github.com/oven-sh/bun/releases/download/bun-v1.3.0/bun-linux-x64-baseline.zip
+      - printf '77336611905b9e876e52924f8b1a57e72669cf10541dc1e11269d2c9371f9e45  /tmp/bun.zip\n' | sha256sum --check -
+      - unzip -q /tmp/bun.zip -d /tmp/bun
+      - install -m 0755 /tmp/bun/bun-linux-x64-baseline/bun /usr/local/bin/bun
+      - ln -s /usr/local/bin/bun /usr/local/bin/bunx
+      - npm install --global --ignore-scripts --no-audit --no-fund node-gyp@12.1.0
+      - bash scripts/ci/init-submodules.sh beskid_treesitter
+      - bash scripts/ci/woodpecker-javascript.sh treesitter
+    when:
+      - event: manual
+        ref: refs/heads/main
+        evaluate: 'BESKID_TASK == "treesitter-publish"'
+
+  - name: prepare-treesitter
+    image: node:22.16.0-bookworm
+    commands:
+      - apt-get update >/dev/null
+      - apt-get install -y --no-install-recommends ca-certificates git >/dev/null
+      - bash scripts/ci/init-submodules.sh beskid_treesitter
+      - snapshot="/woodpecker-output/javascript-$${CI_PIPELINE_NUMBER}-$${CI_COMMIT_SHA}/treesitter"
+      - node scripts/ci/prebuilt-javascript-publish.mjs prepare treesitter "$${snapshot}"
+      - node scripts/ci/prebuilt-javascript-publish.mjs verify treesitter "$${snapshot}"
+    when:
+      - event: manual
+        ref: refs/heads/main
+        evaluate: 'BESKID_TASK == "treesitter-publish"'
+
+  - name: publish-treesitter
+    image: node:22.16.0-bookworm
+    environment:
+      NODE_AUTH_TOKEN:
+        from_secret: github_packages_publish_token
+    commands:
+      - apt-get update >/dev/null
+      - apt-get install -y --no-install-recommends ca-certificates git >/dev/null
+      - bash scripts/ci/init-submodules.sh beskid_treesitter
+      - snapshot="/woodpecker-output/javascript-$${CI_PIPELINE_NUMBER}-$${CI_COMMIT_SHA}/treesitter"
+      - node scripts/ci/prebuilt-javascript-publish.mjs verify treesitter "$${snapshot}"
+      - node scripts/ci/prebuilt-javascript-publish.mjs publish treesitter "$${snapshot}"
+      - test -s "$${snapshot}/publish-results.json"
+    when:
+      - event: manual
+        ref: refs/heads/main
+        evaluate: 'BESKID_TASK == "treesitter-publish"'
+
+when:
+  - event: [push, pull_request]
+  - event: manual
+    ref: refs/heads/main
+    evaluate: 'CI_REPO == "Cyber-Nomad-Collective/beskid" && (BESKID_TASK == "shared-packages-publish" || BESKID_TASK == "treesitter-publish")'

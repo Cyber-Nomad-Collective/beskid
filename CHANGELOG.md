@@ -11,6 +11,10 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Move shared-web and Tree-sitter validation and reviewed GitHub Packages
+  publication from submodule GitHub workflows to root Woodpecker, using exact
+  gitlinks, frozen installs, token-free checksum-bound package preparation, and
+  credentials only in protected final publication steps.
 - Promote existing rolling release tags only when GitHub proves the current
   target is an ancestor of the qualified compiler commit; reject unknown or
   divergent targets before release mutation and use non-forced tag updates.
@@ -163,6 +167,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Removed
 
+- Remove the superseded first-party shared-web CI/publisher and Tree-sitter
+  publisher GitHub workflows after adding their root Woodpecker equivalents.
 - Remove the retired `beskid hi` command page and `new --tui` picker guidance
   from the current CLI reference; document the line-oriented REPL while keeping
   `graph --tui` in the command surface.
