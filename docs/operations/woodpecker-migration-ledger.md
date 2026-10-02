@@ -17,7 +17,8 @@ reviewing the target outputs.
 - Root Woodpecker owns validation and reviewed GitHub Packages publication for
   the exact pinned shared-web and Tree-sitter submodules. Preparation is
   token-free and publication consumes only checksum-verified prebuilt bytes;
-  the superseded owned submodule GitHub workflows are removed.
+  every package phase rejects tracked or untracked root-source contamination,
+  and the superseded owned submodule GitHub workflows are removed.
 - Existing canonical manual packaging, OpenVSX, Zed, Homebrew, and OCI recipes
   remain optional operator work. They are not release acceptance gates.
 

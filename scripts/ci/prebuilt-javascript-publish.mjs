@@ -99,6 +99,10 @@ function VerifyContext(lane, context = process.env) {
       context.CI_COMMIT_SHA === head,
     `publication requires the trusted Woodpecker ${definition.task} task on the checked-out root source`,
   );
+  Require(
+    Git(ROOT, 'status', '--porcelain=v1', '--untracked-files=all', '--ignore-submodules=none') === '',
+    'root source must be clean before packaging or publication',
+  );
   return head;
 }
 

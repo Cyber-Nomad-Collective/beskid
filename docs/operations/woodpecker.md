@@ -141,7 +141,10 @@ while retaining built `dist` output, and writes checksum-bound tarballs under
 `/woodpecker-output/javascript-<pipeline>-<commit>/<lane>/`. It runs without a
 publisher credential. The final step verifies the same root source, gitlink,
 receipt, checksum inventory, and immutable tarball bytes before invoking
-`npm publish --ignore-scripts`.
+`npm publish --ignore-scripts`. Every prepare, verify, and publish command also
+requires a clean root worktree, including initialized non-selected submodules;
+ordinary ignored dependency and build outputs remain outside Git's source
+inventory.
 
 A repository administrator must provision the existing manual secret name
 `github_packages_publish_token` with actual GitHub Packages write grants for

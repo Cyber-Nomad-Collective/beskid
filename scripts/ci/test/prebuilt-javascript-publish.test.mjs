@@ -65,6 +65,18 @@ function WritePackages(root, lane, mutate) {
   return submodule;
 }
 
+function WriteNonSelectedSubmodule(root, lane) {
+  const submodule = lane === 'shared' ? 'beskid_treesitter' : 'beskid_web_common';
+  const subroot = join(root, submodule);
+  mkdirSync(subroot, { recursive: true });
+  InitRepository(subroot);
+  writeFileSync(join(subroot, '.gitignore'), 'dist/\nnode_modules/\n');
+  writeFileSync(join(subroot, 'README.md'), 'clean non-selected fixture submodule\n');
+  Git(subroot, 'add', '-A');
+  Git(subroot, 'commit', '-qm', 'fixture non-selected submodule');
+  return submodule;
+}
+
 function WriteFakeNpm(bin) {
   mkdirSync(bin, { recursive: true });
   writeFileSync(join(bin, 'npm'), `#!/usr/bin/env node
@@ -115,7 +127,7 @@ process.exit(55);
   execFileSync('chmod', ['+x', join(bin, 'npm')]);
 }
 
-function Setup(lane = 'shared', mutate) {
+function Setup(lane = 'shared', mutate, options = {}) {
   const base = mkdtempSync(join(tmpdir(), 'beskid-js-publish-'));
   const root = join(base, 'repo');
   const bin = join(base, 'bin');
@@ -125,8 +137,11 @@ function Setup(lane = 'shared', mutate) {
   const snapshot = join(base, 'snapshot');
   mkdirSync(join(root, 'scripts/ci'), { recursive: true });
   writeFileSync(join(root, 'scripts/ci/prebuilt-javascript-publish.mjs'), readFileSync(RUNNER_SOURCE));
+  writeFileSync(join(root, '.gitignore'), 'dist/\nnode_modules/\ntarget/\n');
+  writeFileSync(join(root, 'fixture-root.txt'), 'clean root fixture\n');
   InitRepository(root);
   const submodule = WritePackages(root, lane, mutate);
+  const nonSelectedSubmodule = options.withNonSelected ? WriteNonSelectedSubmodule(root, lane) : undefined;
   Git(root, 'add', '-A');
   Git(root, 'commit', '-qm', 'fixture root');
   WriteFakeNpm(bin);
@@ -151,7 +166,7 @@ function Setup(lane = 'shared', mutate) {
   delete env.NPM_TOKEN;
   delete env.GITHUB_TOKEN;
   delete env.GH_TOKEN;
-  return { base, root, bin, log, manifestLog, state, snapshot, source, submodule, lane, env };
+  return { base, root, bin, log, manifestLog, state, snapshot, source, submodule, nonSelectedSubmodule, lane, env };
 }
 
 function Run(fixture, command, extraEnv = {}) {
@@ -318,6 +333,64 @@ test('all commands reject the wrong manual main repository and source context', 
     const result = Run(fixture, 'prepare', changed);
     assert.notEqual(result.status, 0);
     assert.match(result.stderr, /trusted Woodpecker/);
+  }
+});
+
+test('all commands reject tracked and untracked root contamination between stages', (t) => {
+  for (const command of ['prepare', 'verify', 'publish']) {
+    for (const contamination of ['tracked', 'untracked']) {
+      const fixture = Setup('treesitter');
+      t.after(() => Cleanup(fixture.base));
+      if (command !== 'prepare') Prepare(fixture);
+      if (contamination === 'tracked') {
+        writeFileSync(join(fixture.root, 'fixture-root.txt'), `${command} tracked contamination\n`);
+      } else {
+        writeFileSync(join(fixture.root, 'root-contamination.txt'), `${command} untracked contamination\n`);
+      }
+      const extraEnv = command === 'publish'
+        ? { NODE_AUTH_TOKEN: 'x', FAKE_NPM_IDENTITIES: JSON.stringify(ArtifactIdentities(fixture)) }
+        : {};
+      const result = Run(fixture, command, extraEnv);
+      assert.notEqual(result.status, 0, `${command} accepted ${contamination} root contamination`);
+      assert.match(result.stderr, /root source must be clean before packaging/);
+      assert.equal(ReadLog(fixture.log).filter(({ args }) => args[0] === 'publish').length, 0);
+    }
+  }
+});
+
+test('all commands accept ignored build outputs with a clean initialized non-selected submodule', (t) => {
+  const fixture = Setup('treesitter', undefined, { withNonSelected: true });
+  t.after(() => Cleanup(fixture.base));
+  mkdirSync(join(fixture.root, 'dist'), { recursive: true });
+  writeFileSync(join(fixture.root, 'dist', 'root-build-output.js'), 'ignored root build output\n');
+  mkdirSync(join(fixture.root, fixture.nonSelectedSubmodule, 'node_modules'), { recursive: true });
+  writeFileSync(join(fixture.root, fixture.nonSelectedSubmodule, 'node_modules', 'dependency.txt'), 'ignored dependency tree\n');
+  mkdirSync(join(fixture.root, fixture.nonSelectedSubmodule, 'dist'), { recursive: true });
+  writeFileSync(join(fixture.root, fixture.nonSelectedSubmodule, 'dist', 'built.js'), 'ignored non-selected build output\n');
+  let result = Run(fixture, 'prepare');
+  assert.equal(result.status, 0, result.stderr);
+  result = Run(fixture, 'verify');
+  assert.equal(result.status, 0, result.stderr);
+  result = Run(fixture, 'publish', {
+    NODE_AUTH_TOKEN: 'x',
+    FAKE_NPM_IDENTITIES: JSON.stringify(ArtifactIdentities(fixture)),
+  });
+  assert.equal(result.status, 0, result.stderr);
+});
+
+test('preparation rejects tracked and untracked changes in an initialized non-selected submodule', (t) => {
+  for (const contamination of ['tracked', 'untracked']) {
+    const fixture = Setup('treesitter', undefined, { withNonSelected: true });
+    t.after(() => Cleanup(fixture.base));
+    const subroot = join(fixture.root, fixture.nonSelectedSubmodule);
+    if (contamination === 'tracked') {
+      writeFileSync(join(subroot, 'README.md'), 'tracked non-selected contamination\n');
+    } else {
+      writeFileSync(join(subroot, 'unexpected.txt'), 'untracked non-selected contamination\n');
+    }
+    const result = Run(fixture, 'prepare');
+    assert.notEqual(result.status, 0, `prepare accepted ${contamination} non-selected submodule contamination`);
+    assert.match(result.stderr, /root source must be clean before packaging/);
   }
 });
 
