@@ -47,6 +47,7 @@ class PublisherTests(unittest.TestCase):
         for name, sha in [("compiler", self.compiler), ("beskid_vscode", self.editor)]:
             self.git("update-index", "--add", "--cacheinfo", "160000," + sha + "," + name)
         self.git("commit", "-qm", "frozen source")
+        self.git("remote", "add", "origin", "https://github.com/Cyber-Nomad-Collective/beskid.git")
         self.source = self.git("rev-parse", "HEAD").strip()
         self.approval = {
             "schema_version": 1, "version": "0.5.1", "publisher": "beskid", "name": "beskid-vscode",
@@ -236,6 +237,58 @@ class PublisherTests(unittest.TestCase):
         self.approval["source"]["editor_commit"] = "d" * 40
         with self.assertRaises(ValueError):
             self.verify()
+
+    def shallow_source_fixture(self):
+        source_tmp = tempfile.TemporaryDirectory(prefix="beskid-source-")
+        bare_tmp = tempfile.TemporaryDirectory(prefix="beskid-origin-")
+        self.addCleanup(source_tmp.cleanup)
+        self.addCleanup(bare_tmp.cleanup)
+        source_repo = Path(source_tmp.name)
+        bare_repo = Path(bare_tmp.name) / "origin.git"
+        subprocess.run(["git", "init", "-q", str(source_repo)], check=True)
+        def source_git(*args):
+            return subprocess.check_output(["git", "-C", str(source_repo), *args], text=True)
+        source_git("config", "user.name", "fixture")
+        source_git("config", "user.email", "fixture@example.invalid")
+        for name, sha in [("compiler", self.compiler), ("beskid_vscode", self.editor)]:
+            source_git("update-index", "--add", "--cacheinfo", "160000," + sha + "," + name)
+        source_git("commit", "-qm", "approved source")
+        approved = source_git("rev-parse", "HEAD").strip()
+        (source_repo / "history-marker").write_text("newer commit\n")
+        source_git("add", "history-marker")
+        source_git("commit", "-qm", "current checkout")
+        subprocess.run(["git", "init", "--bare", "-q", str(bare_repo)], check=True)
+        source_git("remote", "add", "origin", "https://github.com/Cyber-Nomad-Collective/beskid.git")
+        source_git("config", "url.file://" + str(bare_repo) + ".insteadOf", "https://github.com/Cyber-Nomad-Collective/beskid.git")
+        source_git("push", "-q", "origin", "HEAD")
+        shallow_tmp = tempfile.TemporaryDirectory(prefix="beskid-shallow-")
+        self.addCleanup(shallow_tmp.cleanup)
+        shallow = Path(shallow_tmp.name)
+        subprocess.run(["git", "clone", "-q", "--depth=1", "file://" + str(bare_repo), str(shallow)], check=True)
+        subprocess.run(["git", "-C", str(shallow), "remote", "set-url", "origin", "https://github.com/Cyber-Nomad-Collective/beskid.git"], check=True)
+        self.git_at(shallow, "config", "url.file://" + str(bare_repo) + ".insteadOf", "https://github.com/Cyber-Nomad-Collective/beskid.git")
+        return shallow, approved
+
+    def test_hydrates_shallow_history_from_trusted_origin_before_ancestry(self):
+        shallow, approved = self.shallow_source_fixture()
+        self.assertEqual(self.git_at(shallow, "config", "--get", "remote.origin.url").strip(), "https://github.com/Cyber-Nomad-Collective/beskid.git")
+        approval = copy.deepcopy(self.approval)
+        approval["source"]["superrepo_commit"] = approved
+        approval["source"]["publisher_base_commit"] = approved
+        self.api.VerifySource(approval, shallow)
+        self.assertEqual(self.git_at(shallow, "rev-parse", "--is-shallow-repository"), "false\n")
+
+    def test_rejects_shallow_history_with_untrusted_origin(self):
+        shallow, approved = self.shallow_source_fixture()
+        subprocess.run(["git", "-C", str(shallow), "remote", "set-url", "origin", "https://example.invalid/not-beskid.git"], check=True)
+        approval = copy.deepcopy(self.approval)
+        approval["source"]["superrepo_commit"] = approved
+        approval["source"]["publisher_base_commit"] = approved
+        with self.assertRaises(ValueError):
+            self.api.VerifySource(approval, shallow)
+
+    def git_at(self, root, *args):
+        return subprocess.check_output(["git", "-C", str(root), *args], text=True)
 
     def test_rejects_standalone_native_lsp_digest_drift(self):
         (self.native / self.approval["targets"][0]["native_asset"]).write_bytes(b"tampered")

@@ -22,6 +22,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[2]
 APPROVAL = ROOT / "scripts/ci/editor-marketplace-approvals/0.5.1.json"
+SOURCE_HISTORY = ROOT / "scripts/ci/woodpecker-source-history.sh"
 TARGETS = {
     "linux-x64": ("x86_64-unknown-linux-gnu", "beskid_lsp"),
     "darwin-arm64": ("aarch64-apple-darwin", "beskid_lsp"),
@@ -106,6 +107,10 @@ def VerifySource(approval, root):
                                 stderr=subprocess.PIPE, text=True)
         Require(result.returncode == 0, "approved source is unavailable or not an ancestor")
         return result.stdout.strip()
+    history = subprocess.run(["bash", str(SOURCE_HISTORY), str(root)],
+                             env={k: os.environ[k] for k in ("PATH", "HOME", "SYSTEMROOT") if k in os.environ},
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    Require(history.returncode == 0, "approved source history could not be hydrated")
     Git("merge-base", "--is-ancestor", source["superrepo_commit"], "HEAD")
     Git("merge-base", "--is-ancestor", source["publisher_base_commit"], "HEAD")
     for path, field in (("compiler", "compiler_commit"), ("beskid_vscode", "editor_commit")):

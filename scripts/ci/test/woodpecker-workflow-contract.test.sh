@@ -67,11 +67,13 @@ grep -Fq 'ref: refs/heads/main' "${workflow_dir}/editor.yml"
 grep -Fq 'BESKID_TASK == "editor-publish"' "${workflow_dir}/editor.yml"
 grep -Fq 'from_secret: open_vsx_token' "${workflow_dir}/editor.yml"
 grep -Fq 'depth: 0' "${workflow_dir}/editor.yml"
+grep -Fq 'woodpecker-source-history.sh' "${workflow_dir}/editor.yml"
 grep -Fq 'ovsx@1.2.0' "${workflow_dir}/editor.yml"
 grep -Fq 'npm install --prefix' "${workflow_dir}/editor.yml"
 test "$(grep -c 'npm install --prefix' "${workflow_dir}/editor.yml")" -eq 1
 ! grep -Fq 'rm -rf "$${snapshot}"' "${workflow_dir}/editor.yml"
 ! grep -Eq 'GITHUB_EVENT_NAME|GITHUB_REF|GITHUB_REPOSITORY|OVSX_TOKEN' "${workflow_dir}/editor.yml"
+grep -Fq 'apt-get install -y --no-install-recommends ca-certificates clang gh git jq python3 unzip' "${workflow_dir}/pckg.yml"
 
 # This contract owns only native build and standard validation lanes. Editor,
 # security and protected publishing lanes have separate policy contracts;

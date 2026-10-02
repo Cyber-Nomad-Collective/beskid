@@ -17,6 +17,7 @@ steps:
       - apt-get update >/dev/null
       - apt-get install -y --no-install-recommends ca-certificates git python3 >/dev/null
       - snapshot="/woodpecker-output/editor-$${CI_PIPELINE_NUMBER}-$${CI_COMMIT_SHA}"
+      - bash scripts/ci/woodpecker-source-history.sh
       - python3 scripts/ci/prebuilt-editor-publish.py prepare "$${snapshot}"
       - toolchain="$${snapshot}/ovsx-toolchain"
       - npm install --prefix "$${toolchain}" --ignore-scripts --no-audit --no-fund ovsx@1.2.0
