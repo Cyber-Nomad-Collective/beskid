@@ -122,6 +122,30 @@ curl --fail --silent --show-error \
   '.version == "0.5.1" and (.files.download | contains("linux-x64"))'
 ```
 
+### Marketplace-only publisher derivative
+
+The verified VSIX files remain `beskid` artifacts for Open VSX. To prepare a
+separate Visual Studio Marketplace upload for the owner-created `beskid-lang`
+publisher, run the bounded metadata-stage transform into a new, nonexistent
+directory:
+
+```bash
+python3 scripts/ci/package-marketplace-editor.py \
+  /absolute/approved-editors \
+  scripts/ci/editor-marketplace-approvals/0.5.1.json \
+  /absolute/new-marketplace-derivatives
+```
+
+The command validates each original digest, target platform, embedded LSP
+digest, safe ZIP inventory, and original self-formatter ID before writing
+`*-marketplace.vsix` files and `marketplace-approval.json`. Only the package
+publisher, the `[beskid]` formatter self-ID, and the VSIX manifest publisher
+change. The receipt records separate original and derivative hashes,
+inventory hashes, target/version, LSP digest, and source pins. It is not an
+Open VSX approval and does not authorize upload or claim Marketplace host
+acceptance; a release owner must perform the fresh install, activation, and
+formatter check before publication.
+
 The SFTP inbox is `/var/lib/woodpecker-handoff/<role>/incoming/<build>-<sha>/<role>`.
 Prepared output is `/var/lib/woodpecker/beskid-output/releases/<release-run>-<sha>`.
 Each invocation creates a new private snapshot; interrupted output remains for
