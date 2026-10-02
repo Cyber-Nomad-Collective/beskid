@@ -137,14 +137,17 @@ python3 scripts/ci/package-marketplace-editor.py \
 ```
 
 The command validates each original digest, target platform, embedded LSP
-digest, safe ZIP inventory, and original self-formatter ID before writing
+digest, exact approved source pins, raw-path symlink safety, safe ZIP
+inventory, and original self-formatter ID before writing
 `*-marketplace.vsix` files and `marketplace-approval.json`. Only the package
 publisher, the `[beskid]` formatter self-ID, and the VSIX manifest publisher
 change. The receipt records separate original and derivative hashes,
 inventory hashes, target/version, LSP digest, and source pins. It is not an
 Open VSX approval and does not authorize upload or claim Marketplace host
 acceptance; a release owner must perform the fresh install, activation, and
-formatter check before publication.
+formatter check before publication. Repeating the transform with the same
+inputs produces byte-identical derivatives; the receipt also requires equal
+non-metadata entry inventories.
 
 The SFTP inbox is `/var/lib/woodpecker-handoff/<role>/incoming/<build>-<sha>/<role>`.
 Prepared output is `/var/lib/woodpecker/beskid-output/releases/<release-run>-<sha>`.

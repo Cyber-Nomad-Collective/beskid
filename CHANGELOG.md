@@ -57,6 +57,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Harden Marketplace-only editor derivative provenance with raw-path symlink
+  checks, exact approved source pins, non-metadata inventory comparison,
+  repeated-run determinism coverage, and encoding-safe XML DTD rejection.
 - Require the protected package publisher to use the immutable, digest-verified
   full release bundle, pinned-source-verified Corelib, and matching runtime
   prefix; remove raw compiler and local Cargo-build fallbacks.

@@ -26,6 +26,12 @@ TARGETS = {
     "win32-x64": ("x86_64-pc-windows-msvc", "beskid_lsp.exe"),
 }
 DERIVATIVE_PUBLISHER = "beskid-lang"
+APPROVED_SOURCE = {
+    "superrepo_commit": "f064de92777d36c249424a18f92c91abd6f3e248",
+    "compiler_commit": "1bd7bdee81d59ef14339e6a6c2ce18eb36585238",
+    "editor_commit": "270cc2b4caec843516fa5ad684a6e1eb1d1608e6",
+    "publisher_base_commit": "3179295444affc9a646a272c0a1ec677ce00acf5",
+}
 
 
 def Require(condition, message):
@@ -54,6 +60,18 @@ def FileDigest(path):
     Require(path.is_file() and not path.is_symlink(), "expected approved regular VSIX: " + str(path))
     Require(path.stat().st_size <= MAX_VSIX, "VSIX exceeds size bound: " + path.name)
     return Digest(path.read_bytes())
+
+
+def RejectSymlinkComponents(path, label):
+    absolute = path if path.is_absolute() else Path.cwd() / path
+    current = Path(absolute.anchor)
+    for component in absolute.parts[1:]:
+        current /= component
+        # macOS exposes the temporary directory through this system symlink;
+        # user-controlled components below it are still checked individually.
+        if str(current) in ("/var", "/tmp"):
+            continue
+        Require(not current.is_symlink(), label + " contains a symlink: " + str(current))
 
 
 def SafeEntry(item):
@@ -98,10 +116,14 @@ def Inventory(archive, target):
 
 
 def ParseManifest(xml_bytes, target, publisher):
-    Require(len(xml_bytes) <= 1024 * 1024 and b"<!DOCTYPE" not in xml_bytes.upper() and
-            b"<!ENTITY" not in xml_bytes.upper(), "unsafe VSIX XML")
+    Require(len(xml_bytes) <= 1024 * 1024, "unsafe VSIX XML")
     try:
-        document = ET.fromstring(xml_bytes)
+        xml_text = xml_bytes.decode("utf-8")
+    except UnicodeDecodeError as error:
+        raise ValueError("unsafe VSIX XML") from error
+    Require("<!DOCTYPE" not in xml_text.upper() and "<!ENTITY" not in xml_text.upper(), "unsafe VSIX XML")
+    try:
+        document = ET.fromstring(xml_text)
     except ET.ParseError as error:
         raise ValueError("malformed VSIX XML") from error
     identities = [element for element in document.iter() if element.tag.split("}")[-1] == "Identity"]
@@ -139,6 +161,7 @@ def ValidateApproval(approval):
             "unsupported Open VSX approval identity")
     for field in ("superrepo_commit", "compiler_commit", "editor_commit", "publisher_base_commit"):
         Require(re.fullmatch(r"[0-9a-f]{40}", approval.get("source", {}).get(field, "")), "invalid source pin")
+    Require(approval["source"] == APPROVED_SOURCE, "approval source pins are not the approved 0.5.1 pins")
     entries = approval.get("targets", [])
     Require(len(entries) == 3 and {x.get("target") for x in entries} == set(TARGETS), "incomplete approved target set")
     for entry in entries:
@@ -185,6 +208,9 @@ def WriteDerivative(source, destination, target):
 
 
 def Package(originals, approval_path, output):
+    RejectSymlinkComponents(originals, "originals path")
+    RejectSymlinkComponents(approval_path, "approval path")
+    RejectSymlinkComponents(output, "output path")
     Require(not output.exists() and not output.is_symlink(), "derivative output must not already exist")
     Require(originals.is_dir() and not originals.is_symlink(), "original VSIX directory is missing")
     approval = ReadJson(approval_path.read_bytes())
@@ -208,12 +234,18 @@ def Package(originals, approval_path, output):
                 ParseManifest(archive.read("extension.vsixmanifest"), entry["target"], DERIVATIVE_PUBLISHER)
                 lsp = archive.read("extension/server/" + entry["target"] + "/" + TARGETS[entry["target"]][1])
                 Require(Digest(lsp) == entry["lsp_sha256"], "derivative LSP digest mismatch")
+            original_payloads = {item["name"]: item for item in original_inventory
+                                 if item["name"] not in {"extension/package.json", "extension.vsixmanifest"}}
+            derivative_payloads = {item["name"]: item for item in derivative_inventory
+                                   if item["name"] not in {"extension/package.json", "extension.vsixmanifest"}}
+            Require(original_payloads == derivative_payloads,
+                    "non-metadata ZIP inventory differs between original and derivative")
             result["targets"].append({"target": entry["target"], "version": "0.5.1", "target_platform": entry["target"],
                 "original_asset": entry["asset"], "original_sha256": entry["sha256"], "derivative_asset": derivative_asset,
                 "derivative_sha256": FileDigest(destination), "lsp_sha256": entry["lsp_sha256"],
                 "original_inventory_sha256": Digest(json.dumps(original_inventory, sort_keys=True).encode()),
                 "derivative_inventory_sha256": Digest(json.dumps(derivative_inventory, sort_keys=True).encode()),
-                "identity": "beskid-lang.beskid-vscode", "native_target": entry["native_target"],
+                "non_metadata_inventory_equal": True, "identity": "beskid-lang.beskid-vscode", "native_target": entry["native_target"],
                 "native_asset": entry["native_asset"]})
     except Exception:
         for child in output.iterdir():
@@ -230,7 +262,7 @@ def Main():
     parser.add_argument("approval", type=Path)
     parser.add_argument("output", type=Path)
     args = parser.parse_args()
-    Package(args.originals.resolve(), args.approval.resolve(), args.output.resolve())
+    Package(args.originals, args.approval, args.output)
     print("Marketplace-only derivative package: verified 0.5.1 complete target set")
 
 

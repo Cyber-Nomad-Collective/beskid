@@ -3,10 +3,12 @@
 import hashlib
 import importlib.util
 import json
+import os
 from pathlib import Path
 import tempfile
 import unittest
 import zipfile
+import subprocess
 
 
 SCRIPT = Path(__file__).resolve().parents[1] / "package-marketplace-editor.py"
@@ -43,8 +45,10 @@ class MarketplacePackagerTests(unittest.TestCase):
             })
         self.approval.write_text(json.dumps({
             "schema_version": 1, "version": "0.5.1", "publisher": "beskid", "name": "beskid-vscode",
-            "source": {field: "a" * 40 for field in (
-                "superrepo_commit", "compiler_commit", "editor_commit", "publisher_base_commit")},
+            "source": {"superrepo_commit": "f064de92777d36c249424a18f92c91abd6f3e248",
+                       "compiler_commit": "1bd7bdee81d59ef14339e6a6c2ce18eb36585238",
+                       "editor_commit": "270cc2b4caec843516fa5ad684a6e1eb1d1608e6",
+                       "publisher_base_commit": "3179295444affc9a646a272c0a1ec677ce00acf5"},
             "editor_release": {"repository": "fixture/editor", "tag": "editor-v0.5.1"},
             "native_release": {"repository": "fixture/native", "tag": "lsp-v0.5.1"},
             "targets": self.targets,
@@ -130,6 +134,60 @@ class MarketplacePackagerTests(unittest.TestCase):
                 self.assertEqual(names, set(generated.namelist()))
                 for name in names - {"extension/package.json", "extension.vsixmanifest"}:
                     self.assertEqual(original.read(name), generated.read(name), name)
+
+    def test_repeated_runs_are_byte_deterministic_for_every_target(self):
+        first, second = self.root / "first", self.root / "second"
+        API.Package(self.originals, self.approval, first)
+        API.Package(self.originals, self.approval, second)
+        for item in self.targets:
+            name = item["asset"].replace(".vsix", "-marketplace.vsix")
+            self.assertEqual((first / name).read_bytes(), (second / name).read_bytes())
+            self.assertEqual(item["sha256"], self._digest(self.originals / item["asset"]))
+
+    def test_inventory_comparison_rejects_changed_non_metadata_payload(self):
+        original_writer = API.WriteDerivative
+        def corrupt(source, destination, target):
+            original_writer(source, destination, target)
+            temporary = destination.with_suffix(".corrupt.vsix")
+            with zipfile.ZipFile(destination) as source_archive, zipfile.ZipFile(temporary, "w") as archive:
+                for item in source_archive.infolist():
+                    archive.writestr(item, b"corrupted" if item.filename == "extension/unchanged.bin" else source_archive.read(item))
+            temporary.replace(destination)
+        API.WriteDerivative = corrupt
+        try:
+            with self.assertRaises(ValueError):
+                API.Package(self.originals, self.approval, self.root / "corrupt")
+        finally:
+            API.WriteDerivative = original_writer
+
+    def test_rejects_mutated_source_pin_with_unchanged_artifacts(self):
+        approval = json.loads(self.approval.read_text())
+        approval["source"]["compiler_commit"] = "a" * 40
+        mutated = self.root / "mutated-approval.json"
+        mutated.write_text(json.dumps(approval))
+        with self.assertRaises(ValueError):
+            API.Package(self.originals, mutated, self.root / "mutated")
+
+    def test_cli_rejects_raw_path_symlinks_before_resolution(self):
+        output_link = self.root / "dangling-output"
+        output_link.symlink_to(self.root / "outside")
+        result = subprocess.run(["python3", str(SCRIPT), str(self.originals), str(self.approval), str(output_link)],
+                                text=True, capture_output=True)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse((self.root / "outside").exists())
+        originals_link = self.root / "originals-link"
+        originals_link.symlink_to(self.originals, target_is_directory=True)
+        result = subprocess.run(["python3", str(SCRIPT), str(originals_link), str(self.approval), str(self.root / "link-out")],
+                                text=True, capture_output=True)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse((self.root / "link-out").exists())
+
+    def test_rejects_utf16_xml_dtd_at_parser_boundary(self):
+        xml = ('<?xml version="1.0" encoding="UTF-16"?>\n<!DOCTYPE PackageManifest [<!ENTITY x "y">]>\n'
+               '<PackageManifest><Metadata><Identity Publisher="beskid" Id="beskid-vscode" Version="0.5.1" '
+               'TargetPlatform="linux-x64"/></Metadata></PackageManifest>').encode("utf-16")
+        with self.assertRaisesRegex(ValueError, "unsafe VSIX XML"):
+            API.ParseManifest(xml, "linux-x64", "beskid")
 
     def test_rejects_signature_and_traversal_entries(self):
         for index, (extra, signature) in enumerate(
