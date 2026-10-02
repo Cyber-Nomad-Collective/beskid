@@ -7,6 +7,7 @@ LSP, never changes the Open VSX approval, and accepts only the fixed
 """
 import argparse
 import hashlib
+import importlib.util
 import json
 from pathlib import Path
 import re
@@ -32,6 +33,10 @@ APPROVED_SOURCE = {
     "editor_commit": "270cc2b4caec843516fa5ad684a6e1eb1d1608e6",
     "publisher_base_commit": "3179295444affc9a646a272c0a1ec677ce00acf5",
 }
+ROOT = Path(__file__).resolve().parents[2]
+VERIFIER_SPEC = importlib.util.spec_from_file_location("prebuilt_editor_publish", ROOT / "scripts/ci/prebuilt-editor-publish.py")
+VERIFIER = importlib.util.module_from_spec(VERIFIER_SPEC)
+VERIFIER_SPEC.loader.exec_module(VERIFIER)
 
 
 def Require(condition, message):
@@ -115,7 +120,7 @@ def Inventory(archive, target):
     return records
 
 
-def ParseManifest(xml_bytes, target, publisher):
+def ParseManifest(xml_bytes, target, publisher, version="0.5.1"):
     Require(len(xml_bytes) <= 1024 * 1024, "unsafe VSIX XML")
     try:
         xml_text = xml_bytes.decode("utf-8")
@@ -130,12 +135,12 @@ def ParseManifest(xml_bytes, target, publisher):
     Require(len(identities) == 1, "VSIX identity is not unique")
     identity = identities[0].attrib
     Require(identity.get("Publisher") == publisher and identity.get("Id") == "beskid-vscode" and
-            identity.get("Version") == "0.5.1" and identity.get("TargetPlatform") == target,
+            identity.get("Version") == version and identity.get("TargetPlatform") == target,
             "VSIX identity/version/target mismatch")
     return identity
 
 
-def InspectOriginal(path, entry):
+def InspectOriginal(path, entry, version="0.5.1"):
     Require(FileDigest(path) == entry["sha256"], "approved original VSIX digest mismatch: " + entry["target"])
     expected_lsp = "extension/server/" + entry["target"] + "/" + TARGETS[entry["target"]][1]
     with zipfile.ZipFile(path) as archive:
@@ -146,26 +151,31 @@ def InspectOriginal(path, entry):
         Require(len(package_bytes) <= MAX_JSON, "package identity exceeds size bound")
         package = ReadJson(package_bytes)
         Require(package.get("publisher") == "beskid" and package.get("name") == "beskid-vscode" and
-                package.get("version") == "0.5.1", "package identity/version mismatch")
+                package.get("version") == version, "package identity/version mismatch")
         formatter = package.get("contributes", {}).get("configurationDefaults", {}).get("[beskid]", {}).get("editor.defaultFormatter")
         Require(formatter == "beskid.beskid-vscode", "original formatter self-ID mismatch")
-        ParseManifest(archive.read("extension.vsixmanifest"), entry["target"], "beskid")
+        ParseManifest(archive.read("extension.vsixmanifest"), entry["target"], "beskid", version)
         lsp = archive.read(expected_lsp)
         Require(Digest(lsp) == entry["lsp_sha256"], "ZIP LSP identity/digest mismatch")
     return records
 
 
 def ValidateApproval(approval):
-    Require(approval.get("schema_version") == 1 and approval.get("version") == "0.5.1" and
+    version = approval.get("version")
+    Require(approval.get("schema_version") == 1 and version in ("0.5.1", "0.5.2") and
             approval.get("publisher") == "beskid" and approval.get("name") == "beskid-vscode",
             "unsupported Open VSX approval identity")
     for field in ("superrepo_commit", "compiler_commit", "editor_commit", "publisher_base_commit"):
         Require(re.fullmatch(r"[0-9a-f]{40}", approval.get("source", {}).get(field, "")), "invalid source pin")
-    Require(approval["source"] == APPROVED_SOURCE, "approval source pins are not the approved 0.5.1 pins")
+    if version == "0.5.2":
+        VERIFIER.VerifyApproval(approval)
+        Require(approval == VERIFIER.SelectApproval(version), "approval is not the tracked 0.5.2 contract")
+    else:
+        Require(approval["source"] == APPROVED_SOURCE, "approval source pins are not the approved 0.5.1 pins")
     entries = approval.get("targets", [])
     Require(len(entries) == 3 and {x.get("target") for x in entries} == set(TARGETS), "incomplete approved target set")
     for entry in entries:
-        Require(entry.get("asset") == "beskid-vscode-0.5.1-" + entry["target"] + ".vsix", "approved asset name mismatch")
+        Require(entry.get("asset") == "beskid-vscode-" + version + "-" + entry["target"] + ".vsix", "approved asset name mismatch")
         Require(entry.get("native_target") == TARGETS[entry["target"]][0] and
                 entry.get("native_asset") == "beskid_lsp-" + {
                     "linux-x64": "linux-amd64", "darwin-arm64": "darwin-arm64",
@@ -188,6 +198,7 @@ def DerivativePackage(package):
 
 def WriteDerivative(source, destination, target):
     with zipfile.ZipFile(source) as original, zipfile.ZipFile(destination, "w", allowZip64=False) as derivative:
+        version = ReadJson(original.read("extension/package.json"))["version"]
         for item in original.infolist():
             info = zipfile.ZipInfo(item.filename, date_time=(1980, 1, 1, 0, 0, 0))
             info.comment, info.extra, info.internal_attr, info.external_attr = item.comment, item.extra, item.internal_attr, item.external_attr
@@ -202,12 +213,12 @@ def WriteDerivative(source, destination, target):
                     rb'(<(?:[A-Za-z_][\w.-]*:)?Identity\b[^>]*\bPublisher=")beskid(")',
                     rb'\1beskid-lang\2', xml, count=1)
                 Require(replacements == 1, "VSIX identity publisher field is missing or ambiguous")
-                ParseManifest(xml, target, DERIVATIVE_PUBLISHER)
+                ParseManifest(xml, target, DERIVATIVE_PUBLISHER, version)
                 data = xml
             derivative.writestr(info, data)
 
 
-def Package(originals, approval_path, output):
+def Package(originals, approval_path, output, native=None, root=None):
     RejectSymlinkComponents(originals, "originals path")
     RejectSymlinkComponents(approval_path, "approval path")
     RejectSymlinkComponents(output, "output path")
@@ -215,23 +226,28 @@ def Package(originals, approval_path, output):
     Require(originals.is_dir() and not originals.is_symlink(), "original VSIX directory is missing")
     approval = ReadJson(approval_path.read_bytes())
     entries = ValidateApproval(approval)
+    version = approval["version"]
+    if version == "0.5.2":
+        Require(native is not None and root is not None, "0.5.2 derivative requires qualified native evidence and source checkout")
+        VERIFIER.VerifyRelease(approval, originals, native, root)
     output.mkdir(mode=0o700)
     result = {"schema_version": 1, "channel": "marketplace", "publisher": DERIVATIVE_PUBLISHER,
-              "name": "beskid-vscode", "version": "0.5.1", "formatter_self_id": "beskid-lang.beskid-vscode",
-              "source": approval["source"], "original_approval": str(approval_path), "targets": []}
+              "name": "beskid-vscode", "version": version, "formatter_self_id": "beskid-lang.beskid-vscode",
+              "source": approval["source"], "original_approval": ("scripts/ci/editor-marketplace-approvals/0.5.2.json"
+                if version == "0.5.2" else str(approval_path)), "targets": []}
     try:
         for entry in entries:
             source = originals / entry["asset"]
-            original_inventory = InspectOriginal(source, entry)
+            original_inventory = InspectOriginal(source, entry, version)
             derivative_asset = entry["asset"].replace(".vsix", "-marketplace.vsix")
             destination = output / derivative_asset
             WriteDerivative(source, destination, entry["target"])
             with zipfile.ZipFile(destination) as archive:
                 derivative_inventory = Inventory(archive, entry["target"])
                 package = ReadJson(archive.read("extension/package.json"))
-                Require(package["publisher"] == DERIVATIVE_PUBLISHER and package["version"] == "0.5.1",
+                Require(package["publisher"] == DERIVATIVE_PUBLISHER and package["version"] == version,
                         "derivative package identity mismatch")
-                ParseManifest(archive.read("extension.vsixmanifest"), entry["target"], DERIVATIVE_PUBLISHER)
+                ParseManifest(archive.read("extension.vsixmanifest"), entry["target"], DERIVATIVE_PUBLISHER, version)
                 lsp = archive.read("extension/server/" + entry["target"] + "/" + TARGETS[entry["target"]][1])
                 Require(Digest(lsp) == entry["lsp_sha256"], "derivative LSP digest mismatch")
             original_payloads = {item["name"]: item for item in original_inventory
@@ -240,7 +256,7 @@ def Package(originals, approval_path, output):
                                    if item["name"] not in {"extension/package.json", "extension.vsixmanifest"}}
             Require(original_payloads == derivative_payloads,
                     "non-metadata ZIP inventory differs between original and derivative")
-            result["targets"].append({"target": entry["target"], "version": "0.5.1", "target_platform": entry["target"],
+            result["targets"].append({"target": entry["target"], "version": version, "target_platform": entry["target"],
                 "original_asset": entry["asset"], "original_sha256": entry["sha256"], "derivative_asset": derivative_asset,
                 "derivative_sha256": FileDigest(destination), "lsp_sha256": entry["lsp_sha256"],
                 "original_inventory_sha256": Digest(json.dumps(original_inventory, sort_keys=True).encode()),
@@ -261,9 +277,11 @@ def Main():
     parser.add_argument("originals", type=Path)
     parser.add_argument("approval", type=Path)
     parser.add_argument("output", type=Path)
+    parser.add_argument("--native", type=Path)
+    parser.add_argument("--root", type=Path)
     args = parser.parse_args()
-    Package(args.originals, args.approval, args.output)
-    print("Marketplace-only derivative package: verified 0.5.1 complete target set")
+    result = Package(args.originals, args.approval, args.output, args.native, args.root)
+    print("Marketplace-only derivative package: verified " + result["version"] + " complete target set")
 
 
 if __name__ == "__main__":

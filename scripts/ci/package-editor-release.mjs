@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Package the already-verified native release LSP without rebuilding compiler sources.
 import { execFileSync } from "node:child_process";
-import { realpathSync } from "node:fs";
+import { readFileSync, realpathSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { resolveEditorAuthoringVersion } from "./editor-version.mjs";
@@ -49,6 +49,24 @@ export function resolveVerifiedEditorLsp({ evidence, evidenceRoot, platformKey, 
   return { artifactPath: join(resolve(evidenceRoot), platform.lane, platform.asset), sha256: artifacts[0].sha256 };
 }
 
+export function VerifyEditorNativeRoots(root, nativeRoot, editorRoot) {
+  if (![nativeRoot, editorRoot].every(pin => /^[a-f0-9]{40}$/.test(pin ?? ""))) {
+    throw new Error("editor release requires exact native and editor root commits");
+  }
+  const git = (...args) => execFileSync("git", ["-C", root, ...args], { encoding: "utf8", stdio: "pipe" }).trim();
+  if ([nativeRoot, editorRoot].some(pin => git("cat-file", "-t", pin) !== "commit")) {
+    throw new Error("editor release source pin is not a commit object");
+  }
+  git("merge-base", "--is-ancestor", nativeRoot, editorRoot);
+  git("merge-base", "--is-ancestor", editorRoot, "HEAD");
+  const nativeCompiler = git("ls-tree", nativeRoot, "--", "compiler");
+  if (!/^160000 commit [a-f0-9]{40}\tcompiler$/.test(nativeCompiler) ||
+      git("ls-tree", editorRoot, "--", "compiler") !== nativeCompiler) {
+    throw new Error("editor root compiler pin differs from native evidence source");
+  }
+  return nativeCompiler.slice("160000 commit ".length, "160000 commit ".length + 40);
+}
+
 function main() {
   const [platformKey, evidenceDirectory, nativeSourceCommit] = process.argv.slice(2);
   if (!platformKey || !evidenceDirectory || !nativeSourceCommit || process.argv.length !== 5) {
@@ -60,11 +78,21 @@ function main() {
   const extensionRoot = join(root, "beskid_vscode");
   attestEditorSource(root);
   const git = (...args) => execFileSync("git", ["-C", root, ...args], { encoding: "utf8" }).trim();
-  const sourceCommit = git("rev-parse", `${nativeSourceCommit}^{commit}`);
-  git("merge-base", "--is-ancestor", sourceCommit, "HEAD");
-  const compilerCommit = git("rev-parse", `${sourceCommit}:compiler`);
-  if (git("rev-parse", "HEAD:compiler") !== compilerCommit) throw new Error("editor root compiler pin differs from native evidence source");
   const version = resolveEditorAuthoringVersion(join(root, "editors/zed"), extensionRoot);
+  const sourceCommit = nativeSourceCommit;
+  const approved = version === "0.5.2" ? JSON.parse(readFileSync(
+    join(root, "scripts/ci/editor-marketplace-approvals/0.5.2.json"), "utf8")).source : null;
+  const editorRoot = approved?.superrepo_commit ?? git("rev-parse", "HEAD");
+  const compilerCommit = VerifyEditorNativeRoots(root, sourceCommit, editorRoot);
+  if (version === "0.5.2") {
+    git("merge-base", "--is-ancestor", approved.publisher_base_commit, "HEAD");
+    if (sourceCommit !== approved.native_superrepo_commit || compilerCommit !== approved.compiler_commit ||
+        git("ls-tree", "HEAD", "--", "compiler") !== `160000 commit ${approved.compiler_commit}\tcompiler` ||
+        git("ls-tree", editorRoot, "--", "beskid_vscode") !== `160000 commit ${approved.editor_commit}\tbeskid_vscode` ||
+        git("rev-parse", "HEAD:beskid_vscode") !== approved.editor_commit) {
+      throw new Error("0.5.2 packaging source differs from the tracked exact two-root contract");
+    }
+  }
   const evidenceRoot = resolve(evidenceDirectory);
   const evidence = JSON.parse(execFileSync(process.execPath,
     [join(root, "scripts/ci/woodpecker-release-evidence.mjs"), evidenceRoot, platform.lane], { encoding: "utf8" }));

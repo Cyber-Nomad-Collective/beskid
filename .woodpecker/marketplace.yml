@@ -17,7 +17,7 @@ steps:
       - apt-get update >/dev/null
       - apt-get install -y --no-install-recommends ca-certificates git python3 >/dev/null
       - bash scripts/ci/woodpecker-source-history.sh .
-      - python3 scripts/ci/marketplace-publish.py preflight /woodpecker-output/marketplace/staged/editor-marketplace-v0.5.1 /woodpecker-output/marketplace/attempts/$${CI_PIPELINE_NUMBER}-$${CI_COMMIT_SHA}
+      - python3 scripts/ci/marketplace-publish.py --version "$${BESKID_EDITOR_PUBLISH_VERSION:-0.5.1}" preflight /woodpecker-output/marketplace/staged/editor-marketplace-v$${BESKID_EDITOR_PUBLISH_VERSION:-0.5.1} /woodpecker-output/marketplace/attempts/$${CI_PIPELINE_NUMBER}-$${CI_COMMIT_SHA}
 
   - name: install-marketplace-publisher
     image: node:22.16.0-bookworm
@@ -32,7 +32,7 @@ steps:
       VSCE_PAT:
         from_secret: vsce_pat
     commands:
-      - python3 scripts/ci/marketplace-publish.py publish /woodpecker-output/marketplace/attempts/$${CI_PIPELINE_NUMBER}-$${CI_COMMIT_SHA}
+      - python3 scripts/ci/marketplace-publish.py --version "$${BESKID_EDITOR_PUBLISH_VERSION:-0.5.1}" publish /woodpecker-output/marketplace/attempts/$${CI_PIPELINE_NUMBER}-$${CI_COMMIT_SHA}
 
 # This is a publication-only route. It consumes the owner-staged immutable
 # derivative release and never builds, packages, downloads, or rewrites VSIXs.

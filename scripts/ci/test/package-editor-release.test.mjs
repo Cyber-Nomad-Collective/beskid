@@ -5,6 +5,7 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { attestEditorSource, resolveVerifiedEditorLsp } from "../package-editor-release.mjs";
+import * as packager from "../package-editor-release.mjs";
 
 const sourceCommit = "a".repeat(40), compilerCommit = "b".repeat(40), sha256 = "c".repeat(64);
 function fixture() {
@@ -46,6 +47,26 @@ function sourceFixture(t) {
   git(root, "commit", "-qm", "root source");
   return { root, editor, git };
 }
+
+test("verifies exact native ancestor/editor descendant roots with the same compiler", t => {
+  const f = sourceFixture(t);
+  f.git(f.root, "update-index", "--add", "--cacheinfo", `160000,${compilerCommit},compiler`);
+  f.git(f.root, "commit", "-qm", "native compiler");
+  const native = f.git(f.root, "rev-parse", "HEAD");
+  f.git(f.editor, "commit", "--allow-empty", "-qm", "final editor");
+  f.git(f.root, "update-index", "--cacheinfo", `160000,${f.git(f.editor, "rev-parse", "HEAD")},beskid_vscode`);
+  f.git(f.root, "commit", "-qm", "editor root");
+  const editor = f.git(f.root, "rev-parse", "HEAD");
+  f.git(f.root, "commit", "--allow-empty", "-qm", "publisher");
+  assert.equal(typeof packager.VerifyEditorNativeRoots, "function", "exact root authority is not implemented");
+  assert.equal(packager.VerifyEditorNativeRoots(f.root, native, editor), compilerCommit);
+  for (const pin of ["", native.slice(0, 8), "F".repeat(40), "e".repeat(40), f.git(f.root, "rev-parse", "HEAD")]) {
+    assert.throws(() => packager.VerifyEditorNativeRoots(f.root, pin, editor));
+  }
+  f.git(f.root, "update-index", "--cacheinfo", `160000,${"f".repeat(40)},compiler`);
+  f.git(f.root, "commit", "-qm", "changed compiler");
+  assert.throws(() => packager.VerifyEditorNativeRoots(f.root, native, f.git(f.root, "rev-parse", "HEAD")), /compiler/);
+});
 
 test("attests the clean root and its pinned editor checkout", t => {
   const { root } = sourceFixture(t);

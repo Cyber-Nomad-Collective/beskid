@@ -1,5 +1,49 @@
 # Manual prebuilt editor marketplace publication
 
+## Bounded 0.5.2 source-binding implementation
+
+The separately tracked `scripts/ci/editor-marketplace-approvals/0.5.2.json`
+records the actual original VSIX and standalone LSP digests without changing any
+artifact. Its `source.superrepo_commit` is the editor artifact root
+`e06d6b4b1e7e06a602bcf0b575e9fc05d921106b`; mandatory
+`source.native_superrepo_commit` is the original native build root
+`2de50cdaef9b1f34e0b246eadad70a17fd43f6d8`. Both must be exact commit objects,
+the native root must be an ancestor of the editor root, and both trees must pin
+compiler `95c203ff12639b25e2c67b08da531e3715fef4c2`. Only the editor root must
+pin editor `838d10b4606097e8fba8dc311c70dd9053607b9c`. The editor root and
+publisher base must be ancestors of the trusted publisher HEAD. A sibling native
+root reachable only through a later publisher merge cannot qualify.
+
+Native state retains its original native-root provenance and must genuinely be
+stable, publishable and gate-qualified for the complete target set. The native
+release tag still resolves to the compiler commit; the editor tag resolves to
+the editor artifact root. The Marketplace derivative packager requires these
+freshly verified exact originals and qualified native evidence through `--native`
+and `--root` for 0.5.2. It carries the complete source unchanged into its receipt,
+permits only publisher and formatter self-ID changes, and preserves all other
+payload inventories. Marketplace source, original/LSP digests, derivative digests,
+actual raw host proof, sanitized qualification and publication attempt bind that
+same complete source object. A raw 0.5.2 host receipt must additionally carry the
+complete `source` and exact qualified `derivative_sha256`; old proof cannot be
+restamped into qualification.
+
+The manual Woodpecker editor and Marketplace lanes select only tracked 0.5.1 or
+0.5.2 through `BESKID_EDITOR_PUBLISH_VERSION` (default 0.5.1). Open VSX accepts
+`--version 0.5.2` after its command; Marketplace accepts it before its command.
+There are no caller-selected production approval paths, source pins or hashes.
+The 0.5.1 approval bytes and compiler-specific source hold remain unchanged.
+
+This records implementation approval, not publication eligibility. The new
+contract has `publication_enabled: false`, with explicit pending qualifications.
+Production stops before transport or credential use. Final native source gates
+and stable/publishable release-state, immutable release tags/assets, fresh exact
+Marketplace derivative approval/digests, actual formatter host qualification, and
+installer qualification or an explicit owner waiver remain required. No genuine
+derivative or host hashes are populated by this implementation. Enabling either
+channel requires a further reviewed tracked qualification change and separate
+publication authorization. Existing historical sections below describe 0.5.1;
+they are not authority to publish 0.5.2.
+
 ## Recommendation and scope
 
 A root-repository, manual-only GitHub Actions publisher can use the existing

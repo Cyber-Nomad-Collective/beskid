@@ -2,7 +2,7 @@
 """Verify frozen editor/native archives and publish only prebuilt Open VSX files.
 
 No archive is extracted and no extension or native payload is executed. The only
-production approval record is the tracked JSON beside this script.
+production approval records are the bounded tracked JSONs beside this script.
 """
 import argparse
 import hashlib
@@ -87,25 +87,40 @@ def FileDigest(path, limit):
         return StreamDigest(file, limit)
 
 
+def SelectApproval(version):
+    Require(version in ("0.5.1", "0.5.2"), "unsupported editor publication version")
+    return ReadJson((APPROVAL.parent / (version + ".json")).read_bytes())
+
+
+def RequireQualification(approval):
+    if approval["version"] == "0.5.2":
+        Require(approval.get("publication_enabled") is True,
+                approval.get("publication_hold") or "0.5.2 publication qualifications are pending")
+
+
 def VerifyApproval(approval):
-    Require(approval.get("schema_version") == 1 and approval.get("version") == "0.5.1" and
+    version = approval.get("version")
+    Require(approval.get("schema_version") == 1 and version in ("0.5.1", "0.5.2") and
             approval.get("publisher") == "beskid" and approval.get("name") == "beskid-vscode",
             "unsupported approval identity")
     source = approval["source"]
     for field in ("superrepo_commit", "compiler_commit", "editor_commit", "publisher_base_commit"):
         Require(re.fullmatch(r"[0-9a-f]{40}", source.get(field, "")), "invalid approved source")
+    if version == "0.5.2":
+        Require(re.fullmatch(r"[0-9a-f]{40}", source.get("native_superrepo_commit", "")),
+                "invalid approved native source")
     entries = approval["targets"]
     Require(len(entries) == 3 and {x["target"] for x in entries} == set(TARGETS), "incomplete approved target set")
     for entry in entries:
         target = entry["target"]
         Require(entry["native_target"] == TARGETS[target][0], "approved native target mismatch")
-        Require(entry["asset"] == "beskid-vscode-0.5.1-" + target + ".vsix", "approved asset name mismatch")
+        Require(entry["asset"] == "beskid-vscode-" + version + "-" + target + ".vsix", "approved asset name mismatch")
         Require(entry["native_asset"] == NATIVE_ASSETS[target], "approved native LSP name mismatch")
         for field in ("sha256", "lsp_sha256"):
             Require(re.fullmatch(r"[0-9a-f]{64}", entry.get(field, "")), "invalid approved digest")
-    Require(approval["editor_release"] == {"repository": "Cyber-Nomad-Collective/beskid", "tag": "editor-v0.5.1"},
+    Require(approval["editor_release"] == {"repository": "Cyber-Nomad-Collective/beskid", "tag": "editor-v" + version},
             "unapproved editor release origin")
-    Require(approval["native_release"] == {"repository": "Cyber-Nomad-Collective/beskid_compiler", "tag": "lsp-v0.5.1"},
+    Require(approval["native_release"] == {"repository": "Cyber-Nomad-Collective/beskid_compiler", "tag": "lsp-v" + version},
             "unapproved native release origin")
 
 
@@ -121,8 +136,17 @@ def VerifySource(approval, root):
                              env={k: os.environ[k] for k in ("PATH", "HOME", "SYSTEMROOT") if k in os.environ},
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     Require(history.returncode == 0, "approved source history could not be hydrated")
+    if approval["version"] == "0.5.2":
+        for field in ("native_superrepo_commit", "superrepo_commit", "publisher_base_commit"):
+            Require(Git("cat-file", "-t", source[field]) == "commit", "approved source pin is not a commit object")
     Git("merge-base", "--is-ancestor", source["superrepo_commit"], "HEAD")
     Git("merge-base", "--is-ancestor", source["publisher_base_commit"], "HEAD")
+    if approval["version"] == "0.5.2":
+        native = source["native_superrepo_commit"]
+        Git("merge-base", "--is-ancestor", native, source["superrepo_commit"])
+        Require(Git("ls-tree", native, "--", "compiler") ==
+                "160000 commit " + source["compiler_commit"] + "\tcompiler",
+                "approved native source gitlink mismatch: compiler")
     for path, field in (("compiler", "compiler_commit"), ("beskid_vscode", "editor_commit")):
         tree = Git("ls-tree", source["superrepo_commit"], "--", path)
         Require(tree == "160000 commit " + source[field] + "\t" + path, "approved source gitlink mismatch: " + path)
@@ -192,9 +216,11 @@ def VerifyNative(approval, directory):
             state.get("channel") == "stable" and state.get("publishable") is True,
             "native release is not qualified")
     FileDigest(directory / "lsp-version.txt", 32)
-    Require((directory / "lsp-version.txt").read_bytes() in (b"0.5.1", b"0.5.1\n"), "native LSP stream version mismatch")
-    Require(all(state.get("provenance", {}).get(field) == source[field]
-                for field in ("superrepo_commit", "compiler_commit")), "native source mismatch")
+    version = approval["version"].encode()
+    Require((directory / "lsp-version.txt").read_bytes() in (version, version + b"\n"), "native LSP stream version mismatch")
+    native_root = source["native_superrepo_commit"] if approval["version"] == "0.5.2" else source["superrepo_commit"]
+    Require(state.get("provenance", {}).get("superrepo_commit") == native_root and
+            state.get("provenance", {}).get("compiler_commit") == source["compiler_commit"], "native source mismatch")
     Require(state.get("tests", {}).get("gate_result") == "success" and state["tests"].get("failed") == [] and
             state.get("failed_platform_builds") == [], "native gates failed")
     expected_targets = {x[0] for x in TARGETS.values()}
@@ -282,6 +308,7 @@ def Upload(argv, env):
 def Publish(approval, editors, native, root, context, ovsx, results_file, read_registry=None, upload=Upload):
     VerifyApproval(approval)
     CheckSource(approval["version"], approval["source"]["compiler_commit"])
+    RequireQualification(approval)
     VerifyContext(context, root)
     VerifyRelease(approval, editors, native, root)
     Require(bool(context.get("OVSX_PAT", "").strip()), "OVSX_PAT is missing")
@@ -356,6 +383,7 @@ def DownloadAsset(record, assets, name, path, limit, expected_digest=None):
 def Prepare(approval, snapshot, root, context):
     VerifyApproval(approval)
     CheckSource(approval["version"], approval["source"]["compiler_commit"])
+    RequireQualification(approval)
     VerifyContext(context, root)
     VerifySource(approval, root)
     Require(not context.get("OVSX_PAT") and not context.get("OVSX_TOKEN"), "preparation must not receive publisher credentials")
@@ -380,8 +408,10 @@ def Main():
     parser.add_argument("mode", choices=("prepare", "verify", "publish"))
     parser.add_argument("snapshot", type=Path)
     parser.add_argument("--ovsx", type=Path)
+    parser.add_argument("--version", choices=("0.5.1", "0.5.2"), default="0.5.1")
     args = parser.parse_args()
-    approval = ReadJson(APPROVAL.read_bytes())
+    approval = SelectApproval(args.version)
+    RequireQualification(approval)
     snapshot = args.snapshot.resolve()
     if args.mode == "prepare":
         Prepare(approval, snapshot, ROOT, os.environ)
@@ -391,7 +421,7 @@ def Main():
         Require(args.ovsx is not None and args.ovsx.is_absolute(), "absolute pinned ovsx executable is required")
         Publish(approval, snapshot / "editors", snapshot / "native", ROOT, os.environ,
                 args.ovsx, snapshot / "publish-results.json")
-    print("prebuilt editor " + args.mode + ": verified 0.5.1 complete target set")
+    print("prebuilt editor " + args.mode + ": verified " + args.version + " complete target set")
 
 
 if __name__ == "__main__":

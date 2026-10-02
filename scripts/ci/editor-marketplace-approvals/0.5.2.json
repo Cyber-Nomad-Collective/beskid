@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "version": "0.5.2",
+  "publisher": "beskid",
+  "name": "beskid-vscode",
+  "source": {
+    "superrepo_commit": "e06d6b4b1e7e06a602bcf0b575e9fc05d921106b",
+    "native_superrepo_commit": "2de50cdaef9b1f34e0b246eadad70a17fd43f6d8",
+    "compiler_commit": "95c203ff12639b25e2c67b08da531e3715fef4c2",
+    "editor_commit": "838d10b4606097e8fba8dc311c70dd9053607b9c",
+    "publisher_base_commit": "e06d6b4b1e7e06a602bcf0b575e9fc05d921106b"
+  },
+  "publication_enabled": false,
+  "publication_hold": "0.5.2 publication qualifications pending: genuine final native stable/publishable release-state and source gates, immutable release tags/assets, fresh Marketplace derivative approval/digests and actual host qualification, and installer qualification or owner waiver",
+  "pending_qualifications": [
+    "final native release-state and source gates",
+    "immutable release tags and assets",
+    "fresh Marketplace derivative approval and digests",
+    "actual derivative host qualification",
+    "installer qualification or owner waiver"
+  ],
+  "editor_release": {
+    "repository": "Cyber-Nomad-Collective/beskid",
+    "tag": "editor-v0.5.2"
+  },
+  "native_release": {
+    "repository": "Cyber-Nomad-Collective/beskid_compiler",
+    "tag": "lsp-v0.5.2"
+  },
+  "targets": [
+    {
+      "target": "linux-x64",
+      "native_target": "x86_64-unknown-linux-gnu",
+      "asset": "beskid-vscode-0.5.2-linux-x64.vsix",
+      "sha256": "4c7af07a1e7ed04463c83728f5a5492ccc4e1ba6d8caf634c8f56dce9e0ddd37",
+      "lsp_sha256": "750443a35fb4623623230ff147f2610f52c826d0f17c2ded98a91370ec03ea9f",
+      "native_asset": "beskid_lsp-linux-amd64"
+    },
+    {
+      "target": "darwin-arm64",
+      "native_target": "aarch64-apple-darwin",
+      "asset": "beskid-vscode-0.5.2-darwin-arm64.vsix",
+      "sha256": "6d087648becb5df5c56197ed9dc0a4dcc38b1ff299de5372ab512a91ea7a047e",
+      "lsp_sha256": "9cf246a8b4bb7b2160b1214ed3e97c90558ab8c4f4762e0afadc7f2c3802ef4e",
+      "native_asset": "beskid_lsp-darwin-arm64"
+    },
+    {
+      "target": "win32-x64",
+      "native_target": "x86_64-pc-windows-msvc",
+      "asset": "beskid-vscode-0.5.2-win32-x64.vsix",
+      "sha256": "d1eebccc12778fa440f4273aec9c98a97acfe90a33be8557f784dcc793a227c2",
+      "lsp_sha256": "c7e04e69d5efd1cfde035436b9ef0a12c33d472b624718221720786e6e8aea2e",
+      "native_asset": "beskid_lsp-windows-amd64.exe"
+    }
+  ]
+}

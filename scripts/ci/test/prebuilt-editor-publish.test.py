@@ -95,9 +95,12 @@ class PublisherTests(unittest.TestCase):
     def zip(self, entry, payload=None, identity=None, extras=()):
         target = entry["target"]
         payload = payload or ("native LSP " + target).encode()
-        package = {"publisher": "beskid", "name": "beskid-vscode", "version": "0.5.1"}
+        version = self.approval["version"]
+        package = {"publisher": "beskid", "name": "beskid-vscode", "version": version,
+                   "contributes": {"configurationDefaults": {"[beskid]": {
+                       "editor.defaultFormatter": "beskid.beskid-vscode"}}}}
         package.update(identity or {})
-        manifest = '<PackageManifest><Metadata><Identity Publisher="beskid" Id="beskid-vscode" Version="0.5.1" TargetPlatform="' + target + '"/></Metadata></PackageManifest>'
+        manifest = '<PackageManifest><Metadata><Identity Publisher="beskid" Id="beskid-vscode" Version="' + version + '" TargetPlatform="' + target + '"/></Metadata></PackageManifest>'
         binary = "beskid_lsp.exe" if target == "win32-x64" else "beskid_lsp"
         with warnings.catch_warnings(), zipfile.ZipFile(self.editors / entry["asset"], "w", zipfile.ZIP_DEFLATED) as archive:
             warnings.simplefilter("ignore", UserWarning)
@@ -146,6 +149,308 @@ class PublisherTests(unittest.TestCase):
 
     def test_verifies_complete_real_zip_and_standalone_lsp_set(self):
         self.assertEqual(len(self.verify()), 3)
+
+    def two_roots(self):
+        native_root = self.source
+        self.git("update-index", "--cacheinfo", "160000," + "d" * 40 + ",beskid_vscode")
+        self.git("commit", "-qm", "final editor")
+        editor_root = self.git("rev-parse", "HEAD").strip()
+        self.git("commit", "--allow-empty", "-qm", "later publisher")
+        self.approval["source"].update(superrepo_commit=editor_root,
+            native_superrepo_commit=native_root, editor_commit="d" * 40)
+        self.approval.update(version="0.5.2", publication_enabled=True)
+        self.approval["editor_release"]["tag"] = "editor-v0.5.2"
+        self.approval["native_release"]["tag"] = "lsp-v0.5.2"
+        for entry in self.approval["targets"]:
+            old = self.editors / entry["asset"]
+            entry["asset"] = entry["asset"].replace("0.5.1", "0.5.2")
+            old.rename(self.editors / entry["asset"])
+            self.zip(entry)
+        self.state["version"] = "0.5.2"
+        self.save_state()
+        (self.native / "lsp-version.txt").write_bytes(b"0.5.2\n")
+        self.context["CI_COMMIT_SHA"] = self.git("rev-parse", "HEAD").strip()
+        return native_root, editor_root
+
+    def test_real_two_root_history_preserves_original_native_provenance(self):
+        self.two_roots()
+        self.assertEqual(len(self.verify()), 3)
+
+    def test_two_root_missing_malformed_unknown_and_reversed_pins_reject(self):
+        native, editor = self.two_roots()
+        for value in (None, "bad", "F" * 40, "e" * 40, self.context["CI_COMMIT_SHA"]):
+            with self.subTest(pin=value):
+                if value is None:
+                    self.approval["source"].pop("native_superrepo_commit", None)
+                else:
+                    self.approval["source"]["native_superrepo_commit"] = value
+                with self.assertRaises(ValueError):
+                    self.verify()
+        self.approval["source"].update(native_superrepo_commit=editor, superrepo_commit=native)
+        with self.assertRaises(ValueError):
+            self.verify()
+
+    def test_sibling_roots_reachable_from_merged_publisher_reject(self):
+        native, editor = self.two_roots()
+        publisher = self.context["CI_COMMIT_SHA"]
+        self.git("checkout", "-qb", "sibling", native)
+        self.git("commit", "--allow-empty", "-qm", "sibling native")
+        sibling = self.git("rev-parse", "HEAD").strip()
+        self.git("checkout", "-q", publisher)
+        self.git("merge", "--no-ff", "-qm", "merged publisher", "sibling")
+        self.approval["source"]["native_superrepo_commit"] = sibling
+        with self.assertRaises(ValueError):
+            self.verify()
+
+    def test_two_root_annotated_tag_objects_are_not_exact_commit_pins(self):
+        native, editor = self.two_roots()
+        original = copy.deepcopy(self.approval["source"])
+        for field, commit in (("native_superrepo_commit", native), ("superrepo_commit", editor),
+                              ("publisher_base_commit", native)):
+            with self.subTest(field=field):
+                self.git("tag", "-a", field, commit, "-m", "tag is not a source commit")
+                self.approval["source"][field] = self.git("rev-parse", field).strip()
+                with self.assertRaises(ValueError):
+                    self.verify()
+                self.approval["source"] = copy.deepcopy(original)
+
+    def test_two_root_wrong_gitlinks_at_either_root_reject(self):
+        native, editor = self.two_roots()
+        for source_root, path in ((native, "compiler"), (editor, "compiler"), (editor, "beskid_vscode")):
+            with self.subTest(root=source_root, path=path):
+                tree = self.git("ls-tree", source_root).splitlines()
+                changed = "\n".join(line if not line.endswith("\t" + path) else
+                                    "160000 commit " + "f" * 40 + "\t" + path for line in tree)
+                tree_sha = subprocess.check_output(["git", "-C", str(self.root), "mktree"],
+                                                  input=changed + "\n", text=True).strip()
+                commit = subprocess.check_output(["git", "-C", str(self.root), "commit-tree", tree_sha,
+                                                  "-p", source_root, "-m", "bad gitlink"], text=True).strip()
+                source = copy.deepcopy(self.approval["source"])
+                if source_root == native:
+                    self.approval["source"]["native_superrepo_commit"] = commit
+                    # Keep the bad native root genuinely upstream of the editor;
+                    # ancestry must pass so this tests the native compiler gitlink.
+                    editor_tree = self.git("rev-parse", editor + "^{tree}").strip()
+                    descendant = subprocess.check_output(["git", "-C", str(self.root), "commit-tree", editor_tree,
+                        "-p", commit, "-m", "editor after bad native"], text=True).strip()
+                    self.approval["source"]["superrepo_commit"] = descendant
+                else:
+                    self.approval["source"]["superrepo_commit"] = commit
+                self.git("checkout", "-q", self.approval["source"]["superrepo_commit"])
+                with self.assertRaisesRegex(ValueError, "gitlink mismatch"):
+                    self.verify()
+                self.approval["source"] = source
+                self.git("checkout", "-q", self.context["CI_COMMIT_SHA"])
+
+    def test_restamped_native_source_and_changed_bytes_reject(self):
+        self.two_roots()
+        self.state["provenance"]["superrepo_commit"] = self.approval["source"]["superrepo_commit"]
+        self.save_state()
+        with self.assertRaisesRegex(ValueError, "native source mismatch"):
+            self.verify()
+        self.state["provenance"]["superrepo_commit"] = self.approval["source"]["native_superrepo_commit"]
+        self.save_state()
+        entry = self.approval["targets"][-1]
+        (self.native / entry["native_asset"]).write_bytes(b"changed native")
+        with self.assertRaisesRegex(ValueError, "standalone native LSP"):
+            self.publish()
+        self.assertEqual(self.uploads, [])
+
+    def test_two_root_changed_final_vsix_blocks_registry_and_upload(self):
+        self.two_roots()
+        (self.editors / self.approval["targets"][-1]["asset"]).write_bytes(b"changed VSIX")
+        with patch.object(self, "read_registry", side_effect=AssertionError("remote read")):
+            with self.assertRaises(ValueError):
+                self.publish()
+        self.assertEqual(self.uploads, [])
+
+    def test_bounded_pending_contract_blocks_before_transport(self):
+        approval = self.api.SelectApproval("0.5.2")
+        with patch.object(self.api, "ReleaseMetadata", side_effect=AssertionError("transport")):
+            with self.assertRaisesRegex(ValueError, "pending"):
+                self.api.Prepare(approval, self.root / "snapshot", self.root, self.context)
+        with self.assertRaises(ValueError):
+            self.api.SelectApproval("../../other")
+
+    def test_two_root_native_state_compiler_version_target_and_embedded_lsp_reject(self):
+        self.two_roots()
+        saved = copy.deepcopy(self.state)
+        for mutate in (lambda: self.state["provenance"].update(compiler_commit="f" * 40),
+                       lambda: self.state.update(version="0.5.1"),
+                       lambda: self.state["platforms"][-1].update(target="wrong-target"),
+                       lambda: self.state.update(publishable=False),
+                       lambda: self.state["tests"].update(gate_result="failed")):
+            mutate()
+            self.save_state()
+            with self.assertRaises(ValueError):
+                self.verify()
+            self.state = copy.deepcopy(saved)
+        self.save_state()
+        self.zip(self.approval["targets"][-1], payload=b"different embedded server")
+        with self.assertRaisesRegex(ValueError, "ZIP LSP"):
+            self.publish()
+        self.assertEqual(self.uploads, [])
+
+    def test_two_root_immutable_editor_and_native_tag_domains(self):
+        self.two_roots()
+        requests = []
+        def metadata(record, commit):
+            requests.append((record["tag"], commit))
+            return {x["asset"]: {} for x in self.approval["targets"]}
+        with patch.object(self.api, "ReleaseMetadata", side_effect=metadata), \
+             patch.object(self.api, "DownloadAsset", side_effect=ValueError("fixture transport stop")):
+            context = {k: v for k, v in self.context.items() if k != "OVSX_PAT"}
+            with self.assertRaisesRegex(ValueError, "fixture transport stop"):
+                self.api.Prepare(self.approval, self.root / "tag-domain-snapshot", self.root, context)
+        self.assertEqual(requests, [("editor-v0.5.2", self.approval["source"]["superrepo_commit"]),
+                                    ("lsp-v0.5.2", self.compiler)])
+
+    def test_production_cli_052_pending_before_files_or_secrets(self):
+        environment = {k: os.environ[k] for k in ("PATH", "HOME", "SYSTEMROOT") if k in os.environ}
+        environment.update(OVSX_PAT="must-not-be-used", VSCE_PAT="must-not-be-used")
+        for command in (["python3", str(SCRIPT), "prepare", str(self.root / "absent"), "--version", "0.5.2"],
+                        ["python3", str(SCRIPT.parent / "marketplace-publish.py"), "--version", "0.5.2",
+                         "preflight", str(self.root / "absent"), str(self.root / "attempt")]):
+            result = subprocess.run(command, env=environment, capture_output=True, text=True)
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("pending", result.stderr)
+            self.assertNotIn("must-not-be-used", result.stderr + result.stdout)
+        self.assertFalse((self.root / "attempt").exists())
+
+    def test_two_root_derivative_preserves_native_source_and_qualifies_originals(self):
+        self.two_roots()
+        spec = importlib.util.spec_from_file_location("derivative", SCRIPT.parent / "package-marketplace-editor.py")
+        derivative = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(derivative)
+        approved = self.root / "approved.json"
+        approved.write_text(json.dumps(self.approval))
+        with patch.object(derivative.VERIFIER, "SelectApproval", return_value=self.approval):
+            receipt = derivative.Package(self.editors, approved, self.root / "derivative", self.native, self.root)
+            self.assertEqual(receipt["source"], self.approval["source"])
+            self.assertEqual(receipt["version"], "0.5.2")
+            self.assertTrue(all(x["non_metadata_inventory_equal"] for x in receipt["targets"]))
+            self.state["provenance"]["superrepo_commit"] = self.approval["source"]["superrepo_commit"]
+            self.save_state()
+            with self.assertRaisesRegex(ValueError, "native source mismatch"):
+                derivative.Package(self.editors, approved, self.root / "bad-derivative", self.native, self.root)
+            self.assertFalse((self.root / "bad-derivative").exists())
+
+    def test_two_root_derivative_marketplace_and_host_chain_rejects_mutations(self):
+        self.two_roots()
+        spec = importlib.util.spec_from_file_location("marketplace_chain", SCRIPT.parent / "marketplace-publish.py")
+        marketplace = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(marketplace)
+        packager = marketplace.PACKAGER
+        approved = self.root / "approved.json"
+        approved.write_text(json.dumps(self.approval))
+        stage = self.root / "stage"
+        with patch.object(packager.VERIFIER, "SelectApproval", return_value=self.approval):
+            receipt = packager.Package(self.editors, approved, stage, self.native, self.root)
+        contract = {"publication_enabled": True, "originals": self.approval["targets"],
+                    "original_host_receipt_sha256": "a" * 64,
+                    "approval_sha256": self.digest(stage / "marketplace-approval.json"),
+                    "derivative_sha256": {x["target"]: x["derivative_sha256"] for x in receipt["targets"]}}
+        host = {"schema_version": 1, "kind": "beskid-marketplace-local-host-qualification", "status": "success",
+                "original_receipt_sha256": "a" * 64, "marketplace_approval_sha256": contract["approval_sha256"],
+                "source": copy.deepcopy(receipt["source"]), "release": {
+                    "repository": marketplace.REPOSITORY, "tag": "editor-marketplace-v0.5.2",
+                    "source_commit": self.approval["source"]["superrepo_commit"]},
+                "extension": {"id": "beskid-lang.beskid-vscode", "publisher": "beskid-lang", "name": "beskid-vscode",
+                    "version": "0.5.2", "qualified_target": "darwin-arm64", "target_set": list(marketplace.TARGETS),
+                    "qualified_derivative_sha256": contract["derivative_sha256"]["darwin-arm64"],
+                    "lsp_sha256": self.approval["targets"][1]["lsp_sha256"]},
+                "checks": {"extension_active": True, "workspace_count": 0, "language_id": "beskid",
+                    "formatter_self_id": "beskid-lang.beskid-vscode", "formatter_edit_count": 4,
+                    "formatter_input_sha256": marketplace.FORMATTER_INPUT_SHA256,
+                    "formatter_output_sha256": marketplace.FORMATTER_OUTPUT_SHA256, "formatter_applied": True}}
+        (stage / marketplace.HOST_QUALIFICATION_NAME).write_text(json.dumps(host))
+        with patch.object(marketplace, "VERSION", "0.5.2"), \
+             patch.object(marketplace, "RELEASE_TAG", "editor-marketplace-v0.5.2"), \
+             patch.object(marketplace, "APPROVED_SOURCE", self.approval["source"]), \
+             patch.object(marketplace, "ROOT", self.root), \
+             patch.object(marketplace, "EXPECTED_STAGE_NAMES", {x["derivative_asset"] for x in receipt["targets"]} |
+                {"marketplace-approval.json", marketplace.HOST_QUALIFICATION_NAME}):
+            self.assertEqual(marketplace.VerifyStage(stage, contract)["source"], self.approval["source"])
+            record = marketplace.Preflight(stage, self.root / "qualified-attempt", self.context, contract)
+            self.assertEqual(record["original_host_receipt_sha256"], "a" * 64)
+            attempt_receipt = self.root / "qualified-attempt" / marketplace.ATTEMPT_RECEIPT_NAME
+            record["source"] = copy.deepcopy(record["source"])
+            record["source"].pop("native_superrepo_commit")
+            attempt_receipt.write_text(json.dumps(record))
+            with patch.object(marketplace, "RunPublisher", side_effect=AssertionError("publisher runner")) as runner:
+                with self.assertRaisesRegex(ValueError, "source"):
+                    marketplace.Publish(self.root / "qualified-attempt", dict(self.context, VSCE_PAT="test-only"),
+                                        contract, runner=runner)
+                runner.assert_not_called()
+            for document, check in ((receipt, lambda d: marketplace.VerifyApproval(d, contract)),
+                                    (host, lambda d: marketplace.VerifyHostQualification(d, receipt, contract))):
+                for pin in (None, self.context["CI_COMMIT_SHA"]):
+                    changed = copy.deepcopy(document)
+                    if pin is None:
+                        changed["source"].pop("native_superrepo_commit")
+                    else:
+                        changed["source"]["native_superrepo_commit"] = pin
+                    with self.assertRaisesRegex(ValueError, "source"):
+                        check(changed)
+            changed = copy.deepcopy(receipt)
+            changed["targets"][-1]["original_sha256"] = "f" * 64
+            with self.assertRaisesRegex(ValueError, "approval chain"):
+                marketplace.VerifyApproval(changed, contract)
+            changed = copy.deepcopy(host)
+            changed["original_receipt_sha256"] = marketplace.ORIGINAL_HOST_RECEIPT_SHA256
+            with self.assertRaisesRegex(ValueError, "original proof"):
+                marketplace.VerifyHostQualification(changed, receipt, contract)
+            changed = copy.deepcopy(host)
+            changed["extension"]["version"] = "0.5.1"
+            with self.assertRaises(ValueError):
+                marketplace.VerifyHostQualification(changed, receipt, contract)
+            raw = {"schema_version": 1, "status": "success", "source": copy.deepcopy(receipt["source"]),
+                "source_commit": receipt["source"]["superrepo_commit"], "compiler_commit": self.compiler,
+                "derivative_sha256": contract["derivative_sha256"]["darwin-arm64"],
+                "extension_id": "beskid-lang.beskid-vscode", "publisher": "beskid-lang",
+                "extension_version": "0.5.2", "formatter_self_id": "beskid-lang.beskid-vscode",
+                "server_sha256": self.approval["targets"][1]["lsp_sha256"], "extension_active": True,
+                "workspace_count": 0, "language_id": "beskid", "formatter_edit_count": 4,
+                "before": "pub i32 Main() { return 42; }\n",
+                "after": "pub i32 Main()\n{\n    return 42;\n}\n"}
+            raw_path = self.root / "synthetic-raw-host.json"
+            with patch.object(marketplace, "HOST_LSP_SHA256", raw["server_sha256"]):
+                raw_path.write_text(json.dumps(raw))
+                raw_contract = dict(contract, original_host_receipt_sha256=self.digest(raw_path))
+                result = marketplace.SanitizeHostReceipt(raw_path, stage / "marketplace-approval.json",
+                    stage / receipt["targets"][1]["derivative_asset"], self.root / "synthetic-host-proof.json", raw_contract)
+                self.assertEqual(result["source"], self.approval["source"])
+                for mutate in (lambda d: d["source"].pop("native_superrepo_commit"),
+                               lambda d: d["source"].update(native_superrepo_commit=self.context["CI_COMMIT_SHA"]),
+                               lambda d: d.update(derivative_sha256="f" * 64),
+                               lambda d: d.update(extension_version="0.5.1")):
+                    changed = copy.deepcopy(raw)
+                    mutate(changed)
+                    raw_path.write_text(json.dumps(changed))
+                    raw_contract["original_host_receipt_sha256"] = self.digest(raw_path)
+                    with self.assertRaises(ValueError):
+                        marketplace.SanitizeHostReceipt(raw_path, stage / "marketplace-approval.json",
+                            stage / receipt["targets"][1]["derivative_asset"], self.root / "rejected-host-proof.json", raw_contract)
+                    self.assertFalse((self.root / "rejected-host-proof.json").exists())
+            (stage / receipt["targets"][-1]["derivative_asset"]).write_bytes(b"changed last derivative")
+            with self.assertRaises(ValueError):
+                marketplace.Preflight(stage, self.root / "attempt", self.context, contract)
+            self.assertEqual(json.loads((self.root / "attempt" / marketplace.ATTEMPT_RECEIPT_NAME).read_text())["status"],
+                             "preflight-failed")
+
+    def test_two_root_marketplace_real_checkout_and_receipt_chain(self):
+        self.two_roots()
+        spec = importlib.util.spec_from_file_location("marketplace", SCRIPT.parent / "marketplace-publish.py")
+        marketplace = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(marketplace)
+        with patch.object(marketplace, "ROOT", self.root), patch.object(marketplace, "VERSION", "0.5.2"), \
+             patch.object(marketplace, "APPROVED_SOURCE", self.approval["source"]):
+            marketplace.VerifyCheckout(self.context)
+            bad = copy.deepcopy(self.approval["source"])
+            bad["native_superrepo_commit"] = self.context["CI_COMMIT_SHA"]
+            with patch.object(marketplace, "APPROVED_SOURCE", bad):
+                with self.assertRaises(ValueError):
+                    marketplace.VerifyCheckout(self.context)
 
     def test_uploads_positional_packages_with_environment_only_token(self):
         self.publish()

@@ -11,6 +11,10 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Bind the bounded 0.5.2 editor publication route to separate exact native and
+  editor source roots, preserving original artifact digests and the held 0.5.1
+  contract. Keep production blocked pending genuine native source gates,
+  immutable assets, fresh Marketplace derivatives, and actual host qualification.
 - Prepare Zed and VS Code authoring metadata for the owner-approved corrected
   0.5.2 release without replacing immutable 0.5.1 artifacts. Final native
   payload verification and channel publication remain required.

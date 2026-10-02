@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fail-closed publication of the approved 0.5.1 Marketplace derivatives."""
+"""Fail-closed publication of bounded tracked Marketplace derivatives."""
 import argparse
 import copy
 from datetime import datetime, timezone
@@ -66,6 +66,34 @@ PRODUCTION_CONTRACT = {
 }
 
 
+def SelectProductionVersion(version):
+    # CLI selection is a finite tracked contract selector, never a path override.
+    global VERSION, RELEASE_TAG, APPROVED_SOURCE, ASSETS, EXPECTED_STAGE_NAMES, PRODUCTION_CONTRACT, HOST_LSP_SHA256
+    Require(version in ("0.5.1", "0.5.2"), "unsupported Marketplace publication version")
+    if version == "0.5.1":
+        Require(VERSION == version, "Marketplace version already selected")
+        return
+    original = PACKAGER.VERIFIER.SelectApproval(version)
+    PACKAGER.VERIFIER.VerifyApproval(original)
+    VERSION = version
+    RELEASE_TAG = "editor-marketplace-v" + version
+    APPROVED_SOURCE = copy.deepcopy(original["source"])
+    ASSETS = {AssetName(target): target for target in TARGETS}
+    EXPECTED_STAGE_NAMES = set(ASSETS) | {"marketplace-approval.json", HOST_QUALIFICATION_NAME}
+    HOST_LSP_SHA256 = next(x["lsp_sha256"] for x in original["targets"] if x["target"] == "darwin-arm64")
+    PRODUCTION_CONTRACT = {
+        "approval_sha256": None, "derivative_sha256": {}, "assets": ASSETS,
+        "original_host_receipt_sha256": None, "originals": copy.deepcopy(original["targets"]),
+        "publication_enabled": False, "publication_hold": original["publication_hold"],
+    }
+
+
+def RequireQualification(contract):
+    if VERSION == "0.5.2":
+        Require(contract.get("publication_enabled") is True,
+                contract.get("publication_hold") or "0.5.2 Marketplace qualifications pending")
+
+
 def Require(condition, message):
     if not condition:
         raise ValueError(message)
@@ -123,6 +151,16 @@ def VerifyCheckout(context):
             "full trusted history is required; hydrate the verified origin before preflight")
     Require(Git("rev-parse", "HEAD") == context["CI_COMMIT_SHA"], "pipeline checkout SHA mismatch")
     Git("merge-base", "--is-ancestor", APPROVED_SOURCE["superrepo_commit"], "HEAD")
+    Git("merge-base", "--is-ancestor", APPROVED_SOURCE["publisher_base_commit"], "HEAD")
+    if VERSION == "0.5.2":
+        native = APPROVED_SOURCE.get("native_superrepo_commit", "")
+        Require(isinstance(native, str) and len(native) == 40 and all(c in "0123456789abcdef" for c in native),
+                "invalid approved native source")
+        for field in ("native_superrepo_commit", "superrepo_commit", "publisher_base_commit"):
+            Require(Git("cat-file", "-t", APPROVED_SOURCE[field]) == "commit", "approved source pin is not a commit object")
+        Git("merge-base", "--is-ancestor", native, APPROVED_SOURCE["superrepo_commit"])
+        Require(Git("ls-tree", native, "--", "compiler") ==
+                f"160000 commit {APPROVED_SOURCE['compiler_commit']}\tcompiler", "native compiler gitlink differs")
     for path, field in (("compiler", "compiler_commit"), ("beskid_vscode", "editor_commit")):
         tree = Git("ls-tree", APPROVED_SOURCE["superrepo_commit"], "--", path)
         Require(tree == f"160000 commit {APPROVED_SOURCE[field]}\t{path}",
@@ -136,13 +174,19 @@ def VerifyApproval(approval, contract):
             approval.get("formatter_self_id") == "beskid-lang.beskid-vscode",
             "unsupported Marketplace approval identity")
     Require(approval.get("source") == APPROVED_SOURCE, "Marketplace approval source pins differ")
-    Require(approval.get("original_approval") == "scripts/ci/editor-marketplace-approvals/0.5.1.json",
+    Require(approval.get("original_approval") == f"scripts/ci/editor-marketplace-approvals/{VERSION}.json",
             "Marketplace approval origin differs")
     entries = approval.get("targets", [])
     Require(len(entries) == len(TARGETS) and [entry.get("target") for entry in entries] == list(TARGETS),
             "Marketplace approval target set/order differs")
     for entry in entries:
         target = entry["target"]
+        if VERSION == "0.5.2":
+            original = next(x for x in contract["originals"] if x["target"] == target)
+            Require(all(entry.get(field) == original[original_field] for field, original_field in (
+                ("original_asset", "asset"), ("original_sha256", "sha256"), ("lsp_sha256", "lsp_sha256"),
+                ("native_target", "native_target"), ("native_asset", "native_asset"))),
+                "Marketplace original/native approval chain differs: " + target)
         Require(entry.get("version") == VERSION and entry.get("target_platform") == target and
                 entry.get("derivative_asset") == AssetName(target) and
                 entry.get("derivative_sha256") == contract["derivative_sha256"][target] and
@@ -173,7 +217,7 @@ def VerifyVsix(path, entry, contract):
                 package.get("version") == VERSION, "Marketplace package identity differs: " + target)
         formatter = package.get("contributes", {}).get("configurationDefaults", {}).get("[beskid]", {}).get("editor.defaultFormatter")
         Require(formatter == "beskid-lang.beskid-vscode", "Marketplace formatter self-ID differs: " + target)
-        PACKAGER.ParseManifest(archive.read("extension.vsixmanifest"), target, PUBLISHER)
+        PACKAGER.ParseManifest(archive.read("extension.vsixmanifest"), target, PUBLISHER, VERSION)
         server = f"extension/server/{target}/{TARGETS[target]}"
         Require(hashlib.sha256(archive.read(server)).hexdigest() == entry["lsp_sha256"],
                 "Marketplace embedded LSP differs: " + target)
@@ -186,7 +230,8 @@ def VerifyHostQualification(qualification, approval, contract):
     Require(qualification.get("schema_version") == 1 and
             qualification.get("kind") == "beskid-marketplace-local-host-qualification" and
             qualification.get("status") == "success", "host qualification did not succeed")
-    Require(qualification.get("original_receipt_sha256") == ORIGINAL_HOST_RECEIPT_SHA256,
+    Require(qualification.get("original_receipt_sha256") == (contract["original_host_receipt_sha256"]
+            if VERSION == "0.5.2" else ORIGINAL_HOST_RECEIPT_SHA256),
             "host qualification original proof differs")
     Require(qualification.get("marketplace_approval_sha256") == contract["approval_sha256"] and
             qualification.get("source") == APPROVED_SOURCE, "host qualification source differs")
@@ -209,7 +254,8 @@ def VerifyHostQualification(qualification, approval, contract):
     }, "strict formatter qualification differs")
 
 
-def VerifyStage(stage, contract=PRODUCTION_CONTRACT):
+def VerifyStage(stage, contract=None):
+    contract = PRODUCTION_CONTRACT if contract is None else contract
     VerifyStageLayout(stage)
     approval_path = stage / "marketplace-approval.json"
     Require(FileDigest(approval_path, PACKAGER.MAX_JSON) == contract["approval_sha256"],
@@ -255,7 +301,9 @@ def WriteAttempt(attempt, record):
     temporary.replace(path)
 
 
-def Preflight(stage, attempt, context, contract=PRODUCTION_CONTRACT):
+def Preflight(stage, attempt, context, contract=None):
+    contract = PRODUCTION_CONTRACT if contract is None else contract
+    RequireQualification(contract)
     Require(not attempt.exists() and not attempt.is_symlink(), "publication attempt directory already exists")
     attempt.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
     attempt.mkdir(mode=0o700)
@@ -274,7 +322,8 @@ def Preflight(stage, attempt, context, contract=PRODUCTION_CONTRACT):
                 shutil.copyfileobj(reader, writer, 1024 * 1024)
         VerifyStage(snapshot, contract)
         record["marketplace_approval_sha256"] = contract["approval_sha256"]
-        record["original_host_receipt_sha256"] = ORIGINAL_HOST_RECEIPT_SHA256
+        record["original_host_receipt_sha256"] = (contract["original_host_receipt_sha256"]
+            if VERSION == "0.5.2" else ORIGINAL_HOST_RECEIPT_SHA256)
         record["status"] = "preflight-passed"
         record["preflight_completed_utc"] = UtcNow()
         WriteAttempt(attempt, record)
@@ -293,7 +342,9 @@ def RunPublisher(argv, environment):
     return result.returncode
 
 
-def Publish(attempt, context, contract=PRODUCTION_CONTRACT, runner=RunPublisher):
+def Publish(attempt, context, contract=None, runner=RunPublisher):
+    contract = PRODUCTION_CONTRACT if contract is None else contract
+    RequireQualification(contract)
     record = ReadJsonFile(attempt / ATTEMPT_RECEIPT_NAME)
     Require(record.get("status") == "preflight-passed", "publication attempt is not preflight-qualified")
     try:
@@ -301,6 +352,8 @@ def Publish(attempt, context, contract=PRODUCTION_CONTRACT, runner=RunPublisher)
         VerifyContext(context, allow_secret=True)
         VerifyCheckout(context)
         Require(record.get("checkout_sha") == context["CI_COMMIT_SHA"], "publication checkout differs from preflight")
+        if VERSION == "0.5.2":
+            Require(record.get("source") == APPROVED_SOURCE, "publication attempt source differs from preflight")
         VerifyStage(attempt / "snapshot", contract)
         Require(contract.get("publication_enabled") is True,
                 contract.get("publication_hold") or "Marketplace publication is not enabled")
@@ -334,7 +387,9 @@ def Publish(attempt, context, contract=PRODUCTION_CONTRACT, runner=RunPublisher)
         raise
 
 
-def SanitizeHostReceipt(raw_path, approval_path, derivative_path, output, contract=PRODUCTION_CONTRACT):
+def SanitizeHostReceipt(raw_path, approval_path, derivative_path, output, contract=None):
+    contract = PRODUCTION_CONTRACT if contract is None else contract
+    RequireQualification(contract)
     Require(not output.exists() and not output.is_symlink(), "sanitized host receipt output already exists")
     Require(FileDigest(raw_path, PACKAGER.MAX_JSON) == contract["original_host_receipt_sha256"],
             "original host receipt digest mismatch")
@@ -344,6 +399,10 @@ def SanitizeHostReceipt(raw_path, approval_path, derivative_path, output, contra
             "Marketplace approval receipt digest mismatch")
     entries = VerifyApproval(approval, contract)
     darwin = next(entry for entry in entries if entry["target"] == "darwin-arm64")
+    if VERSION == "0.5.2":
+        Require(raw.get("source") == APPROVED_SOURCE and
+                raw.get("derivative_sha256") == contract["derivative_sha256"]["darwin-arm64"],
+                "original host proof does not bind the complete two-root source and derivative")
     Require(FileDigest(derivative_path) == contract["derivative_sha256"]["darwin-arm64"],
             "host-qualified derivative digest mismatch")
     Require(raw.get("schema_version") == 1 and raw.get("status") == "success" and
@@ -380,6 +439,7 @@ def SanitizeHostReceipt(raw_path, approval_path, derivative_path, output, contra
 
 def Main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--version", choices=("0.5.1", "0.5.2"), default="0.5.1")
     commands = parser.add_subparsers(dest="mode", required=True)
     preflight = commands.add_parser("preflight")
     preflight.add_argument("stage", type=Path)
@@ -392,13 +452,15 @@ def Main():
     sanitize.add_argument("derivative", type=Path)
     sanitize.add_argument("output", type=Path)
     args = parser.parse_args()
+    SelectProductionVersion(args.version)
+    RequireQualification(PRODUCTION_CONTRACT)
     if args.mode == "preflight":
-        Preflight(args.stage, args.attempt, os.environ)
+        Preflight(args.stage, args.attempt, os.environ, PRODUCTION_CONTRACT)
     elif args.mode == "publish":
-        Publish(args.attempt, os.environ)
+        Publish(args.attempt, os.environ, PRODUCTION_CONTRACT)
     else:
-        SanitizeHostReceipt(args.raw, args.approval, args.derivative, args.output)
-    print("Marketplace " + args.mode + ": verified bounded 0.5.1 publication route")
+        SanitizeHostReceipt(args.raw, args.approval, args.derivative, args.output, PRODUCTION_CONTRACT)
+    print("Marketplace " + args.mode + ": verified bounded " + VERSION + " publication route")
 
 
 if __name__ == "__main__":

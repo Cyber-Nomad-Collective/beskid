@@ -18,11 +18,11 @@ steps:
       - apt-get install -y --no-install-recommends ca-certificates git python3 >/dev/null
       - snapshot="/woodpecker-output/editor-$${CI_PIPELINE_NUMBER}-$${CI_COMMIT_SHA}"
       - bash scripts/ci/woodpecker-source-history.sh
-      - python3 scripts/ci/prebuilt-editor-publish.py prepare "$${snapshot}"
+      - python3 scripts/ci/prebuilt-editor-publish.py prepare "$${snapshot}" --version "$${BESKID_EDITOR_PUBLISH_VERSION:-0.5.1}"
       - toolchain="$${snapshot}/ovsx-toolchain"
       - npm install --prefix "$${toolchain}" --ignore-scripts --no-audit --no-fund ovsx@1.2.0
       - test -x "$${toolchain}/node_modules/.bin/ovsx"
-      - python3 scripts/ci/prebuilt-editor-publish.py verify "$${snapshot}"
+      - python3 scripts/ci/prebuilt-editor-publish.py verify "$${snapshot}" --version "$${BESKID_EDITOR_PUBLISH_VERSION:-0.5.1}"
 
   - name: publish-editor-release
     image: node:22.16.0-bookworm
@@ -36,8 +36,8 @@ steps:
       - toolchain="$${snapshot}/ovsx-toolchain"
       - ovsx="$${toolchain}/node_modules/.bin/ovsx"
       - test -x "$${ovsx}"
-      - python3 scripts/ci/prebuilt-editor-publish.py verify "$${snapshot}"
-      - python3 scripts/ci/prebuilt-editor-publish.py publish "$${snapshot}" --ovsx "$${ovsx}"
+      - python3 scripts/ci/prebuilt-editor-publish.py verify "$${snapshot}" --version "$${BESKID_EDITOR_PUBLISH_VERSION:-0.5.1}"
+      - python3 scripts/ci/prebuilt-editor-publish.py publish "$${snapshot}" --ovsx "$${ovsx}" --version "$${BESKID_EDITOR_PUBLISH_VERSION:-0.5.1}"
       - test -s "$${snapshot}/publish-results.json"
 
 when:
