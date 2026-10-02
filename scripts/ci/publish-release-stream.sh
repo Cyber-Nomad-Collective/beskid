@@ -28,6 +28,10 @@ RELEASE_STATE="${7:-}"
 
 REPO="Cyber-Nomad-Collective/beskid_compiler"
 
+# Explicit source holds precede credentials, state that may predate a hold, and
+# every GitHub read or mutation.
+node "${SCRIPT_DIR}/release-publication-eligibility.mjs" check-source "${RELEASE_VERSION}" "${COMPILER_SHA}"
+
 case "$RELEASE_CHANNEL" in
   stable|unstable) ;;
   *) echo "Unsupported release channel: $RELEASE_CHANNEL" >&2; exit 1 ;;

@@ -14,6 +14,7 @@ for suite in \
 done
 python3 scripts/ci/test/marketplace-publish.test.py
 node --test scripts/ci/test/package-source-authority.test.mjs \
+  scripts/ci/test/release-publication-eligibility.test.mjs \
   scripts/ci/test/qualified-pckg-toolchain.test.mjs \
   scripts/ci/test/template-quality-gate.test.mjs \
   scripts/ci/test/release-version.test.mjs \

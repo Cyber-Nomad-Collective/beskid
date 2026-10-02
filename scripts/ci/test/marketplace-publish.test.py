@@ -30,6 +30,11 @@ class MarketplacePublishTests(unittest.TestCase):
             "CI_REPO": "Cyber-Nomad-Collective/beskid",
             "CI_COMMIT_SHA": "a" * 40,
         }
+        self.synthetic_source = copy.deepcopy(API.APPROVED_SOURCE)
+        self.synthetic_source["compiler_commit"] = "b" * 40
+        source_patch = mock.patch.object(API, "APPROVED_SOURCE", self.synthetic_source)
+        source_patch.start()
+        self.addCleanup(source_patch.stop)
         self.contract = copy.deepcopy(API.PRODUCTION_CONTRACT)
         self.contract["publication_enabled"] = True
         targets = []
@@ -235,6 +240,28 @@ class MarketplacePublishTests(unittest.TestCase):
                 API.Publish(attempt, dict(self.context, VSCE_PAT="must-not-be-used"), held, runner=runner)
         self.assertFalse(called)
         self.assertEqual(json.loads((attempt / API.ATTEMPT_RECEIPT_NAME).read_text())["status"], "publish-blocked")
+
+    def test_exact_source_hold_precedes_boolean_secret_and_runner(self):
+        held_source = copy.deepcopy(self.synthetic_source)
+        held_source["compiler_commit"] = "1bd7bdee81d59ef14339e6a6c2ce18eb36585238"
+        self._mutate_json("marketplace-approval.json", lambda value: value.update(source=held_source))
+        self._mutate_json(API.HOST_QUALIFICATION_NAME, lambda value: value.update(source=held_source))
+        self.contract["approval_sha256"] = self._sha(self.stage / "marketplace-approval.json")
+        self._mutate_json(API.HOST_QUALIFICATION_NAME,
+                          lambda value: value.update(marketplace_approval_sha256=self.contract["approval_sha256"]))
+        called = False
+        def runner(*_):
+            nonlocal called
+            called = True
+            return 0
+        with mock.patch.object(API, "APPROVED_SOURCE", held_source):
+            attempt = self._preflight(name="exact-source-held-attempt")
+            with self.assertRaises(ValueError) as failure:
+                API.Publish(attempt, dict(self.context, VSCE_PAT="must-not-be-used"),
+                            self.contract, runner=runner)
+        self.assertIn("publication hold", str(failure.exception).lower())
+        self.assertFalse(called)
+        self.assertTrue(self.contract["publication_enabled"])
 
     def test_host_receipt_sanitizer_binds_proof_without_private_paths(self):
         raw = self.root / "raw-host-receipt.json"

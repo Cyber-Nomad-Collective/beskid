@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "holds": [
+    {
+      "version": "0.5.1",
+      "compiler_commit": "1bd7bdee81d59ef14339e6a6c2ce18eb36585238",
+      "reason": "Released compiler Corelib intrinsic authority fails after its original build checkout is absent."
+    }
+  ]
+}

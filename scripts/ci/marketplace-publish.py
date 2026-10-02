@@ -21,6 +21,7 @@ PACKAGER_PATH = ROOT / "scripts/ci/package-marketplace-editor.py"
 PACKAGER_SPEC = importlib.util.spec_from_file_location("package_marketplace_editor", PACKAGER_PATH)
 PACKAGER = importlib.util.module_from_spec(PACKAGER_SPEC)
 PACKAGER_SPEC.loader.exec_module(PACKAGER)
+SOURCE_ELIGIBILITY = ROOT / "scripts/ci/release-publication-eligibility.mjs"
 
 VERSION = "0.5.1"
 PUBLISHER = "beskid-lang"
@@ -87,6 +88,15 @@ def FileDigest(path, limit=PACKAGER.MAX_VSIX):
 def ReadJsonFile(path):
     FileDigest(path, PACKAGER.MAX_JSON)
     return PACKAGER.ReadJson(path.read_bytes())
+
+
+def CheckSource(version, compiler_commit):
+    environment = {key: os.environ[key] for key in ("PATH", "HOME", "SYSTEMROOT") if key in os.environ}
+    result = subprocess.run(["node", str(SOURCE_ELIGIBILITY), "check-source", version, compiler_commit],
+                            env=environment, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    message = result.stderr.strip()
+    Require(result.returncode == 0, message if message.startswith("publication hold") else
+            "publication source eligibility check failed")
 
 
 def VerifyContext(context, allow_secret=False):
@@ -287,6 +297,7 @@ def Publish(attempt, context, contract=PRODUCTION_CONTRACT, runner=RunPublisher)
     record = ReadJsonFile(attempt / ATTEMPT_RECEIPT_NAME)
     Require(record.get("status") == "preflight-passed", "publication attempt is not preflight-qualified")
     try:
+        CheckSource(VERSION, APPROVED_SOURCE["compiler_commit"])
         VerifyContext(context, allow_secret=True)
         VerifyCheckout(context)
         Require(record.get("checkout_sha") == context["CI_COMMIT_SHA"], "publication checkout differs from preflight")

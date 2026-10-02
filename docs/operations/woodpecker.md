@@ -18,6 +18,17 @@ Further 0.5.1 editor and package publication is held: clean-consumer testing
 found that its compiler/LSP depends on its original build-checkout path for
 Corelib intrinsic authority. Preserve the immutable published artifacts; a
 corrected release requires fresh source, artifact and relocation qualification.
+The tracked `scripts/ci/release-publication-holds.json` denies the exact
+`0.5.1` / `1bd7bdee81d59ef14339e6a6c2ce18eb36585238` source tuple before native
+GitHub Release, Open VSX, or Microsoft Marketplace transport. The shared
+`release-publication-eligibility.mjs check-source <version> <compiler-sha>`
+command checks only explicit source holds; it does not replace the remaining
+release evidence, approval, or transport-specific gates. Malformed inputs,
+malformed records, and duplicate tuple records stop publication. Keep the
+Microsoft `publication_enabled: false` hold in place as an independent guard.
+Root-cause diagnostic tooling and guidance live in `compiler/scripts/diagnose/`
+and `compiler/docs/diagnose.md`; publisher fixture failures remain the local
+proof that held sources make no transport calls.
 
 ## Worker prerequisites
 
