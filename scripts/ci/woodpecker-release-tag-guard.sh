@@ -8,7 +8,7 @@ root="$(cd "$(dirname "$0")/../.." && pwd)"
 
 if [[ "${tag#v}" == "${tag}" ]] || ! node "${root}/scripts/ci/release-version.mjs" "${tag#v}" --stable-only >/dev/null; then
   echo "Ignoring non-release tag ${tag}"
-  exit 0
+  exit 1
 fi
 
 if [[ "${1:-}" == "--check-only" ]]; then

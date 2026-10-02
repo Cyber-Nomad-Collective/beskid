@@ -15,11 +15,33 @@ run_guard() {
 }
 
 for tag in editor-v0.5.1 v0.5.1-rc.1 malformed 0.5.1; do
-  test "$(run_guard "${tag}")" -eq 0
+  status="$(run_guard "${tag}")"
+  if [ "${status}" -eq 0 ]; then
+    echo "invalid tag unexpectedly passed check: ${tag}" >&2
+    exit 1
+  fi
   test ! -s "${marker}"
 done
 
 test "$(run_guard v0.5.1)" -eq 73
+test "$(cat "${marker}")" = reached
+
+run_workflow_guard() {
+  : >"${marker}"
+  set +e
+  if ! bash "${guard}" "$1" --check-only >/dev/null; then
+    status=0
+  else
+    printf reached >"${marker}"
+    status=73
+  fi
+  set -e
+  echo "${status}"
+}
+
+test "$(run_workflow_guard editor-v0.5.1)" -eq 0
+test ! -s "${marker}"
+test "$(run_workflow_guard v0.5.1)" -eq 73
 test "$(cat "${marker}")" = reached
 
 for file in linux macos windows; do
