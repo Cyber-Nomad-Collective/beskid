@@ -6,9 +6,17 @@ WORKFLOW="${ROOT}/.woodpecker/javascript.yml"
 
 test -f "${WORKFLOW}"
 
+reject_pattern() {
+  local pattern="$1"
+  local file="$2"
+  if grep -Eq "${pattern}" "${file}"; then
+    printf 'Forbidden workflow pattern found: %s\n' "${pattern}" >&2
+    exit 1
+  fi
+}
+
 grep -Fq 'image: node:22.16.0-bookworm' "${WORKFLOW}"
 grep -Fq 'corepack prepare pnpm@10.17.1 --activate' "${WORKFLOW}"
-test "$(grep -c 'npm install --global --ignore-scripts --no-audit --no-fund node-gyp@12.1.0' "${WORKFLOW}")" -eq 2
 grep -Fq 'apt-get install -y --no-install-recommends build-essential ca-certificates curl git python3 unzip' "${WORKFLOW}"
 grep -Fq 'https://github.com/oven-sh/bun/releases/download/bun-v1.3.0/bun-linux-x64-baseline.zip' "${WORKFLOW}"
 grep -Fq '77336611905b9e876e52924f8b1a57e72669cf10541dc1e11269d2c9371f9e45  /tmp/bun.zip' "${WORKFLOW}"
@@ -45,14 +53,20 @@ step_block() {
 for step in prepare-shared-packages prepare-treesitter; do
   block="$(step_block "${step}")"
   grep -Fq 'prepare ' <<<"${block}"
-  ! grep -Eq 'from_secret|NODE_AUTH_TOKEN|github_packages_publish_token' <<<"${block}"
+  if grep -Eq 'from_secret|NODE_AUTH_TOKEN|github_packages_publish_token' <<<"${block}"; then
+    printf 'Preparation step received publisher credentials: %s\n' "${step}" >&2
+    exit 1
+  fi
 done
 
 block="$(step_block validate-treesitter-release)"
 grep -Fq 'image: node:22.16.0-bookworm' <<<"${block}"
 grep -Fq 'bun-v1.3.0/bun-linux-x64-baseline.zip' <<<"${block}"
 grep -Fq 'bash scripts/ci/woodpecker-javascript.sh treesitter' <<<"${block}"
-! grep -Eq 'from_secret|NODE_AUTH_TOKEN|github_packages_publish_token' <<<"${block}"
+if grep -Eq 'from_secret|NODE_AUTH_TOKEN|github_packages_publish_token' <<<"${block}"; then
+  printf 'Tree-sitter validation received publisher credentials\n' >&2
+  exit 1
+fi
 
 for step in publish-shared-packages publish-treesitter; do
   block="$(step_block "${step}")"
@@ -62,9 +76,10 @@ for step in publish-shared-packages publish-treesitter; do
 done
 
 test "$(grep -c 'from_secret: github_packages_publish_token' "${WORKFLOW}")" -eq 2
-! grep -Eq 'GITHUB_TOKEN|NPM_TOKEN|GH_TOKEN|version_input|BESKID_PACKAGE_VERSION|workflow_dispatch' "${WORKFLOW}"
-! grep -Fq '|| pnpm' "${WORKFLOW}"
-! grep -Fq '|| bun' "${WORKFLOW}"
+reject_pattern 'GITHUB_TOKEN|NPM_TOKEN|GH_TOKEN|version_input|BESKID_PACKAGE_VERSION|workflow_dispatch' "${WORKFLOW}"
+reject_pattern 'npm install --global' "${WORKFLOW}"
+reject_pattern '\|\| pnpm' "${WORKFLOW}"
+reject_pattern '\|\| bun' "${WORKFLOW}"
 
 test ! -e "${ROOT}/beskid_web_common/.github/workflows/ci.yml"
 test ! -e "${ROOT}/beskid_web_common/.github/workflows/publish.yml"

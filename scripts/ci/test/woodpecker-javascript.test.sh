@@ -13,6 +13,9 @@ printf '{}\n' >"${fixture}/beskid_web_common/package.json"
 printf 'lockfileVersion: 9\n' >"${fixture}/beskid_web_common/pnpm-lock.yaml"
 printf '{}\n' >"${fixture}/beskid_treesitter/package.json"
 printf '{}\n' >"${fixture}/beskid_treesitter/bun.lock"
+mkdir -p "${fixture}/beskid_treesitter/node_modules/.bin"
+mkdir -p "${fixture}/beskid_treesitter/node_modules/tree-sitter-cli"
+printf '// fixture installer\n' >"${fixture}/beskid_treesitter/node_modules/tree-sitter-cli/install.js"
 
 cat >"${bin}/pnpm" <<'EOF'
 #!/usr/bin/env bash
@@ -36,7 +39,8 @@ fi
 printf 'bun[%s jobs=%s make=%s node_gyp=%s] %s\n' \
   "$(basename "$PWD")" "${npm_config_jobs:-}" "${MAKEFLAGS:-}" \
   "$(basename "${npm_config_node_gyp:-missing}")" "$*" >>"${COMMAND_LOG}"
-[[ "${FAKE_FAIL:-}" != bun-install ]] || exit 43
+[[ "${FAKE_FAIL:-}" != bun-install || "$*" != 'install --frozen-lockfile --ignore-scripts' ]] || exit 43
+[[ "${FAKE_FAIL:-}" != tree-native || "$*" != 'run install' ]] || exit 46
 EOF
 
 cat >"${bin}/bunx" <<'EOF'
@@ -47,6 +51,17 @@ printf 'bunx[%s] %s\n' "$(basename "$PWD")" "$*" >>"${COMMAND_LOG}"
 [[ "${FAKE_FAIL:-}" != tree-test || "$*" != 'tree-sitter test' ]] || exit 45
 EOF
 
+cat >"${bin}/node" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+if [[ "${1:-}" == --version ]]; then
+  printf '%s\n' "${FAKE_NODE_VERSION:-v22.16.0}"
+  exit 0
+fi
+printf 'node[%s] %s\n' "$(basename "$PWD")" "$(basename "${1:-}")" >>"${COMMAND_LOG}"
+[[ "${FAKE_FAIL:-}" != tree-cli-install ]] || exit 47
+EOF
+
 cat >"${bin}/git" <<'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
@@ -54,7 +69,7 @@ printf 'git %s\n' "$*" >>"${COMMAND_LOG}"
 [[ "${FAKE_GIT_DRIFT:-0}" != 1 ]] || exit 1
 EOF
 
-cat >"${bin}/node-gyp" <<'EOF'
+cat >"${fixture}/beskid_treesitter/node_modules/.bin/node-gyp" <<'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
 if [[ "${1:-}" == --version ]]; then
@@ -63,7 +78,8 @@ if [[ "${1:-}" == --version ]]; then
 fi
 exit 72
 EOF
-chmod +x "${bin}/pnpm" "${bin}/bun" "${bin}/bunx" "${bin}/node-gyp" "${bin}/git"
+chmod +x "${bin}/pnpm" "${bin}/bun" "${bin}/bunx" "${bin}/node" "${bin}/git" \
+  "${fixture}/beskid_treesitter/node_modules/.bin/node-gyp"
 
 run_lane() {
   local lane="$1"
@@ -95,7 +111,9 @@ EOF
 : >"${tmp}/commands.log"
 run_lane treesitter
 diff -u - "${tmp}/commands.log" <<'EOF'
-bun[beskid_treesitter jobs=2 make=-j2 node_gyp=node-gyp] install --frozen-lockfile
+bun[beskid_treesitter jobs= make= node_gyp=missing] install --frozen-lockfile --ignore-scripts
+node[tree-sitter-cli] install.js
+bun[beskid_treesitter jobs=2 make=-j2 node_gyp=node-gyp] run install
 bunx[beskid_treesitter] tree-sitter generate
 bunx[beskid_treesitter] tree-sitter test
 git -C beskid_treesitter diff --exit-code -- grammar.js grammar.template.js src
@@ -103,6 +121,7 @@ EOF
 
 expect_failure 'pnpm 10.17.1 is required' run_lane shared env FAKE_PNPM_VERSION=10.18.0
 expect_failure 'Bun 1.3.0 is required' run_lane treesitter env FAKE_BUN_VERSION=1.3.1
+expect_failure 'Node.js 22.16.0 is required' run_lane treesitter env FAKE_NODE_VERSION=v22.17.0
 expect_failure 'node-gyp 12.1.0 is required' run_lane treesitter env FAKE_NODE_GYP_VERSION=v12.0.0
 
 mv "${fixture}/beskid_web_common/pnpm-lock.yaml" "${fixture}/beskid_web_common/pnpm-lock.missing"
@@ -116,6 +135,8 @@ mv "${fixture}/beskid_treesitter/bun.lock.missing" "${fixture}/beskid_treesitter
 expect_failure 'shared package install failed' run_lane shared env FAKE_FAIL=pnpm-install
 expect_failure 'shared package build failed' run_lane shared env FAKE_FAIL=pnpm-build
 expect_failure 'Tree-sitter install failed' run_lane treesitter env FAKE_FAIL=bun-install
+expect_failure 'Tree-sitter CLI install failed' run_lane treesitter env FAKE_FAIL=tree-cli-install
+expect_failure 'Tree-sitter native build failed' run_lane treesitter env FAKE_FAIL=tree-native
 expect_failure 'Tree-sitter generator failed' run_lane treesitter env FAKE_FAIL=tree-generate
 expect_failure 'Tree-sitter corpus tests failed' run_lane treesitter env FAKE_FAIL=tree-test
 expect_failure 'Tree-sitter generated outputs changed' run_lane treesitter env FAKE_GIT_DRIFT=1

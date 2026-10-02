@@ -46,15 +46,24 @@ case "${lane}" in
     [[ -f beskid_treesitter/bun.lock ]] || Fail 'bun.lock is required'
     command -v bun >/dev/null 2>&1 || Fail 'Bun is required'
     command -v bunx >/dev/null 2>&1 || Fail 'bunx is required'
-    command -v node-gyp >/dev/null 2>&1 || Fail 'node-gyp is required'
+    command -v node >/dev/null 2>&1 || Fail 'Node.js is required'
     [[ "$(bun --version)" == 1.3.0 ]] || Fail 'Bun 1.3.0 is required'
-    [[ "$(node-gyp --version)" == v12.1.0 ]] || Fail 'node-gyp 12.1.0 is required'
-    node_gyp="$(command -v node-gyp)"
+    [[ "$(node --version)" == v22.16.0 ]] || Fail 'Node.js 22.16.0 is required'
     (
       cd beskid_treesitter
-      Run 'Tree-sitter install failed' \
+      Run 'Tree-sitter install failed' bun install --frozen-lockfile --ignore-scripts
+      tree_sitter_cli_dir="${PWD}/node_modules/tree-sitter-cli"
+      [[ -f "${tree_sitter_cli_dir}/install.js" ]] || Fail 'locked Tree-sitter CLI installer is required'
+      (
+        cd "${tree_sitter_cli_dir}"
+        Run 'Tree-sitter CLI install failed' node install.js
+      )
+      node_gyp="${PWD}/node_modules/.bin/node-gyp"
+      [[ -x "${node_gyp}" ]] || Fail 'locked node-gyp is required'
+      [[ "$("${node_gyp}" --version)" == v12.1.0 ]] || Fail 'node-gyp 12.1.0 is required'
+      Run 'Tree-sitter native build failed' \
         env npm_config_jobs=2 MAKEFLAGS=-j2 npm_config_node_gyp="${node_gyp}" \
-          bun install --frozen-lockfile
+          bun run install
       Run 'Tree-sitter generator failed' bunx tree-sitter generate
       Run 'Tree-sitter corpus tests failed' bunx tree-sitter test
     )

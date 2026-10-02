@@ -14,7 +14,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Move shared-web and Tree-sitter validation and reviewed GitHub Packages
   publication from submodule GitHub workflows to root Woodpecker, using exact
   gitlinks, frozen installs, token-free checksum-bound package preparation, and
-  credentials only in protected final publication steps.
+  credentials only in protected final publication steps. Run Tree-sitter with
+  pinned Node and Bun versions and a lock-resolved native build tool.
 - Promote existing rolling release tags only when GitHub proves the current
   target is an ancestor of the qualified compiler commit; reject unknown or
   divergent targets before release mutation and use non-forced tag updates.

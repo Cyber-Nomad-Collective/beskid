@@ -16,7 +16,9 @@ fixture suite, and real NixOS shared-package and Tree-sitter validation passed.
 The real Tree-sitter gate established that the official Bun-only Node fallback
 cannot load the grammar and Debian Node 18 is too old for the native toolchain;
 the workflow therefore uses pinned Node 22.16.0, checksum-pinned Bun 1.3.0,
-Node-22-compatible `node-gyp@12.1.0`, and a two-job native build bound. No
+lock-resolved `node-gyp@12.1.0`, explicit execution of only the pinned
+Tree-sitter CLI and repository native lifecycle scripts, and a two-job native
+build bound. No
 publication, secret provisioning, push, merge, or service activation occurred.
 
 ## Global Constraints

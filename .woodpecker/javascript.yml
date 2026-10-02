@@ -33,7 +33,6 @@ steps:
       - unzip -q /tmp/bun.zip -d /tmp/bun
       - install -m 0755 /tmp/bun/bun-linux-x64-baseline/bun /usr/local/bin/bun
       - ln -s /usr/local/bin/bun /usr/local/bin/bunx
-      - npm install --global --ignore-scripts --no-audit --no-fund node-gyp@12.1.0
       - bash scripts/ci/init-submodules.sh beskid_treesitter
       - bash scripts/ci/woodpecker-javascript.sh treesitter
     when:
@@ -84,7 +83,6 @@ steps:
       - unzip -q /tmp/bun.zip -d /tmp/bun
       - install -m 0755 /tmp/bun/bun-linux-x64-baseline/bun /usr/local/bin/bun
       - ln -s /usr/local/bin/bun /usr/local/bin/bunx
-      - npm install --global --ignore-scripts --no-audit --no-fund node-gyp@12.1.0
       - bash scripts/ci/init-submodules.sh beskid_treesitter
       - bash scripts/ci/woodpecker-javascript.sh treesitter
     when:
