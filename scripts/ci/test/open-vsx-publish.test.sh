@@ -9,4 +9,5 @@ if grep -riEq 'open-vsx-publish|open_vsx_token|OVSX_TOKEN|ovsx publish' "${root}
   exit 1
 fi
 node --test "${root}/scripts/ci/test/package-editor-release.test.mjs"
+python3 "${root}/scripts/ci/test/prebuilt-editor-publish.test.py"
 echo 'PASS: Open VSX release preparation requires verified native evidence'

@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Correct release-channel documentation to distinguish manual prebuilt editor
+  publication, Woodpecker native builds, Watchtower deployment, and the pending
+  initial Zed registry listing.
 - Pin the reviewed 0.5.1 compiler integration candidate, including the
   line-oriented CLI, template authoring locks, package browsing, and
   command-surface regression gate.
@@ -36,6 +39,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Added
 
+- Add a manual main-only Open VSX publisher for the three reviewed prebuilt
+  0.5.1 VSIX packages, with immutable native/source/archive verification before
+  step-local credential access and fail-closed partial-publication reporting.
 - Prepare the maintained VS Code and Zed packages with coordinated 0.5.1
   authoring metadata and the initial Zed registry submission instructions.
 - Package editor releases from native release evidence with exact version,
@@ -48,6 +54,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Require the protected package publisher to use the immutable, digest-verified
+  full release bundle, pinned-source-verified Corelib, and matching runtime
+  prefix; remove raw compiler and local Cargo-build fallbacks.
 - Require clean tracked root and editor source and the committed VS Code
   gitlink before packaging verified native editor releases.
 - Remove the unsafe Woodpecker Open VSX source-rebuild workflow and publisher;

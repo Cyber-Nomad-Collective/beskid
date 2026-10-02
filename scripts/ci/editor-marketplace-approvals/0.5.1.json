@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "version": "0.5.1",
+  "publisher": "beskid",
+  "name": "beskid-vscode",
+  "source": {
+    "superrepo_commit": "f064de92777d36c249424a18f92c91abd6f3e248",
+    "compiler_commit": "1bd7bdee81d59ef14339e6a6c2ce18eb36585238",
+    "editor_commit": "270cc2b4caec843516fa5ad684a6e1eb1d1608e6",
+    "publisher_base_commit": "3179295444affc9a646a272c0a1ec677ce00acf5"
+  },
+  "editor_release": {
+    "repository": "Cyber-Nomad-Collective/beskid",
+    "tag": "editor-v0.5.1"
+  },
+  "native_release": {
+    "repository": "Cyber-Nomad-Collective/beskid_compiler",
+    "tag": "lsp-v0.5.1"
+  },
+  "targets": [
+    {
+      "target": "linux-x64",
+      "native_target": "x86_64-unknown-linux-gnu",
+      "asset": "beskid-vscode-0.5.1-linux-x64.vsix",
+      "sha256": "fe04be50139e95d44bfe16636619d24f0f87a4486e8b62820e1de1e7120b2bb1",
+      "lsp_sha256": "7c161fdd3e26fcb8099cc56f090c2224b33b52883b63bfb5dd36db7b4335097a",
+      "native_asset": "beskid_lsp-linux-amd64"
+    },
+    {
+      "target": "darwin-arm64",
+      "native_target": "aarch64-apple-darwin",
+      "asset": "beskid-vscode-0.5.1-darwin-arm64.vsix",
+      "sha256": "68ea0c3518418cc6629b89f6f39f68efaec4856f5d1b0ada625d29ba5dbe1473",
+      "lsp_sha256": "ecfc68d921d4b9539f090eb2de221f4cc616177e52e1f166198ba45c9ed143d7",
+      "native_asset": "beskid_lsp-darwin-arm64"
+    },
+    {
+      "target": "win32-x64",
+      "native_target": "x86_64-pc-windows-msvc",
+      "asset": "beskid-vscode-0.5.1-win32-x64.vsix",
+      "sha256": "79d16b9215fa2e4324853153a32705279acf270252d049c92abefd3b1b577160",
+      "lsp_sha256": "34e01e08d0dc9a4fd31d2c67929f3e4418b177fa4e6aa1d1d1bc4fb8d95d447a",
+      "native_asset": "beskid_lsp-windows-amd64.exe"
+    }
+  ]
+}

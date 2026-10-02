@@ -2,9 +2,8 @@
 # Pack and publish the production corelib and first-party template packages.
 #
 # The packaging + upload logic lives in the native pure-Node runner at
-# scripts/ci/lib/corelib-publish-runner.mjs. This script either uses an
-# explicitly supplied verified beskid_cli release binary or builds one locally,
-# then invokes that runner with the source workspaces.
+# scripts/ci/lib/corelib-publish-runner.mjs. Require a qualified direct-install
+# release bundle; never build or use a standalone compiler for publication.
 #
 # Run from the superrepo root. Assumes compiler (+ corelib), beskid_bsol, and
 # beskid_templates submodules are initialised.
@@ -14,6 +13,7 @@
 #   --dry-run     build and validate every artifact without registry access
 # Env: BESKID_PCKG_API_KEY (required unless --dry-run)
 #      BESKID_PCKG_BASE_URL (default https://pckg.beskid-lang.org)
+#      BESKID_TOOLCHAIN_PREFIX (required extracted, verified release bundle)
 set -euo pipefail
 
 VERSION_BUMP="patch"
@@ -40,18 +40,38 @@ export BESKID_PCKG_BASE_URL="${BESKID_PCKG_BASE_URL:-https://pckg.beskid-lang.or
 export BESKID_PCKG_VERSION_BUMP="$VERSION_BUMP"
 export BESKID_PUBLISH_DRY_RUN="$DRY_RUN"
 
-# Resolve the corelib workspace root (mirrors resolveCorelibRoot).
-if [[ -f "${ROOT}/CoreLib.bws" ]]; then
-  CORELIB_ROOT="${ROOT}"
-elif [[ -f "${ROOT}/compiler/corelib/CoreLib.bws" ]]; then
-  CORELIB_ROOT="${ROOT}/compiler/corelib"
-elif [[ -f "${ROOT}/compiler/CoreLib.bws" ]]; then
-  CORELIB_ROOT="${ROOT}/compiler"
-else
-  echo "Could not resolve corelib workspace root" >&2; exit 1
-fi
-export CORELIB_ROOT="$CORELIB_ROOT"
-export BESKID_CORELIB_ROOT="$CORELIB_ROOT"
+: "${BESKID_TOOLCHAIN_PREFIX:?BESKID_TOOLCHAIN_PREFIX must name a qualified extracted release bundle}"
+[[ -d "$BESKID_TOOLCHAIN_PREFIX" && ! -L "$BESKID_TOOLCHAIN_PREFIX" ]] || {
+  echo 'BESKID_TOOLCHAIN_PREFIX must be a real bundle directory' >&2; exit 1;
+}
+PREFIX="$(cd "$BESKID_TOOLCHAIN_PREFIX" && pwd -P)"
+for override in BESKID_CLI_BIN BESKID_CORELIB_ROOT CORELIB_ROOT BESKID_RUNTIME_PREFIX; do
+  expected="$PREFIX"
+  [[ "$override" != BESKID_CLI_BIN ]] || expected="$PREFIX/bin/beskid"
+  [[ "$override" != BESKID_CORELIB_ROOT && "$override" != CORELIB_ROOT ]] || expected="$PREFIX/beskid_corelib"
+  [[ -z "${!override:-}" || "${!override}" == "$expected" ]] || {
+    echo "$override conflicts with the qualified BESKID_TOOLCHAIN_PREFIX" >&2; exit 1;
+  }
+done
+export BESKID_TOOLCHAIN_PREFIX="$PREFIX"
+export BESKID_CLI_BIN="$PREFIX/bin/beskid"
+export BESKID_CORELIB_ROOT="$PREFIX/beskid_corelib"
+export CORELIB_ROOT="$BESKID_CORELIB_ROOT"
+export BESKID_RUNTIME_PREFIX="$PREFIX"
+
+case "$(uname -s):$(uname -m)" in
+  Linux:x86_64) TARGET=x86_64-unknown-linux-gnu ;;
+  Darwin:arm64) TARGET=aarch64-apple-darwin ;;
+  *) echo 'Package publication requires a maintained native Linux or macOS bundle' >&2; exit 1 ;;
+esac
+for required in bin/beskid release-version.txt beskid_corelib/.beskid-bundle.sha256 \
+  "lib/beskid-runtime/abi-5/$TARGET/debug/abi.json" \
+  "lib/beskid-runtime/abi-5/$TARGET/release/abi.json"; do
+  [[ -f "$PREFIX/$required" && ! -L "$PREFIX/$required" ]] || {
+    echo "Qualified toolchain omitted regular $required" >&2; exit 1;
+  }
+done
+[[ -x "$BESKID_CLI_BIN" ]] || { echo 'Qualified bin/beskid is not executable' >&2; exit 1; }
 
 TEMPLATES_ROOT="${BESKID_TEMPLATES_ROOT:-${ROOT}/beskid_templates}"
 if [[ ! -f "${TEMPLATES_ROOT}/beskid_templates.bws" ]]; then
@@ -60,26 +80,8 @@ if [[ ! -f "${TEMPLATES_ROOT}/beskid_templates.bws" ]]; then
 fi
 export BESKID_TEMPLATES_ROOT="$TEMPLATES_ROOT"
 
-if [[ -f "${ROOT}/compiler/Cargo.toml" ]]; then
-  COMPILER_ROOT="${ROOT}/compiler"
-else
-  COMPILER_ROOT="${ROOT}"
-fi
-
 RUNNER="${ROOT}/scripts/ci/lib/corelib-publish-runner.mjs"
 [[ -f "$RUNNER" ]] || { echo "Missing publish runner: $RUNNER" >&2; exit 1; }
-
-if [[ -n "${BESKID_CLI_BIN:-}" ]]; then
-  [[ -x "${BESKID_CLI_BIN}" ]] || {
-    echo "BESKID_CLI_BIN must name an executable compiler release binary" >&2
-    exit 1
-  }
-  export BESKID_CLI_BIN
-else
-  cd "$COMPILER_ROOT"
-  cargo build -p beskid_cli --release
-  export BESKID_CLI_BIN="${COMPILER_ROOT}/target/release/beskid_cli"
-fi
 
 if command -v node >/dev/null 2>&1; then
   JS_RUNTIME="$(command -v node)"
@@ -91,4 +93,15 @@ else
   echo "node or bun is required to run the package publisher" >&2
   exit 1
 fi
+VERSION="$(< "$PREFIX/release-version.txt")"
+printf '%s\n' "$VERSION" | cmp -s - "$PREFIX/release-version.txt" || {
+  echo 'Qualified release-version.txt must contain exactly one version line' >&2; exit 1;
+}
+"$JS_RUNTIME" "$ROOT/scripts/ci/release-version.mjs" "$VERSION" --stable-only >/dev/null
+[[ "$("$BESKID_CLI_BIN" --version)" == "beskid $VERSION" ]] || {
+  echo 'Qualified CLI version does not match its release bundle' >&2; exit 1;
+}
+# Authored sources are comparison inputs, not the CLI's installed Corelib root.
+"$JS_RUNTIME" "$ROOT/scripts/ci/verify-release-corelib-bundle.mjs" --verify \
+  "$ROOT/compiler/corelib" "$BESKID_CORELIB_ROOT"
 "$JS_RUNTIME" "$RUNNER"

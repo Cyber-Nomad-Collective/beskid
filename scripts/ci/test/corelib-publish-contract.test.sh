@@ -44,12 +44,10 @@ assert_contains "${RUNNER}" 'generateCorelibDocsForPackage(cliBin, meta.workspac
   "each documented corelib package is generated immediately before packing"
 assert_contains "${PUBLISHER}" 'BESKID_PUBLISH_DRY_RUN' \
   "the publisher exposes a no-secret, no-mutation validation mode"
-assert_contains "${PUBLISHER}" 'if [[ -n "${BESKID_CLI_BIN:-}" ]]' \
-  "a verified prebuilt compiler binary bypasses the local Rust build"
-assert_contains "${PUBLISHER}" 'BESKID_CLI_BIN must name an executable compiler release binary' \
-  "a supplied compiler binary is validated before package generation"
-assert_contains "$(cat "${ROOT}/.woodpecker/pckg.yml")" 'expected_digest=' \
-  "the PCKG pipeline checks the downloaded compiler release checksum"
+assert_contains "$(cat "${ROOT}/.woodpecker/pckg.yml")" 'node scripts/ci/prepare-pckg-toolchain.mjs' \
+  "the PCKG pipeline obtains the immutable digest-verified full bundle"
+assert_contains "$(cat "${ROOT}/.woodpecker/pckg.yml")" 'BESKID_TOOLCHAIN_PREFIX=/woodpecker-toolchain/prefix' \
+  "the PCKG pipeline passes the complete installed prefix to publication"
 assert_contains "${PUBLISHER}" 'https://pckg.beskid-lang.org' \
   "the publisher default uses the canonical public registry URL"
 assert_eq "absent" "$({ grep -Fq 'https://pckg.beskid-lang.org:8082' <<<"${PUBLISHER}" && echo present; } || echo absent)" \
@@ -85,4 +83,5 @@ assert_eq "1" "${INVALID_KEY_STATUS}" \
 assert_contains "${INVALID_KEY_OUTPUT}" "canonical bpk_ publisher token" \
   "malformed publisher key failure identifies the canonical credential contract"
 
+"${JS_RUNTIME}" --test "${ROOT}/scripts/ci/test/qualified-pckg-toolchain.test.mjs"
 finish_tests

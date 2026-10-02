@@ -20,21 +20,12 @@ steps:
     commands:
       - apt-get update >/dev/null
       - apt-get install -y --no-install-recommends ca-certificates gh git jq python3 unzip >/dev/null
-      - bash scripts/ci/init-submodules.sh compiler beskid_bsol beskid_templates
+      - bash scripts/ci/init-submodules.sh compiler beskid_bsol beskid_templates beskid_distrib
       - |
         version="$${BESKID_COMPILER_RELEASE_VERSION:?set the verified compiler release version}"
-        case "$${version}" in
-          [0-9]*.[0-9]*.[0-9]*) ;;
-          *) echo "BESKID_COMPILER_RELEASE_VERSION must be a release version" >&2; exit 1 ;;
-        esac
         mkdir -p /woodpecker-toolchain
-        gh release download "cli-v$${version}" --repo Cyber-Nomad-Collective/beskid_compiler --pattern beskid-linux-amd64 --dir /woodpecker-toolchain --clobber
-        expected_digest="$(gh api "repos/Cyber-Nomad-Collective/beskid_compiler/releases/tags/cli-v$${version}" --jq '.assets[] | select(.name == "beskid-linux-amd64") | .digest')"
-        actual_digest="sha256:$(sha256sum /woodpecker-toolchain/beskid-linux-amd64 | awk '{print $1}')"
-        test "$${expected_digest}" = "$${actual_digest}"
-        chmod 0755 /woodpecker-toolchain/beskid-linux-amd64
-        test "$(/woodpecker-toolchain/beskid-linux-amd64 --version)" = "beskid $${version}"
-      - BESKID_CLI_BIN=/woodpecker-toolchain/beskid-linux-amd64 bash scripts/ci/corelib-publish.sh patch
+        node scripts/ci/prepare-pckg-toolchain.mjs "$${version}" /woodpecker-toolchain/prefix
+      - BESKID_TOOLCHAIN_PREFIX=/woodpecker-toolchain/prefix bash scripts/ci/corelib-publish.sh patch
     when:
       - event: manual
         branch: main
