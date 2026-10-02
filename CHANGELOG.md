@@ -68,6 +68,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Pin the reviewed compiler repair that preserves verified installed Corelib
+  service authority after the original compiler build checkout is absent.
 - Harden Marketplace-only editor derivative provenance with raw-path symlink
   checks, exact approved source pins, non-metadata inventory comparison,
   repeated-run determinism coverage, and encoding-safe XML DTD rejection.
