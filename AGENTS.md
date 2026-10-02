@@ -99,7 +99,7 @@ This project is indexed by GitNexus as **beskid** (121068 symbols, 223747 relati
   produces durable, checksummed Linux, Windows, and macOS target outputs, but
   it has no publication or deployment credentials. Stable publication remains
   a reviewed manual operation; Watchtower in `beskid_sites/deploy` alone
-  reconciles production. GitHub Actions remains limited to editor-marketplace
-  and repository-native maintenance work.
+  reconciles production. Woodpecker is also the sole root editor-marketplace
+  publisher; GitHub Actions is limited to repository-native maintenance work.
 - While sites still resolve `@beskid/*` via `file:../../beskid_web_common`, CI and Docker must checkout/copy that submodule before `pnpm install` (same pattern as the website image)
 - Generation-bound Salsa/syntax facts in `beskid_queries` are semantic authority for LSP/IDE (no per-request HIR rebuilds or dual snapshot paths); ABI-v5 runtime kits use exact installed-prefix discovery/validation and fail closed on missing, mismatched, or tampered kits

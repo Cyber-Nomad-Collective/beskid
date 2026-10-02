@@ -17,6 +17,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Correct release-channel documentation to distinguish manual prebuilt editor
   publication, Woodpecker native builds, Watchtower deployment, and the pending
   initial Zed registry listing.
+- Move reviewed prebuilt Open VSX publication to the manual Woodpecker editor
+  lane, preserving the original `beskid` package identity and granting the
+  existing `open_vsx_token` secret only to the final publish step.
 - Pin the reviewed 0.5.1 compiler integration candidate, including the
   line-oriented CLI, template authoring locks, package browsing, and
   command-surface regression gate.
@@ -42,9 +45,10 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Added
 
-- Add a manual main-only Open VSX publisher for the three reviewed prebuilt
-  0.5.1 VSIX packages, with immutable native/source/archive verification before
-  step-local credential access and fail-closed partial-publication reporting.
+- Add a manual main-only Woodpecker Open VSX publisher for the three reviewed
+  prebuilt 0.5.1 VSIX packages, with immutable native/source/archive
+  verification before step-local credential access and fail-closed
+  partial-publication reporting.
 - Prepare the maintained VS Code and Zed packages with coordinated 0.5.1
   authoring metadata and the initial Zed registry submission instructions.
 - Package editor releases from native release evidence with exact version,

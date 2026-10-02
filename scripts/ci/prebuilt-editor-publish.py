@@ -210,9 +210,14 @@ def VerifyRelease(approval, editors, native, root):
     return [VerifyVsix(editors / x["asset"], x, approval) for x in approval["targets"]]
 
 
-def VerifyContext(context):
-    Require(context.get("GITHUB_EVENT_NAME") == "workflow_dispatch" and context.get("GITHUB_REF") == "refs/heads/main" and
-            context.get("GITHUB_REPOSITORY") == "Cyber-Nomad-Collective/beskid", "publication requires manual root main invocation")
+def VerifyContext(context, root):
+    Require(context.get("CI_PIPELINE_EVENT") == "manual" and context.get("CI_COMMIT_BRANCH") == "main" and
+            context.get("CI_REPO") == "Cyber-Nomad-Collective/beskid" and
+            context.get("BESKID_TASK") == "editor-publish", "publication requires the trusted Woodpecker editor-publish task")
+    expected = subprocess.run(["git", "-C", str(root), "rev-parse", "HEAD"], check=True,
+                               stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True).stdout.strip()
+    Require(re.fullmatch(r"[0-9a-f]{40}", context.get("CI_COMMIT_SHA", "")) and
+            context.get("CI_COMMIT_SHA") == expected, "publication commit does not match the checked-out root HEAD")
 
 
 def Request(url, limit, missing=False):
@@ -260,7 +265,7 @@ def Upload(argv, env):
 
 
 def Publish(approval, editors, native, root, context, ovsx, results_file, read_registry=None, upload=Upload):
-    VerifyContext(context)
+    VerifyContext(context, root)
     VerifyRelease(approval, editors, native, root)
     Require(bool(context.get("OVSX_PAT", "").strip()), "OVSX_PAT is missing")
     read_registry = read_registry or (lambda entry: RegistryPackage(entry, approval))
@@ -332,7 +337,7 @@ def DownloadAsset(record, assets, name, path, limit, expected_digest=None):
 
 
 def Prepare(approval, snapshot, root, context):
-    VerifyContext(context)
+    VerifyContext(context, root)
     VerifyApproval(approval)
     VerifySource(approval, root)
     Require(not context.get("OVSX_PAT") and not context.get("OVSX_TOKEN"), "preparation must not receive publisher credentials")

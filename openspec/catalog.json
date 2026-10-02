@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "cd7092b6cdbc3aae4ac31b8e2152378fe594fe40b4e2db97cdda2d42f7548cab",
+  "revision": "0becd4360ef4ac935bd2dfda21841901276bf10a6bcc9c0df4f54225ab061bb8",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -39099,7 +39099,7 @@
       "path": "AGENTS.md",
       "title": "Beskid — Toolchain & Stack",
       "authority": "informative",
-      "sourceHash": "1e5530300037591d5dbe2df9e03aee14d6c20e0530b0c2d3ff269fbeba08e217",
+      "sourceHash": "a58da55df6fb8c301327db33cb79f81dac5eed3010d63f493844b8c13f6cc720",
       "standardLinks": [],
       "containsNormativeKeywords": true,
       "disposition": "informative-by-policy"
@@ -39130,7 +39130,7 @@
       "path": "README.md",
       "title": "Beskid Superrepo",
       "authority": "informative",
-      "sourceHash": "a85c8d211041c9986158fa70e88925df07052d5397fac03affe4655b7dfb8d19",
+      "sourceHash": "a622644daf4978a943ff2b2f69ab995a41a19c030404dc3775f3daf69ab380ee",
       "standardLinks": [
         "/platform-spec/",
         "/platform-spec/README.md"
@@ -39273,7 +39273,7 @@
       "path": "site/website/src/content/docs/book/01-it-works-on-my-machine/downloads-and-releases.md",
       "title": "Downloads and rolling releases",
       "authority": "informative",
-      "sourceHash": "f5b66eedc5eda1af04fa5341d566e5441d9e136da2a6db227b4ee65f7ce05176",
+      "sourceHash": "ad2bdca9f3d137c16648f1f4c68a1d2b8e3fbbc85748893704938a2cfbbac047",
       "standardLinks": [
         "/platform-spec/tooling/cli-and-distribution/"
       ],

@@ -76,8 +76,9 @@ class PublisherTests(unittest.TestCase):
                 for target, triple, _ in TARGETS],
         }
         self.save_state()
-        self.context = {"GITHUB_EVENT_NAME": "workflow_dispatch", "GITHUB_REF": "refs/heads/main",
-                        "GITHUB_REPOSITORY": "Cyber-Nomad-Collective/beskid", "OVSX_PAT": "test-only-token"}
+        self.context = {"CI_PIPELINE_EVENT": "manual", "CI_COMMIT_BRANCH": "main",
+                        "CI_REPO": "Cyber-Nomad-Collective/beskid", "CI_COMMIT_SHA": self.source,
+                        "BESKID_TASK": "editor-publish", "OVSX_PAT": "test-only-token"}
         self.uploads = []
         self.remote = {}
 
@@ -449,8 +450,9 @@ def ContextCase(key, value):
     return case
 
 
-for key, value in [("GITHUB_EVENT_NAME", "push"), ("GITHUB_REF", "refs/heads/feature"),
-                   ("GITHUB_REPOSITORY", "other/repo"), ("OVSX_PAT", "")]:
+for key, value in [("CI_PIPELINE_EVENT", "push"), ("CI_COMMIT_BRANCH", "feature"),
+                   ("CI_REPO", "other/repo"), ("CI_COMMIT_SHA", "0" * 40),
+                   ("BESKID_TASK", "build"), ("OVSX_PAT", "")]:
     setattr(PublisherTests, "test_rejects_invalid_context_" + key.lower(), ContextCase(key, value))
 
 if __name__ == "__main__":

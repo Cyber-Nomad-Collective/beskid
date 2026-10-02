@@ -8,7 +8,9 @@ has no publication credentials.
 
 No workflow deploys production. The rootless platform-image job is optional.
 Marketplace, Homebrew, and OCI publishing use the existing canonical manual
-recipes and are not release gates.
+recipes and are not release gates. The reviewed prebuilt editor publisher is a
+manual Woodpecker lane; only its final publish step receives the existing
+`open_vsx_token` repository secret.
 
 ## Worker prerequisites
 
@@ -21,8 +23,9 @@ The macOS worker needs the official arm64 agent, Git, Node, jq,
 tar, Rust 1.98.1, Xcode tools, and Homebrew LLVM; it writes under
 `~/Library/Application Support/Woodpecker/beskid-output`.
 
-Keep agent handoff keys in host-managed files. Keep publisher credentials
-outside Woodpecker and never place them in tracked files or pipeline variables.
+Keep agent handoff keys in host-managed files. Keep publisher credentials out of
+tracked files and ordinary pipeline variables. The editor publisher binds the
+existing `open_vsx_token` secret only in its final publish step.
 
 Native clone uses the `plugin-git` executable from Woodpecker plugin-git 2.10.1
 on each account's PATH, not a Docker image. Agents connect with TLS to
@@ -93,12 +96,27 @@ credential and should never be represented as completed installer-test evidence.
 
 ### Open VSX extension publication
 
-Prepare target-specific editor packages on the trusted manual release host
-from the checksum-verified native release evidence. The root and VS Code
-tracked source must be clean, and the checked-out editor revision must match
-the committed root gitlink. The native source revision must be an ancestor of
-the editor release revision with the same compiler pin. No marketplace workflow
-runs in Woodpecker; the former source-rebuild publisher has been removed.
+Run the reviewed prebuilt publisher on the trusted manual Woodpecker lane:
+
+```bash
+woodpecker-cli pipeline create Cyber-Nomad-Collective/beskid --branch main \
+  --var BESKID_TASK=editor-publish
+```
+
+The lane uses a full-history clone and accepts only Woodpecker's built-in
+`CI_PIPELINE_EVENT=manual`, `CI_COMMIT_BRANCH=main`, exact `CI_REPO`, and
+`CI_COMMIT_SHA` equal to the checked-out root `HEAD`. It requires the
+`BESKID_TASK=editor-publish` gate, verifies the approved source identities,
+native LSP assets, and the three original VSIX byte digests, and never rebuilds
+editor or native sources. Preparation and verification run without a publisher
+credential; only the final publish step receives `OVSX_PAT` from the existing
+repository secret `open_vsx_token`. npm installs pinned `ovsx@1.2.0` with
+`--ignore-scripts`, and the step writes durable `publish-results.json` evidence
+under `/woodpecker-output/editor-<pipeline>-<commit>/`.
+
+The native build workflows accept only exact stable semantic-version `vX.Y.Z`
+tags (or their explicit manual build task); editor staging tags such as
+`editor-v0.5.1` never enter a native build path.
 
 The native evidence root contains its canonical `linux`, `macos`, and `windows`
 directories. Package each target from a separate clean editor checkout:
@@ -109,10 +127,10 @@ node scripts/ci/package-editor-release.mjs linux-x64 \
 ```
 
 The versioned VSIX under `beskid_vscode/dist` embeds the exact verified native
-LSP and declares its marketplace target. Review its digest and contents before
-submitting that file to Open VSX or Visual Studio Marketplace. Supply the
-existing publisher credential only to the external manual publication process;
-never transfer it into Woodpecker, tracked files, or pipeline variables.
+LSP and declares its marketplace target. The publisher preserves the original
+`beskid` Open VSX identity and checks each public target before and after any
+publication. Review the resulting durable evidence and exact registry version
+and target after the authorized run.
 
 After authorized publication, verify the exact registry version and target:
 

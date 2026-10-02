@@ -41,6 +41,11 @@ for file in "${workflow_dir}/macos.yml" "${workflow_dir}/windows.yml"; do
 done
 
 for file in "${workflow_dir}/linux.yml" "${workflow_dir}/macos.yml" "${workflow_dir}/windows.yml"; do
+  grep -Fq 'release-version.mjs' "${file}"
+  grep -Fq 'Ignoring non-release tag' "${file}"
+done
+
+for file in "${workflow_dir}/linux.yml" "${workflow_dir}/macos.yml" "${workflow_dir}/windows.yml"; do
   grep -Fq 'woodpecker-package-platform.mjs' "${file}"
   grep -Fq 'package-result.json' "${file}"
   ! grep -Fq 'BESKID_RELEASE_EVIDENCE_DIR' "${file}"
@@ -54,10 +59,20 @@ if grep -iqE 'from_secret|GH_TOKEN|BESKID_PUBLISH_RELEASE|release-publish' "${wo
 fi
 
 # Marketplace releases consume reviewed native evidence on the trusted manual
-# release host. The retired source-build lane must never regain credentials.
-test ! -e "${workflow_dir}/open-vsx.yml"
+# Woodpecker host. Only the final publish step receives the existing secret.
+test -f "${workflow_dir}/editor.yml"
 test ! -e "${ROOT}/scripts/ci/open-vsx-publish.sh"
-! grep -riEq 'open_vsx_token|OVSX_TOKEN|open-vsx-publish|ovsx publish' "${workflow_dir}"
+test ! -e "${ROOT}/.github/workflows/editor-marketplace-publish.yml"
+grep -Fq 'event: manual' "${workflow_dir}/editor.yml"
+grep -Fq 'ref: refs/heads/main' "${workflow_dir}/editor.yml"
+grep -Fq 'BESKID_TASK == "editor-publish"' "${workflow_dir}/editor.yml"
+grep -Fq 'from_secret: open_vsx_token' "${workflow_dir}/editor.yml"
+grep -Fq 'depth: 0' "${workflow_dir}/editor.yml"
+grep -Fq 'ovsx@1.2.0' "${workflow_dir}/editor.yml"
+grep -Fq 'npm install --prefix' "${workflow_dir}/editor.yml"
+test "$(grep -c 'npm install --prefix' "${workflow_dir}/editor.yml")" -eq 1
+! grep -Fq 'rm -rf "$${snapshot}"' "${workflow_dir}/editor.yml"
+! grep -Eq 'GITHUB_EVENT_NAME|GITHUB_REF|GITHUB_REPOSITORY|OVSX_TOKEN' "${workflow_dir}/editor.yml"
 
 # This contract owns only native build and standard validation lanes. Editor,
 # security and protected publishing lanes have separate policy contracts;
