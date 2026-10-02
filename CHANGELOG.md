@@ -39,6 +39,11 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Added
 
+- Add a protected manual Woodpecker publisher for the exact approved 0.5.1
+  Microsoft Marketplace derivatives, with secret-free immutable preflight,
+  lockfile-pinned `vsce`, sanitized host qualification, and durable attempt
+  receipts that preserve uncertain partial failures; keep transport disabled
+  after relocation testing disqualified the immutable 0.5.1 compiler/LSP.
 - Add a bounded Marketplace-only VSIX derivative packager for the verified
   `beskid-lang` publisher, with separate per-target approval receipts and
   unchanged Open VSX `beskid` artifacts.

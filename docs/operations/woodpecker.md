@@ -6,9 +6,11 @@ installer packaging; their output is durable and named by pipeline and source
 SHA. A manual `main` Woodpecker release prepares the existing aggregate; it
 has no publication credentials.
 
-No workflow deploys production. The rootless platform-image job is optional.
-Marketplace, Homebrew, and OCI publishing use the existing canonical manual
-recipes and are not release gates.
+No workflow deploys production services. The rootless platform-image job is
+optional.
+Microsoft Marketplace publication has its own protected manual Woodpecker
+route. Homebrew and OCI publishing use the existing canonical manual recipes.
+None of these publication routes is a native release gate.
 
 ## Worker prerequisites
 
@@ -21,8 +23,11 @@ The macOS worker needs the official arm64 agent, Git, Node, jq,
 tar, Rust 1.98.1, Xcode tools, and Homebrew LLVM; it writes under
 `~/Library/Application Support/Woodpecker/beskid-output`.
 
-Keep agent handoff keys in host-managed files. Keep publisher credentials
-outside Woodpecker and never place them in tracked files or pipeline variables.
+Keep agent handoff keys in host-managed files. The Microsoft Marketplace
+credential is a protected Woodpecker secret and must never be placed in
+tracked files or ordinary pipeline variables; only the final bounded publisher
+step may bind it. Other publisher credentials remain outside Woodpecker unless
+their own reviewed route explicitly says otherwise.
 
 Native clone uses the `plugin-git` executable from Woodpecker plugin-git 2.10.1
 on each account's PATH, not a Docker image. Agents connect with TLS to
@@ -148,6 +153,70 @@ acceptance; a release owner must perform the fresh install, activation, and
 formatter check before publication. Repeating the transform with the same
 inputs produces byte-identical derivatives; the receipt also requires equal
 non-metadata entry inventories.
+
+### Microsoft Marketplace publication
+
+> **Release hold (2026-10-02):** do not stage or dispatch this task for 0.5.1.
+> The qualified compiler/LSP does not preserve Corelib intrinsic authority
+> after relocation to a clean consumer host, so the 0.5.1 Marketplace
+> publication gate is disabled in code. A corrected new immutable version must
+> supply a new approval record, derivative hashes, and host qualification. Do
+> not retag, overwrite, or reuse the 0.5.1 artifacts.
+
+The separate manual Woodpecker task `marketplace-publish` publishes only the
+approved 0.5.1 derivatives under the immutable `beskid-lang` identity. It does
+not build the editor or compiler, rewrite archives, override targets or
+versions, skip duplicates, or alter the Open VSX `beskid` packages.
+
+Before dispatch, create a new mode-0700 directory at
+`/var/lib/woodpecker/beskid-output/marketplace/staged/editor-marketplace-v0.5.1`
+on the Linux worker host. Copy exactly these assets from the immutable root
+release `editor-marketplace-v0.5.1`:
+
+- `beskid-vscode-0.5.1-linux-x64-marketplace.vsix`
+- `beskid-vscode-0.5.1-darwin-arm64-marketplace.vsix`
+- `beskid-vscode-0.5.1-win32-x64-marketplace.vsix`
+- `marketplace-approval.json`
+- `marketplace-host-qualification.json`
+
+Generate the final file from the reviewed qM3 host receipt without carrying
+its private local paths into the staged proof:
+
+```bash
+python3 scripts/ci/marketplace-publish.py sanitize-host-receipt \
+  /absolute/qM3/receipt.json \
+  /absolute/derivatives/marketplace-approval.json \
+  /absolute/derivatives/beskid-vscode-0.5.1-darwin-arm64-marketplace.vsix \
+  /absolute/new/marketplace-host-qualification.json
+```
+
+The sanitizer requires the reviewed original receipt SHA-256 and records it in
+the normalized proof. The preflight verifies the exact approval and derivative
+hashes, source pins, identity, targets, embedded LSPs, ZIP safety, inventory,
+formatter self-ID, and strict applied-formatter evidence. It snapshots the
+five files into
+`/var/lib/woodpecker/beskid-output/marketplace/attempts/<pipeline>-<checkout>`;
+the attempt receipt remains there after success, validation failure, missing
+credentials, or publisher failure.
+
+Only after a corrected release updates this bounded contract and removes the
+tracked hold, configure the manual-only protected Woodpecker secret `vsce_pat`
+and dispatch the exact reviewed `main` checkout:
+
+```bash
+woodpecker-cli pipeline create Cyber-Nomad-Collective/beskid --branch main \
+  --var BESKID_TASK=marketplace-publish
+```
+
+The token-free steps hydrate and verify the official root origin, require full
+history and the selected checkout SHA, snapshot the staged release, and install
+lockfile-pinned `@vscode/vsce@4.0.0`. Only the final step receives `VSCE_PAT`.
+It invokes one prebuilt-package command with the three exact `--packagePath`
+values. A duplicate version/target is a release conflict. A failed publisher
+may have accepted a prefix of the target list, so the durable receipt reports
+all targets as unconfirmed until an operator checks the Marketplace. Hosted
+Marketplace bytes can be service-signed; do not claim their hashes equal the
+staged VSIX hashes.
 
 The SFTP inbox is `/var/lib/woodpecker-handoff/<role>/incoming/<build>-<sha>/<role>`.
 Prepared output is `/var/lib/woodpecker/beskid-output/releases/<release-run>-<sha>`.

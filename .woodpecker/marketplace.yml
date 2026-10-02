@@ -1,0 +1,42 @@
+labels:
+  platform: linux/amd64
+  backend: docker
+  role: beskid-linux
+
+clone:
+  git:
+    image: woodpeckerci/plugin-git:2.10.1
+    settings:
+      recursive: false
+      depth: 0
+
+steps:
+  - name: marketplace-preflight
+    image: node:22.16.0-bookworm
+    commands:
+      - apt-get update >/dev/null
+      - apt-get install -y --no-install-recommends ca-certificates git python3 >/dev/null
+      - bash scripts/ci/woodpecker-source-history.sh .
+      - python3 scripts/ci/marketplace-publish.py preflight /woodpecker-output/marketplace/staged/editor-marketplace-v0.5.1 /woodpecker-output/marketplace/attempts/$${CI_PIPELINE_NUMBER}-$${CI_COMMIT_SHA}
+
+  - name: install-marketplace-publisher
+    image: node:22.16.0-bookworm
+    commands:
+      - corepack enable
+      - corepack install -g pnpm@10.17.1+sha512.17c560fca4867ae9473a3899ad84a88334914f379be46d455cbf92e5cf4b39d34985d452d2583baf19967fa76cb5c17bc9e245529d0b98745721aa7200ecaf7a
+      - pnpm --dir scripts/ci/marketplace-publisher install --frozen-lockfile --ignore-workspace --ignore-scripts
+
+  - name: marketplace-publish
+    image: node:22.16.0-bookworm
+    environment:
+      VSCE_PAT:
+        from_secret: vsce_pat
+    commands:
+      - python3 scripts/ci/marketplace-publish.py publish /woodpecker-output/marketplace/attempts/$${CI_PIPELINE_NUMBER}-$${CI_COMMIT_SHA}
+
+# This is a publication-only route. It consumes the owner-staged immutable
+# derivative release and never builds, packages, downloads, or rewrites VSIXs.
+when:
+  - event: manual
+    branch: main
+    evaluate: 'BESKID_TASK == "marketplace-publish"'
