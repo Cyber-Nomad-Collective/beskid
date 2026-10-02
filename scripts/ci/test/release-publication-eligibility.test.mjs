@@ -1,11 +1,12 @@
 import assert from "node:assert/strict";
-import { cpSync, existsSync, mkdtempSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdtempSync, realpathSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
 
 const script = new URL("../release-publication-eligibility.mjs", import.meta.url).pathname;
+const releaseVersion = new URL("../release-version.mjs", import.meta.url).pathname;
 const heldVersion = "0.5.1";
 const heldCompiler = "1bd7bdee81d59ef14339e6a6c2ce18eb36585238";
 const syntheticCompiler = "0123456789abcdef0123456789abcdef01234567";
@@ -18,8 +19,9 @@ function copiedChecker(holds) {
   const directory = mkdtempSync(join(tmpdir(), "beskid-publication-holds-"));
   const copied = join(directory, "release-publication-eligibility.mjs");
   cpSync(script, copied);
+  cpSync(releaseVersion, join(directory, "release-version.mjs"));
   writeFileSync(join(directory, "release-publication-holds.json"), holds);
-  return copied;
+  return realpathSync(copied);
 }
 
 test("the known-bad 0.5.1 compiler source is held while another exact source passes", () => {
@@ -53,14 +55,20 @@ test("malformed and duplicate hold records fail closed", () => {
     reason: "released compiler loses Corelib intrinsic authority after relocation",
   };
   const invalidDocuments = [
-    JSON.stringify({ schema_version: 2, holds: [valid] }),
-    JSON.stringify({ schema_version: 1, holds: [{ ...valid, compiler_commit: "abc" }] }),
-    JSON.stringify({ schema_version: 1, holds: [{ ...valid, unexpected: true }] }),
-    JSON.stringify({ schema_version: 1, holds: [valid, valid] }),
+    [JSON.stringify({ schema_version: 2, holds: [valid] }), /unsupported publication hold document/],
+    [JSON.stringify({ schema_version: 1, holds: [{ ...valid, compiler_commit: "abc" }] }), /invalid compiler commit/],
+    [JSON.stringify({ schema_version: 1, holds: [{ ...valid, unexpected: true }] }), /publication hold 0 fields differ/],
+    [JSON.stringify({ schema_version: 1, holds: [valid, valid] }), /duplicate publication hold/],
   ];
-  for (const document of invalidDocuments) {
+  for (const [document, diagnostic] of invalidDocuments) {
     const checker = copiedChecker(document + "\n");
     const result = run(checker, "9.9.9", syntheticCompiler);
     assert.notEqual(result.status, 0, `invalid hold document was accepted: ${document}`);
+    assert.match(result.stderr, diagnostic);
   }
+
+  const validChecker = copiedChecker(JSON.stringify({ schema_version: 1, holds: [valid] }) + "\n");
+  const control = run(validChecker, "9.9.9", syntheticCompiler);
+  assert.equal(control.status, 0, control.stderr);
+  assert.match(control.stdout, /not explicitly held/);
 });
