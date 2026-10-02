@@ -14,7 +14,6 @@ import re
 import stat
 import subprocess
 import sys
-import tarfile
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -28,10 +27,14 @@ TARGETS = {
     "darwin-arm64": ("aarch64-apple-darwin", "beskid_lsp"),
     "win32-x64": ("x86_64-pc-windows-msvc", "beskid_lsp.exe"),
 }
+NATIVE_ASSETS = {
+    "linux-x64": "beskid_lsp-linux-amd64",
+    "darwin-arm64": "beskid_lsp-darwin-arm64",
+    "win32-x64": "beskid_lsp-windows-amd64.exe",
+}
 MAX_VSIX = 64 * 1024 * 1024
 MAX_ENTRY = 128 * 1024 * 1024
 MAX_INVENTORY = 256 * 1024 * 1024
-MAX_BUNDLE = 2 * 1024 * 1024 * 1024
 MAX_JSON = 4 * 1024 * 1024
 REGISTRY = "https://open-vsx.org"
 
@@ -86,12 +89,12 @@ def VerifyApproval(approval):
         target = entry["target"]
         Require(entry["native_target"] == TARGETS[target][0], "approved native target mismatch")
         Require(entry["asset"] == "beskid-vscode-0.5.1-" + target + ".vsix", "approved asset name mismatch")
-        Require(entry["bundle"] == "beskid-0.5.1-" + entry["native_target"] + ".tar.gz", "approved bundle name mismatch")
-        for field in ("sha256", "lsp_sha256", "bundle_sha256"):
+        Require(entry["native_asset"] == NATIVE_ASSETS[target], "approved native LSP name mismatch")
+        for field in ("sha256", "lsp_sha256"):
             Require(re.fullmatch(r"[0-9a-f]{64}", entry.get(field, "")), "invalid approved digest")
     Require(approval["editor_release"] == {"repository": "Cyber-Nomad-Collective/beskid", "tag": "editor-v0.5.1"},
             "unapproved editor release origin")
-    Require(approval["native_release"] == {"repository": "Cyber-Nomad-Collective/beskid_compiler", "tag": "v0.5.1"},
+    Require(approval["native_release"] == {"repository": "Cyber-Nomad-Collective/beskid_compiler", "tag": "lsp-v0.5.1"},
             "unapproved native release origin")
 
 
@@ -173,8 +176,10 @@ def VerifyNative(approval, directory):
     Require(state.get("schema_version") == 1 and state.get("version") == approval["version"] and
             state.get("channel") == "stable" and state.get("publishable") is True,
             "native release is not qualified")
-    Require(state.get("provenance") == {"superrepo_commit": source["superrepo_commit"],
-                                       "compiler_commit": source["compiler_commit"]}, "native source mismatch")
+    FileDigest(directory / "lsp-version.txt", 32)
+    Require((directory / "lsp-version.txt").read_bytes() in (b"0.5.1", b"0.5.1\n"), "native LSP stream version mismatch")
+    Require(all(state.get("provenance", {}).get(field) == source[field]
+                for field in ("superrepo_commit", "compiler_commit")), "native source mismatch")
     Require(state.get("tests", {}).get("gate_result") == "success" and state["tests"].get("failed") == [] and
             state.get("failed_platform_builds") == [], "native gates failed")
     expected_targets = {x[0] for x in TARGETS.values()}
@@ -185,24 +190,13 @@ def VerifyNative(approval, directory):
     for entry in approval["targets"]:
         platform = next(x for x in platforms if x["target"] == entry["native_target"])
         Require(platform.get("builds", {}).get("lsp", {}).get("status") == "success" and
-                platform["builds"].get("bundle", {}).get("status") == "success" and
-                platform["builds"]["bundle"].get("asset") == entry["bundle"], "native LSP/bundle build mismatch")
-        bundle = directory / entry["bundle"]
-        Require(FileDigest(bundle, MAX_BUNDLE) == entry["bundle_sha256"], "native bundle digest mismatch")
-        path = "beskid-0.5.1-" + entry["native_target"] + "/bin/" + TARGETS[entry["target"]][1]
-        count, total = 0, 0
-        with tarfile.open(bundle, "r|gz") as archive:
-            for i, member in enumerate(archive):
-                Require(i < 100000, "native bundle inventory exceeds bound")
-                total += member.size
-                Require(total <= MAX_BUNDLE, "native bundle payload exceeds bound")
-                if member.name == path:
-                    count += 1
-                    Require(member.isfile() and not member.issym() and not member.islnk() and member.size <= MAX_ENTRY,
-                            "native LSP must be a bounded regular payload")
-                    Require(StreamDigest(archive.extractfile(member), MAX_ENTRY) == entry["lsp_sha256"],
-                            "native bundle LSP digest mismatch")
-        Require(count == 1, "native bundle LSP must be unique")
+                platform["builds"]["lsp"].get("asset") == entry["native_asset"], "native LSP build identity mismatch")
+        VerifyNativeLsp(directory / entry["native_asset"], entry)
+
+
+def VerifyNativeLsp(file, entry):
+    Require(FileDigest(file, MAX_ENTRY) == entry["lsp_sha256"], "standalone native LSP digest mismatch")
+    return str(file)
 
 
 def VerifyRelease(approval, editors, native, root):
@@ -351,9 +345,10 @@ def Prepare(approval, snapshot, root, context):
     native_assets = ReleaseMetadata(native_record, approval["source"]["compiler_commit"])
     Require(set(editor_assets) == {x["asset"] for x in approval["targets"]}, "editor release contains an unapproved asset set")
     DownloadAsset(native_record, native_assets, "release-state.json", native / "release-state.json", MAX_JSON)
+    DownloadAsset(native_record, native_assets, "lsp-version.txt", native / "lsp-version.txt", 32)
     for entry in approval["targets"]:
         DownloadAsset(editor_record, editor_assets, entry["asset"], editors / entry["asset"], MAX_VSIX, entry["sha256"])
-        DownloadAsset(native_record, native_assets, entry["bundle"], native / entry["bundle"], MAX_BUNDLE, entry["bundle_sha256"])
+        DownloadAsset(native_record, native_assets, entry["native_asset"], native / entry["native_asset"], MAX_ENTRY, entry["lsp_sha256"])
     VerifyRelease(approval, editors, native, root)
 
 

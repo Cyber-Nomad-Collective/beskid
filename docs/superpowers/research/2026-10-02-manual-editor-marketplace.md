@@ -31,13 +31,15 @@ VS Code gitlink: `270cc2b4caec843516fa5ad684a6e1eb1d1608e6`.
 Publisher-only follow-up: `3179295444affc9a646a272c0a1ec677ce00acf5`;
 it does not replace or relabel native source provenance.
 
-The canonical native bundle origin is
-`Cyber-Nomad-Collective/beskid_compiler`'s immutable `v0.5.1` release; its tag must
+The editor's canonical native LSP origin is
+`Cyber-Nomad-Collective/beskid_compiler`'s immutable `lsp-v0.5.1` release; its tag must
 resolve to compiler `1bd7bdee81d59ef14339e6a6c2ce18eb36585238`, while its qualified
 `release-state.json` must declare root `f064de9` and compiler `1bd7bdee`. The bundle
-release contains three native tarballs, `beskid-release.json`, `bundle-version.txt`,
-and `release-state.json`. Direct LSP files belong to the separate immutable
-`lsp-v0.5.1` release. The editor assets use the independently staged root
+release `v0.5.1` is separate. Its LSP binaries were built separately and differ in
+hash from the standalone LSP files, despite having the same frozen source. Therefore
+its tarball LSP digests must not be substituted for the approved standalone digests.
+The LSP release contains the three direct `beskid_lsp-*` files,
+`lsp-version.txt`, and `release-state.json`. The editor assets use the independently staged root
 `editor-v0.5.1` release at `f064de9`; the publisher does not retarget either tag.
 
 Read-only local inspection of `/private/tmp/beskid-v051-final-editors` produced:
@@ -147,10 +149,11 @@ The only workflow is `.github/workflows/editor-marketplace-publish.yml`, trigger
 manually on root `main` with read-only GitHub permissions and serialized 0.5.1
 publication. There are no URL, digest, commit, or target override inputs.
 `scripts/ci/prebuilt-editor-publish.py prepare <new-owned-snapshot>` downloads the
-exact three editor assets and the native qualified state and tarballs. It checks
+exact three editor assets and the standalone LSP assets, native qualified state,
+and LSP stream version. It checks
 GitHub's asset SHA-256 as well as the reviewed hashes, resolves the immutable tags,
-checks actual root source gitlinks and publisher ancestry, streams both archive
-types without extraction or execution, and verifies all targets before returning.
+checks actual root source gitlinks and publisher ancestry, streams ZIP entries and
+regular native files without extraction or execution, and verifies all targets before returning.
 `verify <snapshot>` repeats offline verification. The workflow installs pinned
 `ovsx@1.2.0` without lifecycle scripts in a separate step with no marketplace
 credential, then verifies again before the publishing step receives `OVSX_PAT`.

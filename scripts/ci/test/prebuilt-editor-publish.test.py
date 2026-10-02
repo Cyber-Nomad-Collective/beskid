@@ -21,6 +21,8 @@ TARGETS = [
     ("darwin-arm64", "aarch64-apple-darwin", "beskid_lsp"),
     ("win32-x64", "x86_64-pc-windows-msvc", "beskid_lsp.exe"),
 ]
+NATIVE_ASSETS = {"linux-x64": "beskid_lsp-linux-amd64", "darwin-arm64": "beskid_lsp-darwin-arm64",
+                 "win32-x64": "beskid_lsp-windows-amd64.exe"}
 
 
 class PublisherTests(unittest.TestCase):
@@ -51,30 +53,27 @@ class PublisherTests(unittest.TestCase):
             "source": {"superrepo_commit": self.source, "compiler_commit": self.compiler,
                        "editor_commit": self.editor, "publisher_base_commit": self.source},
             "editor_release": {"repository": "Cyber-Nomad-Collective/beskid", "tag": "editor-v0.5.1"},
-            "native_release": {"repository": "Cyber-Nomad-Collective/beskid_compiler", "tag": "v0.5.1"},
+            "native_release": {"repository": "Cyber-Nomad-Collective/beskid_compiler", "tag": "lsp-v0.5.1"},
             "targets": [],
         }
         for target, triple, binary in TARGETS:
             payload = ("native LSP " + target).encode()
             entry = {"target": target, "native_target": triple,
                      "asset": "beskid-vscode-0.5.1-" + target + ".vsix",
-                     "bundle": "beskid-0.5.1-" + triple + ".tar.gz",
+                     "native_asset": NATIVE_ASSETS[target],
                      "lsp_sha256": hashlib.sha256(payload).hexdigest()}
             self.approval["targets"].append(entry)
             self.zip(entry, payload=payload)
-            with tarfile.open(self.native / entry["bundle"], "w:gz") as archive:
-                info = tarfile.TarInfo("beskid-0.5.1-" + triple + "/bin/" + binary)
-                info.size = len(payload)
-                archive.addfile(info, io.BytesIO(payload))
-            entry["bundle_sha256"] = self.digest(self.native / entry["bundle"])
+            (self.native / entry["native_asset"]).write_bytes(payload)
+        (self.native / "lsp-version.txt").write_bytes(b"0.5.1\n")
         self.state = {
             "schema_version": 1, "version": "0.5.1", "channel": "stable", "publishable": True,
             "provenance": {"superrepo_commit": self.source, "compiler_commit": self.compiler},
             "tests": {"gate_result": "success", "failed": []},
             "complete_platforms": [x[1] for x in TARGETS], "failed_platform_builds": [],
-            "platforms": [{"target": triple, "builds": {"lsp": {"status": "success"},
+            "platforms": [{"target": triple, "builds": {"lsp": {"status": "success", "asset": NATIVE_ASSETS[target]},
                 "bundle": {"status": "success", "asset": "beskid-0.5.1-" + triple + ".tar.gz"}}}
-                for _, triple, _ in TARGETS],
+                for target, triple, _ in TARGETS],
         }
         self.save_state()
         self.context = {"GITHUB_EVENT_NAME": "workflow_dispatch", "GITHUB_REF": "refs/heads/main",
@@ -131,7 +130,7 @@ class PublisherTests(unittest.TestCase):
             self.context, "/pinned/ovsx", self.root / "results.json",
             read_registry=self.read_registry, upload=self.upload)
 
-    def test_verifies_complete_real_zip_and_native_bundle_set(self):
+    def test_verifies_complete_real_zip_and_standalone_lsp_set(self):
         self.assertEqual(len(self.verify()), 3)
 
     def test_uploads_positional_packages_with_environment_only_token(self):
@@ -237,20 +236,37 @@ class PublisherTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.verify()
 
-    def test_rejects_native_bundle_digest_drift(self):
-        (self.native / self.approval["targets"][0]["bundle"]).write_bytes(b"tampered")
+    def test_rejects_standalone_native_lsp_digest_drift(self):
+        (self.native / self.approval["targets"][0]["native_asset"]).write_bytes(b"tampered")
         with self.assertRaises(ValueError):
             self.verify()
 
-    def test_rejects_native_lsp_even_when_bundle_digest_is_approved(self):
+    def test_accepts_standalone_lsp_without_equating_separately_built_bundle(self):
         entry = self.approval["targets"][0]
-        with tarfile.open(self.native / entry["bundle"], "w:gz") as archive:
+        with tarfile.open(self.native / "separately-built-bundle.tar.gz", "w:gz") as archive:
             info = tarfile.TarInfo("beskid-0.5.1-x86_64-unknown-linux-gnu/bin/beskid_lsp")
-            info.size = 5
-            archive.addfile(info, io.BytesIO(b"other"))
-        entry["bundle_sha256"] = self.digest(self.native / entry["bundle"])
+            different = b"separate build from same frozen source"
+            info.size = len(different)
+            archive.addfile(info, io.BytesIO(different))
+        try:
+            self.verify()
+        except ValueError as error:
+            self.fail("standalone LSP must be the authority, not separately built bundle bytes: " + str(error))
+
+    def test_rejects_missing_standalone_native_lsp(self):
+        entry = self.approval["targets"][0]
+        (self.native / entry["native_asset"]).unlink()
         with self.assertRaises(ValueError):
             self.verify()
+
+    def test_accepts_optional_qualified_state_enrichment(self):
+        self.state["provenance"]["additional_acceptance"] = {"status": "approved"}
+        self.state["installer_owner_acceptance"] = {"scope": "windows"}
+        self.save_state()
+        try:
+            self.verify()
+        except ValueError as error:
+            self.fail("optional qualification enrichment must preserve required field validation: " + str(error))
 
     def test_source_verification_child_never_receives_publisher_secret(self):
         calls = []
@@ -331,6 +347,51 @@ class PublisherTests(unittest.TestCase):
         self.assertEqual(result["argv"], ["publish", str(self.editors / self.approval["targets"][2]["asset"])])
         self.assertEqual(result["token"], "test-only-token")
         self.assertFalse(result["has_gh"])
+
+    @unittest.skipUnless(os.environ.get("BESKID_EDITOR_REAL_STATE"), "frozen release files are optional local verification inputs")
+    def test_full_real_qualified_release_with_fake_external_transports(self):
+        # Use the complete canonical receipt and all actual files, never a reduced state fixture.
+        approval = json.loads(self.api.APPROVAL.read_bytes())
+        state = Path(os.environ["BESKID_EDITOR_REAL_STATE"])
+        editors = Path(os.environ["BESKID_EDITOR_REAL_VSIX"])
+        evidence = Path(os.environ["BESKID_EDITOR_REAL_NATIVE"])
+        lanes = {"linux-x64": "linux", "darwin-arm64": "macos", "win32-x64": "windows"}
+        files = {"release-state.json": state.read_bytes(), "lsp-version.txt": b"0.5.1\n"}
+        for entry in approval["targets"]:
+            files[entry["asset"]] = (editors / entry["asset"]).read_bytes()
+            files[entry["native_asset"]] = (evidence / lanes[entry["target"]] / entry["native_asset"]).read_bytes()
+            self.api.VerifyNativeLsp(evidence / lanes[entry["target"]] / entry["native_asset"], entry)
+        def request(url, limit):
+            editor = "/beskid/" in url
+            record = approval["editor_release" if editor else "native_release"]
+            commit = approval["source"]["superrepo_commit" if editor else "compiler_commit"]
+            if "/git/ref/" in url:
+                return json.dumps({"object": {"type": "commit", "sha": commit}}).encode()
+            assets = [{"name": name, "state": "uploaded", "size": len(data),
+                       "digest": "sha256:" + hashlib.sha256(data).hexdigest()}
+                      for name, data in files.items() if name.endswith(".vsix") == editor]
+            return json.dumps({"tag_name": record["tag"], "draft": False, "prerelease": False, "assets": assets}).encode()
+        def response(url, timeout):
+            return io.BytesIO(files[url.rsplit("/", 1)[1]])
+        snapshot = self.root / "real-snapshot"
+        context = {k: v for k, v in self.context.items() if k != "OVSX_PAT"}
+        with patch.object(self.api, "Request", request), patch.object(self.api.urllib.request, "urlopen", response):
+            self.api.Prepare(approval, snapshot, self.api.ROOT, context)
+        published, commands = {}, []
+        def upload(argv, env):
+            self.assertEqual(len(self.api.VerifyRelease(approval, snapshot / "editors", snapshot / "native", self.api.ROOT)), 3)
+            self.assertEqual(argv[1], "publish")
+            self.assertEqual(len(argv), 3)
+            self.assertEqual(env["OVSX_PAT"], "test-only-token")
+            self.assertNotIn("test-only-token", " ".join(argv))
+            entry = next(x for x in approval["targets"] if Path(argv[2]).name == x["asset"])
+            published[entry["target"]] = Path(argv[2]).read_bytes()
+            commands.append(argv)
+        self.api.Publish(approval, snapshot / "editors", snapshot / "native", self.api.ROOT, self.context,
+                         "/pinned/ovsx", snapshot / "results.json", read_registry=lambda entry: published.get(entry["target"]),
+                         upload=upload)
+        self.assertEqual(len(commands), 3)
+        self.assertEqual([x["status"] for x in json.loads((snapshot / "results.json").read_text())], ["published"] * 3)
 
     def test_existing_matching_target_is_verified_and_skipped(self):
         entry = self.approval["targets"][0]
