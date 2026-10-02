@@ -242,9 +242,13 @@ It must record four edits and the exact saved transformation from
 `pub i32 Formatter()\n{\n    return 42;\n}\n`. The runner must collect platform
 and version from the actual host, apply and save the edits, and reread the
 saved bytes. An original VSIX receipt is not derivative qualification.
-The approval, derivative and raw receipt digest qualifications remain missing,
-so production stays disabled before staged input or publication credentials
-are consumed. The following 0.5.1 procedure is historical and remains held.
+The genuine full source gates and native aggregation passed, and the production
+contract freezes the exact reviewed Marketplace approval sidecar, complete
+three-target derivative digests, and actual Linux raw host-receipt digest.
+Publication remains disabled before staged input or credentials are consumed:
+immutable public tags/assets, installer qualification or an exact owner waiver,
+other channel conditions, and separate owner authorization remain pending. The
+following 0.5.1 procedure is historical and remains held.
 
 > **Release hold (2026-10-02):** do not stage or dispatch this task for 0.5.1.
 > The qualified compiler/LSP does not preserve Corelib intrinsic authority

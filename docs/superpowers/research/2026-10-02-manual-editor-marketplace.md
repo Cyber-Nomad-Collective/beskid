@@ -33,16 +33,15 @@ The manual Woodpecker editor and Marketplace lanes select only tracked 0.5.1 or
 There are no caller-selected production approval paths, source pins or hashes.
 The 0.5.1 approval bytes and compiler-specific source hold remain unchanged.
 
-This records implementation approval, not publication eligibility. The new
-contract has `publication_enabled: false`, with explicit pending qualifications.
-Production stops before transport or credential use. Final native source gates
-and stable/publishable release-state, immutable release tags/assets, fresh exact
-Marketplace derivative approval/digests, actual formatter host qualification, and
-installer qualification or an explicit owner waiver remain required. No genuine
-derivative or host hashes are populated by this implementation. Enabling either
-channel requires a further reviewed tracked qualification change and separate
-publication authorization. Existing historical sections below describe 0.5.1;
-they are not authority to publish 0.5.2.
+This records completed qualification evidence, not publication eligibility.
+Genuine full source gates and native aggregation passed, and the tracked contract
+freezes the exact reviewed Marketplace approval sidecar, complete three-target
+derivative digests, and actual Linux raw host-receipt digest. It still has
+`publication_enabled: false`; production stops before transport or credential
+use. Immutable public tags/assets, installer qualification or an exact owner
+waiver, other channel conditions, and separate owner publication authorization
+remain required. Existing historical sections below describe 0.5.1; they are not
+authority to publish 0.5.2.
 
 ## Recommendation and scope
 
