@@ -36,6 +36,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Added
 
+- Add a manual main-only Open VSX publisher for the three reviewed prebuilt
+  0.5.1 VSIX packages, with immutable native/source/archive verification before
+  step-local credential access and fail-closed partial-publication reporting.
 - Prepare the maintained VS Code and Zed packages with coordinated 0.5.1
   authoring metadata and the initial Zed registry submission instructions.
 - Package editor releases from native release evidence with exact version,
