@@ -99,8 +99,14 @@ def SelectProductionVersion(version):
                  if x["target"] == HostContract()["target"]) == HOST_LSP_SHA256,
             "approved host LSP differs from tracked host contract")
     PRODUCTION_CONTRACT = {
-        "approval_sha256": None, "derivative_sha256": {}, "assets": ASSETS,
-        "original_host_receipt_sha256": None, "originals": copy.deepcopy(original["targets"]),
+        "approval_sha256": "af4802cef95dde8ccbf5ac053ea7bed4eadde78e4929cd4962769c571fdc6b49",
+        "derivative_sha256": {
+            "linux-x64": "32919b50ad2655374029b3605c2c8ca8e5a0dab285273595536c522f0a28e658",
+            "darwin-arm64": "737690292718278064802639154963cd0eb25dc34ed4ecc4ced244e6bab8cf0a",
+            "win32-x64": "95a2d8feace8000a55b4ed394edb541c72506b1b70ca7dbec7656ba3cef55f0c",
+        }, "assets": ASSETS,
+        "original_host_receipt_sha256": "20f303b7df6bf20a6d714a2f4d2abd54894089a10b36b05629eebece9a29b142",
+        "originals": copy.deepcopy(original["targets"]),
         "publication_enabled": False, "publication_hold": original["publication_hold"],
     }
 
