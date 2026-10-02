@@ -206,7 +206,9 @@ function collectContractTokens(command) {
 }
 
 test('every CLI page documents its pinned flags, arguments, subcommands, defaults, and an example', async () => {
-	assert.equal(snapshot.sourceRevision, 'e9709da96f5e8426650dafcf91cdfc0807771c23');
+	const root = fileURLToPath(new URL('../../../../', import.meta.url));
+	const gitlink = execFileSync('git', ['-C', root, 'rev-parse', 'HEAD:compiler'], { encoding: 'utf8' }).trim();
+	assert.equal(snapshot.sourceRevision, gitlink, 'CLI docs must match the root compiler pin');
 	assert.equal(snapshot.commands.length, 25);
 	const pagePaths = new Map((await commandPagePaths()).map(({ name, relativePath }) => [name, relativePath]));
 	const failures = [];
