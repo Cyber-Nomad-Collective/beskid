@@ -197,14 +197,16 @@ class MarketplacePublishTests(unittest.TestCase):
         attempt = self._preflight(name="missing-pat-attempt")
         with mock.patch.object(API, "VerifyCheckout", return_value=None):
             with self.assertRaises(ValueError):
-                API.Publish(attempt, self.context, self.contract, runner=lambda *_: None)
+                API.Publish(attempt, self.context, self.contract, runner=lambda *_: None,
+                            read_published=lambda _: None)
         attempt = self._preflight(name="publish-attempt")
         seen = {}
         def runner(argv, env):
             seen.update(argv=argv, env=env)
             return 0
         with mock.patch.object(API, "VerifyCheckout", return_value=None):
-            API.Publish(attempt, dict(self.context, VSCE_PAT="test-only-secret"), self.contract, runner=runner)
+            API.Publish(attempt, dict(self.context, VSCE_PAT="test-only-secret"), self.contract, runner=runner,
+                        read_published=lambda _: None)
         self.assertEqual(seen["argv"], ["npx", "--no-install", "@vscode/vsce", "publish", "--packagePath",
                          *[str(attempt / "snapshot" / API.AssetName(target)) for target in API.TARGETS]])
         self.assertNotIn("--target", seen["argv"])
@@ -213,12 +215,113 @@ class MarketplacePublishTests(unittest.TestCase):
         self.assertNotIn("test-only-secret", receipt)
         self.assertEqual(json.loads(receipt)["status"], "published")
 
+    def test_publish_skips_a_verified_existing_target_and_only_sends_missing_targets(self):
+        attempt = self._preflight(name="resume-attempt")
+        existing = {
+            "darwin-arm64": (attempt / "snapshot" / API.AssetName("darwin-arm64")).read_bytes(),
+        }
+        reads, seen = [], {}
+
+        def read_published(target):
+            reads.append(target)
+            return existing.get(target)
+
+        def runner(argv, env):
+            seen.update(argv=argv, env=env)
+            return 0
+
+        with mock.patch.object(API, "VerifyCheckout", return_value=None):
+            API.Publish(attempt, dict(self.context, VSCE_PAT="test-only-secret"), self.contract,
+                        runner=runner, read_published=read_published)
+
+        self.assertEqual(reads, list(API.TARGETS))
+        self.assertEqual(seen["argv"], ["npx", "--no-install", "@vscode/vsce", "publish", "--packagePath",
+                                        str(attempt / "snapshot" / API.AssetName("linux-x64")),
+                                        str(attempt / "snapshot" / API.AssetName("win32-x64"))])
+        result = json.loads((attempt / API.ATTEMPT_RECEIPT_NAME).read_text())
+        self.assertEqual([item["status"] for item in result["targets"]],
+                         ["publisher-reported-success", "existing-verified", "publisher-reported-success"])
+        self.assertTrue(result["hosted_bytes_sha256_verified"])
+
+    def test_publish_is_a_secret_free_no_op_when_every_target_already_matches(self):
+        attempt = self._preflight(name="all-existing-attempt")
+        existing = {target: (attempt / "snapshot" / API.AssetName(target)).read_bytes()
+                    for target in API.TARGETS}
+
+        def forbidden(*_):
+            self.fail("publisher must not run when every approved target is already present")
+
+        with mock.patch.object(API, "VerifyCheckout", return_value=None):
+            API.Publish(attempt, self.context, self.contract, runner=forbidden,
+                        read_published=lambda target: existing[target])
+
+        result = json.loads((attempt / API.ATTEMPT_RECEIPT_NAME).read_text())
+        self.assertEqual(result["status"], "published")
+        self.assertEqual({item["status"] for item in result["targets"]}, {"existing-verified"})
+        self.assertTrue(result["hosted_bytes_sha256_verified"])
+
+    def test_mismatched_existing_target_blocks_before_pat_or_publisher_invocation(self):
+        attempt = self._preflight(name="mismatched-existing-attempt")
+        calls = []
+
+        def read_published(target):
+            calls.append(target)
+            return b"not the approved VSIX" if target == "darwin-arm64" else None
+
+        def forbidden(*_):
+            self.fail("publisher must not run after a hosted-byte mismatch")
+
+        with mock.patch.object(API, "VerifyCheckout", return_value=None):
+            with self.assertRaises(ValueError):
+                API.Publish(attempt, self.context, self.contract, runner=forbidden,
+                            read_published=read_published)
+
+        self.assertEqual(calls, ["linux-x64", "darwin-arm64"])
+        result = json.loads((attempt / API.ATTEMPT_RECEIPT_NAME).read_text())
+        self.assertEqual(result["status"], "publish-blocked")
+        self.assertFalse(result["hosted_bytes_sha256_verified"])
+
+    def test_uncertain_existing_target_read_blocks_before_any_publisher_invocation(self):
+        attempt = self._preflight(name="uncertain-existing-attempt")
+
+        def read_published(target):
+            if target == "darwin-arm64":
+                raise ValueError("Marketplace hosted target could not be determined")
+            return None
+
+        def forbidden(*_):
+            self.fail("publisher must not run after an uncertain hosted-byte read")
+
+        with mock.patch.object(API, "VerifyCheckout", return_value=None):
+            with self.assertRaisesRegex(ValueError, "could not be determined"):
+                API.Publish(attempt, self.context, self.contract, runner=forbidden,
+                            read_published=read_published)
+
+        result = json.loads((attempt / API.ATTEMPT_RECEIPT_NAME).read_text())
+        self.assertEqual(result["status"], "publish-blocked")
+        self.assertFalse(result["hosted_bytes_sha256_verified"])
+
+    def test_partial_retry_preserves_verified_targets_when_missing_target_publish_fails(self):
+        attempt = self._preflight(name="partial-retry-attempt")
+        existing = {
+            "darwin-arm64": (attempt / "snapshot" / API.AssetName("darwin-arm64")).read_bytes(),
+        }
+        with mock.patch.object(API, "VerifyCheckout", return_value=None):
+            with self.assertRaises(RuntimeError):
+                API.Publish(attempt, dict(self.context, VSCE_PAT="test-only-secret"), self.contract,
+                            runner=lambda *_: 23, read_published=lambda target: existing.get(target))
+
+        result = json.loads((attempt / API.ATTEMPT_RECEIPT_NAME).read_text())
+        self.assertEqual(result["status"], "publisher-failed-possible-partial")
+        self.assertEqual([item["status"] for item in result["targets"]],
+                         ["unconfirmed", "existing-verified", "unconfirmed"])
+
     def test_publisher_failure_is_durable_and_fail_closed(self):
         attempt = self._preflight()
         with mock.patch.object(API, "VerifyCheckout", return_value=None):
             with self.assertRaises(RuntimeError):
                 API.Publish(attempt, dict(self.context, VSCE_PAT="test-only-secret"), self.contract,
-                            runner=lambda *_: 23)
+                            runner=lambda *_: 23, read_published=lambda _: None)
         result = json.loads((attempt / API.ATTEMPT_RECEIPT_NAME).read_text())
         self.assertEqual(result["status"], "publisher-failed-possible-partial")
         self.assertEqual({x["status"] for x in result["targets"]}, {"unconfirmed"})
@@ -235,9 +338,12 @@ class MarketplacePublishTests(unittest.TestCase):
             nonlocal called
             called = True
             return 0
+        def forbidden_read(*_):
+            self.fail("held publication must not read hosted packages")
         with mock.patch.object(API, "VerifyCheckout", return_value=None):
             with self.assertRaises(ValueError):
-                API.Publish(attempt, dict(self.context, VSCE_PAT="must-not-be-used"), held, runner=runner)
+                API.Publish(attempt, dict(self.context, VSCE_PAT="must-not-be-used"), held, runner=runner,
+                            read_published=forbidden_read)
         self.assertFalse(called)
         self.assertEqual(json.loads((attempt / API.ATTEMPT_RECEIPT_NAME).read_text())["status"], "publish-blocked")
 

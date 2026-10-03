@@ -5,6 +5,7 @@ import copy
 from datetime import datetime, timezone
 import hashlib
 import importlib.util
+import io
 import json
 import os
 from pathlib import Path
@@ -12,6 +13,9 @@ import shutil
 import stat
 import subprocess
 import sys
+import urllib.error
+import urllib.parse
+import urllib.request
 import zipfile
 
 
@@ -46,6 +50,8 @@ FORMATTER_INPUT_SHA256 = "d1243e0f78b816cca2c583114321323e9dcaa80123b4a7ba4de803
 FORMATTER_OUTPUT_SHA256 = "d6e18e2695ad1261254d86d8f35a204c02dd3566fcc8fcc537e7efd2896f24b4"
 HOST_QUALIFICATION_NAME = "marketplace-host-qualification.json"
 ATTEMPT_RECEIPT_NAME = "marketplace-publication-attempt.json"
+MARKETPLACE_PACKAGE_BASE = ("https://beskid-lang.gallery.vsassets.io/_apis/public/gallery/"
+                            "publisher/beskid-lang/extension/beskid-vscode")
 PUBLICATION_HOLD = ("0.5.1 is not publication-eligible: the qualified compiler/LSP does not preserve "
                     "Corelib intrinsic authority after relocation; require a new immutable version and approval")
 HOST_CONTRACTS = {
@@ -229,6 +235,12 @@ def VerifyVsix(path, entry, contract):
     Require(FileDigest(path) == contract["derivative_sha256"][target],
             "Marketplace derivative digest mismatch: " + target)
     with zipfile.ZipFile(path) as archive:
+        VerifyVsixArchive(archive, entry)
+
+
+def VerifyVsixArchive(archive, entry):
+    target = entry["target"]
+    try:
         records = PACKAGER.Inventory(archive, target)
         Require(hashlib.sha256(json.dumps(records, sort_keys=True).encode()).hexdigest() ==
                 entry["derivative_inventory_sha256"], "Marketplace derivative inventory differs: " + target)
@@ -244,6 +256,45 @@ def VerifyVsix(path, entry, contract):
         server = f"extension/server/{target}/{TARGETS[target]}"
         Require(hashlib.sha256(archive.read(server)).hexdigest() == entry["lsp_sha256"],
                 "Marketplace embedded LSP differs: " + target)
+    except (KeyError, zipfile.BadZipFile) as error:
+        raise ValueError("Marketplace hosted package is not the approved VSIX: " + target) from error
+
+
+def MarketplacePackageUrl(target):
+    return (f"{MARKETPLACE_PACKAGE_BASE}/{VERSION}/assetbyname/"
+            "Microsoft.VisualStudio.Services.VSIXPackage?targetPlatform=" + urllib.parse.quote(target, safe=""))
+
+
+def ReadPublishedPackage(target):
+    request = urllib.request.Request(MarketplacePackageUrl(target), headers={
+        "Accept": "application/octet-stream",
+        "User-Agent": "beskid-marketplace-publisher/1",
+    })
+    try:
+        with urllib.request.urlopen(request, timeout=60) as response:
+            payload = response.read(PACKAGER.MAX_VSIX + 1)
+    except urllib.error.HTTPError as error:
+        if error.code == 404:
+            return None
+        raise ValueError("Marketplace hosted target could not be determined: " + target) from None
+    except (OSError, urllib.error.URLError):
+        raise ValueError("Marketplace hosted target could not be determined: " + target) from None
+    Require(len(payload) <= PACKAGER.MAX_VSIX, "Marketplace hosted package exceeds size bound: " + target)
+    Require(payload.startswith(b"PK\x03\x04"), "Marketplace hosted package is not a VSIX: " + target)
+    return payload
+
+
+def VerifyPublishedPackage(payload, entry, contract):
+    target = entry["target"]
+    Require(isinstance(payload, bytes) and len(payload) <= PACKAGER.MAX_VSIX,
+            "Marketplace hosted package is invalid: " + target)
+    Require(hashlib.sha256(payload).hexdigest() == contract["derivative_sha256"][target],
+            "Marketplace hosted package bytes differ: " + target)
+    try:
+        with zipfile.ZipFile(io.BytesIO(payload)) as archive:
+            VerifyVsixArchive(archive, entry)
+    except zipfile.BadZipFile as error:
+        raise ValueError("Marketplace hosted package is not a VSIX: " + target) from error
 
 
 def VerifyHostQualification(qualification, approval, contract):
@@ -375,7 +426,7 @@ def RunPublisher(argv, environment):
     return result.returncode
 
 
-def Publish(attempt, context, contract=None, runner=RunPublisher):
+def Publish(attempt, context, contract=None, runner=RunPublisher, read_published=ReadPublishedPackage):
     contract = PRODUCTION_CONTRACT if contract is None else contract
     RequireQualification(contract)
     record = ReadJsonFile(attempt / ATTEMPT_RECEIPT_NAME)
@@ -387,11 +438,27 @@ def Publish(attempt, context, contract=None, runner=RunPublisher):
         Require(record.get("checkout_sha") == context["CI_COMMIT_SHA"], "publication checkout differs from preflight")
         if VERSION == "0.5.2":
             Require(record.get("source") == APPROVED_SOURCE, "publication attempt source differs from preflight")
-        VerifyStage(attempt / "snapshot", contract)
+        approval = VerifyStage(attempt / "snapshot", contract)
         Require(contract.get("publication_enabled") is True,
                 contract.get("publication_hold") or "Marketplace publication is not enabled")
+        entries = {entry["target"]: entry for entry in approval["targets"]}
+        existing = {}
+        for target in TARGETS:
+            payload = read_published(target)
+            if payload is not None:
+                VerifyPublishedPackage(payload, entries[target], contract)
+            existing[target] = payload is not None
+        record["targets"] = [dict(item, status=("existing-verified" if existing[item["target"]]
+                                                else "not-attempted")) for item in record["targets"]]
+        record["hosted_bytes_sha256_verified"] = True
+        missing = [target for target in TARGETS if not existing[target]]
+        if not missing:
+            record["status"] = "published"
+            record["completed_utc"] = UtcNow()
+            WriteAttempt(attempt, record)
+            return record
         Require(bool(context.get("VSCE_PAT", "").strip()), "VSCE_PAT is missing")
-        paths = [str(attempt / "snapshot" / AssetName(target)) for target in TARGETS]
+        paths = [str(attempt / "snapshot" / AssetName(target)) for target in missing]
         argv = ["npx", "--no-install", "@vscode/vsce", "publish", "--packagePath", *paths]
         environment = {key: os.environ[key] for key in ("PATH", "HOME", "SYSTEMROOT") if key in os.environ}
         environment.update({"VSCE_PAT": context["VSCE_PAT"], "CI": "true"})
@@ -402,7 +469,8 @@ def Publish(attempt, context, contract=None, runner=RunPublisher):
         if code != 0:
             raise RuntimeError("Marketplace publisher failed; one or more targets may have been accepted")
         record["status"] = "published"
-        record["targets"] = [dict(item, status="publisher-reported-success",
+        record["targets"] = [dict(item, status=("existing-verified" if existing[item["target"]]
+                                                else "publisher-reported-success"),
                                   marketplace_url="https://marketplace.visualstudio.com/items?itemName=beskid-lang.beskid-vscode")
                              for item in record["targets"]]
         record["completed_utc"] = UtcNow()
@@ -411,7 +479,9 @@ def Publish(attempt, context, contract=None, runner=RunPublisher):
     except Exception as error:
         if record.get("status") == "publisher-running":
             record["status"] = "publisher-failed-possible-partial"
-            record["targets"] = [dict(item, status="unconfirmed") for item in record["targets"]]
+            record["targets"] = [dict(item, status=("existing-verified" if item["target"] in existing and
+                                                    existing[item["target"]] else "unconfirmed"))
+                                 for item in record["targets"]]
         else:
             record["status"] = "publish-blocked"
         record["failure"] = str(error) if isinstance(error, (ValueError, RuntimeError)) else "publication stopped"

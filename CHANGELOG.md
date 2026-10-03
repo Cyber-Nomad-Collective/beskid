@@ -92,6 +92,11 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Resume Microsoft Marketplace publication only after each existing
+  target-platform VSIX has been downloaded and verified against its approved
+  derivative digest. Skip verified targets, publish only missing targets, and
+  retain verified targets in a partial-failure receipt; mismatched or
+  indeterminate hosted bytes stop before any publisher invocation.
 - Pin the qualified DEB and toolchain-container prerequisite corrections:
   install Clang, binutils, and native development dependencies required by AOT
   project builds, including the runner image's independent final stage.
