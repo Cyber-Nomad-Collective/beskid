@@ -113,6 +113,23 @@ assert_safe_transport() {
   ! grep -Eq -- '--clobber|release (create|edit|delete)|cli-(stable|nightly)|homebrew|brew' "$TMP/gh.log"
 }
 
+# The caller-supplied intent path and every ancestor are validated before the
+# intent is copied into the private publication snapshot.
+reset_remote
+ln -s "$INTENT" "$TMP/symlink-intent.json"
+if GH_TOKEN=test-token GH_LOG="$TMP/gh.log" GH_REMOTE="$TMP/remote" GH_ORIGINAL="$OUTPUT" PATH="$TMP/bin:$PATH" \
+  bash "$SCRIPT" "$TMP/symlink-intent.json" "$OUTPUT" >"$TMP/stdout" 2>"$TMP/stderr"; then exit 1; fi
+grep -Eqi 'symbolic link|symlink' "$TMP/stderr"
+assert_no_write
+[[ ! -s "$TMP/gh.log" ]]
+reset_remote
+ln -s "$TMP" "$TMP/intent-ancestor-link"
+if GH_TOKEN=test-token GH_LOG="$TMP/gh.log" GH_REMOTE="$TMP/remote" GH_ORIGINAL="$OUTPUT" PATH="$TMP/bin:$PATH" \
+  bash "$SCRIPT" "$TMP/intent-ancestor-link/fixture/intent.json" "$OUTPUT" >"$TMP/stdout" 2>"$TMP/stderr"; then exit 1; fi
+grep -Eqi 'ancestor.*symbolic link|symlink' "$TMP/stderr"
+assert_no_write
+[[ ! -s "$TMP/gh.log" ]]
+
 # The shared repository publication-hold policy is evaluated before transport.
 reset_remote
 if GH_TOKEN=test-token GH_LOG="$TMP/gh.log" GH_REMOTE="$TMP/remote" GH_ORIGINAL="$OUTPUT" PATH="$TMP/bin:$PATH" \
