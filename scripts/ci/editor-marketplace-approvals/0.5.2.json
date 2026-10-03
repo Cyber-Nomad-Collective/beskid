@@ -10,15 +10,22 @@
     "editor_commit": "838d10b4606097e8fba8dc311c70dd9053607b9c",
     "publisher_base_commit": "e06d6b4b1e7e06a602bcf0b575e9fc05d921106b"
   },
-  "publication_enabled": false,
-  "publication_hold": "0.5.2 publication qualifications pending: genuine final native stable/publishable release-state and source gates, immutable release tags/assets, fresh Marketplace derivative approval/digests and actual host qualification, and installer qualification or owner waiver",
-  "pending_qualifications": [
-    "final native release-state and source gates",
-    "immutable release tags and assets",
-    "fresh Marketplace derivative approval and digests",
-    "actual derivative host qualification",
-    "installer qualification or owner waiver"
-  ],
+  "publication_enabled": true,
+  "publication_hold": null,
+  "pending_qualifications": [],
+  "qualification": {
+    "native_release_state_sha256": "4d3f81f2c93f5c2da2206ad63a5530652d11de6866d05504f0c4abc77e563e27",
+    "marketplace_approval_sha256": "af4802cef95dde8ccbf5ac053ea7bed4eadde78e4929cd4962769c571fdc6b49",
+    "actual_linux_host_receipt_sha256": "20f303b7df6bf20a6d714a2f4d2abd54894089a10b36b05629eebece9a29b142",
+    "windows_installer_acceptance": {
+      "decision": "release-owner-installer-test-waiver",
+      "record_url": "https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/download/cli-v0.5.2/beskid-0.5.2-windows-installer-owner-waiver.json",
+      "record_sha256": "abf1923c47f26738b7a649974d3ae56809443c474e74096a5b340b2e3749a71a",
+      "installer_sha256": "146330cae81119759298223c063f04606b317f34da7d67873179e16e6828e88b",
+      "approved_utc": "2026-10-03T18:57:20Z",
+      "scenario_tests": "owner-waived; not reported as passed"
+    }
+  },
   "editor_release": {
     "repository": "Cyber-Nomad-Collective/beskid",
     "tag": "editor-v0.5.2"

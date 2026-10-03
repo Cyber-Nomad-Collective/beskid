@@ -113,7 +113,8 @@ def SelectProductionVersion(version):
         }, "assets": ASSETS,
         "original_host_receipt_sha256": "20f303b7df6bf20a6d714a2f4d2abd54894089a10b36b05629eebece9a29b142",
         "originals": copy.deepcopy(original["targets"]),
-        "publication_enabled": False, "publication_hold": original["publication_hold"],
+        "publication_enabled": original.get("publication_enabled") is True,
+        "publication_hold": original.get("publication_hold"),
     }
 
 

@@ -491,7 +491,7 @@ class ProductionContractSelectionTests(unittest.TestCase):
         spec.loader.exec_module(api)
         return api
 
-    def test_052_selection_freezes_genuine_qualification_digests_without_enabling_publication(self):
+    def test_052_selection_admits_verified_owner_accepted_release(self):
         api = self.load_api()
         api.SelectProductionVersion("0.5.2")
 
@@ -504,7 +504,7 @@ class ProductionContractSelectionTests(unittest.TestCase):
         })
         self.assertEqual(api.PRODUCTION_CONTRACT["original_host_receipt_sha256"],
                          "20f303b7df6bf20a6d714a2f4d2abd54894089a10b36b05629eebece9a29b142")
-        self.assertFalse(api.PRODUCTION_CONTRACT["publication_enabled"])
+        api.RequireQualification(api.PRODUCTION_CONTRACT)
 
     def test_selector_preserves_held_051_contract_and_rejects_untracked_versions(self):
         api = self.load_api()
@@ -678,6 +678,8 @@ class LinuxMarketplaceHostTests(unittest.TestCase):
 
     def test_unqualified_production_stops_before_inputs_secrets_and_transport(self):
         api = self.api
+        api.PRODUCTION_CONTRACT.update(publication_enabled=False,
+                                       publication_hold="qualifications pending")
         with self.assertRaisesRegex(ValueError, "qualifications pending"):
             api.SanitizeHostReceipt(self.raw_path, self.approval_path, self.root / "absent",
                                     self.output)

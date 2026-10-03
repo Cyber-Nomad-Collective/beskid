@@ -11,6 +11,11 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Enable the finite 0.5.2 editor publication contract after native and editor
+  immutable-asset verification, actual Linux editor-host qualification, and
+  the owner's exact Windows-installer test waiver. Preserve the held 0.5.1
+  contract and all frozen source and artifact digests; do not report waived
+  installer scenarios as passing tests.
 - Make the extensionless npm fixture in publication tests compatible with
   Woodpecker's Node 18 runtime without relying on Node 22 module detection.
 - Freeze the verified 0.5.2 Marketplace approval, complete three-target

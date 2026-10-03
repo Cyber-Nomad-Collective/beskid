@@ -266,6 +266,7 @@ class PublisherTests(unittest.TestCase):
 
     def test_bounded_pending_contract_blocks_before_transport(self):
         approval = self.api.SelectApproval("0.5.2")
+        approval.update(publication_enabled=False, publication_hold="qualifications pending")
         with patch.object(self.api, "ReleaseMetadata", side_effect=AssertionError("transport")):
             with self.assertRaisesRegex(ValueError, "pending"):
                 self.api.Prepare(approval, self.root / "snapshot", self.root, self.context)
@@ -305,17 +306,22 @@ class PublisherTests(unittest.TestCase):
         self.assertEqual(requests, [("editor-v0.5.2", self.approval["source"]["superrepo_commit"]),
                                     ("lsp-v0.5.2", self.compiler)])
 
-    def test_production_cli_052_pending_before_files_or_secrets(self):
+    def test_production_cli_untracked_version_before_files_or_secrets(self):
         environment = {k: os.environ[k] for k in ("PATH", "HOME", "SYSTEMROOT") if k in os.environ}
         environment.update(OVSX_PAT="must-not-be-used", VSCE_PAT="must-not-be-used")
-        for command in (["python3", str(SCRIPT), "prepare", str(self.root / "absent"), "--version", "0.5.2"],
-                        ["python3", str(SCRIPT.parent / "marketplace-publish.py"), "--version", "0.5.2",
+        for command in (["python3", str(SCRIPT), "prepare", str(self.root / "absent"), "--version", "0.5.3"],
+                        ["python3", str(SCRIPT.parent / "marketplace-publish.py"), "--version", "0.5.3",
                          "preflight", str(self.root / "absent"), str(self.root / "attempt")]):
             result = subprocess.run(command, env=environment, capture_output=True, text=True)
-            self.assertEqual(result.returncode, 1)
-            self.assertIn("pending", result.stderr)
+            self.assertEqual(result.returncode, 2)
+            self.assertIn("invalid choice", result.stderr)
             self.assertNotIn("must-not-be-used", result.stderr + result.stdout)
         self.assertFalse((self.root / "attempt").exists())
+
+    def test_production_052_admits_verified_owner_accepted_release(self):
+        approval = self.api.SelectApproval("0.5.2")
+        self.api.VerifyApproval(approval)
+        self.api.RequireQualification(approval)
 
     def test_two_root_derivative_preserves_native_source_and_qualifies_originals(self):
         self.two_roots()
