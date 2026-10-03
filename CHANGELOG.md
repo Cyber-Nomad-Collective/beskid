@@ -92,6 +92,11 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Pin the qualified DEB and toolchain-container prerequisite corrections:
+  install Clang, binutils, and native development dependencies required by AOT
+  project builds, including the runner image's independent final stage.
+  Keep existing immutable release evidence unchanged; corrected package
+  publication requires separate provenance qualification.
 - Read Open VSX metadata for the selected immutable editor version during
   publication preflight and post-upload verification.
 - Pin the reviewed compiler repair that preserves verified installed Corelib
