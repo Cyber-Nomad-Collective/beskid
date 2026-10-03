@@ -101,6 +101,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Match complete DEB publication filenames in retry-test assertions so GNU
+  grep does not count the accompanying correction record as a second DEB upload.
+
 - Resume Microsoft Marketplace publication only after each existing
   target-platform VSIX has been downloaded and verified against its approved
   derivative digest. Skip verified targets, publish only missing targets, and

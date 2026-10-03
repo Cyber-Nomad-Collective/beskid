@@ -205,12 +205,12 @@ reset_remote
 GH_UPLOAD_MODE="fail-after:$DEB" run_publisher
 cmp -s "$OUTPUT/$DEB" "$TMP/remote/$DEB"
 cmp -s "$OUTPUT/$RECORD" "$TMP/remote/$RECORD"
-[[ "$(grep -c "release upload cli-v1.2.3 .*\/$DEB" "$TMP/gh.log")" == 1 ]]
+[[ "$(grep -F 'release upload cli-v1.2.3 ' "$TMP/gh.log" | grep -Fc "/$DEB --repo Cyber-Nomad-Collective/beskid_compiler")" == 1 ]]
 reset_remote
 if GH_UPLOAD_MODE="fail-before:$RECORD" run_publisher >"$TMP/stdout" 2>"$TMP/stderr"; then exit 1; fi
 cmp -s "$OUTPUT/$DEB" "$TMP/remote/$DEB"
 [[ ! -e "$TMP/remote/$RECORD" ]]
-[[ "$(grep -c "release upload cli-v1.2.3 .*\/$RECORD" "$TMP/gh.log")" == 1 ]]
+[[ "$(grep -F 'release upload cli-v1.2.3 ' "$TMP/gh.log" | grep -Fc "/$RECORD --repo Cyber-Nomad-Collective/beskid_compiler")" == 1 ]]
 
 # Retrying a verified partial attempt downloads the exact DEB and uploads only
 # the missing record.
