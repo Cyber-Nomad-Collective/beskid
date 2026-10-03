@@ -101,6 +101,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Correct the published Homebrew tap instructions to use its explicit Git URL
+  and fully qualified formula, without granting whole-tap trust.
+
 - Match complete DEB publication filenames in retry-test assertions so GNU
   grep does not count the accompanying correction record as a second DEB upload.
 
