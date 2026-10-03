@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "kind": "linux-package-derivative-correction",
+  "version": "0.5.2",
+  "platform": "linux",
+  "target": "x86_64-unknown-linux-gnu",
+  "native": {
+    "superrepo_commit": "2de50cdaef9b1f34e0b246eadad70a17fd43f6d8",
+    "compiler_commit": "95c203ff12639b25e2c67b08da531e3715fef4c2",
+    "bundle": { "name": "beskid-0.5.2-x86_64-unknown-linux-gnu.tar.gz", "sha256": "90da0f619f216c18e468de3030979c10f87a59a76c4f7879d974793b9487d373" },
+    "release_state_sha256": "4d3f81f2c93f5c2da2206ad63a5530652d11de6866d05504f0c4abc77e563e27",
+    "validated_evidence_sha256": "40e9e51fb86d743402c130ce84b0b6e78986c8fe9ad32618aa0cdad1910d0dd0"
+  },
+  "recipe": { "distribution_commit": "339f3c574fc9850c5bf77a63716c8db2a242e243", "base_distribution_commit": "8aeb09d9dc943d530001ffcf43e41dfeddc71332", "entrypoint": "deb/build-deb.sh" },
+  "artifact": { "name": "beskid-0.5.2-amd64.deb", "sha256": "f89a39c07254e06b5fcdad6960abfb1190b6d317b9686cdd663ededcbd8c96b1" },
+  "record": { "name": "beskid-0.5.2-amd64.deb.correction-v1.json" },
+  "qualification": {
+    "environment": { "os": "ubuntu", "version": "24.04", "architecture": "amd64", "install_mode": "apt-get --no-install-recommends", "container_image": "docker.io/library/ubuntu@sha256:f610ab94648195aa356059f5b41d6085c9d4d903c072430cdd1af7bdb646106b" },
+    "harness": { "path": "tests/deb-toolchain-install.test.sh", "sha256": "1e7197fa22ade906f0a23bafaa8b323e949983162460828eec672ea66a6a3e36" },
+    "fixture": {
+      "project": { "path": "tests/fixtures/deb-console/Smoke.bproj", "sha256": "16263a5207af0918794d3ebaf6b1a7cd1ed0a3c7e659c1252e6566393c53a865" },
+      "source": { "path": "tests/fixtures/deb-console/Src/Main.bd", "sha256": "b89f04a6def4b7958aa385c09fddbde3ba39c378d1fcffffe2b98afffa2af867" },
+      "c_probe": { "path": "tests/fixtures/deb-console/probe.c", "sha256": "4e51443b08f01495ba1861cec031015e252241ae1dfcb9f71bc96e321ac58588" }
+    },
+    "red": { "log": "beskid-v052-deb-trace-red.log", "sha256": "b004fe0068c05b97f4fb6d597cec6050ba1509108d7b86cf8c1ff148f15c6d4c", "expected_failure": "DEB did not install required tool: clang", "exit_code": 1 },
+    "green": { "log": "beskid-v052-deb-trace-green.log", "sha256": "18f1ca17239ba4258c3091744b925d08ddccd06fd015ac381100a26e35afcdb5", "required_checks": ["clang", "cc", "ar", "ranlib", "libc-header-c-probe", "analyze", "locked-build", "locked-run", "lockfile-unchanged"], "exit_code": 0 }
+  }
+}

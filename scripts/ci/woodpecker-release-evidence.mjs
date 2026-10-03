@@ -15,7 +15,7 @@ import { createHash } from "node:crypto";
 import { lstatSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const PLATFORMS = [
   {
@@ -320,7 +320,7 @@ function validatePlatform(root, definition, expectedSource, expectedVersion) {
   };
 }
 
-function validate(root, selectedPlatform) {
+export function ValidateReleaseEvidence(root, selectedPlatform) {
   const resolvedRoot = resolve(root);
   requireDirectory(resolvedRoot, "evidence directory");
   const selected = selectedPlatform ? PLATFORMS.filter(item => item.platform === selectedPlatform) : PLATFORMS;
@@ -338,14 +338,15 @@ function usage() {
   return "usage: woodpecker-release-evidence.mjs <evidence-directory> [linux|macos|windows]";
 }
 
-if (![3, 4].includes(process.argv.length) || process.argv[2] === "--help") {
-  process.stderr.write(`${usage()}\n`);
-  process.exit(process.argv[2] === "--help" ? 0 : 2);
-}
-
-try {
-  process.stdout.write(`${JSON.stringify(validate(process.argv[2], process.argv[3]), null, 2)}\n`);
-} catch (error) {
-  process.stderr.write(`woodpecker release evidence: ${error.message}\n`);
-  process.exit(1);
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  if (![3, 4].includes(process.argv.length) || process.argv[2] === "--help") {
+    process.stderr.write(`${usage()}\n`);
+    process.exit(process.argv[2] === "--help" ? 0 : 2);
+  }
+  try {
+    process.stdout.write(`${JSON.stringify(ValidateReleaseEvidence(process.argv[2], process.argv[3]), null, 2)}\n`);
+  } catch (error) {
+    process.stderr.write(`woodpecker release evidence: ${error.message}\n`);
+    process.exit(1);
+  }
 }
