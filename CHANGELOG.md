@@ -11,6 +11,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Make the extensionless npm fixture in publication tests compatible with
+  Woodpecker's Node 18 runtime without relying on Node 22 module detection.
 - Freeze the verified 0.5.2 Marketplace approval, complete three-target
   derivative set, and Linux raw-host receipt digests in the finite publication
   contract without enabling publication. Preserve the current publication hold,

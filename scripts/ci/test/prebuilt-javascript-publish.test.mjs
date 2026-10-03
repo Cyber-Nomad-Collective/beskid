@@ -80,8 +80,8 @@ function WriteNonSelectedSubmodule(root, lane) {
 function WriteFakeNpm(bin) {
   mkdirSync(bin, { recursive: true });
   writeFileSync(join(bin, 'npm'), `#!/usr/bin/env node
-import { appendFileSync, readFileSync, writeFileSync } from 'node:fs';
-import { basename, join } from 'node:path';
+const { appendFileSync, readFileSync, writeFileSync } = require('node:fs');
+const { basename, join } = require('node:path');
 const args = process.argv.slice(2);
 const log = process.env.FAKE_NPM_LOG;
 appendFileSync(log, JSON.stringify({ args, cwd: process.cwd(), credential: Boolean(process.env.NODE_AUTH_TOKEN) }) + '\\n');
