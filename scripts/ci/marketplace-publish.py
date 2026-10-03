@@ -265,13 +265,25 @@ def MarketplacePackageUrl(target):
             "Microsoft.VisualStudio.Services.VSIXPackage?targetPlatform=" + urllib.parse.quote(target, safe=""))
 
 
-def ReadPublishedPackage(target):
+class NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, request, fp, code, message, headers, new_url):
+        return None
+
+
+def OpenMarketplaceRequest(request):
+    return urllib.request.build_opener(NoRedirect()).open(request, timeout=60)
+
+
+def ReadPublishedPackage(target, open_request=OpenMarketplaceRequest):
     request = urllib.request.Request(MarketplacePackageUrl(target), headers={
         "Accept": "application/octet-stream",
         "User-Agent": "beskid-marketplace-publisher/1",
     })
     try:
-        with urllib.request.urlopen(request, timeout=60) as response:
+        with open_request(request) as response:
+            encoding = response.headers.get("Content-Encoding", "identity")
+            Require(isinstance(encoding, str) and encoding.lower() in ("", "identity"),
+                    "Marketplace hosted package has unsupported content encoding: " + target)
             payload = response.read(PACKAGER.MAX_VSIX + 1)
     except urllib.error.HTTPError as error:
         if error.code == 404:

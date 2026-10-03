@@ -9,6 +9,8 @@ from pathlib import Path
 import tempfile
 import unittest
 from unittest import mock
+import urllib.error
+import urllib.request
 import zipfile
 
 
@@ -315,6 +317,74 @@ class MarketplacePublishTests(unittest.TestCase):
         self.assertEqual(result["status"], "publisher-failed-possible-partial")
         self.assertEqual([item["status"] for item in result["targets"]],
                          ["unconfirmed", "existing-verified", "unconfirmed"])
+
+    def test_marketplace_reader_accepts_only_direct_identity_encoded_exact_vsix_bytes(self):
+        payload = (self.stage / API.AssetName("darwin-arm64")).read_bytes()
+        seen = {}
+
+        class Response:
+            headers = {"Content-Encoding": "identity"}
+            def read(self, limit):
+                seen["limit"] = limit
+                return payload
+            def __enter__(self):
+                return self
+            def __exit__(self, *_):
+                return False
+
+        result = API.ReadPublishedPackage("darwin-arm64", open_request=lambda request: seen.setdefault("request", request) and Response())
+        self.assertEqual(result, payload)
+        self.assertEqual(seen["request"].full_url, API.MarketplacePackageUrl("darwin-arm64"))
+        self.assertEqual(seen["limit"], API.PACKAGER.MAX_VSIX + 1)
+
+    def test_marketplace_reader_treats_only_direct_404_as_absent_and_fails_closed_otherwise(self):
+        url = API.MarketplacePackageUrl("darwin-arm64")
+
+        def failure(status):
+            def open_request(_):
+                raise urllib.error.HTTPError(url, status, "fixture", {}, None)
+            return open_request
+
+        self.assertIsNone(API.ReadPublishedPackage("darwin-arm64", open_request=failure(404)))
+        for status in (301, 302, 401, 500):
+            with self.subTest(status=status):
+                with self.assertRaisesRegex(ValueError, "could not be determined"):
+                    API.ReadPublishedPackage("darwin-arm64", open_request=failure(status))
+        with self.assertRaisesRegex(ValueError, "could not be determined"):
+            API.ReadPublishedPackage("darwin-arm64", open_request=lambda _: (_ for _ in ()).throw(
+                urllib.error.URLError("offline")))
+
+    def test_marketplace_default_transport_disables_redirect_following(self):
+        request = urllib.request.Request(API.MarketplacePackageUrl("darwin-arm64"))
+        opener = mock.Mock()
+        with mock.patch.object(urllib.request, "build_opener", return_value=opener) as build:
+            API.OpenMarketplaceRequest(request)
+        self.assertEqual(len(build.call_args.args), 1)
+        self.assertIsInstance(build.call_args.args[0], API.NoRedirect)
+        opener.open.assert_called_once_with(request, timeout=60)
+
+    def test_marketplace_reader_rejects_encoded_oversized_and_malformed_payloads(self):
+        class Response:
+            def __init__(self, payload, encoding="identity"):
+                self.payload = payload
+                self.headers = {"Content-Encoding": encoding}
+            def read(self, _):
+                return self.payload
+            def __enter__(self):
+                return self
+            def __exit__(self, *_):
+                return False
+
+        def open_response(payload, encoding="identity"):
+            return lambda _: Response(payload, encoding)
+
+        with self.assertRaisesRegex(ValueError, "content encoding"):
+            API.ReadPublishedPackage("darwin-arm64", open_request=open_response(b"gzip", "gzip"))
+        with mock.patch.object(API.PACKAGER, "MAX_VSIX", 3):
+            with self.assertRaisesRegex(ValueError, "exceeds size bound"):
+                API.ReadPublishedPackage("darwin-arm64", open_request=open_response(b"PK\\x03\\x04"))
+        with self.assertRaisesRegex(ValueError, "not a VSIX"):
+            API.ReadPublishedPackage("darwin-arm64", open_request=open_response(b"not-a-zip"))
 
     def test_publisher_failure_is_durable_and_fail_closed(self):
         attempt = self._preflight()
