@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Announce the published 0.5.2 toolchain on the main website, with corrected
+  project-start commands, installation links, and explicit installer and
+  editor-channel qualification limits.
 - Enable the finite 0.5.2 editor publication contract after native and editor
   immutable-asset verification, actual Linux editor-host qualification, and
   the owner's exact Windows-installer test waiver. Preserve the held 0.5.1
