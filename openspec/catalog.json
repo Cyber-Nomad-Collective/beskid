@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "fdb9868dbf21302751dd8f00282a08ef56042938a2e24b00714be55a4c93fcfc",
+  "revision": "d71f6d1bd258ef8af9d2488fa7e11f4c92f67e0813810ab76c3cd5e7c7ca80fd",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
     "nodes": 1042,
     "capabilities": 197,
-    "requirements": 575,
+    "requirements": 576,
     "normativeSources": 304,
     "provisionalCapabilities": 52,
     "legacyArtifacts": 3189,
@@ -677,6 +677,17 @@
         "/platform-spec/community/spec-maintenance/release-and-versioning-policy/adr/0004-single-normative-tree/"
       ],
       "requirements": [
+        {
+          "id": "BSP-REQ-749DF1706D05",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/community--spec-maintenance--release-and-versioning-policy/spec.md",
+          "sourceHash": "1362cb1a53cbdc85c89dbba3cb3e59540ebfb9d53eef116ef8c2dce291e90c97",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Linux package derivative provenance",
+          "anchor": "requirement-linux-package-derivative-provenance"
+        },
         {
           "id": "BSP-REQ-F1FF04F3A53F",
           "title": "Git is the canonical specification version axis: Decision [D-COMM-VERS-0001]",
@@ -58286,7 +58297,7 @@
       "decision": null,
       "title": "Release and versioning policy",
       "status": "Standard",
-      "sourceHash": "a0644ebed87d157c29d17a91b37adccd240b3c94de16ffef8a08318ae18e79e5"
+      "sourceHash": "41cf041cbb4df989fc8d8faf9573d1b79b245e81f3a21cc234cb45dba12526b7"
     },
     {
       "id": "BSP-CAP-73D36745349C",

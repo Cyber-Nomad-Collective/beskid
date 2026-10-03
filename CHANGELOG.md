@@ -72,8 +72,11 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Add a bounded, secret-free Linux DEB derivative verifier and external
   immutable-tag publisher for the corrected 0.5.2 package. The finite intent
   binds native evidence, the focused distribution recipe, qualified DEB, and
-  attested fresh-container evidence without changing native release state or
-  Woodpecker publication lanes.
+  traced pinned-container, harness, and fixture evidence without changing
+  native release state or Woodpecker publication lanes. Publication now
+  enforces tracked source holds, freezes a private validated input snapshot,
+  preflights both append-only assets, and resolves partial or uncertain uploads
+  from fresh remote state without overwrite, local-input races, or blind retry.
 
 - Add a protected manual Woodpecker publisher for the exact approved 0.5.1
   Microsoft Marketplace derivatives, with secret-free immutable preflight,
