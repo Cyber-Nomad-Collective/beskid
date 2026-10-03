@@ -1,6 +1,6 @@
 ---
 title: "beskid 0.5.2: From Download to a Running Project"
-description: "Native releases for Linux, macOS and Windows, corrected templates, portable lockfiles, and a simpler CLI. Here is how to get started, and which distribution steps remain unfinished."
+description: "Explore beskid's fibers, channels, TCP, UDP and HTTP/1.1, then create a native project with portable dependencies on Linux, macOS or Windows."
 date: 2026-10-03
 blogStatus: released
 release: v0.5.2
@@ -12,23 +12,35 @@ cover:
   sourceLabel: "US National Archives, Public domain"
 ---
 
-**beskid 0.5.2 is available for Linux, macOS and Windows.** The native toolchain downloads, Windows setup and MSI, Linux DEB, macOS ARM64 DMG, and Homebrew formula are published. This release closes an important gap between having a compiler that passes its tests and having an installation you can use to create, build and run a project.
+**beskid 0.5.2 is available for Linux, macOS and Windows.** The 0.5 release line brings concurrency and networking into the language's native toolchain. Version 0.5.2 makes those capabilities easier to start using, with ready-to-use project templates, portable dependency lockfiles, and platform installation packages.
 
-The shortest route is the [download page](/downloads/). The [versioned release](https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/tag/cli-v0.5.2) contains the installation packages and their qualification records; the [toolchain bundle release](https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/tag/v0.5.2) contains the complete native prefixes.
+You can use it to build native command-line programs, organize concurrent work, and communicate through TCP, UDP or HTTP/1.1. Start with the [download page](/downloads/), or read on for an overview of the building blocks and a complete project-start workflow.
 
-## What the 0.5 release line brings
+## Concurrent work with fibers and channels
 
-The 0.5 release line adds the foundations for programs that communicate: typed fibers and channels, a growable managed heap, scoped resource cleanup, portable TCP, UDP and DNS, and a bounded HTTP/1.1 package. These build on the same runtime and I/O contracts rather than separate platform-specific APIs in application code.
+Fibers let a program organize work into independently scheduled tasks. A fiber can wait for a message or I/O while other runnable fibers continue. Scheduling is cooperative: fibers are a way to structure concurrency, not a promise that every task runs on a dedicated operating-system thread.
 
-The HTTP package is deliberately small. TLS, HTTP/2, HTTP/3, WebSocket and connection pooling are not included. A working HTTP/1.1 transport is not a promise that every browser or service-client feature exists.
+Typed channels provide the communication path between fibers. Rather than arranging work around shared stack state, a producer sends values and a consumer receives them. This gives programs a natural shape for work queues, staged processing and message-driven coordination. Fiber results and channel errors make completion and shutdown part of the program's control flow.
 
-The focus of 0.5.2 is the path around those features: installing the toolchain, finding its runtime kit and Corelib, generating valid projects, and keeping their dependency identities stable.
+The runtime also has a growable managed heap, while scoped resource cleanup ties a resource's lifetime to the scope that owns it. Together, these are foundations for programs that allocate data, coordinate tasks and manage I/O resources over time.
 
-## Templates that produce real beskid projects
+## Networking from sockets to HTTP
 
-The corrected templates use beskid syntax and include the project metadata needed to resolve Corelib. Generating a console project must not produce a Rust-shaped entry point, a lockfile copied from another project, or a project that only builds inside the compiler checkout.
+The networking package exposes TCP, UDP and DNS through portable Corelib APIs:
 
-The published templates are version 0.1.3; package versions and compiler versions are independent. Fresh installed-toolchain checks covered project generation, analysis, locked builds and locked runs on Linux, macOS and Windows. The generated lockfiles remained unchanged during those locked checks.
+- TCP provides connected byte streams, with listener and stream operations for accepting connections, reading and writing.
+- UDP provides datagram communication, preserving the message-oriented shape of the transport.
+- DNS resolves host names into addresses that a program can use to establish communication.
+
+These operations integrate with the fiber runtime. Application code can use the same networking API on Linux, macOS and Windows rather than selecting a different socket interface for each platform.
+
+The HTTP package builds on TCP with request and response types, encoding and decoding, and client and server exchange support. Its HTTP/1.1 implementation is bounded: parsing and message handling have explicit limits. This is a useful layer when a program needs an HTTP exchange rather than direct access to a byte stream.
+
+HTTP in this release does not include TLS, HTTP/2, HTTP/3, WebSocket or connection pooling. Choose the transport with those boundaries in mind; HTTPS is not provided by the HTTP/1.1 package itself.
+
+## Create, check, build and run a project
+
+The console template gives you a beskid entry point, a project manifest and the metadata needed to resolve Corelib. The published template packages are version 0.1.3; their version numbers are independent of the compiler's 0.5.2 version.
 
 For a new console application, choose an unused output directory:
 
@@ -40,15 +52,17 @@ beskid build --project HelloBeskid/HelloBeskid.bproj --target app --locked --pla
 beskid run --project HelloBeskid/HelloBeskid.bproj --target app --locked --plain
 ```
 
-The version command should report `0.5.2`. Native builds also need the platform's compiler and linker prerequisites; installing the beskid executable alone does not install every system development tool.
+The version command should report `0.5.2`. The generated `.bproj` file describes the project and its `app` target. `analyze` checks the program, `build` produces the native application, and `run` builds and executes it. `--plain` keeps the output straightforward, while `--no-interactive` makes project generation suitable for a script as well as a terminal.
 
-If an older generated project reports that its lockfile belongs to a different project, keep a backup and generate a fresh project in another directory. Do not copy the old template's lockfile into it. Move your application sources deliberately, preserving the new project's manifest and dependency identity.
+The `--locked` option uses the recorded dependency graph without updating it. Fresh installed-toolchain checks covered this generation, analysis, locked-build and locked-run workflow on all three operating systems.
 
-## Portable dependencies and a straightforward CLI
+## Carry the project between machines
 
-The v2 lockfile format replaces machine-specific checkout paths with project-relative paths and a verified Corelib anchor. Moving a checkout between Linux, macOS and Windows should not require committing somebody else's home directory. Missing or mismatched runtime kits still fail closed: portability does not mean accepting whichever library happens to be on disk.
+The v2 `Project.lock` format records project-relative paths and identifies Corelib through a verified installed kit. The lockfile can travel with a checkout between Linux, macOS and Windows, even when the toolchain is installed in a different location on each machine.
 
-The CLI no longer opens `beskid hi` as a fullscreen application during ordinary project work. Commands remain commands, with prompts, progress indicators and tree output where they help. The `beskid graph` TUI is retained for exploring the graph interactively.
+That separates two concerns: the project records which dependencies it uses, and each machine supplies a matching toolchain and runtime kit. Kit validation checks that the installed components belong together before compilation proceeds.
+
+Ordinary CLI commands work directly in the terminal, with prompts, progress indicators and tree output where useful. For an interactive view, `beskid graph` retains its TUI. The native bundles also include the language server for editor integration, alongside the CLI, updater, runtime kit and Corelib.
 
 ## Install or upgrade
 
@@ -61,14 +75,14 @@ brew install cyber-nomad-collective/beskid/beskid
 
 For an existing installation through that tap, update Homebrew and upgrade the same fully qualified formula.
 
-Windows users can download the [0.5.2 setup executable](https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/download/cli-v0.5.2/beskid-0.5.2-windows-amd64.exe). Linux users can download the [AMD64 DEB](https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/download/cli-v0.5.2/beskid-0.5.2-amd64.deb). Its corrected dependency recipe was checked in a clean Ubuntu environment without relying on recommended packages to supply missing development tools.
+Windows users can download the [0.5.2 setup executable](https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/download/cli-v0.5.2/beskid-0.5.2-windows-amd64.exe), and Linux users can download the [AMD64 DEB](https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/download/cli-v0.5.2/beskid-0.5.2-amd64.deb). The [versioned release](https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/tag/cli-v0.5.2) also provides the Windows MSI and macOS ARM64 DMG. For a complete installed prefix, use the [native toolchain bundles](https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/tag/v0.5.2).
 
-The native bundles include the CLI, LSP, updater, runtime kit and Corelib in one prefix. Their runtime discovery is relative to that installed prefix, not the machine that built the release.
+Native builds need the platform's compiler and linker prerequisites as well as beskid. Follow the [installation guide](/docs/getting-started/install/) for the appropriate setup. When upgrading an existing application, preserve your sources and review its manifest and lockfile; generating a separate project is a useful way to compare the current template layout.
 
-## What is published—and what is not yet finished
+## Explore the APIs and editor support
 
-There are two qualifications worth spelling out. The remaining Windows installer scenario-test matrix was explicitly waived by the release owner for the exact published setup bytes; those scenarios are not reported as passing tests. The macOS DMG is unsigned and not notarized. Its package contents and native conformance were checked, but normal Gatekeeper acceptance and compatibility with older physical macOS hosts are not claimed. Homebrew remains the recommended macOS route.
+The [first-program guide](/docs/getting-started/first-program/) is the next step after installation. [pckg](https://pckg.beskid-lang.org/) provides package documentation and source browsing, while the [language standard](/docs/standard/) describes the normative contracts behind the language and runtime.
 
-The [original VSIX packages](https://github.com/Cyber-Nomad-Collective/beskid/releases/tag/editor-v0.5.2) and the separately verified [Visual Studio Marketplace packages](https://github.com/Cyber-Nomad-Collective/beskid/releases/tag/editor-marketplace-v0.5.2) are available as downloads. Download availability is not the same as completion of every editor registry rollout: Open VSX publication has not passed its public readback check, the Linux and Windows Marketplace rollout remains unfinished, and the initial Zed registry listing remains pending.
+For editor setup, see the [editor guide](/docs/getting-started/editor/). The [VSIX downloads](https://github.com/Cyber-Nomad-Collective/beskid/releases/tag/editor-v0.5.2) and separate [Visual Studio Marketplace packages](https://github.com/Cyber-Nomad-Collective/beskid/releases/tag/editor-marketplace-v0.5.2) are available now; editor-store listings are rolling out separately.
 
-Package documentation is available through [pckg](https://pckg.beskid-lang.org/), and the language's normative requirements remain in the [standard](/docs/standard/). Release notes should describe the binaries you can actually download, not the channels we hope to finish next.
+Packaging notes: the macOS DMG is unsigned and not notarized, so Homebrew remains the recommended macOS route. The Windows setup is published under an owner-approved installer-test waiver. Detailed qualification records accompany the versioned release.

@@ -11,6 +11,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Refocus the 0.5.2 announcement on concurrency, networking, portable
+  dependencies, and practical project workflows; keep packaging notes concise.
 - Announce the published 0.5.2 toolchain on the main website, with corrected
   project-start commands, installation links, and explicit installer and
   editor-channel qualification limits.
