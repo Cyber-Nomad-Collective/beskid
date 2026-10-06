@@ -1,25 +1,15 @@
 ---
 title: "beskid lock"
-description: "Synchronize Project.lock for a project."
+description: "Removed in 0.6.0. Use beskid dev project lock."
 ---
 
-Runs the resolver to synchronize **`Project.lock`** for the selected project.
-This command is available as `beskid lock`.
-
-## Arguments
-
-| Argument | Description |
-| --- | --- |
-| `--project` | Project directory or `App.bproj` path |
-| `--target` | Target name from the manifest |
-| `--workspace-member` | Workspace member when resolving via `Workspace.bws` |
-| `--plain` | Disable animated resolve progress |
-
-## Example
+The root command `beskid lock` was removed in version 0.6.0. Use `beskid dev project lock` instead.
 
 ```bash
-beskid lock --project path/to/App.bproj
+beskid dev project lock --help
 ```
+
+The replacement accepts `--project`, `--target`, `--workspace-member`, `--frozen`, `--locked`, `--offline`, and `--plain`. To change a dependency, use `beskid add`, `beskid remove`, or `beskid update`.
 
 For lockfile behavior and recovery, use [Dependencies and locks](/docs/projects/dependencies-and-locks/).
 

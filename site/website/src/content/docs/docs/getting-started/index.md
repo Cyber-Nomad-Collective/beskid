@@ -32,7 +32,7 @@ Use a supported host: Linux on AMD64, macOS on ARM64, or Windows on AMD64. You n
 
 ## Limits
 
-`beskid --version` succeeds, `beskid analyze Main.bd --plain` reports no error diagnostics, and `beskid run Main.bd --plain` exits with status `0`.
+`beskid --version` succeeds, `beskid check Main.bd --plain` reports no error diagnostics, and `beskid run Main.bd --plain` exits with status `0`.
 
 Stop at the first failed check. Use the recovery section on that task page before you continue. Do not bypass an analysis error with a build command.
 

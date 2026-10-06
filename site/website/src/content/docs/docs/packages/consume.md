@@ -24,20 +24,21 @@ Know the package name and requested version. Select the consuming project. Ensur
 
 ## Actions
 
-1. Inspect the package and its active versions for the requested version:
+1. Inspect the package:
 
    ```bash
-   beskid pckg details Acme.Math
-   beskid pckg versions Acme.Math
+   beskid package info Acme.Math
    ```
 
-2. Download that coordinate when you need offline inspection:
+2. Add the exact version as a dependency. The command updates `App.bproj` and `Project.lock`:
 
    ```bash
-   beskid pckg download Acme.Math --version 1.0.0 --output ./vendor/Acme.Math-1.0.0.bpk
+   beskid add Acme.Math@1.0.0 --project ./App.bproj
    ```
 
-3. Add the dependency to `App.bproj`:
+   If you add the package without a version, the command selects the greatest non-yanked stable version.
+
+3. Confirm that `App.bproj` declares the dependency:
 
    ```text
    dependency "Acme.Math" {
@@ -46,10 +47,10 @@ Know the package name and requested version. Select the consuming project. Ensur
    }
    ```
 
-4. Resolve once to update the lockfile:
+4. Resolve once and materialize the sources:
 
    ```bash
-   beskid fetch --project ./App.bproj --plain
+   beskid dev project fetch --project ./App.bproj --plain
    ```
 
 5. Inspect `Project.lock` after every registry resolution for an `Acme.Math` `resolved_version` that matches `1.0.0`.
@@ -58,7 +59,7 @@ Know the package name and requested version. Select the consuming project. Ensur
 8. Run the resolution with the reviewed lockfile enforced:
 
    ```bash
-   beskid fetch --project ./App.bproj --locked --plain
+   beskid dev project fetch --project ./App.bproj --locked --plain
    ```
 
 ## Expected result
@@ -69,7 +70,7 @@ The current resolver can fall back to the first active version when the requeste
 
 ## Recovery
 
-If the requested version is absent, run `beskid pckg versions Acme.Math` and select an active coordinate. If the resolver falls back, stop the workflow and remove the unreviewed lockfile change. A yanked version is not available for a new download. If `--locked` reports drift, review the manifest change and regenerate the lockfile outside CI.
+If the requested version is absent, run `beskid package info Acme.Math` and select an active version. If the resolver falls back, stop the workflow and remove the unreviewed lockfile change. A yanked version is not available for a new download. If `--locked` reports drift, review the manifest change and regenerate the lockfile outside CI.
 
 ## Next task
 

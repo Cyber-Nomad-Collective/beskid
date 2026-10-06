@@ -12,7 +12,7 @@
  *
  */
 import { createHash } from "node:crypto";
-import { lstatSync, readFileSync } from "node:fs";
+import { lstatSync, readFileSync, readdirSync, existsSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -60,6 +60,8 @@ const FEATURE_CASES = [
 ];
 const GLUE_NOT_APPLICABLE_REASON = "Glue bindings are outside the v0.5 release contract; generated Rust/.NET bindings remain deferred to v0.6.";
 const scripts = dirname(fileURLToPath(import.meta.url));
+// Reviewed source manifest identity: update only alongside reviewed real bindings.
+const V06_CASE_MANIFEST_SHA256 = "fa79ce334362489451a570e0c7440c7ee46a88afa3aa635875baeb9aab6efc82";
 
 function fail(message) {
   throw new Error(message);
@@ -185,6 +187,164 @@ function featureLogName(id) {
   return `feature-${id.replaceAll(".", "-")}.json`;
 }
 
+const objectDigest = value => createHash("sha256").update(JSON.stringify(value)).digest("hex");
+const equalValue = (actual, expected, label) => {
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) fail(`${label} does not match frozen expected identity`);
+};
+function packetName(name) {
+  if (typeof name !== "string" || !/^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(name)) fail("packet file name must be confined and flat");
+  return name;
+}
+function checkedPacketFile(expected, reference, label) {
+  if (!reference || !SHA256.test(reference.sha256)) fail(`${label} digest is invalid`);
+  const name = packetName(reference.path);
+  if (expected.packet_files[name] !== reference.sha256) fail(`${label} digest does not match retained packet closure`);
+  const path = join(expected.packet_root, name);
+  requireRegularFile(path, `${label} packet file`);
+  const bytes = readFileSync(path);
+  if (createHash("sha256").update(bytes).digest("hex") !== reference.sha256) fail(`${label} packet file digest mismatch`);
+  return bytes;
+}
+
+/** Schema validation is shared by the immutable packet reader and reader-only fixtures.
+ * Expected manifest identity is supplied independently; feature bytes never choose it.
+ */
+export function ValidateV06FeatureEvidence(feature, manifest, expected) {
+  if (!SHA256.test(expected.case_manifest_sha256) || objectDigest(manifest) !== expected.case_manifest_sha256
+      || feature.case_manifest_sha256 !== expected.case_manifest_sha256) fail("case manifest differs from independently frozen manifest digest");
+  if (manifest.schema_version !== 2 || manifest.state !== "frozen") fail("case manifest requires frozen real assertion bindings");
+  if (feature.schema_version !== 2 || feature.version !== expected.version || feature.target !== expected.target
+      || !manifest.targets.includes(expected.target)) fail("feature version/target does not match candidate");
+  equalValue(feature.source, expected.source, "feature source");
+  if (!Array.isArray(manifest.cases) || !manifest.cases.length || !Array.isArray(feature.cases)) fail("manifest cases are missing");
+  const required = new Map();
+  for (const item of manifest.cases) {
+    if (required.has(item.id)) fail(`manifest duplicate case ${item.id}`);
+    if (!item.binding || !Array.isArray(item.binding.required_test_ids) || !item.binding.required_test_ids.length
+        || new Set(item.binding.required_test_ids).size !== item.binding.required_test_ids.length) fail(`manifest binding missing for ${item.id}`);
+    required.set(item.id, item);
+  }
+  if (!feature.runtime_kit || feature.runtime_kit.sha256 !== expected.runtime_kit_sha256 || feature.runtime_kit.abi_sha256 !== expected.runtime_abi_sha256 || !SHA256.test(expected.runtime_abi_sha256)) fail("runtime kit identity mismatch");
+  if (!feature.installed_prefix || feature.installed_prefix.fallback_used !== false) fail("installed prefix fallback cannot qualify");
+  if (!feature.not_applicable || Object.keys(feature.not_applicable).some(key => key !== "dotnet_glue")
+      || feature.not_applicable.dotnet_glue !== "stretch") fail("mandatory Rust Glue cannot use an exemption");
+  requireDirectory(expected.packet_root, "retained packet");
+  if (!expected.packet_files || typeof expected.packet_files !== "object") fail("retained packet closure missing");
+  const declaredFiles = Object.keys(expected.packet_files).sort();
+  for (const name of declaredFiles) checkedPacketFile(expected, { path: name, sha256: expected.packet_files[name] }, "retained packet");
+  equalValue(readdirSync(expected.packet_root).filter(name => name !== "SHA256SUMS").sort(), declaredFiles, "retained packet file closure");
+  const packetManifest = JSON.parse(checkedPacketFile(expected, { path: "release-cases-v06.json",
+    sha256: expected.packet_files["release-cases-v06.json"] }, "retained case manifest"));
+  equalValue(packetManifest, manifest, "retained case manifest");
+  const installed = JSON.parse(checkedPacketFile(expected, { path: feature.installed_prefix.receipt,
+    sha256: feature.installed_prefix.manifest_sha256 }, "installed prefix receipt"));
+  if (installed.prefix !== feature.installed_prefix.path || installed.target !== expected.target) fail("installed prefix receipt target/path mismatch");
+  equalValue(installed.source, expected.source, "installed prefix source");
+  if (installed.version !== expected.version || installed.runtime_kit_sha256 !== expected.runtime_kit_sha256
+      || installed.abi_sha256 !== expected.runtime_abi_sha256 || installed.bundle_sha256 !== expected.candidate_bundle_sha256)
+    fail("installed receipt version/runtime ABI/bundle identity mismatch");
+  if (!installed.cli || installed.cli.sha256 !== expected.candidate_cli_sha256
+      || join(installed.prefix, packetName(installed.cli.path)) !== expected.installed_cli)
+    fail("installed receipt cli ownership mismatch");
+  checkedPacketFile(expected, installed.cli, "installed receipt cli");
+  checkedPacketFile(expected, { path: feature.runtime_kit.receipt, sha256: expected.runtime_kit_sha256 }, "runtime kit receipt");
+  checkedPacketFile(expected, { path: feature.runtime_kit.abi_receipt, sha256: expected.runtime_abi_sha256 }, "runtime ABI receipt");
+  if (!Array.isArray(installed.files) || !installed.files.length) fail("installed prefix artifact closure missing");
+  for (const reference of installed.files) checkedPacketFile(expected, reference, "installed prefix artifact");
+  const actual = new Map();
+  for (const row of feature.cases) {
+    if (!row || actual.has(row.id)) fail(`duplicate case ${row?.id}`);
+    const item = required.get(row.id);
+    if (!item) fail(`undeclared case ${row.id}`);
+    const binding = item.binding;
+    equalValue(row.requirement_ids, item.requirement_ids, `${row.id} requirement identity`);
+    if (row.status !== "success" || row.exit_code !== 0 || row.timed_out !== false) fail(`${row.id} did not execute successfully`);
+    equalValue(row.source, expected.source, `${row.id} source`);
+    if (row.target !== expected.target) fail(`${row.id} target mismatch`);
+    if (row.runtime_kit_sha256 !== expected.runtime_kit_sha256 || row.candidate_cli_sha256 !== expected.candidate_cli_sha256
+        || row.candidate_bundle_sha256 !== expected.candidate_bundle_sha256) fail(`${row.id} runtime/artifact mismatch`);
+    equalValue(row.harness_source, binding.harness_source, `${row.id} harness source`);
+    const harness = checkedPacketFile(expected, row.harness_source, `${row.id} harness source`);
+    if (binding.reviewed_source_binding !== true || !Array.isArray(binding.assertion_provenance)
+        || binding.assertion_provenance.length !== binding.required_test_ids.length) fail(`${row.id} reviewed assertion provenance missing`);
+    if (!["node", "beskid"].includes(binding.harness_language)) fail(`${row.id} assertion declaration language missing or unsupported`);
+    const proven = new Set();
+    for (const proof of binding.assertion_provenance) {
+      if (!binding.required_test_ids.includes(proof.test_id) || proven.has(proof.test_id)) fail(`${row.id} assertion provenance identity mismatch`);
+      equalValue(proof.source, binding.harness_source, `${row.id} assertion source binding`);
+      const declaration = binding.harness_language === "node" ? `test(${JSON.stringify(proof.test_id)},` : `test ${proof.test_id}`;
+      if (binding.harness_language === "beskid" && !/^[A-Za-z_][A-Za-z0-9_]*$/.test(proof.test_id))
+        fail(`${row.id} native assertion identifier is invalid`);
+      if (!Number.isSafeInteger(proof.start) || !Number.isSafeInteger(proof.end) || proof.start < 0
+          || proof.end <= proof.start || proof.end > harness.length
+          || harness.subarray(proof.start, proof.end).toString("utf8") !== proof.declaration
+          || proof.declaration !== declaration
+          || (proof.start !== 0 && harness[proof.start - 1] !== 10)) fail(`${row.id} assertion declaration provenance mismatch`);
+      if (binding.harness_language === "beskid" && !/^\s*\{/.test(harness.subarray(proof.end).toString("utf8")))
+        fail(`${row.id} native assertion declaration must introduce a test body`);
+      proven.add(proof.test_id);
+    }
+    equalValue(row.command, binding.command, `${row.id} command tool identity`);
+    if (!Array.isArray(row.command.argv) || !row.command.argv.length || !row.command.argv.every(arg => typeof arg === "string")
+        || !row.command.version) fail(`${row.id} command tool version/argv missing`);
+    if (row.command.argv[0] !== expected.installed_cli || row.command.tool_sha256 !== expected.candidate_cli_sha256
+        || row.command.tool_file !== installed.cli.path) fail(`${row.id} command must execute installed candidate cli`);
+    checkedPacketFile(expected, { path: row.command.tool_file, sha256: row.command.tool_sha256 }, `${row.id} command tool`);
+    for (const [field, ref] of [["input_sha256", binding.input], ["stdout_sha256", binding.stdout], ["stderr_sha256", binding.stderr], ["artifact_sha256", binding.artifact]]) {
+      if (!ref || row[field] !== ref.sha256) fail(`${row.id} ${field} digest mismatch`);
+      const bytes = checkedPacketFile(expected, ref, `${row.id} ${field}`);
+      if ((field === "stdout_sha256" || field === "stderr_sha256") && bytes.length > 8 * 1024 * 1024) fail(`${row.id} bounded output exceeded`);
+    }
+    if (!Array.isArray(row.tests) || !row.tests.length || row.tests.some(test => !test || test.outcome !== "passed" || typeof test.id !== "string")) fail(`${row.id} assertions were failed, skipped or nonexecuted`);
+    const ids = row.tests.map(test => test.id);
+    if (new Set(ids).size !== ids.length) fail(`${row.id} duplicate executed assertion`);
+    equalValue([...ids].sort(), [...binding.required_test_ids].sort(), `${row.id} required assertions`);
+    if (row.log !== binding.log) fail(`${row.id} log identity mismatch`);
+    const retained = JSON.parse(checkedPacketFile(expected, { path: row.log, sha256: row.log_sha256 }, `${row.id} log`));
+    const claimed = { ...row }; delete claimed.log_sha256;
+    equalValue(retained, claimed, `${row.id} retained log digest/contents`);
+    actual.set(row.id, row);
+  }
+  for (const id of required.keys()) if (!actual.has(id)) fail(`missing mandatory case ${id}`);
+  function assertLinked(row, category) {
+    const item = required.get(row.case_id);
+    if (!item || !actual.get(row.case_id)?.tests.some(test => test.id === row.test_id)) fail(`${category} assertion is not executed`);
+    return item.binding;
+  }
+  const profile = new Map();
+  for (const row of feature.rust_profile_matrix ?? []) {
+    const key = JSON.stringify([row.representation, row.implementation, row.direction]);
+    if (profile.has(key)) fail("duplicate Rust profile matrix dimension");
+    const binding = assertLinked(row, "Rust profile");
+    if (!binding.profile_assertions?.some(proof => proof.test_id === row.test_id && proof.representation === row.representation
+        && proof.implementation === row.implementation && proof.direction === row.direction)) fail("Rust profile assertion binding mismatch");
+    profile.set(key, row);
+  }
+  let dimensions = 0;
+  for (const representation of manifest.rust_profile.representations) for (const implementation of manifest.rust_profile.implementations)
+    for (const direction of manifest.rust_profile.directions) {
+      dimensions++;
+      if (!profile.has(JSON.stringify([representation, implementation, direction]))) fail(`missing Rust profile matrix ${representation}/${implementation}/${direction}`);
+    }
+  if (profile.size !== dimensions) fail("undeclared Rust profile representation");
+  const obligations = new Map();
+  for (const row of feature.obligation_matrix ?? []) {
+    const key = JSON.stringify([row.kind, row.obligation]);
+    if (obligations.has(key)) fail("duplicate obligation matrix identity");
+    const binding = assertLinked(row, "obligation");
+    if (!binding.obligation_assertions?.some(proof => proof.kind === row.kind && proof.obligation === row.obligation && proof.test_id === row.test_id)) fail("obligation assertion binding mismatch");
+    obligations.set(key, row);
+  }
+  let count = 0;
+  for (const [kind, items] of Object.entries(manifest.required_obligations)) for (const obligation of items) {
+    count++;
+    if (!obligations.has(JSON.stringify([kind, obligation]))) fail(`missing mandatory ${kind} obligation ${obligation}`);
+  }
+  if (obligations.size !== count) fail("undeclared obligation matrix identity");
+  return { schema_version: 2, target: feature.target, cases: feature.cases, runtime_kit: feature.runtime_kit,
+    case_manifest_sha256: feature.case_manifest_sha256, not_applicable: feature.not_applicable };
+}
+
 function validateFeatures(directory, definition, expectedSource, expectedVersion, buildResult, checksums) {
   const featureName = "feature-evidence-v1.json";
   const feature = readJson(join(directory, featureName), `${definition.platform} feature evidence`);
@@ -247,6 +407,10 @@ function validateFeatures(directory, definition, expectedSource, expectedVersion
   if (byId.size !== FEATURE_CASES.length) fail(`${definition.platform} feature cases contain undeclared conformance IDs`);
 
   const glue = feature.not_applicable?.glue;
+  const [major, minor] = expectedVersion.split(".").map(Number);
+  if ((major > 0 || minor >= 6) && glue?.status === "not_applicable") {
+    fail(`${definition.platform} Glue is required for ${expectedVersion}; the historical v0.5 exemption cannot qualify this release`);
+  }
   if (feature.not_applicable === null || Array.isArray(feature.not_applicable) || typeof feature.not_applicable !== "object") fail(`${definition.platform} not_applicable must be an object`);
   exactKeys(feature.not_applicable, ["glue"], `${definition.platform} not_applicable`);
   if (glue === null || Array.isArray(glue) || typeof glue !== "object") fail(`${definition.platform} Glue status must be an object`);
@@ -269,7 +433,8 @@ function validatePlatform(root, definition, expectedSource, expectedVersion) {
   requireDirectory(directory, `${definition.platform} platform directory`);
   const resultName = `platform-result-${definition.target}.json`;
   const bundle = `beskid-${expectedVersion}-${definition.target}.tar.gz`;
-  const expectedArtifacts = [definition.cli, definition.lsp, bundle, resultName, "woodpecker-build-result.json", "feature-evidence-v1.json", ...FEATURE_CASES.map(({ id }) => featureLogName(id))];
+  const version2 = existsSync(join(directory, "feature-evidence-v2.json"));
+  let expectedArtifacts = [definition.cli, definition.lsp, bundle, resultName, "woodpecker-build-result.json", "feature-evidence-v1.json", ...FEATURE_CASES.map(({ id }) => featureLogName(id))];
   if (definition.platform === "linux") expectedArtifacts.push("cli-surface-evidence-v1.json", "cli-surface-receipt-v1.json");
   const buildResult = readJson(join(directory, "woodpecker-build-result.json"), `${definition.platform} build result`);
   if (buildResult.schema_version !== 1) fail(`${definition.platform} build result schema_version must be 1`);
@@ -302,8 +467,27 @@ function validatePlatform(root, definition, expectedSource, expectedVersion) {
     if (build.asset !== expectedAsset) fail(`${definition.platform} ${name} build asset does not match expected artifact`);
   }
 
+  let manifest;
+  if (version2) {
+    if (!expectedVersion.startsWith("0.6.")) fail("version 2 feature evidence requires release series 0.6");
+    manifest = readJson(join(scripts, "release-cases-v06.json"), "reviewed v0.6 case manifest");
+    if (objectDigest(manifest) !== V06_CASE_MANIFEST_SHA256 || manifest.state !== "frozen")
+      fail("v0.6 case manifest requires independently frozen real assertion bindings");
+    // The reviewed binding manifest, never feature claims, defines packet closure.
+    if (!Array.isArray(manifest.packet_files) || !manifest.packet_files.length) fail("frozen manifest packet closure missing");
+    expectedArtifacts = [...new Set([definition.cli, definition.lsp, bundle, resultName, "woodpecker-build-result.json",
+      "feature-evidence-v2.json", "release-cases-v06.json", ...manifest.packet_files])];
+    if (definition.platform === "linux") expectedArtifacts.push("cli-surface-evidence-v1.json", "cli-surface-receipt-v1.json");
+  }
   const checksums = readChecksums(join(directory, "SHA256SUMS"), definition.platform, expectedArtifacts);
-  const features = validateFeatures(directory, definition, expectedSource, expectedVersion, buildResult, checksums);
+  const features = version2 ? ValidateV06FeatureEvidence(
+    readJson(join(directory, "feature-evidence-v2.json"), "v0.6 feature evidence"), manifest, {
+      version: expectedVersion, target: definition.target, source: buildResult.source,
+      case_manifest_sha256: V06_CASE_MANIFEST_SHA256, packet_root: directory,
+      packet_files: Object.fromEntries(checksums), runtime_kit_sha256: buildResult.runtime_kit_sha256,
+      runtime_abi_sha256: buildResult.runtime_abi_sha256, candidate_cli_sha256: checksums.get(definition.cli),
+      candidate_bundle_sha256: checksums.get(bundle), installed_cli: buildResult.installed_cli,
+    }) : validateFeatures(directory, definition, expectedSource, expectedVersion, buildResult, checksums);
   const artifacts = expectedArtifacts.map((name) => checksumFile(directory, definition.platform, name, checksums));
   if (definition.platform === "linux") {
     if (!SHA256.test(buildResult.corelib_fingerprint)) fail("linux build result Corelib fingerprint must be SHA-256");

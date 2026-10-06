@@ -29,24 +29,36 @@ make_fixture() {
   chmod +x "${fixture}/scripts/ci/corelib-gate.sh"
 
   cat > "${fixture}/compiler/corelib/CoreLib.bws" <<'EOF'
-name = "corelib"
+workspace {
+  name = "corelib"
+}
 member "corelib" {
+  path = "beskid_corelib"
   package = "corelib"
 }
 member "foundation" {
+  path = "packages/foundation"
   package = "corelib_foundation"
 }
 member "runtime" {
+  path = "packages/runtime"
   package = "corelib_runtime"
 }
 member "compiler_sdk" {
+  path = "packages/compiler-sdk"
   package = "corelib_compiler_sdk"
 }
 member "console" {
+  path = "packages/console"
   package = "corelib_console"
 }
 member "concurrency" {
+  path = "packages/concurrency"
   package = "corelib_concurrency"
+}
+member "corelib_tests" {
+  path = "beskid_corelib/tests/corelib_tests"
+  package = "corelib_tests"
 }
 EOF
   for item in \

@@ -35,21 +35,22 @@ i32 Main() {
 2. Analyze the source:
 
    ```bash
-   beskid analyze Main.bd --plain
+   beskid check Main.bd --plain
    ```
 
 3. Check its canonical format:
 
    ```bash
-   beskid format Main.bd --check
+   beskid fmt Main.bd --check
    ```
 
-4. If the format check reports drift, update the file before the next check:
+4. If the format check reports drift, update the file in place:
 
    ```bash
-   beskid format Main.bd --write
-   beskid format Main.bd --check
+   beskid fmt Main.bd
    ```
+
+   The command formats in place by default. It has no `--write` option. Repeat step 3 to confirm the result.
 
 5. Execute the program through the AOT pipeline:
 

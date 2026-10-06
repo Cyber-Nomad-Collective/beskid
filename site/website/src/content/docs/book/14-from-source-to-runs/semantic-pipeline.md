@@ -35,7 +35,7 @@ flowchart LR
 
 **Text equivalent:** Parse the source, merge generated Mod output, apply semantic rules, apply approved rewrites, and then start code generation.
 
-## `beskid analyze`
+## `beskid check`
 
 Runs analysis without requiring a successful JIT: your CI friend for "no, you cannot call that."
 

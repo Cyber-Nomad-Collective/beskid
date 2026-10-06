@@ -20,14 +20,14 @@ Build and run use ahead-of-time compilation. `run` creates a temporary executabl
 
 ## Prerequisites
 
-Start with source that passes `beskid analyze`. To run test items, select a project with a valid `.bproj` manifest and a Test or Lib target.
+Start with source that passes `beskid check`. To run test items, select a project with a valid `.bproj` manifest and a Test or Lib target.
 
 ## Actions
 
 1. Analyze one source file:
 
    ```bash
-   beskid analyze Main.bd --plain
+   beskid check Main.bd --plain
    ```
 
 2. Build a debug executable:

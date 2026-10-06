@@ -10,10 +10,10 @@ Mods ship like other Beskid packages (manifest, graph, lockfile), but consumers 
 
 1. Create or open a **`type: Mod`** project ([Project manifest](/docs/standard/tooling/manifests-and-lockfiles/project-manifest-contract/)).
 2. Implement public types satisfying SDK contracts (`Collector`, `Generator`, …).
-3. Run **`beskid mod rebuild`** for the target triple that downstream compiles need.
+3. Run **`beskid dev mod rebuild`** for the target triple that downstream compiles need.
 4. Add the mod package to app/lib **dependencies**; host discovers exports at `mod.load`.
 
-See the [`beskid mod` command reference](/book/reference/cli/commands/mod/) for project, target, lockfile, clean, and progress flags.
+See the [`beskid dev mod` command reference](/book/reference/cli/commands/mod/) for project, target, lockfile, clean, and progress flags.
 
 ## Artifacts
 

@@ -12,8 +12,7 @@ Ensure the project `.bproj` has valid metadata, at least one target, and explici
 ## 2. Authenticate
 
 ```bash
-beskid pckg configure --api-key "$BESKID_PCKG_API_KEY"
-beskid pckg whoami
+beskid package login --key "$BESKID_PCKG_API_KEY"
 ```
 
 Create the package record once through the authenticated metadata API. This is a separate operation from immutable artifact publication:
@@ -36,7 +35,7 @@ Your credential must carry publish scope for the package. Authentication can suc
 ## 3. Validate package locally
 
 ```bash
-beskid pckg pack --package my-package --source . --output my-package.bpk
+beskid package pack --package my-package --source . --output my-package.bpk
 ```
 
 This selects the exact artifact version and performs local checks without uploading:
@@ -45,10 +44,10 @@ This selects the exact artifact version and performs local checks without upload
 - source/package consistency
 - deterministic package assembly
 
-## 4. Upload
+## 4. Publish
 
 ```bash
-beskid pckg upload my-package --artifact my-package.bpk
+beskid package publish my-package --artifact my-package.bpk
 ```
 
 The CLI reads the version from artifact-root `package.json` and sends multipart `version`, `checksumSha256`, and `.bpk` bytes to `POST /api/packages/my-package/versions`. The server validates the artifact and preserves that immutable package/version coordinate.
@@ -56,9 +55,9 @@ The CLI reads the version from artifact-root `package.json` and sends multipart 
 ## 5. Verify and consume
 
 ```bash
-beskid pckg search my-package
-beskid pckg versions my-package
-beskid pckg download my-package --version 1.0.0 --output my-package.bpk
+beskid package search my-package
+beskid package info my-package
+beskid add my-package@1.0.0 --project ./Consumer.bproj
 ```
 
 <Aside type="note">
@@ -83,6 +82,6 @@ If package is moderated before public availability, wait for approval status in 
 
 - [pckg command reference](/book/reference/cli/commands/pckg/): full subcommand and flag reference
 - [Packages without npm trauma](/book/18-packages-without-npm-trauma/): chapter overview and concepts
-- [The pckg CLI](/book/18-packages-without-npm-trauma/pckg-cli/): tutorial walkthrough of `beskid pckg`
+- [The pckg CLI](/book/18-packages-without-npm-trauma/pckg-cli/): tutorial walkthrough of `beskid package`
 - [Doc and api.json](/book/16-corelib-batteries-with-opinions/doc-and-api-json/): generated API docs for pckg ingestion
 - [Package public surface](/book/19-public-api-that-survives-review/package-public-surface/): what registry consumers see

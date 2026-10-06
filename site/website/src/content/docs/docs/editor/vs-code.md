@@ -27,7 +27,7 @@ Complete [the first installation](/docs/getting-started/editor/) and keep the in
 2. Select one member `.bproj` entry under a `.bws` workspace, or select one standalone `.bproj` entry. This selection sets the focused project.
 3. Keep the default `beskid.project.autoSelectFromEditor` setting enabled if editor changes must select the nearest project.
 4. Select the Beskid status-bar entry. This action opens the Status dashboard in the bottom panel and shows project, CLI, language-server, and recovery state.
-5. Keep `beskid.toolchain.autoFetchDependencies` enabled if the first toolchain bootstrap must run `beskid fetch` once. The fetch does not run on each extension launch.
+5. Keep `beskid.toolchain.autoFetchDependencies` enabled if the first toolchain bootstrap must run `beskid dev project fetch` once. The fetch does not run on each extension launch.
 6. Inspect `Project.lock` after any automatic or manual fetch.
 7. Expand **Projects** to inspect workspace members, targets, dependencies, and source folders.
 8. Run **Beskid: Select Project** when automatic focus selects the wrong `.bproj` file.
@@ -48,7 +48,7 @@ flowchart TD
   A[Open .bws or .bproj] --> B[Select .bproj project focus]
   B --> C[Start CLI and LSP]
   C --> D{Automatic fetch enabled?}
-  D -->|Yes, first bootstrap| E[Run beskid fetch once]
+  D -->|Yes, first bootstrap| E[Run beskid dev project fetch once]
   D -->|No| F[Use current dependency state]
   E --> G[Projects and Packages]
   F --> G
@@ -59,7 +59,7 @@ flowchart TD
 
 ### Diagram text
 
-Open a folder that contains a `.bws` workspace or a `.bproj` project. Select a `.bproj` project focus before you use project-scoped tools. The extension starts the CLI and language server. During the first bootstrap, automatic fetch runs `beskid fetch` once when you enable it. When you disable automatic fetch, the extension uses the current dependency state. Projects and Packages then show information for the selected context. Graph Explorer requests a graph for that context. The Beskid status dashboard shows the current lifecycle state. The Beskid LSP output records startup, fetch, and language-server details.
+Open a folder that contains a `.bws` workspace or a `.bproj` project. Select a `.bproj` project focus before you use project-scoped tools. The extension starts the CLI and language server. During the first bootstrap, automatic fetch runs `beskid dev project fetch` once when you enable it. When you disable automatic fetch, the extension uses the current dependency state. Projects and Packages then show information for the selected context. Graph Explorer requests a graph for that context. The Beskid status dashboard shows the current lifecycle state. The Beskid LSP output records startup, fetch, and language-server details.
 
 ## Expected result
 

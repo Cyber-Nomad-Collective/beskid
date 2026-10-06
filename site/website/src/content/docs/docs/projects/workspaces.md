@@ -43,7 +43,7 @@ Create two project directories. Put one `.bproj` manifest in each directory. Kee
 2. Select the application member from a real source path:
 
    ```bash
-   beskid analyze ./app/Src/Main.bd --project ./Workspace.bws --target App --plain
+   beskid check ./app/Src/Main.bd --project ./Workspace.bws --target App --plain
    ```
 
 3. Source-path selection chooses the deepest matching member directory. Add `--workspace-member app` when you must override that result.

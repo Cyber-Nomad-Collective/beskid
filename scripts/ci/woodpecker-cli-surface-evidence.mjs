@@ -56,8 +56,8 @@ function validateGate(evidence, binarySha, corelibFingerprint) {
   }
   for (const [name, count] of Object.entries(counts)) equal(evidence.counts?.[name], count, `CLI gate ${name} count`);
   if (counts.fail !== 0 || counts.uncovered !== 0 || counts.pass === 0) fail("CLI gate has failed, uncovered, or no exercised paths");
-  const graph = byPath.get("graph --tui");
-  const analyze = byPath.get("analyze --plain PTY");
+  const graph = byPath.get("dev project graph --tui");
+  const analyze = byPath.get("check --plain PTY");
   if (graph?.status !== "pass" || graph.timed_out !== false || graph.rendered_project !== true || !graph.transcript_base64 ||
       analyze?.status !== "pass" || analyze.timed_out !== false || analyze.line_output !== true || analyze.summary_seen !== true || !analyze.transcript_base64) {
     fail("required CLI PTY evidence is missing or failed");

@@ -4,7 +4,7 @@ description: TypedProgram to CodegenInput, ISLE emission, and Cranelift IR.
 tableOfContents: true
 ---
 
-Code generation converts typed syntax facts into **machine-oriented artifacts** for AOT commands and the separate JIT test and REPL paths.
+Code generation converts typed syntax facts into **machine-oriented artifacts** for AOT commands, including `beskid test`, and the separate JIT REPL path.
 
 ## Entry
 

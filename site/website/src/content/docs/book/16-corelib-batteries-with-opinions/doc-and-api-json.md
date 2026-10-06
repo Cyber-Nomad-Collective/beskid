@@ -10,7 +10,7 @@ tableOfContents: true
 
 Registry ingestion and the pckg docs UI treat **`api.json` as the primary contract**. If your package page looks empty, the fix is usually "run doc generation and publish," not "invent a second schema in YAML."
 
-`beskid pckg pack` for library packages runs doc generation automatically: Markdown and `api.json` land under `.beskid/docs/` and ship inside the `.bpk` artifact. The pckg server indexes them on ingest.
+`beskid package pack` for library packages runs doc generation automatically: Markdown and `api.json` land under `.beskid/docs/` and ship inside the `.bpk` artifact. The pckg server indexes them on ingest.
 
 ## Authoring tie-in
 
@@ -21,8 +21,8 @@ Registry ingestion and the pckg docs UI treat **`api.json` as the primary contra
 ## See also
 
 - [Packages without npm trauma](/book/18-packages-without-npm-trauma/): how pckg registry ingests `api.json` and Markdown
-- [The pckg CLI](/book/18-packages-without-npm-trauma/pckg-cli/): `beskid pckg` tutorial and pack/doc flow
-- [pckg command reference](/book/reference/cli/commands/pckg/): automatic doc generation during `beskid pckg pack`
+- [The pckg CLI](/book/18-packages-without-npm-trauma/pckg-cli/): `beskid package` tutorial and pack/doc flow
+- [pckg command reference](/book/reference/cli/commands/pckg/): automatic doc generation during `beskid package pack`
 - [Publish your first package](/book/reference/publish-first-package/): end-to-end publish with docs
 - [Package public surface](/book/19-public-api-that-survives-review/package-public-surface/): what registry consumers see from your API docs
 - [api.json contract](/platform-spec/tooling/cli/api-json-contract/)

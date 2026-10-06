@@ -15,6 +15,10 @@ beskid dev build test --project path/to/Project.proj
 
 See [beskid dev build test reference](/book/reference/cli/commands/test/) for full flags (`--target`, `--workspace-member`, lockfile modes).
 
+## Execution model
+
+`beskid test` compiles the project once into a single AOT object, then runs each selected test in a fresh native process. Tests do not share state, and a crashing test fails alone. The JIT engine is not involved; only `beskid dev repl` still uses it.
+
 ## Filtering
 
 ```bash

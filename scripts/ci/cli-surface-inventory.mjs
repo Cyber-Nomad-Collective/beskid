@@ -1,35 +1,26 @@
-// Reviewed 0.5.1 CLI command inventory. Keep this independent of the gate's
-// reported rows so an incomplete report cannot qualify by changing counts.
+// Reviewed 0.6 canonical CLI inventory, independent of reported rows.
 export const BRANCHES = [
-  "dev", "dev syntax", "dev project", "dev build", "dev package", "dev package registry",
-  "import", "mod", "runtime-kit", "new", "pckg", "up", "lsp",
+  "dev", "dev syntax", "dev project", "dev bsol", "dev mod", "dev runtime-kit",
+  "package", "package template", "toolchain", "dev lsp",
 ];
-
 export const SMOKE_LEAVES = [
-  "analyze", "build", "clif", "corelib", "dev build compile", "dev build corelib",
-  "dev build test", "dev package registry details", "dev package registry download",
-  "dev package registry list", "dev package registry pack", "dev package registry search",
-  "dev package registry versions", "dev package registry whoami", "dev project fetch",
-  "dev project graph", "dev project lock", "dev project update", "dev syntax analyze",
-  "dev syntax clif", "dev syntax doc", "dev syntax format", "dev syntax parse",
-  "dev syntax tree", "doc", "fetch", "format", "graph", "import lib", "lock",
-  "migrate-bsol", "new list", "parse", "pckg details", "pckg download", "pckg list",
-  "pckg pack", "pckg search", "pckg versions", "pckg whoami", "repl", "run", "test",
-  "tree", "up check", "up host-target", "up list", "update", "validate-bsol",
+  "new", "check", "build", "run", "test", "fmt", "doc", "dev build", "dev corelib",
+  "dev import lib", "dev repl", "dev capabilities", "dev syntax parse", "dev syntax tree",
+  "dev syntax clif", "dev project fetch", "dev project lock", "dev project graph",
+  "dev bsol validate", "dev bsol migrate", "package search", "package info", "package pack",
+  "package template list", "toolchain status",
 ];
-
+// dev import is a branch; lib is its leaf. dev lsp has optional nested install.
+BRANCHES.push("dev import");
 export const SETUP_SKIPS = [
-  "lsp install", "mod clean", "mod rebuild", "new install", "new uninstall",
-  "pckg configure", "pckg unyank", "pckg upload", "pckg yank", "runtime-kit build",
-  "runtime-kit build-matrix", "runtime-kit build-native-host", "up remove", "up use",
-  "dev package registry configure", "dev package registry unyank",
-  "dev package registry upload", "dev package registry yank",
+  "add", "remove", "update", "doctor", "dev mod rebuild", "dev mod clean",
+  "dev runtime-kit build", "dev runtime-kit build-native-host", "dev runtime-kit build-matrix",
+  "dev lsp install", "package template install", "package template uninstall",
+  "package publish", "package login", "package logout", "toolchain update",
 ];
-
 export const SCENARIOS = [
-  "new <local-template>", "graph --out", "graph --tui", "analyze --plain PTY", "--version",
+  "new <local-template>", "dev project graph --out", "dev project graph --tui", "check --plain PTY", "--version",
 ];
-
 export const EXPECTED_ROWS = new Map([
   ...BRANCHES.map(path => [path, ["branch", "inventory_only"]]),
   ...SMOKE_LEAVES.map(path => [path, ["leaf", "pass"]]),

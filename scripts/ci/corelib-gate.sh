@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Corelib gate: workspace/manifest quality checks (corelibQuality) + the
-# beskid_cli corelib test suite (corelibTest).
+# beskid_cli dev corelib test suite (corelibTest).
 #
 # Runs directly on a native CI worker and surfaces full per-test output.
 #
@@ -456,7 +456,7 @@ corelib_materialize_release_bundle() {
     return 1
   }
   corelib_run_bounded_phase "materialize pinned Corelib bundle" "${CORELIB_MATERIALIZE_TIMEOUT:-120}" \
-    "$CLI" corelib --output "$installed"
+    "$CLI" dev corelib --output "$installed"
   node "$ROOT/scripts/ci/verify-release-corelib-bundle.mjs" --verify "$source" "$installed"
 }
 if [[ "${BESKID_RELEASE_MANAGED_CORELIB:-0}" == 1 ]]; then

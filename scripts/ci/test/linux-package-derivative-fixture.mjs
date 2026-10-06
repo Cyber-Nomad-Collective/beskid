@@ -110,7 +110,7 @@ function greenTrace(harnessSha) { return [`QUALIFICATION_START phase=green image
   "+ command -v ar", "/usr/bin/ar", "+ command -v ranlib", "/usr/bin/ranlib", "+ cp /test/tests/fixtures/deb-console/probe.c /tmp/work/probe.c",
   "+ clang -target x86_64-unknown-linux-gnu -std=c11 -fPIC -c /tmp/work/probe.c -o /tmp/work/probe.o", "+ ar rcs /tmp/work/probe.a /tmp/work/probe.o",
   "+ ranlib /tmp/work/probe.a", "+ cc /tmp/work/probe.a -o /tmp/work/probe", "+ /tmp/work/probe", "+ cp -a /test/tests/fixtures/deb-console/. /tmp/work/project/",
-  "+ /usr/bin/beskid analyze --project Smoke.bproj --plain", "Analysis complete in 1ms", "+ sha256sum Project.lock",
+  "+ /usr/bin/beskid check --project Smoke.bproj --plain", "Analysis complete in 1ms", "+ sha256sum Project.lock",
   "+ /usr/bin/beskid build --project Smoke.bproj --locked --plain", "Build complete in 1ms", "+ /usr/bin/beskid run --project Smoke.bproj --locked --plain",
   "Run complete in 1ms", "  exit: 0", "+ sha256sum --check /tmp/work/lock.sha256", "Project.lock: OK", "Clean DEB toolchain install and AOT build/run: PASS",
   "QUALIFICATION_EXIT phase=green exit_code=0", ""].join("\n"); }

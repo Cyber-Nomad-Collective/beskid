@@ -1,19 +1,19 @@
 ---
-title: "beskid pckg"
+title: "beskid package"
 description: "Package registry and publishing operations (pckg backend)."
 ---
 
-Dispatches to the **pckg** HTTP client: authentication, catalog search and details, `.bpk` pack and upload, version download, yank/unyank, and related registry workflows (project dependency resolution stays on **`beskid fetch`** / **`beskid lock`**).
+Dispatches to the **pckg** HTTP client: authentication, catalog search and details, `.bpk` pack and publish, template management, and related registry workflows (project dependency changes use `beskid add`, `beskid remove`, and `beskid update`; plumbing uses `beskid dev project fetch` and `beskid dev project lock`).
 
-Use the `beskid pckg` root command:
+The root command `beskid pckg` was removed in 0.6.0. Use `beskid package`:
 
 ```bash
-beskid pckg --help
+beskid package --help
 ```
 
 ## Automatic docs on pack (library packages)
 
-For ordinary **library** projects (`project.type` omitted or `Host`), `beskid pckg pack` (via the **beskid** CLI) generates API docs before creating the `.bpk` artifact:
+For ordinary **library** projects (`project.type` omitted or `Host`), `beskid package pack` (via the **beskid** CLI) generates API docs before creating the `.bpk` artifact:
 
 - writes Markdown and `api.json` to `<source>/.beskid/docs/` (for example `index.md`)
 - includes those files in the published artifact (paths under `.beskid/docs/` are allowed by the registry)
@@ -46,7 +46,7 @@ When the project `.bproj` declares **`type = Template`**, pack uses the **templa
 
 Authoring and registry rules: [Template packages](/docs/standard/tooling/project-scaffolding/template-packages/). User workflows: [Project scaffolding](/book/reference/projects/scaffolding/).
 
-## Pack (`beskid pckg pack`)
+## Pack (`beskid package pack`)
 
 Builds a `.bpk` zip from a package source tree.
 
@@ -80,7 +80,7 @@ sources. The server applies the same immutable-version and artifact validation
 rules to every member; there is no separate workspace publication contract or
 rollback envelope.
 
-## Upload (`beskid pckg upload`)
+## Publish (`beskid package publish`)
 
 Publishes an existing `.bpk` to an existing registry package
 (`POST /api/packages/<package>/versions`).
@@ -88,7 +88,7 @@ Publishes an existing `.bpk` to an existing registry package
 Usage shape:
 
 ```bash
-beskid pckg upload <package> --artifact path/to/package.bpk
+beskid package publish <package> --artifact path/to/package.bpk
 ```
 
 The CLI does **not** accept a separate `--version` flag. It reads the version
@@ -97,7 +97,7 @@ the checksum and artifact bytes. Packing or the release version plan therefore
 owns version selection; the registry rejects a different artifact at an
 already-published package/version coordinate.
 
-Optional upload flags:
+Optional publish flags:
 
 - `--checksum-sha256 <hex>`: must match the artifact when provided
 
@@ -107,14 +107,14 @@ On success, when the API returns version details, the CLI prints:
 - a human-readable summary including the published version, checksum, size,
   and timestamps
 
-Other subcommands that target a specific release (`download`, `yank`, `unyank`) still take `--version` because they refer to an already-published version.
+The 0.6.0 package command has no `download`, `yank`, `unyank`, `versions`, `list`, or `whoami` operation. Registry dependencies are resolved by `beskid add`, `beskid update`, and `beskid dev project fetch`.
 
 ## Shared client options
 
-These apply to all `beskid pckg` subcommands (see `beskid pckg --help` for the full list):
+These apply to all `beskid package` subcommands (see `beskid package --help` for the full list):
 
 - `--base-url <url>`: pckg HTTP root (also `BESKID_PCKG_URL`)
-- `--bearer-token` or `--api-key`: authentication (also `BESKID_PCKG_TOKEN` / `BESKID_PCKG_API_KEY`); otherwise the CLI can load a saved publisher key from `--config-file` (default `.beskid/pckg/repositories.json`, written by `beskid pckg configure`)
+- `--bearer-token` or `--api-key`: authentication (also `BESKID_PCKG_TOKEN` / `BESKID_PCKG_API_KEY`); otherwise the CLI can load a saved publisher key from `--config-file` (default `.beskid/pckg/repositories.json`, written by `beskid package login --key`)
 - `--timeout-secs <seconds>`: request timeout; default `30`
 - `--config-file <path>`: repository config; default `.beskid/pckg/repositories.json`
 - `-v`, `--verbose`: print connection, authentication-presence, and timing diagnostics
@@ -125,24 +125,22 @@ The default `--base-url` is `https://pckg.beskid-lang.org`. `--bearer-token` and
 
 | Operation | Arguments and flags |
 | --- | --- |
-| `beskid pckg pack` | Required `--package` and `--output`; optional `--version`, `--source` (default `.`), `--version-state-file`, `--package-kind`, and `--skip-docs` |
-| `beskid pckg upload <PACKAGE>` | Required `--artifact`; optional `--checksum-sha256` |
-| `beskid pckg configure` | Required `--api-key`; optional `--repository-url` (defaults to the root `--base-url`) |
-| `beskid pckg list` | No operation-specific arguments |
-| `beskid pckg search <QUERY>` | Required free-text query |
-| `beskid pckg details <ID_OR_NAME>` | Required package identifier or name |
-| `beskid pckg versions <PACKAGE>` | Required package name |
-| `beskid pckg download <PACKAGE>` | Required `--version` and `--output` |
-| `beskid pckg yank <PACKAGE>` | Required `--version` |
-| `beskid pckg unyank <PACKAGE>` | Required `--version` |
-| `beskid pckg whoami` | No operation-specific arguments |
+| `beskid package pack` | Required `--package` and `--output`; optional `--version`, `--source` (default `.`), `--version-state-file`, `--package-kind`, and `--skip-docs` |
+| `beskid package publish <PACKAGE>` | Required `--artifact`; optional `--checksum-sha256` |
+| `beskid package login` | Required `--key`. The command saves the key for the selected repository. It does not copy environment authentication |
+| `beskid package logout` | Removes saved authentication for the selected repository |
+| `beskid package search <QUERY>` | Required free-text query |
+| `beskid package info <ID_OR_NAME>` | Required package identifier or name |
+| `beskid package template list` | List installed templates. `--online` adds registry results, `--kind` filters, and `--registry-url`, `--bearer-token`, `--api-key` select the registry |
+| `beskid package template install <PACKAGE_OR_SHORT>` | Cache a template. `--path` or `--git` (with `--git-ref` and `--git-subpath`) select a source other than the registry; `--registry-url`, `--bearer-token`, `--api-key` select the registry |
+| `beskid package template uninstall <SHORT_NAME>` | Remove a cached template by short name |
 
 ## Discovering commands
 
 Run:
 
 ```bash
-beskid pckg --help
+beskid package --help
 ```
 
 for the live subcommand tree and flags.
@@ -154,14 +152,14 @@ For auth flows, lockfiles, and publish semantics, see the book chapter [Packages
 ## Examples
 
 ```bash
-beskid pckg whoami
+beskid package info Acme.Math
 ```
 
-Pack then upload (after `beskid pckg configure` or with env auth):
+Pack then publish (after `beskid package login --key <key>` or with environment authentication):
 
 ```bash
-beskid pckg pack --package my-lib --source ./my-lib --output ./my-lib.bpk
-beskid pckg upload my-lib --artifact ./my-lib.bpk
+beskid package pack --package my-lib --source ./my-lib --output ./my-lib.bpk
+beskid package publish my-lib --artifact ./my-lib.bpk
 ```
 
 ## See also

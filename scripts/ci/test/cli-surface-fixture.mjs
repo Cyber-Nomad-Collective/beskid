@@ -6,8 +6,8 @@ export function cliSurfaceFixture(binary, binarySha, corelibFingerprint) {
     const row = { path, kind, status };
     if (status === "pass") Object.assign(row, { exit: 0, expected_exit: 0, control_bytes: [], marker_seen: true });
     if (status === "setup_skip") row.reason = "requires isolated setup fixture";
-    if (path === "graph --tui") Object.assign(row, { timed_out: false, rendered_project: true, transcript_base64: "dHVp" });
-    if (path === "analyze --plain PTY") Object.assign(row, { timed_out: false, line_output: true, summary_seen: true, transcript_base64: "bGluZQ==" });
+    if (path === "dev project graph --tui") Object.assign(row, { timed_out: false, rendered_project: true, transcript_base64: "dHVp" });
+    if (path === "check --plain PTY") Object.assign(row, { timed_out: false, line_output: true, summary_seen: true, transcript_base64: "bGluZQ==" });
     return row;
   });
   return {
@@ -15,7 +15,7 @@ export function cliSurfaceFixture(binary, binarySha, corelibFingerprint) {
     corelib_fingerprint: corelibFingerprint,
     source_provenance: { status: "unverified", commit: null, external_receipt_required: true },
     release_qualified: false,
-    counts: { pass: 54, fail: 0, setup_skip: 18, uncovered: 0, inventory_only: 13 },
+    counts: rows.reduce((counts, row) => { counts[row.status]++; return counts; }, { pass: 0, fail: 0, setup_skip: 0, uncovered: 0, inventory_only: 0 }),
     contracts: {
       hi_unknown: { exit: 2, unknown_subcommand: true, control_bytes: [] },
       new_tui_rejected: { exit: 2, not_advertised: true, unexpected_argument: true, control_bytes: [] },

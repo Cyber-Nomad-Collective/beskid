@@ -4,7 +4,7 @@ description: A package artifact carries its exact semver; the registry verifies 
 tableOfContents: true
 ---
 
-Every `.bpk` carries its exact semantic version in artifact-root `package.json`. `beskid pckg pack` selects that version from the package baseline or an explicit release plan; `beskid pckg upload` reads it from the artifact and sends it unchanged. The registry validates the version and refuses to replace different bytes at an existing package/version coordinate.
+Every `.bpk` carries its exact semantic version in artifact-root `package.json`. `beskid package pack` selects that version from the package baseline or an explicit release plan; `beskid package upload` reads it from the artifact and sends it unchanged. The registry validates the version and refuses to replace different bytes at an existing package/version coordinate.
 
 ```mermaid
 erDiagram

@@ -42,7 +42,7 @@ Confirm that your host is Linux AMD64, macOS ARM64, or Windows AMD64. Close term
    ```bash
    beskid --version
    beskid --help
-   beskid up host-target
+   beskid doctor
    ```
 
 9. Match the language-server channel to the CLI channel:
@@ -58,7 +58,7 @@ Confirm that your host is Linux AMD64, macOS ARM64, or Windows AMD64. Close term
 10. Install the matching language server. This example uses the stable channel:
 
    ```bash
-   beskid lsp install --release-tag lsp-stable
+   beskid dev lsp install --release-tag lsp-stable
    ```
 
 11. Replace the example version with the immutable tag that Downloads displays for a pinned direct installation:
@@ -70,7 +70,7 @@ Confirm that your host is Linux AMD64, macOS ARM64, or Windows AMD64. Close term
    On Windows PowerShell, set `$env:BESKID_RELEASE_TAG` to the same CLI tag. Then run the displayed PowerShell installer. Install the matching LSP tag separately:
 
    ```powershell
-   beskid lsp install --release-tag lsp-v0.4.0
+   beskid dev lsp install --release-tag lsp-v0.4.0
    ```
 
 12. Repeat the Downloads install command for the channel or immutable tag that you need. The corresponding LSP tag remains a separate installation.

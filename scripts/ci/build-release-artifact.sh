@@ -85,6 +85,11 @@ case "$PACKAGE" in
     cargo build -p "$PACKAGE" --release --target "$TARGET"
     ;;
   beskid_bundle)
+    driver_stage="$(mktemp -d)"
+    python3 "${ROOT}/scripts/ci/qualify-native-tool-driver.py" --snapshot --output "${driver_stage}/source.json"
+    cargo build --locked -p beskid_execution --bin beskid_native_tool_driver --release --target "$TARGET" --message-format=json >"${driver_stage}/cargo.json"
+    python3 "${ROOT}/scripts/ci/qualify-native-tool-driver.py" --messages "${driver_stage}/cargo.json" --target "$TARGET" --profile release --source-snapshot "${driver_stage}/source.json" --output "${driver_stage}/driver.json"
+    export BESKID_COMPILER_DRIVER_BUILD_RECEIPT="${driver_stage}/driver.json"
     cargo build -p beskid_cli -p beskid_lsp -p beskid_up --release --target "$TARGET"
     ;;
   *)
@@ -104,12 +109,12 @@ if [[ "$PACKAGE" == "beskid_bundle" ]]; then
   # destination, so publish this profile with the CLI without clearing debug.
   BESKID_RUNTIME_PREFIX="${runtime_prefix}" \
     "${ROOT}/compiler/target/${TARGET}/release/beskid_cli${binary_extension}" \
-    runtime-kit build-native-host --prefix "${runtime_prefix}" --profile release
+    dev runtime-kit build-native-host --prefix "${runtime_prefix}" --profile release
 
   release_stage="$(mktemp -d)"
   bundle_dir="${release_stage}/beskid-${RELEASE_VERSION}-${TARGET}"
   mkdir -p "${bundle_dir}/bin"
-  for binary_mapping in beskid_cli:beskid beskid_lsp:beskid_lsp beskid-up:beskid-up; do
+  for binary_mapping in beskid_cli:beskid beskid_lsp:beskid_lsp beskid-up:beskid-up beskid_native_tool_driver:beskid_native_tool_driver; do
     built_name="${binary_mapping%%:*}"
     installed_name="${binary_mapping#*:}"
     built_binary="target/${TARGET}/release/${built_name}${binary_extension}"
@@ -118,7 +123,8 @@ if [[ "$PACKAGE" == "beskid_bundle" ]]; then
   done
   chmod 0755 "${bundle_dir}/bin/beskid${binary_extension}" \
     "${bundle_dir}/bin/beskid_lsp${binary_extension}" \
-    "${bundle_dir}/bin/beskid-up${binary_extension}"
+    "${bundle_dir}/bin/beskid-up${binary_extension}" \
+    "${bundle_dir}/bin/beskid_native_tool_driver${binary_extension}"
   for profile in debug release; do
     [[ -f "${runtime_prefix}/lib/beskid-runtime/abi-5/${TARGET}/${profile}/abi.json" ]] || {
       echo "Native runtime kit omitted ${TARGET}/${profile}/abi.json" >&2
@@ -131,7 +137,7 @@ if [[ "$PACKAGE" == "beskid_bundle" ]]; then
   # the *workspace* root; copying only the aggregate project there creates an
   # unrecognized, unmanaged directory and blocks the first installed command.
   BESKID_CORELIB_ROOT="${bundle_dir}/beskid_corelib" \
-    "${bundle_dir}/bin/beskid${binary_extension}" corelib --output "${bundle_dir}/beskid_corelib"
+    "${bundle_dir}/bin/beskid${binary_extension}" dev corelib --output "${bundle_dir}/beskid_corelib"
   [[ -f "${bundle_dir}/beskid_corelib/.beskid-bundle.sha256" ]] || {
     echo 'Bundled Corelib workspace is missing its integrity marker' >&2
     exit 1

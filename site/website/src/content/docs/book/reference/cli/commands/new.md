@@ -1,9 +1,9 @@
 ---
 title: "beskid new"
-description: "List, install, and instantiate Beskid project, workspace, and item templates."
+description: "Create a Beskid project from a template."
 ---
 
-**`beskid new`** is the user entrypoint for template scaffolding. Registry pack/upload workflows are under `beskid pckg`.
+**`beskid new`** is the user entrypoint for template scaffolding. Registry pack and publish workflows are under `beskid package`. Template cache commands are under `beskid package template`.
 
 Normative command taxonomy and edge cases: [beskid new (platform-spec)](/docs/standard/tooling/project-scaffolding/beskid-new/) and [contracts and edge cases](/docs/standard/tooling/project-scaffolding/beskid-new/contracts-and-edge-cases/).
 
@@ -13,30 +13,26 @@ User-oriented workflows: [Project scaffolding](/book/reference/projects/scaffold
 
 | Command | Purpose |
 | --- | --- |
-| `beskid new list` | List installed templates; optional registry results with `--online` |
-| `beskid new install <PACKAGE_OR_SHORT>` | Cache a registry or first-party template; source flags can select path or Git instead |
-| `beskid new uninstall <SHORT_NAME>` | Remove a cached template by short name |
-| `beskid new <SHORT_NAME> [options]` | Instantiate an installed template by short name |
-| `beskid new --path <dir> …` | Instantiate from a local tree (no prior install) |
-| `beskid new --git <url> …` | Instantiate from a git source |
-| `beskid new --package <id>[@version] …` | Instantiate from the registry (install if needed) |
+| `beskid new <NAME>` | Create a project in `./<NAME>` from the bundled offline application template |
+| `beskid new <NAME> --template <SHORT_NAME>` | Instantiate an installed template by short name |
+| `beskid new <NAME> --path <dir>` | Instantiate from a local tree |
+| `beskid new <NAME> --git <url>` | Instantiate from a git source |
+| `beskid new <NAME> --package <id>[@version]` | Instantiate from the registry |
+| `beskid new --list` | List installed templates |
+| `beskid package template list` | List installed templates; `--online` adds registry results and `--kind` filters |
+| `beskid package template install <PACKAGE_OR_SHORT>` | Cache a registry or first-party template; `--path` or `--git` select another source |
+| `beskid package template uninstall <SHORT_NAME>` | Remove a cached template by short name |
 
-## First-party short names
+`beskid new --offline` forbids network requests and uses bundled, local, or verified installed templates.
 
-When the registry is configured, these packages are resolved from the package service:
-
-| Short name | Package id |
-| --- | --- |
-| `console` | `beskid.templates.console` |
-| `lib` | `beskid.templates.lib` |
-| `template` | `beskid.templates.project` |
-
-## Global flags (instantiate)
+## Flags (instantiate)
 
 | Flag | Meaning |
 | --- | --- |
-| `-o`, `--output <path>` | Output directory or file (item templates) |
-| `-n`, `--name <string>` | Primary name symbol (default `name` symbol) |
+| `<NAME>` | Project name and default output directory. Required unless you pass `--list` |
+| `-o`, `--output <path>` | Output directory or file (item templates). Defaults to `<NAME>` |
+| `-n`, `--name <name>` | Primary name symbol for the template. Defaults to `<NAME>` |
+| `--template <short-name>` | Installed template. Conflicts with `--path`, `--git`, `--package`, and `--list` |
 | `--symbol <id>=<value>` | Repeatable symbol binding |
 | `--no-interactive` | Fail if required symbols are missing |
 | `--force` | Allow non-empty output directory |
@@ -49,22 +45,10 @@ When the registry is configured, these packages are resolved from the package se
 | `--allow-yanked` | Continue after yanked-version warning |
 | `--strict-post-actions` | Fail on unknown post-action id |
 | `--allow-project-manifest` | Item template may write `App.bproj` |
+| `--offline` | Forbid network requests |
 | `--registry-url <url>` | Registry URL (default `https://pckg.beskid-lang.org`) |
 | `--bearer-token <token>` | Registry bearer token (`BESKID_PCKG_TOKEN`) |
 | `--api-key <key>` | Registry API key (`BESKID_PCKG_API_KEY`) |
-
-Exactly one template selector is required: `SHORT_NAME`, `--package`, `--path`, or `--git`. The `--path` and `--git` forms are flags; they are not positional values for `install` or instantiate.
-For instantiation, `-o` or `--output` is also required.
-
-## `beskid new list` flags
-
-| Flag | Meaning |
-| --- | --- |
-| `--online` | Include registry search results |
-| `--kind <project\|workspace\|item>` | Filter by `tags.type` |
-| `--registry-url`, `--bearer-token`, `--api-key` | Registry connection and authentication |
-
-`beskid new install <PACKAGE_OR_SHORT>` also accepts `--path`, `--git`, `--git-ref`, `--git-subpath`, `--registry-url`, `--bearer-token`, and `--api-key`.
 
 ## Interactive behavior
 
@@ -73,12 +57,10 @@ When stdin is a TTY, the CLI uses line prompts for required symbols without CLI 
 ## Examples
 
 ```bash
-beskid new list --online
-beskid new install beskid.templates.console
-beskid new console -n MyApp -o ./MyApp
-beskid new lib --symbol name=MyLib --no-interactive -o ./MyLib
-beskid new --git https://git.example.com/templates --git-ref main --git-subpath lib -o ./Lib
-beskid new contract --symbol contractName=Foo -o ./Src/Foo.bd --project ./App/App.bproj
+beskid new MyApp
+beskid new MyLib --template lib --no-interactive
+beskid new Lib --git https://git.example.com/templates --git-ref main --git-subpath lib
+beskid package template install beskid.templates.console
 ```
 
 ## Exit status

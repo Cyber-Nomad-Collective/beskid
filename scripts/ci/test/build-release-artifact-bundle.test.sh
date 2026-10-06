@@ -38,13 +38,13 @@ for binary in beskid_cli beskid_lsp beskid-up; do
     cat >"target/${target}/release/${binary}${extension}" <<'CLI'
 #!/usr/bin/env bash
 set -euo pipefail
-if [[ "${1:-}" == runtime-kit && "${2:-}" == build-native-host ]]; then
+if [[ "${1:-}" == dev && "${2:-}" == runtime-kit && "${3:-}" == build-native-host ]]; then
   target="$(basename "$(dirname "$(dirname "$0")")")"
   mkdir -p "${BESKID_RUNTIME_PREFIX}/lib/beskid-runtime/abi-5/${target}/release"
   printf '{}\n' >"${BESKID_RUNTIME_PREFIX}/lib/beskid-runtime/abi-5/${target}/release/abi.json"
   exit 0
 fi
-[[ "${1:-}" == corelib ]] || exit 1
+[[ "${1:-}" == dev && "${2:-}" == corelib ]] || exit 1
 mkdir -p "${BESKID_CORELIB_ROOT}"
 cp -a corelib/CoreLib.bws corelib/beskid_corelib corelib/packages "${BESKID_CORELIB_ROOT}/"
 printf '%064d\n' 0 >"${BESKID_CORELIB_ROOT}/.beskid-bundle.sha256"

@@ -302,7 +302,7 @@ Bsol project-shape validation emits these codes from `beskid_analysis::projects`
 | --- | --- |
 | **E1886** | `type = Bsol` project declares a `target` block (forbidden — schema packages are not compile roots). |
 | **E1887** | `type = Bsol` project has no nested `schemas { export ... }` block. |
-| **E1888** | A `beskid build` targets a `Bsol` project (use `beskid validate-bsol` instead). |
+| **E1888** | A `beskid build` targets a `Bsol` project (use `beskid dev bsol validate <manifest>.bproj` instead). |
 
 ## Language macro expansion (**E1901–E1999**)
 

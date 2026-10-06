@@ -1,0 +1,1183 @@
+{
+  "schema_version": 2,
+  "release_series": "0.6",
+  "state": "binding_required",
+  "targets": [
+    "x86_64-unknown-linux-gnu",
+    "aarch64-apple-darwin",
+    "x86_64-pc-windows-msvc"
+  ],
+  "normative_source": "openspec/changes/v06-release-qualification/specs/compiler--conformance--conformance-evidence-policy/spec.md",
+  "policy": {
+    "all_cases_mandatory": true,
+    "baseline_count": 16,
+    "unbound_cases_reject": true,
+    "net_glue": "stretch",
+    "allowed_outcome": "passed",
+    "installed_prefix_only": true,
+    "assertion_bindings_must_exist_in_consumed_source": true
+  },
+  "rust_profile": {
+    "representations": [
+      "i8",
+      "i16",
+      "i32",
+      "i64",
+      "u8",
+      "u16",
+      "u32",
+      "u64",
+      "f32",
+      "f64",
+      "bool",
+      "char",
+      "utf8_view",
+      "byte_view",
+      "unit",
+      "opaque_handle",
+      "native_width"
+    ],
+    "implementations": [
+      "manual",
+      "generated"
+    ],
+    "directions": [
+      "import",
+      "export"
+    ],
+    "required_ownership": [
+      "borrowed_call",
+      "owned_transfer",
+      "release_exactly_once",
+      "stale_generation_reject",
+      "forced_gc"
+    ],
+    "failure_cases": [
+      "invalid_utf8",
+      "invalid_unicode_scalar",
+      "invalid_bool",
+      "null_length_bounds",
+      "foreign_panic",
+      "foreign_error",
+      "target_width_mismatch"
+    ],
+    "transport": "stdio",
+    "process_scheduler": "canonical_runtime"
+  },
+  "cases": [
+    {
+      "id": "foundations.core_bytes",
+      "requirement_ids": [
+        "foundations.core_bytes"
+      ],
+      "spec_change": null,
+      "obligation": "Retain existing mandatory native regression",
+      "execution": "installed_native",
+      "binding": {
+        "target": "CoreBytesTests",
+        "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+        "required_test_ids": null
+      }
+    },
+    {
+      "id": "foundations.encoding_utf8",
+      "requirement_ids": [
+        "foundations.encoding_utf8"
+      ],
+      "spec_change": null,
+      "obligation": "Retain existing mandatory native regression",
+      "execution": "installed_native",
+      "binding": {
+        "target": "CoreEncodingUtf8Tests",
+        "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+        "required_test_ids": null
+      }
+    },
+    {
+      "id": "foundations.time",
+      "requirement_ids": [
+        "foundations.time"
+      ],
+      "spec_change": null,
+      "obligation": "Retain existing mandatory native regression",
+      "execution": "installed_native",
+      "binding": {
+        "target": "SystemTimeTests",
+        "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+        "required_test_ids": null
+      }
+    },
+    {
+      "id": "foundations.fibers",
+      "requirement_ids": [
+        "foundations.fibers"
+      ],
+      "spec_change": null,
+      "obligation": "Retain existing mandatory native regression",
+      "execution": "installed_native",
+      "binding": {
+        "target": "ConcurrencyFiberHandleTests",
+        "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+        "required_test_ids": null
+      }
+    },
+    {
+      "id": "foundations.channels",
+      "requirement_ids": [
+        "foundations.channels"
+      ],
+      "spec_change": null,
+      "obligation": "Retain existing mandatory native regression",
+      "execution": "installed_native",
+      "binding": {
+        "target": "ConcurrencyChannelApiTests",
+        "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+        "required_test_ids": null
+      }
+    },
+    {
+      "id": "network.types",
+      "requirement_ids": [
+        "network.types"
+      ],
+      "spec_change": null,
+      "obligation": "Retain existing mandatory native regression",
+      "execution": "installed_native",
+      "binding": {
+        "target": "NetworkTypesTests",
+        "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+        "required_test_ids": null
+      }
+    },
+    {
+      "id": "network.dns",
+      "requirement_ids": [
+        "network.dns"
+      ],
+      "spec_change": null,
+      "obligation": "Retain existing mandatory native regression",
+      "execution": "installed_native",
+      "binding": {
+        "target": "NetworkDnsTests",
+        "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+        "required_test_ids": null
+      }
+    },
+    {
+      "id": "network.tcp",
+      "requirement_ids": [
+        "network.tcp"
+      ],
+      "spec_change": null,
+      "obligation": "Retain existing mandatory native regression",
+      "execution": "installed_native",
+      "binding": {
+        "target": "NetworkTcpTests",
+        "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+        "required_test_ids": null
+      }
+    },
+    {
+      "id": "network.udp",
+      "requirement_ids": [
+        "network.udp"
+      ],
+      "spec_change": null,
+      "obligation": "Retain existing mandatory native regression",
+      "execution": "installed_native",
+      "binding": {
+        "target": "NetworkUdpTests",
+        "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+        "required_test_ids": null
+      }
+    },
+    {
+      "id": "network.scope",
+      "requirement_ids": [
+        "network.scope"
+      ],
+      "spec_change": null,
+      "obligation": "Retain existing mandatory native regression",
+      "execution": "installed_native",
+      "binding": {
+        "target": "NetworkScopeTests",
+        "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+        "required_test_ids": null
+      }
+    },
+    {
+      "id": "network.shutdown",
+      "requirement_ids": [
+        "network.shutdown"
+      ],
+      "spec_change": null,
+      "obligation": "Retain existing mandatory native regression",
+      "execution": "installed_native",
+      "binding": {
+        "target": "NetworkShutdownLeakTests",
+        "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+        "required_test_ids": null
+      }
+    },
+    {
+      "id": "network.disposable",
+      "requirement_ids": [
+        "network.disposable"
+      ],
+      "spec_change": null,
+      "obligation": "Retain existing mandatory native regression",
+      "execution": "installed_native",
+      "binding": {
+        "target": "NetworkDisposableTests",
+        "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+        "required_test_ids": null
+      }
+    },
+    {
+      "id": "http.codec",
+      "requirement_ids": [
+        "http.codec"
+      ],
+      "spec_change": null,
+      "obligation": "Retain existing mandatory native regression",
+      "execution": "installed_native",
+      "binding": {
+        "target": "HttpCodecTests",
+        "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+        "required_test_ids": null
+      }
+    },
+    {
+      "id": "http.validation",
+      "requirement_ids": [
+        "http.validation"
+      ],
+      "spec_change": null,
+      "obligation": "Retain existing mandatory native regression",
+      "execution": "installed_native",
+      "binding": {
+        "target": "HttpValidationTests",
+        "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+        "required_test_ids": null
+      }
+    },
+    {
+      "id": "http.serialization",
+      "requirement_ids": [
+        "http.serialization"
+      ],
+      "spec_change": null,
+      "obligation": "Retain existing mandatory native regression",
+      "execution": "installed_native",
+      "binding": {
+        "target": "HttpSerializationTests",
+        "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+        "required_test_ids": null
+      }
+    },
+    {
+      "id": "http.exchange",
+      "requirement_ids": [
+        "http.exchange"
+      ],
+      "spec_change": null,
+      "obligation": "Retain existing mandatory native regression",
+      "execution": "installed_native",
+      "binding": {
+        "target": "HttpExchangeTests",
+        "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+        "required_test_ids": null
+      }
+    },
+    {
+      "id": "CLI06-01",
+      "requirement_ids": [
+        "CLI06-01"
+      ],
+      "spec_change": "v06-cli-dependencies",
+      "obligation": "Canonical CLI, forwarding, installed journeys and measured discovery",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "CLI06-02",
+      "requirement_ids": [
+        "CLI06-02"
+      ],
+      "spec_change": "v06-cli-dependencies",
+      "obligation": "Canonical CLI, forwarding, installed journeys and measured discovery",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "CLI06-03",
+      "requirement_ids": [
+        "CLI06-03"
+      ],
+      "spec_change": "v06-cli-dependencies",
+      "obligation": "Canonical CLI, forwarding, installed journeys and measured discovery",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "CLI06-04",
+      "requirement_ids": [
+        "CLI06-04"
+      ],
+      "spec_change": "v06-cli-dependencies",
+      "obligation": "Canonical CLI, forwarding, installed journeys and measured discovery",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "CLI06-05",
+      "requirement_ids": [
+        "CLI06-05"
+      ],
+      "spec_change": "v06-cli-dependencies",
+      "obligation": "Canonical CLI, forwarding, installed journeys and measured discovery",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "CLI06-06",
+      "requirement_ids": [
+        "CLI06-06"
+      ],
+      "spec_change": "v06-cli-dependencies",
+      "obligation": "Canonical CLI, forwarding, installed journeys and measured discovery",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "DEP06-01",
+      "requirement_ids": [
+        "DEP06-01"
+      ],
+      "spec_change": "v06-cli-dependencies",
+      "obligation": "Transactional exact dependencies, offline/locked/frozen, recovery and concurrency",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "DEP06-02",
+      "requirement_ids": [
+        "DEP06-02"
+      ],
+      "spec_change": "v06-cli-dependencies",
+      "obligation": "Transactional exact dependencies, offline/locked/frozen, recovery and concurrency",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "DEP06-03",
+      "requirement_ids": [
+        "DEP06-03"
+      ],
+      "spec_change": "v06-cli-dependencies",
+      "obligation": "Transactional exact dependencies, offline/locked/frozen, recovery and concurrency",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "DEP06-04",
+      "requirement_ids": [
+        "DEP06-04"
+      ],
+      "spec_change": "v06-cli-dependencies",
+      "obligation": "Transactional exact dependencies, offline/locked/frozen, recovery and concurrency",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "DEP06-05",
+      "requirement_ids": [
+        "DEP06-05"
+      ],
+      "spec_change": "v06-cli-dependencies",
+      "obligation": "Transactional exact dependencies, offline/locked/frozen, recovery and concurrency",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "SER-01",
+      "requirement_ids": [
+        "SER-01"
+      ],
+      "spec_change": "v06-serialization-bsol",
+      "obligation": "Generated generic codecs, full shapes, format independence, failures, limits and collisions",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "SER-02",
+      "requirement_ids": [
+        "SER-02"
+      ],
+      "spec_change": "v06-serialization-bsol",
+      "obligation": "Generated generic codecs, full shapes, format independence, failures, limits and collisions",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "SER-03",
+      "requirement_ids": [
+        "SER-03"
+      ],
+      "spec_change": "v06-serialization-bsol",
+      "obligation": "Generated generic codecs, full shapes, format independence, failures, limits and collisions",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "SER-04",
+      "requirement_ids": [
+        "SER-04"
+      ],
+      "spec_change": "v06-serialization-bsol",
+      "obligation": "Generated generic codecs, full shapes, format independence, failures, limits and collisions",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "SER-05",
+      "requirement_ids": [
+        "SER-05"
+      ],
+      "spec_change": "v06-serialization-bsol",
+      "obligation": "Generated generic codecs, full shapes, format independence, failures, limits and collisions",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "SER-06",
+      "requirement_ids": [
+        "SER-06"
+      ],
+      "spec_change": "v06-serialization-bsol",
+      "obligation": "Generated generic codecs, full shapes, format independence, failures, limits and collisions",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "MOD-06-01",
+      "requirement_ids": [
+        "MOD-06-01"
+      ],
+      "spec_change": "v06-serialization-bsol",
+      "obligation": "Real native typed Generator and shape authority",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "MOD-06-02",
+      "requirement_ids": [
+        "MOD-06-02"
+      ],
+      "spec_change": "v06-serialization-bsol",
+      "obligation": "Real native typed Generator and shape authority",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "DYN-06-01",
+      "requirement_ids": [
+        "DYN-06-01"
+      ],
+      "spec_change": "v06-serialization-bsol",
+      "obligation": "Checked dynamic casts, fresh mapping, incompatible atomic rejection and forced GC",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "DYN-06-02",
+      "requirement_ids": [
+        "DYN-06-02"
+      ],
+      "spec_change": "v06-serialization-bsol",
+      "obligation": "Checked dynamic casts, fresh mapping, incompatible atomic rejection and forced GC",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "DYN-06-03",
+      "requirement_ids": [
+        "DYN-06-03"
+      ],
+      "spec_change": "v06-serialization-bsol",
+      "obligation": "Checked dynamic casts, fresh mapping, incompatible atomic rejection and forced GC",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "DYN-06-04",
+      "requirement_ids": [
+        "DYN-06-04"
+      ],
+      "spec_change": "v06-serialization-bsol",
+      "obligation": "Checked dynamic casts, fresh mapping, incompatible atomic rejection and forced GC",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "DYN-06-05",
+      "requirement_ids": [
+        "DYN-06-05"
+      ],
+      "spec_change": "v06-serialization-bsol",
+      "obligation": "Checked dynamic casts, fresh mapping, incompatible atomic rejection and forced GC",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "BSOL-06-01",
+      "requirement_ids": [
+        "BSOL-06-01"
+      ],
+      "spec_change": "v06-serialization-bsol",
+      "obligation": "Native syntax/writer/schema/import/reference/migration/typed mapping shared corpus",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "BSOL-06-02",
+      "requirement_ids": [
+        "BSOL-06-02"
+      ],
+      "spec_change": "v06-serialization-bsol",
+      "obligation": "Native syntax/writer/schema/import/reference/migration/typed mapping shared corpus",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "BSOL-06-03",
+      "requirement_ids": [
+        "BSOL-06-03"
+      ],
+      "spec_change": "v06-serialization-bsol",
+      "obligation": "Native syntax/writer/schema/import/reference/migration/typed mapping shared corpus",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "BSOL-06-04",
+      "requirement_ids": [
+        "BSOL-06-04"
+      ],
+      "spec_change": "v06-serialization-bsol",
+      "obligation": "Native syntax/writer/schema/import/reference/migration/typed mapping shared corpus",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "BSOL-06-05",
+      "requirement_ids": [
+        "BSOL-06-05"
+      ],
+      "spec_change": "v06-serialization-bsol",
+      "obligation": "Native syntax/writer/schema/import/reference/migration/typed mapping shared corpus",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "BSOL-06-06",
+      "requirement_ids": [
+        "BSOL-06-06"
+      ],
+      "spec_change": "v06-serialization-bsol",
+      "obligation": "Native syntax/writer/schema/import/reference/migration/typed mapping shared corpus",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "BSOL-06-07",
+      "requirement_ids": [
+        "BSOL-06-07"
+      ],
+      "spec_change": "v06-serialization-bsol",
+      "obligation": "Native syntax/writer/schema/import/reference/migration/typed mapping shared corpus",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "BSOL-06-08",
+      "requirement_ids": [
+        "BSOL-06-08"
+      ],
+      "spec_change": "v06-serialization-bsol",
+      "obligation": "Native syntax/writer/schema/import/reference/migration/typed mapping shared corpus",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "BSOL-06-09",
+      "requirement_ids": [
+        "BSOL-06-09"
+      ],
+      "spec_change": "v06-serialization-bsol",
+      "obligation": "Native syntax/writer/schema/import/reference/migration/typed mapping shared corpus",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-BIND-01",
+      "requirement_ids": [
+        "R4-BIND-01"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Normalized binding identities and exclusive annotations",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-BIND-02",
+      "requirement_ids": [
+        "R4-BIND-02"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Normalized binding identities and exclusive annotations",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-BIND-03",
+      "requirement_ids": [
+        "R4-BIND-03"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Normalized binding identities and exclusive annotations",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-BIND-04",
+      "requirement_ids": [
+        "R4-BIND-04"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Normalized binding identities and exclusive annotations",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-ABI-01",
+      "requirement_ids": [
+        "R4-ABI-01"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Full primitive, ownership, C ABI separation and panic profile",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-ABI-02",
+      "requirement_ids": [
+        "R4-ABI-02"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Full primitive, ownership, C ABI separation and panic profile",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-ABI-03",
+      "requirement_ids": [
+        "R4-ABI-03"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Full primitive, ownership, C ABI separation and panic profile",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-ABI-04",
+      "requirement_ids": [
+        "R4-ABI-04"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Full primitive, ownership, C ABI separation and panic profile",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-ABI-05",
+      "requirement_ids": [
+        "R4-ABI-05"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Full primitive, ownership, C ABI separation and panic profile",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-ABI-06",
+      "requirement_ids": [
+        "R4-ABI-06"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Full primitive, ownership, C ABI separation and panic profile",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-ABI-07",
+      "requirement_ids": [
+        "R4-ABI-07"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Full primitive, ownership, C ABI separation and panic profile",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-ABI-08",
+      "requirement_ids": [
+        "R4-ABI-08"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Full primitive, ownership, C ABI separation and panic profile",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-ABI-09",
+      "requirement_ids": [
+        "R4-ABI-09"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Full primitive, ownership, C ABI separation and panic profile",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-ABI-10",
+      "requirement_ids": [
+        "R4-ABI-10"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Full primitive, ownership, C ABI separation and panic profile",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-ABI-11",
+      "requirement_ids": [
+        "R4-ABI-11"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Full primitive, ownership, C ABI separation and panic profile",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-ABI-12",
+      "requirement_ids": [
+        "R4-ABI-12"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Full primitive, ownership, C ABI separation and panic profile",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-CALL-01",
+      "requirement_ids": [
+        "R4-CALL-01"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Manual/generated import/export observable equivalence",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-CALL-02",
+      "requirement_ids": [
+        "R4-CALL-02"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Manual/generated import/export observable equivalence",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-CALL-03",
+      "requirement_ids": [
+        "R4-CALL-03"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Manual/generated import/export observable equivalence",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-CALL-04",
+      "requirement_ids": [
+        "R4-CALL-04"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Manual/generated import/export observable equivalence",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-GEN-01",
+      "requirement_ids": [
+        "R4-GEN-01"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Actual Glue Mods and deterministic confined artifact closure",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-GEN-02",
+      "requirement_ids": [
+        "R4-GEN-02"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Actual Glue Mods and deterministic confined artifact closure",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-GEN-03",
+      "requirement_ids": [
+        "R4-GEN-03"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Actual Glue Mods and deterministic confined artifact closure",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-GEN-04",
+      "requirement_ids": [
+        "R4-GEN-04"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Actual Glue Mods and deterministic confined artifact closure",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-GEN-05",
+      "requirement_ids": [
+        "R4-GEN-05"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Actual Glue Mods and deterministic confined artifact closure",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-GEN-06",
+      "requirement_ids": [
+        "R4-GEN-06"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Actual Glue Mods and deterministic confined artifact closure",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-TOOL-01",
+      "requirement_ids": [
+        "R4-TOOL-01"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Explicit bounded tools, target validation and drift rejection",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-TOOL-02",
+      "requirement_ids": [
+        "R4-TOOL-02"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Explicit bounded tools, target validation and drift rejection",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-TOOL-03",
+      "requirement_ids": [
+        "R4-TOOL-03"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Explicit bounded tools, target validation and drift rejection",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-TOOL-04",
+      "requirement_ids": [
+        "R4-TOOL-04"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Explicit bounded tools, target validation and drift rejection",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-TOOL-05",
+      "requirement_ids": [
+        "R4-TOOL-05"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Explicit bounded tools, target validation and drift rejection",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-TOOL-06",
+      "requirement_ids": [
+        "R4-TOOL-06"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Explicit bounded tools, target validation and drift rejection",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-TOOL-07",
+      "requirement_ids": [
+        "R4-TOOL-07"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Explicit bounded tools, target validation and drift rejection",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-TOOL-08",
+      "requirement_ids": [
+        "R4-TOOL-08"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Explicit bounded tools, target validation and drift rejection",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-PROC-01",
+      "requirement_ids": [
+        "R4-PROC-01"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Actual native process/pipe/wait/cancel/reap/close lifecycle",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-PROC-02",
+      "requirement_ids": [
+        "R4-PROC-02"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Actual native process/pipe/wait/cancel/reap/close lifecycle",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-PROC-03",
+      "requirement_ids": [
+        "R4-PROC-03"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Actual native process/pipe/wait/cancel/reap/close lifecycle",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-PROC-04",
+      "requirement_ids": [
+        "R4-PROC-04"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Actual native process/pipe/wait/cancel/reap/close lifecycle",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-PROC-05",
+      "requirement_ids": [
+        "R4-PROC-05"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Actual native process/pipe/wait/cancel/reap/close lifecycle",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-PROC-06",
+      "requirement_ids": [
+        "R4-PROC-06"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Actual native process/pipe/wait/cancel/reap/close lifecycle",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-IO-01",
+      "requirement_ids": [
+        "R4-IO-01"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Canonical shared-codec stdio framing, cancellation, foreign failure, GC and checked tags",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-IO-02",
+      "requirement_ids": [
+        "R4-IO-02"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Canonical shared-codec stdio framing, cancellation, foreign failure, GC and checked tags",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-IO-03",
+      "requirement_ids": [
+        "R4-IO-03"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Canonical shared-codec stdio framing, cancellation, foreign failure, GC and checked tags",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-IO-04",
+      "requirement_ids": [
+        "R4-IO-04"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Canonical shared-codec stdio framing, cancellation, foreign failure, GC and checked tags",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-IO-05",
+      "requirement_ids": [
+        "R4-IO-05"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Canonical shared-codec stdio framing, cancellation, foreign failure, GC and checked tags",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-IO-06",
+      "requirement_ids": [
+        "R4-IO-06"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Canonical shared-codec stdio framing, cancellation, foreign failure, GC and checked tags",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-IO-07",
+      "requirement_ids": [
+        "R4-IO-07"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Canonical shared-codec stdio framing, cancellation, foreign failure, GC and checked tags",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-IO-08",
+      "requirement_ids": [
+        "R4-IO-08"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Canonical shared-codec stdio framing, cancellation, foreign failure, GC and checked tags",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-IO-09",
+      "requirement_ids": [
+        "R4-IO-09"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Canonical shared-codec stdio framing, cancellation, foreign failure, GC and checked tags",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-IO-10",
+      "requirement_ids": [
+        "R4-IO-10"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Canonical shared-codec stdio framing, cancellation, foreign failure, GC and checked tags",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-IO-11",
+      "requirement_ids": [
+        "R4-IO-11"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Canonical shared-codec stdio framing, cancellation, foreign failure, GC and checked tags",
+      "execution": "installed_native",
+      "binding": null
+    },
+    {
+      "id": "R4-IO-12",
+      "requirement_ids": [
+        "R4-IO-12"
+      ],
+      "spec_change": "v06-rust-glue-integration",
+      "obligation": "Canonical shared-codec stdio framing, cancellation, foreign failure, GC and checked tags",
+      "execution": "installed_native",
+      "binding": null
+    }
+  ],
+  "required_obligations": {
+    "ownership": [
+      "borrowed_call",
+      "owned_transfer",
+      "release_exactly_once",
+      "stale_generation_reject",
+      "forced_gc"
+    ],
+    "failure": [
+      "invalid_utf8",
+      "invalid_unicode_scalar",
+      "invalid_bool",
+      "null_length_bounds",
+      "foreign_panic",
+      "foreign_error",
+      "target_width_mismatch"
+    ],
+    "process": [
+      "argv_unicode_no_shell",
+      "binary_partial_pipes",
+      "stderr_flood",
+      "exit_wait",
+      "cancel_terminate_reap",
+      "idempotent_close_setup_cleanup"
+    ],
+    "stdio": [
+      "fragmented_frame",
+      "partial_write_zero_progress",
+      "payload_bounds",
+      "truncated_invalid_frame",
+      "handshake_identity",
+      "shape_bit_fidelity",
+      "out_of_order_response",
+      "foreign_error_panic",
+      "cancel_late_reply",
+      "close_inflight",
+      "stale_tag_reopen",
+      "forced_gc_cleanup"
+    ]
+  }
+}

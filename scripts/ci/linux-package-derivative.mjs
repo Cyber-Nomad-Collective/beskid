@@ -213,7 +213,7 @@ export function ValidateQualificationLogs(definition, redPath, greenPath) {
     ar: /^\+ command -v ar\r?\n\/usr\/bin\/ar$/m,
     ranlib: /^\+ command -v ranlib\r?\n\/usr\/bin\/ranlib$/m,
     "libc-header-c-probe": new RegExp(`^\\+ clang -target ${Escape(definition.target)} -std=c11 -fPIC -c .+/probe\\.c -o .+/probe\\.o$[\\s\\S]*^\\+ ar rcs .+/probe\\.a .+/probe\\.o$[\\s\\S]*^\\+ ranlib .+/probe\\.a$[\\s\\S]*^\\+ cc .+/probe\\.a -o .+/probe$[\\s\\S]*^\\+ .+/probe$`, "m"),
-    analyze: /^\+ \/usr\/bin\/beskid analyze --project Smoke\.bproj --plain$/m,
+    analyze: /^\+ \/usr\/bin\/beskid check --project Smoke\.bproj --plain$/m,
     "locked-build": /^\+ \/usr\/bin\/beskid build --project Smoke\.bproj --locked --plain$/m,
     "locked-run": /^\+ \/usr\/bin\/beskid run --project Smoke\.bproj --locked --plain$[\s\S]*^Run complete in .+$[\s\S]*^\s*exit:\s*0$/m,
     "lockfile-unchanged": /^\+ sha256sum Project\.lock$[\s\S]*^\+ sha256sum --check .+\/lock\.sha256$[\s\S]*^Project\.lock: OK$/m,

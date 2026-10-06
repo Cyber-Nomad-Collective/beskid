@@ -1,62 +1,61 @@
 ---
 title: "The pckg CLI"
-description: Pack and upload flows through beskid pckg, not a second package manager hiding in the bushes.
+description: Pack and publish flows through beskid package, not a second package manager hiding in the bushes.
 tableOfContents: true
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
-`beskid pckg` is the toolchain entry for registry operations: credential configuration, artifact packing, upload, and related workflows implemented in the **`beskid_pckg`** crate and the **pckg** registry service.
+`beskid package` is the toolchain entry for registry operations: credential configuration, artifact packing, publishing, and related workflows implemented in the **`beskid_pckg`** crate and the **pckg** registry service.
 
 <Aside type="caution">
-Scaffolding templates use **`beskid new`**, not `pckg`. There is no `beskid pkg` command: `pckg` is the canonical spelling in every context.
+Scaffolding uses **`beskid new`**; template cache commands live under `beskid package template`. This is not the `package` publish flow. There is no `beskid pkg` command: `package` is the canonical spelling in every context.
 </Aside>
 
 ## Commands you will actually use
 
 ```bash
-beskid pckg configure --api-key "$BESKID_PCKG_API_KEY"
-beskid pckg whoami
-beskid pckg pack --package acme.math --source . --output acme.math.bpk
-beskid pckg upload acme.math --artifact acme.math.bpk
+beskid package login --key "$BESKID_PCKG_API_KEY"
+beskid package pack --package acme.math --source . --output acme.math.bpk
+beskid package publish acme.math --artifact acme.math.bpk
 ```
 
-## What happens during upload
+## What happens during publish
 
-1. **`beskid pckg pack`**: collects source, generates API docs for library packages, selects an exact semantic version, and assembles the `.bpk` artifact
-2. **`beskid pckg upload`**: reads that version from artifact-root `package.json` and streams `version`, checksum, and artifact bytes to **`POST /api/packages/<name>/versions`**
+1. **`beskid package pack`**: collects source, generates API docs for library packages, selects an exact semantic version, and assembles the `.bpk` artifact
+2. **`beskid package publish`**: reads that version from artifact-root `package.json` and streams `version`, checksum, and artifact bytes to **`POST /api/packages/<name>/versions`**
 3. **Server-side validation**: manifest integrity, checksum match, review/moderation policy enforcement
 4. **Catalog update**: version appears in search and listing endpoints; project fetch/lock flows can resolve it
 
 ```mermaid
 sequenceDiagram
-  accTitle: Pack and upload to the registry
+  accTitle: Pack and publish to the registry
   accDescr: The author packs a bpk artifact with the CLI, the CLI uploads it to the registry, the registry validates and adds it to the catalog, and the CLI reports the result.
   actor Author
-  participant CLI as beskid pckg
+  participant CLI as beskid package
   participant Reg as pckg registry
   Author->>CLI: pack
   CLI-->>Author: .bpk artifact with exact version
-  Author->>CLI: upload
+  Author->>CLI: publish
   CLI->>Reg: POST /api/packages/name/versions
   Reg->>Reg: validate manifest, checksum, policy
   Reg-->>CLI: version published
   CLI-->>Author: Published name@version
 ```
 
-**Text equivalent:** `pack` produces the artifact with its exact version. `upload` posts version, checksum and bytes to the registry, which validates them and adds the version to the catalog.
+**Text equivalent:** `pack` produces the artifact with its exact version. `publish` posts version, checksum and bytes to the registry, which validates them and adds the version to the catalog.
 
 The registry does not assign a different version during upload. Package/version coordinates are immutable: publish a new artifact version instead of replacing existing bytes.
 
 ## Authentication
 
-`beskid pckg` loads credentials from, in order:
+`beskid package` loads credentials from, in order:
 
 1. `--bearer-token` / `--api-key` CLI flags (highest priority)
 2. `BESKID_PCKG_TOKEN` / `BESKID_PCKG_API_KEY` environment variables
-3. `.beskid/pckg/repositories.json` (written by `beskid pckg configure`)
+3. `.beskid/pckg/repositories.json` (written by `beskid package login`)
 
-Publisher operations (`upload`, `yank`, `unyank`) require a valid publish-scoped credential.
+Publisher operations (`publish`) require a valid publish-scoped credential.
 
 ## See also
 

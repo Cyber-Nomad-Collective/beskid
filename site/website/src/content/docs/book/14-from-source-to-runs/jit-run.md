@@ -1,10 +1,10 @@
 ---
 title: "AOT run and interactive JIT"
-description: The AOT run command and the separate JIT paths for tests and the REPL.
+description: The AOT run command, the native-process test flow, and the REPL as the remaining JIT path.
 tableOfContents: true
 ---
 
-Quick feedback has two paths. `beskid run` builds and links a native executable before it starts a subprocess. The REPL and the current test runner execute code in the in-process JIT engine.
+Quick feedback has three paths. `beskid run` builds and links a native executable before it starts a subprocess. `beskid test` builds one AOT object and runs each selected test in a fresh native process. Only the REPL still executes code in the in-process JIT engine.
 
 ## Crates
 
@@ -21,13 +21,16 @@ Spec: [Backends JIT/AOT](/docs/standard/compiler/build-pipeline/backends-jit-aot
 beskid run --project path/to/App.bproj --entrypoint Main --plain
 ```
 
-The command uses the same project resolution as `beskid analyze` and `beskid build`. It requires an exact ABI-v5 runtime kit. Use the [canonical run procedure](/docs/tooling/build-run-test/) for prerequisites, checks, and recovery.
+The command uses the same project resolution as `beskid check` and `beskid build`. It requires an exact ABI-v5 runtime kit. Use the [canonical run procedure](/docs/tooling/build-run-test/) for prerequisites, checks, and recovery.
 
-## Current JIT users
+## Native-process tests
 
-- `beskid repl` evaluates interactive snippets without project resolution.
-- `beskid test` discovers test items and executes them in the current in-process engine.
+`beskid test` discovers test items, compiles the project once into a single AOT object, and starts a fresh native process for every selected test. A crash or hang in one test cannot corrupt the next, and the code under test is the code you would ship. See [the test CLI](/book/08-green-tests-red-production/beskid-test-cli/).
 
-Do not infer deployment behavior from these JIT paths. Use `beskid build` for a persistent native artifact.
+## Current JIT user
+
+- `beskid dev repl` evaluates interactive snippets without project resolution.
+
+Do not infer deployment behavior from the REPL. Use `beskid build` for a persistent native artifact.
 
 Next: [AOT build](/book/14-from-source-to-runs/aot-build/).

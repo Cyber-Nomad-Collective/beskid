@@ -16,7 +16,7 @@ verified:
   date: 2026-09-08
 ---
 
-The registry stores a `.bpk` artifact at an immutable package name-and-version coordinate. Use `beskid pckg` for ordinary package commands. The equivalent grouped form is `beskid dev package registry`; this guide uses the concise form.
+The registry stores a `.bpk` artifact at an immutable package name-and-version coordinate. Use `beskid package` for registry commands. Use `beskid add`, `beskid remove`, and `beskid update` to change project dependencies.
 
 ## Orientation
 

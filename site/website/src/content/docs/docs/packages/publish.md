@@ -24,10 +24,10 @@ Load `BESKID_PCKG_API_KEY` from a secret manager. The key must have publisher pe
 
 ## Actions
 
-1. Verify the credential without printing its value:
+1. Check that `BESKID_PCKG_API_KEY` is set without printing its value:
 
    ```bash
-   beskid pckg whoami
+   test -n "${BESKID_PCKG_API_KEY:-}"
    ```
 
 2. Create the package record through `POST /api/packages`. The CLI has no package-record creation subcommand:
@@ -45,7 +45,7 @@ Load `BESKID_PCKG_API_KEY` from a secret manager. The key must have publisher pe
 
    ```bash
    mkdir -p dist
-   beskid pckg pack --package Acme.Math --version 1.0.0 --source . --output ./dist/Acme.Math-1.0.0.bpk
+   beskid package pack --package Acme.Math --version 1.0.0 --source . --output ./dist/Acme.Math-1.0.0.bpk
    ```
 
 4. Inspect the embedded identity and file checksums before upload:
@@ -56,23 +56,22 @@ Load `BESKID_PCKG_API_KEY` from a secret manager. The key must have publisher pe
    unzip -l ./dist/Acme.Math-1.0.0.bpk
    ```
 
-5. Confirm that the archive contains `.beskid/docs/api.json`. For a library package, `beskid pckg pack` generates API documentation unless you explicitly use `--skip-docs`.
-6. Upload the inspected artifact:
+5. Confirm that the archive contains `.beskid/docs/api.json`. For a library package, `beskid package pack` generates API documentation unless you explicitly use `--skip-docs`.
+6. Publish the inspected artifact:
 
    ```bash
-   beskid pckg upload Acme.Math --artifact ./dist/Acme.Math-1.0.0.bpk
+   beskid package publish Acme.Math --artifact ./dist/Acme.Math-1.0.0.bpk
    ```
 
 7. Verify the published record:
 
    ```bash
-   beskid pckg details Acme.Math
-   beskid pckg versions Acme.Math
+   beskid package info Acme.Math
    ```
 
 ## Expected result
 
-The pack command reports the resolved version and includes generated `.beskid/docs/api.json` and `.beskid/docs/index.md` content. Upload reports `Published Acme.Math@1.0.0` with its checksum. The registry treats `Acme.Math@1.0.0` as an immutable coordinate.
+The pack command reports the resolved version and includes generated `.beskid/docs/api.json` and `.beskid/docs/index.md` content. Publish reports `Published Acme.Math@1.0.0` with its checksum. The registry treats `Acme.Math@1.0.0` as an immutable coordinate.
 
 ## Recovery
 

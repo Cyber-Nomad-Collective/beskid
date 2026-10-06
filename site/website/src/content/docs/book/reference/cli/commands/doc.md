@@ -16,6 +16,7 @@ This command is available as `beskid doc`.
 | `--workspace-member` | Workspace member when resolving via `Workspace.bws` |
 | `--frozen` | Require lockfile match; forbid updates |
 | `--locked` | Require an existing lockfile |
+| `--offline` | Forbid network requests; use verified cached dependency artifacts only |
 | `--out` | Output directory (default `doc-out`); receives `api.json` and `index.md` |
 
 ## Output
@@ -43,7 +44,7 @@ Human-oriented index page generated alongside `api.json` for browsing in reposit
 
 ## Layout in projects
 
-When run as part of packaging, artifacts are written under **`<sourceRoot>/.beskid/docs/`** (for example `.beskid/docs/api.json`). The `beskid pckg pack` command copies those paths into the archive and records a `documentation` pointer in the embedded `package.json` so registries can open `api.json` without path heuristics.
+When run as part of packaging, artifacts are written under **`<sourceRoot>/.beskid/docs/`** (for example `.beskid/docs/api.json`). The `beskid package pack` command copies those paths into the archive and records a `documentation` pointer in the embedded `package.json` so registries can open `api.json` without path heuristics.
 
 ## Example
 

@@ -10,8 +10,8 @@ tableOfContents: true
 
 - Document public callables with `///` (chapter 20).
 - Run `beskid doc` before upload (chapter 16).
-- Pack locally to catch manifest lies before registry mutation: `beskid pckg pack --package <id> --source . --output <id>.bpk`.
-- Upload the validated artifact and its embedded version: `beskid pckg upload <id> --artifact <id>.bpk`.
+- Pack locally to catch manifest lies before registry mutation: `beskid package pack --package <id> --source . --output <id>.bpk`.
+- Upload the validated artifact and its embedded version: `beskid package publish <id> --artifact <id>.bpk`.
 
 ## Next
 

@@ -1,6 +1,6 @@
 ---
 title: "Pipeline overview"
-description: Resolution, semantic facts, typed code generation, AOT execution, and the separate interactive JIT paths.
+description: Resolution, semantic facts, typed code generation, AOT execution, and the interactive JIT REPL.
 tableOfContents: true
 ---
 
@@ -9,7 +9,7 @@ Mirror of the normative [Build pipeline overview](/docs/standard/compiler/build-
 ```mermaid
 flowchart TB
   accTitle: Current compilation and execution pipeline
-  accDescr: Resolution and syntax produce a typed program, CodegenInput drives ISLE emission, and the result goes to AOT commands or the JIT test and REPL paths.
+  accDescr: Resolution and syntax produce a typed program, CodegenInput drives ISLE emission, and the result goes to AOT commands, including the native-process test runner, or to the JIT REPL.
   resolve[Project resolution]
   assemble[program.assemble]
   parse[Parse and syntax diagnostics]
@@ -18,14 +18,14 @@ flowchart TB
   typed[TypedProgram]
   input[CodegenInput]
   isle[ISLE emission to CodegenArtifact]
-  jit[JIT tests and REPL]
+  jit[JIT REPL]
   aot[AOT build, run, and link]
   resolve --> assemble --> parse --> mods --> semantic --> typed --> input --> isle
   isle --> jit
   isle --> aot
 ```
 
-**Text equivalent:** Resolve the project and assemble source roots. Parse and analyze the program, apply approved Mod behavior, and produce `TypedProgram`. Construct `CodegenInput`, emit through ISLE, and create `CodegenArtifact`. `beskid build` and `beskid run` use AOT output. The current test runner and REPL use the JIT engine.
+**Text equivalent:** Resolve the project and assemble source roots. Parse and analyze the program, apply approved Mod behavior, and produce `TypedProgram`. Construct `CodegenInput`, emit through ISLE, and create `CodegenArtifact`. `beskid build`, `beskid run`, and `beskid test` use AOT output; `beskid test` builds one object and runs each selected test in a fresh native process. Only the REPL uses the JIT engine.
 
 ## Crate map
 
@@ -36,13 +36,13 @@ flowchart TB
 | Mod host | `beskid_analysis` (`mod_host`) |
 | Semantic rules | `beskid_analysis` (`analysis`) |
 | `CodegenInput` and ISLE emission | `beskid_codegen`, `beskid_isle` |
-| JIT tests and REPL | `beskid_engine`, `beskid_repl`, `beskid_abi` |
+| JIT REPL | `beskid_engine`, `beskid_repl`, `beskid_abi` |
 | AOT | `beskid_aot` |
 | Phase IDs | `beskid_pipeline` |
 
 ## CLI entry
 
-`beskid build`, `beskid run`, `beskid analyze` orchestrate subsets. Contract: [Build / analyze / run](/docs/standard/tooling/cli/build-analyze-run-contract/).
+`beskid build`, `beskid run`, `beskid check` orchestrate subsets. Contract: [Build / analyze / run](/docs/standard/tooling/cli/build-analyze-run-contract/).
 
 ## Diagnostics parity
 

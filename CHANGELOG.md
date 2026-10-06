@@ -11,6 +11,62 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Load the canonical Serialization Mod transitively from the Serialization library, with its Compiler SDK and Foundation dependency closure.
+
+- Disambiguate Serialization Mod selector imports from SDK Collect contracts and restore imports needed by matrix cancellation unit controls.
+
+- Rename reserved identifiers in the real Serialization Mod and require every Mod source file to parse without recovery before native callback execution.
+
+- Use the canonical Host project kind in the native Collector/Generator consumer fixture.
+
+- Match native CLI project fixtures to the canonical `Src` directory on case-sensitive hosts while preserving nested executable deadline checks.
+
+- Isolate document-service projects from checkout lockfiles and materialized state so LSP controls resolve the current bundled Corelib closure.
+
+- Traverse generation-bound indexed declarations in dynamic lookalike controls so both nominal types are checked for denied managed-erasure authority.
+
+- Require BSOL and serialization packages in the template authoring lock closure and retain portable locked/frozen replay checks after relocation.
+
+- Preserve every indented documentation line during atomic DocRun normalization, including CRLF source bounds and Markdown indentation.
+
+- Require semantic failure exit status and the actual missing-name diagnostic in the `check` e2e contract.
+
+- Exclude private `.beskid` transaction state from e2e fixture copies so dependency journeys start with fresh guarded state.
+
+- Align Fiber facade contract controls with explicit move-only handle receivers while retaining the exact service and cancellation ABI checks.
+
+- Update the managed allocator source-contract control to require both ordinary and checked traced-heap routes through the shared policy function.
+
+- Validate explicitly declared Node and native Beskid assertion provenance in 0.6 release evidence, including exact native identifier and test-body boundaries.
+
+- Resolve distribution installation-control fixtures relative to their test files so they run from either the superrepo or distribution checkout.
+
+- Isolate release packaging orchestration tests from dirty development checkouts while preserving source gitlink and distribution cleanliness guards; keep native installer qualification separate.
+
+- Project preparation now issues immutable package provenance for stable serialization identities; canonical Mod shapes distinguish records and enums with exact ordered payload declarations and generic substitutions. Qualification of package provenance tests remains pending.
+
+- Preserve managed aggregate field classification separately from native pointer ABI storage when emitting GC descriptor pointer maps.
+
+- Fix parser recovery token matching at UTF-8 boundaries and preserve token
+  lengths at nonzero offsets. Focused recovery regressions and the existing
+  recovery suite pass; native BSOL qualification remains in progress.
+
+- Define the 0.6 release scope and source reconciliation, with separate CLI,
+  serialization/BSOL and Rust Glue plans and normative release qualification
+  requirements. Record standing authorization for researched blocker remedies;
+  implementation and publication remain pending.
+- Reject historical Glue exemptions when validating 0.6 or later release
+  evidence; preserve validation of historical release packets.
+- Add source-preserving dependency intent edits and deterministic stable registry
+  version selection. Resolve proposed intent through the existing project graph
+  without writing the manifest. Paired dependency changes pass five integration
+  regressions, including absent-removal no-ops and foreign lock rejection;
+  native installed-consumer qualification remains pending.
+- Bundle the app template and validate staged updater payloads, immutable source
+  identity, runtime kits and Corelib fingerprints before activation. Native
+  installed-consumer qualification remains pending.
+- Preserve generated builtin file timestamps when their content is unchanged,
+  preventing the analysis build script from invalidating its own Cargo input.
 - Refocus the 0.5.2 announcement on concurrency, networking, portable
   dependencies, and practical project workflows; keep packaging notes concise.
 - Announce the published 0.5.2 toolchain on the main website, with corrected
