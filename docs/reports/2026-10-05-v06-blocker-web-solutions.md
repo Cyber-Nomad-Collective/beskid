@@ -269,3 +269,68 @@ Local red reproduction: seven document-service tests reject the checked-in pre-B
 ## Generated decoder consumer seam (2026-10-06)
 
 [Serde's primary Deserialize documentation](https://serde.rs/impl-deserialize.html) describes generated typed construction through a format deserializer and warns that relying on deserialize_any restricts format independence. [DeserializeSeed primary API](https://docs.rs/serde/latest/serde/de/trait.DeserializeSeed.html) accepts explicit state/binding for typed construction. Inference for beskid: preserve the existing typed Reader/FieldDecoder and source-issued adapter authority; connect the generated decoder through a reviewed callable binding, never replace typed construction with universal DataValue casting or caller guessing private __serialization names. Native WireEncoder/SyntaxReader already exist. Current real-Mod probe first fails dependency closure locking; solve that prerequisite before claiming decoder execution. Exact source/command evidence is in the standard audit.
+
+## Native Mod artifact reuse and toolchain-shipped Corelib Mods (2026-10-07)
+
+**Problem.** `corelib_serialization` depends on the native Mod `serialization_mod`. The CLI rebuilt every dependency Mod on every command (30-60 s in debug), and the LSP, query and engine paths never build Mods, so any Std-using project failed there with "required native Mod artifact is missing".
+
+**Documented facts.**
+- Cargo marks a unit "fresh" or "dirty" from a fingerprint. Its inputs include the rustc version, the profile, the target, the compile kind, the source files and the hashes of the immediate dependencies; "a change in a dependency will propagate the 'dirty' status up". A missing fingerprint or any changed field makes the unit dirty, and a failed compile does not update it. [Cargo fingerprint module](https://doc.rust-lang.org/nightly/nightly-rustc/cargo/compiler/fingerprint/index.html).
+- With `--target`, Cargo builds build scripts and proc macros separately for the host architecture, and the output directory is keyed by target and profile. [Cargo build cache](https://doc.rust-lang.org/cargo/reference/build-cache.html).
+- Proc-macro crates run during compilation with the compiler's resources and link the compiler-provided `proc_macro` crate. [Rust reference, procedural macros](https://doc.rust-lang.org/reference/procedural-macros.html).
+- SwiftPM builds each macro target as an executable for the host platform and passes it to the compiler with `-load-plugin-executable <path>#<module>`. [SE-0394](https://github.com/swiftlang/swift-evolution/blob/main/proposals/0394-swiftpm-expression-macros.md).
+- SwiftPM prebuilt macro support selects a binary by the swift-syntax version, the running host platform and the compiler version, and builds from source when no prebuilt exists for that combination. [Swift forums, swift-syntax prebuilts announcement](https://forums.swift.org/t/preview-swift-syntax-prebuilts-for-macros/80202). Apple toolchains ship system macro plugins prebuilt under `usr/lib/swift/host/plugins` (search result for that path; not verified on a primary Apple page).
+
+**Beskid inference and remedy.**
+- A native Mod artifact is a host tool, keyed like a Cargo host unit. The cache key tuple is: the exact Mod-host compiler executable digest (the descriptor's `compiler` build tool), the compiler version (when the caller is the compiler), the target triple, the runtime-kit profile, the source/manifest/`Project.lock`/`project.mod` evidence, and a new `dependencySources` map with one source identity per dependency project. The dependency map closes a gap: the descriptor previously did not cover dependency sources, so a cached artifact could not have detected a changed dependency.
+- `beskid_aot::qualify_cached_mod_artifact` is the only reuse authority. It reuses an entry only when the descriptor validates against the installed kit, the directory is named by the recomputed content key, and the complete tuple is equal. If no entry is current, the CLI rebuilds. Two current entries fail closed. After a publication, the producer removes superseded entries of the same package, target and profile, so a loader never sees two candidates for one profile.
+- The CLI checks the cache before it prepares the Mod workspace. A hit does not write into the Mod project, so an installed prefix stays byte-identical to its `beskid-up` install receipt.
+- The Mod host is the `beskid` CLI, as the macro plugin executable is for Swift. Non-building consumers (the LSP) qualify cached or shipped artifacts against the installed `beskid` executable next to them (`beskid_tools::native_mods`). They do not build. If no artifact is current, they report `beskid dev mod rebuild <manifest>`.
+- Descriptors are specific to host and target (directory `<target>`), to profile (runtime binding) and to the exact compiler binary. The release bundle therefore ships them per target bundle. Each Corelib `type = Mod` member is built with the bundled CLI for the debug kit (the profile that installed `build` and `run` select) into `<corelib>/<member>/.beskid/obj/mods/<package>/<key>/<target>/`. `.beskid`, `obj` and `Project.lock` are outside the Corelib fingerprint, so the seal stays valid.
+
+**Gate WEB-MOD01.**
+- `beskid_cli` `commands::compiler_mod::tests::current_mod_artifact_is_reused_without_rebuild_and_stale_source_rebuilds`: a second request does not run codegen or link and reuses the same directory. A source edit rebuilds the Mod and prunes the superseded entry.
+- `beskid_cli` `commands::compiler_mod::tests::shipped_mod_artifact_is_qualified_for_a_non_building_consumer`: the analysis loader and the editor invoker accept a prebuilt descriptor. A foreign Mod-host executable fails closed. A missing descriptor names the rebuild command.
+- `beskid_analysis` `mod_host::load::tests::dependency_source_change_makes_cached_evidence_stale`.
+- `scripts/ci/test/build-release-artifact-bundle.test.sh`: the bundle ships one descriptor per Corelib Mod for the bundle target, and a failed Mod prebuild rejects the bundle.
+- Release check: on an installed bundle, the LSP and `beskid check` on a Std project run without a Mod build, and `beskid-up` installed-prefix validation still passes after those commands.
+
+## Compiler-owned SDK adapter sources in native Mod builds (2026-10-07)
+
+**Problem.** A native Mod adapter needs the canonical SDK request constructors (`Beskid.Compiler.NativeRequests`) and syntax constructors (`Beskid.Syntax.NativeFactories`). A Mod's assembly is an import closure, and Mod sources import only the contract surface (`Beskid.Compiler.Collect`). The constructors were therefore absent, and `dev mod rebuild` failed with "native SDK closure lacks exact typed constructor CompilationValue". The `native_sdk` fixture imports neither module.
+
+**Documented fact.** Proc-macro crates link the compiler-provided `proc_macro` crate, and the crate author does not declare it. [Rust reference, procedural macros](https://doc.rust-lang.org/reference/procedural-macros.html).
+
+**Beskid inference and remedy.**
+- The compiler provides its adapter sources to a native Mod build, as rustc provides `proc_macro` to proc-macro crates. Mod authors do not import them.
+- `PrepareOptions::native_mod_adapter_sources` is set only by `beskid dev mod rebuild` (`build_mod_artifact_for_resolved`). It becomes `AssemblyOptions::native_mod_adapter_sources`, and the loader seeds discovery with exactly `Beskid/Compiler/NativeRequests.bd` and `Beskid/Syntax/NativeFactories.bd` under the single `corelib_compiler_sdk` dependency root. A missing root, a second root, or a missing regular file fails the assembly (`AssemblyError::NativeModAdapterSource`). Other builds do not seed.
+- Seeding grants no authority. Codegen still requires the exact embedded SDK bytes (`sdk_source_authority`) and Corelib package identity (`require_sdk_package`). The seed option is part of the assembly cache fingerprint, and the prepare session cache is not used for seeded builds.
+
+**Gate WEB-MOD02.**
+- `beskid dev mod rebuild` of `serialization_mod` gets past request constructor selection. `beskid_cli` `native_mod_sdk_v06` builds the `native_sdk` fixture, which imports neither adapter module.
+- `beskid_analysis` `projects::assembly::loader::tests`:
+  - `native_mod_adapter_seeds_come_only_from_the_single_compiler_sdk_root`: both seeds come from the SDK root, and look-alike files in the host root and in another dependency root are not assembled.
+  - `ordinary_build_never_seeds_native_mod_adapter_sources`: without the option, the same plan assembles only its import closure.
+  - `native_mod_adapter_seeding_without_compiler_sdk_dependency_fails_closed`, `native_mod_adapter_seeding_with_missing_adapter_file_fails_closed` and `native_mod_adapter_seeding_with_two_compiler_sdk_roots_fails_closed`: each fails with `NativeModAdapterSource`.
+- `beskid_queries` `semantic_facts` `calls_and_graph`: `reachable_items_accepts_a_method_entry_and_follows_its_callees`, and `native_mod_expression_payload_strips_only_expression_and_grouping_wrappers` (constructor field values reach their path, array or call payload, and nothing deeper).
+
+## Serialization adapters and default field privacy (2026-10-08)
+
+**Problem.** A field without `pub` is private to the source unit that declares its type (E1211). The Serialization Mod generates an encoder impl, which reads the target fields, and a decoder read function, which builds the whole target record literal. The merger appends these contributions to the entry source unit. A generated adapter for a target record declared in another source unit with a private field would therefore fail with E1211.
+
+**Documented facts.**
+- A derive macro's output items are appended to the module or block that contains the input item. [Rust reference, derive macros](https://doc.rust-lang.org/reference/procedural-macros.html#derive-macros).
+- A private item is visible in the module where it is declared and in the descendants of that module. Thus a derived `Serialize` impl can read the private fields of its input type. [Rust reference, visibility and privacy](https://doc.rust-lang.org/reference/visibility-and-privacy.html).
+
+**Beskid inference and decision.**
+- The Serialization Mod selects targets only from the syntax tree of the entry unit. `Collect.Selected` walks `OfKind` from `entryRoot`, and the host confines `OfKind` and `Descendants` to the unit of the start node. Contributions are appended to that same unit. Thus every target that the Mod selects has the Rust placement: the adapter is in the declaring unit of the target and reads private fields without an exception.
+- The gap is the host binding. `compile_serialization_target` and `compile_serialization_template` accept a handle or a template for a type in any registered unit. A nested nominal field type is an example. An attribution of merged contributions to a different unit would need these changes: a unit identity for each contribution in the merged entry, a binding that also covers the decoder read function (today only the impl blocks are bound), and a mirror of that binding in the legacy checker. The legacy checker cannot see the typed binding proof. These changes are a redesign of the merge, so they are not part of v0.6.
+- Fail-closed rule: a target record that is declared outside the entry unit and has a value field that the entry unit cannot read or construct is rejected at the binding. The rejection occurs in `compile_target`, in `compile_template`, and again when a consumer rebinds (`rebind_in_environment`). The check uses the same field visibility policy as the semantic gate (`inaccessible_literal_fields` through `serialization_contribution_inaccessible_fields`). There is no second rule and no attribution. The diagnostic names the target, the first private field, the declaring unit, the entry unit, and E1211, and it tells the author to mark the field `pub` or to declare the type in the entry unit. Enum payload fields have no field visibility, so enum targets are not affected. Ordinary entry-unit code and all other contributions keep the E1211 denial.
+- A future redesign that moves generated contributions into the declaring unit of the target must record a new gate.
+
+**Gate WEB-SER05.**
+- `beskid_codegen` `v06_serialization_compiled_shape`:
+  - `entry_unit_target_with_a_private_field_binds`: the Rust placement case.
+  - `other_unit_target_with_only_pub_fields_binds`.
+  - `other_unit_target_with_a_private_field_is_rejected_precisely`: the error names `Hidden`, `secret`, both units and E1211, and does not name the `pub` field.
+- `beskid_queries` `semantic_facts` `field_visibility` (existing): cross-unit reads, projection chains and literals of private fields stay E1211 when no binding is involved.

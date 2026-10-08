@@ -36,9 +36,9 @@ Each code action SHALL produce `TextEdit` operations that apply the fix. Each co
 **Stable ID:** `BSP-REQ-LSP-ANALYZER-CODEACTIONS`
 
 #### Scenario: Missing import offers an auto-add use statement
-- **GIVEN** a `.bd` buffer with a missing-import diagnostic for symbol `Std.System.IO.Print`
+- **GIVEN** a `.bd` buffer with a missing-import diagnostic for symbol `Core.Output.WriteLine`
 - **WHEN** code actions are requested at that diagnostic range
-- **THEN** a `CodeAction` is returned that inserts a `use Std.System.IO.Print;` statement and references the missing-import diagnostic
+- **THEN** a `CodeAction` is returned that inserts a `use Core.Output.WriteLine;` statement and references the missing-import diagnostic
 
 #### Scenario: Naming-style violation offers a rename
 - **GIVEN** a `.bd` buffer with a naming-style diagnostic for an identifier

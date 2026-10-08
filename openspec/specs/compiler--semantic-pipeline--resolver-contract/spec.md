@@ -318,8 +318,8 @@ Canonical lookup helpers live in `resolve/symbol_lookup.rs` (`symbol_for_item`, 
 
 | Shape | Example key |
 | --- | --- |
-| Module export | `corelib::Std::Console::Capabilities::ShouldEmitAnsi` |
-| Member | `corelib::Std::Console::Capabilities::colorDisabled` |
+| Module export | `corelib::Console::Capabilities::ShouldEmitAnsi` |
+| Member | `corelib::Console::Capabilities::colorDisabled` |
 | Method | `corelib::Capabilities::ShouldEmitAnsi` (receiver string + method name) |
 | Builtin | `beskid::range` |
 
@@ -510,7 +510,7 @@ These strings appear as **`symbolKey`** in `api.json` when emitted ([design mode
 | --- | --- |
 | `ItemId` | Dense index into merged `items` (stable for prefetch rows) |
 | `SymbolId` | Interned key for export |
-| **`symbolKey`** (api.json) | `corelib_mvp::Std::System::IO::Output::WriteLine` (exact package prefix from materialized project) |
+| **`symbolKey`** (api.json) | `corelib_foundation::Core::Output::WriteLine` (exact package prefix from materialized project) |
 | **`qualifiedName`** | May use module-relative display; prefer **`symbolKey`** for cross-package links |
 
 Workspace find-references on the `WriteLine` use site **must** include references in `Output.bd` when assembly is available.
@@ -528,7 +528,7 @@ Workspace find-references on the `WriteLine` use site **must** include reference
 Documentation comment:
 
 ```beskid
-/// See also @ref(corelib::Std::Console::Esc)
+/// See also @ref(corelib::Console::Esc)
 ```
 
 Resolution **must** locate the target item by exact registry string before falling back to `qualifiedName` suffix heuristics (`doc/refs.rs`).

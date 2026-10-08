@@ -249,7 +249,7 @@ CLI integration.
 | Stale lock after manifest edit | `lock`/`update` rewrite; LSP invalidates compilation cache |
 | Partial fetch failure | Unresolved dependency policy (`Warn` vs `Error`) controls whether graph proceeds |
 | Duplicate dependency names | Validation error during graph build |
-| Corelib-only path fallback | Implicit `Std` edge omitted for corelib workspace shards to avoid cycles |
+| Corelib-only path fallback | Implicit `Core` edge omitted for corelib workspace shards to avoid cycles |
 
 ## pckg integration
 
@@ -510,7 +510,7 @@ When the language server lacks an in-memory prepared workspace:
 
 ## Corelib path injection during resolve
 
-While walking the DAG, host projects without explicit `Std` receive implicit corelib path attachment (`default_corelib_dependency_path` in `resolver.rs`). Workspace shards under `compiler/corelib/packages/*` **must not** create cyclic back-links to the aggregate `beskid_corelib` package.
+While walking the DAG, host projects without an explicit `Core` dependency receive implicit corelib path attachment (`default_corelib_dependency_path` in `resolver.rs`). Workspace shards under `compiler/corelib/packages/*` **must not** create cyclic back-links to the aggregate `beskid_corelib` package.
 
 ## Tests
 

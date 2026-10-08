@@ -437,7 +437,7 @@ sequenceDiagram
   participant Root as beskid_corelib
   Tool->>Res: env BESKID_CORELIB_ROOT or repo walk
   Res->>Root: normalize Project.proj path
-  Root-->>Tool: graph node for Std / corelib
+  Root-->>Tool: graph node for Core / corelib
 ```
 
 1. Tool starts project resolution.
@@ -455,7 +455,7 @@ sequenceDiagram
 
 ## Shard cycle avoidance
 
-When resolving manifests under `compiler/corelib/packages/*`, `is_corelib_workspace_shard_manifest` suppresses implicit `Std` back-edges to the aggregate package to prevent `beskid_corelib → shard → beskid_corelib` cycles.
+When resolving manifests under `compiler/corelib/packages/*`, `is_corelib_workspace_shard_manifest` suppresses implicit `Core` back-edges to the aggregate package to prevent `beskid_corelib → shard → beskid_corelib` cycles.
 
 ## Algorithm notes
 

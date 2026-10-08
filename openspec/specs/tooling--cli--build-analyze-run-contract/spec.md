@@ -173,7 +173,7 @@ Use beskid_analysis aligned with LSP.
 ## Normative contracts
 
 - **Single analysis entry** — Project-scoped commands **must not** fork ad-hoc parsers that skip `CompilationContext` when a `Project.proj` is in scope.
-- **Corelib always on** — Host projects **must** resolve implicit `Std` / corelib; manifests **must not** opt out (`noCorelib`, `useCorelib: false` are parse errors in `beskid_analysis` `projects/parser.rs`).
+- **Corelib always on** — Host projects **must** resolve the implicit `Core` dependency (corelib); manifests **must not** opt out (`noCorelib`, `useCorelib: false` are parse errors in `beskid_analysis` `projects/parser.rs`).
 - **Exit codes** — Semantic errors on `analyze` **must** yield non-zero process exit; `build`/`run` **must** propagate linker/AOT subprocess failures without masking as warnings; `run` **must** exit with the linked executable's status code on success paths.
 - **Pipeline truthfulness** — Reported phase IDs **must** correspond to real `beskid_pipeline` stages; silent no-ops are forbidden for declared progress events.
 - **Mod parity** — Capability denial and generator round exhaustion **must** match LSP diagnostics (same codes, same severity).
@@ -357,7 +357,7 @@ Maps pipeline phases to line-oriented stderr suitable for noninteractive log par
 
 The CLI runs the full project graph and lock policy. Run `beskid lock` (or check in `Project.lock`) and set `BESKID_CORELIB_ROOT` when not using the bundled corelib layout. Compare against the focused `Project.proj` the extension sends to the LSP.
 
-## `build` cannot find corelib / `Std`
+## `build` cannot find corelib / `Core`
 
 Verify `BESKID_CORELIB_ROOT` points at a tree containing `beskid_corelib/Project.proj`, or run `beskid corelib` materialization. Superrepo checkouts should resolve via `compiler/corelib/beskid_corelib` discovery in `resolver.rs`.
 

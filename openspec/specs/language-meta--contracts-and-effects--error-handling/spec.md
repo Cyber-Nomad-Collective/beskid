@@ -69,10 +69,10 @@ Defines how **recoverable failures** are represented and propagated in user code
 
 ### `Result`, `Option<T>`, and enums
 
-- Recoverable errors **should** use **`Core.Results.Result<TValue, TError>`** from corelib when the project links **Std** (prelude exposes `Core.Results`).
-- In **App** projects with implicit **Std**, the assembly module path is **`Std::Core::Results`** (source may write ``Std.Core.Results.Result<i32, string>``); inside corelib shards the path remains ``Core.Results.Result<_, _>``.
+- Recoverable errors **should** use **`Core.Results.Result<TValue, TError>`** from the `Core` dependency (import `Core.Results`).
+- The assembly module path is **`Core::Results`** in every project, including App projects and corelib shards (source writes ``Core.Results.Result<i32, string>``).
 - There is **no** built-in `Result<T,E>` type alias in v0.1 grammar; use the corelib generic enum with explicit type arguments.
-- Projects **must not** define a second bare `enum Result` in the same scope as Std; use the corelib type or a distinct name.
+- Projects **must not** define a second bare `enum Result` in the same scope as an imported `Core.Results.Result`; use the corelib type or a distinct name.
 - **Absence of value** (not failure) **must** use `Option<T>`, not `null` or sentinel pointers (**must** align with [Types](/platform-spec/language-meta/type-system/types/)).
 
 ### `try` postfix operator

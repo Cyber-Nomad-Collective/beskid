@@ -172,7 +172,7 @@ The native producer SHALL derive separate recursive codec closures from issued e
 - **THEN** preparation fails before invocation
 
 ### Requirement: Compiler SDK dependency closure
-The compiler SDK package SHALL declare its Foundation dependency explicitly through the canonical project graph. SDK source imports of Core collections, Optional, and Results SHALL resolve from that verified dependency closure without relying on an implicit external Std namespace or a source-authority bypass.
+The compiler SDK package SHALL declare its Foundation dependency explicitly through the canonical project graph. SDK source imports of Core collections, Optional, and Results SHALL resolve at their package-native `Core.*` paths from that verified dependency closure, without a source-authority bypass.
 
 #### Scenario: MOD-06-27 SDK compilation resolves Foundation source imports
 - **GIVEN** the installed compiler SDK package and its declared Foundation dependency

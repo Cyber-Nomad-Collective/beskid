@@ -6,14 +6,14 @@ The semantic pipeline SHALL include a missing-import analyzer that emits a spann
 **Stable ID:** `BSP-REQ-MISSING-IMPORT-ANALYZER`
 
 #### Scenario: Unresolved reference emits a spanned missing-import diagnostic
-- **GIVEN** a `.bd` source that references `Std.System.IO.Print` without a `use Std.System.IO.Print` statement
+- **GIVEN** a `.bd` source that references `Core.Output.WriteLine` without a `use Core.Output.WriteLine` statement
 - **WHEN** the missing-import analyzer runs
 - **THEN** it emits a diagnostic anchored to the unresolved reference with a registered code inside **E1801–E1899**
 
 #### Scenario: Missing-import fix auto-adds a use statement
-- **GIVEN** a missing-import diagnostic for `Std.System.IO.Print`
+- **GIVEN** a missing-import diagnostic for `Core.Output.WriteLine`
 - **WHEN** the rewriter fix is applied
-- **THEN** a `use Std.System.IO.Print;` statement is inserted and the reference resolves
+- **THEN** a `use Core.Output.WriteLine;` statement is inserted and the reference resolves
 
 #### Scenario: Missing-import code action links to its diagnostic
 - **GIVEN** a missing-import diagnostic in a `.bd` buffer

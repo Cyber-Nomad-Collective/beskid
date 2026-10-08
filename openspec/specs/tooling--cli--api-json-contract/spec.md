@@ -327,8 +327,8 @@ Example row (truncated):
 ```json
 {
   "id": 42,
-  "qualifiedName": "Std::System::IO::Output::WriteLine",
-  "symbolKey": "corelib_mvp::Std::System::IO::Output::WriteLine",
+  "qualifiedName": "Core::Output::WriteLine",
+  "symbolKey": "corelib_foundation::Core::Output::WriteLine",
   "name": "WriteLine",
   "kind": "function"
 }
@@ -338,7 +338,7 @@ Example row (truncated):
 
 | Field | When present | Meaning |
 | --- | --- | --- |
-| `modulePath` | Root symbols | Logical module segments, e.g. `["Std","Widgets"]` |
+| `modulePath` | Root symbols | Logical module segments, e.g. `["Core","Output"]` |
 | `signature` | Most kinds | Single-line display signature for headers and search |
 | `fieldType` | `field`, `parameter` | [`typeAnnotation`](#typeannotation) for the member type |
 | `returnType` | `function`, `method`, `contract_method` | Return type annotation |

@@ -85,7 +85,7 @@ This page defines the concrete IntelliSense behavior exposed by Beskid LSP to ed
 
 1. **Completion** shall be provided for `.bd`, `.bproj`, and `.bws` documents. `.bd` completion candidates come from `beskid_queries::completion_candidates`; manifest completion includes keywords and enum-like value suggestions.
 2. **Project-aware `.bd` IntelliSense** — When `CompilationContext` resolves a `.bproj` for the buffer path, the LSP **shall** assemble the exact open-buffer input via `ProgramAssembly`, register one current syntax generation in the shared Salsa database, and expose generation-bound cross-unit facts.
-3. **Member completion after import aliases** — After a trailing `.` following a registered `use` alias (for example `IO.` after `use Std.System.IO`), completion **shall** list public members from the aliased module path in the assembly `ModuleGraph`.
+3. **Member completion after import aliases** — After a trailing `.` following a registered `use` alias (for example `Output.` after `use Core.Output`), completion **shall** list public members from the aliased module path in the assembly `ModuleGraph`.
 4. **`use` path completion** — On a `use` line, completion **shall** offer next path segments from assembly-known logical module paths (`assembly_module_paths` / `ModuleGraph`).
 5. **Hover** shall return Markdown content for resolved `.bd` symbols and manifest tokens in `.bproj`/`.bws`. Hover ranges **shall** use the declaring unit's generation-bound syntax span and source path.
 6. **Go to definition** shall resolve to the declaration span for resolved symbols in `.bd`, returning a `file://` URI for dependency units. In `.bproj`/`.bws`, `path = "..."` dependency values shall navigate to the target manifest.

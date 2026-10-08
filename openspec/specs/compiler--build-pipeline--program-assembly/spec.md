@@ -333,8 +333,8 @@ Assembly unit count tracks the transitive `use` graph plus explicit prelude seed
 
 ## `use` aliases and step-6 resolution
 
-- A `use` declaration registers an **import alias** (explicit `as` name or default tail of the path, e.g. `use Std.System.IO` → alias `IO`) mapped to the **full logical module path** in the merged `ModuleGraph` from `ModuleIndex`.
-- Value and type paths such as `IO.PrintLine` or `String.IsEmpty` **must** resolve through alias expansion to `Std::System::IO::PrintLine` (etc.) during the resolver pass, producing ordinary `Item` bindings—not `ItemKind::Use` placeholders.
+- A `use` declaration registers an **import alias** (explicit `as` name or default tail of the path, e.g. `use Core.Output` → alias `Output`) mapped to the **full logical module path** in the merged `ModuleGraph` from `ModuleIndex`.
+- Value and type paths such as `Output.WriteLine` or `String.IsEmpty` **must** resolve through alias expansion to `Core::Output::WriteLine` (etc.) during the resolver pass, producing ordinary `Item` bindings—not `ItemKind::Use` placeholders.
 - Staged semantic **E1105** (`unknown import path`) **must** consult assembly-known module paths when `ProgramAssembly` is available, not file-local root heuristics alone.
 
 ## IDE consumption
@@ -342,7 +342,7 @@ Assembly unit count tracks the transitive `use` graph plus explicit prelude seed
 - `beskid_analysis::services::build_document_analysis_with_context` lowers and normalizes the entry program, then calls `assembly.module_index.resolve_entry_hir` when assembly is available.
 - Resolved items from dependency units carry `ItemInfo.source_path` so LSP go-to-definition, find references, and hover map to the declaring `.bd` file URI.
 - Workspace find references on non-entry units use `ModuleIndex::resolve_unit_hir` per dependency unit when merging matches into `references_at_offset_workspace`.
-- Import aliases collected in the entry unit are exposed on `Resolution.module_imports` for member completion (`IO.` → `Std::System::IO` scope).
+- Import aliases collected in the entry unit are exposed on `Resolution.module_imports` for member completion (`Output.` → `Core::Output` scope).
 
 ## CLI and JIT/AOT parity
 
