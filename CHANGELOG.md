@@ -11,6 +11,14 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Pin compiler 0.5.3 (`42d9f8cc`): per-file corelib service authority, typed
+  CLIF instruction blocks with array payload access, runtime-optional externs
+  (new trap code 11, rebuild runtime kits), keyword-boundary grammar fix,
+  optimizing JIT, sized array allocation, geometric `Array.Append` growth, heap
+  span reuse, and network reads that keep data when a deadline races a
+  completed transfer. Its corelib (`91324fe`, `beskid_standard` branch `0.5.3`)
+  adds the networking packages uri, codec, connect, crypto, x509, tls, http2,
+  websocket, quic, http3 and web.
 - Refocus the 0.5.2 announcement on concurrency, networking, portable
   dependencies, and practical project workflows; keep packaging notes concise.
 - Announce the published 0.5.2 toolchain on the main website, with corrected
