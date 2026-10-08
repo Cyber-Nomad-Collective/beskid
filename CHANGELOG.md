@@ -11,6 +11,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Check out `beskid_vscode` in the Linux Woodpecker build so the compiler gate can
+  compare the LSP project-explorer commands with the extension's contract snapshot.
 - Keep Python bytecode caches out of the Linux Woodpecker source tree so the
   release source inventory accepts manual native builds.
 - Pin compiler 0.5.3 (`fcd60ac9`): per-file corelib service authority, typed
