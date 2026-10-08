@@ -12,6 +12,8 @@ clone:
 steps:
   - name: validate-standard
     image: node:22.16.0-bookworm
+    environment:
+      PYTHONDONTWRITEBYTECODE: "1"
     commands:
       - corepack enable
       - corepack install -g pnpm@10.17.1+sha512.17c560fca4867ae9473a3899ad84a88334914f379be46d455cbf92e5cf4b39d34985d452d2583baf19967fa76cb5c17bc9e245529d0b98745721aa7200ecaf7a
@@ -19,6 +21,10 @@ steps:
 
   - name: validate-and-build
     image: rust:1.98.1-bookworm@sha256:9a73a5088750b4c95158ab26629c854c3d6fc4b173cb7bc8079ad252d8ed7bfa
+    environment:
+      # Python tests must not leave __pycache__ in the source tree that
+      # release-source-inventory.sh audits.
+      PYTHONDONTWRITEBYTECODE: "1"
     commands:
       - apt-get update >/dev/null
       - apt-get install -y --no-install-recommends ca-certificates clang git jq lld llvm mold nodejs openssh-client pkg-config libssl-dev python3 ripgrep >/dev/null
@@ -40,8 +46,12 @@ steps:
           echo "Validation complete; native build runs only for manual and version-tag events."
           exit 0
         fi
+        # The CI tests above import Python scripts; drop any bytecode caches so the
+        # release source inventory sees exactly the committed tree.
+        find . -path ./target -prune -o -type d -name __pycache__ -prune -exec rm -rf {} +
         output="/woodpecker-output/$${CI_PIPELINE_NUMBER}-$${CI_COMMIT_SHA}/linux"
         bash scripts/ci/woodpecker-build-platform.sh linux "$${release_version}" "$${output}"
+        find . -path ./target -prune -o -type d -name __pycache__ -prune -exec rm -rf {} +
         bash scripts/ci/woodpecker-release-gates.sh "$${release_version}" "$${output}"
         package_output="$${output}-package"
         node scripts/ci/woodpecker-package-platform.mjs linux "$$(dirname "$${output}")" "$${package_output}"

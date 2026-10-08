@@ -67,6 +67,17 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   installed-consumer qualification remains pending.
 - Preserve generated builtin file timestamps when their content is unchanged,
   preventing the analysis build script from invalidating its own Cargo input.
+- Keep Python bytecode caches out of the Linux Woodpecker source tree so the
+  release source inventory accepts manual native builds.
+- Pin compiler 0.5.3 (`45ac84fe`): per-file corelib service authority, typed
+  CLIF instruction blocks with array payload access, runtime-optional externs
+  (new trap code 11, rebuild runtime kits), keyword-boundary grammar fix,
+  optimizing JIT, sized array allocation, geometric `Array.Append` growth, heap
+  span reuse, and network reads that keep data when a deadline races a
+  completed transfer. Its corelib (`82ecd75`, `beskid_standard` branch `0.5.3`)
+  adds the networking packages uri, codec, connect, crypto, x509, tls, http2,
+  websocket, quic, http3 and web, and keeps persistent collection versions
+  independent under in-place `Array.Append`.
 - Refocus the 0.5.2 announcement on concurrency, networking, portable
   dependencies, and practical project workflows; keep packaging notes concise.
 - Announce the published 0.5.2 toolchain on the main website, with corrected
