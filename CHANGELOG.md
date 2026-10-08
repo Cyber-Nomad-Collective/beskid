@@ -13,7 +13,7 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 - Keep Python bytecode caches out of the Linux Woodpecker source tree so the
   release source inventory accepts manual native builds.
-- Pin compiler 0.5.3 (`9ce4bb88`): per-file corelib service authority, typed
+- Pin compiler 0.5.3 (`43903d3c`): per-file corelib service authority, typed
   CLIF instruction blocks with array payload access, runtime-optional externs
   (new trap code 11, rebuild runtime kits), keyword-boundary grammar fix,
   optimizing JIT, sized array allocation, geometric `Array.Append` growth, heap
