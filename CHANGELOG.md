@@ -11,6 +11,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Announce beskid 0.5.3 on the blog: the Corelib networking packages, typed
+  CLIF blocks, optional externs, cheaper arrays and the upgrade notes.
 - Check out `beskid_vscode` in the Linux Woodpecker build so the compiler gate can
   compare the LSP project-explorer commands with the extension's contract snapshot.
 - Keep Python bytecode caches out of the Linux Woodpecker source tree so the
