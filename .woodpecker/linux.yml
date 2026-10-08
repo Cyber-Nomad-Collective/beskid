@@ -51,6 +51,7 @@ steps:
         find . -path ./target -prune -o -type d -name __pycache__ -prune -exec rm -rf {} +
         output="/woodpecker-output/$${CI_PIPELINE_NUMBER}-$${CI_COMMIT_SHA}/linux"
         bash scripts/ci/woodpecker-build-platform.sh linux "$${release_version}" "$${output}"
+        find . -path ./target -prune -o -type d -name __pycache__ -prune -exec rm -rf {} +
         bash scripts/ci/woodpecker-release-gates.sh "$${release_version}" "$${output}"
         package_output="$${output}-package"
         node scripts/ci/woodpecker-package-platform.mjs linux "$$(dirname "$${output}")" "$${package_output}"
