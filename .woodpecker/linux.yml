@@ -46,6 +46,9 @@ steps:
           echo "Validation complete; native build runs only for manual and version-tag events."
           exit 0
         fi
+        # The CI tests above import Python scripts; drop any bytecode caches so the
+        # release source inventory sees exactly the committed tree.
+        find . -path ./target -prune -o -type d -name __pycache__ -prune -exec rm -rf {} +
         output="/woodpecker-output/$${CI_PIPELINE_NUMBER}-$${CI_COMMIT_SHA}/linux"
         bash scripts/ci/woodpecker-build-platform.sh linux "$${release_version}" "$${output}"
         bash scripts/ci/woodpecker-release-gates.sh "$${release_version}" "$${output}"
