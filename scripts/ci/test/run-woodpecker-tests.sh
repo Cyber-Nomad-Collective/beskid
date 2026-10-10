@@ -8,7 +8,7 @@ for suite in \
   build-release-platform build-release-state build-release-artifact-bundle publish-release-stream \
   woodpecker-build-platform release-source-inventory compiler-rust-gate-timeout woodpecker-release-gates woodpecker-release-tag-guard woodpecker-workflow-contract woodpecker-standard-workflow \
   open-vsx-publish marketplace-workflow woodpecker-javascript woodpecker-javascript-workflow woodpecker-platform-images woodpecker-release \
-  woodpecker-upload-handoff woodpecker-fetch-handoffs; do
+  woodpecker-upload-handoff woodpecker-fetch-handoffs release-credential-hygiene; do
   echo "Migration contract: ${suite}"
   bash "scripts/ci/test/${suite}.test.sh"
 done

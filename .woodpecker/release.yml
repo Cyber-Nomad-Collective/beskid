@@ -18,9 +18,49 @@ steps:
       - bash scripts/ci/woodpecker-fetch-handoffs.sh "$${BESKID_BUILD_PIPELINE_NUMBER:?select build run}" "$${CI_COMMIT_SHA}" /woodpecker-handoff
       - bash scripts/ci/woodpecker-release.sh "$${BESKID_BUILD_PIPELINE_NUMBER:?select build run}" "$${BESKID_RELEASE_VERSION:?set stable version}"
     when:
-      - evaluate: 'BESKID_TASK == "release"'
+      - event: manual
+        evaluate: 'BESKID_TASK == "release"'
 
-# Woodpecker prepares release evidence without publication credentials.
+  # Credential-free proof of the qualified state, including the owner waiver.
+  - name: verify-release
+    image: node:22.16.0-bookworm
+    environment:
+      BESKID_PUBLISH_RELEASE: "0"
+    commands:
+      - apt-get update >/dev/null
+      - apt-get install -y --no-install-recommends ca-certificates git jq openssh-client >/dev/null
+      - test -n "$${BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_JSON:-}" || { echo 'set BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_JSON' >&2; exit 1; }
+      - bash scripts/ci/woodpecker-fetch-handoffs.sh "$${BESKID_BUILD_PIPELINE_NUMBER:?select build run}" "$${CI_COMMIT_SHA}" /woodpecker-handoff
+      - BESKID_PUBLISH_RELEASE=0 bash scripts/ci/woodpecker-release.sh "$${BESKID_BUILD_PIPELINE_NUMBER:?select build run}" "$${BESKID_RELEASE_VERSION:?set stable version}"
+    when:
+      - event: manual
+        branch: main
+        evaluate: 'BESKID_TASK == "release-publish"'
+
+  # The only step that receives the scoped GitHub publication secret. It
+  # re-fetches and re-validates the same handoffs before any GitHub call.
+  - name: publish-release
+    image: node:22.16.0-bookworm
+    environment:
+      BESKID_PUBLISH_RELEASE: "1"
+      GH_TOKEN:
+        from_secret: compiler_release_token
+    commands:
+      - apt-get update >/dev/null
+      - apt-get install -y --no-install-recommends ca-certificates gh git jq openssh-client >/dev/null
+      - bash scripts/ci/woodpecker-fetch-handoffs.sh "$${BESKID_BUILD_PIPELINE_NUMBER:?select build run}" "$${CI_COMMIT_SHA}" /woodpecker-handoff
+      - BESKID_PUBLISH_RELEASE=1 bash scripts/ci/woodpecker-release.sh "$${BESKID_BUILD_PIPELINE_NUMBER:?select build run}" "$${BESKID_RELEASE_VERSION:?set stable version}"
+    when:
+      - event: manual
+        branch: main
+        evaluate: 'BESKID_TASK == "release-publish"'
+
+# BESKID_TASK=release prepares evidence without publication credentials.
+# BESKID_TASK=release-publish is the manual main-only publication lane; only
+# its final step receives the scoped GitHub publication secret.
 when:
   - event: manual
     evaluate: 'BESKID_TASK == "release"'
+  - event: manual
+    branch: main
+    evaluate: 'BESKID_TASK == "release-publish"'

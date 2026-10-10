@@ -417,4 +417,93 @@ if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=true CI_PIPELINE_NUMBER=79 CI_C
 fi
 test ! -s "$tmp/gh.log" || fail 'nonmanual owner waiver reached GitHub'
 
+# Woodpecker publication is accepted only for the exact manual main
+# release-publish lane. Every other combination fails before any GitHub call.
+unset BESKID_MANUAL_PUBLISH
+lane_env=(CI=true CI_SYSTEM_NAME=woodpecker CI_PIPELINE_NUMBER=80 CI_COMMIT_SHA="$source_sha"
+  CI_PIPELINE_EVENT=manual CI_COMMIT_BRANCH=main CI_REPO=Cyber-Nomad-Collective/beskid
+  BESKID_TASK=release-publish GH_TOKEN=lane-token BESKID_PUBLISH_RELEASE=1
+  GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH")
+refusals=(
+  'wrong-event|CI_PIPELINE_EVENT=push|release-publish requires'
+  'pull-request|CI_PIPELINE_EVENT=pull_request|release-publish requires'
+  'wrong-branch|CI_COMMIT_BRANCH=release|release-publish requires'
+  'wrong-repo|CI_REPO=someone/beskid|release-publish requires'
+  'wrong-task|BESKID_TASK=release|Woodpecker publication requires'
+  'no-task|BESKID_TASK=|Woodpecker publication requires'
+  'wrong-sha|CI_COMMIT_SHA=0000000000000000000000000000000000000000|source identity'
+  'missing-token|GH_TOKEN=|publication requires GH_TOKEN'
+)
+for row in "${refusals[@]}"; do
+  IFS='|' read -r case_name override expected <<<"$row"
+  : >"$tmp/gh.log"
+  if env "${lane_env[@]}" "$override" bash "$script" "$build_run" "$version" \
+    >"$tmp/lane-$case_name.out" 2>"$tmp/lane-$case_name.err"; then
+    fail "Woodpecker publication accepted $case_name"
+  fi
+  grep -Fq "$expected" "$tmp/lane-$case_name.err" || fail "Woodpecker $case_name refusal was not diagnosed"
+  test ! -s "$tmp/gh.log" || fail "Woodpecker $case_name refusal reached GitHub"
+  ! grep -Fq lane-token "$tmp/lane-$case_name.out" "$tmp/lane-$case_name.err" || fail "Woodpecker $case_name printed the token"
+done
+
+# A dirty checkout is refused even inside the exact lane.
+printf 'not in the release commit\n' >"$root/untracked-source.bd"
+: >"$tmp/gh.log"
+if env "${lane_env[@]}" bash "$script" "$build_run" "$version" 2>"$tmp/lane-dirty.err"; then
+  fail 'Woodpecker publication accepted a dirty checkout'
+fi
+grep -Fq 'clean local main checkout' "$tmp/lane-dirty.err" || fail 'Woodpecker dirty checkout was not diagnosed'
+test ! -s "$tmp/gh.log" || fail 'Woodpecker dirty checkout reached GitHub'
+rm "$root/untracked-source.bd"
+
+# The exact lane passes the publication authority. The fixture can then only
+# be stopped by the test-root guard, which proves the authority accepted it.
+: >"$tmp/gh.log"
+if env "${lane_env[@]}" WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" bash "$script" "$build_run" "$version" \
+  2>"$tmp/lane-exact.err"; then
+  fail 'Woodpecker accepted a fixture test root'
+fi
+grep -Fq 'WOODPECKER_RELEASE_TEST_ROOT is forbidden in Woodpecker' "$tmp/lane-exact.err" || \
+  fail "exact Woodpecker lane was not accepted by the publication authority: $(cat "$tmp/lane-exact.err")"
+test ! -s "$tmp/gh.log" || fail 'exact Woodpecker lane authority check reached GitHub'
+
+# The credential-free verify step of the lane is refused outside the lane too.
+if env "${lane_env[@]}" BESKID_PUBLISH_RELEASE=0 GH_TOKEN= CI_COMMIT_BRANCH=feature \
+  bash "$script" "$build_run" "$version" 2>"$tmp/lane-verify.err"; then
+  fail 'Woodpecker release-publish verification accepted a non-main branch'
+fi
+grep -Fq 'release-publish requires' "$tmp/lane-verify.err" || fail 'non-main verify step was not diagnosed'
+
+# Publication passes the token only through gh's process environment. The
+# recording wrappers prove no argv carries it and no non-gh helper receives it.
+token='tok-release-SECRET-7f3c'
+mkdir -p "$tmp/recbin"
+: >"$tmp/gh-record.log"; : >"$tmp/node-record.log"
+real_node="$(command -v node)"
+cat >"$tmp/recbin/gh" <<GH
+#!/usr/bin/env bash
+if [[ "\${GH_TOKEN:-}" == "$token" ]]; then env_state=token; else env_state=missing; fi
+printf '%s\t%s\n' "\$env_state" "\$*" >>"$tmp/gh-record.log"
+exec "$tmp/bin/gh" "\$@"
+GH
+cat >"$tmp/recbin/node" <<NODE
+#!/usr/bin/env bash
+[[ -z "\${GH_TOKEN+x}" ]] || printf 'node received GH_TOKEN: %s\n' "\$*" >>"$tmp/node-record.log"
+exec "$real_node" "\$@"
+NODE
+chmod +x "$tmp/recbin/gh" "$tmp/recbin/node"
+: >"$tmp/gh.log"
+WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" BESKID_MANUAL_PUBLISH=1 CI=false CI_PIPELINE_NUMBER=742 \
+  CI_COMMIT_SHA="$source_sha" GH_TOKEN="$token" BESKID_PUBLISH_RELEASE=1 \
+  BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_JSON="$(jq -c . "$waiver")" \
+  GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/recbin:$tmp/bin:$PATH" \
+  bash "$script" "$build_run" "$version" >"$tmp/token-run.out" 2>"$tmp/token-run.err" || \
+  fail "recorded publication failed: $(cat "$tmp/token-run.err")"
+test -s "$tmp/gh-record.log" || fail 'recorded publication made no gh call'
+! grep -v '^token	' "$tmp/gh-record.log" | grep -q . || fail 'a gh call ran without the token in its environment'
+! cut -f2- "$tmp/gh-record.log" | grep -Fq "$token" || fail 'the token appeared in gh argv'
+test ! -s "$tmp/node-record.log" || fail "a node helper received GH_TOKEN: $(cat "$tmp/node-record.log")"
+! grep -Fq "$token" "$tmp/token-run.out" "$tmp/token-run.err" || fail 'publication output printed the token'
+! grep -rFq "$token" "$tmp/rootfs" "$tmp/remote" || fail 'the token was written to disk'
+
 echo 'woodpecker release tests OK'

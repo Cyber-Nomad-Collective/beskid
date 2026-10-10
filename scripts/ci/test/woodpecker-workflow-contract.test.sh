@@ -52,10 +52,12 @@ for file in "${workflow_dir}/linux.yml" "${workflow_dir}/macos.yml" "${workflow_
 done
 grep -Fq 'BESKID_TASK == "build" || BESKID_TASK == "validate"' "${workflow_dir}/linux.yml"
 grep -Fq 'BESKID_TASK == "release"' "${workflow_dir}/release.yml"
-if grep -iqE 'from_secret|GH_TOKEN|BESKID_PUBLISH_RELEASE|release-publish' "${workflow_dir}/release.yml"; then
-  echo 'Woodpecker release preparation must not receive publication credentials or a publish route' >&2
-  exit 1
-fi
+grep -Fq 'BESKID_TASK == "release-publish"' "${workflow_dir}/release.yml"
+# Only the final release-publish step binds a secret; the structural step,
+# event, branch, and image checks live in woodpecker-secret-scope.test.py.
+test "$(grep -c 'from_secret' "${workflow_dir}/release.yml")" -eq 1
+grep -Fq 'from_secret: compiler_release_token' "${workflow_dir}/release.yml"
+python3 "${ROOT}/scripts/ci/test/woodpecker-secret-scope.test.py"
 
 # Marketplace releases consume reviewed native evidence on the trusted manual
 # Woodpecker host. Only the final publish step receives the existing secret.
