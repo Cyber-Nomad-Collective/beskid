@@ -4,7 +4,8 @@ Project preparation in the language server runs the native Mods of the project (
 
 ## What Changes
 
-- New initialization option `initializationOptions.modHost = { "path": "<absolute beskid executable>" }` selects the native Mod host executable. Without the option, the server uses the `beskid` CLI installed next to the language server binary.
+- New initialization option `initializationOptions.modHost = { "path": "<absolute beskid executable>", "runtimePrefix": "<absolute installation prefix>", "runtimeProfile": "debug" | "release" }` selects the native Mod host executable and the runtime kit that Mod artifacts are qualified and loaded against. Every key is optional; at least one is required. Without `path`, the server uses the `beskid` CLI installed next to the language server binary. Without `runtimePrefix`, the server uses the runtime kit that its process resolves for itself.
+- Mod loading and qualification receive the runtime kit as one value (`RuntimeKitSelection`: prefix and profile) carried by the Mod host. They never read it from the process environment, so a selection in one session cannot change another, and test harnesses do not mutate the process environment.
 - An invalid `modHost` value fails `initialize` with the JSON-RPC `InvalidParams` error. The server never falls back to the installed Mod host.
 - The selected Mod host does not bypass Mod artifact descriptor and authority qualification.
 - A project preparation failure is reported as a `project-preparation` error diagnostic and as a log record. It is never dropped.
@@ -21,11 +22,11 @@ None.
 
 ## Impact
 
-Compiler: `beskid_lsp` (`session/mod_host.rs`, `server/backend.rs`, `diagnostics.rs`) and `beskid_tools::native_mods::ModHostSelection`. Editor extensions can pass the option; no extension change is required.
+Compiler: `beskid_lsp` (`session/mod_host.rs`, `server/backend.rs`, `diagnostics.rs`), `beskid_tools::native_mods::ModHostSelection`, and `beskid_analysis::mod_host` (`ModHost`, `RuntimeKitSelection`, Mod loading). Editor extensions can pass the option; no extension change is required.
 
 Compatibility: clients that do not send `modHost` keep the installed Mod host. A client that sends an invalid `modHost` value no longer starts a session.
 
-Migration: none for clients without the option. A client that sends the option must send an object with exactly one `path` key that names an absolute path to an executable file.
+Migration: none for clients without the option. A client that sends the option must send an object with at least one of `path`, `runtimePrefix` and `runtimeProfile`; `path` names an absolute path to an executable file, `runtimePrefix` names an absolute installation prefix with an exact runtime kit, and `runtimeProfile` requires `runtimePrefix`.
 
 Legacy URLs: no public route changes.
 
