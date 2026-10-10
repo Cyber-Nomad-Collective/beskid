@@ -2,6 +2,8 @@
 # Render compiler release notes from the machine-readable release state.
 # Usage: render-compiler-release-notes.sh <release-state.json> <stream>
 set -euo pipefail
+# Credential-free: this renderer never reads tokens; never enable xtrace here.
+set +x
 
 state="${1:?release state path}"
 stream="${2:?stream}"

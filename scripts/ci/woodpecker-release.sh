@@ -1,7 +1,17 @@
 #!/usr/bin/env bash
 # Prepare one three-platform stable release and, only when explicitly enabled,
 # publish its canonical compiler streams and native installers.
+#
+# Credential handling: never enable xtrace here and never print the
+# environment. GH_TOKEN is removed from this shell's exported environment at
+# start-up and reaches only `gh` (and the two GitHub publisher scripts) through
+# their process environment, never through argv, URLs, files, or git remotes.
 set -euo pipefail
+set +x
+release_token="${GH_TOKEN:-}"
+unset GH_TOKEN
+gh() { GH_TOKEN="$release_token" command gh "$@"; }
+with_token() { GH_TOKEN="$release_token" "$@"; }
 
 [[ "$#" == 2 ]] || { echo 'usage: woodpecker-release.sh <build-run> <version>' >&2; exit 2; }
 build_run="$1"; requested_version="$2"
@@ -23,6 +33,43 @@ if [[ "${CI_SYSTEM_NAME:-}" == woodpecker ]]; then
   }
 fi
 
+# The only Woodpecker publication route is the manual main-only release-publish
+# lane of the canonical repository, at the exact checked-out commit.
+woodpecker_publish_lane() {
+  [[ "${CI_SYSTEM_NAME:-}" == woodpecker &&
+     "${CI_PIPELINE_EVENT:-}" == manual &&
+     "${CI_COMMIT_BRANCH:-}" == main &&
+     "${CI_REPO:-}" == Cyber-Nomad-Collective/beskid &&
+     "${BESKID_TASK:-}" == release-publish &&
+     "${CI_COMMIT_SHA:-}" == "$source_sha" ]]
+}
+if [[ "${CI_SYSTEM_NAME:-}" == woodpecker && "${BESKID_TASK:-}" == release-publish ]] && ! woodpecker_publish_lane; then
+  echo 'Woodpecker release-publish requires a manual main pipeline of Cyber-Nomad-Collective/beskid at the checked-out commit' >&2
+  exit 1
+fi
+
+if [[ "${BESKID_PUBLISH_RELEASE:-0}" == 1 ]]; then
+  [[ -n "$release_token" ]] || { echo 'publication requires GH_TOKEN' >&2; exit 1; }
+  if [[ "${CI_SYSTEM_NAME:-}" == woodpecker ]]; then
+    woodpecker_publish_lane || {
+      echo 'Woodpecker publication requires the manual main release-publish lane of Cyber-Nomad-Collective/beskid at the checked-out commit' >&2
+      exit 1
+    }
+  else
+    [[ "${BESKID_MANUAL_PUBLISH:-0}" == 1 ]] || {
+      echo 'publication requires an external manual publisher and GH_TOKEN' >&2; exit 1;
+    }
+    [[ "${CI:-}" != true && "$(git -C "$repo" branch --show-current)" == main ]] || {
+      echo 'manual publication requires a clean local main checkout' >&2; exit 1;
+    }
+  fi
+  [[ -z "$(git -C "$repo" status --porcelain --untracked-files=normal --ignore-submodules=all)" ]] || {
+    echo 'manual publication requires a clean local main checkout' >&2; exit 1;
+  }
+elif [[ "${BESKID_PUBLISH_RELEASE:-0}" != 0 ]]; then
+  echo 'BESKID_PUBLISH_RELEASE must be 0 or 1' >&2; exit 2
+fi
+
 test_root="${WOODPECKER_RELEASE_TEST_ROOT:-}"
 if [[ -n "$test_root" && "${CI_SYSTEM_NAME:-}" == woodpecker ]]; then
   echo 'WOODPECKER_RELEASE_TEST_ROOT is forbidden in Woodpecker' >&2; exit 2
@@ -30,20 +77,6 @@ fi
 handoff_root="${test_root%/}/woodpecker-handoff"
 output_root="${test_root%/}/woodpecker-output"
 [[ -n "$test_root" ]] || { handoff_root=/woodpecker-handoff; output_root=/woodpecker-output; }
-
-if [[ "${BESKID_PUBLISH_RELEASE:-0}" == 1 ]]; then
-  [[ "${CI_SYSTEM_NAME:-}" != woodpecker && "${BESKID_MANUAL_PUBLISH:-0}" == 1 && -n "${GH_TOKEN:-}" ]] || {
-    echo 'publication requires an external manual publisher and GH_TOKEN' >&2; exit 1;
-  }
-  [[ "${CI:-}" != true && "$(git -C "$repo" branch --show-current)" == main ]] || {
-    echo 'manual publication requires a clean local main checkout' >&2; exit 1;
-  }
-  [[ -z "$(git -C "$repo" status --porcelain --untracked-files=normal --ignore-submodules=all)" ]] || {
-    echo 'manual publication requires a clean local main checkout' >&2; exit 1;
-  }
-elif [[ "${BESKID_PUBLISH_RELEASE:-0}" != 0 ]]; then
-  echo 'BESKID_PUBLISH_RELEASE must be 0 or 1' >&2; exit 2
-fi
 
 validate_handoff() {
   node - "$1" "$2" "$source_sha" "$compiler_sha" "$version" "$build_run" <<'NODE'
@@ -79,6 +112,9 @@ for role in "${roles[@]}"; do
 done
 
 release="$output_root/releases/${pipeline}-${source_sha}"
+# The release-publish lane verifies first and then re-validates from a fresh
+# snapshot in its publishing step; keep both transactions side by side.
+[[ "${CI_SYSTEM_NAME:-}" != woodpecker || "${BESKID_PUBLISH_RELEASE:-0}" != 1 ]] || release="${release}-publish"
 mkdir -p "$output_root/releases"
 mkdir -m 700 "$release"
 mkdir "$release/input" "$release/native"
@@ -173,17 +209,14 @@ done
 cp "$release/input/macos/beskid.rb" "$assets/beskid.rb"
 release_assets=("${installers[@]}" beskid.rb)
 
-if [[ "${BESKID_PUBLISH_RELEASE:-0}" == 0 ]]; then
-  echo "Woodpecker release prepared: $qualified"
-  exit 0
-fi
-
 owner_waiver_file="${BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_FILE:-}"
 owner_waiver_json="${BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_JSON:-}"
 if [[ -n "$owner_waiver_file" || -n "$owner_waiver_json" ]]; then
   [[ -z "$owner_waiver_file" || -z "$owner_waiver_json" ]] || {
     echo 'provide only one Windows installer owner waiver input' >&2; exit 1;
   }
+  # Preparation validates a supplied record too, so the release-publish lane
+  # rejects a wrong waiver before its credentialed step starts.
   # This manual-only exception records the release owner's decision, not a
   # claim that the unrun scenario matrix passed. Bind it to the checked-out
   # source and to the exact installer already verified by package-result.
@@ -202,7 +235,7 @@ const temporary=`${path}.waiver.tmp`;
 writeFileSync(temporary,`${JSON.stringify(state,null,2)}\n`,{flag:'wx'});
 renameSync(temporary,path);
 NODE
-else
+elif [[ "${BESKID_PUBLISH_RELEASE:-0}" == 1 ]]; then
   smoke_dir="${BESKID_WINDOWS_INSTALLER_SMOKE_DIR:-}"
   [[ -n "$smoke_dir" && -d "$smoke_dir" ]] || {
     echo 'BESKID_WINDOWS_INSTALLER_SMOKE_DIR or a Windows installer owner waiver is required before publication' >&2
@@ -214,8 +247,13 @@ else
   exit 1
 fi
 
+if [[ "${BESKID_PUBLISH_RELEASE:-0}" == 0 ]]; then
+  echo "Woodpecker release prepared: $qualified"
+  exit 0
+fi
+
 for stream in cli lsp bundle; do
-  bash "$scripts/publish-release-stream.sh" "$stream" "$version" "$compiler_sha" "$assets" immutable stable "$state"
+  with_token bash "$scripts/publish-release-stream.sh" "$stream" "$version" "$compiler_sha" "$assets" immutable stable "$state"
 done
 
 # Preflight every existing immutable installer before uploading any missing one.
@@ -231,10 +269,10 @@ for name in "${release_assets[@]}"; do
   fi
 done
 [[ "${#missing[@]}" == 0 ]] || gh release upload "cli-v${version}" --repo Cyber-Nomad-Collective/beskid_compiler "${missing[@]}"
-bash "$scripts/publish-homebrew-formula.sh" "$assets/beskid.rb" "$version"
+with_token bash "$scripts/publish-homebrew-formula.sh" "$assets/beskid.rb" "$version"
 
 for stream in cli lsp bundle; do
-  bash "$scripts/publish-release-stream.sh" "$stream" "$version" "$compiler_sha" "$assets" rolling stable "$state"
+  with_token bash "$scripts/publish-release-stream.sh" "$stream" "$version" "$compiler_sha" "$assets" rolling stable "$state"
 done
 gh release upload cli-stable --repo Cyber-Nomad-Collective/beskid_compiler "${release_assets[@]/#/$assets/}" --clobber
 echo "Woodpecker release published: $version ($source_sha)"

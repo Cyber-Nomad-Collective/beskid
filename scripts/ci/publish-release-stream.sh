@@ -16,6 +16,13 @@
 #   release-channel  stable (default) | unstable
 # Env: GH_TOKEN (github token with contents:write on beskid_compiler)
 set -euo pipefail
+# Never enable xtrace or print the environment here. GH_TOKEN leaves the
+# exported environment immediately and reaches only `gh` through its process
+# environment, never argv, URLs, files on disk, or git remotes.
+set +x
+release_token="${GH_TOKEN:-}"
+unset GH_TOKEN
+gh() { GH_TOKEN="$release_token" command gh "$@"; }
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 STREAM="${1:?stream (cli | lsp)}"
@@ -76,7 +83,7 @@ case "$PHASE" in
   *) echo "Unsupported publish phase: $PHASE" >&2; exit 1 ;;
 esac
 
-: "${GH_TOKEN:?GH_TOKEN must be exported (contents:write on ${REPO})}"
+[[ -n "${release_token}" ]] || { echo "GH_TOKEN must be exported (contents:write on ${REPO})" >&2; exit 1; }
 
 [[ -n "${RELEASE_STATE}" && -f "${RELEASE_STATE}" ]] || {
   echo 'release-state.json is required for publication' >&2

@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 # Publish the rendered global-version formula to the Beskid Homebrew tap.
 set -euo pipefail
+# Never enable xtrace or print the environment here. GH_TOKEN leaves the
+# exported environment immediately and reaches only `gh` through its process
+# environment, never argv, URLs, files on disk, or git remotes.
+set +x
+release_token="${GH_TOKEN:-}"
+unset GH_TOKEN
+gh() { GH_TOKEN="$release_token" command gh "$@"; }
 
 [[ "$#" == 2 ]] || { echo 'usage: publish-homebrew-formula.sh <formula> <version>' >&2; exit 2; }
 formula="$1"
@@ -10,7 +17,7 @@ path='Formula/beskid.rb'
 
 [[ -f "$formula" ]] || { echo "missing formula: $formula" >&2; exit 1; }
 [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo 'stable version must be X.Y.Z' >&2; exit 2; }
-: "${GH_TOKEN:?GH_TOKEN must be exported for Homebrew publication}"
+[[ -n "$release_token" ]] || { echo 'GH_TOKEN must be exported for Homebrew publication' >&2; exit 1; }
 grep -Fq "/v${version}/" "$formula" || { echo 'formula does not reference the immutable bundle release' >&2; exit 1; }
 grep -Fq "version \"${version}\"" "$formula" || { echo 'formula version does not match the release' >&2; exit 1; }
 
