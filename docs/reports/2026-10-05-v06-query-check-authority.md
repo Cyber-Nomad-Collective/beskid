@@ -141,6 +141,65 @@ Neither is a legacy checker obligation; whether the staged rule stays in
 no legacy emission site either; the gate renders it from `spawn_legality`,
 which emission already enforces.
 
+## Phase 3 (2026-10-09): sole authority
+
+Phase 3 closes the removal condition. Rulings are recorded in
+`docs/reports/2026-10-04-v06-decisions.md` ("the query gate is the sole semantic authority of
+`beskid check`").
+
+- `semantic_diagnostics_for_roots` judges every own unit (`library_unit_indices`: the entry plus
+  every unit under the host source root), for App and Lib targets. `beskid check` assembles with
+  `AssemblyDiscovery::WorkspaceScan` so an own unit nothing imports (a Mod's `Driver.bd`) is
+  assembled and judged, and its native Mod activation is decided on that same assembly
+  (`prepare_native_mod_executor_with_front_end`); the build path and the tools build-side
+  semantic gate (which runs without a Mod host) keep the import closure. The
+  language server keeps the import closure of the open buffer: it publishes per buffer, and a
+  sibling unit is judged when it is the open buffer.
+- The prepare spine's diagnostics path requires the query authority and fails closed without it.
+  The legacy `TypeChecker` still builds the executable front end, but its errors are never
+  rendered; `additional_root_diagnostics` became `own_unit_rule_diagnostics` (structural rules
+  only, over every own unit). `beskid_analysis::services::prepare_compilation_diagnostics`,
+  `prepare_compilation_diagnostics_isolated`, the `analyze_source_in_project*` family,
+  `AnalyzeInProjectOptions`, the `SemanticFactsError` converter and `analysis/rules/types.rs`
+  (`emit_type_error`) are removed. The `prepare` unit tests that judged diagnostics moved to
+  `beskid_queries/tests/prepare_diagnostics_authority.rs`.
+- New query obligations (parity modules beside `parity_tests.rs`, sharing `parity_harness.rs`,
+  which also builds multi-unit entry-less libraries):
+  - `parity_literals_externs_clif.rs`: T0905 for unsuffixed integer literals against their
+    contextual destination (`contextual_integer_literal_abi_type`; typed let, return, call
+    argument, assignment, negated and grouped literals, unsigned destinations); T0906
+    `ExternInvalidOptional` (non-boolean `Optional`, malformed `bool Available();`, which is
+    exempt from the C profile); E1232 `InvalidClifBlock` (`gate/clif.rs`, every legacy detail
+    class: no typed context, non-scalar context, surface rejection, `%N` out of range, array or
+    non-scalar value parameter, payload of a non-payload parameter, method receiver, parameters
+    inside a lambda); E1206 for a valued `return` in a `test` body (`typing.rs`, expected `unit`).
+  - `parity_values.rs` (`values.rs`): E1206 for generic callee arguments whose parameter mentions
+    no callee generic or whose generic the call fixes, contract-dispatch arguments, callable-value
+    call arguments and results, event raise arguments, lambda bodies against function-typed
+    destinations and subscription handlers, non-conforming nominals into contract-typed
+    destinations (`contract_accepts`), fields of generic type literals and arguments of generic
+    enum constructors fixed by the literal path or the contextual destination, nested enum and
+    literal payload patterns, and a nominal `return` in a `test` body.
+  - `parity_resolution.rs` (`gate/expressions.rs`, `units.rs`, `value_paths.rs`,
+    `local_type_resolution.rs`): E1201 `TypeUnknownValueType` for a function named as a value and
+    for a type-qualified value path; E1213 / E1211 / E1201 along field paths of three or more
+    segments; E1102 for two `mod` declarations of one path, builtin collisions, and an item an
+    earlier unit of the same logical module declares; E1601 / E1607 for generic implementors and
+    applied generic contracts (E1602 only for closed signatures); qualified type paths classified
+    as the legacy resolver (E1108 unknown module, E1104 ambiguous, E1107 private, E1201
+    `ResolveUnknownTypeInModule`); non-call value paths classified like call targets (E1108,
+    E1101 `ResolveUnknownValueInModule`, E1107); `TypeInaccessibleStructField` across units.
+  - `units.rs`: E1201 for a `where` bound whose parameter is not a generic of its declaration or
+    whose path names no contract (lexical shadowing by a nearer type, inline-module contracts
+    invisible outside, private contracts not importable); `gate/expressions.rs`: E1610 for a
+    generic callable forwarding its own unbounded parameter to a bounded callee (the legacy
+    `check_generic_function_bounds` caller-bound rule).
+- Not a legacy obligation after inspection: E1224 `JoinWouldDeadlock` has no reachable legacy
+  emission shape (the handle local is registered only after its `spawn` initializer is typed, so
+  a join inside the handle's own lambda is an unresolved value there); the gate's `gate/control.rs`
+  obligation stays, with a fixture asserting the gate reports E1101/E1107 for that shape, not
+  E1224.
+
 ## Coverage inventory: legacy class to query obligation to test
 
 Codes are the `SemanticIssueKind` codes the legacy `emit_type_error` /
@@ -215,21 +274,32 @@ Not legacy `TypeChecker` obligations (no construction site): E1205
 `CallArgumentMismatch`, E1305 `MatchArmTypeMismatch` (staged rule), E1225
 `StackReferenceEscapesSpawn` (gate renders the `spawn_legality` diagnostic).
 
-### Not yet covered (legacy checker retained for these)
+### Rows closed in phase 3 (previously "not yet covered")
 
-| Legacy class | Code | Remaining shape |
-| --- | --- | --- |
-| `TypeError::TypeMismatch` | E1206 | arguments of generic callees (other than E1229 conflicts), contract-dispatch and callable-value calls, and event raises; lambda bodies and lambda arguments against an expected signature; contract-typed destinations (conformance); fields of generic `type` literals and arguments of generic `enum` constructors; nested payload patterns |
-| `TypeError::ReturnTypeMismatch` | E1207 | `return` inside a `test` body |
-| `TypeError::UnknownValueType` | E1201 | a single-segment path naming a non-local item as a value; a local without a typed declaration; a multi-segment value path whose base is not a local |
-| `TypeError::InvalidMemberTarget`, `UnknownStructField` | E1213, E1211 | field paths of three or more segments through a primitive |
-| `TypeError::JoinWouldDeadlock` | E1224 | obligation present in `gate/control.rs`; no fixture (needs a handle joined inside its own spawned lambda) |
-| `TypeError::NumericLiteralOutOfRange` | T0905 | unsuffixed integer literals against a contextual destination (`i8 x = 300;`) |
-| `TypeError::ContractMethodMissingImplementation`, `ContractImplementationSignatureMismatch`, `ContractAssociatedTypeMissingBinding` | E1601, E1602, E1607 | generic implementors and generic contracts |
-| `TypeError::EnumConstructorMismatch` (pattern arity) | E1302 | the legacy checker reports pattern arity as E1302; the query reports E1307 (`member_reference_legality::PatternArity`) at the same pattern |
-| `ResolveError::DuplicateSymbol`, `DuplicateItem` across units | E1102 | symbol collisions between units of one module or package, `mod` declarations, builtin collisions |
-| `ResolveError::UnknownTypeInModule`, `PrivateItemInModule`, `UnknownModulePath` (type paths) | E1201, E1107, E1108 | the query reports every unresolved type path as E1201 (`unresolved_type_reference`); a private or module-missing type path keeps a different legacy code |
-| `ResolveError::UnknownValueInModule`, `PrivateItemInModule`, `UnknownModulePath` (value paths that are not call targets) | E1101, E1107, E1108 | `Module.Constant` and other non-call value paths are not judged |
+| Legacy class | Code | Query obligation | Test (module: fixture) |
+| --- | --- | --- | --- |
+| `TypeError::TypeMismatch` (generic callee arguments) | E1206 | `value_obligations` (`collect_call_argument_values`, `callee_substitutions`) | `parity_values`: rows a |
+| `TypeError::TypeMismatch` (contract dispatch, callable value, event raise) | E1206 | `value_obligations` (`collect_callable_value_call_values`, `collect_event_raise_values`) | `parity_values`: rows b, c, d |
+| `TypeError::TypeMismatch` (lambda body and parameters against an expected signature) | E1206 | `value_obligations` (`judge_lambda_body`) | `parity_values`: row e |
+| `TypeError::TypeMismatch` (contract-typed destination) | E1206 | `value_obligations` (`Destination::Contract`, `contract_accepts`) | `parity_values`: row f |
+| `TypeError::TypeMismatch` (generic `type` literal fields, generic `enum` constructor arguments) | E1206 | `value_obligations` (`literal_generic_arguments`, `generic_declared_destination`) | `parity_values`: row g |
+| `TypeError::TypeMismatch` (nested payload patterns) | E1206 | `value_obligations` (`judge_pattern`) | `parity_values`: row h |
+| `TypeError::TypeMismatch` (`return <value>` in a `test` body; legacy result `unit`) | E1206 | `typing_obligations` (primitive), `value_obligations` (nominal) | `parity_literals_externs_clif`: `valued_return_in_a_test_is_a_type_mismatch`; `parity_values`: row i |
+| `TypeError::UnknownValueType` (item named as a value, type-qualified value path) | E1201 | `gate_obligations::UnknownValueType` | `parity_resolution`: `COVERED_KINDS` |
+| `TypeError::InvalidMemberTarget`, `UnknownStructField`, `UnknownStructType` (field paths of three or more segments) | E1213, E1211, E1201 | `gate_obligations` (`collect_member_obligations` path walk) | `parity_resolution`: `COVERED_KINDS` |
+| `TypeError::JoinWouldDeadlock` | E1224 | `gate_obligations::JoinWouldDeadlock` (no reachable legacy emission shape; see phase 3) | `parity_literals_externs_clif`: `join_of_a_handle_inside_its_own_spawned_lambda_is_not_a_deadlock_finding` |
+| `TypeError::NumericLiteralOutOfRange` (unsuffixed literal against a contextual destination) | T0905 | `gate_obligations::NumericLiteralOutOfRange` (`contextual_integer_literal_abi_type`) | `parity_literals_externs_clif`: `UNSUFFIXED_OUT_OF_RANGE` |
+| `TypeError::ContractMethodMissingImplementation`, `ContractAssociatedTypeMissingBinding` (generic implementors, applied generic contracts) | E1601, E1607 | `unit_obligations` (`collect_conformance_obligations`) | `parity_resolution`: `COVERED_KINDS` |
+| `TypeError::ContractImplementationSignatureMismatch` (generics) | E1602 | `unit_obligations`, closed signatures only; an open signature (mentioning a contract or implementor generic) is not judged | `parity_resolution`: `COVERED_KINDS`, `SILENT` |
+| `TypeError::EnumConstructorMismatch` (pattern arity) | E1307 | `member_reference_legality::PatternArity` (ruling: E1307 is the code for pattern arity) | `parity_tests`: `COVERED` E1307 |
+| `ResolveError::DuplicateSymbol`, `DuplicateItem` (across units of one module, `mod` declarations, builtin collisions) | E1102 | `unit_obligations` (`collect_cross_unit_duplicate_obligations`, `collect_module_declaration_obligations`, `collect_builtin_collision_obligations`) | `parity_resolution`: `duplicate_item_across_units_of_one_module_is_reported_in_the_later_unit`, `COVERED_KINDS` |
+| `ResolveError::UnknownTypeInModule`, `PrivateItemInModule`, `UnknownModulePath` (type paths) | E1201, E1107, E1108 | `unresolved_type_reference` (classified kind) | `parity_resolution`: `qualified_type_paths_are_classified_like_the_legacy_resolver` |
+| `ResolveError::UnknownValueInModule`, `PrivateItemInModule`, `UnknownModulePath` (non-call value paths) | E1101, E1107, E1108 | `unit_obligations::ValuePath` (`value_paths.rs`) | `parity_resolution`: `qualified_value_paths_are_classified_like_qualified_callees` |
+| `TypeError::InaccessibleStructField` | E1211 | `member_reference_legality::InaccessibleStructField` | `parity_resolution`: `private_field_of_another_unit_is_inaccessible` |
+| `TypeError::InvalidClifBlock` | E1232 | `gate_obligations::InvalidClifBlock` (`gate/clif.rs`) | `parity_literals_externs_clif`: `CLIF_CLASSES` |
+| `TypeError::ExternInvalidOptional` | T0906 | `extern_profile_findings` | `parity_literals_externs_clif`: `invalid_optional_extern_contracts_are_reported_as_t0906` |
+| `TypeError::UnknownType` (`where` bound parameter or contract) | E1201 | `unit_obligations::UnresolvedWhereBound` | `prepare_diagnostics_authority`: `prepare_diagnostics_rejects_*bound*` |
+| `TypeError::GenericBoundNotSatisfied` (unconstrained forwarding of a caller generic) | E1610 | `gate_obligations::GenericBoundNotSatisfied` (`judge_unconstrained_forwarding`) | `prepare_diagnostics_authority`: `prepare_diagnostics_rejects_unconstrained_generic_forwarding_with_code` |
 
 ### Corelib false-positive patterns (query gate must stay silent)
 
@@ -247,24 +317,21 @@ or the legacy path is removed.
 
 ## Removal condition
 
-The legacy checker leaves `additional_root_diagnostics` and diagnostics-only
-`check` when every row of the "not yet covered" table has a query obligation
-and a parity fixture, and `check_typing_obligations` has been promoted into the
-codegen gate (`check_items`) so build and check judge the same obligations.
-After phase 2 the open rows are the table above; until they close, both
-authorities run and the spine deduplicates.
+Met in phase 3: every row of the former "not yet covered" table has a query obligation and a
+parity fixture, and the legacy checker no longer renders diagnostics on the `check`, `analyze`,
+or language-server path. `check_typing_obligations` stays a `check`-gate obligation set; the
+codegen gate (`check_items`) keeps judging what lowering needs, and a build still fails closed on
+the executable front end.
 
 ## Verification (coordinator, cwd `compiler/`)
 
-- `cargo test --locked -p beskid_queries legality` (typing fact unit tests)
-- `cargo test --locked -p beskid_queries parity_tests` (query-only parity,
-  `COVERED_KINDS`, Glue, and negative corpus; the `COVERED_KINDS` test lists
-  every failing class in one run)
-- `cargo test --locked -p beskid_queries entry` (roots gate, corelib service,
-  runtime fixture, entry-less library through the spine)
-- `cargo test --locked -p beskid_queries --test unavailable_inventory`
-- `cargo test --locked -p beskid_analysis prepare`
-- `cargo test --locked -p beskid_cli check`
-- `beskid check` over the corelib packages (with the isolated `BESKID_HOME` and
-  `BESKID_CONFIG_DIR`), to compare the error inventory against the rc11 logs
-  in `.build/rc11-check-corelib*.log`
+- `cargo test --locked -p beskid_queries --lib parity` (every parity module; `parity_tests` keeps
+  the negative corpus)
+- `cargo test --locked -p beskid_queries --lib legality`
+- `cargo test --locked -p beskid_queries --lib entry`
+- `cargo test --locked -p beskid_queries --test prepare_diagnostics_authority --test
+  unavailable_inventory --test try_diagnostics --test undefined_argument_diagnostics`
+- `cargo test --locked -p beskid_analysis --lib prepare` and `-- diagnostic_kinds`
+- `cargo test --locked -p beskid_cli analyze` / `check`
+- `cargo test --locked -p beskid_tests_projects diagnostics_parity`
+- `cargo test --locked -p beskid_lsp diagnostics`
