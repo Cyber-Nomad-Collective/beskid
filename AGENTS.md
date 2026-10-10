@@ -6,9 +6,10 @@
 - **Rust:** workspace in `compiler/`; `just replace` installs `beskid` + `beskid_lsp`, `just vscode` rebuilds the extension
 - **Sites:** **pnpm** for all site apps
 - **Build automation:** Woodpecker runs Linux validation and native Linux,
-  Windows, and macOS target builds through `scripts/ci/`; publishing is a
-  separately reviewed manual operation, and Watchtower alone deploys platform
-  images
+  Windows, and macOS target builds through `scripts/ci/`; stable releases are
+  published only through its manual `main`-only `release-publish` lane, whose
+  final step alone receives the scoped GitHub secret, and Watchtower alone
+  deploys platform images
 
 ## Tech Stack
 - **Compiler:** Rust, AOT-only, host composition. Corelib in `compiler/corelib` (Beskid sources, not a Rust crate move)
@@ -96,10 +97,12 @@ This project is indexed by GitNexus as **beskid** (121068 symbols, 223747 relati
 - Shared AST/DAG explorer UI (ReactFlow/d3) belongs in common `@beskid` components and should reuse one repo/browser explorer dialog across website, pckg, and tracker
 - OpenSpec `validate-standard` catalogues `AGENTS.md` and hard-fails TBD Purpose headers; regenerating `openspec/catalog.json` may be required after editing either
 - Woodpecker is the sole root build service. It validates trusted pushes and
-  produces durable, checksummed Linux, Windows, and macOS target outputs, but
-  it has no publication or deployment credentials. Stable publication remains
-  a reviewed manual operation; Watchtower in `beskid_sites/deploy` alone
-  reconciles production. Woodpecker is also the sole root editor-marketplace
-  publisher; GitHub Actions is limited to repository-native maintenance work.
+  produces durable, checksummed Linux, Windows, and macOS target outputs. It
+  publishes stable releases only through the manual `main`-only
+  `release-publish` lane, whose final `publish-release` step alone receives
+  the scoped GitHub secret `compiler_release_token`; it holds no deployment
+  credentials. Watchtower in `beskid_sites/deploy` alone reconciles
+  production. Woodpecker is also the sole root editor-marketplace publisher;
+  GitHub Actions is limited to repository-native maintenance work.
 - While sites still resolve `@beskid/*` via `file:../../beskid_web_common`, CI and Docker must checkout/copy that submodule before `pnpm install` (same pattern as the website image)
 - Generation-bound Salsa/syntax facts in `beskid_queries` are semantic authority for LSP/IDE (no per-request HIR rebuilds or dual snapshot paths); ABI-v5 runtime kits use exact installed-prefix discovery/validation and fail closed on missing, mismatched, or tampered kits

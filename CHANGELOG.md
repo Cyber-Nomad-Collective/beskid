@@ -11,6 +11,14 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Publish stable releases from `ci.beskid-lang.org` through the manual
+  `main`-only Woodpecker `release-publish` lane. A credential-free
+  `verify-release` step proves the qualified state and owner waiver; only the
+  final `publish-release` step receives `compiler_release_token`.
+  `woodpecker-release.sh` publishes inside Woodpecker only for the exact
+  manual, `main`, canonical-repository, task, and checked-out-commit identity.
+  The release scripts give `GH_TOKEN` only to `gh`, and new contract tests fix
+  secret scoping, pinned images, and the absence of shell tracing.
 - Announce beskid 0.5.3 on the blog: the Corelib networking packages, typed
   CLIF blocks, optional externs, cheaper arrays and the upgrade notes.
 - Check out `beskid_vscode` in the Linux Woodpecker build so the compiler gate can

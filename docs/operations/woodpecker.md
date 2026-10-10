@@ -3,15 +3,17 @@
 Woodpecker 3.18.1 on `bdziam.dev` runs beskid builds. Linux performs normal
 validation. Linux, macOS, and Windows perform native target builds and local
 installer packaging; their output is durable and named by pipeline and source
-SHA. A manual `main` Woodpecker release prepares the existing aggregate; it
-has no publication credentials.
+SHA. The manual `release` task prepares the aggregate without any credential.
+Stable releases are published from Woodpecker itself, through the manual
+`main`-only `release-publish` lane. Only the last step of that lane receives
+the scoped GitHub secret, so nobody pastes or handles a publication token.
 
 No workflow deploys production services. The rootless platform-image job is
 optional.
 Open VSX and Microsoft Marketplace publication have separate protected manual
 Woodpecker routes. Only the final Open VSX publish step receives the existing
-`open_vsx_token` repository secret. Homebrew and OCI publishing use the
-existing canonical manual recipes.
+`open_vsx_token` repository secret. The Homebrew formula is published by the
+stable `release-publish` lane; OCI publishing uses the `platform-publish` task.
 None of these publication routes is a native release gate.
 
 Further 0.5.1 editor and package publication is held: clean-consumer testing
@@ -44,8 +46,34 @@ tar, Rust 1.98.1, Xcode tools, and Homebrew LLVM; it writes under
 Keep agent handoff keys in host-managed files. Keep publisher credentials out of
 tracked files and ordinary pipeline variables. Open VSX binds the existing
 `open_vsx_token` only in its final publish step; Microsoft Marketplace binds
-`vsce_pat` only in its separate final bounded publisher step. Other publisher
-credentials follow their own reviewed routes.
+`vsce_pat` only in its separate final bounded publisher step. The stable
+release lane binds `compiler_release_token` only in its final
+`publish-release` step. Other publisher credentials follow their own reviewed
+routes.
+
+### Secret scoping
+
+Repository secrets on `ci.beskid-lang.org` carry two server-side filters. Each
+secret is available only to `manual` events, and only to steps whose image
+matches the secret's image filter: `node` for `compiler_release_token`,
+`open_vsx_token`, and `pckg_release_publisher_key`, and `docker` for the
+`registry_*` credentials. A push, tag, or pull-request pipeline cannot receive
+them, and neither can a step that runs another image.
+
+The tracked workflows add a second layer. `woodpecker-secret-scope.test.py`
+fails the Linux validation when a step binds a secret without a pinned image,
+outside a manual `main` pipeline, or expands a credential in its command text.
+It also fixes `compiler_release_token` to exactly two steps:
+`release.yml:publish-release` and `pckg.yml:publish-corelib-and-templates`.
+
+`compiler_release_token` is the GitHub credential with `contents: write` on
+`beskid_compiler` and write access to `beskid_homebrew`. The release scripts
+remove `GH_TOKEN` from their exported environment when they start, and give it
+only to `gh` as a process environment value. It never appears in argument
+lists, URLs, files, or git remotes, and the scripts never enable shell tracing
+or print their environment. `release-credential-hygiene.test.sh` and the
+recording `gh` and `node` stubs in `woodpecker-release.test.sh` keep these
+rules in place.
 
 Native clone uses the `plugin-git` executable from Woodpecker plugin-git 2.10.1
 on each account's PATH, not a Docker image. Agents connect with TLS to
@@ -77,23 +105,63 @@ woodpecker-cli pipeline create Cyber-Nomad-Collective/beskid --branch main \
 ```
 
 `release` only prepares local output and needs no publisher credential.
-After reviewing the prepared state and exact artifact hashes, run
+
+### Stable release publication
+
+After reviewing the prepared state and exact artifact hashes, publish from the
+same `main` revision through the `release-publish` lane:
+
+```bash
+woodpecker-cli pipeline create Cyber-Nomad-Collective/beskid --branch main \
+  --var BESKID_TASK=release-publish --var BESKID_RELEASE_VERSION=X.Y.Z \
+  --var BESKID_BUILD_PIPELINE_NUMBER=N \
+  --var BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_JSON='{...}'
+```
+
+`BESKID_RELEASE_VERSION` and `BESKID_BUILD_PIPELINE_NUMBER` are required. The
+waiver is the owner decision record described below; it is an ordinary
+pipeline variable, not a secret, because it carries no credential.
+
+The lane has two steps:
+
+1. `verify-release` runs without any secret. It fetches the selected handoffs
+   and runs `woodpecker-release.sh` with `BESKID_PUBLISH_RELEASE=0`. This
+   proves the qualified state and validates the waiver against the exact
+   Windows setup executable. A wrong waiver or handoff stops the pipeline here.
+2. `publish-release` runs `node:22.16.0-bookworm` and is the only step that
+   receives `GH_TOKEN` from `compiler_release_token`. It fetches the handoffs
+   again into a fresh container, repeats every check, and then publishes the
+   compiler streams, native installers, and Homebrew formula. Its snapshot is
+   kept beside the verification snapshot as
+   `releases/<pipeline>-<sha>-publish`.
+
+Inside Woodpecker, `woodpecker-release.sh` publishes only when all of these
+hold: `CI_SYSTEM_NAME=woodpecker`, `CI_PIPELINE_EVENT=manual`,
+`CI_COMMIT_BRANCH=main`, `CI_REPO=Cyber-Nomad-Collective/beskid`,
+`BESKID_TASK=release-publish`, `CI_COMMIT_SHA` equal to the checked-out
+`HEAD`, a clean checkout, and a non-empty `GH_TOKEN`. Any other combination
+stops before the first GitHub call.
+
+The script checks the source SHA, compiler/distribution gitlinks, version, all
+three targets, upload completion, and checksums before calling the stream
+publisher. A changed `main` cannot consume an older build: rebuild from the
+selected revision. Immutable release retries must be byte-identical;
+conflicting assets are not overwritten, so a rerun of a partly completed lane
+is safe.
+
+The trusted release host remains a fallback. Run
 `scripts/ci/woodpecker-release.sh <build-run> <version>` from a clean local
-`main` checkout on the trusted manual release host, with
-`BESKID_MANUAL_PUBLISH=1`, `BESKID_PUBLISH_RELEASE=1`, and `GH_TOKEN` supplied
-to that process outside Woodpecker. The host must have the selected handoffs
-at `/woodpecker-handoff` and a durable `/woodpecker-output` directory. The
-script checks the source SHA, compiler/distribution
-gitlinks, version, all three targets, upload completion, and checksums before
-calling the existing stream publisher. A changed `main` cannot consume an older
-build: rebuild from the selected revision. Immutable release retries must be
-byte-identical; conflicting assets are not overwritten.
+`main` checkout with `BESKID_MANUAL_PUBLISH=1`, `BESKID_PUBLISH_RELEASE=1`, and
+`GH_TOKEN` supplied to that process outside Woodpecker. The host needs the
+selected handoffs at `/woodpecker-handoff` and a durable `/woodpecker-output`
+directory. Prefer the Woodpecker lane: it keeps the token off every
+workstation.
 
 ### Owner-scoped Windows installer test waiver
 
 The Windows installer scenario matrix is normally a release gate. For a release
-where the owner explicitly waives that matrix, the external manual `main`
-publisher accepts one decision record via
+where the owner explicitly waives that matrix, the `release-publish` lane (or
+the fallback host publisher) accepts one decision record via
 `BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_JSON` or
 `BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_FILE`. This is a waiver, **not** a claim
 of VM attestation or passing tests. It does not bypass the three-platform build
@@ -102,8 +170,9 @@ manual-only publisher guard. Without a matching record, publication remains
 blocked; structural smoke evidence alone is not trusted VM provenance.
 
 Review the final `main` commit and the exact setup executable in the Windows
-handoff from the chosen build run. Supply this JSON to the manual publisher,
-replacing the example values with the reviewed facts:
+handoff from the chosen build run. Supply this JSON as the
+`BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_JSON` pipeline variable, replacing the
+example values with the reviewed facts:
 
 ```json
 {"schema_version":1,"decision":"release-owner-installer-test-waiver","scope":"windows-installer-scenario-tests-only","source_commit":"<40-character final main SHA>","version":"<stable version>","installer_sha256":"<64-character SHA-256 of the Windows setup EXE>","approved_utc":"<UTC timestamp, YYYY-MM-DDTHH:MM:SSZ>"}
@@ -328,6 +397,6 @@ registries/tags. Watchtower alone reconciles production containers.
 
 Use an exact stable release version for native release work. A human reviews
 the three native outputs for source, version, checksums, CLI/LSP assets, and
-bundles before approving `main` publication. The bundle contract has fixture
+bundles before starting the `release-publish` lane on `main`. The bundle contract has fixture
 coverage, but a real end-to-end three-worker release is not yet verified.
 Failed packaging or an old flat bundle is a failure, never a release result.

@@ -3,7 +3,8 @@
 GitHub hosts source and release assets. Native build automation lives in
 `.woodpecker/`; commands and authority boundaries are documented in
 `docs/operations/woodpecker.md`. Native builders have no publication credentials;
-stable compiler publication remains a separate reviewed manual operation.
+stable compiler publication runs only in the manual `main`-only Woodpecker
+`release-publish` lane, whose final step alone receives the scoped GitHub secret.
 
 Editor marketplace publication remains an explicit operator action through the
 manual Woodpecker `editor.yml` lane. It verifies the approved source identities,
