@@ -88,7 +88,7 @@ The records below preserve migration history and are not normative except where 
 <SpecSection title="Implementation anchors" id="implementation-anchors">
 - `compiler/corelib/packages/console/src/Console/Capabilities.bd`
 - `compiler/corelib/packages/console/src/Platform/Terminal.bd`
-- Tests: `CapabilitiesTests.bd`
+- Tests: `ConsoleSuite.bd#CapabilitiesTests`
 </SpecSection>
 
 ## Decisions
@@ -135,7 +135,7 @@ Capability probes and markup render paths consult the same gate.
 
 ## Verification anchors
 
-`CapabilitiesTests.bd`; `Console/Capabilities.bd`.
+`ConsoleSuite.bd#CapabilitiesTests`; `Console/Capabilities.bd`.
 ``````
 
 </details>
@@ -168,7 +168,7 @@ EffectiveColorModel reflects env probes before SGR downgrade (see D-CORE-TERM-00
 
 ## Verification anchors
 
-`CapabilitiesTests.bd`.
+`ConsoleSuite.bd#CapabilitiesTests`.
 ``````
 
 </details>
@@ -201,7 +201,7 @@ Styled output remains readable on Basic16 hosts without author branches.
 
 ## Verification anchors
 
-`AnsiSgrGoldenTests.bd`; capability + SGR integration.
+`ConsoleSuite.bd#AnsiSgrGoldenTests`; capability + SGR integration.
 ``````
 
 </details>
@@ -457,10 +457,10 @@ Document **verification and traceability** for the **Console Capabilities** feat
 | --- | --- |
 | `Console/Capabilities.bd` | `ProbeStdout`, `ShouldEmitAnsi`, strip logic |
 | `Platform/Terminal.bd` | `ProbeColorModel`, `ForcePlainText`, `IsAtty` |
-| `CapabilitiesTests.bd` | Strip vs emit behavior |
-| `AnsiEscapeTests.bd` | Conditional empty sequences when ANSI disabled |
+| `ConsoleSuite.bd#CapabilitiesTests` | Strip vs emit behavior |
+| `ConsoleSuite.bd#AnsiEscapeTests` | Conditional empty sequences when ANSI disabled |
 
-Changes to **CAP-001**–**CAP-005** **must** extend `CapabilitiesTests.bd` or ANSI golden tests that assert gating.
+Changes to **CAP-001**–**CAP-005** **must** extend `ConsoleSuite.bd#CapabilitiesTests` or ANSI golden tests that assert gating.
 
 ## Verification
 

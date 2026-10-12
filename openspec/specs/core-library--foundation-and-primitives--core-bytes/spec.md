@@ -117,7 +117,7 @@ No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-CORE-P
 ## Implementation anchors
 
 - `compiler/corelib/packages/foundation/src/Core/Bytes/`
-- `compiler/corelib/beskid_corelib/tests/corelib_tests/src/core/BytesTests.bd`
+- `compiler/corelib/beskid_corelib/tests/corelib_tests/src/core/CoreSuite.bd#BytesTests`
 ``````
 
 </details>
@@ -174,12 +174,12 @@ flowchart TB
 ``````markdown
 | Requirement | Test anchor |
 | --- | --- |
-| **BYTES-001**, **BYTES-007** | `BytesTests.bd` — `bytes_new_has_length` |
-| **BYTES-003** | `BytesTests.bd` — `bytes_from_str_builtin_smoke` |
+| **BYTES-001**, **BYTES-007** | `CoreSuite.bd#BytesTests` — `bytes_new_has_length` |
+| **BYTES-003** | `CoreSuite.bd#BytesTests` — `bytes_from_str_builtin_smoke` |
 | **BYTES-002** | Runtime trap on OOB `__bytes_get` / `__bytes_set` (integration) |
-| **BYTES-005** | `EncodingUtf8Tests.bd` — `utf8_from_str_builtin_round_trip` |
+| **BYTES-005** | `CoreSuite.bd#EncodingUtf8Tests` — `utf8_from_str_builtin_round_trip` |
 
-Harness: `compiler/corelib/beskid_corelib/tests/corelib_tests/src/core/BytesTests.bd`
+Harness: `compiler/corelib/beskid_corelib/tests/corelib_tests/src/core/CoreSuite.bd#BytesTests`
 ``````
 
 </details>

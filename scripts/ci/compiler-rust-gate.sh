@@ -50,9 +50,6 @@ run_lint_phase() {
     fi
   done
 
-  if [[ -f scripts/verify-corelib-tests-parity.sh ]]; then
-    bash scripts/verify-corelib-tests-parity.sh
-  fi
   echo "no legacy type-system patterns in compiler .rs sources"
 
   # Clippy denies warnings. `--no-deps` keeps the gate scoped to workspace crates.

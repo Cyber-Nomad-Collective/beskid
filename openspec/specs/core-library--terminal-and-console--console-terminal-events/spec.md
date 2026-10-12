@@ -89,7 +89,7 @@ How the corelib observes **terminal size changes** and notifies UI code: `Platfo
 - `compiler/corelib/packages/console/src/Platform/Terminal.bd`
 - `compiler/corelib/packages/console/src/Console.bd`
 - `compiler/corelib/packages/console/src/Console/ConsoleMessage.bd`
-- Tests: `ConsoleMessageChannelTests.bd`
+- Tests: `ConsoleSuite.bd#ConsoleMessageChannelTests`
 </SpecSection>
 
 ## Decisions
@@ -136,7 +136,7 @@ No separate OS-thread callback API in v1.
 
 ## Verification anchors
 
-`ConsoleMessageChannelTests.bd`.
+`ConsoleSuite.bd#ConsoleMessageChannelTests`.
 ``````
 
 </details>
@@ -202,7 +202,7 @@ Poll loops continue after dropped resize notifications.
 
 ## Verification anchors
 
-`ConsoleMessageChannelTests.bd`; EVT-002 traceability.
+`ConsoleSuite.bd#ConsoleMessageChannelTests`; EVT-002 traceability.
 ``````
 
 </details>
@@ -440,7 +440,7 @@ Document **verification and traceability** for the **Console Terminal Events** f
 | --- | --- |
 | `Platform/Terminal.bd` | `QuerySize`, `PollResize`, env fallback |
 | `Console.bd` | `RunTick`, `SubscribeOnResize`, `MessagesChannel` |
-| `ConsoleMessageChannelTests.bd` | Channel resize delivery |
+| `ConsoleSuite.bd#ConsoleMessageChannelTests` | Channel resize delivery |
 
 Platform stubs: `Platform/Linux.bd`, `MacOS.bd`, `Windows.bd` winsize externs.
 

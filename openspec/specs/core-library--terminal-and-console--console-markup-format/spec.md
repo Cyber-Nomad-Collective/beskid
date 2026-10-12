@@ -91,7 +91,7 @@ The records below preserve migration history and are not normative except where 
 <SpecSection title="Implementation anchors" id="implementation-anchors">
 - `compiler/corelib/packages/console/src/Console/Format.bd`
 - `compiler/corelib/packages/console/src/Console/Format/Markdown.bd`, `Attributes.bd`, `Scan.bd`
-- Tests: `FormatMarkdownTests.bd`, `FormatAttributesTests.bd`
+- Tests: `ConsoleSuite.bd#FormatMarkdownTests`, `ConsoleSuite.bd#FormatAttributesTests`
 </SpecSection>
 
 ## Decisions
@@ -138,7 +138,7 @@ New syntax requires tests before Standard promotion.
 
 ## Verification anchors
 
-`FormatMarkdownTests.bd`; `Format/Scan.bd`.
+`ConsoleSuite.bd#FormatMarkdownTests`; `Format/Scan.bd`.
 ``````
 
 </details>
@@ -171,7 +171,7 @@ Authors use Ansi builders for advanced color outside markup.
 
 ## Verification anchors
 
-`FormatAttributesTests.bd`.
+`ConsoleSuite.bd#FormatAttributesTests`.
 ``````
 
 </details>
@@ -205,13 +205,13 @@ Bracket palette tags and attribute spans **may** both appear in the same documen
 ## Consequences
 
 - `console_markup.pest` is the single grammar authority.
-- `FormatMarkdownTests.bd` gains bracket-tag cases; ADR-0031 palette-only RGB rule is relaxed for `&[fg=](…)` form.
+- `ConsoleSuite.bd#FormatMarkdownTests` gains bracket-tag cases; ADR-0031 palette-only RGB rule is relaxed for `&[fg=](…)` form.
 - Hand-rolled `RenderInner` is retired after generated parser lands.
 
 ## Verification anchors
 
 - `compiler/corelib/packages/console/grammars/console_markup.pest`
-- `compiler/corelib/beskid_corelib/tests/corelib_tests/src/console/FormatMarkdownTests.bd`
+- `compiler/corelib/beskid_corelib/tests/corelib_tests/src/console/ConsoleSuite.bd#FormatMarkdownTests`
 ``````
 
 </details>
@@ -386,7 +386,7 @@ Inner `**` spans compose with outer bracket color via `Ansi.StyleChain` (see [fl
 
 ## Verification
 
-Golden coverage: `FormatMarkdownTests.bd`, `FormatAttributesTests.bd`, `AnsiStyleChainTests.bd` under `compiler/corelib/beskid_corelib/tests/corelib_tests/src/console/`.
+Golden coverage: `ConsoleSuite.bd#FormatMarkdownTests`, `ConsoleSuite.bd#FormatAttributesTests`, `ConsoleSuite.bd#AnsiStyleChainTests` under `compiler/corelib/beskid_corelib/tests/corelib_tests/src/console/`.
 
 ## Related topics
 
@@ -466,9 +466,9 @@ Document **verification and traceability** for the **Console Markup Format** fea
 
 | Test | Coverage |
 | --- | --- |
-| `FormatMarkdownTests.bd` | Bold, underline, bracket colors, escapes |
-| `FormatAttributesTests.bd` | Name → SGR mapping |
-| `AnsiStyleChainTests.bd` | Chain composition |
+| `ConsoleSuite.bd#FormatMarkdownTests` | Bold, underline, bracket colors, escapes |
+| `ConsoleSuite.bd#FormatAttributesTests` | Name → SGR mapping |
+| `ConsoleSuite.bd#AnsiStyleChainTests` | Chain composition |
 
 Source: `compiler/corelib/packages/console/src/Console/Format*.bd`. New sigils require **FMT-*** contract row + golden test in the same change.
 

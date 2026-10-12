@@ -514,7 +514,7 @@ Document **verification and traceability** for the **Console Io Streams** featur
 
 ### Tests and runtime checks
 
-- Console package integration tests write styled output via `Core.Output` indirectly (`FormatMarkdownTests.bd`, controls tests).
+- Console package integration tests write styled output via `Core.Output` indirectly (`ConsoleSuite.bd#FormatMarkdownTests`, controls tests).
 - Syscall behavior is covered by execution/runtime specs and runtime integration tests (see [Panic, IO, and syscalls](/platform-spec/execution/runtime/panic-io-and-syscalls/)).
 
 ### Traceability

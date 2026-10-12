@@ -271,7 +271,7 @@ Resolver and `items.rs` grow `use`-import registration beyond alias tables. Anal
 - `compiler/crates/beskid_analysis/src/resolve/resolver.rs`
 - `compiler/crates/beskid_analysis/src/resolve/items.rs`
 - `compiler/crates/beskid_tests/src/analysis/resolve.rs`
-- `compiler/corelib/beskid_corelib/tests/corelib_tests/src/core/ResultsTests.bd`
+- `compiler/corelib/beskid_corelib/tests/corelib_tests/src/core/CoreSuite.bd#ResultsTests`
 ``````
 
 </details>

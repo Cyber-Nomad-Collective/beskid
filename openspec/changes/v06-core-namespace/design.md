@@ -7,7 +7,7 @@
 1. One path per module. The logical module path is the relative source path under its source root (with the homonymous-file and `.generated` rules unchanged). No package, dependency label or project kind adds a prefix.
 2. The Corelib dependency label is `Core` (`CORE_DEPENDENCY_NAME`). A manifest may declare it only as a path dependency. If `path` is absent, the installed Corelib aggregate is used. If `path` is present, the target project must be the Corelib aggregate (`corelib`); otherwise graph resolution fails. A user package therefore cannot take the label and silently remove Corelib from the graph.
 3. Dependency labels are not module path segments. Path inference reads only file locations, and `package_for_unit` uses labels only to name the declaring package. A module path that starts with `Core` and a dependency labeled `Core` cannot collide.
-4. The removed namespace fails closed. `Std.X` is an ordinary unknown path (E1105 for `use`, E1108 for qualified module paths). The diagnostic message and help name the package-native replacement. No alias resolves it.
+4. The removed namespace fails closed. `Std.X` is an ordinary unknown path (E1105 for `use`, E1108 for qualified module paths). No alias resolves it, and no diagnostic special-cases it (the migration hint was removed on 2026-10-12: Beskid has no users to migrate).
 
 ## Single path and removed behavior
 
@@ -15,7 +15,7 @@ Deleted: the `Std` prefix in `infer_logical_module_path`, `module_path_from_src_
 
 ## Observability and security
 
-The E1105 and E1108 messages include the rejected path and the replacement. Manifest validation names the `Core` label when a path-less `Std` dependency appears. Reserving the `Core` label prevents a user package from shadowing Corelib in the dependency graph.
+The E1105 and E1108 messages include the rejected path. Reserving the `Core` label prevents a user package from shadowing Corelib in the dependency graph.
 
 ## Rollback and authority
 

@@ -902,8 +902,8 @@ Top-of-file `///` doc blocks must either attach to the first item or be folded i
 | API-SHAPE-004 (prelude only re-exports Tier 1) | `beskid_tests::projects::corelib::layout::corelib_system_streams_carry_api_shape_tier_directives` (Input/Output/Error are Tier 1) | — | `cargo test -p beskid_tests projects::corelib::layout` |
 | API-SHAPE-005 (camelCase + omit when None) | `beskid_tests::projects::corelib::layout::checked_in_corelib_tier_metadata_round_trips_through_api_json` | — | `cargo test -p beskid_tests projects::corelib::layout` |
 | API-SHAPE-006 (`api.json` schema ≥ v4 when tier is set) | `beskid_tests::projects::corelib::layout::api_doc_root_advertises_v4_schema_for_tier_metadata` | — | `cargo test -p beskid_tests projects::corelib::layout` |
-| API-SHAPE-007 (Tier 1 stability) | `beskid_tests::projects::corelib::layout::corelib_collections_sources_carry_api_shape_tier_directives` plus snapshot reviews | `CollectionsTier1Tests` (`tests/corelib_tests/src/collections/CollectionsTier1Tests.bd`) | `beskid test --project tests/corelib_tests --target CollectionsTier1Tests` |
-| API-SHAPE-008 (Tier 2 stability) | `beskid_tests::projects::corelib::layout::corelib_collections_sources_carry_api_shape_tier_directives` | `CollectionsListTests`, `CollectionsMapTests`, `CollectionsSetTests`, `CollectionsQueueTests`, `CollectionsStackTests`, `SystemFsTests`, `SystemPathTests` | `beskid test --project tests/corelib_tests --target CollectionsMapTests` (repeat per target) |
+| API-SHAPE-007 (Tier 1 stability) | `beskid_tests::projects::corelib::layout::corelib_collections_sources_carry_api_shape_tier_directives` plus snapshot reviews | `CollectionsTier1Tests` (`tests/corelib_tests/src/collections/CollectionsSuite.bd#CollectionsTier1Tests`) | `beskid test --project tests/corelib_tests --target CollectionsSuite` |
+| API-SHAPE-008 (Tier 2 stability) | `beskid_tests::projects::corelib::layout::corelib_collections_sources_carry_api_shape_tier_directives` | `CollectionsListTests`, `CollectionsMapTests`, `CollectionsSetTests`, `CollectionsQueueTests`, `CollectionsStackTests`, `SystemFsTests`, `SystemPathTests` | `beskid test --project tests/corelib_tests --target CollectionsSuite` (repeat per target) |
 | API-SHAPE-009 (Tier 3 not in prelude / completions) | Prelude reader checks in `beskid_tests::projects::corelib::compile::checked_in_corelib_prelude_exports_mvp_modules` plus the layout tier directives test | — | `cargo test -p beskid_tests projects::corelib::compile::checked_in_corelib_prelude_exports_mvp_modules` |
 | API-SHAPE-010 (consumer badges) | OpenSpec validation checks ADRs and `## Decisions` table on the hub | — | `pnpm run openspec:validate` |
 
@@ -919,14 +919,14 @@ cd compiler && cargo test -p beskid_tests projects::corelib::layout
 cd compiler && cargo test -p beskid_analysis doc::api_tier
 
 # Beskid-side Tier 1 / Tier 2 suites (drop-in once CLI's beskid test resolves cross-package symbols)
-cd compiler/corelib/beskid_corelib/tests/corelib_tests && beskid test --target CollectionsTier1Tests
-cd compiler/corelib/beskid_corelib/tests/corelib_tests && beskid test --target CollectionsListTests
-cd compiler/corelib/beskid_corelib/tests/corelib_tests && beskid test --target CollectionsMapTests
-cd compiler/corelib/beskid_corelib/tests/corelib_tests && beskid test --target CollectionsSetTests
-cd compiler/corelib/beskid_corelib/tests/corelib_tests && beskid test --target CollectionsQueueTests
-cd compiler/corelib/beskid_corelib/tests/corelib_tests && beskid test --target CollectionsStackTests
-cd compiler/corelib/beskid_corelib/tests/corelib_tests && beskid test --target SystemFsTests
-cd compiler/corelib/beskid_corelib/tests/corelib_tests && beskid test --target SystemPathTests
+cd compiler/corelib/beskid_corelib/tests/corelib_tests && beskid test --target CollectionsSuite
+cd compiler/corelib/beskid_corelib/tests/corelib_tests && beskid test --target CollectionsSuite
+cd compiler/corelib/beskid_corelib/tests/corelib_tests && beskid test --target CollectionsSuite
+cd compiler/corelib/beskid_corelib/tests/corelib_tests && beskid test --target CollectionsSuite
+cd compiler/corelib/beskid_corelib/tests/corelib_tests && beskid test --target CollectionsSuite
+cd compiler/corelib/beskid_corelib/tests/corelib_tests && beskid test --target CollectionsSuite
+cd compiler/corelib/beskid_corelib/tests/corelib_tests && beskid test --target SystemSuite
+cd compiler/corelib/beskid_corelib/tests/corelib_tests && beskid test --target SystemSuite
 
 # Spec contract (no Proposed pages under api-shape, no scaffold stubs, decisions present)
 pnpm run openspec:validate

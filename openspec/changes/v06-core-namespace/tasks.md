@@ -7,7 +7,7 @@
 
 - [x] 2.1 Infer package-native logical module paths for host and dependency units.
 - [x] 2.2 Inject the implicit Corelib dependency as `Core`; reserve the label for the Corelib aggregate and require `source = path`.
-- [x] 2.3 Name the package-native replacement in E1105 and E1108 for `Std`-qualified paths.
+- [x] 2.3 Report `Std`-qualified paths as ordinary E1105/E1108 unknown module paths (the migration hint was removed by the 2026-10-12 test audit: no users).
 
 ## 3. Migrate
 
