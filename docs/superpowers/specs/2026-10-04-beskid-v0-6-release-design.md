@@ -488,3 +488,17 @@ Next execution step: turn the accepted root command map, serialization/BSOL
 behavior matrix and Rust boundary matrix into normative OpenSpec changes and a
 dependency-linked Tracker plan. Select required existing delivery channels from
 baseline evidence and record the ruling. Continue under standing authorization.
+
+## Goal update (2026-10-11)
+
+Finish the 0.6.0 release by porting compiler 0.5.4 slice by slice, following `docs/reports/2026-10-11-v054-v06-overlap.md`: keep the 0.6 designs where both lines implement the same feature (query-layer authority, E1211, E1104, single `expected_type`), port the 0.5.4 fixes and evidence tests into them, and take the 0.5.4-only features (function values and lambdas, bulk calls, runtime primitives extended to every 0.6 width). Then close the 0.5.5 gaps (named functions as values, function-typed fields, calls on arbitrary expressions, unsuffixed literals in generic struct literals, interpolation diagnostics, f32 interpolation). Reduce the edit-verify cycle time so that targeted suites, not full passes, drive day-to-day work.
+
+## Release goal and working method (2026-10-11)
+
+Goal: release beskid 0.6.0. Done means: 0.5.4 ported (overlap report), 0.5.5 gaps closed, every Linux suite green (workspace, interop, corelib and Mod test projects, package checks), macOS and Windows evidence, release notes and OpenSpec catalog, then the reviewed manual publication (owner approval).
+
+Method:
+1. Gap census: run the traced compiler over corelib, Mods, corelib tests and 0.5.4/0.5.5 probes; a script ranks `fact.unavailable` / `isle.missing` by query, node kind and context.
+2. Fix gap families at the mechanism level (one query-layer rule per family), test first, smallest repro.
+3. Token budget: scripts for search and verification; Haiku/Sonnet for repro reduction, tests, docs and lockfiles; Opus/Fable only for family fixes, at most two at once; no sub-agents; one final report per agent, no polling; Codex second opinion when stuck.
+4. Verification: `fast-verify.sh` (affected crates only) while iterating; one full pass per milestone.
