@@ -11,6 +11,7 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Runtime limits: every scheduler and synchronization table (fibers, run queue, pending operations, channels, mutexes, wait groups, hubs and registrations, poll tasks/monitors/links, external waits, composition slots) grows on demand from the system allocator with stable record addresses; the fixed 16/32/64/256 sizes are gone. The managed heap has no fixed 1 GiB cap; `BESKID_HEAP_MAX` (read by the runtime at process init, replacing the host-only `BESKID_HEAP_MAX_BYTES`) installs one and `BESKID_FIBER_STACK_MAX` sets the per-fiber stack reservation (OpenSpec change `v06-runtime-limits`).
 - Load the canonical Serialization Mod transitively from the Serialization library, with its Compiler SDK and Foundation dependency closure.
 
 - Disambiguate Serialization Mod selector imports from SDK Collect contracts and restore imports needed by matrix cancellation unit controls.
