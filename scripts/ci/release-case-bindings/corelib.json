@@ -432,7 +432,7 @@
         "serialization_generated_full_shape_record_roundtrips_through_bsol",
         "serialization_generated_nested_generic_record_decodes_at_top_level",
         "serialization_generated_scalar_and_container_applications_decode_through_one_correspondence",
-        "serialization_generated_variant_identity_survives_typed_decode",
+        "serialization_generated_variant_identity_and_field_order_survive_typed_decode",
         "serialization_generated_word_uses_declared_width_and_range_checks",
         "serialization_generated_decoder_rejects_trailing_input_without_publishing"
       ],
