@@ -20,8 +20,9 @@ summary; the itemized development log stays under [Unreleased] below and in
 
 - Function values. A function type is a reference type whose value is a
   GC-managed closure record. Calls go through function-typed parameters,
-  locals, fields (`holder.op(1)`) and call results (`Make()(1)`). A named,
-  non-generic function can be used as a value. An immutable expression-bodied
+  locals, fields (`holder.op(1)`) and call results (`Make()(1)`). A named
+  function can be used as a value; a generic one is instantiated from its type
+  arguments or the expected function type. An immutable expression-bodied
   lambda used only as a callee is a stack closure; every other lambda is a heap
   closure. Captures are by-value snapshots (OpenSpec `v06-function-values`).
 - Lambda parameters and bodies are typed from the position that declares the

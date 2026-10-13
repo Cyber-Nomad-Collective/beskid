@@ -38,6 +38,8 @@ i64 Double(i64 x) { return x * 2; }
 i64 Main() { return Apply(4, Double); }
 ```
 
+A generic function works too. It is instantiated where you use it, from its type arguments (`Identity<i64>`) or from the function type the position expects: in `Apply(5, Identity)`, the parameter `(i64) => i64` fixes `T` to `i64`. Without either, the compiler reports E1203 instead of guessing.
+
 Calls work through parameters, locals, fields (`h.op(5)`) and call results (`Make()(1)`). A lambda takes its parameter and return types from the place that declares the function type: an annotated local, a field, a return type or the parameter it is passed to.
 
 Allocation follows use. A lambda that is immutable, has an expression body and is only ever called is lowered inline and allocates nothing. Any other lambda allocates its record when it is evaluated. Captures are copies taken at that moment. A lambda that captures a `mut` local outside `spawn` is rejected with E1233, because a copy of a variable that keeps changing is a bug report waiting to be filed.
@@ -162,7 +164,6 @@ beskid has no users yet, so there is no migration guide. For the record, these c
 ## What is still missing
 
 - **Glue extensions.** Records by value, callbacks, function types across the boundary, enums and Glue-driven exports wait for 0.6.1. The Rust side of an export is linked by hand today. `glue-dotnet` is unavailable.
-- **Generic functions as values.** A generic function has no entry that works without a type context, so it cannot be passed as a value.
 - **Parallelism.** 0.6.0 runs fibers. It does not run your code on more than one core at a time.
 
 ## What comes next
