@@ -39,11 +39,11 @@ Reference defaults are in `site/website/.env.example`.
 
 giscus maps **one discussion thread per page** (with `pathname` mapping). It does not support anchored comments inside the page like a PDF reviewer.
 
-On platform-spec pages, select text in the article: a **Copy quote for discussion** control appears. It copies a Markdown blockquote plus the page URL (with a `#heading-id` when possible). Paste that into the giscus comment box so thread readers see exactly what you mean.
+On Book and Docs pages, select text in the article: a **Copy quote for discussion** control appears. It copies a Markdown blockquote plus the page URL (with a `#heading-id` when possible). Paste that into the giscus comment box so thread readers see exactly what you mean.
 
 ## Verification checklist
 
-- Open any `/platform-spec/...` page:
+- Open any `/book/...` page:
   - confirm **Edit page** opens the expected file path in GitHub,
   - confirm **Discuss this page** loads giscus.
 - If `PUBLIC_GISCUS_THEME=sync`, toggle light/dark and verify giscus follows the site. If you use `preferred_color_scheme`, giscus follows the OS/browser scheme instead.

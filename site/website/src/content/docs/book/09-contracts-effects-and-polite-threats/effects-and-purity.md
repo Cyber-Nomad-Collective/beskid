@@ -8,7 +8,7 @@ tableOfContents: true
 
 ## Compile-time effects (mods and macros)
 
-[Metaprogramming](/platform-spec/language-meta/metaprogramming/metaprogramming/) is explicit:
+[Metaprogramming](/docs/standard/capabilities/language-meta--metaprogramming--metaprogramming/) is explicit:
 
 - Mod work runs through **AOT-compiled** `type: Mod` artifacts (no interpreted Beskid at compile time except via linked mod entrypoints).
 - Generators emit **typed AST**; analyzers register rewrites; hosts merge and re-parse under bounded rounds.
@@ -27,7 +27,7 @@ flowchart TB
 
 ## Runtime effects
 
-User-visible runtime behavior (**spawn**, channel IO, syscall-backed console, FFI) lives under [Evaluation](/platform-spec/language-meta/evaluation/), [Execution runtime](/platform-spec/execution/runtime/), and [Core library](/platform-spec/core-library/). The language does not pretend `println` is pure; it routes IO through documented surfaces ([panic-io and syscalls](/platform-spec/execution/runtime/panic-io-and-syscalls/)).
+User-visible runtime behavior (**spawn**, channel IO, syscall-backed console, FFI) lives under [Evaluation](/docs/standard/capabilities/taxonomy--language-meta--evaluation/), [Execution runtime](/docs/standard/capabilities/taxonomy--execution--runtime/), and [Core library](/docs/standard/capabilities/taxonomy--core-library/). The language does not pretend `println` is pure; it routes IO through documented surfaces ([panic-io and syscalls](/docs/standard/capabilities/execution--runtime--panic-io-and-syscalls/)).
 
 ## Purity (pragmatic, not academic)
 
@@ -36,12 +36,12 @@ Beskid does not ship Haskell-style `IO` tracking in v0.x tutorials. Practical pu
 | Prefer | When |
 | --- | --- |
 | Pure functions + explicit `Result` | Domain logic you unit-test |
-| `spawn` + channels for concurrency | Cross-fiber communication ([Fibers and spawn](/platform-spec/language-meta/evaluation/fibers-and-spawn/)) |
-| `extern` / `[Extern]` only at boundaries | Native libraries with profile rules ([FFI and extern](/platform-spec/language-meta/interop/ffi-and-extern/)) |
+| `spawn` + channels for concurrency | Cross-fiber communication ([Fibers and spawn](/docs/standard/capabilities/language-meta--evaluation--fibers-and-spawn/)) |
+| `extern` / `[Extern]` only at boundaries | Native libraries with profile rules ([FFI and extern](/docs/standard/capabilities/language-meta--interop--ffi-and-extern/)) |
 
 ## Area hub
 
-Full index: [Contracts and effects](/platform-spec/language-meta/contracts-and-effects/).
+Full index: [Contracts and effects](/docs/standard/capabilities/taxonomy--language-meta--contracts-and-effects/).
 
 ## Next
 

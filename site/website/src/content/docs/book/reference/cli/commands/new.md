@@ -5,7 +5,7 @@ description: "Create a Beskid project from a template."
 
 **`beskid new`** is the user entrypoint for template scaffolding. Registry pack and publish workflows are under `beskid package`. Template cache commands are under `beskid package template`.
 
-Normative command taxonomy and edge cases: [beskid new (platform-spec)](/docs/standard/tooling/project-scaffolding/beskid-new/) and [contracts and edge cases](/docs/standard/tooling/project-scaffolding/beskid-new/contracts-and-edge-cases/).
+Normative command taxonomy and edge cases: [beskid new (the Standard)](/docs/standard/capabilities/tooling--project-scaffolding--beskid-new/) and [contracts and edge cases](/docs/standard/capabilities/tooling--project-scaffolding--beskid-new/).
 
 User-oriented workflows: [Project scaffolding](/book/reference/projects/scaffolding/).
 
@@ -69,7 +69,7 @@ The command returns zero on success. Validation, template, file-system, authenti
 
 ## Implementation note
 
-Subcommand wiring lives in `compiler/crates/beskid_cli`; registry download uses `compiler/crates/beskid_pckg`. The template engine is specified in [Project templates](/docs/standard/tooling/project-scaffolding/project-templates/).
+Subcommand wiring lives in `compiler/crates/beskid_cli`; registry download uses `compiler/crates/beskid_pckg`. The template engine is specified in [Project templates](/docs/standard/capabilities/tooling--project-scaffolding--project-templates/).
 
 For the verified scaffold procedure, use [Create a project](/docs/projects/create/).
 

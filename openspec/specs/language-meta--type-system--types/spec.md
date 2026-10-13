@@ -24,7 +24,7 @@ A type expression (`BeskidType`) MUST be exactly one of: a primitive (`bool`, `i
 - **THEN** the nominal type exposes both the field and the method to subsequent resolution
 
 ### Requirement: Static type rules and diagnostics
-Duplicate type or member names in the same scope MUST error (**E1001**, **E1006**). Unknown types in definitions MUST error (**E1005**, **E1201**). Generic arity MUST match at use sites (**E1203**, **E1204**). `unit` is the statement-result type; `never` is the bottom type for non-returning calls. Array values MUST use the `BeskidArray` layout documented in execution ABI material. L2 conforming implementations MUST reject programs with unknown types, arity mismatches, and invalid field access per the reference `beskid_analysis` type tests.
+Duplicate type or member names in the same scope MUST error (**E1001**, **E1006**). Unknown types in definitions MUST error (**E1005**, **E1201**). Generic arity MUST match at use sites (**E1203**, **E1204**). `unit` is the statement-result type; `never` is the bottom type for non-returning calls. Array values MUST use the `BeskidArray` layout documented in execution ABI material. L2 conforming implementations MUST reject programs with unknown types, arity mismatches, and invalid field access per the reference query gate tests in `beskid_queries`; the legacy `beskid_analysis` `TypeChecker` is retired and is not a conformance reference.
 
 #### Scenario: Generic arity mismatch
 - **GIVEN** a generic type used with the wrong number of type arguments

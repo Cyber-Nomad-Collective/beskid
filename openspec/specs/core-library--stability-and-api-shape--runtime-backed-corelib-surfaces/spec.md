@@ -99,7 +99,7 @@ The records below preserve migration history and are not normative except where 
 - Console package: `compiler/corelib/packages/console/`
 - Stream split: `Core.Input`, `Core.Output`, `Core.Error` in `compiler/corelib/packages/foundation/src/Core/`
 - Runtime builtins in `compiler/crates/beskid_runtime/src/builtins/mod.rs`
-- ABI builtin specs in `compiler/crates/beskid_abi/src/builtins.rs`
+- ABI builtin entries in `compiler/runtime_manifest.bsol` (generated into `beskid_abi::generated::abi_v5_contract`)
 - Corelib ABI tests in `compiler/crates/beskid_tests/src/abi/contracts.rs`
 </SpecSection>
 
@@ -214,7 +214,7 @@ Link failures surface at build time, not lazy dlopen.
 
 ## Verification anchors
 
-`beskid_abi/src/builtins.rs`; `abi/contracts.rs`.
+`compiler/runtime_manifest.bsol`; `beskid_abi/tests/runtime_import_catalog_v06.rs`; `abi/contracts.rs`.
 ``````
 
 </details>
@@ -420,7 +420,7 @@ No—split across `Core.Input` / `Core.Output` / `Core.Error` and keep ANSI in `
 
 ## Where is the authoritative builtin list?
 
-`compiler/crates/beskid_abi/src/builtins.rs` plus re-exports in `beskid_runtime/src/builtins/mod.rs`.
+`compiler/runtime_manifest.bsol`. `beskid_abi/build.rs` generates the ABI-v5 tables from it. Runtime implementations are in `beskid_runtime/src/builtins/mod.rs`.
 
 ## Doc drift vs implementation
 

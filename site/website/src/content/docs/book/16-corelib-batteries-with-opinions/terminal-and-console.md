@@ -10,9 +10,9 @@ Low-level syscall-backed I/O lives under the runtime `System` split (`Input`, `O
 
 - Prefer documented console helpers for user-facing CLI output in **your** packages.
 - Do not reimplement ANSI escape archaeology in app code because Stack Overflow said so.
-- When behavior differs by OS, check platform-spec **Standard** text before `#ifdef` cosplay in Beskid.
+- When behavior differs by OS, check the **Standard** text before `#ifdef` cosplay in Beskid.
 
 ## Spec
 
-- [Terminal and console](/platform-spec/core-library/terminal-and-console/)
-- [Runtime-backed corelib surfaces](/platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/)
+- [Terminal and console](/docs/standard/capabilities/taxonomy--core-library--terminal-and-console/)
+- [Runtime-backed corelib surfaces](/docs/standard/capabilities/core-library--stability-and-api-shape--runtime-backed-corelib-surfaces/)

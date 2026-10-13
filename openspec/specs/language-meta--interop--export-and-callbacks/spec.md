@@ -273,7 +273,7 @@ Hosts **must** reject unknown `version` values.
 
 ## Reference symbol
 
-The reference runtime exposes `beskid_register_callbacks` from `compiler/crates/beskid_runtime/src/builtins/callback.rs`, registered in `RUNTIME_EXPORT_SYMBOLS` and `BUILTIN_SPECS` via `compiler/crates/beskid_abi/src/symbols.rs`. Hosts **must** pass `version == BESKID_USER_FFI_LAYOUT_BAND` (initial Standard value `1`).
+The reference runtime exposes `beskid_register_callbacks` from `compiler/crates/beskid_runtime/src/builtins/callback.rs`, declared in `compiler/runtime_manifest.bsol` and the generated ABI-v5 tables. `RUNTIME_EXPORT_SYMBOLS` in `compiler/crates/beskid_abi/src/generated/symbols.rs` reserves the name from user FFI. Hosts **must** pass `version == BESKID_USER_FFI_LAYOUT_BAND` (initial Standard value `1`).
 
 ## Beskid-side callback exports
 
@@ -368,7 +368,7 @@ Panics in exported functions **must** be treated as **non-returning traps** acro
 - Codegen export metadata: `compiler/crates/beskid_codegen/src/lowering/expressions/export.rs`, `compiler/crates/beskid_codegen/src/lowering/context.rs` (`CodegenArtifact::exports`).
 - AOT export table: `compiler/crates/beskid_aot/src/export_table.rs`.
 - Runtime callback registration: `compiler/crates/beskid_runtime/src/builtins/callback.rs` (`beskid_register_callbacks`).
-- ABI symbols: `compiler/crates/beskid_abi/src/symbols.rs` (`SYM_BESKID_REGISTER_CALLBACKS`, `BESKID_USER_FFI_LAYOUT_BAND`), `compiler/crates/beskid_abi/src/builtins.rs` (`BUILTIN_SPECS`).
+- ABI symbols: `compiler/crates/beskid_abi/src/symbols.rs` (`SYM_BESKID_REGISTER_CALLBACKS`, `BESKID_USER_FFI_LAYOUT_BAND`), `compiler/runtime_manifest.bsol` (generated ABI-v5 import tables).
 
 ## Runtime ABI
 

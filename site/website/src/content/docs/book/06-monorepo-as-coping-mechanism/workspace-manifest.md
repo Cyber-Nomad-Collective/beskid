@@ -49,7 +49,7 @@ erDiagram
 ## Guides and spec
 
 - [Workspace monorepo setup](/book/reference/workspace-monorepo/)
-- [Workspace and lock contracts](/docs/standard/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/)
+- [Workspace and lock contracts](/docs/standard/capabilities/tooling--manifests-and-lockfiles--workspace-and-lock-contracts/)
 
 ## Next
 

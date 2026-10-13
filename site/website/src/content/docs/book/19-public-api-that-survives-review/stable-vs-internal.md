@@ -4,9 +4,9 @@ description: Not everything in a public repo is a public API. Tiers matter for c
 tableOfContents: true
 ---
 
-**Stable** means you expect downstream breakage to hurt real users and you will update platform-spec / semver policy before changing behavior. **Internal** means "I can rename this Tuesday."
+**Stable** means you expect downstream breakage to hurt real users and you will update the Standard / semver policy before changing behavior. **Internal** means "I can rename this Tuesday."
 
-Corelib documents stability tiers under [Stability and API shape](/platform-spec/core-library/stability-and-api-shape/). Your application packages should copy the *discipline*, not necessarily the same tier names.
+Corelib documents stability tiers under [Stability and API shape](/docs/standard/capabilities/taxonomy--core-library--stability-and-api-shape/). Your application packages should copy the *discipline*, not necessarily the same tier names.
 
 ## API checklist
 

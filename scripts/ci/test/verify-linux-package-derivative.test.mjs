@@ -4,7 +4,7 @@ import { spawnSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import { CHECKS, createDerivativeFixture, json, sha } from "./linux-package-derivative-fixture.mjs";
+import { CHECKS, VERSION, createDerivativeFixture, json, sha } from "./linux-package-derivative-fixture.mjs";
 
 const verifier = new URL("../verify-linux-package-derivative.mjs", import.meta.url);
 
@@ -101,7 +101,7 @@ for (const [name, mutate, pattern] of [
 for (const [name, relative, pattern] of [
   ["aggregate release-state", "release-state.json", /release-state.*symbolic link|regular file/i],
   ["aggregate validated evidence", "validated-evidence.json", /validated evidence.*symbolic link|regular file/i],
-  ["native bundle", "assets/beskid-1.2.3-x86_64-unknown-linux-gnu.tar.gz", /native aggregate asset.*symbolic link|regular file/i],
+  ["native bundle", `assets/beskid-${VERSION}-x86_64-unknown-linux-gnu.tar.gz`, /native aggregate asset.*symbolic link|regular file/i],
 ]) test(`verifier rejects a symlinked ${name}`, t => {
   const value = fixture(t), path = join(value.native, relative), actual = join(value.root, `actual-native-${name.replaceAll(" ", "-")}`);
   cpSync(path, actual); rmSync(path); symlinkSync(actual, path); expectRejectedBeforeOutput(value, pattern);

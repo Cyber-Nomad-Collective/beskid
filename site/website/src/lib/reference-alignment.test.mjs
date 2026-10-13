@@ -342,7 +342,7 @@ test('project examples use named BSOL roots and filenames that match project nam
 	const relativePath = 'reference/projects/examples.md';
 	const source = await readFile(new URL(relativePath, contentRoot), 'utf8');
 	assert.doesNotMatch(source, /^project\s*\{/m, `${relativePath}: legacy anonymous project root`);
-	for (const name of ['MyApp', 'App', 'Std', 'NetLib', 'Project']) {
+	for (const name of ['MyApp', 'App', 'Shared', 'NetLib', 'Project']) {
 		assert.match(source, new RegExp(`\\*\\*${name}\\.bproj\\*\\*[\\s\\S]*?\\n${name} \\{[\\s\\S]*?name\\s*=\\s*"${name}"`), `${relativePath}: ${name}.bproj must use matching named root and name`);
 	}
 });

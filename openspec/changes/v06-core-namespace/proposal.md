@@ -29,7 +29,7 @@ Compiler: `beskid_analysis` path inference, module discovery, graph resolver and
 
 Compatibility: source that imports `Std.*` no longer compiles. Manifests with an explicit `dependency "Std"` that points at the Corelib aggregate must rename the label to `Core`. A user dependency that was labeled `Core` and is not the Corelib aggregate must take a different label.
 
-Migration: remove the leading `Std.` from each import and qualified path (`Std.Core.Output` becomes `Core.Output`; `Std.Testing.Assert` becomes `Testing.Assert`). Regenerate lockfiles with `beskid update --all`. The compiler diagnostic names the replacement for each site.
+Migration: remove the leading `Std.` from each import and qualified path (`Std.Core.Output` becomes `Core.Output`; `Std.Testing.Assert` becomes `Testing.Assert`). Regenerate lockfiles with `beskid update --all`.
 
 Legacy URLs: no public route changes.
 

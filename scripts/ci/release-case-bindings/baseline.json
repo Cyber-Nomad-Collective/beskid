@@ -1,0 +1,271 @@
+{
+  "schema_version": 1,
+  "slice": "baseline",
+  "cases": {
+    "foundations.core_bytes": {
+      "execution": "installed_native",
+      "target": "CoreSuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/core/CoreSuite.bd",
+      "required_test_ids": [
+        "bytes_new_has_length",
+        "bytes_from_string_matches_utf8_length",
+        "bytes_fill_sets_range",
+        "bytes_subslice_copies_window",
+        "bytes_compare_lexicographic",
+        "bytes_copy_range",
+        "bytes_new_one_mebibyte_is_one_zeroed_allocation",
+        "bytes_new_non_positive_length_is_empty",
+        "bytes_four_mebibyte_live_buffer_survives_churn",
+        "bytes_three_live_64k_buffers_with_garbage_do_not_exhaust_heap"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "foundations.encoding_utf8": {
+      "execution": "installed_native",
+      "target": "CoreSuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/core/CoreSuite.bd",
+      "required_test_ids": [
+        "utf8_is_valid_ascii",
+        "utf8_is_valid_two_byte",
+        "utf8_is_invalid_solo_continuation",
+        "utf8_decode_from_bytes_roundtrip",
+        "utf8_encode_to_bytes_roundtrip",
+        "hex_encode_bytes_roundtrip",
+        "hex_decode_odd_length_rejected",
+        "base64_encode_bytes_roundtrip",
+        "base64_decode_invalid_length_rejected"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "foundations.time": {
+      "execution": "installed_native",
+      "target": "SystemSuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/system/SystemSuite.bd",
+      "required_test_ids": [
+        "time_date_struct_smoke",
+        "time_is_leap_year_divisible_by_4",
+        "time_is_leap_year_divisible_by_400",
+        "time_days_in_month_february_leap",
+        "time_days_in_month_february_non_leap",
+        "time_days_in_month_standard",
+        "time_now_utc_returns_instant",
+        "time_monotonic_now_returns_instant",
+        "time_from_milliseconds",
+        "time_from_seconds",
+        "time_subtract_instants",
+        "time_sleep_rejects_negative_duration_with_closed_error",
+        "time_deadline_after_accepts_zero_duration",
+        "time_deadline_after_rejects_negative_duration",
+        "time_deadline_after_rejects_monotonic_overflow",
+        "time_format_date_iso_formats_minimum_i64_year"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "foundations.fibers": {
+      "execution": "installed_native",
+      "target": "ConcurrencySuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/concurrency/ConcurrencySuite.bd",
+      "required_test_ids": [
+        "spawned_fiber_join_returns_its_value",
+        "repeated_cancel_then_join_is_safe",
+        "detach_relinquishes_the_join_obligation"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "foundations.channels": {
+      "execution": "installed_native",
+      "target": "ConcurrencySuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/concurrency/ConcurrencySuite.bd",
+      "required_test_ids": [
+        "channel_create_returns_handle",
+        "channel_send_returns_result",
+        "channel_receive_returns_result",
+        "channel_try_send_returns_try_result",
+        "channel_try_receive_distinguishes_empty_and_claimed_values",
+        "channel_close_is_idempotent",
+        "channel_close_drains_committed_value"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "network.types": {
+      "execution": "installed_native",
+      "target": "NetworkSuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/network/NetworkSuite.bd",
+      "required_test_ids": [
+        "network_ipv4_and_ipv6_values_keep_bounded_ports",
+        "network_datagram_keeps_source_and_truncation",
+        "network_cleanup_conversion_is_explicit_and_portable",
+        "network_error_union_has_no_native_payload",
+        "network_ports_reject_out_of_range_numbers"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "network.dns": {
+      "execution": "installed_native",
+      "target": "NetworkSuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/network/NetworkSuite.bd",
+      "required_test_ids": [
+        "network_dns_ipv4_filter_preserves_typed_addresses",
+        "network_dns_port_zero_is_rejected_before_resolving",
+        "network_dns_repeated_calls_return_independently_owned_results",
+        "network_dns_expired_typed_deadline_times_out_before_submission"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "network.tcp": {
+      "execution": "installed_native",
+      "target": "NetworkSuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/network/NetworkSuite.bd",
+      "required_test_ids": [
+        "network_tcp_reuses_stream_transfer_eof_and_idempotent_close",
+        "network_tcp_invalid_backlog_has_typed_error",
+        "network_tcp_second_read_reports_busy_cause",
+        "network_tcp_typed_read_deadline_times_out_and_recovers",
+        "network_tcp_pending_typed_read_deadline_clear_preserves_readiness",
+        "network_tcp_pending_read_expired_policy_reports_timed_out",
+        "network_tcp_pending_read_close_reports_closed_with_armed_deadline",
+        "network_tcp_pending_readiness_reports_byte_with_armed_deadline",
+        "network_tcp_physical_readiness_close_deadline_has_one_typed_winner",
+        "network_tcp_peer_reset_is_not_eof",
+        "network_tcp_typed_accept_deadline_times_out_and_recovers",
+        "network_tcp_expired_connect_has_one_outcome_and_closes_owned_stream"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "network.udp": {
+      "execution": "installed_native",
+      "target": "NetworkSuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/network/NetworkSuite.bd",
+      "required_test_ids": [
+        "network_udp_same_direction_busy_and_opposite_direction_send_receive",
+        "network_udp_preserves_datagrams_sources_and_truncation",
+        "network_udp_connected_operations_and_closed_error",
+        "network_closed_resource_cannot_reach_a_reused_slot",
+        "network_udp_exhaustion_is_typed",
+        "network_udp_expired_receive_deadline_times_out_and_socket_recovers",
+        "network_udp_expired_send_keeps_unsent_payload_and_socket"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "network.scope": {
+      "execution": "installed_native",
+      "target": "NetworkSuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/network/NetworkSuite.bd",
+      "required_test_ids": [
+        "network_tcp_disposable_uses_foundation_cleanup_conversion"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "network.shutdown": {
+      "execution": "installed_native",
+      "target": "NetworkSuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/network/NetworkSuite.bd",
+      "required_test_ids": [
+        "network_shutdown_is_idempotent_and_repeated_cycles_do_not_leak_slots"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "network.disposable": {
+      "execution": "installed_native",
+      "target": "NetworkSuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/network/NetworkSuite.bd",
+      "required_test_ids": [
+        "network_tcp_stream_after_dispose_fails_closed_and_dispose_is_idempotent",
+        "network_tcp_fresh_stream_works_after_a_prior_dispose"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "http.codec": {
+      "execution": "installed_native",
+      "target": "HttpCodecTests",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/http/CodecTests.bd",
+      "required_test_ids": [
+        "http_request_parser_normalizes_headers_and_keeps_content_length_body",
+        "http_rejects_bare_lf_and_conflicting_framing",
+        "http_chunked_decoder_requires_boundaries_and_terminator",
+        "http_fixed_limits_reject_oversized_declared_body_before_allocating",
+        "http_message_end_waits_for_head_and_reports_declared_total",
+        "http_message_end_walks_chunks_without_copying",
+        "http_message_end_bounds_head_and_rejects_bare_lf",
+        "http_request_requires_exactly_one_host",
+        "http_request_rejects_invalid_host_before_body_framing",
+        "http_response_head_role_ignores_content_length",
+        "http_response_204_with_body_octets_is_trailing_bytes",
+        "http_unframed_2xx_response_is_close_delimited",
+        "http_interim_response_is_rejected",
+        "http_io_errors_keep_transfer_failure_cause"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "http.validation": {
+      "execution": "installed_native",
+      "target": "HttpValidationTests",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/http/ValidationTests.bd",
+      "required_test_ids": [
+        "http_host_ipv6_literals_follow_rfc3986_address_grammar",
+        "http_field_values_allow_spaces_and_reject_controls_and_non_ascii",
+        "http_start_line_components_reject_control_octets"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "http.serialization": {
+      "execution": "installed_native",
+      "target": "HttpSerializationTests",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/http/SerializationTests.bd",
+      "required_test_ids": [
+        "http_request_serialization_emits_one_canonical_content_length",
+        "http_serializer_rejects_caller_supplied_framing_header",
+        "http_serializer_rejects_header_control_and_non_ascii_octets",
+        "http_response_parser_requires_http11_status_and_exact_suffix",
+        "http_serializer_requires_host"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "http.exchange": {
+      "execution": "installed_native",
+      "target": "HttpExchangeTests",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/http/ExchangeTests.bd",
+      "required_test_ids": [
+        "http_exchange_reads_bodies_across_partial_reads",
+        "http_exchange_head_returns_no_body",
+        "http_exchange_unframed_response_is_close_delimited",
+        "http_exchange_missing_host_is_answered_400",
+        "http_exchange_duplicate_host_rejected_before_declared_body",
+        "http_exchange_peer_reset_is_transport_cause"
+      ],
+      "input": null,
+      "fixture": null
+    }
+  }
+}

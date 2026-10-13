@@ -223,7 +223,7 @@ function createPackageFixture() {
   }
   const scripts = join(checkout, "scripts/ci");
   mkdirSync(scripts, { recursive: true });
-  for (const file of ["woodpecker-package-platform.mjs", "package-source-authority.mjs", "woodpecker-release-evidence.mjs", "woodpecker-cli-surface-evidence.mjs", "cli-surface-inventory.mjs", "release-cases-v06.json"]) {
+  for (const file of ["woodpecker-package-platform.mjs", "package-source-authority.mjs", "woodpecker-release-evidence.mjs", "woodpecker-cli-surface-evidence.mjs", "cli-surface-inventory.mjs", "release-cases-v06.json", "release-case-common.mjs"]) {
     copyFileSync(new URL(`../${file}`, import.meta.url), join(scripts, file));
   }
   const distrib = join(checkout, "beskid_distrib");
@@ -474,6 +474,15 @@ test("rejects the historical Glue exemption for 0.6 and later release evidence",
     assert.notEqual(result.status, 0, `${version} must require executed Rust Glue evidence`);
     assert.match(result.stderr, /Glue is required.*historical.*exemption/);
   }
+});
+
+test("schema dispatch follows the release series: 0.5 evidence cannot carry schema-2 files", (t) => {
+  const root = createFixture({ version: "0.5.2" });
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  writeJson(join(root, "linux", "feature-evidence-v2.json"), { schema_version: 2 });
+  const result = runValidator(root);
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /requires release series 0\.6/);
 });
 
 test("preserves historical Glue exemption validation for 0.5 evidence", (t) => {

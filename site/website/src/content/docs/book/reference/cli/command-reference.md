@@ -9,7 +9,7 @@ Unless noted, failures print a diagnostic report (miette) and exit non-zero.
 
 ## Global behavior
 
-- On launch, the CLI ensures the **bundled corelib** tree is available (and may print a short message when it materializes or updates a copy). Override the source location with `BESKID_CORELIB_SOURCE` when developing against a different corelib checkout.
+- Before `check`, `build`, `run`, `test`, `doc`, and the compiling `dev` commands, the CLI ensures the **bundled Corelib** is installed and current, and prints a short message when it updates the copy. `BESKID_CORELIB_ROOT` selects an explicit Corelib workspace instead. `BESKID_CORELIB_SOURCE` is read only when the compiler itself is built.
 - Subcommands that need a single resolved `.bd` entrypoint accept optional `--project`, `--target`, and `--workspace-member` together with `--frozen` / `--locked` where project resolution applies (see [check](/book/reference/cli/commands/analyze/), [doc](/book/reference/cli/commands/doc/), [run](/book/reference/cli/commands/run/), [build](/book/reference/cli/commands/build/), [clif](/book/reference/cli/commands/clif/)).
 
 ## Commands

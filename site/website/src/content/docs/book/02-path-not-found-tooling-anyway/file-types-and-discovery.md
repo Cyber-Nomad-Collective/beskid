@@ -42,8 +42,8 @@ The LSP does not get a parallel universe. Editor diagnostics, go-to-definition, 
 
 ## Normative contracts
 
-- [Project manifest contract](/docs/standard/tooling/manifests-and-lockfiles/project-manifest-contract/)
-- [Workspace and lock contracts](/docs/standard/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/)
+- [Project manifest contract](/docs/standard/capabilities/tooling--manifests-and-lockfiles--project-manifest-contract/)
+- [Workspace and lock contracts](/docs/standard/capabilities/tooling--manifests-and-lockfiles--workspace-and-lock-contracts/)
 
 ## Next
 

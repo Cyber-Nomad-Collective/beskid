@@ -84,23 +84,6 @@ SpawnUntil(ProcessStartInfo, Deadline) SHALL use the caller's absolute checked m
 - **WHEN** setup confirmation remains pending
 - **THEN** the checked five-second deadline applies and its expiry is reported distinctly after cleanup (R4-PROC-19)
 
-## MODIFIED Requirements
-
-### Requirement: Process execution contract: Decision [D-CORE-PRIM-0180]
-The Beskid standard SHALL enforce the following process execution contract. Run(string command, string[] args) SHALL return Result<ProcessOutput, ProcessError> and SHALL delegate to the same source-issued Spawn, streaming pipe, wait and contained cleanup authority. It SHALL NOT introduce or retain a separate __process_run dispatcher or native capture codec. ProcessOutput SHALL contain exitCode:i64, stdout:string and stderr:string. ProcessError SHALL retain NotFound(string), PermissionDenied(string), ExitCode(i64,string) and IOError(string), and SHALL additionally distinguish invalid input, cancellation, deadline expiry, closed capabilities, busy operations, cleanup failure and unavailable cooperative execution. Run SHALL return ProcessOutput for zero exit and ExitCode with captured stderr for nonzero exit. Its environment policy SHALL inherit, its argument vector SHALL preserve argument boundaries without shell expansion, and capture SHALL obey the structured capture requirement.
-
-**Stable ID:** BSP-REQ-4A7C91E2D6F308B5
-
-#### Scenario: Structured command execution shares streaming ownership
-- **GIVEN** a caller invokes Run with an executable and an argument vector
-- **WHEN** the child starts, emits output and terminates
-- **THEN** the same canonical child authority used by Spawn captures both streams and reaps the child without a parallel dispatcher (R4-PROC-16)
-
-#### Scenario: Execution failures remain typed
-- **GIVEN** a missing or forbidden executable, nonzero exit, cancellation or cleanup failure
-- **WHEN** Run executes
-- **THEN** the corresponding ProcessError result is returned and the child ownership obligation is not reported as successfully closed before cleanup completes (R4-PROC-17)
-
 ### Requirement: Issued absolute shutdown deadlines
 The deadline module SHALL provide Earlier and Reserve operations that retain the issued monotonic clock domain and SHALL report unavailable clock sampling through IsExpired. Reserve SHALL subtract a nonnegative duration with saturation at zero and SHALL reject negative durations. ChildProcess.CloseUntil SHALL share the supplied absolute deadline across termination and reap, clamp cleanup to at most five seconds from admission, and attempt immediate cleanup even when the deadline has expired. Pending cleanup at expiry SHALL return CleanupFailed without claiming the process is reaped or discarding its retained capability.
 
@@ -113,3 +96,25 @@ The deadline module SHALL provide Earlier and Reserve operations that retain the
 - **GIVEN** a live contained child and an expired issued deadline
 - **WHEN** CloseUntil is invoked
 - **THEN** it SHALL perform one immediate termination and reap probe and SHALL return explicit cleanup failure if the child remains pending.
+
+## MODIFIED Requirements
+
+### Requirement: Process execution contract: Decision [D-CORE-PRIM-0180]
+The Beskid standard SHALL enforce the following process execution contract. Run(string command, string[] args) SHALL return Result<ProcessOutput, ProcessError> and SHALL delegate to the same source-issued Spawn, streaming pipe, wait and contained cleanup authority. It SHALL NOT introduce or retain a separate __process_run dispatcher or native capture codec. ProcessOutput SHALL contain exitCode:i64, stdout:string and stderr:string. ProcessError SHALL retain NotFound(string), PermissionDenied(string), ExitCode(i64,string) and IOError(string), and SHALL additionally distinguish invalid input, cancellation, deadline expiry, closed capabilities, busy operations, cleanup failure and unavailable cooperative execution. Run SHALL return ProcessOutput for zero exit and ExitCode with captured stderr for nonzero exit. Its environment policy SHALL inherit, its argument vector SHALL preserve argument boundaries without shell expansion, and capture SHALL obey the structured capture requirement.
+
+**Stable ID:** `BSP-REQ-4A7C91E2D6F308B5`
+
+#### Scenario: Conformance exercises Decision
+- **GIVEN** an implementation claims conformance with this capability
+- **WHEN** behavior governed by this contract section is exercised
+- **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
+
+#### Scenario: Structured command execution shares streaming ownership
+- **GIVEN** a caller invokes Run with an executable and an argument vector
+- **WHEN** the child starts, emits output and terminates
+- **THEN** the same canonical child authority used by Spawn captures both streams and reaps the child without a parallel dispatcher (R4-PROC-16)
+
+#### Scenario: Execution failures remain typed
+- **GIVEN** a missing or forbidden executable, nonzero exit, cancellation or cleanup failure
+- **WHEN** Run executes
+- **THEN** the corresponding ProcessError result is returned and the child ownership obligation is not reported as successfully closed before cleanup completes (R4-PROC-17)

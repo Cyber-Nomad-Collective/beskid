@@ -44,7 +44,7 @@ When the project `.bproj` declares **`type = Template`**, pack uses the **templa
 - copies a **`template`** summary (`shortName`, `identity`, `tags`) from that manifest into `package.json`
 - **does not** run `beskid doc` or embed **`.beskid/docs/api.json`**
 
-Authoring and registry rules: [Template packages](/docs/standard/tooling/project-scaffolding/template-packages/). User workflows: [Project scaffolding](/book/reference/projects/scaffolding/).
+Authoring and registry rules: [Template packages](/docs/standard/capabilities/tooling--project-scaffolding--template-packages/). User workflows: [Project scaffolding](/book/reference/projects/scaffolding/).
 
 ## Pack (`beskid package pack`)
 

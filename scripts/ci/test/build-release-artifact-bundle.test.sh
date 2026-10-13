@@ -13,6 +13,7 @@ git -C "${root}" diff --quiet -- beskid_distrib
 mkdir -p "${tmp}/root/scripts/ci" "${tmp}/root/compiler/crates/beskid_cli" \
   "${tmp}/root/compiler/crates/beskid_lsp" "${tmp}/root/compiler/crates/beskid_up" \
   "${tmp}/root/compiler/corelib/beskid_corelib" "${tmp}/root/compiler/corelib/packages/foundation" \
+  "${tmp}/root/compiler/corelib/mods/example_mod" \
   "${tmp}/root/compiler/scripts" "${tmp}/bin"
 cp "${builder}" "${tmp}/root/scripts/ci/"
 for manifest in beskid_cli beskid_lsp beskid_up; do
@@ -21,7 +22,24 @@ done
 printf '# fixture lock\n' >"${tmp}/root/compiler/Cargo.lock"
 printf 'project { name = "corelib" }\n' >"${tmp}/root/compiler/corelib/beskid_corelib/corelib.bproj"
 printf 'project { name = "foundation" }\n' >"${tmp}/root/compiler/corelib/packages/foundation/foundation.bproj"
-printf 'workspace { name = "corelib" }\n' >"${tmp}/root/compiler/corelib/CoreLib.bws"
+printf 'example_mod { name = "example_mod"\n  type = Mod }\n' >"${tmp}/root/compiler/corelib/mods/example_mod/example_mod.bproj"
+cat >"${tmp}/root/compiler/corelib/CoreLib.bws" <<'BWS'
+workspace {
+  name = "corelib"
+}
+
+member "corelib" {
+  path = "beskid_corelib"
+}
+
+member "foundation" {
+  path = "packages/foundation"
+}
+
+member "example_mod" {
+  path = "mods/example_mod"
+}
+BWS
 
 cat >"${tmp}/bin/cargo" <<'SH'
 #!/usr/bin/env bash
@@ -44,9 +62,24 @@ if [[ "${1:-}" == dev && "${2:-}" == runtime-kit && "${3:-}" == build-native-hos
   printf '{}\n' >"${BESKID_RUNTIME_PREFIX}/lib/beskid-runtime/abi-5/${target}/release/abi.json"
   exit 0
 fi
+if [[ "${1:-}" == dev && "${2:-}" == mod && "${3:-}" == rebuild ]]; then
+  manifest="$4"; triple=''
+  args=("$@")
+  for index in "${!args[@]}"; do
+    [[ "${args[$index]}" == --target-triple ]] && triple="${args[$((index + 1))]}"
+  done
+  [[ -n "${triple}" && "${BESKID_RUNTIME_KIT_PROFILE:-}" == debug ]] || exit 1
+  [[ -f "${BESKID_RUNTIME_PREFIX}/lib/beskid-runtime/abi-5/${triple}/debug/abi.json" ]] || exit 1
+  [[ -z "${FAIL_MOD_BUILD:-}" ]] || exit 1
+  artifact="$(dirname "${manifest}")/.beskid/obj/mods/$(basename "${manifest}" .bproj)/key/${triple}"
+  mkdir -p "${artifact}"
+  printf '{}\n' >"${artifact}/mod.descriptor.json"
+  exit 0
+fi
 [[ "${1:-}" == dev && "${2:-}" == corelib ]] || exit 1
 mkdir -p "${BESKID_CORELIB_ROOT}"
-cp -a corelib/CoreLib.bws corelib/beskid_corelib corelib/packages "${BESKID_CORELIB_ROOT}/"
+cp -a corelib/CoreLib.bws corelib/beskid_corelib corelib/packages corelib/mods "${BESKID_CORELIB_ROOT}/"
+if [[ -n "${OMIT_CORELIB_MOD:-}" ]]; then rm -rf "${BESKID_CORELIB_ROOT}/mods"; fi
 printf '%064d\n' 0 >"${BESKID_CORELIB_ROOT}/.beskid-bundle.sha256"
 CLI
   else
@@ -92,6 +125,9 @@ assert_bundle() {
   test -f "${extracted}/beskid_corelib/CoreLib.bws"
   test -f "${extracted}/beskid_corelib/beskid_corelib/corelib.bproj"
   test -f "${extracted}/beskid_corelib/packages/foundation/foundation.bproj"
+  test -f "${extracted}/beskid_corelib/mods/example_mod/example_mod.bproj"
+  test -f "${extracted}/beskid_corelib/mods/example_mod/.beskid/obj/mods/example_mod/key/${target}/mod.descriptor.json"
+  test ! -e "${extracted}/beskid_corelib/packages/foundation/.beskid"
   test ! -e "${extracted}/packages"
   grep -Fxq 1.2.3 "${extracted}/release-version.txt"
   test ! -e "${extracted}/native-runtime-kit"
@@ -100,6 +136,20 @@ assert_bundle() {
 
 assert_bundle x86_64-unknown-linux-gnu ''
 assert_bundle x86_64-pc-windows-msvc .exe
+
+if OMIT_CORELIB_MOD=1 PATH="${tmp}/bin:${PATH}" bash "${tmp}/root/scripts/ci/build-release-artifact.sh" \
+  beskid_bundle ignored x86_64-unknown-linux-gnu beskid-1.2.3-missing-mod.tar.gz 1.2.3 2>"${tmp}/missing-mod.err"; then
+  echo 'a bundle without a CoreLib.bws member must be rejected' >&2
+  exit 1
+fi
+grep -Fq 'missing member mods/example_mod' "${tmp}/missing-mod.err"
+
+if FAIL_MOD_BUILD=1 PATH="${tmp}/bin:${PATH}" bash "${tmp}/root/scripts/ci/build-release-artifact.sh" \
+  beskid_bundle ignored x86_64-unknown-linux-gnu beskid-1.2.3-failed-mod.tar.gz 1.2.3 2>"${tmp}/failed-mod.err"; then
+  echo 'a bundle whose Corelib Mod cannot be prebuilt must be rejected' >&2
+  exit 1
+fi
+test ! -e "${tmp}/root/beskid-1.2.3-failed-mod.tar.gz"
 
 grep -Fq 'version = "0.0.1"' "${tmp}/root/compiler/crates/beskid_cli/Cargo.toml"
 echo 'build release artifact bundle tests OK'

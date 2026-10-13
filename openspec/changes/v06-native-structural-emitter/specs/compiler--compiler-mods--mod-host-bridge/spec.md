@@ -132,6 +132,14 @@ The host SHALL transport compiler-issued compilation, workspace, package, and ta
 - **THEN** the declaration node, source span, and node identifier SHALL remain intact
 - **AND** the merged program SHALL receive a fresh registered generation
 
+### Requirement: Staged native entry failure status
+A generated CABI2 Mod entry SHALL return status 0 only with a nonzero encoded result. On failure it SHALL return the status of the failed stage: 1 when the header or the request decoding fails, 2 when the factory or the contract method fails, 3 when result encoding fails, and 4, 5 or 6 when result encoding exceeds the transport depth bound (128), the transport work bound (1048576 values) or the transport byte bound (16 MiB). The host SHALL reject every nonzero status and SHALL name the failed stage in the invocation error. The transport bounds SHALL NOT be raised for an individual Mod.
+
+#### Scenario: MOD-06-34 Oversized result names the exceeded bound
+- **GIVEN** a Generator whose typed result needs more encoded values than the transport work bound
+- **WHEN** the host invokes it through the isolated worker
+- **THEN** the entry returns status 5, no contribution is published, and the invocation error names the work bound
+
 ### Requirement: Owned typed rewriter replacement
 An admitted native rewriter SHALL be able to return a newly constructed typed program item or direct declaration projection. The registered syntax provider SHALL validate its canonical Rust AST kind, bounded structure and current host-owned target before queuing replacement. Replacement SHALL retain the target's outer source provenance and leading documentation; supplied numeric node identities SHALL NOT issue generation authority. Applying the pipeline SHALL publish an owned program for fresh-generation registration.
 

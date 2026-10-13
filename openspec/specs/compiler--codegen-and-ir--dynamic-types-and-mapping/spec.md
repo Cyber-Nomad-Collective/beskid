@@ -83,7 +83,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 > - Codegen diagnostic **`E2013`**: `compiler/crates/beskid_codegen/src/diagnostics.rs`
 > - Runtime cell + tables + fallback: `compiler/crates/beskid_runtime/src/dynamic/`
 > - C ABI builtins: `compiler/crates/beskid_runtime/src/builtins/dynamic.rs`
-> - ABI symbol registration: `compiler/crates/beskid_abi/src/symbols.rs`, `compiler/crates/beskid_abi/src/builtins.rs`
+> - ABI symbol registration: `compiler/runtime_manifest.bsol` (generated ABI-v5 tables)
 > - Integration tests: `compiler/crates/beskid_tests/src/codegen/dynamic_types/`, `compiler/crates/beskid_tests/src/runtime/dynamic/`
 > </SpecSection>
 
@@ -184,7 +184,7 @@ Cross-reference: [Compiler Mod SDK](/platform-spec/language-meta/metaprogramming
 - Codegen diagnostic **`E2013`**: `compiler/crates/beskid_codegen/src/diagnostics.rs`
 - Runtime cell + tables + fallback: `compiler/crates/beskid_runtime/src/dynamic/`
 - C ABI builtins: `compiler/crates/beskid_runtime/src/builtins/dynamic.rs`
-- ABI symbol registration: `compiler/crates/beskid_abi/src/symbols.rs`, `compiler/crates/beskid_abi/src/builtins.rs`
+- ABI symbol registration: `compiler/runtime_manifest.bsol` (generated ABI-v5 tables)
 - Integration tests: `compiler/crates/beskid_tests/src/codegen/dynamic_types/`, `compiler/crates/beskid_tests/src/runtime/dynamic/`
 </SpecSection>
 

@@ -8,14 +8,14 @@ Control flow is how programs admit they have **choices**. Beskid expects you to 
 
 ## `if`
 
-Standard conditional binding: exact grammar in [lexical and syntax](/platform-spec/language-meta/surface-syntax/lexical-and-syntax/). Do not use `if` to simulate nullable checks; narrow `Option<T>` with `match`.
+Standard conditional binding: exact grammar in [lexical and syntax](/docs/standard/capabilities/language-meta--surface-syntax--lexical-and-syntax/). Do not use `if` to simulate nullable checks; narrow `Option<T>` with `match`.
 
 ## `match`
 
 `match` is the honest tool for enums and `Option<T>`:
 
 - Exhaustive arms are a feature, not bureaucracy
-- Combine with [enums and match](/platform-spec/language-meta/type-system/enums-and-match/) for algebraic types
+- Combine with [enums and match](/docs/standard/capabilities/language-meta--type-system--enums-and-match/) for algebraic types
 
 ```mermaid
 flowchart TD
@@ -29,11 +29,11 @@ flowchart TD
 
 ## Loops and fibers
 
-Iteration and concurrency primitives live under evaluation features ([fibers and spawn](/platform-spec/language-meta/evaluation/fibers-and-spawn/) etc.). This tutorial does not pretend to be the concurrency bible. Read spec before spawning threads because a blog post said async.
+Iteration and concurrency primitives live under evaluation features ([fibers and spawn](/docs/standard/capabilities/language-meta--evaluation--fibers-and-spawn/) etc.). This tutorial does not pretend to be the concurrency bible. Read spec before spawning threads because a blog post said async.
 
 ## Control flow vs effects
 
-Branching across contract boundaries may interact with effect tracking. When in doubt, run `beskid dev syntax analyze` and read the diagnostic rather than guessing.
+Branching across contract boundaries may interact with effect tracking. When in doubt, run `beskid check` and read the diagnostic rather than guessing.
 
 ## Next
 

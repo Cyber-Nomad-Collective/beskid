@@ -111,7 +111,7 @@ mkdir -p target/release
 cat > target/release/beskid_cli <<'CLI'
 #!/usr/bin/env bash
 set -euo pipefail
-if [[ "${1:-}" == corelib ]]; then
+if [[ "${1:-}" == dev && "${2:-}" == corelib ]]; then
   cp -R "$BESKID_CORELIB_SOURCE/packages" "$BESKID_CORELIB_ROOT/packages"
   cp -R "$BESKID_CORELIB_SOURCE/beskid_corelib" "$BESKID_CORELIB_ROOT/beskid_corelib"
   rm "$BESKID_CORELIB_ROOT/packages/foundation/Project.lock"

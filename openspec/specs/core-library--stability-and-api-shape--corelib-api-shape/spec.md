@@ -4,9 +4,7 @@
 ## Purpose
 
 Normative API tiering for corelib modules — three stability tiers, prelude rules, and the `api.json` contract that surfaces them to consumers.
-
 ## Requirements
-
 ### Requirement: Three-tier classification with default `supported`: Decision [D-CORE-API-SHAPE-0001]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
 
@@ -48,42 +46,49 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
 ### Requirement: Single Core.* namespace: Decision [D-CORE-NS-0001]
-The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
+Every public Corelib module MUST use the `Core.*` prefix. In particular,
+collection modules and types MUST use `Core.Collections.*`, filesystem modules
+and errors MUST use `Core.FS.*`, and standard streams MUST use their established
+`Core.Input`, `Core.Output`, and `Core.Error` paths. `Collections.*`,
+`System.*`, `Core.Platform`, and any alias, re-export, resolver redirect,
+duplicate source tree, or compatibility facade for them MUST be removed. An
+OS-backed module SHALL express stability through `@tier(...)` and use the
+canonical runtime boundary; it MUST NOT use a separate public namespace.
 
-> | Rule | Detail |
-> | --- | --- |
-> | Namespace | Every public corelib module **must** use the `Core.*` prefix |
-> | Removal | `System.*` module paths **must** be removed; there is no `Core.Platform` alias layer |
-> | Layout | Hub-plus-type-directory layout under `compiler/corelib/packages/foundation/src/Core/` (see [Core.Time](/platform-spec/core-library/stability-and-api-shape/core-time/), [Core.Syscall](/platform-spec/core-library/stability-and-api-shape/core-syscall/)) |
-> | Tiering | OS-backed modules declare stability via `@tier(...)` and builtin backing, not a separate namespace |
+#### Scenario: Old collection namespace has no compatibility resolution
+- **GIVEN** source that names `Collections.Array`
+- **WHEN** package assembly and name resolution run after the migration
+- **THEN** the name is unresolved and no alias or generated facade redirects it
+  to `Core.Collections.Array`
 
-**Stable ID:** `BSP-REQ-77B90CEBB3D3`  
-**Legacy source:** `site/spec-content/platform-spec/core-library/stability-and-api-shape/corelib-api-shape/adr/0004-single-core-namespace/content.md`  
-**Source SHA-256:** `afe47e8e4dbaeb7b3a19078d371fc6e5f0f95d7a0d0a17dcaf7b1c92bd45e846`
-
-#### Scenario: Conformance exercises Decision
-- **GIVEN** an implementation claims conformance with this capability
-- **WHEN** behavior governed by this contract section is exercised
-- **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
+#### Scenario: Old filesystem namespace has no compatibility resolution
+- **GIVEN** source that names `System.FS`
+- **WHEN** package assembly and name resolution run after the migration
+- **THEN** the name is unresolved and only `Core.FS` can provide the public
+  filesystem API
 
 ### Requirement: Owning-type inline methods: Decision [D-CORE-API-0002]
-The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
+Methods on a Corelib-owned `pub type` MUST be declared inside that type's
+`pub type { }` block in its owning module file. `extend type` MUST NOT add
+members to types defined in Corelib packages, and module-level free functions
+MUST NOT duplicate receiver behavior; free functions MAY remain only for
+constructors and namespace helpers without a receiver. Generated fluent
+wrappers MAY delegate to owning methods but MUST NOT own a second
+implementation, storage model, error model, or namespace compatibility path.
+Foreign types remain governed by the separate `extend type` capability.
 
-> | Rule | Detail |
-> | --- | --- |
-> | Owning methods | Methods on corelib-owned `pub type` **must** be declared inside the type's `pub type { }` block in the owning module file |
-> | `extend type` | `extend type` **must not** add members to types defined in corelib packages (`foundation`, `concurrency`, `console`, `runtime`) |
-> | Free functions | Module-level free functions **may** remain for constructors and namespace helpers that do not take a receiver |
-> | Foreign types | `extend type` for types defined outside corelib (user code, mods) remains governed by [extend type](/platform-spec/language-meta/program-structure/extend-type/) |
+#### Scenario: Collection method has one implementation
+- **GIVEN** a public `Core.Collections.List<T>` receiver operation
+- **WHEN** its declarations and generated wrappers are inspected
+- **THEN** one method body exists inside the owning `List<T>` and every wrapper
+  delegates to it without an extension or free-function duplicate
 
-**Stable ID:** `BSP-REQ-AE1BED6DC2AC`  
-**Legacy source:** `site/spec-content/platform-spec/core-library/stability-and-api-shape/corelib-api-shape/adr/0005-owning-type-inline-methods/content.md`  
-**Source SHA-256:** `17b893012542b9d4c7bb774c041004dda7e72c60a56d1644d042df3f01f97ab8`
-
-#### Scenario: Conformance exercises Decision
-- **GIVEN** an implementation claims conformance with this capability
-- **WHEN** behavior governed by this contract section is exercised
-- **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
+#### Scenario: Constructor remains a valid namespace helper
+- **GIVEN** a collection constructor that does not receive an existing
+  collection value
+- **WHEN** its API placement is checked
+- **THEN** it may remain a module helper while all receiver behavior remains on
+  the owning type
 
 ### Requirement: Contracts and edge cases: Normative contracts [core-library/stability-and-api-shape/corelib-api-shape/articles/contracts-and-edge-cases]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
@@ -200,6 +205,33 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **GIVEN** an implementation claims conformance with this capability
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
+
+### Requirement: Core.IO is the sole partial-transfer abstraction
+The public `Core.IO` contracts SHALL be the sole foundation-level abstraction for partial byte transfer, EOF, no-progress, and idempotent close. Stream-like corelib APIs MUST use `Reader`, `Writer`, `Closer`, or `Stream` rather than define competing partial-transfer loops; `Core.IO` MUST use `Core.Bytes` and `Core.Encoding` for byte and text conversion and MUST NOT embed transport-specific socket behavior.
+
+**Stable ID:** `BSP-REQ-0A5892A2DB9C`
+
+#### Scenario: Stream API delegates partial transfer
+- **GIVEN** a foundation stream API that must read an exact byte count
+- **WHEN** it exposes that operation publicly
+- **THEN** it delegates to the `Core.IO.Reader` contract rather than defining an independent partial-read policy
+
+### Requirement: Network streams consume Foundation Core.IO and Disposable contracts
+`Network.Tcp.TcpStream` SHALL implement the `Core.IO.Stream` and `Core.Disposable`
+contracts introduced by `beskid-v0-5-foundations`; `TcpListener` and `UdpSocket`
+SHALL implement `Core.Disposable`. Network code MUST use the Foundation partial
+transfer, EOF, no-progress, idempotent-close, scoped `use`, and resource
+transport rules and MUST NOT define competing versions of those contracts.
+The `Core.IO.Stream` methods retain Foundation `IoError`; socket lifecycle and
+policy operations retain `NetworkError`. Implementing `Stream` MUST NOT change
+the Foundation method signatures to return `NetworkError`.
+
+**Stable ID:** `BSP-REQ-4E7D12C9B6A0`
+
+#### Scenario: TCP partial writes use Core.IO
+- **GIVEN** a TCP stream whose native write accepts only part of a buffer
+- **WHEN** a caller invokes Foundation `WriteAll` through the stream
+- **THEN** the existing Core.IO contract completes the transfer or returns its typed error
 
 ## Informative Source Provenance
 

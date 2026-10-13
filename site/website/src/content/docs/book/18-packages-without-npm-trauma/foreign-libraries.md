@@ -4,13 +4,13 @@ description: Import native libraries through tooling contracts, not random linke
 tableOfContents: true
 ---
 
-Native dependencies enter through **foreign library import** tooling: manifest link entries, CLI import flows, and platform-spec contracts that keep Windows/Linux/macOS differences out of your application's soul.
+Native dependencies enter through **foreign library import** tooling: manifest link entries, CLI import flows, and Standard contracts that keep Windows/Linux/macOS differences out of your application's soul.
 
 ## Start here
 
-- [Foreign library import](/docs/standard/tooling/foreign-library-import/)
-- [Project link libraries](/docs/standard/tooling/manifests-and-lockfiles/project-manifest-contract/project-link-libraries/)
-- [CLI import-lib command](/docs/standard/tooling/foreign-library-import/cli-import-lib-command/)
+- [Foreign library import](/docs/standard/capabilities/taxonomy--tooling--foreign-library-import/)
+- [Project link libraries](/docs/standard/capabilities/tooling--manifests-and-lockfiles--project-manifest-contract/)
+- [CLI import-lib command](/docs/standard/capabilities/tooling--foreign-library-import--cli-import-lib-command/)
 
 ## Interop overlap
 

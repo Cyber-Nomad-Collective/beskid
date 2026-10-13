@@ -92,14 +92,17 @@ for role in "${roles[@]}"; do
     macos) target=aarch64-apple-darwin; cli=beskid-darwin-arm64; lsp=beskid_lsp-darwin-arm64 ;;
     windows) target=x86_64-pc-windows-msvc; cli=beskid-windows-amd64.exe; lsp=beskid_lsp-windows-amd64.exe ;;
   esac
-  cp "$release/input/$role/$cli" "$release/input/$role/$lsp" \
-    "$release/input/$role/beskid-${version}-${target}.tar.gz" \
-    "$release/input/$role/platform-result-${target}.json" \
-    "$release/input/$role/woodpecker-build-result.json" \
-    "$release/input/$role/SHA256SUMS" "$release/native/$role/"
-  cp "$release/input/$role/feature-evidence-v1.json" "$release/native/$role/"
-  for feature_log in "$release/input/$role"/feature-*.json; do
-    [[ "${feature_log##*/}" == feature-evidence-v1.json ]] || cp "$feature_log" "$release/native/$role/"
+  # The native evidence directory is exactly the checksummed packet: every file the worker listed in
+  # SHA256SUMS (schema-1 feature logs or the complete schema-2 case packet) plus the checksum list.
+  cp "$release/input/$role/SHA256SUMS" "$release/native/$role/"
+  while IFS= read -r line; do
+    [[ -n "$line" ]] || continue
+    name="${line:66}"
+    [[ "$name" =~ ^[A-Za-z0-9][A-Za-z0-9._-]*$ ]] || { echo "unsafe packet name in $role SHA256SUMS: $name" >&2; exit 1; }
+    cp "$release/input/$role/$name" "$release/native/$role/"
+  done <"$release/input/$role/SHA256SUMS"
+  for required in "$cli" "$lsp" "beskid-${version}-${target}.tar.gz" "platform-result-${target}.json" woodpecker-build-result.json; do
+    [[ -f "$release/native/$role/$required" ]] || { echo "$role packet omits $required" >&2; exit 1; }
   done
   if [[ "$role" == linux ]]; then
     cp "$release/input/linux/cli-surface-evidence-v1.json" \
@@ -116,6 +119,29 @@ node "$scripts/woodpecker-aggregate-release.mjs" "$release/native" "$qualified" 
   "$version" "$source_sha" "$compiler_sha" >/dev/null
 state="$qualified/release-state.json"
 assets="$qualified/assets"
+
+# CLI06-06 (0.6 series): the five-participant uncoached observation is an observer-attested record,
+# not machine evidence. A failing or absent record blocks the candidate before any installer work;
+# the dated owner waiver is the only fallback and expires at 0.6.1.
+case "$version" in
+  0.6.*)
+    observation_file="${BESKID_V06_USER_OBSERVATION_FILE:-}"
+    if [[ -z "$observation_file" ]]; then
+      echo 'BESKID_V06_USER_OBSERVATION_FILE is required for a 0.6 candidate (observer-attested CLI06-06 record or dated owner waiver)' >&2
+      exit 1
+    fi
+    observation="$(node "$scripts/release-user-observation.mjs" "$observation_file" "$version" "$source_sha" "$compiler_sha" \
+      "$qualified/validated-evidence.json")"
+    node - "$state" "$observation" <<'NODE'
+const {readFileSync,renameSync,writeFileSync}=require('node:fs');
+const [path,record]=process.argv.slice(2),state=JSON.parse(readFileSync(path,'utf8'));
+state.user_observation=JSON.parse(record);
+const temporary=`${path}.observation.tmp`;
+writeFileSync(temporary,`${JSON.stringify(state,null,2)}\n`,{flag:'wx'});
+renameSync(temporary,path);
+NODE
+    ;;
+esac
 
 installers=()
 for role in "${roles[@]}"; do

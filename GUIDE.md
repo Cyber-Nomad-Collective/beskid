@@ -104,6 +104,34 @@ selects it through `clang`; macOS and Windows keep their platform linkers.
   GitHub Actions remains only for editor-marketplace and repository-native
   maintenance operations.
 
+## Current release line: 0.6.0
+
+0.6.0 is in qualification and not released. Use these sources, in this order:
+
+| Need | Source |
+|---|---|
+| Scope and method | `docs/superpowers/specs/2026-10-04-beskid-v0-6-release-design.md` |
+| Rulings and blocker remedies | `docs/reports/2026-10-04-v06-decisions.md` |
+| Normative changes | `openspec/changes/v06-*` |
+| Mandatory release cases | `scripts/ci/release-cases-v06.json` (86 mandatory, 15 provisional) |
+| Summary and draft notes | `CHANGELOG.md` (0.6.0 section), `docs/release/v0.6.0-release-notes.md` |
+| Work after 0.6.0 | `openspec/changes/v061-*` through `v065-*` (Glue extensions, isolate parallelism) |
+
+Facts that older documents may still contradict:
+
+- The `beskid_queries` query gate is the only semantic front end. The legacy
+  `beskid_analysis` `TypeChecker` is deleted.
+- Everyday CLI commands sit at the root; compiler inspection is under
+  `beskid dev`. `beskid analyze`, `beskid lsp` and the other old root commands
+  fail with their replacement.
+- Logical module paths are package-native (`Core.*`); there is no `Std`
+  namespace.
+- Rust Glue is the in-process checked C ABI path selected by manifest `glue`
+  blocks, `[GlueHandle]` and `[RustOwner]`. The 0.4 Glue Mod contracts and
+  attributes are deleted; the stdio bridge is provisional.
+- Runtime tables grow on demand; `BESKID_HEAP_MAX` and `BESKID_FIBER_STACK_MAX`
+  set limits. `Thread.Spawn` is removed; fibers are the concurrency model.
+
 ## Agent boundaries
 
 Parallel agents must use disjoint write scopes. Knowledge files live outside the repository and must never be pushed. Before an existing-symbol edit, run GitNexus upstream impact analysis; before a commit, run focused tests and GitNexus change detection.

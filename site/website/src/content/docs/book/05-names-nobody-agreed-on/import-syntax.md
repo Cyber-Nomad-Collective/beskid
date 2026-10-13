@@ -9,14 +9,20 @@ Beskid imports are explicit. The compiler will not guess that `Parser` obviously
 ## Forms
 
 ```beskid
-use net.http.Client;
-use net.http.Client as HttpClient;
-pub use net.http.Client;
+use Core.Output;
+use Network.Types as NetTypes;
+pub use Core.Output;
 ```
 
 - **Direct import**: bring a symbol into scope.
 - **Alias**: local name differs from the original (`as`).
 - **`pub use`**: re-export through the current module boundary.
+
+## Where module paths come from
+
+A module path comes from the file's location under its package source root. Your own modules have no prefix. Corelib modules keep their package roots (`Core.*`, `Testing.*`, `Concurrency.*`, `Beskid.Compiler.*`). The Corelib dependency label `Core` is a manifest name, not a path segment, and there is no `Std.` prefix.
+
+You do not need a `use` to call a dependency through its full path: `Core.Output.WriteLine("hi")` works as written. See [Name resolution](/book/05-names-nobody-agreed-on/name-resolution/) for the shadowing and ambiguity rules.
 
 ## File-scoped modules
 
@@ -28,8 +34,8 @@ Prefer aliases when two imports collide (`AParser`, `BParser`) instead of "helpf
 
 ## Standard reference (informative)
 
-- [Name Resolution](/platform-spec/language-meta/program-structure/name-resolution/)
-- [Modules and Visibility](/platform-spec/language-meta/program-structure/modules-and-visibility/)
+- [Name Resolution](/docs/standard/capabilities/language-meta--program-structure--name-resolution/)
+- [Modules and Visibility](/docs/standard/capabilities/language-meta--program-structure--modules-and-visibility/)
 
 ## Next
 

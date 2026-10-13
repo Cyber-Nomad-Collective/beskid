@@ -24,7 +24,7 @@ None.
 
 ## Impact
 
-Compiler: `beskid_queries` uses one field visibility predicate for field reads, projection chains and struct literals; member legality reports E1211 first. `beskid_analysis` reports the same E1211 in the front-end checker. `beskid_abi` attests the extra canonical Network and Mutex units. `beskid_ast_reflect_gen` emits `pub` fields for syntax-node mirrors and query records.
+Compiler: `beskid_queries` uses one field visibility predicate for field reads, projection chains and struct literals; member legality reports E1211 first. `beskid_analysis` owns the E1211 diagnostic kind (`TypeInaccessibleStructField`); the query gate is the only checker that reports it, because the legacy front-end `TypeChecker` is retired (`v06-query-front-end`). `beskid_abi` attests the extra canonical Network and Mutex units. `beskid_ast_reflect_gen` emits `pub` fields for syntax-node mirrors and query records.
 
 Corelib: compiler SDK and shared data records get `pub` fields. The Network resource and Mutex guard internals stay private.
 

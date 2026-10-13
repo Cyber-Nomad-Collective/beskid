@@ -100,7 +100,7 @@ flowchart TD
 
 ## Expected result
 
-The CLI prints one version. Its help lists root commands such as `analyze`, `format`, `run`, `test`, and `build`. The host-target command prints the detected target triple. The matching LSP install command exits successfully.
+The CLI prints one version. Its help lists the root commands, such as `new`, `check`, `build`, `run`, `test`, `fmt`, `add`, and `doctor`, and ends with a first-project example. `beskid doctor` prints the host-target triple, verifies the debug and release runtime kits and the Corelib bundle, and changes nothing. When a check fails, it names `beskid toolchain update` as the repair. The matching LSP install command exits successfully.
 
 ## Recovery
 

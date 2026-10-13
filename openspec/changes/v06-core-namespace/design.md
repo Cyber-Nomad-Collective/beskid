@@ -23,4 +23,4 @@ OpenSpec is the normative authority for module paths and the dependency label. R
 
 ## Open item
 
-Module paths are now shared across packages. A host file such as `Src/Testing/Assert.bd` has the same logical path as the Corelib `Testing.Assert` module. Before this change the same overlap existed under the `Std.` prefix. A cross-package module-path collision diagnostic is not part of this change and needs a separate decision.
+Module paths are now shared across packages. A host file such as `Src/Testing/Assert.bd` has the same logical path as the Corelib `Testing.Assert` module. Before this change the same overlap existed under the `Std.` prefix. A cross-package module-path collision diagnostic is not part of this change. Change `v06-qualified-dependency-paths` decides it: a logical module path that more than one package of the dependency closure provides fails with E1104, and a lexical name shadows the absolute lookup.

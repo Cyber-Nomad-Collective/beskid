@@ -63,5 +63,5 @@ Publisher operations (`publish`) require a valid publish-scoped credential.
 - [Publish a package](/docs/packages/publish/): verified procedure with expected results and recovery
 - [Packages without npm trauma](/book/18-packages-without-npm-trauma/): chapter overview
 - [Doc and api.json](/book/16-corelib-batteries-with-opinions/doc-and-api-json/): automatic doc generation during pack
-- [Registry client](/docs/standard/tooling/registry-client/)
-- [pckg client contract](/docs/standard/tooling/registry-client/pckg-client-contract/)
+- [Registry client](/docs/standard/capabilities/taxonomy--tooling--registry-client/)
+- [pckg client contract](/docs/standard/capabilities/tooling--registry-client--pckg-client-contract/)

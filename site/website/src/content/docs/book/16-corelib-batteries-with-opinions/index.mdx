@@ -7,7 +7,7 @@ tableOfContents: true
 import { Aside } from '@astrojs/starlight/components';
 
 <Aside type="caution">
-This chapter is **informative**. Enforceable rules live under the [Platform specification](/platform-spec/).
+This chapter is **informative**. Enforceable rules live in the [Beskid Standard](/docs/standard/).
 </Aside>
 
 
@@ -19,10 +19,10 @@ If you expected a monolithic `System.IO` graveyard, adjust expectations now.
 
 | Section | Topic |
 | --- | --- |
-| [corelib command](/book/16-corelib-batteries-with-opinions/corelib-command/) | Materialize the embedded template with `beskid dev build corelib`. |
+| [corelib command](/book/16-corelib-batteries-with-opinions/corelib-command/) | Materialize the embedded Corelib workspace with `beskid dev corelib`. |
 | [Injection and resolution](/book/16-corelib-batteries-with-opinions/injection-and-resolution/) | How every project gets the same canonical package. |
 | [Terminal and console](/book/16-corelib-batteries-with-opinions/terminal-and-console/) | ANSI, streams, and why console is not syscall soup. |
-| [Doc and api.json](/book/16-corelib-batteries-with-opinions/doc-and-api-json/) | `beskid dev syntax doc`, structured API, and pckg docs UI. |
+| [Doc and api.json](/book/16-corelib-batteries-with-opinions/doc-and-api-json/) | `beskid doc`, structured API, and pckg docs UI. |
 | [Runtime-backed surfaces](/book/16-corelib-batteries-with-opinions/runtime-backed-surfaces/) | What must call through the runtime vs pure Beskid. |
 
 ```mermaid
@@ -31,33 +31,38 @@ flowchart LR
   accDescr: The CLI injects corelib sources, doc generation produces api.json for pckg registry docs, and runtime-backed surfaces feed the same sources.
   CLI[beskid CLI] --> inj[Corelib injection]
   inj --> src[Corelib sources]
-  src --> doc[beskid dev syntax doc / api.json]
+  src --> doc[beskid doc / api.json]
   doc --> pckg[pckg registry docs]
   runtime[Runtime-backed surfaces] --> src
 ```
 
-The sources under `compiler/corelib/packages` are split into these packages.
+The Corelib workspace in `compiler/corelib` holds the aggregate `corelib` package, the library packages under `packages/`, and two compiler Mods under `mods/`. The aggregate depends on the library packages, so a project that gets the implicit `Core` dependency can import any of them.
 
-```mermaid
-architecture-beta
-  accTitle: Corelib packages
-  accDescr: The corelib sources are split into foundation, runtime, concurrency, console, network, http, interop, glue, compiler-sdk and pest-gen-schema packages.
-  group packages(server)[compiler/corelib/packages]
-  service foundation(server)[foundation] in packages
-  service runtime(server)[runtime] in packages
-  service concurrency(server)[concurrency] in packages
-  service console(server)[console] in packages
-  service network(server)[network] in packages
-  service http(server)[http] in packages
-  service interop(server)[interop] in packages
-  service glue(server)[glue] in packages
-  service compiler_sdk(server)[compiler-sdk] in packages
-  service pest_gen_schema(server)[pest-gen-schema] in packages
-  foundation:R --> L:network
-  network:R --> L:http
-```
+| Package | What it holds |
+| --- | --- |
+| `corelib_foundation` | Collections, results, strings, threading yield, and testing helpers |
+| `corelib_runtime` | Runtime ABI surfaces: process init and host linkage helpers |
+| `corelib_concurrency` | `Fiber<T>`, `Channel<T>`, `Hub<T>`, `Mutex`, `WaitGroup` |
+| `corelib_console` | Terminal and ANSI helpers built on runtime I/O |
+| `corelib_interop` | C ABI view types: `CStringView`, `CBuffer`, `CArrayView` |
+| `corelib_network` | DNS, TCP, and UDP resources |
+| `corelib_connect` | TCP connection establishment with Happy Eyeballs |
+| `corelib_uri` | URI parsing, formatting, normalization, and resolution |
+| `corelib_codec`, `corelib_crypto`, `corelib_x509` | Byte primitives, cryptography, and certificate validation |
+| `corelib_tls` | TLS 1.3 client and server |
+| `corelib_http`, `corelib_http2`, `corelib_http3`, `corelib_quic` | HTTP/1.1, HTTP/2, QUIC, and HTTP/3 |
+| `corelib_websocket` | WebSocket client and server |
+| `corelib_web` | HTTP client and server facade over the protocol packages |
+| `corelib_serialization` | Format-independent values, policies, and typed serialization metadata |
+| `corelib_bsol` | Native BSOL syntax, schema validation, and typed read and write |
+| `corelib_glue` | Provisional stdio bridge types; the 0.6 Rust Glue path does not use them |
+| `corelib_compiler_sdk` | The Mod SDK: `Beskid.Compiler.*` and `Beskid.Syntax` |
+| `serialization_mod` | The Serialization Mod that generates adapters for `[Serialize]` types |
+| `corelib_pest_gen` | A Mod that generates Pest grammar parsers |
 
-**Text equivalent:** The packages are foundation, runtime, concurrency, console, network, http, interop, glue and compiler-sdk. Arrows point from a package to the package that depends on it: `network` depends on `foundation`, and `http` depends on `network`.
+## Serialization in one paragraph
+
+Serialization is split into three layers. The **Serialization Mod** finds types marked `[Serialize]` (fields can carry `[SerializeField]`) and generates typed adapters for them at compile time. The **Serialization library** (`Core.Serialization`) holds the format-independent data model, metadata, and limits. A **format package** such as `Core.Bsol` reads and writes one format through those adapters. The Mod runs only for programs that reach `Core.Serialization`; see [what activates a Mod](/book/15-mods-plugins-with-consequences/what-is-a-mod/). The normative contract is [Serialization](/docs/standard/capabilities/language-meta--metaprogramming--serialization/).
 
 ## Next
 

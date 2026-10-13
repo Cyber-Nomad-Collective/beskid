@@ -9,7 +9,7 @@ output_dir="${3:?absolute durable output directory}"
 
 root="$(cd "$(dirname "$0")/../.." && pwd)"
 if [[ -n "${CI_PIPELINE_NUMBER:-}" || -n "${CI_COMMIT_SHA:-}" ]]; then
-  for override in WOODPECKER_RELEASE_VERSION_VALIDATOR WOODPECKER_INIT_SUBMODULES_SCRIPT WOODPECKER_RELEASE_PLATFORM_SCRIPT WOODPECKER_FEATURE_EVIDENCE_SCRIPT WOODPECKER_CLI_SURFACE_GATE_SCRIPT WOODPECKER_CLI_SURFACE_CORELIB_VERIFIER WOODPECKER_VSWHERE; do
+  for override in WOODPECKER_RELEASE_VERSION_VALIDATOR WOODPECKER_INIT_SUBMODULES_SCRIPT WOODPECKER_RELEASE_PLATFORM_SCRIPT WOODPECKER_FEATURE_EVIDENCE_SCRIPT WOODPECKER_CLI_SURFACE_GATE_SCRIPT WOODPECKER_CLI_SURFACE_CORELIB_VERIFIER WOODPECKER_VSWHERE WOODPECKER_RELEASE_CASES_SCRIPT WOODPECKER_RELEASE_CASES_MANIFEST WOODPECKER_RELEASE_HARNESS_BUILDER; do
     if printenv "${override}" >/dev/null; then
       echo "${override} is test-only and forbidden in a pipeline" >&2
       exit 2
@@ -25,6 +25,10 @@ platform_builder="${WOODPECKER_RELEASE_PLATFORM_SCRIPT:-${root}/scripts/ci/build
 feature_evidence_runner="${WOODPECKER_FEATURE_EVIDENCE_SCRIPT:-${root}/scripts/ci/woodpecker-feature-evidence.mjs}"
 cli_surface_gate="${WOODPECKER_CLI_SURFACE_GATE_SCRIPT:-${root}/compiler/scripts/ci/cli_surface_gate.py}"
 corelib_verifier="${WOODPECKER_CLI_SURFACE_CORELIB_VERIFIER:-${root}/scripts/ci/verify-release-corelib-bundle.mjs}"
+# 0.6 schema-2 producer and harness builder; the manifest override exists for the CI test shell only.
+release_cases_runner="${WOODPECKER_RELEASE_CASES_SCRIPT:-${root}/scripts/ci/woodpecker-release-cases-v06.mjs}"
+release_cases_manifest="${WOODPECKER_RELEASE_CASES_MANIFEST:-}"
+release_harness_builder="${WOODPECKER_RELEASE_HARNESS_BUILDER:-${root}/scripts/ci/build-release-artifact.sh}"
 
 for command in git jq node tar; do
   command -v "${command}" >/dev/null 2>&1 || {
@@ -68,6 +72,11 @@ if find "${output_dir}" -mindepth 1 -maxdepth 1 -print -quit | grep -q .; then
   exit 2
 fi
 output_dir="$(cd "${output_dir}" && pwd -P)"
+# Diagnostic logs live beside the durable packet, never inside it: every file of the packet is
+# checksummed and the schema-2 reader rejects undeclared entries.
+logs_dir="${output_dir}-logs"
+mkdir -p "${logs_dir}"
+case "${version}" in 0.6.*) schema2=1 ;; *) schema2=0 ;; esac
 
 bash "${init_submodules}" compiler beskid_bsol
 if [[ -n "${CI_PIPELINE_NUMBER:-}" || -n "${CI_COMMIT_SHA:-}" ]]; then
@@ -96,17 +105,17 @@ test -x "${cli_path}"
 test -x "${lsp_path}"
 test -f "${bundle_path}"
 
+bundle_extension=""
+[[ "${platform}" == windows ]] && bundle_extension=.exe
 cli_version="$("${cli_path}" --version)"
 lsp_version="$("${lsp_path}" --version)"
 [[ "${cli_version}" == "beskid ${version}" ]]
 [[ "${lsp_version}" == "beskid_lsp ${version}" ]]
 printf 'cli=%s\nlsp=%s\n' "${cli_version}" "${lsp_version}" \
-  >"${output_dir}/artifact-version-smoke.log"
+  >"${logs_dir}/artifact-version-smoke.log"
 
 bundle_root="beskid-${version}-${target}"
-tar -tzf "${bundle_path}" >"${output_dir}/bundle-contents.log"
-bundle_extension=""
-[[ "${platform}" == windows ]] && bundle_extension=.exe
+tar -tzf "${bundle_path}" >"${logs_dir}/bundle-contents.log"
 for required in \
   "${bundle_root}/bin/beskid${bundle_extension}" \
   "${bundle_root}/bin/beskid_lsp${bundle_extension}" \
@@ -117,7 +126,7 @@ for required in \
   "${bundle_root}/beskid_corelib/beskid_corelib/corelib.bproj" \
   "${bundle_root}/beskid_corelib/packages/" \
   "${bundle_root}/release-version.txt"; do
-  grep -Fxq "${required}" "${output_dir}/bundle-contents.log" || {
+  grep -Fxq "${required}" "${logs_dir}/bundle-contents.log" || {
     echo "bundle is missing ${required}" >&2
     exit 1
   }
@@ -133,15 +142,24 @@ bundle_stage="${output_dir}/feature-bundle"
 mkdir -p "${bundle_stage}"
 tar -xzf "${bundle_path}" -C "${bundle_stage}"
 bundle_root="${bundle_stage}/beskid-${version}-${target}"
-if [[ "${platform}" == linux ]]; then
-  [[ -f "${bundle_root}/bin/beskid" && ! -L "${bundle_root}/bin/beskid" ]] &&
-    cmp -s -- "${cli_path}" "${bundle_root}/bin/beskid" || {
+if [[ "${platform}" == linux || "${schema2}" == 1 ]]; then
+  # Schema 2 pins the installed CLI to the versioned asset on every target; 0.5 kept the Linux-only check.
+  [[ -f "${bundle_root}/bin/beskid${bundle_extension}" && ! -L "${bundle_root}/bin/beskid${bundle_extension}" ]] &&
+    cmp -s -- "${cli_path}" "${bundle_root}/bin/beskid${bundle_extension}" || {
     echo 'bundle CLI differs from versioned CLI asset' >&2
     exit 1
   }
 fi
 runtime_kit="${bundle_root}/lib/beskid-runtime/abi-5/${target}/release"
-runtime_kit_sha="$(node "${root}/scripts/ci/woodpecker-runtime-kit-digest.mjs" "${runtime_kit}")"
+if [[ "${schema2}" == 1 ]]; then
+  runtime_kit_sha="$(node "${root}/scripts/ci/woodpecker-runtime-kit-digest.mjs" "${runtime_kit}" --receipt "${output_dir}/runtime-kit.json")"
+  runtime_abi_sha="$(node -e 'const fs=require("fs"),crypto=require("crypto");process.stdout.write(crypto.createHash("sha256").update(fs.readFileSync(process.argv[1])).digest("hex"))' "${runtime_kit}/abi.json")"
+  installed_cli="${bundle_root}/bin/beskid${bundle_extension}"
+else
+  runtime_kit_sha="$(node "${root}/scripts/ci/woodpecker-runtime-kit-digest.mjs" "${runtime_kit}")"
+  runtime_abi_sha=""
+  installed_cli=""
+fi
 corelib_fingerprint="$(tr -d '\r\n' <"${bundle_root}/beskid_corelib/.beskid-bundle.sha256")"
 [[ "${corelib_fingerprint}" =~ ^[a-f0-9]{64}$ ]] || { echo 'invalid release Corelib fingerprint' >&2; exit 1; }
 jq -n \
@@ -151,7 +169,10 @@ jq -n \
   --arg output_path "${output_dir}" \
   --arg superrepo_sha "${superrepo_sha}" \
   --arg compiler_sha "${compiler_sha}" \
-  --arg runtime_kit_sha "${runtime_kit_sha}" '
+  --arg runtime_kit_sha "${runtime_kit_sha}" \
+  --arg runtime_abi_sha "${runtime_abi_sha}" \
+  --arg installed_cli "${installed_cli}" \
+  --argjson schema2 "${schema2}" '
   {
     schema_version: 1,
     platform: $platform,
@@ -163,23 +184,40 @@ jq -n \
     runtime_kit_sha256: $runtime_kit_sha,
     platform_result_status: "success",
     published: false
-  }
+  } | if $schema2 == 1 then . + {runtime_abi_sha256: $runtime_abi_sha, installed_cli: $installed_cli} else . end
 ' >"${output_dir}/woodpecker-build-result.json"
 
-node "${feature_evidence_runner}" \
-  "${platform}" "${version}" "${output_dir}" "${bundle_root}"
+if [[ "${schema2}" == 1 ]]; then
+  # 0.6: build the reviewed harness executables from this commit, then run every frozen case against
+  # the extracted bundle. The v1 producer and its exemption never run for a 0.6 candidate.
+  harness_dir="${logs_dir}/release-harness"
+  rm -rf "${harness_dir}"
+  mkdir -p "${harness_dir}"
+  (cd "${logs_dir}" && bash "${release_harness_builder}" beskid_release_harness ignored "${target}" "${harness_dir}" "${version}") \
+    >"${logs_dir}/release-harness-build.log" 2>&1 || {
+    tail -n 40 "${logs_dir}/release-harness-build.log" >&2
+    echo 'release harness build failed' >&2
+    exit 1
+  }
+  case_arguments=("${platform}" "${version}" "${output_dir}" "${bundle_root}" --harness-dir "${harness_dir}")
+  [[ -z "${release_cases_manifest}" ]] || case_arguments+=(--manifest "${release_cases_manifest}")
+  node "${release_cases_runner}" "${case_arguments[@]}"
+else
+  node "${feature_evidence_runner}" \
+    "${platform}" "${version}" "${output_dir}" "${bundle_root}"
+fi
 if [[ "${platform}" == linux ]]; then
   command -v python3 >/dev/null 2>&1 || { echo 'Linux CLI surface gate requires Python 3' >&2; exit 2; }
   [[ -f "${cli_surface_gate}" ]] || { echo "missing reviewed CLI surface gate: ${cli_surface_gate}" >&2; exit 1; }
   node "${corelib_verifier}" --verify "${root}/compiler/corelib" "${bundle_root}/beskid_corelib" \
-    >"${output_dir}/cli-surface-corelib-verify.log"
+    >"${logs_dir}/cli-surface-corelib-verify.log"
   cli_sha="$(node -e 'const fs=require("fs"),crypto=require("crypto");process.stdout.write(crypto.createHash("sha256").update(fs.readFileSync(process.argv[1])).digest("hex"))' "${cli_path}")"
   BESKID_RUNTIME_PREFIX="${bundle_root}" python3 "${cli_surface_gate}" "${cli_path}" \
     --expected-sha256 "${cli_sha}" \
     --corelib-root "${bundle_root}/beskid_corelib" \
     --expected-corelib-fingerprint "${corelib_fingerprint}" \
     --json "${output_dir}/cli-surface-evidence-v1.json" \
-    >"${output_dir}/cli-surface-gate.log" 2>&1
+    >"${logs_dir}/cli-surface-gate.log" 2>&1
   node "${root}/scripts/ci/woodpecker-cli-surface-evidence.mjs" create \
     "${output_dir}/cli-surface-evidence-v1.json" "${cli_path}" \
     "${output_dir}/cli-surface-receipt-v1.json" "${version}" \
@@ -189,22 +227,38 @@ if [[ "${platform}" == linux ]]; then
   mv "${output_dir}/woodpecker-build-result.json.tmp" "${output_dir}/woodpecker-build-result.json"
 fi
 rm -rf -- "${bundle_stage}"
-
-checksum_files=(
-  "${cli_asset}"
-  "${lsp_asset}"
-  "${bundle_asset}"
-  "platform-result-${target}.json"
-  woodpecker-build-result.json
-  feature-evidence-v1.json
-)
-if [[ "${platform}" == linux ]]; then
-  checksum_files+=(cli-surface-evidence-v1.json cli-surface-receipt-v1.json)
+# build-release-platform.sh writes its component logs into the packet root; keep them beside the packet.
+if [[ -d "${output_dir}/release-logs" ]]; then
+  rm -rf "${logs_dir}/release-logs"
+  mv "${output_dir}/release-logs" "${logs_dir}/release-logs"
 fi
-for case_log in "${output_dir}"/feature-*.json; do
-  case_log_name="$(basename "${case_log}")"
-  [[ "${case_log_name}" == feature-evidence-v1.json ]] || checksum_files+=("${case_log_name}")
-done
+
+checksum_files=()
+if [[ "${schema2}" == 1 ]]; then
+  # Schema 2: the packet is closed; every regular file is checksummed and nothing else may exist.
+  while IFS= read -r name; do checksum_files+=("${name}"); done < <(
+    cd "${output_dir}" && find . -mindepth 1 -maxdepth 1 -type f ! -name SHA256SUMS -exec basename {} \; | LC_ALL=C sort)
+  if find "${output_dir}" -mindepth 1 -maxdepth 1 ! -type f -print -quit | grep -q .; then
+    echo 'schema-2 packet directory contains an entry that is not a regular file' >&2
+    exit 1
+  fi
+else
+  checksum_files=(
+    "${cli_asset}"
+    "${lsp_asset}"
+    "${bundle_asset}"
+    "platform-result-${target}.json"
+    woodpecker-build-result.json
+    feature-evidence-v1.json
+  )
+  if [[ "${platform}" == linux ]]; then
+    checksum_files+=(cli-surface-evidence-v1.json cli-surface-receipt-v1.json)
+  fi
+  for case_log in "${output_dir}"/feature-*.json; do
+    case_log_name="$(basename "${case_log}")"
+    [[ "${case_log_name}" == feature-evidence-v1.json ]] || checksum_files+=("${case_log_name}")
+  done
+fi
 (
   cd "${output_dir}"
   if command -v sha256sum >/dev/null 2>&1; then

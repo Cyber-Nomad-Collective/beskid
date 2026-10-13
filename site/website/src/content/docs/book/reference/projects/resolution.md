@@ -139,7 +139,9 @@ The module graph is inferred from `mod` declarations and file layout. The manife
 - Virtual modules for generated code.
 - Extended workspace policy for large monorepos.
 
-## Corelib (`Std`) graph behavior
-- `Std` is treated as a normal dependency node in the project DAG.
-- If a resolvable `Std` dependency node exists, corelib prelude fallback injection must be disabled.
-- Feature-gated fallback remains only as a compatibility path when no resolvable `Std` node is present.
+## Corelib (`Core`) graph behavior
+- The resolver attaches Corelib to each host project as a normal dependency node with the label `Core`.
+- An explicit `dependency "Core" { source = path }` replaces the implicit node. Without `path`, it selects the installed Corelib.
+- The label `Core` is reserved for the Corelib aggregate. Give other packages a different label.
+- Dependency labels are not module paths. Corelib modules keep their package paths, for example `Core.Output` and `Testing.Assert`. There is no `Std` namespace.
+- Corelib is not a prelude. Import each module with `use`.

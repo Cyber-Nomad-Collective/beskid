@@ -52,4 +52,4 @@ description: Beskid Project Lockfile (`Project.lock`)
 
 ## Interop migration note
 
-When `Std` is a dependency, `Project.lock` must reflect `Std` resolution identity before compilation proceeds.
+`Project.lock` records the Corelib dependency under the label `Core`. The lock must contain this identity before compilation starts.

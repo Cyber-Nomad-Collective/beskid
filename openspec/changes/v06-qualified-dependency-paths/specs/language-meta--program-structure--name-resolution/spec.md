@@ -21,13 +21,18 @@ Name resolution SHALL resolve a fully qualified path without a `use` declaration
 - **THEN** the call resolves to the inline module function
 
 ### Requirement: Module path provided by more than one package
-A logical module path SHALL have exactly one providing package in the resolved dependency closure. When more than one package of the closure, the host project included, provides the same logical module path, the compiler SHALL fail with **E1104**. The compiler SHALL NOT select a provider by root order or by any other preference. The diagnostic SHALL name the logical module path and each providing package with its module file, in effective root order: the host project first, then the dependencies in plan order. Two source roots that reach the same canonical module file SHALL count as one provider. One package that has more than one candidate file for a path (a flat file, a homonymous file, `mod.bd` or a generated file) SHALL count as one provider.
+A logical module path SHALL have exactly one providing package in the resolved dependency closure. When more than one package of the closure, the host project included, provides the same logical module path, the compiler SHALL fail with **E1104**. The compiler SHALL NOT select a provider by root order or by any other preference. The diagnostic SHALL name the logical module path and each providing package with its module file, in effective root order: the host project first, then the dependencies in plan order. Two source roots that reach the same canonical module file SHALL count as one provider. One package that has more than one candidate file for a path (a flat file, a homonymous file, `mod.bd` or a generated file) SHALL count as one provider. Import-closure assembly reports this error with the provider list before semantic analysis. When an assembly that scans every source root has already admitted more than one module that declares the path, semantic legality SHALL report **E1104** at the qualified reference with the path and the number of declaring modules, and SHALL NOT bind the reference to any of them.
 
 #### Scenario: Two dependencies provide the same module path
 - **GIVEN** an App whose dependencies `alpha` and `beta` provide `Shared/Codec.bd` and `Shared/Codec/mod.bd`
 - **WHEN** the App source contains `use Shared.Codec;` or a qualified call `Shared.Codec.Encode()`
 - **THEN** the compiler fails with **E1104** for the path `Shared::Codec`
 - **AND** the diagnostic names package `alpha` with `Shared/Codec.bd` and package `beta` with `Shared/Codec/mod.bd`, in that order
+
+#### Scenario: Workspace-scan assembly with two declaring modules
+- **GIVEN** an assembly that scans every source root and contains `Base/Output/Output.bd` from two dependencies
+- **WHEN** the host source calls `Base.Output.Answer()` and `beskid check` judges it
+- **THEN** the compiler reports **E1104** for the path `Base.Output` and the call has no target
 
 #### Scenario: Host module and dependency module with the same path
 - **GIVEN** an App that provides `Util.bd` and a dependency that provides `Util/Util.bd`

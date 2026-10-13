@@ -4,7 +4,7 @@ Real native Generator RED proved production dispatch ignored the exported entryp
 
 ## What Changes
 
-- Introduce an explicit structural-generator ABI v1 request/table, separate from the unchanged legacy ModGenerationRequest ABI.
+- Execute required native Generators only from qualified executable Mod artifacts (descriptor schema 3, host ABI 2, exported discriminator) through owned typed CABI2 transport. The interim structural-generator ABI v1 request/table was retired (MOD-06-28).
 - Require artifact ABI discriminator, real native calls, bounded static constructors, validated owner/generation/kind/lifetime and preserved provenance.
 - Carry actual assembly generation into Mod context and pipeline operations; expose a read-only versioned semantic handle for generation-bound shape facts.
 - Remove native Generator stub success; unavailable required constructor/query capabilities fail closed.

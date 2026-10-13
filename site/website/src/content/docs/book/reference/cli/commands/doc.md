@@ -34,7 +34,7 @@ Each item includes location, visibility, `kind`, names, graph ids, and compiler-
 - **`docMarkdown`** (optional): rendered Markdown for hovers and human-facing docs (same template the LSP uses for rich text).
 - **`doc`** (optional, object): structured fields: `summaryMarkdown`, `returnsMarkdown`, `arguments`, `enumVariants`, `typeParameters`. Derived from the same parse tree as `docMarkdown`.
 
-See the [api.json contract](/docs/standard/tooling/cli/api-json-contract/design-model/) in the platform specification for normative field definitions.
+See the [api.json contract](/docs/standard/capabilities/tooling--cli--api-json-contract/) in the platform specification for normative field definitions.
 
 Older consumers that only understand schema version `2` should treat unknown `schemaVersion` values as unsupported and fall back to Markdown-only fields when present.
 

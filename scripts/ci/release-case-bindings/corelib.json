@@ -1,0 +1,453 @@
+{
+  "schema_version": 1,
+  "slice": "corelib",
+  "cases": {
+    "BSOL-06-02": {
+      "execution": "installed_native",
+      "target": "BsolSuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/bsol/BsolSuite.bd",
+      "required_test_ids": [
+        "bsol_ordered_blocks_assignments_and_byte_spans",
+        "bsol_attributes_references_empty_map_inline_blocks_and_numbers",
+        "bsol_aggregate_nodes_include_comment_entries",
+        "bsol_writer_output_may_exceed_original_input_cap",
+        "bsol_shared_corpus_values_and_runtime_manifest",
+        "bsol_parse_write_parse_preserves_kinds_labels_attributes_and_references_across_whitespace_and_comments"
+      ],
+      "input": {
+        "id": "bsol-corpus",
+        "source_root": "beskid_bsol",
+        "include": ["conformance", "schemas"],
+        "corpus": "conformance"
+      },
+      "fixture": null
+    },
+    "BSOL-06-03": {
+      "execution": "installed_native",
+      "target": "BsolSchemaTests",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/bsol/SchemaTests.bd",
+      "required_test_ids": [
+        "bsol_native_profile_v1_and_v2_declared_rule_load",
+        "bsol_native_schema_valid_primitives_return_checked_document",
+        "bsol_native_schema_missing_required_field",
+        "bsol_native_schema_duplicate_field_keeps_both_spans",
+        "bsol_native_schema_unknown_field_rejects_without_extras",
+        "bsol_native_schema_wrong_primitive_kind_and_integer_range",
+        "bsol_native_schema_invalid_profile_fails_at_profile_boundary",
+        "bsol_all_fourteen_canonical_profiles_parse_and_compose",
+        "bsol_all_fourteen_builtin_profiles_validate_real_documents"
+      ],
+      "input": {
+        "id": "bsol-corpus",
+        "source_root": "beskid_bsol",
+        "include": ["conformance", "schemas"],
+        "corpus": "conformance"
+      },
+      "fixture": null
+    },
+    "BSOL-06-04": {
+      "execution": "installed_native",
+      "target": "BsolSchemaRulesSuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/bsol/SchemaRulesSuite.bd",
+      "required_test_ids": [
+        "bsol_schema_compound_types_have_checked_structural_arena",
+        "bsol_schema_valid_union_map_inline_reference_and_local_attributes",
+        "bsol_schema_union_list_and_map_values_check_each_element",
+        "bsol_schema_inline_fields_and_reference_qualifier_are_checked",
+        "bsol_schema_block_and_field_attribute_allowlists_are_local",
+        "bsol_schema_unknown_union_alternative_rejects_profile",
+        "bsol_schema_absent_attribute_allowlists_reject_unlisted_attributes",
+        "bsol_schema_missing_only_defaults_remain_typed",
+        "bsol_schema_supplied_values_override_defaults_at_numeric_boundary",
+        "bsol_schema_numeric_limits_reject_outside_boundaries",
+        "bsol_schema_actual_inline_map_conditional_constraints",
+        "bsol_schema_variants_require_payload_and_known_discriminant",
+        "bsol_schema_invalid_typed_default_rejects_profile",
+        "bsol_pattern_shared_accepted_grammar",
+        "bsol_pattern_shared_nonempty_startzero_rejections",
+        "bsol_pattern_shared_invalid_unsupported_grammar",
+        "bsol_pattern_shared_subject_exact_limit",
+        "bsol_pattern_shared_subject_over_limit",
+        "bsol_pattern_shared_nested_default_work_limit",
+        "bsol_pattern_shared_unicode_scalar_grammar",
+        "bsol_pattern_caller_work_and_depth_limits",
+        "bsol_pattern_unicode_subject_limit_counts_bytes",
+        "bsol_pattern_unicode_failure_has_exact_utf8_assignment_span",
+        "bsol_pattern_caller_budget_is_shared_through_inline_and_defaults",
+        "bsol_pattern_invalid_caller_limits_reject_checked",
+        "bsol_pattern_class_work_counts_inspected_ranges_and_initial_accept",
+        "bsol_schema_identical_diamond_composes_once",
+        "bsol_schema_composition_cycle_and_unknown_base_reject",
+        "bsol_schema_incompatible_overlay_retains_both_definitions",
+        "bsol_schema_overlay_refines_but_cannot_loosen_constraints",
+        "bsol_native_composition_values_can_narrow_but_never_widen",
+        "bsol_native_composition_incompatible_nested_same_name_rejects",
+        "bsol_native_composition_identical_nested_definitions_coalesce",
+        "bsol_native_composition_aggregate_search_work_is_bounded"
+      ],
+      "input": {
+        "id": "bsol-corpus",
+        "source_root": "beskid_bsol",
+        "include": ["conformance", "schemas"],
+        "corpus": "conformance"
+      },
+      "fixture": null
+    },
+    "BSOL-06-05": {
+      "execution": "installed_native",
+      "target": "BsolSuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/bsol/BsolSuite.bd",
+      "required_test_ids": [
+        "bsol_import_path_cannot_escape_controlled_root_lexically",
+        "bsol_import_git_revision_must_be_immutable",
+        "bsol_import_requests_reject_before_host_resolution",
+        "bsol_package_shorthand_preserves_exact_locked_request",
+        "bsol_import_declaration_retains_alias_profile_and_source_span",
+        "bsol_import_declaration_rejects_duplicate_and_inapplicable_properties",
+        "bsol_import_content_digest_is_checked_before_admission",
+        "bsol_typed_write_reowns_profile_before_invoking_binding",
+        "bsol_imported_alias_composes_defaults_and_revalidates_owned_closure",
+        "bsol_imported_private_keys_do_not_shadow_quoted_local_rule_names",
+        "bsol_imported_reference_aliases_share_one_owned_target",
+        "bsol_imported_qualifier_parser_rejects_empty_segments",
+        "bsol_import_graph_diamond_deduplicates_owned_source_and_keeps_namespaces",
+        "bsol_import_graph_cycles_and_missing_cache_never_publish_partial_graph",
+        "bsol_import_graph_limits_cover_the_whole_closure",
+        "bsol_import_graph_preserves_supported_schema_version_in_owned_cache",
+        "bsol_schema_import_missing_materialized_cache_is_source_spanned",
+        "bsol_schema_import_source_digest_mismatch_rejects"
+      ],
+      "input": {
+        "id": "bsol-corpus",
+        "source_root": "beskid_bsol",
+        "include": ["conformance", "schemas"],
+        "corpus": "conformance"
+      },
+      "fixture": null
+    },
+    "BSOL-06-06": {
+      "execution": "installed_native",
+      "target": "BsolSchemaRulesSuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/bsol/SchemaRulesSuite.bd",
+      "required_test_ids": [
+        "bsol_schema_reference_resolves_to_document_owned_index",
+        "bsol_schema_syntax_reference_cycles_do_not_expand_owned_values",
+        "bsol_schema_reference_missing_duplicate_and_ambiguity_reject",
+        "bsol_schema_references_traverse_lists_maps_and_inline_blocks",
+        "bsol_schema_default_reference_retains_checked_field_owner",
+        "bsol_schema_reference_kind_and_rule_alias_share_canonical_target"
+      ],
+      "input": {
+        "id": "bsol-corpus",
+        "source_root": "beskid_bsol",
+        "include": ["conformance", "schemas"],
+        "corpus": "conformance"
+      },
+      "fixture": null
+    },
+    "BSOL-06-07": {
+      "execution": "installed_native",
+      "target": "BsolMigrationTests",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/bsol/MigrationTests.bd",
+      "required_test_ids": [
+        "bsol_migration_stage_is_fresh_and_requires_declared_definition",
+        "bsol_migration_selected_typed_nodes_preserve_other_strings_and_original",
+        "bsol_migration_ambiguous_routes_report_both_definitions",
+        "bsol_migration_self_cycle_rejects",
+        "bsol_migration_no_route_and_already_target_are_distinct",
+        "bsol_migration_destination_collision_preserves_original",
+        "bsol_migration_chain_reaches_target_without_mutating_input",
+        "bsol_migration_chain_cycles_are_checked_before_application"
+      ],
+      "input": {
+        "id": "bsol-corpus",
+        "source_root": "beskid_bsol",
+        "include": ["conformance", "schemas"],
+        "corpus": "conformance"
+      },
+      "fixture": null
+    },
+    "BSOL-06-08": {
+      "execution": "installed_native",
+      "target": "BsolSerializationWireTests",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/bsol/SerializationWireTests.bd",
+      "required_test_ids": [
+        "bsol_serialization_wire_exact_unsigned_width",
+        "bsol_serialization_wire_float_preserves_negative_zero",
+        "bsol_serialization_wire_strict_canonical_base64",
+        "bsol_serialization_wire_optional_cardinality_and_tag",
+        "bsol_serialization_wire_rejects_unknown_duplicate_and_malformed_fields",
+        "bsol_serialization_wire_char_scalar_and_depth_policy",
+        "bsol_serialization_wire_array_list_shapes_are_distinct",
+        "bsol_serialization_wire_record_declared_order_and_required_fields",
+        "bsol_serialization_wire_map_ordinal_keys_and_duplicate_rejection",
+        "bsol_serialization_wire_variant_exact_discriminant_and_payload",
+        "bsol_serialization_stream_encoder_validates_shape_and_transaction",
+        "bsol_serialization_stream_encoder_checks_nested_arity",
+        "bsol_serialization_shared_generic_encoder_decoder_constructs_fresh_t",
+        "bsol_serialization_shared_tagged_corpus_uses_same_native_policy",
+        "bsol_serialization_active_path_rejects_cycle_not_shared_siblings",
+        "bsol_explicit_typed_binding_reads_exact_integer_after_validation",
+        "bsol_explicit_typed_binding_write_roundtrip_is_profile_checked",
+        "bsol_typed_binding_missing_duplicate_and_wrong_kind_reject"
+      ],
+      "input": {
+        "id": "bsol-corpus",
+        "source_root": "beskid_bsol",
+        "include": ["conformance", "schemas"],
+        "corpus": "conformance"
+      },
+      "fixture": null
+    },
+    "BSOL-06-09": {
+      "execution": "installed_native",
+      "target": "BsolSuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/bsol/BsolSuite.bd",
+      "required_test_ids": [
+        "bsol_strict_escaped_unicode_and_invalid_surrogates",
+        "bsol_limits_fail_before_unbounded_work",
+        "bsol_normative_limits_defaults_are_explicit",
+        "bsol_scalar_limit_uses_decoded_utf8_bytes",
+        "bsol_output_limit_is_independent_of_input_limit",
+        "bsol_lexical_matrix_rejects_bracket_attributes_invalid_escapes_leading_zero_and_nonfinite",
+        "bsol_each_configured_limit_boundary_admits_and_plus_one_rejects_atomically",
+        "bsol_float_output_is_shortest_roundtrip_and_keeps_negative_zero_at_both_widths"
+      ],
+      "input": {
+        "id": "bsol-corpus",
+        "source_root": "beskid_bsol",
+        "include": ["conformance", "schemas"],
+        "corpus": "conformance"
+      },
+      "fixture": null
+    },
+    "DYN-06-01": {
+      "execution": "installed_native",
+      "target": "DynamicSuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/dynamic/DynamicSuite.bd",
+      "required_test_ids": [
+        "dynamic_zero_shape_and_mapping_tokens_reject_without_publishing",
+        "dynamic_unregistered_tokens_fail_closed_for_create_cast_and_map"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "DYN-06-02": {
+      "execution": "installed_native",
+      "target": "DynamicSuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/dynamic/DynamicSuite.bd",
+      "required_test_ids": [
+        "dynamic_cast_to_wrong_registered_shape_rejects_and_exact_shape_succeeds"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "DYN-06-05": {
+      "execution": "installed_native",
+      "target": "DynamicSuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/dynamic/DynamicSuite.bd",
+      "required_test_ids": [
+        "dynamic_cell_only_root_keeps_nested_payload_across_forced_collection",
+        "dynamic_generic_instantiations_keep_distinct_identities_through_repeated_creation_and_collection"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "R4-PROC-01": {
+      "execution": "installed_native",
+      "target": "ProcessSuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/process/ProcessSuite.bd",
+      "required_test_ids": [
+        "process_spawn_passes_unicode_space_quote_and_shell_metacharacter_argv_exactly"
+      ],
+      "input": null,
+      "fixture": "beskid_release_fixture",
+      "obligation_assertions": [
+        {
+          "kind": "process",
+          "obligation": "argv_unicode_no_shell",
+          "test_id": "process_spawn_passes_unicode_space_quote_and_shell_metacharacter_argv_exactly"
+        }
+      ]
+    },
+    "R4-PROC-02": {
+      "execution": "installed_native",
+      "target": "ProcessSuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/process/ProcessSuite.bd",
+      "required_test_ids": [
+        "process_binary_stdin_stdout_roundtrip_with_partial_transfers_preserves_order"
+      ],
+      "input": null,
+      "fixture": "beskid_release_fixture",
+      "obligation_assertions": [
+        {
+          "kind": "process",
+          "obligation": "binary_partial_pipes",
+          "test_id": "process_binary_stdin_stdout_roundtrip_with_partial_transfers_preserves_order"
+        }
+      ]
+    },
+    "R4-PROC-03": {
+      "execution": "installed_native",
+      "target": "ProcessSuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/process/ProcessSuite.bd",
+      "required_test_ids": [
+        "process_stderr_flood_is_drained_concurrently_without_deadlock"
+      ],
+      "input": null,
+      "fixture": "beskid_release_fixture",
+      "obligation_assertions": [
+        {
+          "kind": "process",
+          "obligation": "stderr_flood",
+          "test_id": "process_stderr_flood_is_drained_concurrently_without_deadlock"
+        }
+      ]
+    },
+    "R4-PROC-04": {
+      "execution": "installed_native",
+      "target": "ProcessSuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/process/ProcessSuite.bd",
+      "required_test_ids": [
+        "process_wait_returns_exit_code_and_run_reports_typed_exit_and_missing_executable",
+        "process_wait_deadline_expiry_is_timed_out_and_close_reaps"
+      ],
+      "input": null,
+      "fixture": "beskid_release_fixture",
+      "obligation_assertions": [
+        {
+          "kind": "process",
+          "obligation": "exit_wait",
+          "test_id": "process_wait_returns_exit_code_and_run_reports_typed_exit_and_missing_executable"
+        }
+      ]
+    },
+    "R4-PROC-05": {
+      "execution": "installed_native",
+      "target": "ProcessSuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/process/ProcessSuite.bd",
+      "required_test_ids": [
+        "process_terminate_and_close_reap_the_child_tree_within_five_seconds"
+      ],
+      "input": null,
+      "fixture": "beskid_release_fixture",
+      "obligation_assertions": [
+        {
+          "kind": "process",
+          "obligation": "cancel_terminate_reap",
+          "test_id": "process_terminate_and_close_reap_the_child_tree_within_five_seconds"
+        }
+      ]
+    },
+    "R4-PROC-06": {
+      "execution": "installed_native",
+      "target": "ProcessSuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/process/ProcessSuite.bd",
+      "required_test_ids": [
+        "process_close_is_idempotent_through_aliases",
+        "process_failed_spawn_setup_leaves_no_child_and_later_spawns_succeed"
+      ],
+      "input": null,
+      "fixture": "beskid_release_fixture",
+      "obligation_assertions": [
+        {
+          "kind": "process",
+          "obligation": "idempotent_close_setup_cleanup",
+          "test_id": "process_close_is_idempotent_through_aliases"
+        }
+      ]
+    },
+    "SER-01": {
+      "execution": "installed_native",
+      "target": "SerializationGeneratedSuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/serialization/GeneratedTests.bd",
+      "required_test_ids": [
+        "serialization_generated_full_shape_record_roundtrips_through_bsol",
+        "serialization_generated_variant_identity_and_field_order_survive_roundtrip",
+        "serialization_generated_word_uses_declared_width_and_range_checks"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "SER-02": {
+      "execution": "installed_native",
+      "target": "SerializationModEligibilitySuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/serialization/ModEligibilityTests.bd",
+      "required_test_ids": [
+        "serialization_eligibility_rejects_ineligible_declared_types_with_field_spans",
+        "serialization_closure_rejects_non_string_map_keys",
+        "serialization_closure_rejects_nested_opaque_references_and_resources",
+        "serialization_closure_rejects_host_gated_resources"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "SER-03": {
+      "execution": "installed_native",
+      "target": "SerializationGeneratedSuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/serialization/GeneratedTests.bd",
+      "required_test_ids": [
+        "serialization_generated_record_uses_one_descriptor_for_bsol_and_json",
+        "serialization_generated_f32_and_f64_bits_survive_both_formats_without_coercion"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "SER-05": {
+      "execution": "installed_native",
+      "target": "BsolSerializationWireTests",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/bsol/SerializationWireTests.bd",
+      "required_test_ids": [
+        "serialization_each_configured_limit_succeeds_and_plus_one_returns_limit_exceeded_without_partial_output",
+        "serialization_cycle_rejects_and_acyclic_alias_copies_by_value",
+        "serialization_record_missing_required_duplicate_and_unknown_fields_reject_and_optional_fields_may_be_absent",
+        "serialization_precision_unicode_scalars_and_invalid_surrogates_roundtrip_or_reject",
+        "serialization_failure_publication_has_no_mutable_payload",
+        "wire_encoder_prepares_fallible_work_before_nonallocating_commit"
+      ],
+      "input": {
+        "id": "bsol-corpus",
+        "source_root": "beskid_bsol",
+        "include": ["conformance", "schemas"],
+        "corpus": "conformance"
+      },
+      "fixture": null
+    },
+    "SER-06": {
+      "execution": "installed_native",
+      "target": "SerializationSuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/serialization/SerializationSuite.bd",
+      "required_test_ids": [
+        "serialization_registration_conflict_is_atomic_and_owned",
+        "serialization_signature_sha256_exact",
+        "serialization_shape_id_preserves_complete_digest_and_rejects_noncanonical_text",
+        "serialization_graph_missing_edge_keeps_existing_table",
+        "serialization_graph_admits_complete_recursive_closure"
+      ],
+      "input": null,
+      "fixture": null
+    }
+  }
+}

@@ -29,7 +29,7 @@ Check SHALL perform semantic checking through shared generation-bound analysis w
 - **THEN** the operation fails before executable lowering rather than succeeding with a warning
 
 ### Requirement: Program arguments streams and outcome
-Run SHALL accept trailing -- arguments preserving OsString argument boundaries, including empty values, spaces, Unicode and leading dashes. It SHALL inherit stdin and preserve independent child stdout/stderr bytes without mixing progress into stdout. It SHALL forward cancellation, reap the child and propagate numeric child status; Unix signal termination SHALL map to 128+signal and Windows cancellation to 130. Successful ordinary execution SHALL NOT impose an undocumented unconditional 60-second timeout. Captured internal execution SHALL drain both pipes concurrently. Linker, subprocess and interrupted test failures SHALL NOT report success.
+Run SHALL accept trailing -- arguments preserving OsString argument boundaries, including empty values, spaces, Unicode and leading dashes; a --json after -- SHALL belong to the program. It SHALL inherit stdin and preserve independent child stdout/stderr bytes without mixing progress into stdout. It SHALL forward cancellation, reap the child and propagate numeric child status; Unix signal termination SHALL map to 128+signal and Windows cancellation to 130. Successful ordinary execution SHALL NOT impose an undocumented unconditional 60-second timeout. Captured internal execution SHALL drain both pipes concurrently. Linker, subprocess and interrupted test failures SHALL NOT report success.
 
 #### Scenario: CLI06-03 Boundaries and status
 - **GIVEN** a program reading stdin and argv and exiting 7

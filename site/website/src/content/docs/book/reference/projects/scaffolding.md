@@ -5,7 +5,7 @@ description: "Create Beskid projects, workspaces, and items from templates with 
 
 Beskid scaffolds new **projects**, **workspaces**, and **items** from **templates**: versioned file trees described by **`beskid.template.v1`** in **`.beskid/template.json`**. The primary CLI entrypoint is **`beskid new`**; **`beskid package`** is for packing and publishing template packages, not for instantiation.
 
-Normative contracts live under [Project scaffolding](/docs/standard/tooling/project-scaffolding/). This guide summarizes day-to-day workflows.
+Normative contracts live under [Project scaffolding](/docs/standard/capabilities/taxonomy--tooling--project-scaffolding/). This guide summarizes day-to-day workflows.
 
 ## Sources
 
@@ -68,11 +68,11 @@ Every **instantiated** ordinary **host** project (**`project.type` omitted or `H
 
 ## Authoring template packages
 
-Template authors use **`project.type = Template`** in `App.bproj` and publish with **`beskid package pack`** (sets **`packageKind: template`**, includes **`.beskid/template.json`**, skips **`api.json`** generation). See [beskid package](/book/reference/cli/commands/pckg/) and [Template packages](/docs/standard/tooling/project-scaffolding/template-packages/).
+Template authors use **`project.type = Template`** in `App.bproj` and publish with **`beskid package pack`** (sets **`packageKind: template`**, includes **`.beskid/template.json`**, skips **`api.json`** generation). See [beskid package](/book/reference/cli/commands/pckg/) and [Template packages](/docs/standard/capabilities/tooling--project-scaffolding--template-packages/).
 
 ## Related
 
 - [beskid new](/book/reference/cli/commands/new/)
 - [Beskid Projects](/book/reference/projects/)
-- [Project templates (spec)](/docs/standard/tooling/project-scaffolding/project-templates/)
-- [beskid new (spec)](/docs/standard/tooling/project-scaffolding/beskid-new/)
+- [Project templates (spec)](/docs/standard/capabilities/tooling--project-scaffolding--project-templates/)
+- [beskid new (spec)](/docs/standard/capabilities/tooling--project-scaffolding--beskid-new/)

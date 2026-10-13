@@ -38,7 +38,7 @@ The adapter resolves the native server in this exact order:
 1. `lsp.beskid-lsp.binary.path`, preserving configured arguments and
    environment exactly.
 2. `beskid_lsp` on the worktree `PATH`, invoked with `--stdio`.
-3. `beskid` on the worktree `PATH`, invoked as `beskid lsp`.
+3. `beskid` on the worktree `PATH`, invoked as `beskid dev lsp`.
 4. The exact asset from the compiler repository's rolling `lsp-stable` GitHub
    release, cached under its immutable release version and invoked with
    `--stdio`.
@@ -118,9 +118,9 @@ Source runnables use these pinned top-level compiler commands:
 | Test current source | `beskid test $ZED_FILE` |
 | Run captured entry point | `beskid run $ZED_FILE --entrypoint $ZED_CUSTOM_entrypoint` |
 | Build current source | `beskid build $ZED_FILE` |
-| Analyze current source | `beskid analyze $ZED_FILE` |
-| Fetch project dependencies | `beskid fetch` |
-| Lock project dependencies | `beskid lock` |
+| Check current source | `beskid check $ZED_FILE` |
+| Fetch project dependencies | `beskid dev project fetch` |
+| Lock project dependencies | `beskid dev project lock` |
 
 The first two appear beside matching source declarations through
 `runnables.scm`; all templates are available through Zed's task picker.
@@ -138,7 +138,7 @@ surface for which the SDK has no host capability.
 | Syntax highlighting and symbols | Re-expressed | Packaged Tree-sitter grammar plus highlight, tag, and outline queries |
 | Standalone `.bsol` Tree-sitter highlighting | Re-expressed | Pinned `beskid_bsol` grammar at `grammars/tree-sitter-bsol` with a package-owned adapted highlights query |
 | Declaration snippets | Re-expressed | Zed JSON snippets for module, function, type, contract, enum, and test declarations |
-| Test, run, build, analyze, fetch, and lock actions | Re-expressed | Runnable captures and Zed task templates using the pinned top-level CLI |
+| Test, run, build, check, fetch, and lock actions | Re-expressed | Runnable captures and Zed task templates using the canonical 0.6 CLI routes |
 | Projects and Packages tree views | Unsupported UI | Registry extensions cannot register custom tree views |
 | Graph Explorer, dashboard, and package-registry webviews | Unsupported UI | Registry extensions cannot create webviews or custom panels |
 | Beskid status-bar entry | Unsupported UI | Registry extensions cannot add status-bar items |

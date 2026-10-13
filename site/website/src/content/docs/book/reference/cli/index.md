@@ -5,7 +5,7 @@ description: "Command-line interface for parsing, analysis, formatting, compilat
 
 The `beskid` binary is the primary interface for local development, CI, and editor integrations. It provisions the embedded **corelib** template on startup when needed, then dispatches to a subcommand.
 
-The global `--log-cranelift` flag enables Cranelift JIT and codegen backend logs. It is also available through `BESKID_LOG_CRANELIFT=1`.
+`beskid dev --log-cranelift` enables Cranelift backend logs for the inspection commands under `dev`. It is also available through `BESKID_LOG_CRANELIFT=1`. Ordinary commands have no global flags.
 
 ## Where to go next
 
@@ -28,6 +28,6 @@ beskid test --project path/to/App.bproj --plain
 beskid dev project graph --project path/to/App.bproj --mermaid
 ```
 
-`beskid new` instantiation requires exactly one template selector and an output path. Use a short name such as `console`, or use one of `--package`, `--path`, and `--git`. See the [new command](/book/reference/cli/commands/new/) for registry authentication flags and line-oriented prompts.
+`beskid new <NAME>` creates a project from the bundled application template, offline. Select a different template with at most one of `--template`, `--package`, `--path`, and `--git`, and list templates with `--list`. See the [new command](/book/reference/cli/commands/new/) for registry authentication flags and line-oriented prompts.
 
 Install prebuilt binaries from [Downloads](/downloads/) or build from the compiler repository.

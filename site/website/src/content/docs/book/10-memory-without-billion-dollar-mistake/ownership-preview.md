@@ -24,7 +24,7 @@ The **compiler host** is Rust (`beskid_analysis`, `beskid_engine`, …) and uses
 
 ## Closures and captures
 
-Closures capture environment values; the compiler roots captures for **GC** when lowering `spawn`. If a capture would let stack memory outlive its frame across fibers, you get a diagnostic, not a silent segfault gift basket ([Fibers and spawn semantic rules](/platform-spec/language-meta/evaluation/fibers-and-spawn/)).
+Closures capture environment values; the compiler roots captures for **GC** when lowering `spawn`. If a capture would let stack memory outlive its frame across fibers, you get a diagnostic, not a silent segfault gift basket ([Fibers and spawn semantic rules](/docs/standard/capabilities/language-meta--evaluation--fibers-and-spawn/)).
 
 ## When you need Rust-level control
 
@@ -32,7 +32,7 @@ Put it behind **`extern`** / native libraries with a documented ABI profile, or 
 
 ## Standard reference (informative)
 
-[Memory and references](/platform-spec/language-meta/memory-model/memory-and-references/)
+[Memory and references](/docs/standard/capabilities/language-meta--memory-model--memory-and-references/)
 
 ## Next
 

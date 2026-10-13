@@ -82,14 +82,16 @@ The single pckg product implementation: `beskid_pckg_server` is the sole registr
 
 ## CLI root command inventory
 
-The 26 public root commands exposed by the pinned `beskid` Clap model. Each
-command has one Book reference page. Task procedures use the concise root
-forms; `beskid dev` only groups documented aliases for discovery. The committed
-`site/website/src/data/pinned-cli-reference.json` snapshot records the source
-revision, arguments, flags, defaults, subcommands, and alias relationships that
-the public reference must cover. Its source-blob map binds the fixture to the
-immutable compiler object. Conditional requirements distinguish command paths
-such as `beskid new` instantiation from the output-free TUI picker.
+The public root commands of the pinned `beskid` Clap model. In 0.6.0 there are
+14: `new`, `check`, `build`, `run`, `test`, `fmt`, `doc`, `add`, `remove`,
+`update`, `package`, `toolchain`, `doctor` and `dev`. Compiler inspection and
+maintenance commands are subcommands of `beskid dev`, not aliases of root
+commands. A removed 0.5 root spelling (for example `analyze`, `pckg`, `up` or
+`lsp`) is not dispatched; it fails with the name of its replacement. The
+committed `site/website/src/data/pinned-cli-reference.json` snapshot records the
+source revision, arguments, flags, defaults and subcommands that the public
+reference must cover, and its source-blob map binds the fixture to the immutable
+compiler object.
 
 ## Capability
 
@@ -372,35 +374,79 @@ not make the procedure normative or guarantee a later deployment.
 
 ## Beskid.Glue
 
-The generator/reader layer that lets Beskid integrate with multiple target languages through a common model. It instantiates the `Interop.Contracts` vocabulary as typed values and adds glue-specific generation and reading constructs; it does not redefine the boundary vocabulary.
+The Beskid interop layer that connects Beskid code to code in another language.
+In 0.6.0 its delivered form is Rust Glue: an in-process call path through a
+checked C ABI between a Glue consumer image and Rust owner images. Bindings are
+`Extern` contracts and `[GlueHandle]` types whose `Library` names a manifest
+`glue` block. The 0.6 boundary vocabulary is `GlueLogicalType` (primitives,
+arrays, generic positions and branded handles); its unification with
+`Interop.Contracts` is deferred to `v061-glue-extensions`.
 
 ## Interop.Contracts
 
-The normative language-agnostic boundary vocabulary: type-shape classes (`Scalar`, `OpaqueHandle`, `Buffer`, `StringLike`, `Never`), call-shape classes, ownership classes (`Borrow`, `Transfer`, `OpaqueBorrow`), and a conformance envelope. C and Rust ABI profiles bind these primitives rather than redefining them.
+The language-agnostic boundary vocabulary in `beskid_abi::interop`: type-shape classes (`Scalar`, `OpaqueHandle`, `Buffer`, `StringLike`, `Never`), call-shape classes, ownership classes (`Borrow`, `Transfer`, `OpaqueBorrow`), and a conformance envelope. C and Rust ABI profiles bind these primitives rather than redefining them. The 0.6 Glue code path does not yet lower to it.
 
 ## Glue backend
 
-A `Backend` trait implementation at the `CodegenInput` boundary that emits a non-CLIF artifact (Rust source, .NET project) instead of Cranelift CLIF. Backends are selected by a manifest flag, not by a new mod contract kind; the existing Cranelift path is the `CraneliftClif` backend.
+The codegen backend selected with `beskid build --backend`. `clif` is the
+default Cranelift path. `glue-rust` builds a `Lib` target as a shared Glue
+consumer plus one Rust owner image per referenced `glue` block, and requires
+explicit Rust tools. `glue-dotnet` is parsed but unavailable in 0.6.
 
-## Glue contract
+## Glue owner block
 
-One of seven atomized, single-purpose, closed-set contracts a per-language glue mod implements: `TypeMapping`, `SymbolEmission`, `LinkArgs`, `SignatureReader`, `SignatureWriter`, `ToolchainProbe`, and `StdioBridge`. The set mirrors the existing mod SDK closed contract pattern.
+The top-level project manifest block `glue "<library>" { backend = rust path = "<dir>" }`.
+The label is the canonical owner library identity and equals the `Library`
+string of the `Extern` contracts and `GlueHandle` types the owner implements.
+`path` is the project-relative Rust owner source directory. Only `backend` and
+`path` are accepted (E1867 for any other key).
 
-## Glue mod
+## GlueHandle
 
-A Beskid package (`type = Mod`) implementing the seven glue contracts' rules (type mappings, emission templates, toolchain allowlists, stdio protocol) as Beskid data and typed AST contributions. The host dispatches the contracts; the host seam stays Rust.
+The attribute `[GlueHandle(Library: "<library>", Nullable: <bool>)]` on a type
+declaration. It brands the type as an opaque foreign handle owned by that
+library. A nominal type crosses the Glue boundary only with exactly one
+`GlueHandle` brand; plain records are rejected in 0.6.
 
-## Stdio bridge fiber
+## RustOwner
 
-A Beskid cooperative `Fiber` generated by the glue system from `[GlueImport]` attributes that proxies calls between the Beskid runtime and a foreign library over a stdio message protocol, for cases that cannot be direct FFI. It owns a registry of host typed tag objects, one per imported library.
+The attribute that maps a Glue binding to a Rust path. On an `Extern` contract
+method it is `[RustOwner(Path: .., Fallible: ..)]`, both optional; without it the
+default path is `implementation::<symbol>`. On a `GlueHandle` type `Path` is
+required and `Fallible` is rejected. A path starts with the generated
+`implementation` module and may not use crate roots, relative roots, keywords or
+generic arguments.
 
-## Host typed tag object
+## Rust owner image
 
-An `OpaqueHandle`-shaped, Beskid.Glue-typed handle representing one imported foreign library, used by the stdio bridge fiber to route messages.
+The shared native image built from a `glue` block's Rust sources by a hermetic
+Cargo build with the tools named on the command line. It implements the imports
+of one library and carries its own admission record.
+
+## Glue admission record
+
+The immutable record that each Glue image compiles into itself before the link:
+the consumer through a generated C object
+(`beskid_glue_artifact_v1_admission_record`), a Rust owner through a generated
+`static` (`beskid_glue_rust_owner_v1_admission_record`). The host reads it from
+the file bytes before any image code runs. A record is evidence, not trust: the
+consumer image digest arrives through the build's own result output, the
+consumer record pins every Rust owner image by digest, and a record from another
+compiler version is not admitted.
+
+## Glue stdio bridge
+
+The provisional process-isolated Glue transport in `Core.Glue` (envelope,
+binary codec, pump, session) and the `beskid_glue` crate. It has no 0.6 delivery
+obligation, its release cases fail closed, and there is no fallback between it
+and the in-process path (`v06-glue-stdio-bridge-provisional`).
 
 ## ToolchainProbe
 
-A fail-closed glue contract, modeled on the ABI-v5 runtime-kit validation pattern, that discovers and verifies external tools (rustc, cargo, dotnet, linkers) by exact path, sha256, version, and capability, and rejects drift before link or load.
+The typed fail-closed model for external tools in `beskid_abi::toolchain`
+(`ToolSpec`, `ResolvedTool`, `ToolchainError`), modeled on runtime-kit
+validation: exact paths, no search-path fallback. It is no longer a Glue Mod
+contract; the 0.6 Rust Glue build takes its tools from explicit CLI flags.
 
 ## cargo-binstall
 
@@ -416,12 +462,72 @@ linkers because this configuration is Linux-only.
 
 ## Glue contracts cutoff (0.4)
 
-The 0.4 delivery obligation for Beskid.Glue: the normative OpenSpec contract, the `Interop.Contracts` typed model, the `Backend` trait with three variants (`CraneliftClif` wired, `RustSource` and `DotnetProject` declared), the seven glue contracts declared as Beskid contracts and attributes, the stdio bridge fiber design, and the `ToolchainProbe` contract scaffold. No language-specific emission code ships in 0.4.
+Historical. The 0.4 Glue delivery: the OpenSpec contract, the `Interop.Contracts` typed model, the `Backend` trait, seven Glue Mod contracts with the `[Glue]`, `[GlueImport]` and `[GlueExport]` attributes, a stdio bridge design and the `ToolchainProbe` scaffold. 0.6.0 deletes the Mod contracts and attributes (`v06-rust-glue-integration`).
 
 ## Glue generation (0.5)
 
-The 0.5 delivery obligation for Beskid.Glue: language-specific code generation (Rust and .NET emitters), dotscope-based .NET signature reading, corelib/runtime stdio and other-protocol implementation, full `ToolchainProbe` implementation, and extending glue projects in Beskid to insert rust, C#, or any language.
+Historical. The planned 0.5 Glue obligation (Rust and .NET emitters, .NET signature reading, stdio protocol, full `ToolchainProbe`). It did not ship in 0.5. 0.6.0 replaces it with in-process Rust Glue; .NET stays unavailable.
 
 ## Ridge identity
 
 The user-selected beskid logo: two solid, asymmetric mountain shoulders separated by an open diagonal, paired with a lowercase wordmark. Its canonical geometry and generated asset family live in [`site/beskid_brand`](site/beskid_brand/); usage is defined in [`BRAND.md`](site/beskid_brand/BRAND.md).
+
+## Query gate
+
+The `beskid_queries` typing and legality authority. In 0.6.0 it is the only
+semantic front end: `check`, `build`, `run`, `test` and the language server run
+the same gate, and a program it accepts is never judged again by a second type
+system (`v06-query-front-end`).
+
+## Executable front end
+
+The value the query gate produces for an executable build: the rewritten syntax
+assembly plus composition authority (`ExecutableFrontEnd`). Codegen builds
+`TypedProgram` and `CodegenInput` from it and lowers through ISLE. A failure
+after the gate accepts a program is a compiler gap, not a user error.
+
+## Function value
+
+A value of a function type. It is a GC-managed closure record (header, code
+pointer, environment pointer) whose ABI is one pointer. A named non-generic
+function used as a value has a null environment. Captures are by-value
+snapshots taken when the record is created (`v06-function-values`).
+
+## Native Mod host
+
+The process that loads and runs compiled Mod executables for project
+preparation. The CLI uses its own executable (`beskid dev native-mod-worker`);
+the language server uses the `beskid` CLI next to it unless the `modHost`
+initialization option selects another executable and runtime kit.
+
+## Mod artifact descriptor
+
+The `mod.descriptor.json` file beside a compiled Mod executable
+(`ModArtifactDescriptor`, schema 3, host ABI 2). It records the package
+identity, target triple, compiler version, contract registrations, callable
+identities, source, SDK and dependency digests, the runtime binding, and each
+build tool by executable digest and captured version output. A Mod artifact is
+loaded only when its descriptor matches the current sources and Mod host.
+
+## Release case
+
+One mandatory entry of `scripts/ci/release-cases-v06.json`. It names its
+requirement ids, the project or harness that executes it, the exact test ids it
+binds, and its execution kind (`installed_native` or `installed_host_harness`).
+Every release case must pass on every release target against the installed
+candidate; unbound or missing cases reject the release. 0.6.0 has 86.
+
+## Provisional release case
+
+An entry of `provisional_cases` in the release case manifest. It records an
+obligation that is not part of the release (in 0.6.0, the 15 stdio bridge
+cases). Provisional cases are not evaluated and cannot count as passed.
+
+## Heap and fiber stack limits
+
+The process-wide runtime limits read at `beskid_rt_v5_process_init`.
+`BESKID_HEAP_MAX` installs a managed heap cap (decimal bytes, optional `k`, `m`
+or `g` suffix); without it the heap has no fixed cap. `BESKID_FIBER_STACK_MAX`
+sets the per-fiber stack reservation (default 8 MiB, a whole multiple of the
+64 KiB initial commit). An invalid value traps with the variable name.
+

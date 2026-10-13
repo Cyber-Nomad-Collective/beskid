@@ -1,17 +1,17 @@
 ---
 title: "Execution and core library"
-description: Navigate execution and core library in platform-spec and tie reading to crates.
+description: Navigate execution and core library in the Standard and tie reading to crates.
 tableOfContents: true
 ---
 
-Execution and the core library answer different questions. Read [Execution](/platform-spec/execution/) for runtime, ABI, and host behavior; read [Core library](/platform-spec/core-library/) for the library surface exposed to programs.
+Execution and the core library answer different questions. Read [Execution](/docs/standard/capabilities/taxonomy--execution/) for runtime, ABI, and host behavior; read [Core library](/docs/standard/capabilities/taxonomy--core-library/) for the library surface exposed to programs.
 
 ## Choose the right domain
 
 | If you are asking about… | Start here |
 | --- | --- |
-| Host calls, runtime services, ABI boundaries, or conformance execution | [Execution](/platform-spec/execution/) |
-| Public library APIs, corelib organization, or compiler integration | [Core library](/platform-spec/core-library/) |
+| Host calls, runtime services, ABI boundaries, or conformance execution | [Execution](/docs/standard/capabilities/taxonomy--execution/) |
+| Public library APIs, corelib organization, or compiler integration | [Core library](/docs/standard/capabilities/taxonomy--core-library/) |
 
 Cross-domain features may link to both hubs. Follow those links rather than assuming that an API name describes its owning contract.
 

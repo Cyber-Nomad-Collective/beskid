@@ -510,7 +510,7 @@ Document **verification and traceability** for the **Console Io Streams** featur
 | `compiler/corelib/packages/foundation/src/Core/Output/Output.bd` | stdout writes |
 | `compiler/corelib/packages/foundation/src/Core/Error/Error.bd` | stderr writes |
 | `compiler/corelib/packages/foundation/src/Core/Syscall/` | Descriptor and request types |
-| `compiler/crates/beskid_abi` / `BUILTIN_SPECS` | `__syscall_read`, `__syscall_write` |
+| `compiler/runtime_manifest.bsol` / generated ABI-v5 tables in `beskid_abi` | `__syscall_read`, `__syscall_write` |
 
 ### Tests and runtime checks
 

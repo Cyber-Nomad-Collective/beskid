@@ -74,7 +74,9 @@ try {
   const bundles = [];
   for (const platform of checked.platforms) {
     results.push(join(snapshot, platform.platform, `platform-result-${platform.target}.json`));
-    for (const artifact of platform.artifacts.filter(asset => !asset.name.endsWith(".json"))) {
+    // Only the CLI, LSP and bundle are publishable assets; retained evidence (schema-2 packet files,
+    // harness executables, logs) stays in the evidence snapshot.
+    for (const artifact of platform.artifacts.filter(asset => platform.release_assets.includes(asset.name))) {
       copyFileSync(join(snapshot, platform.platform, artifact.name), join(assets, artifact.name));
       if (artifact.name.endsWith(".tar.gz")) bundles.push(`${platform.target}|https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/download/v${version}/${artifact.name}|${artifact.sha256}`);
     }

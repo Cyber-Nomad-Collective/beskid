@@ -4,47 +4,29 @@
 ## Purpose
 
 Feature-gate and capability signaling contract between runtime builds and compiler/tooling expectations.
-
 ## Requirements
+### Requirement: Required ABI-v5 runtime semantics are not feature-gated
+Every supported ABI-v5 runtime kit SHALL provide the same mandatory managed
+array storage, descriptor tracing, typed growth, bounds behavior, roots,
+barriers, and filesystem adapter semantics. A build feature MAY enable
+observability or implementation diagnostics only when it does not add, remove,
+or alter a public/core/runtime semantic capability, ABI symbol, layout,
+failure outcome, or conformance result. Runtime-kit metadata MUST reject a
+semantic feature combination that would make required behavior unavailable.
 
-### Requirement: Cargo features are separate from ABI version: Decision [D-EXEC-RT-0014]
-The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
+#### Scenario: Array storage is present in every supported kit
+- **GIVEN** any supported target/profile ABI-v5 runtime kit
+- **WHEN** a non-empty managed array is allocated and used by a Corelib
+  collection
+- **THEN** real descriptor-backed storage, checked access, growth, roots, and
+  barriers are available without an `arrays_backing` feature
 
-> | Concept | Rule |
-> | --- | --- |
-> | `BESKID_RUNTIME_ABI_VERSION` | Changes only on breaking layout/signature per **D-EXEC-ABI-0002** |
-> | Cargo `features` | `metrics`, `arrays_backing`, `sched` — build-time toggles |
-> | Additive exports | New feature-gated symbols **may** ship without ABI bump if old artifacts never import them |
-> | Shipped binaries | **Must** document enabled features in release notes |
-> | Tests | Compiler tests enable features explicitly when validating optional paths |
-
-**Stable ID:** `BSP-REQ-D0D411D012AC`  
-**Legacy source:** `site/spec-content/platform-spec/execution/runtime/runtime-feature-flags/adr/0014-cargo-features-not-abi-version/content.md`  
-**Source SHA-256:** `77bafb075078817c302d5d83a712fdedc70f4f15bc081838a5edd0a54de23c81`
-
-#### Scenario: Conformance exercises Decision
-- **GIVEN** an implementation claims conformance with this capability
-- **WHEN** behavior governed by this contract section is exercised
-- **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
-
-### Requirement: arrays_backing gates array element storage: Decision [D-EXEC-RT-0015]
-The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
-
-> | `arrays_backing` | Behavior |
-> | --- | --- |
-> | **Enabled** | `array_new` allocates element storage; `ptr` non-null when length > 0 |
-> | **Disabled** | Header-only arrays; `ptr` may be **null** |
-> | ABI | Symbol list unchanged; semantics differ by build — document in release matrices |
-> | Alignment | Shipped CLI/VSIX **should** enable `arrays_backing` for reference user workflows |
-
-**Stable ID:** `BSP-REQ-289D07407B0E`  
-**Legacy source:** `site/spec-content/platform-spec/execution/runtime/runtime-feature-flags/adr/0015-arrays-backing-feature/content.md`  
-**Source SHA-256:** `6334ca0fac56db28593dd4ff052322f97d4038cb268c29c1ecc8c61e6a9f13db`
-
-#### Scenario: Conformance exercises Decision
-- **GIVEN** an implementation claims conformance with this capability
-- **WHEN** behavior governed by this contract section is exercised
-- **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
+#### Scenario: Diagnostic feature does not change behavior
+- **GIVEN** two otherwise identical kits that differ only in an approved
+  observability feature
+- **WHEN** the same collection and filesystem conformance programs run
+- **THEN** their public values, failures, symbols, layouts, and conformance
+  results are identical
 
 ## Informative Source Provenance
 

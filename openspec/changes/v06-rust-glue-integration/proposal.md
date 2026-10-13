@@ -4,22 +4,24 @@ Rust Glue is required for beskid 0.6, but compiler 95c203ff only observes Glue a
 
 ## What Changes
 
-- Deliver a manually proven C ABI basis and equivalent generated Rust adapters for both directions, all fixed integer widths, f32/f64, Bool, Unicode scalar, UTF-8/bytes, unit, checked handles and target-sized values.
-- Add canonical missing primitive prerequisites; implement registered Glue Mod invocation, deterministic source/build artifact closure, explicit bounded tools and one stdio transport using shared serialization, Core.IO and existing fibers.
-- Add child-process pipes/wait/termination and canonical host syscall ownership needed by that transport.
+- Deliver Rust Glue as the in-process checked C ABI owned path: a Beskid consumer image and Rust owner images, admission records on each image, `[RustOwner]` mappings and `[GlueHandle]` opaque types. Prove a manual C ABI basis and equivalent generated Rust adapters for both directions, all fixed integer widths, f32/f64, Bool, Unicode scalar, UTF-8/bytes, unit, checked handles and target-sized values.
+- Add canonical missing primitive prerequisites, deterministic source/build artifact closure, explicit bounded tools and hermetic owner Cargo builds.
+- Add child-process pipes/wait/termination and canonical host syscall ownership as general Core.Process capabilities.
+- **BREAKING** Delete the 0.4 Glue scaffold: the seven string-in/string-out Glue Mod contracts, the `[Glue]`, `[GlueImport]` and `[GlueExport]` attributes, the `GlueBackendKind` enum, the no-op `mod.glue` phase and its `beskid_analysis` host module. Glue generation does not run Mod contracts.
+- Move the stdio bridge (envelope, binary codec, pump, session) to the separate provisional change `v06-glue-stdio-bridge-provisional`. It has no 0.6 delivery obligation.
+- Record records by value, callbacks, glue-driven exports, enums and the boundary vocabulary unification as `v061-glue-extensions`.
 - Supersede scalar-only or scaffold-only Glue completion claims. .NET remains optional and unavailable until separately qualified.
 
 ## Capabilities
 
 ### New Capabilities
-- `language-meta--interop--beskid-glue`: delivered Rust binding, generation, transport and lifecycle contract, reconciling the pending add-beskid-glue-0-4 proposal without relying on its unarchived assertions.
+- `language-meta--interop--beskid-glue`: delivered in-process Rust Glue binding, generation, admission and lifecycle contract with named test evidence, reconciling the pending add-beskid-glue-0-4 proposal without relying on its unarchived assertions.
 
 ### Modified Capabilities
 - `language-meta--type-system--types`: canonical full primitive grammar and semantics prerequisite.
-- `language-meta--interop--interop-contracts`: normalized Glue identity and ownership compatibility.
+- `language-meta--interop--interop-contracts`: normalized Glue identity over the Glue logical type vocabulary.
 - `language-meta--interop--c-abi-profile`: required Rust Glue C representation and ownership matrix.
 - `language-meta--interop--rust-abi-profile`: separation from native Rust and runtime embedding ABIs.
-- `compiler--compiler-mods--mod-host-bridge`: actual deterministic registered contract execution.
 - `compiler--build-pipeline--backends-jit-aot`: deterministic external artifact and tool validation.
 - `core-library--foundation-and-primitives--core-process`: streaming child control.
 - `execution--runtime--panic-io-and-syscalls`: canonical host process syscall lifecycle.
@@ -28,8 +30,8 @@ Rust Glue is required for beskid 0.6, but compiler 95c203ff only observes Glue a
 
 ## Impact
 
-Interop.Contracts remains boundary vocabulary; normal Beskid execution remains canonical AOT/ISLE. R2 generic serialization is owned by v06-serialization-bsol; Glue supplies its value-format adapter and explicit limits. This changes observable primitive availability and Rust integration but does not declare .NET, callback/variadic or foreign-thread support. New user FFI layouts use a separately recorded layout band; runtime ABI changes require their existing version gate. Public standard links remain /docs/standard/ and legacy routes retain their redirects.
+The Glue logical type vocabulary (`GlueLogicalType`) is the 0.6 Glue boundary vocabulary; unification with Interop.Contracts is deferred to `v061-glue-extensions`. Normal Beskid execution remains canonical AOT/ISLE. R2 generic serialization is owned by v06-serialization-bsol; the provisional stdio bridge owns the Glue value-format adapter. This changes observable primitive availability and Rust integration but does not declare .NET, callback/variadic, foreign-thread or stdio service support. New user FFI layouts use a separately recorded layout band; runtime ABI changes require their existing version gate. Public standard links remain /docs/standard/ and legacy routes retain their redirects.
 
 ## Compatibility, Migration and Reversion
 
-Unsupported historical Glue forms continue to fail before generation until implemented. Raw GlueTag construction/handle access is replaced by checked session-scoped APIs; no compatibility bypass remains. Recover reviewed draft hunks from compiler 16848cf0 and its dirty overlay into the accepted baseline without mutating user work. Reversion disables the affected backend and rejects its artifacts; it cannot reuse incompatible bands or relabel old evidence. Required release scope cannot be reduced by rollback without explicit scope change.
+No users exist, so the 0.4 scaffold is deleted without deprecation: the seven Glue Mod contracts, the `[Glue]`, `[GlueImport]` and `[GlueExport]` attributes, `GlueBackendKind`, the `mod.glue` phase and raw `GlueTag` construction. No compatibility bypass remains. Recover reviewed draft hunks from compiler 16848cf0 and its dirty overlay into the accepted baseline without mutating user work. Reversion disables the affected backend and rejects its artifacts; it cannot reuse incompatible bands or relabel old evidence. Required release scope cannot be reduced by rollback without explicit scope change.

@@ -4,7 +4,7 @@ description: How spec claims connect to tests in the compiler workspace.
 tableOfContents: true
 ---
 
-Platform-spec features cite verification anchors: conformance tests, crate paths, diagnostic codes. The [Conformance](/platform-spec/compiler/conformance/) area documents how evidence is expected to track **Standard** features.
+Standard capabilities cite verification anchors: conformance tests, crate paths, diagnostic codes. The [Conformance](/docs/standard/capabilities/taxonomy--compiler--conformance/) area documents how evidence is expected to track **Standard** features.
 
 Practical loop for contributors:
 

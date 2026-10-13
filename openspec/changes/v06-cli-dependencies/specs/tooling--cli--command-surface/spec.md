@@ -1,16 +1,21 @@
 ## MODIFIED Requirements
 
 ### Requirement: Stable CLI command families
-The CLI SHALL expose exactly these root command families: `new`, `check`, `build`, `run`, `test`, `fmt`, `doc`, `add`, `remove`, `update`, `package`, `toolchain`, `doctor`, and `dev`. It SHALL expose `package search|info|pack|publish|login|logout` and `package template list|install|uninstall`, and `toolchain status|update`. Compiler inspection and maintenance SHALL have canonical routes under `dev`: `syntax parse|tree|clif`, `project fetch|lock|graph`, `corelib`, `runtime-kit`, `mod`, `lsp`, `bsol validate|migrate`, `build` backend inspection and `repl`. It SHALL remove old and duplicate dispatch, including dev routes for ordinary test/fmt/doc/update. It SHALL reject old root spellings with usage status and exact canonical replacement where one exists; it SHALL NOT expose `hi` or hidden compatibility dispatch.
+The CLI SHALL expose exactly these root command families: `new`, `check`, `build`, `run`, `test`, `fmt`, `doc`, `add`, `remove`, `update`, `package`, `toolchain`, `doctor`, and `dev`. It SHALL expose `package search|info|pack|publish|login|logout` and `package template list|install|uninstall`, and `toolchain status|update`. Compiler inspection and maintenance SHALL have canonical routes under `dev`: `syntax parse|tree|clif`, `project fetch|lock|graph`, `corelib`, `runtime-kit`, `mod`, `import`, `lsp`, `bsol validate|migrate`, `build` backend inspection, `repl`, `toolchain-owner` and `capabilities`. The private native Mod worker protocol entry `dev native-mod-worker` SHALL be hidden from help; it SHALL NOT dispatch any retired user command. It SHALL remove old and duplicate dispatch, including dev routes for ordinary test/fmt/doc/update. It SHALL reject old root spellings with usage status and exact canonical replacement where one exists; it SHALL NOT expose `hi` or hidden compatibility dispatch.
 
 Every root command SHALL provide a concise user-facing action description in help. Help SHALL NOT substitute internal argument-structure documentation for that description.
 
 #### Scenario: Required families are present
 - **GIVEN** an installed 0.6 CLI
 - **WHEN** root and dev help are requested
-- **THEN** the exact root families and canonical internal routes are listed and duplicate routes are absent
+- **THEN** the exact root families (CLI06-03) and canonical internal routes are listed, duplicate routes are absent, and `hi` is absent
 
 #### Scenario: Removed Hi command is rejected
+- **GIVEN** an installed 0.6 CLI
+- **WHEN** a user invokes `beskid hi`
+- **THEN** ordinary unknown-subcommand usage diagnostics are returned with exit status 2 and no terminal UI is opened
+
+#### Scenario: CLI06-03 Removed root spellings are rejected
 - **GIVEN** a user invokes analyze, pckg, up, fetch or lsp at root
 - **WHEN** the CLI parses the invocation
 - **THEN** it exits 2 without executing the old handler and names check, package, toolchain, dev project fetch or dev lsp respectively
@@ -62,12 +67,24 @@ Root help SHALL explain that add declares a project dependency and SHALL show a 
 - **THEN** the CLI returns useful output without provisioning or credential mutation
 
 ### Requirement: Versioned CLI-owned output and statuses
-CLI-owned operations SHALL return 0 on success, 1 on operation failure and 2 on usage error. Check/build/test/add/remove/update/doctor SHALL support --json with newline-delimited JSON records containing schemaVersion=1, command, event and status, plus diagnostics or change data appropriate to that event. Diagnostics SHALL carry stable code, message and source span when available; mutation data SHALL list deterministic added/removed/retained coordinates with old/new version and digest when applicable. JSON stdout SHALL contain no human tables, progress or ANSI. Progress and compiler diagnostics SHALL use stderr. Run SHALL reserve stdout for program output and reject --json with usage guidance. Quiet/verbose and color auto/always/never SHALL be supported; non-TTY execution SHALL imply plain progress. Errors SHALL identify failed action, cause and next valid command without secret credentials.
+CLI-owned operations SHALL return 0 on success, 1 on operation failure and 2 on usage error. Check/build/test/add/remove/update/doctor SHALL support --json with newline-delimited JSON records containing schemaVersion=1, command, event and status, plus diagnostics or change data appropriate to that event. Diagnostics SHALL carry stable code, message and source span when available; mutation data SHALL list deterministic added/removed/retained coordinates with old/new version and old/new locked artifact digest when applicable, and the result SHALL carry the `sha256:` digest of the lock before and after the change. JSON stdout SHALL contain no human tables, progress or ANSI. Progress and compiler diagnostics SHALL use stderr. Run SHALL reserve stdout for program output and reject --json with usage guidance. Global -q/--quiet and -v/--verbose SHALL be supported and SHALL conflict: quiet SHALL suppress progress, summaries, passing test rows and informational logs while keeping diagnostics, errors, failed or timed-out test rows and command results; verbose SHALL report every progress work unit and debug-level Beskid logs. The CLI emits no ANSI color in 0.6.0 and SHALL NOT offer a color option. Non-TTY execution SHALL imply plain progress. Errors SHALL identify failed action, cause and next valid command without secret credentials.
+
+Each --json invocation SHALL emit zero or more detail records and then exactly one `result` record with status `success` or `failure`; a failure record SHALL carry the error chain, and the exit status SHALL still follow the rule above. The detail events SHALL be `diagnostic` for check and build, with the severity `error`, `warning` or `note` as status; `change` for add, remove and update, with the dependency action as status; and `finding` for doctor, with status `ok`, `missing` or `invalid` and the next valid action for a problem. Test SHALL emit only the `result` record, which carries the target, its summary and the per-test outcomes, or the matrix report for --all-targets. A diagnostic record SHALL carry code, severity, message, label, help and a span with file, byte offset, byte length and 1-based start and end line and column, where a column counts Unicode scalar values.
 
 #### Scenario: CLI06-04 Machine mutation
 - **GIVEN** a dependency update dry-run
 - **WHEN** --json is requested
 - **THEN** stdout contains only schemaVersion=1 change/result records and stderr owns progress
+
+#### Scenario: CLI06-04 Machine diagnostics
+- **GIVEN** a project with a semantic error
+- **WHEN** check --json runs
+- **THEN** stdout contains a `diagnostic` record with code, message and span, then one `result` record with status `failure`, and the CLI exits 1
+
+#### Scenario: CLI06-04 Quiet output
+- **GIVEN** a clean source and a source with a semantic error
+- **WHEN** check runs with --quiet
+- **THEN** the clean check prints no progress or summary, the failing check still prints its diagnostic and exits 1, and --quiet with --verbose exits 2
 
 #### Scenario: CLI06-04 Child JSON rejection
 - **GIVEN** run with program output
@@ -80,7 +97,7 @@ CLI-owned operations SHALL return 0 on success, 1 on operation failure and 2 on 
 - **THEN** it reports actionable missing tool/kit findings without installing software or changing credentials
 
 ### Requirement: Canonical consumer and capability migration
-CLI SHALL provide a versioned capability description of CLI version, canonical commands and supported output schemas through dev capabilities --json. Editor, templates, docs copy snippets, completions and active CI gates SHALL consume canonical operations; incompatible capabilities SHALL fail with upgrade guidance without trying old dispatch. Historical versioned evidence SHALL remain historical.
+CLI SHALL provide a versioned capability description of CLI version, canonical commands and supported output schemas through dev capabilities --json. The description SHALL be one JSON document with `schemaVersion` 1, `cliVersion`, `commands` (the visible root families), `devCommands` (the visible dev routes) and `outputSchemas`, with one entry of `command`, `schemaVersion`, `format` `ndjson` and `events` for each command that supports --json; every list SHALL derive from the parsed command model. Editor, templates, docs copy snippets, completions and active CI gates SHALL consume canonical operations; incompatible capabilities SHALL fail with upgrade guidance without trying old dispatch. Historical versioned evidence SHALL remain historical.
 
 #### Scenario: CLI06-05 Editor negotiation
 - **GIVEN** an editor requiring check and dev lsp
@@ -93,12 +110,22 @@ CLI SHALL provide a versioned capability description of CLI version, canonical c
 - **THEN** every active command matches canonical grammar and historical artifacts remain unchanged
 
 ### Requirement: Installed beginner workflow acceptance
-Release qualification SHALL repeat create/add/use/check/build/run and path dependency workflows using installed immutable candidate artifacts outside checkout on Linux x64, macOS arm64 and Windows x64. Five fresh users SHALL receive installed CLI and help alone; at least four SHALL find add within 60 seconds and at least four SHALL complete create/add/use/run within five minutes. Evidence SHALL record commands, times, failures and candidate source/artifact identities; coaching or snapshots SHALL NOT substitute for observations.
+Release qualification SHALL repeat create/add/use/check/build/run and path dependency workflows using installed immutable candidate artifacts outside checkout on Linux x64, macOS arm64 and Windows x64; these scripted journeys SHALL be native release cells of the `installed_host_harness` kind. Five fresh users SHALL receive installed CLI and help alone; at least four SHALL find add within 60 seconds and at least four SHALL complete create/add/use/run within five minutes. The observation SHALL be recorded as one observer-attested record per candidate (`verification: "observer-attested"`), never as machine evidence: it SHALL retain one transcript per participant with command, time, exit status and the `beskid --version` output of the candidate, the candidate CLI digests of every target, failures and the observer identity. The release tooling SHALL validate the record against the aggregated candidate identity and SHALL block publication when the record is absent or either threshold is unmet. A dated release-owner waiver MAY stand in for the observation of 0.6.0 only; it SHALL record the unmet SHALL and a 0.6.1 obligation, and it SHALL expire at 0.6.1. Coaching or snapshots SHALL NOT substitute for observations.
 
 #### Scenario: CLI06-06 Qualification
 - **GIVEN** a frozen installed candidate on all three native targets
-- **WHEN** scripted journeys and five uncoached observations are performed
-- **THEN** all native cells pass and both four-of-five thresholds have identity-bound evidence
+- **WHEN** the scripted create/add/use/check/build/run and path dependency journeys execute through the installed CLI outside the checkout
+- **THEN** every native cell passes with retained installed invocation proof
+
+#### Scenario: CLI06-06-OBS Uncoached observation
+- **GIVEN** a frozen candidate and five participants with no prior Beskid exposure who receive only the installed CLI and its help
+- **WHEN** the observer records each participant's transcript, add discovery time and journey outcome
+- **THEN** the observer-attested record validates against the candidate identity with at least four finding add within 60 seconds and at least four completing create/add/use/run within five minutes, and a record below either threshold blocks publication
+
+#### Scenario: CLI06-06-OBS Expired waiver
+- **GIVEN** a release-owner user observation waiver recorded for 0.6.0
+- **WHEN** a 0.6.1 or later candidate is prepared
+- **THEN** the waiver is rejected and the observation record is required
 
 
 ### Requirement: Toolchain operations bind to the running installation owner

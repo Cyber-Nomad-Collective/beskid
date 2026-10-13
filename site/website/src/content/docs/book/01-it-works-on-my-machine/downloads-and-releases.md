@@ -48,7 +48,7 @@ User-facing docs may also mention `cdn.beskid-lang.org` for direct binary fetch;
 
 ## Normative pointers
 
-- [CLI distribution and install](/docs/standard/tooling/cli-and-distribution/) (platform spec tooling area)
+- [CLI distribution and install](/docs/standard/capabilities/taxonomy--tooling/) (platform spec tooling area)
 - [Downloads page](/downloads/): install tabs and command blocks
 
 ## Next

@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: Reserved Core dependency label
-The resolver SHALL attach the implicit Corelib dependency under the label `Core`. A manifest MAY declare the `Core` label explicitly. The `Core` label SHALL be reserved for the Corelib aggregate project `corelib`: a `Core` dependency SHALL use `source = path`; without `path` it SHALL select the installed Corelib aggregate; with `path` the target project SHALL be the Corelib aggregate, or graph resolution SHALL fail. An explicit `Core` dependency SHALL replace the implicit attachment. Dependency labels SHALL NOT become module path segments, so the `Core` label and a module path that starts with `Core` SHALL NOT collide. A path dependency labeled `Std` without `path` SHALL fail manifest validation, and the error SHALL name the `Core` label.
+The resolver SHALL attach the implicit Corelib dependency under the label `Core`. A manifest MAY declare the `Core` label explicitly. The `Core` label SHALL be reserved for the Corelib aggregate project `corelib`: a `Core` dependency SHALL use `source = path`; without `path` it SHALL select the installed Corelib aggregate; with `path` the target project SHALL be the Corelib aggregate, or graph resolution SHALL fail. An explicit `Core` dependency SHALL replace the implicit attachment. Dependency labels SHALL NOT become module path segments, so the `Core` label and a module path that starts with `Core` SHALL NOT collide. The label `Std` SHALL have no special meaning: a dependency labeled `Std` SHALL be validated as any other user dependency label, so a path dependency labeled `Std` without `path` SHALL fail manifest validation because `source = path` requires `path`.
 
 #### Scenario: Implicit Corelib uses the Core label
 - **GIVEN** an App manifest without a `Core` dependency and an installed Corelib
@@ -18,7 +18,7 @@ The resolver SHALL attach the implicit Corelib dependency under the label `Core`
 - **WHEN** the manifest is validated
 - **THEN** validation fails and states that the `Core` label requires `source = path`
 
-#### Scenario: A path-less Std dependency names the Core label
+#### Scenario: A path-less Std dependency is an ordinary invalid path dependency
 - **GIVEN** an App manifest with `dependency "Std" { source = path }`
 - **WHEN** the manifest is validated
-- **THEN** validation fails and the error states that the installed Corelib dependency is named `Core`
+- **THEN** validation fails and states that the dependency `Std` with `source = path` requires `path`

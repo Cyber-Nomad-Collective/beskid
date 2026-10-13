@@ -10,14 +10,14 @@ tableOfContents: true
 
 ## Compile-time: contracts win early
 
-Missing `Dispose()` on `Disposable`? **E1601**, not a stack trace in prod. That is the point of structural contracts ([Contracts](/platform-spec/language-meta/contracts-and-effects/contracts/)).
+Missing `Dispose()` on `Disposable`? **E1601**, not a stack trace in prod. That is the point of structural contracts ([Contracts](/docs/standard/capabilities/language-meta--contracts-and-effects--contracts/)).
 
 ## Runtime: panic policy
 
 Execution owns panic bridges and syscall surfaces:
 
-- [Panic, IO, and syscalls](/platform-spec/execution/runtime/panic-io-and-syscalls/)
-- [Error and unwind semantics](/platform-spec/language-meta/interop/interop-contracts/error-and-unwind-semantics/)
+- [Panic, IO, and syscalls](/docs/standard/capabilities/execution--runtime--panic-io-and-syscalls/)
+- [Error and unwind semantics](/docs/standard/capabilities/language-meta--interop--interop-contracts/)
 
 Normative gist: Beskid panic **must not** assume foreign callers catch Rust/Beskid unwinds. Profiles define who may translate traps.
 
@@ -33,7 +33,7 @@ Do not catch panic in application Beskid as if it were Java. If you need control
 
 ## Mod analyzers
 
-`Analyzer` mods emit diagnostics and fixes; they do not throw into your runtime. Host merge either accepts typed rewrites or fails closed ([Mod host bridge](/platform-spec/compiler/compiler-mods/mod-host-bridge/)).
+`Analyzer` mods emit diagnostics and fixes; they do not throw into your runtime. Host merge either accepts typed rewrites or fails closed ([Mod host bridge](/docs/standard/capabilities/compiler--compiler-mods--mod-host-bridge/)).
 
 ## Next chapter
 

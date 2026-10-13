@@ -17,7 +17,7 @@ Typical CLI output (miette-style):
 3. **Hint / help**: sometimes suggests a fix
 4. **Code**: stable diagnostic id when registered
 
-Registry hub: [diagnostic code registry](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/).
+Registry hub: [diagnostic code registry](/docs/standard/capabilities/compiler--semantic-pipeline--diagnostic-code-registry/).
 
 ## Severity discipline
 
@@ -49,7 +49,7 @@ flowchart TD
 
 ## When the message feels wrong
 
-Sometimes the message is accurate but the **root cause** is two modules away (bad `pub use`, wrong `Project.proj` root). Follow imports and manifest roots before opening compiler issues.
+Sometimes the message is accurate but the **root cause** is two modules away (bad `pub use`, wrong `.bproj` root). Follow imports and manifest roots before opening compiler issues.
 
 ## Related tutorial pages
 
@@ -58,4 +58,4 @@ Sometimes the message is accurate but the **root cause** is two modules away (ba
 
 ## Where to go next
 
-Public API idioms and documentation comments live in later book entries and [platform spec](/platform-spec/language-meta/). You now have enough vocabulary to read real Beskid code without treating the analyzer as malice.
+Public API idioms and documentation comments live in later book entries and [platform spec](/docs/standard/capabilities/taxonomy--language-meta/). You now have enough vocabulary to read real Beskid code without treating the analyzer as malice.

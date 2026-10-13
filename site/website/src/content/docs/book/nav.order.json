@@ -140,6 +140,7 @@
 			"21-ffi-and-forbidden-friendships/c-abi-profile",
 			"21-ffi-and-forbidden-friendships/rust-abi-profile",
 			"21-ffi-and-forbidden-friendships/export-and-callbacks",
+			"21-ffi-and-forbidden-friendships/rust-glue",
 			"22-so-you-want-to-contribute",
 			"22-so-you-want-to-contribute/repos-and-submodules",
 			"22-so-you-want-to-contribute/spec-first-workflow",

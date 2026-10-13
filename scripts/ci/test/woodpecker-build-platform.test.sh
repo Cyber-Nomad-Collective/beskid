@@ -29,6 +29,7 @@ if [[ "${target}" == x86_64-pc-windows-msvc ]]; then
 fi
 
 mkdir -p "${output}/release-logs"
+printf 'fixture component log\n' >"${output}/release-logs/${target}-cli.log"
 cat >"${output}/${cli_asset}" <<SCRIPT
 #!/usr/bin/env bash
 printf 'beskid %s\\n' '${version}'
@@ -123,14 +124,18 @@ assert_platform() {
   else
     test ! -e "${output}/cli-surface-receipt-v1.json"
   fi
-  test -f "${output}/bundle-contents.log"
+  test -f "${output}-logs/bundle-contents.log"
+  test ! -e "${output}/bundle-contents.log"
+  test ! -e "${output}/artifact-version-smoke.log"
+  test ! -e "${output}/release-logs"
+  test -d "${output}-logs/release-logs"
   grep -Fq "WOODPECKER_OUTPUT_PATH=${output}" "${TMP}/${platform}.log"
   jq -e --arg platform "${platform}" --arg target "${target}" --arg output "${output}" '
     .schema_version == 1 and .platform == $platform and .target == $target and
     .version == "1.2.3" and .channel == "stable" and .output_path == $output and
     .platform_result_status == "success"' "${output}/woodpecker-build-result.json" >/dev/null
-  grep -Fq "beskid 1.2.3" "${output}/artifact-version-smoke.log"
-  grep -Fq "beskid_lsp 1.2.3" "${output}/artifact-version-smoke.log"
+  grep -Fq "beskid 1.2.3" "${output}-logs/artifact-version-smoke.log"
+  grep -Fq "beskid_lsp 1.2.3" "${output}-logs/artifact-version-smoke.log"
   (cd "${output}" && shasum -a 256 -c SHA256SUMS >/dev/null)
 }
 
@@ -202,5 +207,60 @@ if CI_PIPELINE_NUMBER=42 CI_COMMIT_SHA="$(git -C "${ROOT}" rev-parse HEAD)" \
   exit 1
 fi
 grep -Fq 'WOODPECKER_CLI_SURFACE_GATE_SCRIPT is test-only and forbidden' "${TMP}/ci-cli-override.log"
+
+# 0.6 candidates take the schema-2 path: harness build, the case producer, a closed checksummed packet and
+# no schema-1 producer run. Fakes stand in for cargo and the installed CLI.
+cat >"${TMP}/harness-builder.sh" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+[[ "$1" == beskid_release_harness ]] || exit 9
+mkdir -p "$4"
+printf 'fake harness\n' >"$4/harness-beskid_tests_release"
+printf 'harness %s %s %s\n' "$3" "$4" "$5" >"${FAKE_HARNESS_LOG}"
+EOF
+chmod +x "${TMP}/harness-builder.sh"
+cat >"${TMP}/release-cases.mjs" <<'EOF'
+import { readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+const [platform, version, output, bundle, flag, harnessDir, manifestFlag, manifest] = process.argv.slice(2);
+if (flag !== "--harness-dir" || manifestFlag !== "--manifest") { console.error("unexpected producer arguments"); process.exit(1); }
+const build = JSON.parse(readFileSync(join(output, "woodpecker-build-result.json"), "utf8"));
+if (!build.installed_cli || !/^[a-f0-9]{64}$/.test(build.runtime_abi_sha256) || !build.installed_cli.startsWith(bundle)) { console.error("build result lacks schema-2 identity"); process.exit(1); }
+readFileSync(join(output, "runtime-kit.json"));
+readFileSync(join(harnessDir, "harness-beskid_tests_release"));
+writeFileSync(join(output, "feature-evidence-v2.json"), `${JSON.stringify({ schema_version: 2, platform, version, manifest })}\n`, { flag: "wx" });
+writeFileSync(join(output, "release-cases-v06.json"), readFileSync(manifest));
+EOF
+printf '{"state":"fixture"}\n' >"${TMP}/fixture-manifest.json"
+FAKE_INIT_LOG="${TMP}/init-v06.log" FAKE_HARNESS_LOG="${TMP}/harness-v06.log" \
+  WOODPECKER_INIT_SUBMODULES_SCRIPT="${TMP}/init-submodules.sh" \
+  WOODPECKER_RELEASE_PLATFORM_SCRIPT="${TMP}/build-release-platform.sh" \
+  WOODPECKER_FEATURE_EVIDENCE_SCRIPT="${TMP}/feature-evidence.mjs" \
+  WOODPECKER_RELEASE_HARNESS_BUILDER="${TMP}/harness-builder.sh" \
+  WOODPECKER_RELEASE_CASES_SCRIPT="${TMP}/release-cases.mjs" \
+  WOODPECKER_RELEASE_CASES_MANIFEST="${TMP}/fixture-manifest.json" \
+  bash "${SCRIPT}" macos 0.6.0 "${TMP}/output-v06" >"${TMP}/v06.log"
+v06="$(cd "${TMP}/output-v06" && pwd -P)"
+grep -q '^harness aarch64-apple-darwin ' "${TMP}/harness-v06.log"
+test -f "${v06}/feature-evidence-v2.json"
+test ! -e "${v06}/feature-evidence-v1.json"
+test -f "${v06}/runtime-kit.json"
+test -f "${v06}/release-cases-v06.json"
+jq -e '.installed_cli | endswith("/bin/beskid")' "${v06}/woodpecker-build-result.json" >/dev/null
+jq -e '.runtime_abi_sha256 | test("^[a-f0-9]{64}$")' "${v06}/woodpecker-build-result.json" >/dev/null
+# The packet is closed: every regular file is checksummed, nothing else exists, and the kit digest is the receipt digest.
+(cd "${v06}" && shasum -a 256 -c SHA256SUMS >/dev/null)
+test "$(cd "${v06}" && find . -mindepth 1 -maxdepth 1 ! -name SHA256SUMS -type f | wc -l | tr -d ' ')" = "$(wc -l <"${v06}/SHA256SUMS" | tr -d ' ')"
+test "$(cd "${v06}" && find . -mindepth 1 -maxdepth 1 ! -type f | wc -l | tr -d ' ')" = 0
+test "$(jq -r .runtime_kit_sha256 "${v06}/woodpecker-build-result.json")" = "$(shasum -a 256 "${v06}/runtime-kit.json" | awk '{print $1}')"
+test -d "${v06}-logs/release-harness"
+
+if CI_PIPELINE_NUMBER=42 CI_COMMIT_SHA="$(git -C "${ROOT}" rev-parse HEAD)" \
+  WOODPECKER_RELEASE_CASES_MANIFEST="${TMP}/fixture-manifest.json" \
+  bash "${SCRIPT}" linux 0.6.0 "${TMP}/ci-manifest-override" >"${TMP}/ci-manifest-override.log" 2>&1; then
+  echo 'pipeline accepted a test-only case manifest override' >&2
+  exit 1
+fi
+grep -Fq 'WOODPECKER_RELEASE_CASES_MANIFEST is test-only and forbidden' "${TMP}/ci-manifest-override.log"
 
 echo 'Woodpecker platform wrapper tests OK'

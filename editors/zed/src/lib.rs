@@ -270,7 +270,7 @@ mod language_server_tests {
             LaunchChoice::CliOnPath("/bin/beskid".into()).command(),
             LaunchSettings {
                 path: Some("/bin/beskid".into()),
-                arguments: vec!["lsp".into()],
+                arguments: vec!["dev".into(), "lsp".into()],
                 environment: Vec::new(),
             }
         );

@@ -22,7 +22,7 @@ This directory defines the architecture and protocol contract for the Beskid lan
    - Telemetry/logging/metrics design
    - Release readiness checklist
 
-The CLI docs for [`beskid dev syntax format`](/book/reference/cli/commands/format/) (and the [command reference index](/book/reference/cli/command-reference/)) describe `format_program`, the same entry point as document formatting.
+The CLI docs for [`beskid fmt`](/book/reference/cli/commands/format/) (and the [command reference index](/book/reference/cli/command-reference/)) describe `format_program`, the same entry point as document formatting.
 
 ## Design principles
 
@@ -51,6 +51,16 @@ The CLI docs for [`beskid dev syntax format`](/book/reference/cli/commands/forma
 - Rename (+ prepareRename)
 - Code actions (deterministic fixes first)
 - Workspace symbols
+
+## Native Mod host
+
+Project preparation runs the project's active native Mods. By default the server uses the `beskid` CLI installed next to it as the Mod host. A client can select another host with an initialization option:
+
+```json
+{ "modHost": { "path": "/opt/beskid/bin/beskid", "runtimePrefix": "/opt/beskid", "runtimeProfile": "release" } }
+```
+
+Every key is optional, but the object needs at least one. `path` is an absolute path to a `beskid` executable, `runtimePrefix` an absolute installation prefix with an exact runtime kit, and `runtimeProfile` (`debug` or `release`) requires `runtimePrefix`. An invalid value fails `initialize` with `InvalidParams`; the server never falls back to the installed host, and the selected host still has to pass Mod artifact qualification. The server never builds Mods; see [Prebuilt Mods and the editor](/book/15-mods-plugins-with-consequences/beskid-mod-cli/#prebuilt-mods-and-the-editor). A failed project preparation is published as a `project-preparation` error diagnostic and logged.
 
 ## Locked decisions (approved)
 

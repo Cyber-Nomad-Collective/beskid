@@ -16,7 +16,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 > | `panic` / `panic_str` | Unrecoverable faults, hard IO faults in v1 streams, allocation failures |
 > | Unwind | **No** Beskid stack unwinding across panics |
 > | Outcome | Runtime panics **terminate** the process (trap / abort) |
-> | Builtin kind | `AbiReturnKind::Never` in `BUILTIN_SPECS` |
+> | Builtin kind | `AbiReturnKind::Never` in the generated ABI-v5 tables from `compiler/runtime_manifest.bsol` |
 
 **Stable ID:** `BSP-REQ-53203A00411B`  
 **Legacy source:** `site/spec-content/platform-spec/execution/runtime/panic-io-and-syscalls/adr/0008-panic-terminates-process/content.md`  
@@ -150,7 +150,7 @@ Language `Option` covers expected errors. Unrecoverable faults and some IO failu
 | `panic` / `panic_str` | Unrecoverable faults, hard IO faults in v1 streams, allocation failures |
 | Unwind | **No** Beskid stack unwinding across panics |
 | Outcome | Runtime panics **terminate** the process (trap / abort) |
-| Builtin kind | `AbiReturnKind::Never` in `BUILTIN_SPECS` |
+| Builtin kind | `AbiReturnKind::Never` in the generated ABI-v5 tables from `compiler/runtime_manifest.bsol` |
 
 ## Consequences
 
@@ -255,7 +255,7 @@ Add `syscall_read_bytes` / `syscall_write_bytes` alongside existing string sysca
 
 ## Verification anchors
 
-`compiler/crates/beskid_runtime/src/builtins/panic_io.rs`, `beskid_abi/src/builtins.rs`
+`compiler/crates/beskid_runtime/src/builtins/panic_io.rs`, `compiler/runtime_manifest.bsol`
 ``````
 
 </details>
@@ -278,13 +278,13 @@ Add `syscall_read_bytes` / `syscall_write_bytes` alongside existing string sysca
 | **IO-ABI-001** | `panic` and `panic_str` **must** not return to callers; lowering **must** treat sites as unreachable after call. |
 | **IO-ABI-002** | JIT and AOT **must** import the same `syscall_read` / `syscall_write` symbols from `beskid_abi`. |
 | **IO-ABI-003** | Non-Linux targets **may** implement syscalls via host shims but **must** preserve signatures and error sentinels. |
-| **IO-ABI-004** | `syscall_write` **must** accept fd as `i64` and string as `BeskidStr` pointer per `BUILTIN_SPECS`. |
+| **IO-ABI-004** | `syscall_write` **must** accept fd as `i64` and string as `BeskidStr` pointer. The generated ABI-v5 tables from `compiler/runtime_manifest.bsol` define this shape. |
 | **IO-ABI-005** | Front-end/lowering **must not** emit raw OS syscall instructions for corelib IO. |
 | **IO-ABI-006** | User docs **must not** document internal mangled panic entrypoints; stable names are `panic` / `panic_str`. |
 | **IO-ABI-007** | `syscall_read_bytes(fd, max)` **must** return a new `u8[]` (`BeskidArray*`) with **no** UTF-8 validation. |
 | **IO-ABI-008** | `syscall_write_bytes(fd, buf)` **must** accept fd as `i64` and `BeskidArray*`; returns bytes written or `-1`. |
 | **IO-ABI-009** | String and binary syscall paths **must** share EOF (empty payload) and `-1` error sentinel semantics. |
-| **IO-ABI-010** | New IO builtins **must** appear in `BUILTIN_SPECS` and `RUNTIME_EXPORT_SYMBOLS` for JIT/AOT parity. |
+| **IO-ABI-010** | A new IO builtin **must** have an entry in `compiler/runtime_manifest.bsol`. `beskid_abi/build.rs` generates its ABI-v5 table entry. The exact runtime kit **must** export it. |
 
 ## Builtin contracts
 
@@ -314,7 +314,7 @@ Add `syscall_read_bytes` / `syscall_write_bytes` alongside existing string sysca
 
 ## Implementation anchors
 - `compiler/crates/beskid_runtime/src/builtins/panic_io.rs` — syscall dispatch, write-loop, and panic termination
-- `compiler/crates/beskid_abi/src/builtins.rs` — IO builtin signature contracts
+- `compiler/runtime_manifest.bsol` — IO builtin signature contracts
 
 ## Related topics
 
@@ -377,7 +377,7 @@ Reference implementation: **Linux x86_64** direct syscalls for performance. Othe
 
 ## Implementation anchors
 - `compiler/crates/beskid_runtime/src/builtins/panic_io.rs` — `panic`, `panic_str`, `syscall_write` implementations
-- `compiler/crates/beskid_abi/src/builtins.rs` — `syscall_write`, `syscall_read` builtin specs
+- `compiler/runtime_manifest.bsol` — `syscall_write`, `syscall_read` builtin entries
 - `compiler/corelib/packages/system/src/IO/` — corelib IO facade over runtime syscalls
 
 ## Related topics
@@ -514,7 +514,7 @@ Step-by-step algorithms for panic and syscall builtins. Layering diagram: [desig
 
 ## `syscall_read` algorithm
 
-1. Accept fd and max byte count (`i64` parameters per `BUILTIN_SPECS`).
+1. Accept fd and max byte count (`i64` parameters per the generated ABI-v5 tables).
 2. Allocate or fill buffer via runtime string helpers; return `BeskidStr` pointer.
 3. Map EOF to empty string handle per corelib contract (**IO-005** in console streams).
 
@@ -531,7 +531,7 @@ Step-by-step algorithms for panic and syscall builtins. Layering diagram: [desig
 ## Implementation anchors
 - `compiler/crates/beskid_runtime/src/builtins/panic_io.rs` — `syscall_write`, `syscall_read` implementation
 - `compiler/crates/beskid_runtime/src/scheduler/` — `run_blocking` for blocking syscall work
-- `compiler/crates/beskid_abi/src/builtins.rs` — IO builtin signature specs
+- `compiler/runtime_manifest.bsol` — IO builtin signature entries
 
 ## Related topics
 
@@ -558,7 +558,7 @@ Step-by-step algorithms for panic and syscall builtins. Layering diagram: [desig
 | --- | --- |
 | `compiler/crates/beskid_runtime/src/builtins/panic_io.rs` | `panic`, `panic_str`, `syscall_read`, `syscall_write` |
 | `compiler/crates/beskid_runtime/src/builtins/mod.rs` | Re-exports |
-| `compiler/crates/beskid_abi/src/builtins.rs` | Signatures for IO/panic |
+| `compiler/runtime_manifest.bsol` | Signatures for IO/panic; `beskid_abi/build.rs` generates the ABI-v5 tables from it |
 | `compiler/crates/beskid_e2e_tests/src/tests/runtime_cases.rs` | End-to-end panic/IO |
 | `compiler/corelib/.../System/Syscall/` | Descriptor routing (corelib tests) |
 
@@ -567,7 +567,7 @@ Step-by-step algorithms for panic and syscall builtins. Layering diagram: [desig
 | ID | Evidence |
 | --- | --- |
 | **IO-ABI-001** | Cranelift unreachable block after `panic` calls in codegen tests |
-| **IO-ABI-002** | Shared `BUILTIN_SPECS` across `beskid_engine` and AOT link |
+| **IO-ABI-002** | All import paths use `canonical_corelib_service_abi_for_adapter(symbol)`; `compiler/crates/beskid_abi/tests/runtime_import_catalog_v06.rs` fails if the generated tables drift from `runtime_manifest.bsol` |
 | **IO-ABI-005** | Code review: no CLIF syscall intrinsics in `beskid_codegen` for stdio |
 | Console **IO-004** | `corelib_tests` console paths |
 

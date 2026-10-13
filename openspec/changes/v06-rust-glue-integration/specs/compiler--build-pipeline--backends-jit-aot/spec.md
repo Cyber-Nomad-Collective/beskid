@@ -140,11 +140,17 @@ The canonical shared provider SHALL expose a hidden checked consumer release tra
 
 ### Requirement: Opaque Rust payload borrows retain a canonical owner lease
 Generated Rust owner invocation SHALL obtain a nonzero process-issued borrow lease bound to the exact owning library, generation, full compiled brand, and live token before exposing a typed Rust reference. The provider SHALL publish that lease as an ordinary canonical traced OwnerRecord before returning the foreign payload address. Active leases SHALL make token release and library close return Busy without invoking the destructor. Borrow end SHALL validate the same full domain and consume the lease allocation-free using the preadmitted empty payload and canonical publication barrier. Generated invocation SHALL end the lease after success, typed error, or caught panic, and SHALL retain the provider and owning image through cleanup. Unpinned opaque resolve SHALL NOT remain an admitted invocation transport.
+Owner records SHALL be bound to the runtime of the thread that opened it (the loader opening-thread restriction). A release from that thread during a live lease SHALL return Busy. A release from another operating-system thread SHALL NOT observe the lease or any other owner record and SHALL return Foreign. Neither result SHALL invoke the destructor or consume the token.
 
 #### Scenario: R4-OWN-14 Reentrant release cannot invalidate an active borrow
 - **GIVEN** an actual privately admitted Rust owner factory and typed invocation with a live borrow lease
 - **WHEN** the invocation attempts token release or owning-library close
 - **THEN** the provider returns Busy, no destructor runs, and the reference remains valid until borrow end
+
+#### Scenario: R4-OWN-19 Foreign-thread release cannot observe an active borrow
+- **GIVEN** an actual privately admitted Rust owner token with a live borrow lease on the thread that opened the runtime
+- **WHEN** another operating-system thread releases the token, once or repeatedly
+- **THEN** each release returns Foreign, no destructor runs, the borrowed call completes, and a later release on the opening thread succeeds exactly once
 
 #### Scenario: R4-OWN-15 Borrow end rejects stale and foreign domains
 - **GIVEN** an ended lease, a different library, or a different full brand
@@ -168,6 +174,30 @@ Native Rust import adapters SHALL call only the exact checked status/out-paramet
 - **GIVEN** a current source-issued scalar import and actual Rust checked entry
 - **WHEN** the foreign entry reports a typed error or caught panic
 - **THEN** the adapter preserves failure and publishes no scalar result
+
+### Requirement: Fallible Rust imports return their status through checked export invocations
+An import row SHALL be fallible when its Extern method declares `[RustOwner(Fallible:true)]`. An export row SHALL be fallible when its body reaches a fallible import through its direct-call closure. The packet SHALL record this fallibility on every row, and the row identity SHALL include it. The Rust owner build SHALL reject a callable whose fallibility differs from its issued import row.
+
+The checked invocation of a fallible export SHALL admit a rooted failure cell, enter a runtime checked scope, and call a checked counterpart of the export body. The counterpart SHALL be the checked effect closure of the body. A Glue import in that closure SHALL be a leaf that calls the generated import adapter. A closure that the effect proof rejects SHALL fail the consumer build.
+
+When a fallible import adapter receives a nonzero status inside the checked scope that the checked invocation of its thread entered, the adapter SHALL record the first status in the scope failure reason and SHALL return its zeroed output. The counterpart SHALL return before it uses that output. The checked invocation SHALL leave the scope, publish no result, and return the recorded status. A failure that the runtime records in the scope, such as an allocation failure, SHALL return status 3.
+
+A nonzero status of a non-fallible import SHALL remain a terminal trap. A fallible import outside such a scope SHALL also trap. The direct export symbol of a fallible export SHALL run the ordinary body, so a fallible import failure through it SHALL trap.
+
+#### Scenario: R4-ABI-19 Declared owner error reaches the checked export caller
+- **GIVEN** a fallible export whose body returns the result of a fallible Rust factory, and an owner that returns its declared error 1 for an excessive length
+- **WHEN** the checked export invocation is called with that length
+- **THEN** it returns status 1, the output token remains zero, and no owner record is published
+
+#### Scenario: R4-ABI-20 Non-fallible import failure stays terminal
+- **GIVEN** a non-fallible import, or a fallible import called outside a Glue checked scope
+- **WHEN** the owner entry returns a nonzero status
+- **THEN** the adapter traps the process and does not return a zeroed output to Beskid code
+
+#### Scenario: R4-ABI-21 Fallibility is part of the import identity
+- **GIVEN** two otherwise identical packets that differ only in the `Fallible` value of one import
+- **WHEN** the import rows are issued
+- **THEN** their identities differ, and an owner built for one packet is not admitted for the other
 
 #### Scenario: R4-ART-12 Missing or foreign import image denies publication
 - **GIVEN** an import whose full binding identity has no unique privately produced owning image

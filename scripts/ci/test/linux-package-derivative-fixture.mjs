@@ -6,7 +6,10 @@ import { join } from "node:path";
 import { cliSurfaceFixture } from "./cli-surface-fixture.mjs";
 
 export const SOURCE = { superrepo_commit: "a".repeat(40), compiler_commit: "b".repeat(40) };
-export const VERSION = "1.2.3";
+// Linux package derivatives correct published v0.5-series releases (see linux-package-derivative-intents/0.5.2.json);
+// that series is qualified by schema-1 feature evidence with the historical Glue exemption, which the release-evidence
+// reader rejects for 0.6 and later.
+export const VERSION = "0.5.9";
 export const TARGET = "x86_64-unknown-linux-gnu";
 export const IMAGE = `docker.io/library/ubuntu@sha256:${"e".repeat(64)}`;
 export const CHECKS = ["clang", "cc", "ar", "ranlib", "libc-header-c-probe", "analyze", "locked-build", "locked-run", "lockfile-unchanged"];
@@ -102,11 +105,11 @@ function createRecipe(root) {
 }
 
 function redTrace(harnessSha) { return [`QUALIFICATION_START phase=red image=${IMAGE} harness_sha256=${harnessSha}`, "+ set -euo pipefail",
-  "+ DEBIAN_FRONTEND=noninteractive", "+ apt-get install -y --no-install-recommends /input/beskid-1.2.3-amd64.deb",
+  "+ DEBIAN_FRONTEND=noninteractive", `+ apt-get install -y --no-install-recommends /input/beskid-${VERSION}-amd64.deb`,
   "+ echo 'DEB did not install required tool: clang'", "DEB did not install required tool: clang", "+ exit 1", "QUALIFICATION_EXIT phase=red exit_code=1", ""].join("\n"); }
 function greenTrace(harnessSha) { return [`QUALIFICATION_START phase=green image=${IMAGE} harness_sha256=${harnessSha}`, "+ set -euo pipefail",
   "+ [[ ubuntu == ubuntu ]]", "+ [[ 24.04 == 24.04 ]]", "+ [[ x86_64 == x86_64 ]]", "+ DEBIAN_FRONTEND=noninteractive",
-  "+ apt-get install -y --no-install-recommends /input/beskid-1.2.3-amd64.deb", "+ command -v clang", "/usr/bin/clang", "+ command -v cc", "/usr/bin/cc",
+  `+ apt-get install -y --no-install-recommends /input/beskid-${VERSION}-amd64.deb`, "+ command -v clang", "/usr/bin/clang", "+ command -v cc", "/usr/bin/cc",
   "+ command -v ar", "/usr/bin/ar", "+ command -v ranlib", "/usr/bin/ranlib", "+ cp /test/tests/fixtures/deb-console/probe.c /tmp/work/probe.c",
   "+ clang -target x86_64-unknown-linux-gnu -std=c11 -fPIC -c /tmp/work/probe.c -o /tmp/work/probe.o", "+ ar rcs /tmp/work/probe.a /tmp/work/probe.o",
   "+ ranlib /tmp/work/probe.a", "+ cc /tmp/work/probe.a -o /tmp/work/probe", "+ /tmp/work/probe", "+ cp -a /test/tests/fixtures/deb-console/. /tmp/work/project/",

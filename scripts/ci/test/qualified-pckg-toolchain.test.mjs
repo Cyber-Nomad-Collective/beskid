@@ -21,8 +21,10 @@ function Fixture() {
   const fixtureScripts = join(repo, 'scripts/ci');
   mkdirSync(fixtureScripts, { recursive: true });
   for (const name of ['corelib-publish.sh', 'verify-release-corelib-bundle.mjs', 'release-version.mjs']) cpSync(join(scripts, name), join(fixtureScripts, name));
-  Put(join(repo, 'compiler/corelib/CoreLib.bws'), 'workspace { name = "corelib" }\n');
+  // The embedded Corelib inventory is the CoreLib.bws member closure, so every shipped project is a declared member.
+  Put(join(repo, 'compiler/corelib/CoreLib.bws'), 'workspace { name = "corelib" }\nmember "corelib" { path = "beskid_corelib" }\nmember "foundation" { path = "packages/foundation" }\n');
   Put(join(repo, 'compiler/corelib/beskid_corelib/corelib.bproj'), 'project { name = "corelib" }\n');
+  Put(join(repo, 'compiler/corelib/packages/foundation/corelib_foundation.bproj'), 'project { name = "corelib_foundation" }\n');
   Put(join(repo, 'compiler/corelib/packages/foundation/Src/Main.bd'), '// canonical fixture\n');
   cpSync(join(repo, 'compiler/corelib'), join(prefix, 'beskid_corelib'), { recursive: true });
   const hash = Run(process.execPath, [join(scripts, 'verify-release-corelib-bundle.mjs'), '--fingerprint', join(prefix, 'beskid_corelib')]);

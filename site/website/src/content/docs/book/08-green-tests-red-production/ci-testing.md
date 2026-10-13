@@ -12,8 +12,8 @@ Typical pipeline:
 
 1. Install pinned or rolling CLI ([Downloads](/downloads/)).
 2. `beskid dev project fetch` / lockfile discipline per [workspace guide](/book/reference/workspace-monorepo/).
-3. `beskid dev build test` with `--include-tag fast` on every push; `slow` or `integration` on nightly or main.
-4. Optional: `beskid dev syntax analyze` / `beskid dev build compile` on the same graph so tests do not run against fantasy projects.
+3. `beskid test` with `--include-tag fast` on every push; `slow` or `integration` on nightly or main.
+4. Optional: `beskid check` / `beskid build` on the same graph so tests do not run against fantasy projects.
 
 Use `--json` when a bot needs to summarize failures without reading ANSI colors.
 
@@ -34,8 +34,8 @@ The aggregate repo runs Book link/build checks and OpenSpec validation separatel
 ## Reference links
 
 - [Testing framework](/book/reference/testing/)
-- [Conformance area](/platform-spec/compiler/conformance/)
-- [Build / analyze / run contract](/platform-spec/tooling/cli/build-analyze-run-contract/)
+- [Conformance area](/docs/standard/capabilities/taxonomy--compiler--conformance/)
+- [Build / analyze / run contract](/docs/standard/capabilities/tooling--cli--build-analyze-run-contract/)
 
 ## Next chapter
 

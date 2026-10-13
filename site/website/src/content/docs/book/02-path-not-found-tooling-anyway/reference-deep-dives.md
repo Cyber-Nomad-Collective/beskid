@@ -32,13 +32,13 @@ This tutorial chapter stops before encyclopedia mode. The reference tree is the 
 - [Semantic analysis](/book/reference/analysis/semantic-analysis/)
 - [Semantic rules](/book/reference/analysis/semantic-rules/)
 
-## Platform specification (normative)
+## Beskid Standard (normative)
 
 When the reference and tutorial disagree with the spec, **the spec wins** for language and platform contracts:
 
-- [Platform specification](/docs/standard/)
-- [Tooling manifests](/docs/standard/tooling/manifests-and-lockfiles/)
-- [Language meta program structure](/docs/standard/language-meta/program-structure/)
+- [Beskid Standard](/docs/standard/)
+- [Tooling manifests](/docs/standard/capabilities/taxonomy--tooling--manifests-and-lockfiles/)
+- [Language meta program structure](/docs/standard/capabilities/taxonomy--language-meta--program-structure/)
 
 ## Next chapter
 

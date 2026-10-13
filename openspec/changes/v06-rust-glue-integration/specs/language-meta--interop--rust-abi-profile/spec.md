@@ -11,7 +11,7 @@ Generated Rust Glue wrappers SHALL use the selected target C ABI with explicit r
 #### Scenario: Foreign panic isolated
 - **GIVEN** a foreign call panics or aborts
 - **WHEN** the boundary executes
-- **THEN** caught panic returns declared failure and abort terminates the bridge with typed process failure; no unwind crosses C (R4-CALL-04)
+- **THEN** caught panic returns declared failure and abort is terminal process failure; no unwind crosses C (R4-CALL-04)
 
 #### Scenario: Runtime gate independent
 - **GIVEN** an artifact has compatible user layout but incompatible runtime ABI

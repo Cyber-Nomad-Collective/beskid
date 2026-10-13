@@ -26,4 +26,4 @@ Consumers import `net.Client`, while internal layout remains free to evolve.
 
 ## Spec
 
-- [Modules and visibility](/platform-spec/language-meta/program-structure/modules-and-visibility/)
+- [Modules and visibility](/docs/standard/capabilities/language-meta--program-structure--modules-and-visibility/)

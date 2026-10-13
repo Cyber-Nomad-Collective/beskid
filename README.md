@@ -34,6 +34,25 @@ If your problem is finite element solvers or a game engine, use Rust or C++ and 
 
 Status: opinionated project. Not finished. Not apologizing. Start with [The Beskid Book](https://beskid-lang.org/book/) or [Beskid Docs](https://beskid-lang.org/docs/). Read the [Beskid Standard](https://beskid-lang.org/docs/standard/) when you need normative rules.
 
+## Release status
+
+The latest announced release is 0.5.3. 0.6.0 is in qualification and not released; its
+draft notes are in [docs/release/v0.6.0-release-notes.md](docs/release/v0.6.0-release-notes.md)
+and its summary is the 0.6.0 section of [CHANGELOG.md](CHANGELOG.md). In short, 0.6.0:
+
+- makes the `beskid_queries` query gate the only semantic front end for `check`,
+  `build`, `run`, `test` and the language server;
+- groups everyday commands at the CLI root (`new`, `check`, `build`, `run`,
+  `test`, `fmt`, `doc`, `add`, `remove`, `update`, `package`, `toolchain`,
+  `doctor`) and moves compiler inspection under `beskid dev`;
+- adds function values and lambdas, `for` over arrays, and the `i8`, `i16`,
+  `u16`, `u64` and `f32` primitives;
+- adds Rust Glue (in-process, checked C ABI) and native BSOL and serialization
+  packages in Corelib;
+- removes fixed runtime table sizes and the fixed heap cap (`BESKID_HEAP_MAX`
+  and `BESKID_FIBER_STACK_MAX` set limits), and removes the raw OS-thread
+  `Thread.Spawn` API in favor of fibers.
+
 ## This superrepo
 
 Day-to-day language work happens in **`compiler/`**, normative standard changes in **`openspec/`**, and informative documentation in **`site/website/`**. Everything else—registry, VS Code extension, tracker UI, deploy infra—lives in git submodules so each piece can version and ship on its own while CI in this repo ties them together.
@@ -96,7 +115,7 @@ compiler builds.
 
 ## Getting started
 
-**Recommended:** interactive setup from the superrepo root (toolchain, submodules, Bun workspaces, `site/` env files):
+**Recommended:** interactive setup from the superrepo root (toolchain, submodules, pnpm workspaces, `site/` env files):
 
 ```bash
 git clone https://github.com/Cyber-Nomad-Collective/beskid.git
@@ -106,7 +125,7 @@ just setup
 
 Requires [just](https://github.com/casey/just) (`./scripts/install-deps.sh --install --tool just`). The wizard offers profiles for docs-only, full developer, and infra operator workflows—see [site/README.md](site/README.md).
 
-**Non-interactive sync** (git submodules + `bun install` at the root):
+**Non-interactive sync** (git submodules + `pnpm install` at the root):
 
 ```bash
 ./scripts/setup-environment.sh
@@ -146,7 +165,7 @@ just deps-install   # install missing tools
 | Read the language | [beskid-lang.org/book/](https://beskid-lang.org/book/) |
 | Install the CLI | [Downloads](https://beskid-lang.org/downloads/) (rolling tags `cli-stable` and `cli-unstable` on [compiler releases](https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/tag/cli-stable)) |
 | Hack the compiler | [compiler/README.md](compiler/README.md) — `cargo build` in `compiler/` |
-| Run docs locally | `cd site/website && bun install && bun dev` → [site/website/README.md](site/website/README.md) |
+| Run docs locally | `pnpm install` at the root, then `cd site/website && pnpm dev` → [site/website/README.md](site/website/README.md) |
 | Run pckg locally | `cd pckg && podman compose up --build -d` → [pckg/README.md](pckg/README.md) |
 | VS Code extension dev | [beskid_vscode/README.md](beskid_vscode/README.md) — `bun install`, Extension Development Host |
 | Deploy / infra | [beskid_infra/docs/deploy-compose.md](beskid_infra/docs/deploy-compose.md) |

@@ -33,9 +33,9 @@ target "App" {
   entry = "Main.bd"
 }
 
-dependency "Std" {
+dependency "Shared" {
   source = path
-  path   = "../Std"
+  path   = "../Shared"
 }
 ```
 
@@ -57,7 +57,7 @@ Use [Dependencies and locks](/docs/projects/dependencies-and-locks/) for the ver
 
 ## Validation expectations
 
-Exactly one named root block (kind equals `name`), at least one `target`, unique labels, entries resolvable under `project.root` where required. Details: [manifest reference](/book/reference/projects/manifest/) and [project manifest contract](/docs/standard/tooling/manifests-and-lockfiles/project-manifest-contract/).
+Exactly one named root block (kind equals `name`), at least one `target`, unique labels, entries resolvable under `project.root` where required. Details: [manifest reference](/book/reference/projects/manifest/) and [project manifest contract](/docs/standard/capabilities/tooling--manifests-and-lockfiles--project-manifest-contract/).
 
 ## Next
 

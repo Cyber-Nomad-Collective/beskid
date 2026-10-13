@@ -189,7 +189,14 @@ try {
     const expectedFiles = sorted(embeddedFiles(source));
     const installedFiles = sorted(filesUnder(installed));
     if (expectedFiles.length === 0 || expectedFiles.join('\0') !== installedFiles.join('\0')) {
-      throw new Error('materialized Corelib file inventory differs from pinned embedded source');
+      const expected = new Set(expectedFiles);
+      const actual = new Set(installedFiles);
+      const missing = expectedFiles.filter(file => !actual.has(file)).slice(0, 10);
+      const extra = installedFiles.filter(file => !expected.has(file)).slice(0, 10);
+      throw new Error(
+        'materialized Corelib file inventory differs from pinned embedded source' +
+          `\n  missing: ${missing.join(', ') || '-'}\n  unexpected: ${extra.join(', ') || '-'}`,
+      );
     }
     for (const file of expectedFiles) {
       if (!readFileSync(join(source, file)).equals(readFileSync(join(installed, file)))) {

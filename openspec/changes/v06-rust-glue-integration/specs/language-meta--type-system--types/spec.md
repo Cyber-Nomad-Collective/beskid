@@ -23,6 +23,8 @@ A type expression SHALL be a primitive (`bool`, `i8`, `i16`, `i32`, `i64`, `u8`,
 - **WHEN** the grammar is parsed
 - **THEN** the nullable form is rejected
 
+## ADDED Requirements
+
 ### Requirement: Aggregate unit fields retain semantics without physical storage
 The compiler SHALL retain unit-valued aggregate fields in the logical field ordering while assigning them no payload bytes or GC pointer-map entry. It SHALL evaluate their initializers and assignment receivers and right-hand sides for effects exactly once. Field accesses following a unit field SHALL retain their declared logical indices and refer to their own physical offsets. A no-storage slot SHALL accept only an exact semantic unit value, including compiler-issued generic specializations.
 

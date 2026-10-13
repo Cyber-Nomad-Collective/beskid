@@ -4,9 +4,7 @@
 ## Purpose
 
 M:N cooperative scheduler, per-fiber stacks, safepoints, and runtime fiber builtins.
-
 ## Requirements
-
 ### Requirement: M:N cooperative fiber scheduler: Decision [D-EXEC-RT-0001]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
 
@@ -14,7 +12,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 > | --- | --- |
 > | Model | **M:N** — many **fibers** on a pool of **OS worker threads** |
 > | API surface | `fiber_*` builtins back `` `Fiber<T>` ``; no async lowering in compiler |
-> | Preemption | User fibers are **cooperative**; preemptive parallelism uses `System.Threading` (OS threads) |
+> | Preemption | User fibers are **cooperative**; 0.6.0 has no preemptive or parallel execution API for Beskid code, and `spawn` always starts a fiber |
 > | Work stealing | Per-worker run queues; work-stealing **permitted** |
 > | Parking | Fibers park on channel ops, join, cancel, and blocking syscalls |
 
@@ -56,8 +54,8 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 > | Phase A (default) | **One** thread at a time may execute Beskid allocations as GC mutator |
 > | Scheduler | Transfers mutator execution between fibers on that contract |
 > | Syscall pool | Workers run blocking host work **without** arbitrary Beskid mutator code or generated allocation; runtime tags them and traps stray allocations (`assert_mutator_allowed`) |
-> | Phase B (opt-in, v0.3) | Multiple Beskid mutators may share one heap by holding a `MutatorAttachGuard` from `attach_phase_b_mutator`; pointer-payload channel ops apply `gc_write_barrier` on send and receive |
-> | Future | Phase B becomes the default once preemption code emission and full concurrent-mark stress coverage land |
+> | Phase B | Not implemented in 0.6.0: the runtime has no API that attaches a second Beskid mutator to a heap, and Phase A is the only mode |
+> | Future | Parallel execution is planned in the changes `v061-attributes-and-isolate-prerequisites` through `v065-parallel-sequences` |
 > 
 > Aligns with [D-CORE-CONC-0007](/platform-spec/core-library/concurrency/concurrency-package/adr/0007-gc-phase-a-single-mutator/).
 
@@ -92,6 +90,105 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
+### Requirement: External completion is routed to the owning scheduler
+Every scheduler SHALL have a stable scheduler identifier, a thread-safe inbound command queue, and an owner wake primitive. A syscall-pool worker or other external source MUST enqueue completion only to the scheduler that owns the waiting fiber and MUST wake that owner; completion MUST NOT depend on the external worker's thread-local wake queue.
+
+**Stable ID:** `BSP-REQ-B206035816D3`
+
+#### Scenario: Syscall worker completes an owner wait
+- **GIVEN** a fiber parked on scheduler A for a syscall performed by a worker thread
+- **WHEN** the worker completes the syscall
+- **THEN** scheduler A is woken and resumes only its owned fiber
+
+### Requirement: External waits suppress false deadlock
+The scheduler SHALL maintain an active-external-wait count from external-work submission through that work's terminal completion or cancellation cleanup. Deadlock detection MUST report deadlock only when no runnable fibers exist, all remaining fibers are parked, and the active-external-wait count is zero.
+
+**Stable ID:** `BSP-REQ-6CF93216D4C9`
+
+#### Scenario: Pending syscall is not deadlock
+- **GIVEN** no fiber is runnable and one fiber is parked for submitted external work
+- **WHEN** the scheduler evaluates deadlock
+- **THEN** it does not report deadlock while the external wait is active
+
+### Requirement: External waits block their fiber, not the scheduler
+Submitting an external wait SHALL park only the submitting fiber. The owner scheduler MUST continue to execute every other runnable fiber while the external source is pending, and the external source MUST NOT occupy a scheduler worker thread or block the scheduler run loop.
+
+**Stable ID:** `BSP-REQ-52284EABE5E1`
+
+#### Scenario: A second fiber runs during an external wait
+- **GIVEN** fiber A is parked for an active external wait and fiber B is runnable on the same owner scheduler
+- **WHEN** the scheduler selects its next runnable fiber
+- **THEN** it executes fiber B before the external wait for fiber A completes
+
+### Requirement: External-wait capacity derives from live fiber capacity
+An owner scheduler SHALL admit at most one active external-wait registration for each live valid fiber. Its usable external-wait capacity SHALL be derived from the scheduler's live-fiber capacity, so every live valid fiber can hold its one registration simultaneously. Implementations MAY retain additional physical record storage, but it SHALL NOT introduce a lower normal admission limit. A repeated registration for the same valid fiber SHALL be rejected as a duplicate without changing active accounting, timer state, or the original registration's winner. A terminal release SHALL make that fiber's one registration available again; stale generations remain harmless under `BSP-REQ-896BA6C917E9`.
+
+**Stable ID:** `BSP-REQ-A0D58F1B3E21`
+
+#### Scenario: Full legal admission remains distinct from duplicate rejection
+- **GIVEN** every live valid fiber owns one active external-wait registration
+- **WHEN** a second registration is attempted for one of those fibers
+- **THEN** the attempt SHALL be rejected as a duplicate, all existing registrations SHALL remain active and unchanged, and a terminal release SHALL permit one subsequent valid registration
+
+### Requirement: Monotonic timers use generation-tagged registrations
+`Sleep`, timeout, and deadline waits SHALL use monotonic absolute deadlines. Every timer registration and cancellation MUST carry a generation that makes an obsolete fire harmless; wall-clock changes MUST NOT advance, delay, or reclassify a monotonic deadline.
+
+**Stable ID:** `BSP-REQ-896BA6C917E9`
+
+#### Scenario: Cancelled timer fires late
+- **GIVEN** a timer registration is cancelled and its slot is reused with a new generation
+- **WHEN** an event for the cancelled generation arrives
+- **THEN** it does not wake or complete the new registration
+
+### Requirement: Each wait has exactly one winner
+Every wait operation SHALL centralize completion in one atomic winner transition shared by readiness, close, cancellation, timeout, and duplicate-wake paths. The winning transition MUST resume the fiber once and schedule idempotent cleanup; every losing transition MUST perform no user-visible completion.
+
+**Stable ID:** `BSP-REQ-A371B8519429`
+
+#### Scenario: Timeout races readiness
+- **GIVEN** readiness and timeout are delivered for the same wait
+- **WHEN** they race to complete it
+- **THEN** exactly one terminal outcome resumes the fiber and the other outcome performs no second resume
+
+### Requirement: Reactor has one portable contract and required native backends
+The runtime SHALL route Internet socket readiness through one internal reactor
+contract. Linux production builds MUST use epoll, macOS production builds MUST
+use kqueue, and Windows production builds MUST use IOCP. A fallback MAY exist
+only in tests and MUST NOT replace a required production backend. Backend
+selection MUST NOT alter the public Network API or error vocabulary.
+
+**Stable ID:** `BSP-REQ-5B97C4F1D3A8`
+
+#### Scenario: Target backend is selected
+- **GIVEN** a production runtime built for macOS
+- **WHEN** it registers a TCP accept wait
+- **THEN** the wait is registered through kqueue and exposes no kqueue detail to the caller
+
+### Requirement: Socket operations share the Foundation terminal winner
+Every socket readiness, DNS completion, cancellation, deadline expiry, and close SHALL settle through the Foundations change's owner-routed completion and atomic one-winner operation contract. A winning transition MUST resume the waiting fiber once and perform idempotent deregistration; every losing or stale transition MUST perform no user-visible completion. Networking MUST NOT add an alternate scheduler wake, timer, or cancellation path.
+
+**Stable ID:** `BSP-REQ-F902B81D6E4C`
+
+#### Scenario: Close races readiness
+- **GIVEN** a fiber waiting to read from a TCP stream
+- **WHEN** close and readiness race for the same operation
+- **THEN** exactly one typed terminal outcome resumes the fiber and late readiness is discarded
+
+### Requirement: Network shutdown is idempotent and leak-audited
+Closing a network resource SHALL invalidate its active handle generation,
+cancel or deregister its pending operations, and release its native socket at
+most once. Debug and conformance modes MUST report each live network handle at
+runtime shutdown and MUST fail the leak check. Runtime diagnostics MUST include
+slot, generation, owner scheduler, backend, operation kind, and winner but
+MUST NOT reveal a native descriptor.
+
+**Stable ID:** `BSP-REQ-8A21D67C43FE`
+
+#### Scenario: Duplicate close does not leak or double-close
+- **GIVEN** a TCP stream with a pending read
+- **WHEN** its owner invokes close twice
+- **THEN** the socket is released once, the read receives one terminal outcome, and the leak check reports no live handle
+
 ## Informative Source Provenance
 
 The records below preserve migration history and are not normative except where text was extracted into a requirement above.
@@ -113,7 +210,7 @@ Cooperative **M:N** scheduling: many **fibers** on an OS worker pool, **growable
 
 <SpecSection title="Implementation anchors" id="implementation-anchors">
 - `compiler/crates/beskid_runtime/src/scheduler/` — split scheduler state, TLS, spawn/cancel, run loop, and syscall parking modules
-- `compiler/crates/beskid_abi/` — symbols and `BUILTIN_SPECS`
+- `compiler/crates/beskid_abi/` — generated ABI-v5 runtime import tables from `compiler/runtime_manifest.bsol`
 - `compiler/crates/beskid_analysis/src/builtins.rs` — `__fiber_*` injected paths
 - `compiler/crates/beskid_codegen/` — safepoints, stack maps
 </SpecSection>

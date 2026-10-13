@@ -4,9 +4,7 @@
 ## Purpose
 
 Feature hub for the extern import extraction contract in the reference compiler.
-
 ## Requirements
-
 ### Requirement: Feature hub authority: Decision [D-COMP-IR-0004]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
 
@@ -49,6 +47,61 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
+### Requirement: Corelib native imports require exact source and manifest preflight
+
+Before a reference compiler backend adds a Corelib-native adapter to its artifact import set, it SHALL retain and validate the exact Corelib declaration
+triple of logical source path, service name, and adapter. The declaration SHALL
+resolve through the compiler-minted source-scoped Corelib capability. The
+compiler SHALL validate it against the canonical ABI-v5 manifest for the
+selected target and SHALL require exactly one generated binding for every
+supported target. Every binding SHALL use the declared adapter as its target
+implementation and SHALL have an identical parameter/result shape. The
+target-independent source-builtin class SHALL instead resolve through exactly
+one generated source declaration with the same service name, adapter, and
+shape; that declaration applies uniformly to every supported target. The
+compiler SHALL reject an unknown, copied, source-mismatched,
+adapter-mismatched, duplicate, target-incomplete, or target-shape-mismatched
+declaration before producing a JIT or AOT backend artifact.
+
+This requirement governs Corelib runtime services, not user `Extern` imports.
+It SHALL NOT infer a library, accept a native-symbol alias, introduce a
+fallback, or route the service through Glue. User Glue imports are governed
+by the Beskid Glue interop contract, not by this requirement.
+
+**Stable ID:** `BSP-REQ-CORELIB-NATIVE-IMPORT-PREFLIGHT-001`
+
+#### Scenario: Networking service is admitted only from its canonical Corelib source
+
+- **GIVEN** `Network/Internal.bd` from the compiler-embedded Corelib corpus
+  calls `__network_open` with adapter `beskid_rt_v5_network_open`
+- **WHEN** module lowering prepares the import for a supported target
+- **THEN** the compiler admits the adapter only after its source declaration
+  and every generated target binding pass the Corelib-native-import preflight
+
+#### Scenario: copied networking declaration is rejected
+
+- **GIVEN** a copied or user source declares `__network_open` with adapter
+  `beskid_rt_v5_network_open`
+- **WHEN** lowering attempts to prepare a Corelib-native import
+- **THEN** the compiler rejects it before any backend artifact is produced
+
+#### Scenario: target binding drift is rejected
+
+- **GIVEN** a generated binding for a Corelib service has a missing target,
+  duplicate target, different adapter implementation, or different ABI shape
+- **WHEN** the compiler preflights that service
+- **THEN** the compiler rejects the artifact rather than guessing a compatible
+  target binding
+
+#### Scenario: target-independent source builtin remains exact
+
+- **GIVEN** a canonical Corelib source calls a target-independent source
+  builtin such as `__fiber_yield`
+- **WHEN** lowering prepares its native import
+- **THEN** the compiler admits it only when exactly one generated source-builtin
+  declaration preserves the same name, adapter, and ABI shape for every
+  supported target
+
 ## Informative Source Provenance
 
 The records below preserve migration history and are not normative except where text was extracted into a requirement above.
@@ -67,7 +120,7 @@ The records below preserve migration history and are not normative except where 
 This feature hub defines the normative contract for **extern import extraction contract** and links newcomer-oriented reference articles.
 
 ## Implementation anchors
-- `compiler/crates/beskid_abi/src/builtins.rs` and `symbols.rs` define import-facing ABI names.
+- `compiler/runtime_manifest.bsol` defines import-facing runtime ABI names and shapes. `beskid_abi/build.rs` generates the ABI-v5 tables from it.
 - `compiler/crates/beskid_runtime/src/builtins/mod.rs` provides runtime implementations for extracted imports.
 - `compiler/crates/beskid_e2e_tests/src/tests/runtime_cases.rs` verifies extern calls end-to-end.
 
@@ -144,7 +197,7 @@ Engineers file spec/ADR updates when behavior changes; crate comments are non-au
 
 ## Verification anchors
 
-- `compiler/crates/beskid_abi/src/builtins.rs`
+- `compiler/crates/beskid_abi/tests/runtime_import_catalog_v06.rs`
 - `compiler/crates/beskid_runtime/src/builtins/mod.rs`
 - `compiler/crates/beskid_e2e_tests/src/tests/runtime_cases.rs`
 ``````
@@ -199,7 +252,7 @@ This article documents **contracts and edge cases** for **extern import extracti
 For newcomers, this page explains where the contract shows up in day-to-day compiler work and which code paths are most useful first reads.
 
 ## Anchored code paths
-- `compiler/crates/beskid_abi/src/builtins.rs` and `symbols.rs` define import-facing ABI names.
+- `compiler/runtime_manifest.bsol` defines import-facing runtime ABI names and shapes. `beskid_abi/build.rs` generates the ABI-v5 tables from it.
 - `compiler/crates/beskid_runtime/src/builtins/mod.rs` provides runtime implementations for extracted imports.
 - `compiler/crates/beskid_e2e_tests/src/tests/runtime_cases.rs` verifies extern calls end-to-end.
 
@@ -228,7 +281,7 @@ This article documents **design model** for **extern import extraction contract*
 For newcomers, this page explains where the contract shows up in day-to-day compiler work and which code paths are most useful first reads.
 
 ## Anchored code paths
-- `compiler/crates/beskid_abi/src/builtins.rs` and `symbols.rs` define import-facing ABI names.
+- `compiler/runtime_manifest.bsol` defines import-facing runtime ABI names and shapes. `beskid_abi/build.rs` generates the ABI-v5 tables from it.
 - `compiler/crates/beskid_runtime/src/builtins/mod.rs` provides runtime implementations for extracted imports.
 - `compiler/crates/beskid_e2e_tests/src/tests/runtime_cases.rs` verifies extern calls end-to-end.
 
@@ -257,7 +310,7 @@ This article documents **examples** for **extern import extraction contract** in
 For newcomers, this page explains where the contract shows up in day-to-day compiler work and which code paths are most useful first reads.
 
 ## Anchored code paths
-- `compiler/crates/beskid_abi/src/builtins.rs` and `symbols.rs` define import-facing ABI names.
+- `compiler/runtime_manifest.bsol` defines import-facing runtime ABI names and shapes. `beskid_abi/build.rs` generates the ABI-v5 tables from it.
 - `compiler/crates/beskid_runtime/src/builtins/mod.rs` provides runtime implementations for extracted imports.
 - `compiler/crates/beskid_e2e_tests/src/tests/runtime_cases.rs` verifies extern calls end-to-end.
 
@@ -286,7 +339,7 @@ This article documents **faq and troubleshooting** for **extern import extractio
 For newcomers, this page explains where the contract shows up in day-to-day compiler work and which code paths are most useful first reads.
 
 ## Anchored code paths
-- `compiler/crates/beskid_abi/src/builtins.rs` and `symbols.rs` define import-facing ABI names.
+- `compiler/runtime_manifest.bsol` defines import-facing runtime ABI names and shapes. `beskid_abi/build.rs` generates the ABI-v5 tables from it.
 - `compiler/crates/beskid_runtime/src/builtins/mod.rs` provides runtime implementations for extracted imports.
 - `compiler/crates/beskid_e2e_tests/src/tests/runtime_cases.rs` verifies extern calls end-to-end.
 
@@ -315,7 +368,7 @@ This article documents **flow and algorithm** for **extern import extraction con
 For newcomers, this page explains where the contract shows up in day-to-day compiler work and which code paths are most useful first reads.
 
 ## Anchored code paths
-- `compiler/crates/beskid_abi/src/builtins.rs` and `symbols.rs` define import-facing ABI names.
+- `compiler/runtime_manifest.bsol` defines import-facing runtime ABI names and shapes. `beskid_abi/build.rs` generates the ABI-v5 tables from it.
 - `compiler/crates/beskid_runtime/src/builtins/mod.rs` provides runtime implementations for extracted imports.
 - `compiler/crates/beskid_e2e_tests/src/tests/runtime_cases.rs` verifies extern calls end-to-end.
 
@@ -344,7 +397,7 @@ This article documents **verification and traceability** for **extern import ext
 For newcomers, this page explains where the contract shows up in day-to-day compiler work and which code paths are most useful first reads.
 
 ## Anchored code paths
-- `compiler/crates/beskid_abi/src/builtins.rs` and `symbols.rs` define import-facing ABI names.
+- `compiler/runtime_manifest.bsol` defines import-facing runtime ABI names and shapes. `beskid_abi/build.rs` generates the ABI-v5 tables from it.
 - `compiler/crates/beskid_runtime/src/builtins/mod.rs` provides runtime implementations for extracted imports.
 - `compiler/crates/beskid_e2e_tests/src/tests/runtime_cases.rs` verifies extern calls end-to-end.
 

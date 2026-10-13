@@ -3,7 +3,7 @@
 
 ## Purpose
 
-OS-thread primitives via syscalls—preemptive parallelism separate from cooperative fibers.
+The OS-level thread surface of corelib. In 0.6.0 it exposes only `Thread.Yield`; Beskid code cannot create or join OS threads. Concurrent work starts as a cooperative fiber with the `spawn` expression, which returns a `Fiber<T>` handle from the Concurrency package. CPU parallelism is planned through isolates in the changes `v061-attributes-and-isolate-prerequisites`, `v063-isolates-and-scope` and `v065-parallel-sequences`.
 
 ## Requirements
 
@@ -63,7 +63,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 
 > | Rule | Detail |
 > | --- | --- |
-> | Entry | Thread start **must** establish runtime heap session |
+> | Entry | An OS thread **must** establish a runtime heap session before it runs Beskid code; Beskid code cannot start an OS thread in 0.6.0 |
 > | FFI | `extern "C"` stays pinned to calling OS thread for call duration |
 
 **Stable ID:** `BSP-REQ-9059C3DF2D90`  

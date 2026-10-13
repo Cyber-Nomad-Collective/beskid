@@ -475,7 +475,7 @@
 							{
 								"slug": "book/11-fibers-cheaper-than-threads/v0-5-foundations-roadmap",
 								"href": "/book/11-fibers-cheaper-than-threads/v0-5-foundations-roadmap/",
-								"title": "11.5 Planned v0.5 foundations",
+								"title": "11.5 What shipped and what is planned",
 								"part": "Tutorial"
 							}
 						]
@@ -539,7 +539,7 @@
 							{
 								"slug": "book/13-reading-the-law/platform-spec-home",
 								"href": "/book/13-reading-the-law/platform-spec-home/",
-								"title": "13.1 Platform spec home",
+								"title": "13.1 Standard home",
 								"part": "Tutorial"
 							},
 							{
@@ -875,6 +875,12 @@
 								"href": "/book/21-ffi-and-forbidden-friendships/export-and-callbacks/",
 								"title": "21.5 Export and callbacks",
 								"part": "Tutorial"
+							},
+							{
+								"slug": "book/21-ffi-and-forbidden-friendships/rust-glue",
+								"href": "/book/21-ffi-and-forbidden-friendships/rust-glue/",
+								"title": "21.6 Rust Glue",
+								"part": "Tutorial"
 							}
 						]
 					},
@@ -1096,7 +1102,7 @@
 							{
 								"slug": "book/reference/contributing/interop-platform-spec-canonical-map",
 								"href": "/book/reference/contributing/interop-platform-spec-canonical-map/",
-								"title": "Interop platform-spec canonical map",
+								"title": "Interop Standard map",
 								"part": "Reference"
 							}
 						]
@@ -1574,7 +1580,7 @@
 		{
 			"slug": "book/11-fibers-cheaper-than-threads/v0-5-foundations-roadmap",
 			"href": "/book/11-fibers-cheaper-than-threads/v0-5-foundations-roadmap/",
-			"title": "11.5 Planned v0.5 foundations"
+			"title": "11.5 What shipped and what is planned"
 		},
 		{
 			"slug": "book/12-the-normative-bible",
@@ -1624,7 +1630,7 @@
 		{
 			"slug": "book/13-reading-the-law/platform-spec-home",
 			"href": "/book/13-reading-the-law/platform-spec-home/",
-			"title": "13.1 Platform spec home"
+			"title": "13.1 Standard home"
 		},
 		{
 			"slug": "book/13-reading-the-law/language-meta-map",
@@ -1890,6 +1896,11 @@
 			"slug": "book/21-ffi-and-forbidden-friendships/export-and-callbacks",
 			"href": "/book/21-ffi-and-forbidden-friendships/export-and-callbacks/",
 			"title": "21.5 Export and callbacks"
+		},
+		{
+			"slug": "book/21-ffi-and-forbidden-friendships/rust-glue",
+			"href": "/book/21-ffi-and-forbidden-friendships/rust-glue/",
+			"title": "21.6 Rust Glue"
 		},
 		{
 			"slug": "book/22-so-you-want-to-contribute",
@@ -2789,7 +2800,7 @@
 			"next": {
 				"slug": "book/11-fibers-cheaper-than-threads/v0-5-foundations-roadmap",
 				"href": "/book/11-fibers-cheaper-than-threads/v0-5-foundations-roadmap/",
-				"title": "11.5 Planned v0.5 foundations"
+				"title": "11.5 What shipped and what is planned"
 			}
 		},
 		"book/11-fibers-cheaper-than-threads/v0-5-foundations-roadmap": {
@@ -2808,7 +2819,7 @@
 			"prev": {
 				"slug": "book/11-fibers-cheaper-than-threads/v0-5-foundations-roadmap",
 				"href": "/book/11-fibers-cheaper-than-threads/v0-5-foundations-roadmap/",
-				"title": "11.5 Planned v0.5 foundations"
+				"title": "11.5 What shipped and what is planned"
 			},
 			"next": {
 				"slug": "book/12-the-normative-bible/informative-vs-normative",
@@ -2909,7 +2920,7 @@
 			"next": {
 				"slug": "book/13-reading-the-law/platform-spec-home",
 				"href": "/book/13-reading-the-law/platform-spec-home/",
-				"title": "13.1 Platform spec home"
+				"title": "13.1 Standard home"
 			}
 		},
 		"book/13-reading-the-law/platform-spec-home": {
@@ -2928,7 +2939,7 @@
 			"prev": {
 				"slug": "book/13-reading-the-law/platform-spec-home",
 				"href": "/book/13-reading-the-law/platform-spec-home/",
-				"title": "13.1 Platform spec home"
+				"title": "13.1 Standard home"
 			},
 			"next": {
 				"slug": "book/13-reading-the-law/compiler-domain-map",
@@ -3555,6 +3566,18 @@
 				"title": "21.4 Rust ABI profile"
 			},
 			"next": {
+				"slug": "book/21-ffi-and-forbidden-friendships/rust-glue",
+				"href": "/book/21-ffi-and-forbidden-friendships/rust-glue/",
+				"title": "21.6 Rust Glue"
+			}
+		},
+		"book/21-ffi-and-forbidden-friendships/rust-glue": {
+			"prev": {
+				"slug": "book/21-ffi-and-forbidden-friendships/export-and-callbacks",
+				"href": "/book/21-ffi-and-forbidden-friendships/export-and-callbacks/",
+				"title": "21.5 Export and callbacks"
+			},
+			"next": {
 				"slug": "book/22-so-you-want-to-contribute",
 				"href": "/book/22-so-you-want-to-contribute/",
 				"title": "22. So you want to contribute, huh?"
@@ -3562,9 +3585,9 @@
 		},
 		"book/22-so-you-want-to-contribute": {
 			"prev": {
-				"slug": "book/21-ffi-and-forbidden-friendships/export-and-callbacks",
-				"href": "/book/21-ffi-and-forbidden-friendships/export-and-callbacks/",
-				"title": "21.5 Export and callbacks"
+				"slug": "book/21-ffi-and-forbidden-friendships/rust-glue",
+				"href": "/book/21-ffi-and-forbidden-friendships/rust-glue/",
+				"title": "21.6 Rust Glue"
 			},
 			"next": {
 				"slug": "book/22-so-you-want-to-contribute/repos-and-submodules",
@@ -3726,7 +3749,7 @@
 		"book/11-fibers-cheaper-than-threads/fibers-and-spawn": "11.2 Fibers and spawn",
 		"book/11-fibers-cheaper-than-threads/channels-preview": "11.3 Channels preview",
 		"book/11-fibers-cheaper-than-threads/corelib-concurrency": "11.4 Corelib concurrency",
-		"book/11-fibers-cheaper-than-threads/v0-5-foundations-roadmap": "11.5 Planned v0.5 foundations",
+		"book/11-fibers-cheaper-than-threads/v0-5-foundations-roadmap": "11.5 What shipped and what is planned",
 		"book/12-the-normative-bible": "12. The normative bible (and why we bothered)",
 		"book/12-the-normative-bible/informative-vs-normative": "12.1 Informative vs normative",
 		"book/12-the-normative-bible/spec-leads-code": "12.2 Spec leads code",
@@ -3736,7 +3759,7 @@
 		"book/12-the-normative-bible/adrs-and-decisions": "12.6 ADRs and decisions",
 		"book/12-the-normative-bible/how-to-propose-a-change": "12.7 How to propose a change",
 		"book/13-reading-the-law": "13. Reading the law without going blind",
-		"book/13-reading-the-law/platform-spec-home": "13.1 Platform spec home",
+		"book/13-reading-the-law/platform-spec-home": "13.1 Standard home",
 		"book/13-reading-the-law/language-meta-map": "13.2 Language meta map",
 		"book/13-reading-the-law/compiler-domain-map": "13.3 Compiler domain map",
 		"book/13-reading-the-law/execution-and-corelib": "13.4 Execution and core library",
@@ -3790,6 +3813,7 @@
 		"book/21-ffi-and-forbidden-friendships/c-abi-profile": "21.3 C ABI profile",
 		"book/21-ffi-and-forbidden-friendships/rust-abi-profile": "21.4 Rust ABI profile",
 		"book/21-ffi-and-forbidden-friendships/export-and-callbacks": "21.5 Export and callbacks",
+		"book/21-ffi-and-forbidden-friendships/rust-glue": "21.6 Rust Glue",
 		"book/22-so-you-want-to-contribute": "22. So you want to contribute, huh?",
 		"book/22-so-you-want-to-contribute/repos-and-submodules": "22.1 Repos and submodules",
 		"book/22-so-you-want-to-contribute/spec-first-workflow": "22.2 Spec-first workflow",

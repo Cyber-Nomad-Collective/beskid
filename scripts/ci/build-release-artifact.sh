@@ -13,14 +13,15 @@
 # archive to <asset-name> in the caller's cwd.
 #
 # Usage: build-release-artifact.sh <package> <binary> <target> <asset-name> <release-version>
-#   package         beskid_cli | beskid_lsp | beskid_bundle
-#   binary          beskid_cli | beskid_lsp | ignored for beskid_bundle
+#   package         beskid_cli | beskid_lsp | beskid_bundle | beskid_release_harness
+#   binary          beskid_cli | beskid_lsp | ignored for beskid_bundle and beskid_release_harness
 #   target          x86_64-unknown-linux-gnu | aarch64-apple-darwin | x86_64-apple-darwin | x86_64-pc-windows-msvc
-#   asset-name      output file name (e.g. beskid-linux-amd64)
+#   asset-name      output file name (e.g. beskid-linux-amd64); for beskid_release_harness an absolute
+#                   output directory that receives the 0.6 release harness and fixture executables
 #   release-version resolved semantic version
 set -euo pipefail
 
-PACKAGE="${1:?package (beskid_cli | beskid_lsp | beskid_bundle)}"
+PACKAGE="${1:?package (beskid_cli | beskid_lsp | beskid_bundle | beskid_release_harness)}"
 BINARY="${2:?binary name}"
 TARGET="${3:?rust target triple}"
 ASSET_NAME="${4:?asset-name}"
@@ -92,6 +93,27 @@ case "$PACKAGE" in
     export BESKID_COMPILER_DRIVER_BUILD_RECEIPT="${driver_stage}/driver.json"
     cargo build -p beskid_cli -p beskid_lsp -p beskid_up --release --target "$TARGET"
     ;;
+  beskid_release_harness)
+    # 0.6 release case harnesses: libtest executables of the reviewed harness crates and the process
+    # fixture binary, built from this commit with the same qualified driver receipt the bundle used so
+    # the Glue harness admits the shipped driver. They are retained as flat packet files, never published.
+    case "$ASSET_NAME" in
+      /* | [A-Za-z]:/*) ;;
+      *) echo "beskid_release_harness output must be an absolute directory: $ASSET_NAME" >&2; exit 1 ;;
+    esac
+    driver_stage="$(mktemp -d)"
+    python3 "${ROOT}/scripts/ci/qualify-native-tool-driver.py" --snapshot --output "${driver_stage}/source.json"
+    cargo build --locked -p beskid_execution --bin beskid_native_tool_driver --release --target "$TARGET" --message-format=json >"${driver_stage}/cargo.json"
+    python3 "${ROOT}/scripts/ci/qualify-native-tool-driver.py" --messages "${driver_stage}/cargo.json" --target "$TARGET" --profile release --source-snapshot "${driver_stage}/source.json" --output "${driver_stage}/driver.json"
+    export BESKID_COMPILER_DRIVER_BUILD_RECEIPT="${driver_stage}/driver.json"
+    cargo test --no-run --locked --release --target "$TARGET" -p beskid_tests_release -p beskid_tests_interop --message-format=json >"${driver_stage}/harness.json"
+    cargo build --locked --release --target "$TARGET" -p beskid_tests_interop --bin beskid_release_fixture --message-format=json >"${driver_stage}/fixture.json"
+    node "${ROOT}/scripts/ci/release-harness-executables.mjs" "$TARGET" "$ASSET_NAME" \
+      "${ROOT}/scripts/ci/release-cases-v06.json" "${driver_stage}/harness.json" "${driver_stage}/fixture.json"
+    rm -rf "${driver_stage}"
+    echo "built release harness executables in ${ASSET_NAME} (Beskid ${RELEASE_VERSION} for ${TARGET})"
+    exit 0
+    ;;
   *)
     echo "unsupported release package: $PACKAGE" >&2
     exit 1
@@ -150,10 +172,62 @@ if [[ "$PACKAGE" == "beskid_bundle" ]]; then
     echo 'Bundled Corelib workspace is missing its aggregate project' >&2
     exit 1
   }
-  [[ -d "${bundle_dir}/beskid_corelib/packages" ]] || {
-    echo 'Bundled Corelib workspace is missing its packages' >&2
+  # Every CoreLib.bws member (packages and compiler mods alike) must ship as a
+  # project directory; a member that cannot be resolved breaks every installed
+  # dependency on it.
+  corelib_members="$(awk '
+    /^member "[^"]*"[[:space:]]*\{[[:space:]]*$/ { in_member = 1; next }
+    in_member && /^\}[[:space:]]*$/ { in_member = 0; next }
+    in_member && /^[[:space:]]*path[[:space:]]*=/ {
+      value = $0
+      sub(/^[^=]*=[[:space:]]*"/, "", value)
+      sub(/"[[:space:]]*$/, "", value)
+      print value
+    }
+  ' "${bundle_dir}/beskid_corelib/CoreLib.bws")"
+  [[ -n "${corelib_members}" ]] || {
+    echo 'Bundled CoreLib.bws lists no members' >&2
     exit 1
   }
+  while IFS= read -r member; do
+    if ! compgen -G "${bundle_dir}/beskid_corelib/${member}/*.bproj" >/dev/null; then
+      echo "Bundled Corelib workspace is missing member ${member}" >&2
+      exit 1
+    fi
+  done <<<"${corelib_members}"
+  # Ship each Corelib compiler Mod prebuilt, as toolchains ship prebuilt macro
+  # plugins: the bundled CLI builds the Mod's executable descriptor into
+  # <corelib>/<member>/.beskid/obj/mods/<package>/<key>/<target>/. The artifact is
+  # keyed by target, runtime-kit profile and the exact bundled CLI digest, so it
+  # is current only for this bundle; consumers (CLI, LSP) reuse it without a
+  # rebuild. `.beskid`, `obj` and Project.lock are outside the Corelib
+  # fingerprint, so the bundle seal stays valid. Installed `beskid build` and
+  # `beskid run` select the debug kit, so the debug profile is shipped.
+  mod_state="$(mktemp -d)"
+  while IFS= read -r member; do
+    for mod_manifest in "${bundle_dir}/beskid_corelib/${member}"/*.bproj; do
+      grep -Eq 'type[[:space:]]*=[[:space:]]*"?Mod"?([^A-Za-z0-9_]|$)' "${mod_manifest}" || continue
+      mod_package="$(grep -Eo 'name[[:space:]]*=[[:space:]]*"[^"]+"' "${mod_manifest}" | head -n 1 | sed -E 's/.*"([^"]+)"/\1/')"
+      [[ -n "${mod_package}" ]] || {
+        echo "Bundled Corelib Mod ${mod_manifest} declares no package name" >&2
+        exit 1
+      }
+      BESKID_HOME="${mod_state}/home" \
+        BESKID_CONFIG_DIR="${mod_state}/config" \
+        BESKID_CORELIB_ROOT="${bundle_dir}/beskid_corelib" \
+        BESKID_RUNTIME_PREFIX="${bundle_dir}" \
+        BESKID_RUNTIME_KIT_PROFILE=debug \
+        "${bundle_dir}/bin/beskid${binary_extension}" dev mod rebuild "${mod_manifest}" \
+        --target-triple "${TARGET}" --plain
+      shipped_descriptors="$(find "${bundle_dir}/beskid_corelib/${member}/.beskid/obj/mods/${mod_package}" \
+        -path "*/${TARGET}/mod.descriptor.json" -type f 2>/dev/null | wc -l | tr -d '[:space:]')"
+      [[ "${shipped_descriptors}" == 1 ]] || {
+        echo "Bundled Corelib Mod ${mod_package} must ship exactly one ${TARGET} descriptor, found ${shipped_descriptors}" >&2
+        exit 1
+      }
+    done
+  done <<<"${corelib_members}"
+  rm -rf "${mod_state}"
   printf '%s\n' "${RELEASE_VERSION}" >"${bundle_dir}/release-version.txt"
   tar -C "${release_stage}" -czf "${ROOT}/${ASSET_NAME}" "$(basename "$bundle_dir")"
   echo "built ${ASSET_NAME} (Beskid ${RELEASE_VERSION} bundle for ${TARGET})"

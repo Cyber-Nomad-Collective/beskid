@@ -84,7 +84,7 @@ Analysis completes without an error diagnostic. The format check exits successfu
 
 ## Recovery
 
-If analysis points to the function name, use the exact default entrypoint `Main`. If formatting fails, run the documented `--write` command. If linking reports a missing or incompatible runtime kit, reinstall the same toolchain release; do not combine compiler and runtime files from different releases.
+If analysis points to the function name, use the exact default entrypoint `Main`. If the format check fails, run `beskid fmt Main.bd` to format the file in place. If linking reports a missing or incompatible runtime kit, reinstall the same toolchain release; do not combine compiler and runtime files from different releases.
 
 ## Next task
 

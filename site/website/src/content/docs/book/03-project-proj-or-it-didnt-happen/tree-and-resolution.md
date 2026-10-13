@@ -47,7 +47,7 @@ Multi-project repos resolve members via `Workspace.bws` (chapter [06](/book/06-m
 ## Deep dive
 
 - [Project Resolution](/book/reference/projects/resolution/)
-- [Project manifest contract](/docs/standard/tooling/manifests-and-lockfiles/project-manifest-contract/)
+- [Project manifest contract](/docs/standard/capabilities/tooling--manifests-and-lockfiles--project-manifest-contract/)
 
 ## Next chapter
 

@@ -25,10 +25,10 @@ The SDK SHALL expose an opaque TypeTemplate that retains an invocation-issued sy
 - **THEN** binding rejects before executable adapters or descriptors are published.
 
 ### Requirement: Required native Mod invocation fails closed
-A production-required Collector, AttributeGenerator or Generator SHALL execute its actual AOT artifact and registered entry point. Missing artifacts, linker/load failure, absent symbol, null/malformed result or unsupported result materialization SHALL produce a terminal diagnostic; the host SHALL NOT substitute StubContractInvoker success. Artifact/library/result lifetime SHALL remain valid through checked contribution materialization.
+A production-required Collector, AttributeGenerator or Generator SHALL execute its actual AOT artifact and registered entry point. Missing or unqualified executable artifacts, linker/load failure, absent or mismatched discriminator, absent entry symbol, null/malformed result or unsupported result materialization SHALL produce a terminal diagnostic; the host SHALL NOT substitute StubContractInvoker success. Artifact/library/result lifetime SHALL remain valid through checked contribution materialization.
 
 #### Scenario: Required native failure (MOD-06-01)
-- **GIVEN** a required serialization Mod has a missing object, symbol or null result
+- **GIVEN** a required serialization Mod has a missing or tampered executable artifact descriptor, a missing entry symbol or a null result
 - **WHEN** the host invokes it
 - **THEN** compilation fails with the concrete native failure rather than continuing with stub results
 

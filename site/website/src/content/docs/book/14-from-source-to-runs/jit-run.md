@@ -13,7 +13,7 @@ Quick feedback has three paths. `beskid run` builds and links a native executabl
 | `beskid_engine` | `run_entrypoint`, module registration, extern validation |
 | `beskid_abi` | Symbol tables, version exports |
 
-Spec: [Backends JIT/AOT](/docs/standard/compiler/build-pipeline/backends-jit-aot/), [Program assembly](/docs/standard/compiler/build-pipeline/program-assembly/).
+Spec: [Backends JIT/AOT](/docs/standard/capabilities/compiler--build-pipeline--backends-jit-aot/), [Program assembly](/docs/standard/capabilities/compiler--build-pipeline--program-assembly/).
 
 ## AOT run command
 

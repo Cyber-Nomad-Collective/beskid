@@ -1,6 +1,6 @@
 ## 1. Validate
 
-- [ ] 1.1 Validate this change with `openspec validate v06-function-values --strict` and regenerate `openspec/catalog.json`.
+- [ ] 1.1 Validate this change with `openspec validate v06-function-values --strict` and regenerate `openspec/catalog.json`. (Strict validation passes; `openspec/catalog.json` is not yet regenerated.)
 
 ## 2. Introduce
 
@@ -11,6 +11,7 @@
 - [x] 2.5 Report E1233 for a non-spawn lambda that captures a `mut` local or a native pointer, as a legality fact of `check_items`.
 - [x] 2.6 Report E1209 for a string concatenation or interpolation operand without a text form, as a `beskid check` gate obligation.
 - [x] 2.7 Port the generic `bulk T[]` query part: `bulk_call_element_abi_type`, bulk-aware generic inference, and the trailing-argument expectation in `expected_type`.
+- [x] 2.8 Instantiate a generic free function read as a value where it is read: type arguments from explicit `Identity<i64>` or from the expected function type (`function_value_specialization`), the record points at the specialization's entry (`FunctionItemValue::specialization`, `DirectCallee::SpecializedItem`), and the instance joins module emission like a direct generic call. Report E1203/E1204/E1229/E1610 at the path as a legality fact of `check_items` (`legality/function_values.rs`).
 
 ## 3. Verify
 

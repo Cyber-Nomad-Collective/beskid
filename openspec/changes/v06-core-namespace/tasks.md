@@ -1,7 +1,7 @@
 ## 1. Validate
 
-- [ ] 1.1 Validate this change with `openspec validate v06-core-namespace --strict` and regenerate `openspec/catalog.json`.
-- [ ] 1.2 Confirm that dependency labels never become module path segments (`module_namespace_v06`).
+- [ ] 1.1 Validate this change with `openspec validate v06-core-namespace --strict` and regenerate `openspec/catalog.json`. (Strict validation passes; `openspec/catalog.json` is not yet regenerated.)
+- [x] 1.2 Confirm that dependency labels never become module path segments (`module_namespace_v06`). (`beskid_analysis/tests/module_namespace_v06.rs` `core_graph_keeps_host_unprefixed_and_corelib_package_native` asserts `Helpers`, `Core.Output`, `Testing.Assert`, `Concurrency.Fiber` and `Beskid.Compiler.Collect` under a `Core` label.)
 
 ## 2. Introduce
 
@@ -13,7 +13,7 @@
 
 - [x] 3.1 Move fixtures, tests, LSP tests and formatter fixtures to package-native paths.
 - [x] 3.2 Move Docs, Book and informative OpenSpec examples to package-native paths.
-- [ ] 3.3 Regenerate every `Project.lock` with `beskid update --all --offline --project <bproj>`.
+- [x] 3.3 Regenerate every `Project.lock` with `beskid update --all --offline --project <bproj>`. (No tracked `Project.lock` in the root, compiler or Corelib repository records `Std`.)
 
 ## 4. Delete
 

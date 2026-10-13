@@ -74,4 +74,4 @@ Project workflow diagnostics use shared analysis diagnostics infrastructure and 
 
 ## Interop alignment
 
-Interop migration must use the same lifecycle. `Std` is resolved as a regular dependency and loaded from materialized source roots.
+Interop migration must use the same lifecycle. Corelib (label `Core`) is resolved as a regular dependency and loaded from materialized source roots.

@@ -36,7 +36,7 @@ Captured locals MUST be definitely assigned before capture or diagnosed per defi
 ## ADDED Requirements
 
 ### Requirement: Function values and indirect calls
-A function type SHALL be a reference type. A value of a function type SHALL be a reference to a GC-managed closure record `{ header, code pointer, environment pointer }`, and the ABI of every function type SHALL be one pointer. A lambda evaluated in value position SHALL allocate its environment (when it captures) and then its record; a capture-free lambda SHALL have a null environment. A named function item that is not generic, read as a value and not called, SHALL evaluate to a record whose code pointer is the item's entry and whose environment is null. A generic function item read as a value SHALL NOT compile.
+A function type SHALL be a reference type. A value of a function type SHALL be a reference to a GC-managed closure record `{ header, code pointer, environment pointer }`, and the ABI of every function type SHALL be one pointer. A lambda evaluated in value position SHALL allocate its environment (when it captures) and then its record; a capture-free lambda SHALL have a null environment. A named function item that is not generic, read as a value and not called, SHALL evaluate to a record whose code pointer is the item's entry and whose environment is null. A generic function item read as a value SHALL follow the requirement "Generic function values".
 
 A call whose callee is an expression of function type SHALL call indirectly through the record: it SHALL evaluate the callee first, then the arguments, and SHALL pass the environment pointer first when it is not null. The callee MAY be a function-typed parameter, lambda parameter or local, an unannotated local initialized by a lambda, a function-typed field projection, a call that returns a function value, or any other expression of function type. A function-typed local SHALL shadow every item, import and builtin of its name at a call site. The arguments SHALL be checked against the parameters of the callee's function type.
 
@@ -59,6 +59,38 @@ A call whose callee is an expression of function type SHALL call indirectly thro
 - **GIVEN** `(i64) => i64 Make() { return (i64 x) => x + 1; }` and `Make()(1)`
 - **WHEN** the outer call is compiled
 - **THEN** `Make()` is evaluated first and its result is called indirectly with `1`
+
+### Requirement: Generic function values
+A generic free function item read as a value and not called SHALL be instantiated where it is read. Its type arguments SHALL come from its explicit type arguments (`Identity<i64>`), which SHALL bind every generic parameter in declaration order. Without explicit type arguments they SHALL come from the expected function type of the value's position (an annotated local, a struct field, a declared return type, or the parameter of the callee, with the callee's generic parameters bound only by its explicit type arguments or its instantiated receiver): every declared parameter type SHALL be unified with the expected parameter at the same position and the declared result type with the expected result. The value SHALL be a closure record whose code pointer is the entry of the specialization for those type arguments and whose environment is null. The specialization SHALL be emitted once for each distinct type argument list, shared with direct calls of the same instance. Every `where` bound of the declaration SHALL be proven for the bound type arguments.
+
+The compiler SHALL report, at the value's path expression, **E1203** when the type arguments cannot be determined (no explicit type arguments and no expected function type, an expected function type of a different arity, or a generic parameter the expected type does not reach), **E1204** when the explicit type-argument count differs from the declaration's generic parameters, **E1229** when the expected function type binds one generic parameter to two different types, and **E1610** when a bound type does not satisfy a `where` bound. The type arguments of a generic callee SHALL NOT be inferred from a generic function value argument that has no type arguments of its own.
+
+In 0.6.0 only free function items, named by a simple or module-qualified path (`Identity`, `Util.Identity<i64>`), SHALL be generic function values. A method of a type or an `impl`, static or not, SHALL NOT be a value. A generic function with a contract-typed parameter SHALL NOT be a value (**E1203**). Type arguments that name a generic parameter of the enclosing item SHALL NOT instantiate a generic function value: an explicit `Identity<T>` or an expected type that mentions `T` inside a generic item SHALL be reported as **E1203**.
+
+#### Scenario: Expected function type fixes the type arguments
+- **GIVEN** `T Identity<T>(T x) { return x; }`, `i64 Apply(i64 v, (i64) => i64 f) { return f(v); }` and `i64 r = Apply(5, Identity);`
+- **WHEN** `Identity` is evaluated as an argument
+- **THEN** the parameter type `(i64) => i64` binds `T` to `i64`, and the value is a record with the entry of `Identity<i64>` and a null environment
+
+#### Scenario: Explicit type arguments
+- **GIVEN** the declarations above and `Apply(5, Identity<i64>)`
+- **WHEN** the call is compiled
+- **THEN** `Identity<i64>` is a record with the entry of the same `Identity<i64>` specialization, which is emitted once
+
+#### Scenario: Generic callee with explicit type arguments
+- **GIVEN** `T ApplyGeneric<T>(T v, (T) => T f) { return f(v); }` and `ApplyGeneric<i64>(7, Identity)`
+- **WHEN** `Identity` is typed
+- **THEN** the callee parameter `(i64) => i64` binds `T` of `Identity` to `i64`
+
+#### Scenario: No type context
+- **GIVEN** `let f = Identity;`
+- **WHEN** the item is checked
+- **THEN** the compiler emits **E1203** at `Identity`
+
+#### Scenario: Conflicting expected type
+- **GIVEN** `(i64) => string f = Identity;`
+- **WHEN** the item is checked
+- **THEN** the compiler emits **E1229** at `Identity`, naming `T`, `i64` and `string`
 
 ### Requirement: Stack and heap closures
 A lambda bound to an immutable local, with an expression body, whose every use is the callee of a call SHALL be a stack closure: each call SHALL lower the lambda inline at the call site and SHALL NOT allocate. A lambda in any other position (an argument, a struct field value, a return value, an assigned value, a `mut` local, or a block-bodied local) SHALL be a heap closure: its environment and its record SHALL be allocated when the lambda is evaluated, and the record SHALL be a GC root for as long as a local holds it. A `mut` function-typed local SHALL call through the record it holds at the call site, never through its initializer.

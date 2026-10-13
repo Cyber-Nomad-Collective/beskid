@@ -4,7 +4,7 @@ description: Package documentation is driven by structured api.json; the compile
 tableOfContents: true
 ---
 
-`beskid dev syntax doc` emits Markdown and **`api.json`** under `.beskid/docs/`. The JSON is not a parallel type system you maintain by hand: signatures, `typeRef` links, and member hierarchy are **compiler-derived**. Prose in `///` comments attaches to symbols; absence of prose does not remove the symbol from the API graph.
+`beskid doc` emits Markdown and **`api.json`** into the directory that `--out` names (default `doc-out`). The JSON is not a parallel type system you maintain by hand: signatures, `typeRef` links, and member hierarchy are **compiler-derived**. Prose in `///` comments attaches to symbols; absence of prose does not remove the symbol from the API graph.
 
 ## Why this matters for pckg
 
@@ -25,5 +25,5 @@ Registry ingestion and the pckg docs UI treat **`api.json` as the primary contra
 - [pckg command reference](/book/reference/cli/commands/pckg/): automatic doc generation during `beskid package pack`
 - [Publish your first package](/book/reference/publish-first-package/): end-to-end publish with docs
 - [Package public surface](/book/19-public-api-that-survives-review/package-public-surface/): what registry consumers see from your API docs
-- [api.json contract](/platform-spec/tooling/cli/api-json-contract/)
-- [Documentation comments](/platform-spec/language-meta/surface-syntax/documentation-comments/)
+- [api.json contract](/docs/standard/capabilities/tooling--cli--api-json-contract/)
+- [Documentation comments](/docs/standard/capabilities/language-meta--surface-syntax--documentation-comments/)

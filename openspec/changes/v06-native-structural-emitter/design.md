@@ -1,3 +1,7 @@
+## Status (2026-10-13)
+
+The structural ABI v1 proposal below (`ModStructuralGenerationRequestV1`, `ModStructuralEmitterV1`, constructor callbacks and the `beskid_mod_structural_generator_abi_version` marker) was implemented as a prerequisite and then retired (requirement "Exclusive typed native Mod protocol", MOD-06-28; `docs/reports/2026-10-04-v06-decisions.md`). The delivered path is the qualified executable Mod artifact: descriptor schema 3 (`NATIVE_MOD_DESCRIPTOR_SCHEMA`), artifact kind `executable-shared-library`, host ABI 2 (`NATIVE_MOD_HOST_ABI`) and an exported discriminator that returns 2 (`beskid_analysis/src/mod_host/descriptor.rs`, `native_worker.rs`), executed in the isolated `dev native-mod-worker` process with owned typed SDK contributions decoded through the machine correspondence (`native_results.rs`, `native_correspondence.rs`). The host structural arena (`structural.rs`) keeps owned numeric handles and the 4096/65536/128 bounds. The sections below that describe the V1 tables and callback limits are historical context, not the delivered contract.
+
 ## Context
 
 NativeContractInvoker previously loaded libraries then delegated Generator to StubContractInvoker. The observed real dylib regression failed because its entry marker never appeared. ModSyntaxNodeHandle is an opaque pointer field; it must be a validated lookup token, never a pointer cast to Rust AST. Context compilation hardcodes syntax generation0; merge pipeline hardcodes1.
