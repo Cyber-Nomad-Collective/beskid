@@ -1,6 +1,8 @@
 # IOCP deadline/completion race
 
-Status: implemented for 0.6.0 (Windows run pending).
+Status: implemented for 0.6.0, including the bounded cancel wait (2026-10-13).
+Windows evidence: `cargo test --locked -p beskid_abi --test network_iocp_settle` in
+the Woodpecker windows pipeline.
 Scope: `compiler/crates/beskid_abi/assembly/x86_64-pc-windows-msvc/network_iocp.h`,
 `compiler/crates/beskid_abi/assembly/common/network_settle.h`.
 
@@ -71,14 +73,15 @@ Each `BeskidNetworkOperation` has a state (`enum BeskidSettleState`):
 | --- | --- | --- |
 | `IN_FLIGHT` | attached, in a socket slot | classify, write the request, post READY to the owner |
 | `SETTLING` | attached, removed from the socket slot | classify, write the request, wake the settling cancel |
-| `ORPHANED` | detached | free the OVERLAPPED, buffer, and accepted socket only |
+| `ORPHANED` | detached, socket closed | free the OVERLAPPED, buffer, and accepted socket only |
+| `ABANDONED` | detached after the settle bound, still in its socket slot | decide stream poison, release the slot, free native storage |
 
 **Runtime cancel settles** (`beskid_rt_v5_intrinsic_network_cancel` →
 `BeskidNetworkSettleLocked`). It is used for deadline and fiber-cancellation winners in
 `NetworkFinish`, for runtime close in `NetworkCloseLocked`, and for detached-fiber
 cleanup in `NetworkShutdown`. It:
 
-1. changes `IN_FLIGHT` to `SETTLING` and removes the operation from its socket slots,
+1. changes `IN_FLIGHT` to `SETTLING`; the operation stays in its socket slot,
 2. calls `CancelIoEx(socket, &overlapped)`. Success or `ERROR_NOT_FOUND` both
    guarantee one queued packet (facts 2 and 6). Any other failure means the handle or
    OVERLAPPED is not the one the kernel holds; the runtime traps (code 10, the same
@@ -86,7 +89,8 @@ cleanup in `NetworkShutdown`. It:
    cannot arrive,
 3. waits on `beskid_network_settled` with `SleepConditionVariableSRW`, which releases
    `beskid_network_lock`, until the reactor has delivered the packet
-   (`request->native_state` is cleared).
+   (`request->native_state` is cleared), for at most `BESKID_SETTLE_WAIT_MS` (250 ms)
+   measured with `GetTickCount64` (`BeskidSettleAwait`, see "Bounded cancel" below).
 
 The reactor thread dequeues the packet, classifies it with the shared rules, copies
 data into the request buffer (which the caller owns until `NetworkFinish` returns),
@@ -102,8 +106,75 @@ the comments in `Operations.bd` and `Runtime/Network/README.md`.
 **Native close orphans** (`beskid_rt_v5_intrinsic_network_close` →
 `BeskidNetworkOrphanLocked`). The close winner (`NET_CLOSED`) is already decided, so
 the request is detached at once, `CancelIoEx` is issued, and the later packet only
-releases native storage. A settling operation is no longer in a socket slot, so close
-cannot orphan it.
+releases native storage. An abandoned operation in the slot is orphaned the same way.
+A settling operation only leaves the slot: its request belongs to the waiting cancel,
+which receives the packet that `closesocket` forces. Close posts nothing for it.
+
+## Bounded cancel
+
+0.6.0 first shipped the settle wait with `INFINITE`. Microsoft's own example waits
+without a bound after `CancelIoEx` (fact 4), and Go does the same per goroutine
+(`internal/poll/fd_windows.go`: `CancelIoEx`, then `fd.pd.waitCanceled`). In Beskid the
+settler holds the runtime network table lock, so an unbounded wait would stall every
+network call of the process behind one withheld packet. The rule that matters is fact
+3: the OVERLAPPED and buffers stay valid until the packet arrives. Waiting is only one
+way to meet it. libuv (`uv__tcp_close`: `CancelIoEx`, then the handle closes only when
+`reqs_pending` reaches zero) and mio (the `SockState` reference held for the kernel is
+released only in `feed_event`) meet it by moving ownership to the event loop instead.
+Beskid does both: it waits a short bound for the common case, where the packet holds
+the final status, and moves ownership to the reactor when the bound expires.
+
+**Settle bound.** `BeskidSettleAwait` (in `network_settle.h`) takes a clock, a
+settled test, and a lock-releasing timed wait. It returns 1 when the packet was
+delivered, 0 when `BESKID_SETTLE_WAIT_MS` expired. Spurious and unrelated wakes
+(`WakeAllConditionVariable` wakes every settler) only shorten the next wait; no wait
+exceeds the remaining time. The settled test runs under the lock before every
+expiry check, so a packet delivered at the bound still settles.
+
+**Abandoned operation.** When the bound expires, the settler, still under
+`beskid_network_lock`, changes `SETTLING` to `ABANDONED`, writes `NET_CANCELLED` with
+count 0 to the request, and detaches it. The reactor did not dequeue the packet (it
+would have detached the request), so the operation is still allocated. Then:
+
+- The OVERLAPPED, the native buffer, and the AcceptEx socket stay owned by the
+  operation in the reactor's operation list until the packet is dequeued. They are
+  never freed or reused before it (fact 3). Each submit allocates a new operation.
+- The request buffer is never written again. The reactor copies into it only for an
+  attached request, so `NetworkFinish` can release the request at once.
+- The operation keeps its socket slot, so a new operation in that direction returns
+  `NET_BUSY` until the packet arrives. That is exact: the kernel operation is still
+  in flight. The other direction is unaffected.
+- `NetworkFinish` sees status `NET_CANCELLED`: the deadline or cancellation winner
+  stands, and the caller resumes after at most the bound.
+
+**Late packet.** The reactor classifies the packet of an abandoned operation with the
+same table, and `BeskidSettleAbandonedPoisons` decides whether the caller's view is
+still true:
+
+| Late packet | Effect |
+| --- | --- |
+| abort, failure, or zero-byte read (end of stream) | slot released, socket intact |
+| stream read or write that moved bytes | socket poisoned |
+| connect that completed | socket poisoned |
+| datagram receive or send that completed | datagram lost or sent; within UDP semantics |
+| accept that completed | accepted socket closed; the peer sees a reset; listener intact |
+
+A poisoned socket rejects every later submit with `NET_CONNECTION_ABORTED`
+(`ConnectionAborted`). Received bytes already left the socket and sent bytes already
+reached the peer, so the stream no longer matches what the caller was told. Failing
+closed is the only correct result; silently dropping the bytes is the 0.5.3 bug.
+
+**Shutdown drain.** `beskid_rt_v5_intrinsic_network_reactor_destroy` closes every
+socket handle, which cancels every pending operation on it (in flight, abandoned, or
+settling) and forces its packet
+([closesocket](https://learn.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-closesocket)).
+Operations orphaned by an earlier close already have a closed handle. The function
+then waits at most `BESKID_SETTLE_DRAIN_MS` (2 s) for the reactor thread, which exits
+when no operation is pending. If a provider still withholds a packet, the reactor, its
+port, its thread, and the pending operations are leaked by design: the thread keeps
+running and frees each operation if its packet ever arrives. The leak is at most one
+reactor and its pending operations per runtime shutdown. Freeing an OVERLAPPED that the
+kernel can still write is never allowed.
 
 ### Packet classification (`BeskidSettleClassify`)
 
@@ -129,27 +200,32 @@ cancellation is also not delivered.
 
 ## Liveness and locking
 
-- The wait is bounded by the time that Winsock (AFD) takes to complete a cancelled
-  operation, which is immediate for pending receive, send, AcceptEx, and ConnectEx.
-  The documented recommendation (fact 4) is to wait, not to continue with an unknown
-  state. A failed completion port already traps in `BeskidNetworkReactorMain`, so
-  the settler cannot wait on a dead reactor without a trap.
+- Every runtime cancel returns within `BESKID_SETTLE_WAIT_MS` plus timer resolution
+  (about 16 ms for `GetTickCount64`). Winsock (AFD) completes a cancelled receive,
+  send, AcceptEx, or ConnectEx at once, so the bound is reached only when the reactor
+  thread is starved or a layered provider withholds the packet. A failed completion
+  port still traps in `BeskidNetworkReactorMain`.
+- Shutdown returns within `BESKID_SETTLE_DRAIN_MS` after the sockets are closed.
+- The only other wait is the reactor thread's own idle `GetQueuedCompletionStatus`,
+  which a posted packet ends at shutdown.
 - The settler holds the Beskid network table lock (taken by `NetworkFinish`,
-  `NetworkCloseLocked`, and `NetworkShutdown`) and releases `beskid_network_lock` while
-  it waits. The reactor thread takes only `beskid_network_lock` and, for in-flight
+  `NetworkCloseLocked`, and `NetworkShutdown`) for at most the settle bound and releases
+  `beskid_network_lock` while it waits. The reactor thread takes only `beskid_network_lock` and, for in-flight
   packets, the Foundation owner lock. Neither path takes the table lock, so there is
   no lock-order cycle. The table lock also prevents a second cancel of the same
   request. If a second cancel occurs, it skips `CancelIoEx` and waits on the same
   condition.
-- `reactor_destroy` waits for `pending == 0`, and a settling operation is pending, so
-  the reactor thread outlives every settler.
+- A settling or abandoned operation is pending, so the reactor thread does not exit
+  before its packet. `reactor_destroy` frees the reactor only after the thread exits.
 - The OVERLAPPED, the native buffer, and the AcceptEx socket stay in the operation
   until the reactor frees them after dequeue (fact 3). `CancelIoEx` and the classifier
   do not read freed memory. The settler compares only `request->native_state` after
   it wakes. The AcceptEx path uses the stored family, not the socket, because a
-  settling operation is no longer linked to its socket.
+  close can unlink a settling operation from its socket. The reactor releases the
+  slot (`BeskidNetworkUnslot`) for every dequeued packet before it frees the operation.
 - No new platform imports: `SleepConditionVariableSRW`, `WakeAllConditionVariable`,
-  `CancelIoEx`, and `GetLastError` are already in the closed Windows import manifest.
+  `CancelIoEx`, `GetLastError`, `GetTickCount64`, and `WaitForSingleObject` are already
+  in the closed Windows import manifest.
   `CONDITION_VARIABLE_INIT` needs no `InitializeConditionVariable` call.
 
 ## Tests
@@ -158,16 +234,28 @@ cancellation is also not delivered.
   a pure state-machine replay of the orderings: packet queued when the deadline wins,
   idle cancel, delivery before cancel, native close orphan, repeated cancel, a
   `CancelIoEx` failure that fails closed, the classification table, and the verdict for
-  a non-timeout winner.
+  a non-timeout winner. For the bounded cancel it drives `BeskidSettleAwait` with a
+  fake clock and condition variable (delivery in time, through spurious wakes, at the
+  bound, never; no wait longer than the bound) and replays the abandoned path: busy
+  slot until the packet, aborted late packet, late stream read, partial write and
+  connect that poison, datagram and accept that do not, and close of an abandoned
+  operation.
 - `compiler/crates/beskid_abi/tests/fixtures/network_settle_iocp.c` (Windows only):
   a real loopback TCP pair on a completion port. It shows that a receive that
   completed in the kernel makes `CancelIoEx` fail with `ERROR_NOT_FOUND`, and that its
   packet is still dequeued with the byte. It also shows that an idle receive is
   dequeued as `ERROR_OPERATION_ABORTED` with zero bytes and does not consume data
-  sent afterwards.
+  sent afterwards. Case C runs the real bounded wait (`GetTickCount64` and an SRW
+  condition variable) with no reactor: it expires within the bound, the packet is
+  still queued afterwards with its transfer, and the transfer is classified as stream
+  poison. Case D shows that `closesocket` forces the packet of a pending receive
+  within the drain bound.
 - `compiler/crates/beskid_abi/tests/network_iocp_settle.rs` runs both fixtures and
-  checks that `network_iocp.h` routes runtime cancel to settlement and native close to
-  orphaning.
+  checks that `network_iocp.h` routes runtime cancel to bounded settlement (no
+  `INFINITE`, abandonment with `NET_CANCELLED`, no free in the settler), native close to
+  orphaning, late packets through the poison rule, poisoned sockets to
+  `NET_CONNECTION_ABORTED`, and the shutdown drain to `BESKID_SETTLE_DRAIN_MS`. On
+  Windows: `cd compiler && cargo test --locked -p beskid_abi --test network_iocp_settle`.
 - Existing end-to-end coverage in `NetworkNativeTests.bd` runs unchanged over the
   IOCP kit on Windows: `native_network_tcp_read_deadline_race_delivers_completed_bytes`,
   `native_network_udp_receive_deadline_race_delivers_completed_datagram`,
