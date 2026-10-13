@@ -407,7 +407,7 @@ Generated serialization and deserialization bounds SHALL derive independently fr
 - **THEN** the exact current T and E application must satisfy that operation's canonical contract
 
 ### Requirement: Typed field decoder factory correspondence
-Generated decoding SHALL use a typed `FieldDecoder<T,R>` binding for abstract field types, where T is the exact current field application and R is the admitted format Reader. A generated adapter SHALL retain direction-specific applied bounds and receive concrete binding instances through exact current compiler-issued factory correspondence. The issuer SHALL validate the actual source factory, specialized output, receiver arguments, package provenance and implementation contribution before publication. A template, field name, factory string, pointer ABI or universal DataValue SHALL NOT substitute for this correspondence. Binding constructors SHALL preserve the typed reader and decoder ownership; fresh target publication SHALL occur only after all fields and Reader.Finish succeed. Encoding SHALL continue to require the original T:Serializable<E> receiver.
+Generated decoding SHALL use a typed `FieldDecoder<T,R>` binding for abstract field types, where T is the exact current field application and R is the admitted format Reader. A generated adapter SHALL retain direction-specific applied bounds and receive concrete binding instances through exact current compiler-issued factory correspondence. The issuer SHALL validate the actual source factory, specialized output, receiver arguments, package provenance and implementation contribution before publication. A template, field name, factory string, pointer ABI or universal DataValue SHALL NOT substitute for this correspondence. Binding constructors SHALL preserve the typed reader and decoder ownership; fresh target publication SHALL occur only after all fields and Reader.Finish succeed. Top-level encoding through `Contracts.Encode<T,E>` SHALL continue to require the original T:Serializable<E> receiver; a generated encoder SHALL write its nested and abstract fields through the field codec correspondence below instead of a Serializable bound on a receiver parameter.
 
 The canonical reader unit `Core/Serialization/Reader.bd` SHALL declare `ReadField<T,R>(R reader, SerializationLimits limits)` with result `Result<T, SerializationError>` and `R: Reader`. Its body SHALL call the compiler-issued runtime bridge `FieldDecoderBridge<T,R>`. For each concrete instance of `ReadField<T,R>`, the compiler SHALL issue the bridge body as a direct forward of the reader and limits to exactly one function:
 
@@ -415,15 +415,21 @@ The canonical reader unit `Core/Serialization/Reader.bd` SHALL declare `ReadFiel
 - For a scalar application, the canonical scalar read of `Core/Serialization/PrimitiveDecoders.bd` of the `corelib_serialization` package.
 - For an array, or a canonical Foundation `List<E>`, `Map<string,E>` or `Option<E>`, the canonical container read of `Core/Serialization/ContainerDecoders.bd`. A container read SHALL read each element through `ReadField<E,R>`.
 
-The generated decoder group of a target `T<P...>` SHALL contain an adapter record over one reader R, a field decoder factory with generic parameters `P...` and R, parameters `(R reader, SerializationLimits limits)` and result `Result<T<P...>, SerializationError>`, and the canonical `Decoder<T<P...>>` implementation that calls `Reader.Begin`, the factory and `Reader.Finish`. Every nominal field site of the factory SHALL read through `ReadField<F,R>` with the exact declared field type F. The group SHALL NOT add a decoding bound for a receiver parameter; each concrete application SHALL be revalidated by the correspondence.
+The canonical contracts unit `Core/Serialization/Contracts.bd` SHALL declare `WriteField<T,E>(T value, E encoder, SerializationLimits limits)` with result `Result<unit, SerializationError>` and `E: Encoder`. Its body SHALL call the compiler-issued runtime bridge `FieldEncoderBridge<T,E>`. For each concrete instance the compiler SHALL issue the bridge body as a direct forward to exactly one function: the field encoder factory of the retained generated encoder group of a `[Serialize]` target application, a canonical scalar write of `Core/Serialization/PrimitiveEncoders.bd`, or a canonical container write of `Core/Serialization/ContainerEncoders.bd`, which writes each element through `WriteField<E2,E>`. Each canonical write SHALL make the same Encoder calls as a generated encoder makes for a declared field of that type.
 
-The issuer SHALL select the factory of a group only by the resolved parameter and result applications of each group function in the requested environment. Exactly one function of the group SHALL match. The issuer SHALL then rebind the retained target or template as the canonical `Decoder` of the same target application in that environment, with unchanged source, package provenance and exact appended contribution. A target application without exactly one admitted factory SHALL reject the program before emission. An abstract field whose application is a target-width word SHALL reject because it has no declared wire width.
+The generated encoder group of a target `T<P...>` SHALL contain a field encoder factory with generic parameters `P...` and E, parameters `(T<P...> value, E encoder, SerializationLimits limits)` and result `Result<unit, SerializationError>`, and the canonical `Serializable<E>` implementation whose `WriteTyped` forwards `this` to the factory. Every nominal field site of the factory SHALL write through `WriteField<F,E>` with the exact declared field type F. The implementation SHALL bound only E by `Encoder`.
+
+The generated decoder group of a target `T<P...>` SHALL contain an adapter record over one reader R, a field decoder factory with generic parameters `P...` and R, parameters `(R reader, SerializationLimits limits)` and result `Result<T<P...>, SerializationError>`, and the canonical `Decoder<T<P...>>` implementation. Every nominal field site of the factory SHALL read through `ReadField<F,R>` with the exact declared field type F. The group SHALL NOT add a decoding bound for a receiver parameter; each concrete application SHALL be revalidated by the correspondence.
+
+The issuer SHALL select the factory of a group only by the resolved parameter and result applications of each group function in the requested environment. Exactly one function of the group SHALL match. The issuer SHALL then rebind the retained target or template as the canonical `Decoder` (for a read) or `Serializable` (for a write) of the same target application in that environment, with unchanged source, package provenance and exact appended contribution. A target application without exactly one admitted factory SHALL reject the program before emission. An abstract field whose application is a target-width word SHALL reject because it has no declared wire width.
 
 The canonical decoding API SHALL be:
 
-- `Decoding.IssuedField<T,R>`: the stateless `FieldDecoder<T,R>` binding whose `Read` calls `ReadField<T,R>`, created by `Decoding.FieldFor<T,R>()`.
-- `Decoding.DecoderFor<T,R>(R reader)`: the `Decoder<T>` that binds the reader to `IssuedField<T,R>`, for use with `Contracts.Decode<T,D>`.
-- `Core.Bsol.Serialization.Read<T>(string text, SerializationLimits limits)`: the top-level typed BSOL decode of T through `IssuedField<T, SyntaxReader>`.
+- `Reader.ReadComplete<T,R>(R reader, SerializationLimits limits)`: `Reader.Begin`, `ReadField<T,R>`, then `Reader.Finish`. It SHALL return a T only after Finish accepts the complete input.
+- `Decoding.DecoderFor<T,R>(R reader)`: the `Decoding.IssuedDecoder<T,R>` implementation of `Decoder<T>` over `ReadComplete<T,R>`, for use with `Contracts.Decode<T,D>`.
+- `Core.Bsol.Serialization.Read<T>(string text, SerializationLimits limits)`: the top-level typed BSOL decode of T. It SHALL admit the compiled descriptor closure of T before it reads.
+
+The generated `Decoder<T<P...>>` implementation SHALL read through `ReadComplete<T<P...>, R>`.
 
 #### Scenario: Abstract field has a concrete typed decoder
 - **GIVEN** a generated generic record adapter whose field is T
@@ -446,8 +452,9 @@ The canonical decoding API SHALL be:
 
 #### Scenario: Abstract field bound to a scalar or container
 - **GIVEN** a `[Serialize]` record `Boxed<T>` with fields `T item` and `List<T> history`
-- **WHEN** `Boxed<i32>` decodes
-- **THEN** `item` reads through the canonical 32-bit signed read and `history` through the canonical List read, whose elements read through the same correspondence
+- **WHEN** `Boxed<i32>` encodes and decodes
+- **THEN** `item` writes and reads through the canonical 32-bit signed write and read, and `history` through the canonical List write and read, whose elements use the same correspondence
+- **AND** `Boxed<i32>` conforms to `Serializable<E>` without an `i32: Serializable<E>` bound
 
 #### Scenario: Factory is selected by signature, not by name
 - **GIVEN** a retained decoder group whose only function with the factory parameters returns another output
