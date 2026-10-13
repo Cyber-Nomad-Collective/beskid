@@ -383,7 +383,7 @@ Backends (JIT and AOT) consume this artifact and must not reorder semantic phase
 2. Substitutes fragment arguments for **`$param`** in macro bodies (typed AST only).
 3. Repeats until no invocations remain or **`maxMacroExpansionDepth`** (default 32) is exceeded.
 
-When **`mod.generate`** re-parses merged syntax, hosts **must** run **`macro.expand`** again before the next **`mod.collect`** / semantic gate (same syntax generation). Emit **`syntax.generation`** when either macros or mods mutate the program snapshot.
+When **`mod.generate`** merges typed contributions into the syntax, hosts **must** run **`macro.expand`** again before the next **`mod.collect`** / semantic gate (same syntax generation). Emit **`syntax.generation`** when either macros or mods mutate the program snapshot.
 
 ## Mod phases and stable phase identifiers
 
@@ -391,7 +391,7 @@ When **`mod.generate`** re-parses merged syntax, hosts **must** run **`macro.exp
 
 1. **Phase vocabulary** — Register stable string ids in `compiler/crates/beskid_pipeline/src/phases.rs` and update `PIPELINE.md` in the same change.
 2. **Observer parity** — CLI and codegen entrypoints must bracket mod phases with `PhaseStart`/`PhaseEnd` (or documented `WorkUnit` ids).
-3. **Bounded generation** — `Generator` is incremental by default and runs with a bounded replay loop (`maxGeneratorRounds`). On each replay, host merges typed AST contributions and re-parses affected units.
+3. **Bounded generation** — `Generator` is incremental by default and runs with a bounded replay loop (`maxGeneratorRounds`). On each replay, host merges typed AST contributions into the affected units without a text parse.
 4. **Analyzer/rewrite ordering** — `Analyzer` runs on merged host+generated code; `Rewriter` applies typed replacements and is surfaced as fix-oriented behavior.
 5. **No lowering on torn trees** — lowering runs only on a consistent post-merge snapshot.
 
@@ -476,7 +476,7 @@ flowchart TB
   a[2 program.assemble]
   p[3 Parse units]
   m{Mods in graph?}
-  mh[4 Mod collect generate reparse]
+  mh[4 Mod collect generate merge]
   s[5 Semantic rules]
   e{Error diagnostics?}
   stop[Abort]

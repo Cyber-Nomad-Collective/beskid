@@ -506,3 +506,10 @@ requirements. The dry archive was repeated after these edits.
 - Regions leave the region-to-owner map before their memory is unmapped, so a reused address never names a dead instance.
 - Region map chunks are not freed while the process runs; slots are reused, bounded by the peak number of live regions.
 - Thread-entry scenarios that need a Beskid function address are covered at the C level in 0.6.1; the Beskid-level ones move to 0.6.3, which adds compiler-made entry addresses.
+
+## Implementation rulings (2026-10-13, from the language-surface slice)
+
+- The compiler-recognized attribute table also contains `GlueHandle`, `RustOwner` and `CleanupConversion`; all recognized attributes are declared in the corelib module `Core.Attributes`, and a test keeps the module and the compiler table identical.
+- Marker attributes live in `Core.Attributes` until a `Core.Parallel` module exists (0.6.3), then move there.
+- Attribute name resolution order: the declaring unit, then imported units, then `Core.Attributes`, then any declaration in the assembly (this admits Mod-declared attributes such as `Serialize`). A user declaration in scope shadows a recognized name.
+- Follow-ups for this change: Glue and `Export` code paths must recognize attributes through the resolved declaration, not the bare name; signature help shows call-site type-parameter bindings; the E1229 shadowing message gets its own wording; `TypeParameter` spans include their attributes.

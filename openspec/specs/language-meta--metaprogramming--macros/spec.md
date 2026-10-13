@@ -119,7 +119,7 @@ Mismatch between actual argument shape and declared kind → **E1903** at the ar
 
 **Well-formedness** — Expanded trees must pass the same structural checks as authored syntax before semantic analysis proceeds.
 
-**Mod interaction** — After **`mod.generate`** merges typed contributions and the host re-parses, **`macro.expand`** runs again inside the generator replay loop so mod-emitted code can contain macro invocations.
+**Mod interaction** — After **`mod.generate`** merges typed contributions, **`macro.expand`** runs again inside the generator replay loop so mod-emitted code can contain macro invocations.
 </SpecSection>
 
 <SpecSection title="Relationship to Compiler Mod SDK" id="vs-mod-sdk">
@@ -228,7 +228,7 @@ No ADRs published under **`adr/`** yet.
 ## Invariants
 
 - Expanded trees must have fresh node identities; diagnostic spans trace to expansion sites.
-- Mod-emitted code containing macro invocations is expanded after re-parse.
+- Mod-emitted code containing macro invocations is expanded after the typed merge.
 - Language macros do not register in `mod.descriptor.json`.
 ``````
 
@@ -438,7 +438,7 @@ flowchart LR
 
 ## Mod interaction
 
-After `mod.generate` merges typed contributions and the host re-parses, `macro.expand` runs again inside the generator replay loop so mod-emitted code can contain macro invocations.
+After `mod.generate` merges typed contributions, `macro.expand` runs again inside the generator replay loop so mod-emitted code can contain macro invocations.
 
 ## LSP / incremental
 

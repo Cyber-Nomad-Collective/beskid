@@ -97,7 +97,7 @@ Manifest `attachTo` / `entryModules` are **not** part of discovery; `Collector` 
 From a mod author's perspective:
 
 1. **Collect** — `Collector` narrows targets for this mod instance.
-2. **Generate** — `Generator` contributes typed AST; host re-parses and merges (bounded by `maxGeneratorRounds`).
+2. **Generate** — `Generator` contributes typed AST; host merges it without a text parse (bounded by `maxGeneratorRounds`).
 3. **Analyze** — `Analyzer` runs after semantic snapshot on merged program (including generated code).
 4. **Rewrite** — `Rewriter` applies when an analyzer declares a fix; host validates typed replacement.
 
@@ -114,7 +114,7 @@ Rust-side phase ids and artifact lifecycle are specified under **[Compiler Mods]
 | Expansion host | Rust intrinsic in `beskid_analysis` | AOT mod artifacts + `Collector` / `Generator` |
 | Discovery | Name resolution / `use` | `mod.descriptor.json` contract registry |
 
-Mods may define and call language macros like any library; `Generator` output that contains `foo!` is expanded after re-parse per stage-ordering rules.
+Mods may define and call language macros like any library; `Generator` output that contains `foo!` is expanded after the typed merge per stage-ordering rules.
 </SpecSection>
 
 <SpecSection title="Language features used by mods" id="language-features">
@@ -184,7 +184,7 @@ No ADRs published under **`adr/`** yet.
 ## Edge cases
 
 - **Missing AOT artifact** — If the artifact for the target triple is missing, the mod is skipped or errors depending on host policy.
-- **Generator round limit** — `maxGeneratorRounds` bounds the generate-reparse loop to prevent infinite generation.
+- **Generator round limit** — `maxGeneratorRounds` bounds the generate-merge loop to prevent infinite generation.
 - **Stale generation** — Mods referencing `NodeRef` from a previous syntax generation emit **E1884**.
 - **Query pipeline conflict** — Concurrent mod queries modifying the same nodes emit **E1883**.
 
@@ -274,22 +274,15 @@ pub contract GrammarGenerator {
 
 The host **must** register contract types whose symbol suffix is **`.GrammarGenerator`** in mod descriptor discovery. On fingerprint miss, the host invokes `Generate`, merges the returned `GeneratedSyntaxContribution`, and **may** write emitted sources under **`.generated/{modulePath}/{fileName}.g.bd`** in the consumer package (layout schema v2: `fileName` + `modulePath` + optional `packageId`). Emitted parsers **must** call **`Core.Text.Parser`** combinators only and satisfy **PARSER-005** naming.
 
-### `GeneratedSyntaxContribution` (typed + code outputs)
+### `GeneratedSyntaxContribution` (typed structural items)
 
 ```beskid
 pub type GeneratedSyntaxContribution {
-    SyntaxContributionItem[] items,   // legacy typed merge path
-    CodeContribution[] codeOutputs,   // primary generator emit path
-}
-
-pub type CodeContribution {
-    string modulePath,
-    string fileName,
-    CodeString body,                  // fenced Beskid source; host evaluates `@{}` holes
+    SyntaxContributionItem[] items,   // typed structural items; the only generator emit path
 }
 ```
 
-`Beskid.Compiler.Emitter.Contribution` helpers assemble contributions (`FromCodeOutputs`, `AppendCode`, …). **`ContributionFluent`** is removed—generators use plain contribution builders.
+`Beskid.Compiler.Emitter.Contribution` helpers assemble typed contributions. `CodeContribution`, `CodeString`, `codeOutputs` and their helpers are removed; the host rejects a native result with any non-typed field. **`ContributionFluent`** is removed—generators use plain contribution builders.
 
 Reference implementation: `corelib_pest_gen` (`PestCollector` + `PestGen`). Consumer projects declare inputs via the **`grammar { }`** block ([project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)).
 
@@ -465,7 +458,7 @@ flowchart LR
 4. **Build schedule** — Create `(contractId, typeId, entrySymbol)` tuples.
 5. **Detect conflicts** — Duplicate or conflicting registrations emit **E1829** / **E1851–E1870**.
 6. **Execute collect** — Run `Collector` contracts to narrow targets.
-7. **Execute generate** — Run `Generator` contracts; host re-parses and merges contributions (bounded by `maxGeneratorRounds`).
+7. **Execute generate** — Run `Generator` contracts; host merges typed contributions without a text parse (bounded by `maxGeneratorRounds`).
 8. **Execute analyze** — Run `Analyzer` contracts on merged program (including generated code).
 9. **Apply rewrites** — Run `Rewriter` contracts when an analyzer declares a fix.
 
@@ -473,7 +466,7 @@ flowchart LR
 
 From a mod author's perspective:
 1. **Collect** — `Collector` narrows targets.
-2. **Generate** — `Generator` contributes typed AST; host re-parses and merges.
+2. **Generate** — `Generator` contributes typed AST; host merges it without a text parse.
 3. **Analyze** — `Analyzer` runs after semantic snapshot on merged program.
 4. **Rewrite** — `Rewriter` applies when an analyzer declares a fix.
 

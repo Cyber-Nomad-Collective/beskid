@@ -96,7 +96,7 @@ Chainable APIs (ANSI builders, future collection facades) need a uniform contrac
 
 - Collections and Query gain optional fluent wrappers without duplicating semantics on the underlying types.
 - Console ANSI contracts remain the normative hand-written example; registry may include them later.
-- Mod output may be checked in via **`generatedOutputs`** materialization until merge/reparse is proven by conformance tests; no standalone `beskid mod generate` CLI.
+- Mod output may be checked in via **`generatedOutputs`** materialization until typed merge is proven by conformance tests; no standalone `beskid mod generate` CLI.
 
 ## Verification anchors
 

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "54cefbc735505a520e73bfcf8b160a0600d9c046c34745738eb7ed4c4f8cf32b",
+  "revision": "39dde5d2de9cf339bb6a4eb0974a76ca20b358581ed2564fa3daa21c3b16c83b",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -59630,7 +59630,7 @@
       "decision": null,
       "title": "Stage ordering and lowering",
       "status": "Standard",
-      "sourceHash": "4595d2f2e2ccdb4fca19dc0e640af2670e0942f37455fce0cf74dd9ee3ee3c47"
+      "sourceHash": "9b4a479b42a58e0a358e1171ed8a40a59e8c7c22aea4f9d0efe33bda1bbccfe5"
     },
     {
       "id": "BSP-CAP-5117C8E20F48",
@@ -59784,7 +59784,7 @@
       "decision": null,
       "title": "Incremental scheduling and determinism",
       "status": "Standard",
-      "sourceHash": "49221845ac655cbe6bb65e6d5b17a295bf570b096c6cd09cc5448f53de86b69b"
+      "sourceHash": "dd10a914ee24a5d18f1ec84bc86003de81b14ed4d065d37d6118c5acfcf13bfb"
     },
     {
       "id": "BSP-CAP-72A560E74FE6",
@@ -59806,7 +59806,7 @@
       "decision": null,
       "title": "Mod host bridge",
       "status": "Standard",
-      "sourceHash": "36fee5c0e8774dd31a7bf0290510456c9716e2c71feab10a308a68d998f385ea"
+      "sourceHash": "39ac21b2a253d6e83c557fdd7bc9ddd8f2a3f6711c8481ae042e9952e16e9125"
     },
     {
       "id": "BSP-CAP-BF4207C24429",
@@ -59828,7 +59828,7 @@
       "decision": null,
       "title": "Pest parser generator",
       "status": "Standard",
-      "sourceHash": "bf5ef0363bae94b860fecfa51e1193aa62aeabcb7b8c67e7b7ca8d210dab1e3e"
+      "sourceHash": "4d999dbe59cdfc634fe26760583f0f0f3fdda883293c738c180f69f4d1b7ce36"
     },
     {
       "id": "BSP-CAP-9DDBFB74F30B",
@@ -60026,7 +60026,7 @@
       "decision": null,
       "title": "Crate-to-spec anchors",
       "status": "Standard",
-      "sourceHash": "c690b1619afb26c33facae62eeafdb00845cf8f476e101b5ac7d25477c25c013"
+      "sourceHash": "32da410e0ec05babca56ceada99014024006bd8e7c1cf62869196a54eac0fffd"
     },
     {
       "id": "BSP-CAP-7771EB0A6B45",
@@ -60224,7 +60224,7 @@
       "decision": null,
       "title": "Rules pipeline contract",
       "status": "Standard",
-      "sourceHash": "c01c018d2f48ca8d775375fb0d9a4689d4fdfc88a664f80627cd76d79e056921"
+      "sourceHash": "8f1cf382dafc27296130ec8129bf8049ebbefc365d5df00ca96b96898c1fd0d9"
     },
     {
       "id": "BSP-CAP-A23B4B9EAF6A",
@@ -60554,7 +60554,7 @@
       "decision": null,
       "title": "Core.Fluent",
       "status": "Standard",
-      "sourceHash": "a830ec00cda584ad41fff92d2ff897112971d67b41cac50e574e8499355295a0"
+      "sourceHash": "c84f6085709dd968094a9f34bb24b81fd30abdac5085598225b552ab9a364d47"
     },
     {
       "id": "BSP-CAP-CF5A8BFAFD56",
@@ -61676,7 +61676,7 @@
       "decision": null,
       "title": "Compiler Mod SDK",
       "status": "Standard",
-      "sourceHash": "883a2c15da317bd044e41d10a574a8c641ae3bf32be3013db79b7e0b03fa76c2"
+      "sourceHash": "8999c573e828d3aca7de25d3d7a43353e860b0cc5ed1d6c958672956b09105b1"
     },
     {
       "id": "BSP-CAP-1EF79EAACF8E",
@@ -61698,7 +61698,7 @@
       "decision": null,
       "title": "Language macros",
       "status": "Standard",
-      "sourceHash": "bbb43d63854d19b42067116dc0b1f1f63996864ca8b0556c6764a652b911cae7"
+      "sourceHash": "c01e1105d59d15ab1f6e5689e7831e95b4839639e54a7f7f7fe1dcc8ce47d8e1"
     },
     {
       "id": "BSP-CAP-22B6A227E75B",

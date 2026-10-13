@@ -61,7 +61,7 @@ Fixes made to keep the deltas consistent with the base specs after the archives 
 - `v06-rust-glue-integration`: two requirements in `language-meta--type-system--types` ("Aggregate unit fields retain semantics without physical storage" and "Private canonical runtime helpers require verified corpus scope") changed from MODIFIED to ADDED. "Issued absolute shutdown deadlines" in `core-library--foundation-and-primitives--core-process` also changed from MODIFIED to ADDED. None of these existed in a base spec.
 - Every MODIFIED, REMOVED and RENAMED header in the `v06-*` changes now matches a base requirement. No requirement is modified by two `v06-*` changes.
 
-Known gaps are left unticked in the `v06-*` task lists: dynamic mapping DYN-06-03/04, `for` over iterators, CLI tasks 2.6 and 2.7, native emitter tasks 2.1 and 4.1, and MOD-06-07 to MOD-06-09 duplicate IDs (being renumbered elsewhere).
+Known gaps are left unticked in the `v06-*` task lists: dynamic mapping DYN-06-03/04, `for` over iterators, CLI tasks 2.6 and 2.7, native emitter tasks 2.1 and 4.1, and the former MOD-06-07 to MOD-06-09 duplicate IDs, which are resolved: the typed-emitter IDs were renumbered to MOD-06-29 to MOD-06-33.
 
 ## 3. Normative specs corrected
 
