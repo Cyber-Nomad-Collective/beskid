@@ -409,6 +409,22 @@ Generated serialization and deserialization bounds SHALL derive independently fr
 ### Requirement: Typed field decoder factory correspondence
 Generated decoding SHALL use a typed `FieldDecoder<T,R>` binding for abstract field types, where T is the exact current field application and R is the admitted format Reader. A generated adapter SHALL retain direction-specific applied bounds and receive concrete binding instances through exact current compiler-issued factory correspondence. The issuer SHALL validate the actual source factory, specialized output, receiver arguments, package provenance and implementation contribution before publication. A template, field name, factory string, pointer ABI or universal DataValue SHALL NOT substitute for this correspondence. Binding constructors SHALL preserve the typed reader and decoder ownership; fresh target publication SHALL occur only after all fields and Reader.Finish succeed. Encoding SHALL continue to require the original T:Serializable<E> receiver.
 
+The canonical reader unit `Core/Serialization/Reader.bd` SHALL declare `ReadField<T,R>(R reader, SerializationLimits limits)` with result `Result<T, SerializationError>` and `R: Reader`. Its body SHALL call the compiler-issued runtime bridge `FieldDecoderBridge<T,R>`. For each concrete instance of `ReadField<T,R>`, the compiler SHALL issue the bridge body as a direct forward of the reader and limits to exactly one function:
+
+- For a `[Serialize]` target application, the field decoder factory of the retained generated decoder group of that application.
+- For a scalar application, the canonical scalar read of `Core/Serialization/PrimitiveDecoders.bd` of the `corelib_serialization` package.
+- For an array, or a canonical Foundation `List<E>`, `Map<string,E>` or `Option<E>`, the canonical container read of `Core/Serialization/ContainerDecoders.bd`. A container read SHALL read each element through `ReadField<E,R>`.
+
+The generated decoder group of a target `T<P...>` SHALL contain an adapter record over one reader R, a field decoder factory with generic parameters `P...` and R, parameters `(R reader, SerializationLimits limits)` and result `Result<T<P...>, SerializationError>`, and the canonical `Decoder<T<P...>>` implementation that calls `Reader.Begin`, the factory and `Reader.Finish`. Every nominal field site of the factory SHALL read through `ReadField<F,R>` with the exact declared field type F. The group SHALL NOT add a decoding bound for a receiver parameter; each concrete application SHALL be revalidated by the correspondence.
+
+The issuer SHALL select the factory of a group only by the resolved parameter and result applications of each group function in the requested environment. Exactly one function of the group SHALL match. The issuer SHALL then rebind the retained target or template as the canonical `Decoder` of the same target application in that environment, with unchanged source, package provenance and exact appended contribution. A target application without exactly one admitted factory SHALL reject the program before emission. An abstract field whose application is a target-width word SHALL reject because it has no declared wire width.
+
+The canonical decoding API SHALL be:
+
+- `Decoding.IssuedField<T,R>`: the stateless `FieldDecoder<T,R>` binding whose `Read` calls `ReadField<T,R>`, created by `Decoding.FieldFor<T,R>()`.
+- `Decoding.DecoderFor<T,R>(R reader)`: the `Decoder<T>` that binds the reader to `IssuedField<T,R>`, for use with `Contracts.Decode<T,D>`.
+- `Core.Bsol.Serialization.Read<T>(string text, SerializationLimits limits)`: the top-level typed BSOL decode of T through `IssuedField<T, SyntaxReader>`.
+
 #### Scenario: Abstract field has a concrete typed decoder
 - **GIVEN** a generated generic record adapter whose field is T
 - **WHEN** its current specialization supplies a factory for FieldDecoder<T,R>
@@ -421,6 +437,22 @@ Generated decoding SHALL use a typed `FieldDecoder<T,R>` binding for abstract fi
 #### Scenario: Reader finalization rejects trailing input
 - **WHEN** a typed binding constructs a target but Reader.Finish reports trailing or incomplete input
 - **THEN** the adapter returns the typed failure and does not publish the target
+
+#### Scenario: Nested generic target decodes at top level
+- **GIVEN** `[Serialize]` records `Point` and `Pair<T>` and a record field of type `Pair<Point>`
+- **WHEN** user code calls `Core.Bsol.Serialization.Read<Pair<Point>>` on text that the generated encoder wrote
+- **THEN** the compiler issues the factory of the `Pair` template group for `Pair<Point>` and the factory of the `Point` group for each `Point` field
+- **AND** the decoded value equals the encoded value
+
+#### Scenario: Abstract field bound to a scalar or container
+- **GIVEN** a `[Serialize]` record `Boxed<T>` with fields `T item` and `List<T> history`
+- **WHEN** `Boxed<i32>` decodes
+- **THEN** `item` reads through the canonical 32-bit signed read and `history` through the canonical List read, whose elements read through the same correspondence
+
+#### Scenario: Factory is selected by signature, not by name
+- **GIVEN** a retained decoder group whose only function with the factory parameters returns another output
+- **WHEN** a field read of the group target is requested
+- **THEN** the correspondence rejects with no admitted field decoder factory, independent of the function names
 
 ### Requirement: Source-typed serialization field policy
 The Serialization Mod SHALL structurally declare Serialize with a string Version parameter defaulting to `1` and SerializeField with named Name, SkipSerialize, SkipDeserialize, Default, WordWidth and Bytes parameters. Field policy SHALL use the original source name when Name is absent, retain separate encoding and decoding skip decisions, reject conflicting effective wire names in each direction and preserve declared word width. Bytes SHALL require exactly u8[] and SHALL select byte operations rather than sequence operations. A present Default SHALL name a qualified source factory; the private contribution issuer SHALL independently validate its exact zero-argument callable, current return type and generic substitutions before publication. A skipped decoding field SHALL require that valid typed default. Unknown, repeated, interpolated, malformed or incorrectly typed policy arguments SHALL reject; parsing descriptive policy syntax SHALL NOT grant semantic authority. Defaults SHALL apply only to absent fields, never to a malformed present field. Generated generic bounds SHALL exclude fields skipped in that direction and phantom parameters that no actual operation requires.
