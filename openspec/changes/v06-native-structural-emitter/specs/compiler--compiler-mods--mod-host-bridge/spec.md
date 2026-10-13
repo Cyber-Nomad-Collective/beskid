@@ -198,12 +198,12 @@ Native Mod execution SHALL use the qualified CABI2 producer and invocation-scope
 ### Requirement: Mod companion packages compile in full
 When a reached dependency package declares a Mod, that package SHALL be the companion package of the Mod. The assembly SHALL include every source unit of each companion package and SHALL follow their imports to a fixpoint, independent of what the user program imports. Route planning, the semantic view of the Mod and the compiled program SHALL use this one set of source units. The host project package and Mod packages SHALL NOT be companion packages. A package that the program does not reach SHALL contribute no source unit.
 
-#### Scenario: Contracts-only import builds and round-trips (MOD-06-29)
+#### Scenario: Contracts-only import builds and round-trips (MOD-06-35)
 - **GIVEN** a program that imports only `Core.Serialization.Contracts` and uses `[Serialize]`, and a reached package `corelib_serialization` that declares the Serialization Mod
 - **WHEN** the program is built and run
 - **THEN** the build succeeds because every source unit of `corelib_serialization` is compiled, and the serialized value round-trips
 
-#### Scenario: Unreached package contributes no units (MOD-06-30)
+#### Scenario: Unreached package contributes no units (MOD-06-36)
 - **GIVEN** a program that does not reach a package that declares a Mod
 - **WHEN** the assembly is built
 - **THEN** no source unit of that package is in the assembly and its Mod is not active
