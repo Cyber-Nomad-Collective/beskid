@@ -1,0 +1,19 @@
+{
+	"name": "Beskid Auth",
+	"short_name": "Beskid Auth",
+	"description": "Sign-in hub for Beskid services: Tracker, Nexus and pckg.",
+	"lang": "en",
+	"start_url": "/",
+	"scope": "/",
+	"display": "browser",
+	"theme_color": "#047857",
+	"background_color": "#ffffff",
+	"icons": [
+		{
+			"src": "/favicon.svg",
+			"sizes": "any",
+			"type": "image/svg+xml",
+			"purpose": "any"
+		}
+	]
+}

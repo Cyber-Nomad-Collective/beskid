@@ -1,1 +1,121 @@
 # NOTE: at releasing and tag creation send webhooks requests, notifications, mail by SMTP - this will depend on what maintainer want to use
+#
+# Announces a published GitHub release on the channels the maintainer turns on.
+# Releases themselves are published by the manual Woodpecker `release-publish`
+# lane; this workflow only reacts to that event and never publishes anything
+# to the repository.
+#
+# Every channel is off until its repository secrets exist. A channel without
+# its secrets is skipped, not failed. Nothing here invents an endpoint.
+#
+# | Channel          | Secrets                                                        |
+# | ---------------- | -------------------------------------------------------------- |
+# | Generic webhook  | ANNOUNCE_WEBHOOK_URL (receives a JSON POST)                    |
+# | Discord          | ANNOUNCE_DISCORD_WEBHOOK_URL                                   |
+# | Mastodon         | ANNOUNCE_MASTODON_URL (instance origin), ANNOUNCE_MASTODON_TOKEN |
+# | Mail (SMTP)      | ANNOUNCE_SMTP_URL (smtps://host:465), ANNOUNCE_SMTP_USER,      |
+# |                  | ANNOUNCE_SMTP_PASSWORD, ANNOUNCE_MAIL_FROM, ANNOUNCE_MAIL_TO   |
+#
+# Rolling tags (`cli-stable`, `cli-unstable`) move often, so plain tag pushes do
+# not trigger announcements; only published, non-draft releases do. Use
+# "Run workflow" with a tag to re-announce or to test a channel.
+
+name: Release announcements
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to announce
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: announce-${{ github.event.release.tag_name || inputs.tag }}
+  cancel-in-progress: false
+
+jobs:
+  announce:
+    name: Announce release
+    if: github.event_name == 'workflow_dispatch' || !github.event.release.prerelease
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      WEBHOOK_URL: ${{ secrets.ANNOUNCE_WEBHOOK_URL }}
+      DISCORD_WEBHOOK_URL: ${{ secrets.ANNOUNCE_DISCORD_WEBHOOK_URL }}
+      MASTODON_URL: ${{ secrets.ANNOUNCE_MASTODON_URL }}
+      MASTODON_TOKEN: ${{ secrets.ANNOUNCE_MASTODON_TOKEN }}
+      SMTP_URL: ${{ secrets.ANNOUNCE_SMTP_URL }}
+      SMTP_USER: ${{ secrets.ANNOUNCE_SMTP_USER }}
+      SMTP_PASSWORD: ${{ secrets.ANNOUNCE_SMTP_PASSWORD }}
+      MAIL_FROM: ${{ secrets.ANNOUNCE_MAIL_FROM }}
+      MAIL_TO: ${{ secrets.ANNOUNCE_MAIL_TO }}
+    steps:
+      - name: Collect release data
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name || inputs.tag }}
+        run: |
+          gh release view "${TAG}" --repo "${GITHUB_REPOSITORY}" \
+            --json tagName,name,url,body,publishedAt > release.json
+          jq -r '"Beskid \(.name // .tagName) is out: \(.url)"' release.json > headline.txt
+          echo "Announcing: $(cat headline.txt)"
+
+      - name: Generic webhook
+        if: env.WEBHOOK_URL != ''
+        run: |
+          jq '{event: "release.published", repository: env.GITHUB_REPOSITORY,
+               tag: .tagName, name: .name, url: .url, published_at: .publishedAt, notes: .body}' \
+            release.json > payload.json
+          curl --fail-with-body --silent --show-error --max-time 30 \
+            -H 'Content-Type: application/json' --data @payload.json "${WEBHOOK_URL}"
+
+      - name: Discord
+        if: env.DISCORD_WEBHOOK_URL != ''
+        run: |
+          jq -n --rawfile text headline.txt '{content: ($text | rtrimstr("\n"))}' > discord.json
+          curl --fail-with-body --silent --show-error --max-time 30 \
+            -H 'Content-Type: application/json' --data @discord.json "${DISCORD_WEBHOOK_URL}"
+
+      - name: Mastodon
+        if: env.MASTODON_URL != '' && env.MASTODON_TOKEN != ''
+        run: |
+          curl --fail-with-body --silent --show-error --max-time 30 \
+            -H "Authorization: Bearer ${MASTODON_TOKEN}" \
+            --data-urlencode "status@headline.txt" \
+            "${MASTODON_URL%/}/api/v1/statuses" > /dev/null
+
+      - name: Mail
+        if: env.SMTP_URL != '' && env.MAIL_FROM != '' && env.MAIL_TO != ''
+        run: |
+          {
+            printf 'From: %s\r\n' "${MAIL_FROM}"
+            printf 'To: %s\r\n' "${MAIL_TO}"
+            printf 'Subject: %s\r\n' "$(cat headline.txt)"
+            printf 'Content-Type: text/plain; charset=utf-8\r\n\r\n'
+            cat headline.txt
+            printf '\r\n'
+            jq -r '.body // ""' release.json
+          } > mail.txt
+          rcpts=()
+          IFS=',' read -ra addresses <<< "${MAIL_TO}"
+          for address in "${addresses[@]}"; do rcpts+=(--mail-rcpt "${address// /}"); done
+          curl --fail --silent --show-error --max-time 60 --ssl-reqd \
+            --url "${SMTP_URL}" --user "${SMTP_USER}:${SMTP_PASSWORD}" \
+            --mail-from "${MAIL_FROM}" "${rcpts[@]}" --upload-file mail.txt
+
+      - name: Report channels
+        if: always()
+        run: |
+          {
+            echo "## Release announcement"
+            echo
+            for channel in WEBHOOK_URL DISCORD_WEBHOOK_URL MASTODON_URL SMTP_URL; do
+              if [ -n "${!channel}" ]; then echo "- ${channel%_URL}: configured"; else echo "- ${channel%_URL}: skipped (no secret)"; fi
+            done
+          } >> "${GITHUB_STEP_SUMMARY}"

@@ -1,1 +1,72 @@
 # NOTE: at pull request check for malware presence
+#
+# Scans the files a pull request adds or changes with ClamAV, using freshly
+# downloaded signatures. Runs on `pull_request` (not `pull_request_target`):
+# the pull request's code runs without secrets and with a read-only token.
+# A detection fails the check and names the file; nothing is deleted or
+# quarantined, so a maintainer decides what happens next.
+
+name: Malware scan
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: avscan-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  clamav:
+    name: ClamAV scan of changed files
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install ClamAV and update signatures
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q clamav
+          sudo systemctl stop clamav-freshclam.service || true
+          sudo freshclam --quiet
+
+      - name: List changed files
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          git diff --name-only --diff-filter=ACMRT "${BASE_SHA}...${HEAD_SHA}" > changed-files
+          count="$(wc -l < changed-files)"
+          echo "Changed files to scan: ${count}"
+
+      - name: Scan
+        run: |
+          if [ ! -s changed-files ]; then
+            echo "No added or modified files to scan." >> "${GITHUB_STEP_SUMMARY}"
+            exit 0
+          fi
+          set +e
+          clamscan --file-list=changed-files --infected --no-summary --scan-archive=yes --max-filesize=200M --max-scansize=400M > clamscan.log 2>&1
+          result=$?
+          set -e
+          case "${result}" in
+            0) echo "ClamAV: no malware found in changed files." >> "${GITHUB_STEP_SUMMARY}" ;;
+            1)
+              { printf '## ClamAV detections\n\n```text\n'; cat clamscan.log; printf '```\n'; } >> "${GITHUB_STEP_SUMMARY}"
+              cat clamscan.log
+              exit 1
+              ;;
+            *)
+              echo "ClamAV failed to complete the scan (exit ${result})." >> "${GITHUB_STEP_SUMMARY}"
+              cat clamscan.log
+              exit "${result}"
+              ;;
+          esac

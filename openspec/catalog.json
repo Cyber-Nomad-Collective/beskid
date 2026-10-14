@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "59e04b3247a7ac71ea547d00b8421277ab15df9fbe682d9f956cad0eacc30003",
+  "revision": "db8ea651a491cb23a26df488686b6c1f88728b105bc24145854a5d1fed9c3135",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -39110,7 +39110,7 @@
       "path": "AGENTS.md",
       "title": "Beskid — guide for agents",
       "authority": "informative",
-      "sourceHash": "c48d01ff89f3463513f35bde63a32c68da6db302a790b323378af6f71c79c3cc",
+      "sourceHash": "c8b331a36b205e698d83d3e0d414210f42c403b1c76b544b2013c3b1d0177703",
       "standardLinks": [],
       "containsNormativeKeywords": true,
       "disposition": "informative-by-policy"

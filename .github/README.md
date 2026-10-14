@@ -14,6 +14,7 @@ does and does not do for this repository.
 | [PULL_REQUEST_TEMPLATE.md](PULL_REQUEST_TEMPLATE.md) | Checklist every pull request fills in |
 | [ISSUE_TEMPLATE/](ISSUE_TEMPLATE/) | Bug and documentation forms; features go to the Tracker |
 | [CODEOWNERS](CODEOWNERS) | Required reviewers per path |
+| [workflows/](workflows/) | Security audit, pull-request malware scan, release announcements |
 | [Taskfile.yml](Taskfile.yml) | `task -t .github/Taskfile.yml check` verifies these files |
 
 ## Automation

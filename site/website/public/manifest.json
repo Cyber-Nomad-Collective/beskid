@@ -1,0 +1,19 @@
+{
+	"name": "Beskid",
+	"short_name": "Beskid",
+	"description": "Beskid language documentation: the Book, Beskid Docs and the Standard.",
+	"lang": "en",
+	"start_url": "/",
+	"scope": "/",
+	"display": "browser",
+	"theme_color": "#047857",
+	"background_color": "#ffffff",
+	"icons": [
+		{
+			"src": "/favicon.svg",
+			"sizes": "any",
+			"type": "image/svg+xml",
+			"purpose": "any"
+		}
+	]
+}

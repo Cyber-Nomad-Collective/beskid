@@ -180,6 +180,7 @@ export default defineConfig({
 			},
 			title: 'Beskid',
 			description: 'Beskid language documentation.',
+			head: [{ tag: 'link', attrs: { rel: 'manifest', href: '/manifest.json' } }],
 			editLink: {
 				baseUrl: 'https://github.com/Cyber-Nomad-Collective/beskid/edit/main/site/website/',
 			},

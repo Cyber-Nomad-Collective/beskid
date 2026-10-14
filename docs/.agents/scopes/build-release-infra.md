@@ -10,7 +10,7 @@ Detailed operator documentation is in `docs/operations/woodpecker.md`.
 | **Woodpecker** (`.woodpecker/`, `scripts/ci/`) | Validates trusted pushes; builds native Linux, Windows and macOS targets with durable, checksummed outputs; runs the manual release and editor lanes | Hold deployment credentials |
 | **`release-publish` lane** | Publishes stable releases; manual, `main` only | Run on any other branch or trigger |
 | **Watchtower** (`beskid_sites/deploy/`) | Reconciles production containers | Get driven by repository builds |
-| **GitHub Actions** | Repository-native maintenance only | Build or publish releases |
+| **GitHub Actions** (`.github/workflows/`) | Repository-native maintenance: weekly security audit, ClamAV scan of pull requests, release announcements | Build, publish releases, or hold deployment credentials |
 
 - Inside `release-publish`, a credential-free `verify-release` step proves the
   qualified state. Only the final `publish-release` step receives the scoped
@@ -20,6 +20,18 @@ Detailed operator documentation is in `docs/operations/woodpecker.md`.
   collected into one release workspace, a fail-closed release state is built,
   and immutable artifacts are published before rolling aliases
   (`cli-stable`, `cli-unstable`) move.
+
+## GitHub workflows
+
+| Workflow | Trigger | Does |
+| --- | --- | --- |
+| `cybersec-audit-sheduld.yml` | Mondays 04:17 UTC, manual | `pnpm audit` over every lockfile; Trivy for CVEs, secrets and misconfiguration; manual runs can propose `pnpm audit --fix` as a patch artifact |
+| `pr-avscan.yml` | Pull requests | ClamAV scan of added and changed files with fresh signatures |
+| `socmed-posting.yml` | Published release, manual | Announces on webhook, Discord, Mastodon and SMTP mail, each only when its `ANNOUNCE_*` secrets exist |
+
+All three run with a read-only token. Actions are pinned by commit SHA, reusing
+the pins from this repository's earlier workflows. Each file keeps the `# NOTE:`
+line that requested it. Lint with `actionlint` (`just gate-full`).
 
 ## Distribution
 
