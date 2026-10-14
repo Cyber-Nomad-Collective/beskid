@@ -1,0 +1,1 @@
+# NOTE: at releasing and tag creation send webhooks requests, notifications, mail by SMTP - this will depend on what maintainer want to use

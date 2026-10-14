@@ -1,0 +1,1 @@
+# NOTE: it should perform things like `npm audit`, `npm audit fix` and `npm audit fix --force` category of procedures. checkings of CVS vurnabilities and exploit-db etc. code analysis will be nice to have here also
