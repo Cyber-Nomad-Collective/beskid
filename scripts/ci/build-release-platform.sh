@@ -100,6 +100,14 @@ for component in $(jq_text '.builds | keys[]' "${result}"); do
   if [[ "$(jq_text ".builds.${component}.status" "${result}")" == failed ]]; then
     reason="$(jq_text ".builds.${component}.reason" "${result}")"
     echo "::error title=${target} ${component} build failed::${reason}"
+    # The retained log stays on the agent; print its tail so the pipeline log
+    # carries the complete failure message.
+    log_file="${output_dir}/release-logs/${target}-${component}.log"
+    if [[ -f "${log_file}" ]]; then
+      echo "--- last 60 lines of ${target}-${component}.log ---" >&2
+      tail -n 60 "${log_file}" >&2
+      echo "--- end of ${target}-${component}.log ---" >&2
+    fi
   fi
 done
 
