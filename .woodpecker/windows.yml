@@ -10,6 +10,33 @@ clone:
       recursive: false
 
 steps:
+  - name: cleanup-disk
+    image: bash
+    commands:
+      - |
+        # The guest has no SSH access; reclaim C: here. Cleanup never fails the build.
+        powershell -NoProfile -Command "Get-PSDrive C | Format-List Used,Free" || true
+        output_root='C:/woodpecker-output/beskid'
+        current="$${output_root}/$${CI_PIPELINE_NUMBER}-$${CI_COMMIT_SHA}"
+        if [ -d "$${output_root}" ]; then
+          kept=0
+          while IFS= read -r build_dir; do
+            build_dir="$${build_dir%/}"
+            [ "$${build_dir}" = "$${current}" ] && continue
+            case "$${build_dir}" in "$${output_root}"/?*) ;; *) continue ;; esac
+            kept=$$((kept + 1))
+            [ "$${kept}" -le 3 ] && continue
+            echo "removing old build output $${build_dir}"
+            rm -rf -- "$${build_dir}" || true
+          done < <(ls -1dt "$${output_root}"/*/ 2>/dev/null)
+        fi
+        for vs_env in C:/ProgramData/Woodpecker/vs-env-*.cmd; do
+          [ -f "$${vs_env}" ] || continue
+          echo "removing leftover $${vs_env}"
+          rm -f -- "$${vs_env}" || true
+        done
+        powershell -NoProfile -Command "Get-PSDrive C | Format-List Used,Free" || true
+
   - name: setup-imagemagick
     image: bash
     commands:
