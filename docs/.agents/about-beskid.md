@@ -2,7 +2,7 @@
 
 What Beskid is, why it exists, and how its pieces fit. Written by an agent
 (Claude, 2026-10-14) from the repository at compiler 0.5.3, after reading
-`README.md`, `GUIDE.md`, `GLOSSARY.md`, `LICENSING.md`, the Book table of
+`README.md`, `GUIDE.md`, the glossary, `LICENSING.md`, the Book table of
 contents and the change log. The last section is that agent's own view and is
 marked as such.
 
@@ -40,7 +40,7 @@ engines belong to Rust or C++.
 
 - **AOT only.** `beskid run` compiles and links a temporary native executable
   and runs it as a subprocess. There is no JIT and no interpreter
-  (see "AOT run" in `GLOSSARY.md`).
+  (see `docs/glossary-wiki/keywords/AOT-run.md`).
 - **Native targets.** ABI v5 supports exactly three 64-bit little-endian
   targets: `x86_64-unknown-linux-gnu`, `aarch64-apple-darwin` and
   `x86_64-pc-windows-msvc`.
@@ -126,7 +126,7 @@ are in `LICENSING.md`.
 - Beskid Docs: <https://beskid-lang.org/docs/>
 - The Standard: <https://beskid-lang.org/docs/standard/> (source in
   `openspec/specs/`)
-- Terms: `GLOSSARY.md`
+- Terms: the glossary wiki, `docs/glossary-wiki/` (one page per keyword)
 
 ## An outside view (the writing agent's opinion)
 

@@ -14,7 +14,7 @@ packages they use.
 | `beskid_sites/apps/` | Deployable app sources (website, pckg web, shell template) | see `LICENSING.md` |
 
 Browser identity for services is provided by Authentik's proxy outpost (see
-"Authentik" in `GLOSSARY.md`).
+"Authentik" in the glossary wiki, `docs/glossary-wiki/keywords/Authentik.md`).
 
 ## Package manager and packages
 

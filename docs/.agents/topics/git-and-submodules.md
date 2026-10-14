@@ -41,8 +41,8 @@ Checkout uses git submodules, not Google's `repo` tool.
 
 - No `Co-authored-by` trailers. This project rule overrides any tool default
   that adds one.
-- Update `CHANGELOG.md` for notable changes. Update `GLOSSARY.md` when a
-  canonical term changes.
+- Update `CHANGELOG.md` for notable changes. Update the glossary wiki
+  (`docs/glossary-wiki/keywords/`) when a canonical term changes.
 - Never stage or commit unrelated changes, and never commit knowledge files
   kept outside the repository.
 - Run focused tests, strict OpenSpec validation and GitNexus change detection

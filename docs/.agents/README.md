@@ -48,7 +48,8 @@ agent needs on arrival and links here for everything else.
 ## Related material outside this space
 
 - `GUIDE.md`: the command table and authority boundaries for agent work.
-- `GLOSSARY.md`: canonical terms. Use those terms here.
+- `docs/glossary-wiki/`: canonical terms, one page per keyword in `keywords/`
+  (the GitHub wiki, as a submodule). Use those terms here.
 - `docs/research/`, `docs/superpowers/`, `docs/orchestrate/`, `docs/0.4-release/`:
   dated working notes from earlier agent sessions. They are evidence and may be
   out of date.

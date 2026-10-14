@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "0ba35dd067bca729b56b641a9693c81466e2c4e8bcdbf332861a50cefd05aec1",
+  "revision": "59e04b3247a7ac71ea547d00b8421277ab15df9fbe682d9f956cad0eacc30003",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -11,7 +11,7 @@
     "normativeSources": 304,
     "provisionalCapabilities": 52,
     "legacyArtifacts": 3189,
-    "informativeDocuments": 183,
+    "informativeDocuments": 182,
     "documentsWithNormativeKeywords": 10,
     "specDocuments": 189
   },
@@ -39110,19 +39110,8 @@
       "path": "AGENTS.md",
       "title": "Beskid — guide for agents",
       "authority": "informative",
-      "sourceHash": "cc51d219e6bf31e9c7a5eae61efb738e5523dae8595bddbfbd42151b6bbdf8ea",
+      "sourceHash": "c48d01ff89f3463513f35bde63a32c68da6db302a790b323378af6f71c79c3cc",
       "standardLinks": [],
-      "containsNormativeKeywords": true,
-      "disposition": "informative-by-policy"
-    },
-    {
-      "path": "GLOSSARY.md",
-      "title": "Glossary",
-      "authority": "informative",
-      "sourceHash": "d6500530c58826a32df2bd8ca4b6452f5f8f593d76bae42f76f70e3f827f88a4",
-      "standardLinks": [
-        "/platform-spec/"
-      ],
       "containsNormativeKeywords": true,
       "disposition": "informative-by-policy"
     },
@@ -39130,7 +39119,7 @@
       "path": "GUIDE.md",
       "title": "Beskid project guide",
       "authority": "informative",
-      "sourceHash": "0cbfc58678a76ded7a698add35c917f6d63fff87d006ae1099d8d8c59ca46138",
+      "sourceHash": "693a5f37f4ceb2ced2828768ca76319210eebccb734fcd1c28bfe4eecd007458",
       "standardLinks": [
         "/platform-spec/"
       ],

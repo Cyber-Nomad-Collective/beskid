@@ -1,0 +1,53 @@
+# Beskid
+
+> Beskid is an ahead-of-time compiled, statically typed programming language for everyday business software: services, CLIs, workflows and integrations. It moves structure that business code usually hides at runtime (reflection, framework conventions, dependency-injection containers) into the compiler, where it can be seen and checked.
+
+Beskid compiles to native code through Cranelift for three targets: Linux x86_64, macOS arm64 and Windows x86_64. There is no JIT. The project includes the compiler and language server, a core library written in Beskid, the pckg package registry, VS Code and Zed extensions, and a normative standard.
+
+The Book and Docs are informative. The only normative definition of the language is the Beskid Standard. When the Book and the Standard disagree, the Standard is right.
+
+## Start
+
+- [The Beskid Book](https://beskid-lang.org/book): the guided path through the language and toolchain, chapter by chapter
+- [Why Beskid Exists](https://beskid-lang.org/book/00-why-beskid-exists): what the industry stack gets wrong and what Beskid refuses to repeat
+- [It works on my machine](https://beskid-lang.org/book/01-it-works-on-my-machine): install the CLI, verify a build, run the first commands
+- [Downloads](https://beskid-lang.org/downloads): CLI releases for Linux, macOS and Windows
+
+## The language
+
+- [The compiler is not your therapist](https://beskid-lang.org/book/07-compiler-is-not-your-therapist): syntax, types and diagnostics
+- [Contracts, effects, and other polite threats](https://beskid-lang.org/book/09-contracts-effects-and-polite-threats): Result, the ? operator, structural contracts, generics
+- [Memory without another billion-dollar mistake](https://beskid-lang.org/book/10-memory-without-billion-dollar-mistake): locals, GC heap, ref and out
+- [Fibers: cheaper than threads, still scary](https://beskid-lang.org/book/11-fibers-cheaper-than-threads): spawn, typed Fiber handles, channels; no async or await
+- [Public API that survives code review](https://beskid-lang.org/book/19-public-api-that-survives-review): pub boundaries and stable package surfaces
+
+## Projects and tooling
+
+- [PATH not found — tooling anyway](https://beskid-lang.org/book/02-path-not-found-tooling-anyway): file types, CLI, VS Code and the language server
+- [.bproj or it didn't happen](https://beskid-lang.org/book/03-project-proj-or-it-didnt-happen): project manifest, lockfile, resolver
+- [Monorepo as coping mechanism](https://beskid-lang.org/book/06-monorepo-as-coping-mechanism): .bws workspaces
+- [Green tests, red production](https://beskid-lang.org/book/08-green-tests-red-production): tests in source and the test CLI
+- [Packages without npm trauma](https://beskid-lang.org/book/18-packages-without-npm-trauma): registry versions, beskid pckg, lockfiles
+
+## Compiler and runtime
+
+- [From source to something that runs](https://beskid-lang.org/book/14-from-source-to-runs): parse, semantic facts, ISLE lowering, Cranelift, link
+- [Mods: plugins with consequences](https://beskid-lang.org/book/15-mods-plugins-with-consequences): compiler extension contracts
+- [Corelib: batteries with opinions](https://beskid-lang.org/book/16-corelib-batteries-with-opinions): the standard library
+- [Execution: ABI, host, and runtime](https://beskid-lang.org/book/17-execution-abi-host-runtime): ABI contracts and fiber scheduling
+- [FFI and other forbidden friendships](https://beskid-lang.org/book/21-ffi-and-forbidden-friendships): C and Rust ABI interop
+
+## Standard
+
+- [The Beskid Standard](https://beskid-lang.org/docs/standard/): the normative requirements
+- [The normative bible](https://beskid-lang.org/book/12-the-normative-bible): how the standard relates to the Book and the code
+- [Reading the law without going blind](https://beskid-lang.org/book/13-reading-the-law): how to navigate the standard
+
+## Optional
+
+- [Blog](https://beskid-lang.org/blog): release notes and design write-ups
+- [So you want to contribute, huh?](https://beskid-lang.org/book/22-so-you-want-to-contribute): contributor path and contact
+- [pckg](https://pckg.beskid-lang.org): the package registry
+- [Tracker](https://tracker.beskid-lang.org): roadmap and delivery status
+- [Source code](https://github.com/Cyber-Nomad-Collective/beskid): the superrepo on GitHub
+- [Sitemap](https://beskid-lang.org/sitemap.xml): every page

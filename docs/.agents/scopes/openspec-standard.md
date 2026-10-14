@@ -9,7 +9,7 @@ and platform. Lives in `openspec/` at the root (not a submodule).
   `openspec/catalog.json` are the sole authority.
 - `openspec/catalog.json` is generated. It records identity, requirement ids,
   source hashes and provenance.
-- Everything else is informative: the Book, Beskid Docs, `GLOSSARY.md`,
+- Everything else is informative: the Book, Beskid Docs, the glossary wiki,
   `GUIDE.md`, `AGENTS.md` and this directory.
 
 ## Where it is published
@@ -36,8 +36,8 @@ and platform. Lives in `openspec/` at the root (not a submodule).
 
 ## Validation traps
 
-- The catalog lists several root documents (`AGENTS.md`, `GLOSSARY.md`,
-  `GUIDE.md` and others) with a `sourceHash`. After editing any of them, run
+- The catalog lists several root documents (`AGENTS.md`, `GUIDE.md`
+  and others) with a `sourceHash`. After editing any of them, run
   `pnpm openspec:catalog`, or validation fails on the stale hash.
 - `validate-standard` hard-fails when a spec still carries the archive
   placeholder "TBD - created by archiving change ... Update Purpose after

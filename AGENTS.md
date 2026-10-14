@@ -133,7 +133,7 @@ submodule empty; run `git submodule update --init --recursive`.
   installing, the CLI and projects. Source: `site/website/src/content/docs/book/`.
 - Beskid Docs, getting started: <https://beskid-lang.org/docs/getting-started/>
 - Downloads: <https://beskid-lang.org/downloads/>
-- Terms: [GLOSSARY.md](GLOSSARY.md)
+- Terms: [glossary wiki](https://github.com/Cyber-Nomad-Collective/beskid/wiki), one page per keyword in [docs/glossary-wiki/keywords/](docs/glossary-wiki/keywords/)
 
 ### Tutorials
 

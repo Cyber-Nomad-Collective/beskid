@@ -1,0 +1,15 @@
+# Beskid Shell
+
+> Reference host for the Beskid shell: a TanStack Start application built on `shell-core`, with shared navigation and sign-in through the Beskid auth hub. Applications generated from this template replace this file with their own description.
+
+This is a template. Replace the title, the summary and the links below with those of the application you build from it, and keep the format (llmstxt.org): a title, a one-paragraph summary, then sections of links.
+
+## Application
+
+- [Home](/): the application's start page
+- [Health](/api/health): service health endpoint
+
+## Optional
+
+- [Beskid](https://beskid-lang.org): the language and platform this shell belongs to
+- [Source code](https://github.com/Cyber-Nomad-Collective/beskid): `beskid_sites/apps/shell-template` in the superrepo

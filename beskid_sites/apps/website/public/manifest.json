@@ -1,0 +1,19 @@
+{
+	"name": "Beskid — a language and platform for everyday software",
+	"short_name": "Beskid",
+	"description": "A statically typed, AOT-first language for services, CLIs, and teams that outgrew .NET's abstraction stack.",
+	"lang": "en",
+	"start_url": "/",
+	"scope": "/",
+	"display": "browser",
+	"theme_color": "#047857",
+	"background_color": "#ffffff",
+	"icons": [
+		{
+			"src": "/favicon.svg",
+			"sizes": "any",
+			"type": "image/svg+xml",
+			"purpose": "any"
+		}
+	]
+}

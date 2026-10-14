@@ -28,7 +28,7 @@
 ## Bookkeeping
 
 - [ ] `CHANGELOG.md` entry
-- [ ] `GLOSSARY.md` updated, or no canonical term changed
+- [ ] Glossary wiki updated, or no canonical term changed
 - [ ] `pnpm openspec:catalog` run after editing a catalogued root document
 - [ ] Submodule changes are pushed to their own repositories first
 - [ ] No secrets, no `Co-authored-by` trailers

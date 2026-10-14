@@ -51,9 +51,9 @@ local gates report a skip.
 
    Compiler work also needs the compiler's own gate; `just gate` does not run
    it.
-5. **Write it down.** Add an entry to `CHANGELOG.md`. Update `GLOSSARY.md` if a
-   canonical term changes. If you edited a root document listed in
-   `openspec/catalog.json` (such as `AGENTS.md` or `GLOSSARY.md`), run
+5. **Write it down.** Add an entry to `CHANGELOG.md`. Update the glossary wiki
+   (`docs/glossary-wiki/keywords/`) if a canonical term changes. If you edited a root document listed in
+   `openspec/catalog.json` (such as `AGENTS.md` or `GUIDE.md`), run
    `pnpm openspec:catalog`.
 6. **Open a pull request** using the template.
 

@@ -32,7 +32,7 @@ Cranelift verifier.
   authority for the LSP and IDE features. Do not rebuild HIR per request and do
   not keep a second snapshot path.
 - These facts are keyed by `AstNodeKey`; see "AST semantic facts" in
-  `GLOSSARY.md`.
+  the glossary wiki (`docs/glossary-wiki/keywords/AST-semantic-facts.md`).
 
 ## ABI v5 and runtime kits
 

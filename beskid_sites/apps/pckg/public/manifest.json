@@ -1,0 +1,19 @@
+{
+	"name": "pckg — the Beskid package registry",
+	"short_name": "pckg",
+	"description": "Browse, publish and fetch Beskid packages.",
+	"lang": "en",
+	"start_url": "/",
+	"scope": "/",
+	"display": "browser",
+	"theme_color": "#047857",
+	"background_color": "#ffffff",
+	"icons": [
+		{
+			"src": "/favicon.svg",
+			"sizes": "any",
+			"type": "image/svg+xml",
+			"purpose": "any"
+		}
+	]
+}

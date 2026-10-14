@@ -8,7 +8,7 @@ How Beskid prose is written and where each kind of text belongs.
 | --- | --- | --- |
 | Rules of the language and platform | `openspec/specs/` | Normative |
 | Explanations, tutorials, the Book | `site/website/src/content/docs/` | Informative, links to the standard |
-| Canonical terms | `GLOSSARY.md` | Informative |
+| Canonical terms | `docs/glossary-wiki/keywords/` (GitHub wiki) | Informative |
 | Agent knowledge | `docs/.agents/` | Informative, agent-written |
 | Dated research and session notes | `docs/research/`, `docs/superpowers/` | Evidence, may be stale |
 | Change history | `CHANGELOG.md` (Keep a Changelog) | Informative |
@@ -27,7 +27,7 @@ The Book never defines a rule. When it states one, it links to the standard.
 
 ## Terms
 
-Use the spellings and terms in `GLOSSARY.md`. Write `beskid` for the tool and
+Use the spellings and terms in the glossary wiki. Write `beskid` for the tool and
 Beskid for the language and project; never `beschid`.
 
 ## Licensing of prose
