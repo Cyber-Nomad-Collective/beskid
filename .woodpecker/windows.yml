@@ -23,6 +23,24 @@ steps:
         imagemagick_dir_windows="$$(cygpath -w "$${imagemagick_dir}")"
         MSYS2_ARG_CONV_EXCL='*' "$${imagemagick_installer}" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP- "/DIR=$${imagemagick_dir_windows}" </dev/null
 
+  - name: setup-python
+    image: bash
+    commands:
+      - |
+        # The release build runs stdlib-only Python 3.11+ scripts (tomllib). Use
+        # the official python.org embeddable package; the SHA-256 is the one
+        # python.org publishes for this exact file.
+        python_dir='C:/ProgramData/Woodpecker/Python-3.13.16'
+        python_archive='C:/ProgramData/Woodpecker/python-3.13.16-embed-amd64.zip'
+        python_sha256='97dae5274cc54867065e8d5a3226e48c35017ed332a0fdb0e27d5b5821961297'
+        mkdir -p "$$(dirname "$${python_archive}")"
+        [ -f "$${python_archive}" ] || curl.exe --fail --location --retry 3 --retry-all-errors --retry-delay 2 --output "$${python_archive}" https://www.python.org/ftp/python/3.13.16/python-3.13.16-embed-amd64.zip
+        printf '%s *%s\n' "$${python_sha256}" "$${python_archive}" | sha256sum --check --strict
+        rm -rf "$${python_dir}"
+        powershell -NoProfile -NonInteractive -Command "Expand-Archive -LiteralPath '$$(cygpath -w "$${python_archive}")' -DestinationPath '$$(cygpath -w "$${python_dir}")' -Force"
+        cp "$${python_dir}/python.exe" "$${python_dir}/python3.exe"
+        "$${python_dir}/python3.exe" -c 'import sys, tomllib; assert sys.version_info[:3] == (3, 13, 16), sys.version'
+
   - name: build-windows
     image: bash
     commands:
@@ -85,6 +103,10 @@ steps:
         [ -x "$${imagemagick_exe}" ] || { echo "ImageMagick installation failed on the Windows agent" >&2; exit 1; }
         export PATH="$$(cygpath -u "$${imagemagick_dir}"):$${PATH}"
         command -v magick.exe >/dev/null || { echo "magick.exe is unavailable after ImageMagick setup" >&2; exit 1; }
+        python_dir='C:/ProgramData/Woodpecker/Python-3.13.16'
+        [ -x "$${python_dir}/python3.exe" ] || { echo "Python installation failed on the Windows agent" >&2; exit 1; }
+        export PATH="$$(cygpath -u "$${python_dir}"):$${PATH}"
+        python3 -c 'import tomllib' || { echo "python3 is unavailable after Python setup" >&2; exit 1; }
         output="C:/woodpecker-output/beskid/$${CI_PIPELINE_NUMBER}-$${CI_COMMIT_SHA}/windows"
         bash scripts/ci/init-submodules.sh beskid_distrib
         bash scripts/ci/woodpecker-build-platform.sh windows "$${release_version}" "$${output}"

@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 # Build a compiler release artifact or a complete direct-install bundle for the
 # host runner's native target.
-# native target.
 #
 # Builds natively on the matching OS runner. Cross-platform coverage comes
 # from the calling workflow's OS matrix (linux on ubuntu, mac on macos, windows
 # on windows) — each target builds on its native host, which avoids the
 # fragile Linux→macOS/Windows cross-linker setup behind QEMU/binfmt.
 #
-# Stamps the resolved release version into the CLI, LSP, and updater crates,
-# builds the requested package(s) in release mode, and copies the binary or
-# archive to <asset-name> in the caller's cwd.
+# Checks that the CLI, LSP, and updater crates already carry the resolved
+# release version, builds the requested package(s) in release mode against the
+# checked-in Cargo.lock, and copies the binary or archive to <asset-name> in the
+# caller's cwd.
 #
 # Usage: build-release-artifact.sh <package> <binary> <target> <asset-name> <release-version>
 #   package         beskid_cli | beskid_lsp | beskid_bundle | beskid_release_harness
@@ -43,47 +43,48 @@ export RUST_MIN_STACK="${RUST_MIN_STACK:-67108864}"
 
 cd "${ROOT}/compiler"
 
-# Version stamping is a build input, not an authoring-tree edit. Restore every
-# touched manifest even when Cargo or a later package verification fails.
-release_backup="$(mktemp -d "${TMPDIR:-/tmp}/beskid-release-version.XXXXXX")"
+# The release version is source: beskid_cli, beskid_lsp and beskid_up carry it
+# in their manifests and in Cargo.lock. Every Cargo build below is --locked, so
+# the build never edits the authoring tree; a version that differs from the
+# checked-in one is a source change to commit, not a build-time stamp.
 release_stage=""
-versioned_manifests=(
-  Cargo.lock
-  crates/beskid_cli/Cargo.toml
-  crates/beskid_lsp/Cargo.toml
-  crates/beskid_up/Cargo.toml
-)
-for manifest in "${versioned_manifests[@]}"; do
-  mkdir -p "${release_backup}/$(dirname "${manifest}")"
-  cp "${manifest}" "${release_backup}/${manifest}"
-done
-restore_release_versions() {
-  for manifest in "${versioned_manifests[@]}"; do
-    cp "${release_backup}/${manifest}" "${manifest}"
-  done
+cleanup_release_stage() {
   [[ -z "${release_stage}" ]] || rm -rf "${release_stage}"
-  rm -rf "${release_backup}"
 }
-trap restore_release_versions EXIT
-
-stamp_version() {
-  local cargo_toml="$1"
-  if [[ "$runner_os" == "Windows" ]]; then
-    powershell -NoProfile -Command "(Get-Content ${cargo_toml}) -replace '^version = \".*\"', 'version = \"${RELEASE_VERSION}\"' | Set-Content ${cargo_toml}"
-  else
-    sed -i.bak "s/^version = \".*\"/version = \"${RELEASE_VERSION}\"/" "$cargo_toml" && rm -f "${cargo_toml}.bak"
-  fi
-}
+trap cleanup_release_stage EXIT
 
 for cargo_toml in crates/beskid_cli/Cargo.toml crates/beskid_lsp/Cargo.toml crates/beskid_up/Cargo.toml; do
-  stamp_version "$cargo_toml"
+  manifest_version="$(awk '
+    /^\[/ { in_package = ($0 == "[package]"); next }
+    in_package && /^version[[:space:]]*=/ {
+      value = $0
+      sub(/^[^=]*=[[:space:]]*"/, "", value)
+      sub(/".*$/, "", value)
+      print value
+      exit
+    }
+  ' "${cargo_toml}" | tr -d '\r')"
+  if [[ "${manifest_version}" != "${RELEASE_VERSION}" ]]; then
+    echo "release version ${RELEASE_VERSION} does not match compiler/${cargo_toml} version '${manifest_version}'; commit the version bump and Cargo.lock to the compiler before building this release" >&2
+    exit 1
+  fi
 done
+
+case "$PACKAGE" in
+  beskid_bundle|beskid_release_harness)
+    # The native tool driver qualifier reads Cargo profiles with tomllib.
+    python3 -c 'import sys, tomllib' 2>/dev/null || {
+      echo "build-release-artifact.sh ${PACKAGE} requires python3 3.11 or newer on PATH" >&2
+      exit 1
+    }
+    ;;
+esac
 
 # Add the Rust target and build natively on the host.
 rustup target add "$TARGET" >/dev/null 2>&1 || true
 case "$PACKAGE" in
   beskid_cli|beskid_lsp)
-    cargo build -p "$PACKAGE" --release --target "$TARGET"
+    cargo build --locked -p "$PACKAGE" --release --target "$TARGET"
     ;;
   beskid_bundle)
     driver_stage="$(mktemp -d)"
@@ -91,7 +92,7 @@ case "$PACKAGE" in
     cargo build --locked -p beskid_execution --bin beskid_native_tool_driver --release --target "$TARGET" --message-format=json >"${driver_stage}/cargo.json"
     python3 "${ROOT}/scripts/ci/qualify-native-tool-driver.py" --messages "${driver_stage}/cargo.json" --target "$TARGET" --profile release --source-snapshot "${driver_stage}/source.json" --output "${driver_stage}/driver.json"
     export BESKID_COMPILER_DRIVER_BUILD_RECEIPT="${driver_stage}/driver.json"
-    cargo build -p beskid_cli -p beskid_lsp -p beskid_up --release --target "$TARGET"
+    cargo build --locked -p beskid_cli -p beskid_lsp -p beskid_up --release --target "$TARGET"
     ;;
   beskid_release_harness)
     # 0.6 release case harnesses: libtest executables of the reviewed harness crates and the process

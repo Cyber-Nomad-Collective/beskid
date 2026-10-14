@@ -67,7 +67,7 @@ const FEATURE_CASES = [
 const GLUE_NOT_APPLICABLE_REASON = "Glue bindings are outside the v0.5 release contract; generated Rust/.NET bindings remain deferred to v0.6.";
 const scripts = dirname(fileURLToPath(import.meta.url));
 // Reviewed source manifest identity: update only alongside reviewed real bindings.
-const V06_CASE_MANIFEST_SHA256 = "fa79ce334362489451a570e0c7440c7ee46a88afa3aa635875baeb9aab6efc82";
+const V06_CASE_MANIFEST_SHA256 = "ccc0c6f1d617dc63ef20c4ddd2c718b3abe0ff55ec24f56e80e666df84169805";
 
 function fail(message) {
   throw new Error(message);
