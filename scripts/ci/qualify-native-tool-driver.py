@@ -37,6 +37,13 @@ for line in raw.splitlines():
 if finished!=[True] or len(artifacts)!=1:raise SystemExit('driver build did not finish once with one exact artifact')
 file=artifacts[0]
 if not file.is_file() or file.stat().st_size>128*1024*1024:raise SystemExit('driver executable bound')
-receipt={'version':1,'package':'beskid_execution','target':a.target,'source_sha256':h.hexdigest(),'executable':str(file),'sha256':hashlib.sha256(file.read_bytes()).hexdigest()}
+def rust_canonical(path):
+    # The compiler build script requires std::fs::canonicalize(executable) == executable. On Windows
+    # that is the verbatim form (\\?\C:\... or \\?\UNC\server\share\...), which Path.resolve omits.
+    text=str(path)
+    if os.name!='nt' or text.startswith('\\\\?\\'):return text
+    if text.startswith('\\\\'):return '\\\\?\\UNC\\'+text[2:]
+    return '\\\\?\\'+text
+receipt={'version':1,'package':'beskid_execution','target':a.target,'source_sha256':h.hexdigest(),'executable':rust_canonical(file),'sha256':hashlib.sha256(file.read_bytes()).hexdigest()}
 output=pathlib.Path(a.output);output.parent.mkdir(parents=True,exist_ok=True)
 with output.open('x') as out:json.dump(receipt,out,sort_keys=True);out.flush();os.fsync(out.fileno())
