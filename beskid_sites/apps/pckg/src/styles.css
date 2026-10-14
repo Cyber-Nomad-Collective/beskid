@@ -24,3 +24,122 @@
 	}
 }
 
+
+/* ── Package file viewer and rendered Markdown ──────────────────────────── */
+
+.pckg-code .pckg-tok-keyword {
+	color: var(--primary);
+	font-weight: 600;
+}
+.pckg-code .pckg-tok-type {
+	color: var(--chart-2, var(--primary));
+}
+.pckg-code .pckg-tok-string {
+	color: var(--chart-3, var(--foreground));
+}
+.pckg-code .pckg-tok-number {
+	color: var(--chart-4, var(--foreground));
+}
+.pckg-code .pckg-tok-comment {
+	color: var(--muted-foreground);
+	font-style: italic;
+}
+.pckg-code .pckg-tok-attribute {
+	color: var(--chart-5, var(--primary));
+}
+.pckg-code .pckg-tok-property {
+	color: var(--chart-1, var(--primary));
+}
+.pckg-code .pckg-tok-punctuation {
+	color: var(--muted-foreground);
+}
+
+.pckg-prose {
+	font-size: 0.95rem;
+	line-height: 1.65;
+}
+.pckg-prose > * + * {
+	margin-top: 0.9em;
+}
+.pckg-prose h1,
+.pckg-prose h2,
+.pckg-prose h3,
+.pckg-prose h4 {
+	font-weight: 600;
+	line-height: 1.25;
+	scroll-margin-top: 5rem;
+}
+.pckg-prose h1 {
+	font-size: 1.6rem;
+}
+.pckg-prose h2 {
+	font-size: 1.3rem;
+	margin-top: 1.6em;
+	padding-bottom: 0.3em;
+	border-bottom: 1px solid var(--border);
+}
+.pckg-prose h3 {
+	font-size: 1.1rem;
+	margin-top: 1.4em;
+}
+.pckg-prose a {
+	color: var(--primary);
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+.pckg-prose ul,
+.pckg-prose ol {
+	padding-left: 1.4em;
+}
+.pckg-prose ul {
+	list-style: disc;
+}
+.pckg-prose ol {
+	list-style: decimal;
+}
+.pckg-prose li + li {
+	margin-top: 0.25em;
+}
+.pckg-prose blockquote {
+	border-left: 3px solid var(--border);
+	padding-left: 1em;
+	color: var(--muted-foreground);
+}
+.pckg-prose code {
+	font-family: var(--font-mono, ui-monospace, monospace);
+	font-size: 0.875em;
+	background: color-mix(in oklab, var(--muted) 70%, transparent);
+	border-radius: 0.25rem;
+	padding: 0.1em 0.35em;
+}
+.pckg-prose table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.9em;
+}
+.pckg-prose th,
+.pckg-prose td {
+	border: 1px solid var(--border);
+	padding: 0.4em 0.6em;
+	text-align: left;
+	vertical-align: top;
+}
+.pckg-prose th {
+	background: color-mix(in oklab, var(--muted) 60%, transparent);
+}
+.pckg-prose img {
+	max-width: 100%;
+}
+.pckg-prose hr {
+	border: 0;
+	border-top: 1px solid var(--border);
+}
+.pckg-prose-compact {
+	font-size: 0.875rem;
+}
+.pckg-prose-compact > * + * {
+	margin-top: 0.4em;
+}
+.pckg-prose-compact p {
+	display: inline;
+}

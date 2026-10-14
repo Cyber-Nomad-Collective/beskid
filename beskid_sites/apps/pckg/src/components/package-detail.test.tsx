@@ -37,6 +37,11 @@ const details: PackageDetails = {
 		totalDownloads: 4242,
 		updatedAtUtc: "2026-01-02T00:00:00Z",
 		ownerDisplayName: "octocat",
+		community: {
+			url: "https://community.beskid-lang.org/category/12/beskid-http",
+			categoryId: 12,
+			categorySlug: "12/beskid-http",
+		},
 	},
 	versions: [
 		{
@@ -66,14 +71,31 @@ const details: PackageDetails = {
 
 describe("PackageDetail", () => {
 	it("renders the hero, facts, readme, dependencies, and versions", () => {
-		render(<PackageDetail details={details} communitySlug="beskid-http" />);
+		render(
+			<PackageDetail
+				details={details}
+				community={{
+					url: "https://community.beskid-lang.org/category/12/beskid-http",
+					categoryId: 12,
+					categorySlug: "12/beskid-http",
+					topicCount: 2,
+					postCount: 5,
+				}}
+			/>,
+		);
 
 		// Hero
-		expect(screen.getByText("beskid.http")).toBeInTheDocument();
+		expect(screen.getAllByText("beskid.http").length).toBeGreaterThan(0);
 		expect(screen.getByText("HTTP client for Beskid.")).toBeInTheDocument();
 		expect(screen.getByText(/Download latest/)).toBeInTheDocument();
 		expect(screen.getByText("Documentation")).toBeInTheDocument();
-		expect(screen.getByText("Discuss beskid.http")).toBeInTheDocument();
+		expect(screen.getByText("Browse files")).toBeInTheDocument();
+		const discuss = screen.getByText(/Discuss beskid.http/).closest("a");
+		expect(discuss).toHaveAttribute(
+			"href",
+			"https://community.beskid-lang.org/category/12/beskid-http",
+		);
+		expect(discuss).toHaveTextContent("2 topics, 5 posts");
 
 		// Facts
 		expect(screen.getAllByText(/downloads/).length).toBeGreaterThan(0);
@@ -82,8 +104,12 @@ describe("PackageDetail", () => {
 		expect(screen.getByText("Source repository")).toBeInTheDocument();
 		expect(screen.getByText("Project website")).toBeInTheDocument();
 
-		// README + dependencies
+		// README (rendered Markdown) + dependencies
 		expect(screen.getByText("README")).toBeInTheDocument();
+		expect(
+			screen.getAllByRole("heading", { level: 1, name: "beskid.http" }),
+		).toHaveLength(2);
+		expect(screen.getByText("A client.")).toBeInTheDocument();
 		expect(screen.getByText("Dependencies")).toBeInTheDocument();
 		expect(screen.getByText("beskid.core")).toBeInTheDocument();
 
@@ -97,5 +123,14 @@ describe("PackageDetail", () => {
 		render(<PackageDetail details={details} />);
 		expect(screen.queryByText("Community reviews")).not.toBeInTheDocument();
 		expect(screen.queryByText("Post review")).not.toBeInTheDocument();
+	});
+
+	it("shows no discussion link when the registry has not linked a NodeBB category", () => {
+		render(
+			<PackageDetail
+				details={{ ...details, package: { ...details.package, community: null } }}
+			/>,
+		);
+		expect(screen.queryByText(/Discuss/)).not.toBeInTheDocument();
 	});
 });

@@ -8,9 +8,10 @@ import {
 } from "@cyber-nomad-collective/beskid-ui-react";
 import { Link } from "@tanstack/react-router";
 import { packageKindPresentation } from "#/lib/package-kind-presentation";
-import type { PackageDetails } from "#/lib/pckg-api";
+import type { PackageCommunityStatus, PackageDetails } from "#/lib/pckg-api";
+import { CommunityLink } from "./community-card";
 import { FactsCard } from "./facts-card";
-import { NodebbLink } from "./nodebb-link";
+import { Markdown } from "./markdown";
 import { VersionList } from "./version-list";
 
 /**
@@ -18,13 +19,14 @@ import { VersionList } from "./version-list";
  *
  * Layout (top → bottom):
  *  1. Hero — category eyebrow + name + description + Download /
- *     Documentation action pair + NodeBB "Discuss" deep-link (community
- *     discussion lives on community.beskid-lang.org; in-app reviews were
- *     removed in favour of NodeBB subforums).
+ *     Documentation / Browse files actions + the NodeBB "Discuss" link the
+ *     registry linked for this package (community discussion lives on
+ *     community.beskid-lang.org; in-app reviews were removed in favour of
+ *     NodeBB categories).
  *  2. Tag strip of secondary badges.
  *  3. Facts card — 2-col muted grid (downloads, owner, updated, dependents,
  *     repo, website).
- *  4. README section (surfaces `PackageDetails.readme`).
+ *  4. README section (surfaces `PackageDetails.readme` as rendered Markdown).
  *  5. Dependencies section (surfaces `PackageDetails.dependencies`).
  *  6. Versions — bordered list.
  *
@@ -32,10 +34,11 @@ import { VersionList } from "./version-list";
  */
 export function PackageDetail({
 	details,
-	communitySlug,
+	community,
 }: {
 	details: PackageDetails;
-	communitySlug?: string;
+	/** Live NodeBB counters; `undefined` while loading, `null` when unlinked. */
+	community?: PackageCommunityStatus | null;
 }) {
 	const { package: pkg } = details;
 	const presentation = packageKindPresentation({
@@ -66,13 +69,32 @@ export function PackageDetail({
 						<Link
 							to="/docs/$package"
 							params={{ package: pkg.name }}
-							search={{ version: details.latestVersion ?? "", doc: "", source: "" }}
+							search={{
+								version: details.latestVersion ?? "",
+								tab: "api",
+								item: "",
+								doc: "",
+							}}
 							className={buttonVariants({ variant: "outline" })}
 						>
 							Documentation
 						</Link>
 					)}
-					<NodebbLink packageName={pkg.name} slug={communitySlug} />
+					{details.latestVersion && (
+						<Link
+							to="/packages/$name/files"
+							params={{ name: pkg.name }}
+							search={{ version: details.latestVersion, path: "" }}
+							className={buttonVariants({ variant: "outline" })}
+						>
+							Browse files
+						</Link>
+					)}
+					<CommunityLink
+						packageName={pkg.name}
+						community={pkg.community}
+						status={community}
+					/>
 				</div>
 			</div>
 
@@ -122,9 +144,10 @@ export function PackageDetail({
 			{details.readme && (
 				<section className="mt-8">
 					<h2 className="text-xl font-semibold">README</h2>
-					<pre className="mt-3 overflow-x-auto whitespace-pre-wrap rounded-md border border-border p-4 text-sm">
-						{details.readme}
-					</pre>
+					<Markdown
+						source={details.readme}
+						className="mt-3 rounded-md border border-border p-4"
+					/>
 				</section>
 			)}
 
