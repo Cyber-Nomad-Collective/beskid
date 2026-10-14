@@ -1,6 +1,6 @@
 ---
 title: "beskid 0.6.0: One Front End, Function Values and Rust Glue"
-description: "beskid 0.6.0 retires the second type checker, makes functions values, lets a for loop walk your own iterators, calls Rust in process through a checked C ABI and removes the runtime's fixed table sizes."
+description: "beskid 0.6.0 retires the second type checker, makes functions values, lets a for loop walk your own iterators, calls Rust in process through a checked C ABI, removes the runtime's fixed table sizes and makes compiles and string operations several times faster."
 date: 2026-10-13
 blogStatus: in-progress
 release: v0.6.0
@@ -12,7 +12,7 @@ cover:
   sourceLabel: "Andrew J. Russell, Public domain"
 ---
 
-<!-- DRAFT. Update `date` to the publication date, set `blogStatus: released` and `draft: false` only after the release evidence below exists. The cover file /blog-covers/v0-6-0-release.jpg must be added before publication. -->
+<!-- DRAFT. Update `date` to the publication date, set `blogStatus: released` and `draft: false` only after the release evidence below exists. -->
 
 <!-- VERIFY: three-platform release evidence (Linux x64, macOS arm64, Windows x64; 86 mandatory cases each) is not complete. Ship this lead sentence only when it is. -->
 **beskid 0.6.0 is out for Linux, macOS and Windows.** The 0.5 line was about talking to other machines. 0.6 is about the compiler agreeing with itself, and about talking to other languages on the same machine.
@@ -25,7 +25,7 @@ The `beskid_queries` query layer is now the only semantic authority for `check`,
 
 Three things follow from that. A program that `check` accepts does not fail a second type check at build time. A single `.bd` file outside a project gets the same checks as a file inside one. And `Main` is no longer reported as an unused private item, which it never was.
 
-Builds also got faster, from parallel item emission, streamed query snapshots and query results that are reused when the content they depend on has not changed. There is no clean before-and-after benchmark for a typical project yet, so this post does not quote one.
+Builds also got faster. The numbers are further down, under "Faster builds, faster strings".
 
 ## Functions are values
 
@@ -77,12 +77,20 @@ i64 SkipTwoStopAtFive() {
 
 The iterator is evaluated once and kept alive by the loop, so the collector can run inside the body. Generic iterators and loops inside generic functions work too. Outside generic code, `check` rejects anything else in a `for` with E1215, so it accepts exactly what `build` can lower.
 
+## `match` covers what `check` accepts
+
+Every `match` that `check` accepts now builds, and `check` rejects the ones the code generator cannot lower. That covers `when` guards (a false guard moves on to the next arm, and a guarded arm never counts toward exhaustiveness), literal patterns over integers, `bool`, `char`, floats and strings, and nested generic payloads such as `Result::Ok(Option::Some(x))`, also inside generic code. A guard that is a bare name, such as `when strict =>`, is no longer read as the start of a lambda.
+
+A match that misses a case fails with E1304 and names one pattern it does not cover, for example `Result::Ok(_) not covered`.
+
 ## Smaller language changes
 
 - **Qualified paths without `use`.** `Core.Output.Write(...)` resolves as long as the package is in your dependency closure. A local name with the same spelling wins. If two packages provide the same module path, that is an error (E1104) instead of a coin toss.
 - **Fields are private by default.** A field without `pub` can only be read or set in the source file that declares its type. Elsewhere it fails with E1211.
 - **`Core`, not `Std`.** Corelib modules keep their own roots: `use Core.Output;`. The `Std` namespace and its alias layer are gone.
 - **More primitive types:** `i8`, `i16`, `u16`, `u64` and `f32`. Conversions between `char` and `u32` are checked and reject surrogates.
+- **Method calls on any receiver.** `(reader).Begin()`, `(this).reader.Begin()`, a method of a parameter typed by a contract and a method of a generic value with a `where` bound all resolve like the plain `reader.Begin()`.
+- **`if a == b {}` parses.** The parser used to read `b {}` as a struct literal (`Point { x: 1 }`) and then miss the block. A struct literal at the top level of an `if`, `while`, `for` or `match` head now has to be in parentheses.
 
 ## Mods, serialization and BSOL
 
@@ -92,10 +100,9 @@ A Mod's descriptor (`mod.descriptor.json`, schema 3) records each build tool by 
 
 That machinery carries two new Corelib packages, both written in beskid. `Core.Serialization` holds format-independent data values, shape identities, limits and checked decimal parsing. `Core.Bsol` is a native BSOL lexer, parser, writer and schema validator, with profile composition, offline import resolution, migration and typed reads and writes.
 
-`Core.Dynamic` wraps a registered value with its shape and casts it back with a checked result.
+A type marked `[Serialize]` now goes to text and back through typed code, generic types such as `Pair<T>` included. The compiler issues the field decoder and encoder for each type the program uses. `Core.Bsol.Serialization.Read<T>` reads a value from BSOL text, `WriteTyped<T>` writes one, and `Decoding.DecoderFor<T, R>` decodes from the reader of any format. A generic `[Serialize]` type applied to something without a codec, such as `Pair<Opaque>`, fails the build with a message that names the field. It used to build without a word.
 
-<!-- VERIFY: Dynamic mapping DYN-06-03/04 pending -->
-Mapping one registered shape to another builds a fresh destination and accepts only lossless conversions. A narrowing or a failing nested field rejects the whole mapping, with no partial result and no change to the source.
+`Core.Dynamic` wraps a registered value with its shape and casts it back with a checked result. `Dynamic.Mapping<S, D>()` asks the compiler for a mapping from one registered shape to another. The compiler approves it only when every conversion is lossless: fields matched by name, integers widened, an optional field with no source left empty. `Dynamic.Map` then builds a fresh destination. A narrowing or a failing nested field rejects the whole mapping, with no partial result and no change to the source.
 
 Corelib also gains `Core.Process` (start a child, pipe its standard streams, wait with a deadline, terminate it), `Core.Json`, string search and builders, number parsing and formatting, sorting, hashed collections, lexical paths and calendar arithmetic.
 
@@ -127,6 +134,35 @@ On Windows, a network transfer that completes as its deadline fires now keeps it
 
 `Thread.Spawn`, `Thread.Join`, `Thread` and `ThreadError` are removed. Fibers, started with `spawn`, are the concurrency model. `Thread.Yield` stays.
 
+## Faster builds, faster strings
+
+The compiler spent most of its time where it had no business being. Parsing rescanned the file from its start to find each span's line and column. Path lookups resolved symbolic links on every call. Name lookups scanned whole files. Each is now a table built once. Builds also emit items in parallel and reuse query results whose inputs did not change.
+
+Wall time on our NixOS build machine, compiler built with the dev profile. The machine was shared with other jobs, so each figure is the mean of two to six runs. "Before" is the 0.6 development tree before this work; 0.5.3 was not measured the same way.
+
+| Workload | Before | 0.6.0 |
+|---|---|---|
+| Test target that runs the Serialization Mod's generation tests | 180 s | about 14 s |
+| `beskid check` on the Corelib `compiler-sdk` package | 77 s | 12 to 15 s |
+| Rebuilding the Serialization Mod | 150 s | 12 to 14 s |
+| Building the runtime kit (the native runtime that programs link) | 52 s | about 6 s |
+
+Programs got faster too, wherever strings and hash tables are involved. A comparison with a literal no longer builds the literal as a new string first. A new string is allocated once instead of grown byte by byte. `String.Join` sizes its result once instead of copying it over and over.
+
+Time per operation on the same machine, with a debug build of the runtime kit, over 100,000 iterations, again against the 0.6 tree before the change. A release kit was not measured.
+
+| Operation | Before | 0.6.0 |
+|---|---|---|
+| `==` against a string literal | 5 to 6.6 µs | 1 to 2 ns |
+| `CompareOrdinal` | 513 ns | 50 ns |
+| `StringMap` lookup | 1,527 ns | 95 ns |
+| `I64Map` lookup | 1,022 ns | 55 ns |
+| String interpolation | 19.7 µs | 2.6 µs |
+| Concatenation | 14.8 µs | 1.2 µs |
+| `String.Join` of 16,000 lines | over 10 minutes | about 4 ms |
+
+The same work fixed a use-after-free: a collection while a string operation built its right operand could free the left one.
+
 ## A CLI built around tasks
 
 Everyday commands sit at the root: `new`, `check`, `build`, `run`, `test`, `fmt`, `doc`, `add`, `remove`, `update`, `package`, `toolchain` and `doctor`. Compiler inspection moved under `beskid dev`. An old spelling such as `beskid analyze` fails and names its replacement.
@@ -142,9 +178,9 @@ beskid run --project Hello -- first second
 - `check`, `build`, `test`, `add`, `remove`, `update` and `doctor` take `--json` and print NDJSON (newline-delimited JSON): one record per line, each with `schemaVersion`, ending in one result record. `beskid dev capabilities --json` lists the commands and their output schemas, so a tool can ask instead of parsing `--help`.
 - `-q`/`--quiet` and `-v`/`--verbose` are global.
 - `beskid doctor` reports installation problems without changing anything.
+- `beskid fmt` keeps attributes on functions, methods, fields and contract methods. It used to drop them, which deleted `[Export]` and `[Extern]` markers.
 
-<!-- VERIFY: transitive resolution pending -->
-Registry dependencies resolve transitively: adding a package also locks the packages it depends on, and removing it drops the ones nothing else needs.
+Registry dependencies resolve transitively: adding a package also locks the packages it depends on, and removing it drops the ones nothing else needs. Two different versions of one package in the closure fail and name both requesters. The `--json` change records list every transitive package whose locked version changed.
 
 <!-- VERIFY: VS Code extension 0.6.0 published (beskid_vscode package.json is 0.6.0; release tag and Marketplace listing not confirmed) -->
 The VS Code extension 0.6.0 uses the new command surface and installs the language server through `beskid dev lsp install`.
@@ -158,6 +194,7 @@ beskid has no users yet, so there is no migration guide. For the record, these c
 - Non-`pub` fields are private to their source file (E1211).
 - A module path provided by two packages fails (E1104).
 - A lambda that captures a `mut` local outside `spawn` fails (E1233).
+- A struct literal at the top level of an `if`, `while`, `for` or `match` head must be in parentheses.
 - `BESKID_HEAP_MAX_BYTES` is now `BESKID_HEAP_MAX`.
 - `Thread.Spawn` and the 0.4 Glue attributes and Mod contracts are gone.
 

@@ -1,0 +1,314 @@
+{
+  "schema_version": 1,
+  "kind": "cli06-06-uncoached-observation",
+  "verification": "observer-attested",
+  "version": "0.6.0",
+  "superrepo_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "compiler_commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "candidate_cli_sha256": {
+    "x86_64-unknown-linux-gnu": "1111111111111111111111111111111111111111111111111111111111111111",
+    "aarch64-apple-darwin": "2222222222222222222222222222222222222222222222222222222222222222",
+    "x86_64-pc-windows-msvc": "3333333333333333333333333333333333333333333333333333333333333333"
+  },
+  "recorded_utc": "2026-10-20T12:00:00Z",
+  "observer": "EXAMPLE Observer Name, release owner",
+  "participants": [
+    {
+      "id": "P1",
+      "target": "x86_64-unknown-linux-gnu",
+      "help_only": true,
+      "add_found_seconds": 30,
+      "journey_completed": true,
+      "journey_seconds": 240,
+      "transcript": [
+        {
+          "utc": "2026-10-20T10:00:00Z",
+          "command": "beskid --version",
+          "exit_code": 0,
+          "output": "beskid 0.6.0\n"
+        },
+        {
+          "utc": "2026-10-20T10:00:20Z",
+          "command": "beskid --help",
+          "exit_code": 0,
+          "output": "(help text)\n"
+        },
+        {
+          "utc": "2026-10-20T10:00:45Z",
+          "command": "beskid new hello",
+          "exit_code": 0,
+          "output": "created hello\n"
+        },
+        {
+          "utc": "2026-10-20T10:01:20Z",
+          "command": "beskid add --help",
+          "exit_code": 0,
+          "output": "(help text)\n"
+        },
+        {
+          "utc": "2026-10-20T10:01:35Z",
+          "command": "beskid add Greeter --path ../Greeter",
+          "exit_code": 0,
+          "output": "added Greeter\n"
+        },
+        {
+          "utc": "2026-10-20T10:02:10Z",
+          "command": "beskid check --project hello/hello.bproj",
+          "exit_code": 0,
+          "output": "ok\n"
+        },
+        {
+          "utc": "2026-10-20T10:02:40Z",
+          "command": "beskid build --project hello/hello.bproj --output hello-app",
+          "exit_code": 0,
+          "output": "built\n"
+        },
+        {
+          "utc": "2026-10-20T10:03:10Z",
+          "command": "beskid run --project hello/hello.bproj",
+          "exit_code": 0,
+          "output": ""
+        }
+      ],
+      "failures": []
+    },
+    {
+      "id": "P2",
+      "target": "aarch64-apple-darwin",
+      "help_only": true,
+      "add_found_seconds": 30,
+      "journey_completed": true,
+      "journey_seconds": 240,
+      "transcript": [
+        {
+          "utc": "2026-10-20T10:00:00Z",
+          "command": "beskid --version",
+          "exit_code": 0,
+          "output": "beskid 0.6.0\n"
+        },
+        {
+          "utc": "2026-10-20T10:00:20Z",
+          "command": "beskid --help",
+          "exit_code": 0,
+          "output": "(help text)\n"
+        },
+        {
+          "utc": "2026-10-20T10:00:45Z",
+          "command": "beskid new hello",
+          "exit_code": 0,
+          "output": "created hello\n"
+        },
+        {
+          "utc": "2026-10-20T10:01:20Z",
+          "command": "beskid add --help",
+          "exit_code": 0,
+          "output": "(help text)\n"
+        },
+        {
+          "utc": "2026-10-20T10:01:35Z",
+          "command": "beskid add Greeter --path ../Greeter",
+          "exit_code": 0,
+          "output": "added Greeter\n"
+        },
+        {
+          "utc": "2026-10-20T10:02:10Z",
+          "command": "beskid check --project hello/hello.bproj",
+          "exit_code": 0,
+          "output": "ok\n"
+        },
+        {
+          "utc": "2026-10-20T10:02:40Z",
+          "command": "beskid build --project hello/hello.bproj --output hello-app",
+          "exit_code": 0,
+          "output": "built\n"
+        },
+        {
+          "utc": "2026-10-20T10:03:10Z",
+          "command": "beskid run --project hello/hello.bproj",
+          "exit_code": 0,
+          "output": ""
+        }
+      ],
+      "failures": []
+    },
+    {
+      "id": "P3",
+      "target": "x86_64-pc-windows-msvc",
+      "help_only": true,
+      "add_found_seconds": 30,
+      "journey_completed": true,
+      "journey_seconds": 240,
+      "transcript": [
+        {
+          "utc": "2026-10-20T10:00:00Z",
+          "command": "beskid.exe --version",
+          "exit_code": 0,
+          "output": "beskid 0.6.0\n"
+        },
+        {
+          "utc": "2026-10-20T10:00:20Z",
+          "command": "beskid.exe --help",
+          "exit_code": 0,
+          "output": "(help text)\n"
+        },
+        {
+          "utc": "2026-10-20T10:00:45Z",
+          "command": "beskid.exe new hello",
+          "exit_code": 0,
+          "output": "created hello\n"
+        },
+        {
+          "utc": "2026-10-20T10:01:20Z",
+          "command": "beskid.exe add --help",
+          "exit_code": 0,
+          "output": "(help text)\n"
+        },
+        {
+          "utc": "2026-10-20T10:01:35Z",
+          "command": "beskid.exe add Greeter --path ../Greeter",
+          "exit_code": 0,
+          "output": "added Greeter\n"
+        },
+        {
+          "utc": "2026-10-20T10:02:10Z",
+          "command": "beskid.exe check --project hello/hello.bproj",
+          "exit_code": 0,
+          "output": "ok\n"
+        },
+        {
+          "utc": "2026-10-20T10:02:40Z",
+          "command": "beskid.exe build --project hello/hello.bproj --output hello-app",
+          "exit_code": 0,
+          "output": "built\n"
+        },
+        {
+          "utc": "2026-10-20T10:03:10Z",
+          "command": "beskid.exe run --project hello/hello.bproj",
+          "exit_code": 0,
+          "output": ""
+        }
+      ],
+      "failures": []
+    },
+    {
+      "id": "P4",
+      "target": "x86_64-unknown-linux-gnu",
+      "help_only": true,
+      "add_found_seconds": 55,
+      "journey_completed": true,
+      "journey_seconds": 240,
+      "transcript": [
+        {
+          "utc": "2026-10-20T10:00:00Z",
+          "command": "beskid --version",
+          "exit_code": 0,
+          "output": "beskid 0.6.0\n"
+        },
+        {
+          "utc": "2026-10-20T10:00:20Z",
+          "command": "beskid --help",
+          "exit_code": 0,
+          "output": "(help text)\n"
+        },
+        {
+          "utc": "2026-10-20T10:00:45Z",
+          "command": "beskid new hello",
+          "exit_code": 0,
+          "output": "created hello\n"
+        },
+        {
+          "utc": "2026-10-20T10:01:20Z",
+          "command": "beskid add --help",
+          "exit_code": 0,
+          "output": "(help text)\n"
+        },
+        {
+          "utc": "2026-10-20T10:01:35Z",
+          "command": "beskid add Greeter --path ../Greeter",
+          "exit_code": 0,
+          "output": "added Greeter\n"
+        },
+        {
+          "utc": "2026-10-20T10:02:10Z",
+          "command": "beskid check --project hello/hello.bproj",
+          "exit_code": 0,
+          "output": "ok\n"
+        },
+        {
+          "utc": "2026-10-20T10:02:40Z",
+          "command": "beskid build --project hello/hello.bproj --output hello-app",
+          "exit_code": 0,
+          "output": "built\n"
+        },
+        {
+          "utc": "2026-10-20T10:03:10Z",
+          "command": "beskid run --project hello/hello.bproj",
+          "exit_code": 0,
+          "output": ""
+        }
+      ],
+      "failures": []
+    },
+    {
+      "id": "P5",
+      "target": "aarch64-apple-darwin",
+      "help_only": true,
+      "add_found_seconds": 90,
+      "journey_completed": false,
+      "journey_seconds": null,
+      "transcript": [
+        {
+          "utc": "2026-10-20T10:00:00Z",
+          "command": "beskid --version",
+          "exit_code": 0,
+          "output": "beskid 0.6.0\n"
+        },
+        {
+          "utc": "2026-10-20T10:00:20Z",
+          "command": "beskid --help",
+          "exit_code": 0,
+          "output": "(help text)\n"
+        },
+        {
+          "utc": "2026-10-20T10:00:45Z",
+          "command": "beskid new hello",
+          "exit_code": 0,
+          "output": "created hello\n"
+        },
+        {
+          "utc": "2026-10-20T10:01:20Z",
+          "command": "beskid add --help",
+          "exit_code": 0,
+          "output": "(help text)\n"
+        },
+        {
+          "utc": "2026-10-20T10:01:35Z",
+          "command": "beskid add Greeter --path ../Greeter",
+          "exit_code": 0,
+          "output": "added Greeter\n"
+        },
+        {
+          "utc": "2026-10-20T10:02:10Z",
+          "command": "beskid check --project hello/hello.bproj",
+          "exit_code": 0,
+          "output": "ok\n"
+        },
+        {
+          "utc": "2026-10-20T10:02:40Z",
+          "command": "beskid build --project hello/hello.bproj --output hello-app",
+          "exit_code": 0,
+          "output": "built\n"
+        },
+        {
+          "utc": "2026-10-20T10:03:20Z",
+          "command": "beskid run --project hello/hello.bproj",
+          "exit_code": 1,
+          "output": "error\n"
+        }
+      ],
+      "failures": [
+        "did not reach a successful run within five minutes (EXAMPLE)"
+      ]
+    }
+  ]
+}

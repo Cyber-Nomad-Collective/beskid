@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "kind": "cli06-06-uncoached-observation",
+  "verification": "observer-attested",
+  "version": "0.6.0",
+  "superrepo_commit": "<40 hex: superrepo commit of the frozen candidate>",
+  "compiler_commit": "<40 hex: compiler commit of the frozen candidate>",
+  "candidate_cli_sha256": {
+    "x86_64-unknown-linux-gnu": "<64 hex: sha256 of the candidate CLI for this target>",
+    "aarch64-apple-darwin": "<64 hex: sha256 of the candidate CLI for this target>",
+    "x86_64-pc-windows-msvc": "<64 hex: sha256 of the candidate CLI for this target>"
+  },
+  "recorded_utc": "YYYY-MM-DDTHH:MM:SSZ",
+  "observer": "<observer full name and role>",
+  "participants": [
+    {
+      "id": "P1",
+      "target": "x86_64-unknown-linux-gnu",
+      "help_only": true,
+      "add_found_seconds": null,
+      "journey_completed": false,
+      "journey_seconds": null,
+      "transcript": [
+        {
+          "utc": "YYYY-MM-DDTHH:MM:SSZ",
+          "command": "beskid --version",
+          "exit_code": 0,
+          "output": "beskid 0.6.0\n"
+        },
+        {
+          "utc": "YYYY-MM-DDTHH:MM:SSZ",
+          "command": "<exact command as typed>",
+          "exit_code": 0,
+          "output": "<output, trimmed to 64 KiB>"
+        }
+      ],
+      "failures": []
+    },
+    {
+      "id": "P2",
+      "target": "aarch64-apple-darwin",
+      "help_only": true,
+      "add_found_seconds": null,
+      "journey_completed": false,
+      "journey_seconds": null,
+      "transcript": [
+        {
+          "utc": "YYYY-MM-DDTHH:MM:SSZ",
+          "command": "beskid --version",
+          "exit_code": 0,
+          "output": "beskid 0.6.0\n"
+        },
+        {
+          "utc": "YYYY-MM-DDTHH:MM:SSZ",
+          "command": "<exact command as typed>",
+          "exit_code": 0,
+          "output": "<output, trimmed to 64 KiB>"
+        }
+      ],
+      "failures": []
+    },
+    {
+      "id": "P3",
+      "target": "x86_64-pc-windows-msvc",
+      "help_only": true,
+      "add_found_seconds": null,
+      "journey_completed": false,
+      "journey_seconds": null,
+      "transcript": [
+        {
+          "utc": "YYYY-MM-DDTHH:MM:SSZ",
+          "command": "beskid --version",
+          "exit_code": 0,
+          "output": "beskid 0.6.0\n"
+        },
+        {
+          "utc": "YYYY-MM-DDTHH:MM:SSZ",
+          "command": "<exact command as typed>",
+          "exit_code": 0,
+          "output": "<output, trimmed to 64 KiB>"
+        }
+      ],
+      "failures": []
+    },
+    {
+      "id": "P4",
+      "target": "x86_64-unknown-linux-gnu",
+      "help_only": true,
+      "add_found_seconds": null,
+      "journey_completed": false,
+      "journey_seconds": null,
+      "transcript": [
+        {
+          "utc": "YYYY-MM-DDTHH:MM:SSZ",
+          "command": "beskid --version",
+          "exit_code": 0,
+          "output": "beskid 0.6.0\n"
+        },
+        {
+          "utc": "YYYY-MM-DDTHH:MM:SSZ",
+          "command": "<exact command as typed>",
+          "exit_code": 0,
+          "output": "<output, trimmed to 64 KiB>"
+        }
+      ],
+      "failures": []
+    },
+    {
+      "id": "P5",
+      "target": "aarch64-apple-darwin",
+      "help_only": true,
+      "add_found_seconds": null,
+      "journey_completed": false,
+      "journey_seconds": null,
+      "transcript": [
+        {
+          "utc": "YYYY-MM-DDTHH:MM:SSZ",
+          "command": "beskid --version",
+          "exit_code": 0,
+          "output": "beskid 0.6.0\n"
+        },
+        {
+          "utc": "YYYY-MM-DDTHH:MM:SSZ",
+          "command": "<exact command as typed>",
+          "exit_code": 0,
+          "output": "<output, trimmed to 64 KiB>"
+        }
+      ],
+      "failures": []
+    }
+  ]
+}

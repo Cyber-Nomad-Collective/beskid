@@ -28,7 +28,20 @@ summary; the itemized development log stays under [Unreleased] below and in
 - Lambda parameters and bodies are typed from the position that declares the
   function type, through one contextual typing query.
 - `for id in expr` iterates an array value, evaluated once, in index order, in
-  addition to `range(start, end)` (OpenSpec `v06-query-front-end`).
+  addition to `range(start, end)` (OpenSpec `v06-query-front-end`). It also
+  iterates any value whose nominal type declares a unique zero-parameter
+  `Next()` returning `Option<T>`, including generic iterators and loops in
+  generic items; outside generic items, any other iterable fails with E1215.
+- Every `match` form `check` admits lowers: `when` guards (guarded arms never
+  count toward exhaustiveness), literal patterns over integer, `bool`, `char`,
+  float and string scrutinees, nested generic enum payloads and matches on
+  generic record fields in specializations. E1304 names one uncovered pattern.
+  Bare-name guards (`when strict =>`) parse as guards, not lambdas.
+- Method calls resolve for every receiver spelling (`(reader).Begin()`,
+  `(this).reader.Begin()`), including contract-typed parameters and
+  `where`-bounded generic parameters and fields.
+- No struct literal at the top level of `if`, `while`, `for` and `match`
+  heads; `if a == b {}` parses.
 - New primitive types `i8`, `i16`, `u16`, `u64` and `f32`. Checked `char`/`u32`
   conversions reject surrogates and values outside the Unicode scalar range.
 - Struct fields without `pub` are private to the source unit that declares the
@@ -57,8 +70,13 @@ summary; the itemized development log stays under [Unreleased] below and in
   synthetic single-file `App` plan.
 - The entry function `Main` of an `App` or `Test` target is never reported as an
   unused private item (W1504).
-- Build speed: parallel item emission, streamed query snapshots and
-  content-stable query reuse.
+- Build speed: parallel item emission, streamed query snapshots,
+  content-stable query reuse, linear span line/column computation, cached
+  canonical paths and per-kind and per-name syntax indexes. On the builder (dev
+  profile, wall): Serialization Mod generation tests 180 s to about 14 s,
+  `beskid check` of `compiler-sdk` 77 s to 12-15 s, Serialization Mod rebuild
+  150 s to 12-14 s, runtime kit build 52 s to about 6 s
+  (`docs/reports/2026-10-13-v06-compile-time.md`).
 
 ### Corelib
 
@@ -73,6 +91,21 @@ summary; the itemized development log stays under [Unreleased] below and in
   `Core.String.Search`/`Transform`/`Builder`, `Core.Text.Number`,
   `Core.Collections.Sort` and hashed collections, `Core.Path.Lexical`,
   `Core.Time.Calendar` and `Testing.Expect`.
+- Typed serialization for `[Serialize]` types, generic ones included: the
+  compiler issues each field decoder and encoder; `Decoding.DecoderFor<T, R>`,
+  `Core.Bsol.Serialization.Read<T>` and `WriteTyped<T>`. An application without
+  field codec facts fails the build naming the field.
+- Registered Dynamic mapping (DYN-06-03/04): `Dynamic.Mapping<S, D>()` approves
+  only lossless plans; `Dynamic.Map` builds a fresh destination and rejects the
+  whole mapping on any failing field.
+- String and hash lookups in nanoseconds: literal comparisons inline,
+  single-allocation string construction, linear `String.Join`, `Repeat` and
+  `Replace`, direct hash table indexing, and no GC root registration in
+  functions that cannot collect. Builder, debug kit, 1e5 iterations: `==`
+  against a literal 5-6.6 us to 1-2 ns, `CompareOrdinal` 513 to 50 ns,
+  `StringMap` lookup 1527 to 95 ns, `I64Map` 1022 to 55 ns, interpolation 19.7
+  to 2.6 us, concatenation 14.8 to 1.2 us. Fixes a use-after-free of the left
+  operand of binary string operations. `String.Trim` trims LF and CR.
 - Saturating float-to-integer conversions, ordinal string ordering, `f32` and
   `f64` interpolation, `i64` minimum value text and `bool` text.
 - The Corelib test workspace is consolidated into 40 suite targets.
@@ -142,6 +175,11 @@ summary; the itemized development log stays under [Unreleased] below and in
   `--template` select others. `beskid package template` manages templates.
 - `beskid doctor` reports installation problems without changing anything.
   `beskid toolchain status|update` replaces `beskid up`.
+- Registry dependencies resolve and lock transitively; `remove` drops
+  unreachable transitive packages, differing requests for one package fail
+  naming both requesters, and change records list changed transitive pins.
+- `beskid fmt` keeps attributes on functions, methods, fields and contract
+  methods.
 - LSP: the initialization option `modHost` (`path`, `runtimePrefix`,
   `runtimeProfile`) selects the native Mod host and runtime kit. An invalid
   value fails `initialize`. Project preparation failures are published as a
@@ -159,6 +197,8 @@ summary; the itemized development log stays under [Unreleased] below and in
 - Non-`pub` fields are inaccessible outside their declaring source unit (E1211).
 - A module path provided by two packages of the closure fails (E1104).
 - A lambda that captures a `mut` local outside `spawn` fails (E1233).
+- A struct literal at the top level of an `if`, `while`, `for` or `match` head
+  must be parenthesized.
 - `BESKID_HEAP_MAX_BYTES` is replaced by `BESKID_HEAP_MAX`.
 - The HIR-era phase ids `lower.ast`, `lower.resolve_pass1`, `lower.normalize`,
   `lower.resolve`, `lower.type_check` and `semantic.error_handling` are no
