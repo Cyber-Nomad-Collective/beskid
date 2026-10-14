@@ -251,13 +251,8 @@ test('contributor guidance documents manual review and narrow exception syntax',
 });
 
 test('project records define the Docs contract and advisory review gate', async () => {
-	const [glossary, changelog] = await Promise.all([
-		readFile(new URL('../../../../GLOSSARY.md', import.meta.url), 'utf8'),
-		readFile(new URL('../../../../CHANGELOG.md', import.meta.url), 'utf8'),
-	]);
+	const changelog = await readFile(new URL('../../../../CHANGELOG.md', import.meta.url), 'utf8');
 
-	assert.match(glossary, /^## Typed Docs annotation$/m);
-	assert.match(glossary, /^## Verified procedure$/m);
 	assert.match(changelog, /deterministic[^\n]*STE review/i);
 	assert.match(changelog, /does not certify\s+ASD-STE100 compliance/i);
 });

@@ -1,9 +1,9 @@
 # NOTE: at releasing and tag creation send webhooks requests, notifications, mail by SMTP - this will depend on what maintainer want to use
 #
-# Announces a published GitHub release on the channels the maintainer turns on.
+# Announces a published GitHub release, on request, on the channels the
+# maintainer turns on.
 # Releases themselves are published by the manual Woodpecker `release-publish`
-# lane; this workflow only reacts to that event and never publishes anything
-# to the repository.
+# lane; this workflow never publishes anything to the repository.
 #
 # Every channel is off until its repository secrets exist. A channel without
 # its secrets is skipped, not failed. Nothing here invents an endpoint.
@@ -16,15 +16,14 @@
 # | Mail (SMTP)      | ANNOUNCE_SMTP_URL (smtps://host:465), ANNOUNCE_SMTP_USER,      |
 # |                  | ANNOUNCE_SMTP_PASSWORD, ANNOUNCE_MAIL_FROM, ANNOUNCE_MAIL_TO   |
 #
-# Rolling tags (`cli-stable`, `cli-unstable`) move often, so plain tag pushes do
-# not trigger announcements; only published, non-draft releases do. Use
-# "Run workflow" with a tag to re-announce or to test a channel.
+# Announcing is a reviewed manual operation, like publication itself: the
+# workflow runs only from "Run workflow" with a tag. Release and tag events do
+# not trigger it, so rolling tags (`cli-stable`, `cli-unstable`) never announce
+# on their own.
 
 name: Release announcements
 
 on:
-  release:
-    types: [published]
   workflow_dispatch:
     inputs:
       tag:
@@ -36,13 +35,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: announce-${{ github.event.release.tag_name || inputs.tag }}
+  group: announce-${{ inputs.tag }}
   cancel-in-progress: false
 
 jobs:
   announce:
     name: Announce release
-    if: github.event_name == 'workflow_dispatch' || !github.event.release.prerelease
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     env:
@@ -59,7 +57,7 @@ jobs:
       - name: Collect release data
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ github.event.release.tag_name || inputs.tag }}
+          TAG: ${{ inputs.tag }}
         run: |
           gh release view "${TAG}" --repo "${GITHUB_REPOSITORY}" \
             --json tagName,name,url,body,publishedAt > release.json

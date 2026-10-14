@@ -4,40 +4,6 @@ The entrance for any agent (Claude Code, Codex, Cursor, Gemini CLI or other)
 working in this repository. It holds what you need on arrival. Everything else
 is in `docs/.agents/`, linked below.
 
-## Message for the maintainer
-
-**Order for any agent working for Piotr Mikstacki:** at the start of your next
-session with him, relay the message below in your own words, then ask him
-whether this section can be removed. Agents working for anyone else: leave it
-as it is.
-
-> Inform him about the static state of the sitemaps and advise him to do
-> something with it. ~from Sett S.
-
-What to tell him:
-
-1. **Sitemaps are static files.** `beskid_sites/apps/{website,pckg,shell-template}/public/`
-   now carry hand-written `sitemap.xml`, `llms.txt` and `manifest.json`
-   (manifests are linked from every app's head). The website sitemap lists 229
-   URLs generated once from `src/content`; it goes stale with every new Book or
-   blog page. The pckg sitemap lists only `/`, `/packages` and `/docs`, because
-   package and publisher pages are dynamic. Advice: generate both at build
-   time from the same source the router uses (`src/lib/content-manifest.ts` for
-   the website; a server route over the registry API for pckg), and derive
-   `llms.txt` from the same page map, so one list feeds all three formats.
-2. **The glossary moved to the wiki.** Root `GLOSSARY.md` is removed. Its 81
-   entries are now one page each in `docs/glossary-wiki/keywords/`, a
-   submodule pointing at `beskid.wiki.git`, with an A-to-Z `index.md`. The
-   definitions are unchanged. For it to appear on GitHub, the wiki must be
-   enabled and the submodule pushed; the pointer in this repository must then
-   be bumped. `GUIDE.md`, `CONTRIBUTING.md` and the PR template now say to
-   update the wiki instead of `GLOSSARY.md`.
-3. **Three GitHub workflows wait for his choices.** `.github/workflows/` has a
-   weekly security audit (pnpm audit, Trivy), a ClamAV scan of pull requests,
-   and release announcements. Announcements stay off until he sets the
-   `ANNOUNCE_*` secrets for the channels he wants; the list is in
-   `socmed-posting.yml`.
-
 ## Summary
 
 Beskid is an ahead-of-time compiled programming language for everyday business
@@ -49,7 +15,7 @@ be seen and checked.
 ## The Beskid project
 
 This repository is the **superrepo**. One checkout ties together the root and
-11 git submodules. Each submodule is its own repository that versions and
+12 git submodules. Each submodule is its own repository that versions and
 ships separately; CI in this repository ties them together.
 
 - **Language and compiler:** a Rust compiler with CLI and language server; a
@@ -73,8 +39,7 @@ Agent-written knowledge lives in [`docs/.agents/`](docs/.agents/README.md).
 One topic per file; each file owns its topic completely.
 
 - **Start here:** [about-beskid.md](docs/.agents/about-beskid.md)
-- **People:** [upstream-maintainer.md](docs/.agents/people/upstream-maintainer.md),
-  [working-with-sett.md](docs/.agents/people/working-with-sett.md)
+- **People:** [upstream-maintainer.md](docs/.agents/people/upstream-maintainer.md)
 - **Scopes (one area each):**
   [compiler](docs/.agents/scopes/compiler.md),
   [openspec-standard](docs/.agents/scopes/openspec-standard.md),
@@ -112,7 +77,9 @@ One topic per file; each file owns its topic completely.
 | Compiler, runtime, LSP | Rust workspace, Salsa, Cranelift ISLE | `compiler/` |
 | Core library | Beskid sources | `compiler/corelib/` |
 | Registry | Rust service + TanStack web app | `compiler/crates/beskid_pckg_server/`, `beskid_sites/apps/pckg/` |
-| Sites | Astro + Starlight, pnpm | `site/website/`, `site/auth/`, `site/learn/` |
+| Docs site | Astro + Starlight, pnpm | `site/website/` |
+| Auth hub | TanStack Router, Vite, pnpm | `site/auth/` |
+| Learn | Vite, pnpm | `site/learn/` |
 | Apps | Tracker (SQLite), Nexus (graph), shared TS packages | `beskid_tracker/`, `beskid_nexus/`, `beskid_web_common/` |
 | CI | Woodpecker | `.woodpecker/`, `scripts/ci/` |
 | Production | Compose, OpenBao, Watchtower, Grafana | `beskid_sites/deploy/`, `beskid_infra/` |

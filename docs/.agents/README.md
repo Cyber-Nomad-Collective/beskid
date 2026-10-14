@@ -28,7 +28,6 @@ agent needs on arrival and links here for everything else.
 | [about-beskid.md](about-beskid.md) | What Beskid is, why it exists, how the pieces fit, and an outside view |
 | **people/** | Who is involved and how to work with them |
 | [people/upstream-maintainer.md](people/upstream-maintainer.md) | Upstream ownership and the maintainer's recorded working preferences |
-| [people/working-with-sett.md](people/working-with-sett.md) | Sett Sarverott, an outside contributor, and how sessions with Sett run |
 | **scopes/** | One area of the repository each: what it owns, its facts, its rules |
 | [scopes/compiler.md](scopes/compiler.md) | Rust compiler, corelib, lowering pipeline, ABI v5, LSP |
 | [scopes/openspec-standard.md](scopes/openspec-standard.md) | The normative standard, its catalog and validation |

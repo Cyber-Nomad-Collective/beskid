@@ -59,4 +59,4 @@ Checkout uses git submodules, not Google's `repo` tool.
 ## In sessions for contributors
 
 A contributor may have stricter rules, for example "never commit". Follow the
-stricter rule. See [../people/working-with-sett.md](../people/working-with-sett.md).
+stricter rule.

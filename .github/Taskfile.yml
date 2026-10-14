@@ -44,7 +44,7 @@ tasks:
     dir: '{{.TASKFILE_DIR}}'
     cmds:
       - for: { var: TEMPLATES }
-        cmd: python3 -c "import sys, yaml; yaml.safe_load(open(sys.argv[1]))" '{{.ITEM}}'
+        cmd: pnpm dlx js-yaml@4.1.0 '{{.ITEM}}' > /dev/null
     vars:
       TEMPLATES:
         sh: ls ISSUE_TEMPLATE/*.yml
