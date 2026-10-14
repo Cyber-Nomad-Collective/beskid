@@ -1,108 +1,190 @@
-# Beskid — Toolchain & Stack
+# Beskid — guide for agents
 
-## Toolchain
-- **Checkout:** `./scripts/setup-environment.sh` (git submodules + root `pnpm install`—not Google `repo`)
-- **Submodules:** day-to-day via lazygit (`U` sync / `P` recursive push); toolchain via `scripts/install-deps.sh` + `repo-deps.json`
-- **Rust:** workspace in `compiler/`; `just replace` installs `beskid` + `beskid_lsp`, `just vscode` rebuilds the extension
-- **Sites:** **pnpm** for all site apps
-- **Build automation:** Woodpecker runs Linux validation and native Linux,
-  Windows, and macOS target builds through `scripts/ci/`; stable releases are
-  published only through its manual `main`-only `release-publish` lane, whose
-  final step alone receives the scoped GitHub secret, and Watchtower alone
-  deploys platform images
+The entrance for any agent (Claude Code, Codex, Cursor, Gemini CLI or other)
+working in this repository. It holds what you need on arrival. Everything else
+is in `docs/.agents/`, linked below.
 
-## Tech Stack
-- **Compiler:** Rust, AOT-only, host composition. Corelib in `compiler/corelib` (Beskid sources, not a Rust crate move)
-- **pckg:** Rust package registry (`compiler/crates/beskid_pckg_server/`) + TanStack web app (`beskid_sites/apps/pckg/`); legacy .NET and duplicate web clients removed
-- **Sites:** `site/website` (landing, Docs, Book, blog), `site/auth`, `site/learn`
-- **Apps:** `beskid_tracker` (SQLite SOT), `beskid_nexus` (graph explorer), `beskid_web_common` (shared TS: `trudoc`, `@beskid/beskid-ui`, `@beskid/ui-react`)
-- **Infra:** standalone production Compose in `beskid_sites/deploy`, OpenBao secrets, private registry, Watchtower, Memgraph, and Grafana monitoring at `monitor.beskid-lang.org`
-- **Spec:** normative spec lives in OpenSpec and is linked from `beskid-lang.org/docs/standard/`; update it before observable behavior changes
+## Summary
 
-## Conventions
-- **Git:** no `Co-authored-by`
-- **Naming:** PascalCase types/functions/methods; camelCase locals/params; crates `beskid_<domain>`
-- **Packages:** `@beskid/*` on GitHub Packages (not monorepo `file:` links); pin `^0.2.0`; refresh via `./scripts/sync-beskid-packages.sh`
-- **Domains:** Coolify target URLs use explicit container ports per service (`https://<host>:<port>`); public browser/API origins use standard HTTPS; staging uses the `stg-` prefix
-- **UI:** match existing Fluent Blazor / `@beskid` patterns; hub launcher leftmost in navbars
-- **Docs:** no emoji; Beskid Book tone (`book/00-why-beskid-exists/...`); prefer practical deploy/container guidance over abstraction
+Beskid is an ahead-of-time compiled programming language for everyday business
+software, together with its complete toolchain and platform. It moves the
+structure that business code usually hides at runtime (reflection, framework
+conventions, dependency-injection containers) into the compiler, where it can
+be seen and checked.
 
-<!-- gitnexus:start -->
-# GitNexus — Code Intelligence
+## The Beskid project
 
-This project is indexed by GitNexus as **beskid** (121068 symbols, 223747 relationships, 300 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This repository is the **superrepo**. One checkout ties together the root and
+11 git submodules. Each submodule is its own repository that versions and
+ships separately; CI in this repository ties them together.
 
-> Index stale? Run `node .gitnexus/run.cjs analyze` from the project root — it auto-selects an available runner. No `.gitnexus/run.cjs` yet? `npx gitnexus analyze` (npm 11 crash → `npm i -g gitnexus`; #1939).
+- **Language and compiler:** a Rust compiler with CLI and language server; a
+  core library written in Beskid; native output for Linux x86_64, macOS arm64
+  and Windows x86_64 through Cranelift (ABI v5). AOT only, no JIT.
+- **Standard:** the normative definition of the language and platform, kept in
+  OpenSpec.
+- **Ecosystem:** a package registry (pckg), VS Code and Zed extensions, a
+  tree-sitter grammar, project templates.
+- **Platform:** a documentation site with the Beskid Book, an auth hub, a
+  learning app, a project tracker, a code-graph explorer (Nexus), and the
+  self-hosted infrastructure that runs them.
+- **Status:** opinionated and unfinished, maintained upstream by Piotr
+  Mikstacki under the Cyber-Nomad-Collective organisation.
 
-## Always Do
+For the full picture, read [docs/.agents/about-beskid.md](docs/.agents/about-beskid.md).
 
-- **MUST run impact analysis before editing any symbol.** Before modifying a function, class, or method, run `impact({target: "symbolName", direction: "upstream"})` and report the blast radius (direct callers, affected processes, risk level) to the user.
-- **MUST run `detect_changes()` before committing** to verify your changes only affect expected symbols and execution flows. For regression review, compare against the default branch: `detect_changes({scope: "compare", base_ref: "main"})`.
-- **MUST warn the user** if impact analysis returns HIGH or CRITICAL risk before proceeding with edits.
-- When exploring unfamiliar code, use `query({query: "concept"})` to find execution flows instead of grepping. It returns process-grouped results ranked by relevance.
-- When you need full context on a specific symbol — callers, callees, which execution flows it participates in — use `context({name: "symbolName"})`.
+## Agent documentation
 
-## Never Do
+Agent-written knowledge lives in [`docs/.agents/`](docs/.agents/README.md).
+One topic per file; each file owns its topic completely.
 
-- NEVER edit a function, class, or method without first running `impact` on it.
-- NEVER ignore HIGH or CRITICAL risk warnings from impact analysis.
-- NEVER rename symbols with find-and-replace — use `rename` which understands the call graph.
-- NEVER commit changes without running `detect_changes()` to check affected scope.
+- **Start here:** [about-beskid.md](docs/.agents/about-beskid.md)
+- **People:** [upstream-maintainer.md](docs/.agents/people/upstream-maintainer.md),
+  [working-with-sett.md](docs/.agents/people/working-with-sett.md)
+- **Scopes (one area each):**
+  [compiler](docs/.agents/scopes/compiler.md),
+  [openspec-standard](docs/.agents/scopes/openspec-standard.md),
+  [sites-and-web](docs/.agents/scopes/sites-and-web.md),
+  [pckg](docs/.agents/scopes/pckg.md),
+  [tracker-and-nexus](docs/.agents/scopes/tracker-and-nexus.md),
+  [editors](docs/.agents/scopes/editors.md),
+  [build-release-infra](docs/.agents/scopes/build-release-infra.md)
+- **Topics (cross-cutting):**
+  [git-and-submodules](docs/.agents/topics/git-and-submodules.md),
+  [gitnexus](docs/.agents/topics/gitnexus.md),
+  [multi-agent-work](docs/.agents/topics/multi-agent-work.md),
+  [refactoring-policy](docs/.agents/topics/refactoring-policy.md),
+  [documentation-style](docs/.agents/topics/documentation-style.md),
+  [release-program-v0.5](docs/.agents/topics/release-program-v0.5.md)
 
-## Resources
+`GUIDE.md` has the full command table and the authority boundaries.
 
-| Resource | Use for |
-|----------|---------|
-| `gitnexus://repo/beskid/context` | Codebase overview, check index freshness |
-| `gitnexus://repo/beskid/clusters` | All functional areas |
-| `gitnexus://repo/beskid/processes` | All execution flows |
-| `gitnexus://repo/beskid/process/{name}` | Step-by-step execution trace |
+## Technical details
 
-## CLI
+### Specification
 
-| Task | Read this skill file |
-|------|---------------------|
-| Understand architecture / "How does X work?" | `.claude/skills/gitnexus/gitnexus-exploring/SKILL.md` |
-| Blast radius / "What breaks if I change X?" | `.claude/skills/gitnexus/gitnexus-impact-analysis/SKILL.md` |
-| Trace bugs / "Why is X failing?" | `.claude/skills/gitnexus/gitnexus-debugging/SKILL.md` |
-| Rename / extract / split / refactor | `.claude/skills/gitnexus/gitnexus-refactoring/SKILL.md` |
-| Tools, resources, schema reference | `.claude/skills/gitnexus/gitnexus-guide/SKILL.md` |
-| Index, status, clean, wiki CLI commands | `.claude/skills/gitnexus/gitnexus-cli/SKILL.md` |
+- The normative standard is `openspec/specs/` plus the generated
+  `openspec/catalog.json`. Nothing else is normative.
+- Change the standard through an OpenSpec change **before** any observable
+  behaviour changes.
+- Published at <https://beskid-lang.org/docs/standard/>.
+- This file is listed in the catalog. After editing it, run
+  `pnpm openspec:catalog`, then `pnpm openspec:validate`.
 
-<!-- gitnexus:end -->
+### Stack
 
-## Learned User Preferences
-- Prefer Cursor Auto agents for parallel work; do not use Composer 2.5 Fast when Auto is available
-- Prefer full, complete refactors that purge the old design—no leftover legacy APIs, half-migrations, or compatibility fallbacks; fail closed instead
-- Prefer parallel agents for large multi-surface work in isolated git worktrees/branches per slice; serialize only for final integration when merge/revert loops appear
-- Always spell the project name `beskid` (never `beschid`)
-- In beskid hi on macOS, prefer menu shortcut Ctrl+M (not F10); keep shortcuts centralized and mouse-clickable
-- Prefer readable symbol/type identifiers in compiler and ISLE traces—expand `SourceUnitId`/`AstNodeKey` and `#gN:nM` into real names plus span/construct detail, not raw numeric ids
-- Settings/kanban dialogs: structural tabs/groups; settings shell with left nav tree and right auto-rendered form; task dialogs roughly 70% form / 30% preview
-- Verify builds and gates locally until they pass before pushing; do not stop at the first remote CI failure
-- When promoting provisional OpenSpec capabilities, require real SHALL requirements and scenarios via OpenSpec changes—not stub fills; leave taxonomy hubs and empty governance/design-model stubs provisional until leaf obligations exist
-- Respect Linear ownership labels (`agent/cursor` vs `agent/codex`); create Cursor children under Codex parents without relabeling or closing them; file Codex blockers for missing facts outside exclusive scope rather than expanding into Codex-owned crates
-- Prefer parent and submodule state on `main` with clean merges; fix merge noise rather than leaving divergent local branches; agents push only their own branch and do not merge `main` unless the user explicitly authorizes merge for that task
-- For the active v0.5 release program, the user authorizes necessary in-repository implementation, test, documentation, and isolated build-cache changes; continue through overnight decisions by recording convention-fit rulings, but still ask before pushes, merges, publishing, destructive operations, credential changes, or external service changes
-- Do not invent Coolify service UUIDs, GHCR package Write grants, or secret token values—fail closed and document the exact human admin step instead
+| Area | Technology | Path |
+| --- | --- | --- |
+| Compiler, runtime, LSP | Rust workspace, Salsa, Cranelift ISLE | `compiler/` |
+| Core library | Beskid sources | `compiler/corelib/` |
+| Registry | Rust service + TanStack web app | `compiler/crates/beskid_pckg_server/`, `beskid_sites/apps/pckg/` |
+| Sites | Astro + Starlight, pnpm | `site/website/`, `site/auth/`, `site/learn/` |
+| Apps | Tracker (SQLite), Nexus (graph), shared TS packages | `beskid_tracker/`, `beskid_nexus/`, `beskid_web_common/` |
+| CI | Woodpecker | `.woodpecker/`, `scripts/ci/` |
+| Production | Compose, OpenBao, Watchtower, Grafana | `beskid_sites/deploy/`, `beskid_infra/` |
 
-## Learned Workspace Facts
-- Tracker SQLite DB is the task-tracking source of truth; GitHub Issues sync is limited to active version and bugs
-- Normative standard lives in `openspec/specs` + `openspec/catalog.json` (sole authority); `site/website` is the single public Docs surface and links to the standard at `/docs/standard/`; legacy `/platform-spec` paths redirect there; legacy `site/spec-content` corpus is removed
-- VS Code extension is BSOL-only (`.bws` / `.bproj`); outline panel removed; projects panel retained; dashboard should open from the Beskid status-bar entry like rust-analyzer
-- Production lowering is TypedProgram → CodegenInput → ISLE → stock-verifier-clean CLIF; reject HIR/Lowerable compatibility entry points; Cranelift ISLE remains the path for gradually porting runtime from Rust to Beskid
-- Local `.beskid` directories and `beskid_infra/config/openbao-*.env` (init/secrets) should stay gitignored; never commit secret values
-- OpenSpec / tracker integration: OpenSpec is normative SOT; Tracker is delivery/version authority (revisioned catalog links, public latest delivery, reconciliation without overwrite); seed workstreams from `beskid_tracker/data/` and OpenSpec
-- Distribution pipelines intentionally omit AUR; keep the remaining packaging channels
-- Shared AST/DAG explorer UI (ReactFlow/d3) belongs in common `@beskid` components and should reuse one repo/browser explorer dialog across website, pckg, and tracker
-- OpenSpec `validate-standard` catalogues `AGENTS.md` and hard-fails TBD Purpose headers; regenerating `openspec/catalog.json` may be required after editing either
-- Woodpecker is the sole root build service. It validates trusted pushes and
-  produces durable, checksummed Linux, Windows, and macOS target outputs. It
-  publishes stable releases only through the manual `main`-only
-  `release-publish` lane, whose final `publish-release` step alone receives
-  the scoped GitHub secret `compiler_release_token`; it holds no deployment
-  credentials. Watchtower in `beskid_sites/deploy` alone reconciles
-  production. Woodpecker is also the sole root editor-marketplace publisher;
-  GitHub Actions is limited to repository-native maintenance work.
-- While sites still resolve `@beskid/*` via `file:../../beskid_web_common`, CI and Docker must checkout/copy that submodule before `pnpm install` (same pattern as the website image)
-- Generation-bound Salsa/syntax facts in `beskid_queries` are semantic authority for LSP/IDE (no per-request HIR rebuilds or dual snapshot paths); ABI-v5 runtime kits use exact installed-prefix discovery/validation and fail closed on missing, mismatched, or tampered kits
+### Rules every agent follows
+
+1. **Standard first.** No observable behaviour change without an OpenSpec change.
+2. **Check impact before editing a symbol, check changes before committing.**
+   See [gitnexus.md](docs/.agents/topics/gitnexus.md). A direct instruction from
+   the owner overrides this.
+3. **Submodules are separate repositories.** Check `git submodule status` and
+   the submodule's own status before editing inside one.
+4. **No `Co-authored-by` trailers** in commits.
+5. **Ask before** pushes, merges, publishing, destructive operations,
+   credential changes and external services. Never commit secrets; never
+   invent identifiers or tokens. Fail closed.
+6. **Complete refactors.** No legacy leftovers or fallbacks.
+7. **Naming:** PascalCase types, functions and methods; camelCase locals and
+   parameters; crates `beskid_<domain>`. The project is spelled `beskid`.
+8. **Docs:** no emoji; Beskid Book tone.
+9. **Follow the stricter rule** when the person you work for has one (for
+   example, "never commit").
+
+## Getting started
+
+### Set up a checkout
+
+```bash
+git clone --recurse-submodules https://github.com/Cyber-Nomad-Collective/beskid.git
+cd beskid
+./scripts/setup-environment.sh   # submodules + root pnpm install
+just deps-check                  # toolchain check from repo-deps.json
+```
+
+`just setup` runs the interactive wizard instead. A plain clone leaves every
+submodule empty; run `git submodule update --init --recursive`.
+
+### First commands
+
+| Task | Command |
+| --- | --- |
+| List root recipes | `just --list` |
+| Fast local gates | `just gate` |
+| Build the compiler | `cargo build` in `compiler/` |
+| Install `beskid` and `beskid_lsp` | `just replace` |
+| Run the docs site | `pnpm website` |
+| Validate the standard | `pnpm openspec:validate` |
+
+### Guides for beginners
+
+- The Beskid Book: <https://beskid-lang.org/book/>. Chapters 01 to 03 cover
+  installing, the CLI and projects. Source: `site/website/src/content/docs/book/`.
+- Beskid Docs, getting started: <https://beskid-lang.org/docs/getting-started/>
+- Downloads: <https://beskid-lang.org/downloads/>
+- Terms: [GLOSSARY.md](GLOSSARY.md)
+
+### Tutorials
+
+- First program and smoke test: Book chapter 01, `first-smoke-test`.
+- First package: Book chapter 18, `publish-first-package`.
+- Interactive lessons: `site/learn/` (`just learn-deps`, then `just learn`).
+- Contributor path through the compiler: Book chapter 22.
+
+## Subprojects and related projects
+
+| Path | Role | Kind |
+| --- | --- | --- |
+| `compiler/` | Compiler, CLI, LSP, runtime; `corelib/` nested | submodule |
+| `pckg/` | Registry local stack | submodule |
+| `beskid_vscode/` | VS Code extension | submodule |
+| `editors/zed/` | Zed extension | in repo |
+| `beskid_treesitter/` | Tree-sitter grammar | submodule |
+| `beskid_templates/` | Project templates | submodule |
+| `beskid_bsol/` | BSOL project format | submodule |
+| `beskid_tracker/` | Roadmap and delivery tracker | submodule |
+| `beskid_nexus/` | Graph explorer, GitNexus fork | submodule |
+| `beskid_web_common/` | Shared `@beskid/*` TypeScript packages | submodule |
+| `beskid_infra/` | Secrets and monitoring support | submodule |
+| `beskid_distrib/` | Distribution packaging | submodule |
+| `site/` | Website, auth, learn | in repo |
+| `openspec/` | The standard | in repo |
+
+Upstream tools Beskid builds on: Rust, Cranelift, Salsa, Pest, Astro and
+Starlight, TanStack, GitNexus, OpenSpec, Woodpecker.
+
+## Contributing
+
+- Contributor guide: [.github/CONTRIBUTING.md](.github/CONTRIBUTING.md)
+- Code of conduct: [.github/CODE_OF_CONDUCT.md](.github/CODE_OF_CONDUCT.md)
+- Security reports: [.github/SECURITY.md](.github/SECURITY.md)
+- Where to ask: [.github/SUPPORT.md](.github/SUPPORT.md)
+- Code owners: [.github/CODEOWNERS](.github/CODEOWNERS)
+- Licensing: [LICENSING.md](LICENSING.md)
+- Change log: [CHANGELOG.md](CHANGELOG.md)
+
+## Reference links
+
+| What | Where |
+| --- | --- |
+| Home and Docs | <https://beskid-lang.org> |
+| The Book | <https://beskid-lang.org/book/> |
+| The Standard | <https://beskid-lang.org/docs/standard/> |
+| Package registry | <https://pckg.beskid-lang.org> |
+| Tracker | <https://tracker.beskid-lang.org> |
+| Auth hub | <https://auth.beskid-lang.org> |
+| Monitoring | <https://monitor.beskid-lang.org> |
+| Source | <https://github.com/Cyber-Nomad-Collective/beskid> |
+| Compiler releases | <https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases> |
+| VS Code extension | <https://open-vsx.org/extension/beskid/beskid-vscode> |

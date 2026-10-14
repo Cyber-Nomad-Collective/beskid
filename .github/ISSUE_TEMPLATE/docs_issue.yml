@@ -1,0 +1,35 @@
+name: Documentation problem
+description: The Book or Docs are wrong, unclear, outdated or missing something.
+labels: ["documentation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        If an example from the Book does not compile, the Book is wrong. Tell us here.
+        Problems with the normative Standard itself start as an OpenSpec change; see CONTRIBUTING.md.
+  - type: input
+    id: page
+    attributes:
+      label: Page
+      description: URL of the page, for example https://beskid-lang.org/book/...
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind of problem
+      options:
+        - Example does not work
+        - Wrong or outdated statement
+        - Unclear explanation
+        - Missing topic
+        - Broken link or rendering
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: What is wrong, and what it should say if you know.
+    validations:
+      required: true

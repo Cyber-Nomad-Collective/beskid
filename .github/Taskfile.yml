@@ -1,0 +1,56 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+#
+# Tasks for the GitHub community files in this directory.
+# Run from anywhere: task -t .github/Taskfile.yml <task>
+
+version: '3'
+
+vars:
+  ROOT: '{{.TASKFILE_DIR}}/..'
+  COMMUNITY_FILES: >-
+    CODE_OF_CONDUCT.md
+    CONTRIBUTING.md
+    PULL_REQUEST_TEMPLATE.md
+    README.md
+    SECURITY.md
+    SUPPORT.md
+    CODEOWNERS
+    ISSUE_TEMPLATE/config.yml
+    ISSUE_TEMPLATE/bug_report.yml
+    ISSUE_TEMPLATE/docs_issue.yml
+
+tasks:
+  default:
+    desc: List tasks.
+    cmds:
+      - task -t '{{.TASKFILE}}' --list
+    silent: true
+
+  check:
+    desc: Verify community files exist and issue templates parse as YAML.
+    cmds:
+      - task: check:files
+      - task: check:yaml
+
+  check:files:
+    desc: Fail when a community file is missing.
+    dir: '{{.TASKFILE_DIR}}'
+    cmds:
+      - for: { var: COMMUNITY_FILES, split: ' ' }
+        cmd: test -f '{{.ITEM}}' || { echo "missing .github/{{.ITEM}}"; exit 1; }
+
+  check:yaml:
+    desc: Parse every issue template.
+    dir: '{{.TASKFILE_DIR}}'
+    cmds:
+      - for: { var: TEMPLATES }
+        cmd: python3 -c "import sys, yaml; yaml.safe_load(open(sys.argv[1]))" '{{.ITEM}}'
+    vars:
+      TEMPLATES:
+        sh: ls ISSUE_TEMPLATE/*.yml
+
+  gate:
+    desc: Run the repository's fast local gates (just gate) from the root.
+    dir: '{{.ROOT}}'
+    cmds:
+      - just gate

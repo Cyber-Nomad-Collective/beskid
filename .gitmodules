@@ -41,3 +41,6 @@
 [submodule "beskid_distrib"]
 	path = beskid_distrib
 	url = ../beskid_distrib.git
+[submodule "docs/glossary-wiki"]
+	path = docs/glossary-wiki
+	url = https://github.com/Cyber-Nomad-Collective/beskid.wiki.git
