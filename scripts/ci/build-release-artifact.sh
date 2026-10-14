@@ -70,28 +70,39 @@ for cargo_toml in crates/beskid_cli/Cargo.toml crates/beskid_lsp/Cargo.toml crat
   fi
 done
 
-case "$PACKAGE" in
-  beskid_bundle|beskid_release_harness)
-    # The native tool driver qualifier reads Cargo profiles with tomllib.
-    python3 -c 'import sys, tomllib' 2>/dev/null || {
-      echo "build-release-artifact.sh ${PACKAGE} requires python3 3.11 or newer on PATH" >&2
-      exit 1
-    }
-    ;;
-esac
+# Every package builds with the qualified native tool driver receipt, so the
+# versioned CLI and LSP assets are byte-identical to the bundle binaries and the
+# release harnesses link the same beskid_abi. The qualifier reads Cargo profiles
+# with tomllib.
+python3 -c 'import sys, tomllib' 2>/dev/null || {
+  echo "build-release-artifact.sh ${PACKAGE} requires python3 3.11 or newer on PATH" >&2
+  exit 1
+}
+
+# Build and qualify the owned native tool driver, then export its receipt. The
+# receipt lives at one path per target and is rewritten only when its bytes
+# change: beskid_abi's build script reruns when the receipt path or file
+# changes, and a rerun between the CLI, LSP and bundle builds would relink them.
+qualify_native_tool_driver() {
+  local stage receipt
+  stage="$(mktemp -d)"
+  receipt="${ROOT}/compiler/target/${TARGET}/native-tool-driver-receipt.json"
+  python3 "${ROOT}/scripts/ci/qualify-native-tool-driver.py" --snapshot --output "${stage}/source.json"
+  cargo build --locked -p beskid_execution --bin beskid_native_tool_driver --release --target "$TARGET" --message-format=json >"${stage}/cargo.json"
+  python3 "${ROOT}/scripts/ci/qualify-native-tool-driver.py" --messages "${stage}/cargo.json" --target "$TARGET" --profile release --source-snapshot "${stage}/source.json" --output "${stage}/driver.json"
+  mkdir -p "$(dirname "${receipt}")"
+  cmp -s "${stage}/driver.json" "${receipt}" || cp -f "${stage}/driver.json" "${receipt}"
+  rm -rf "${stage}"
+  export BESKID_COMPILER_DRIVER_BUILD_RECEIPT="${receipt}"
+}
 
 # Add the Rust target and build natively on the host.
 rustup target add "$TARGET" >/dev/null 2>&1 || true
 case "$PACKAGE" in
-  beskid_cli|beskid_lsp)
-    cargo build --locked -p "$PACKAGE" --release --target "$TARGET"
-    ;;
-  beskid_bundle)
-    driver_stage="$(mktemp -d)"
-    python3 "${ROOT}/scripts/ci/qualify-native-tool-driver.py" --snapshot --output "${driver_stage}/source.json"
-    cargo build --locked -p beskid_execution --bin beskid_native_tool_driver --release --target "$TARGET" --message-format=json >"${driver_stage}/cargo.json"
-    python3 "${ROOT}/scripts/ci/qualify-native-tool-driver.py" --messages "${driver_stage}/cargo.json" --target "$TARGET" --profile release --source-snapshot "${driver_stage}/source.json" --output "${driver_stage}/driver.json"
-    export BESKID_COMPILER_DRIVER_BUILD_RECEIPT="${driver_stage}/driver.json"
+  beskid_cli|beskid_lsp|beskid_bundle)
+    # One build for all three binaries: the CLI, LSP and bundle runs of this
+    # script then share every artifact instead of resolving features per package.
+    qualify_native_tool_driver
     cargo build --locked -p beskid_cli -p beskid_lsp -p beskid_up --release --target "$TARGET"
     ;;
   beskid_release_harness)
@@ -102,11 +113,8 @@ case "$PACKAGE" in
       /* | [A-Za-z]:/*) ;;
       *) echo "beskid_release_harness output must be an absolute directory: $ASSET_NAME" >&2; exit 1 ;;
     esac
+    qualify_native_tool_driver
     driver_stage="$(mktemp -d)"
-    python3 "${ROOT}/scripts/ci/qualify-native-tool-driver.py" --snapshot --output "${driver_stage}/source.json"
-    cargo build --locked -p beskid_execution --bin beskid_native_tool_driver --release --target "$TARGET" --message-format=json >"${driver_stage}/cargo.json"
-    python3 "${ROOT}/scripts/ci/qualify-native-tool-driver.py" --messages "${driver_stage}/cargo.json" --target "$TARGET" --profile release --source-snapshot "${driver_stage}/source.json" --output "${driver_stage}/driver.json"
-    export BESKID_COMPILER_DRIVER_BUILD_RECEIPT="${driver_stage}/driver.json"
     cargo test --no-run --locked --release --target "$TARGET" -p beskid_tests_release -p beskid_tests_interop --message-format=json >"${driver_stage}/harness.json"
     cargo build --locked --release --target "$TARGET" -p beskid_tests_interop --bin beskid_release_fixture --message-format=json >"${driver_stage}/fixture.json"
     node "${ROOT}/scripts/ci/release-harness-executables.mjs" "$TARGET" "$ASSET_NAME" \
