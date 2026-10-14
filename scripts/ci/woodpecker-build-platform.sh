@@ -236,14 +236,22 @@ if [[ "${platform}" == linux ]]; then
   command -v python3 >/dev/null 2>&1 || { echo 'Linux CLI surface gate requires Python 3' >&2; exit 2; }
   [[ -f "${cli_surface_gate}" ]] || { echo "missing reviewed CLI surface gate: ${cli_surface_gate}" >&2; exit 1; }
   node "${corelib_verifier}" --verify "${root}/compiler/corelib" "${bundle_root}/beskid_corelib" \
-    >"${logs_dir}/cli-surface-corelib-verify.log"
+    >"${logs_dir}/cli-surface-corelib-verify.log" 2>&1 || {
+    tail -n 60 "${logs_dir}/cli-surface-corelib-verify.log" >&2
+    echo 'bundled Corelib verification for the CLI surface gate failed' >&2
+    exit 1
+  }
   cli_sha="$(node -e 'const fs=require("fs"),crypto=require("crypto");process.stdout.write(crypto.createHash("sha256").update(fs.readFileSync(process.argv[1])).digest("hex"))' "${cli_path}")"
   BESKID_RUNTIME_PREFIX="${bundle_root}" python3 "${cli_surface_gate}" "${cli_path}" \
     --expected-sha256 "${cli_sha}" \
     --corelib-root "${bundle_root}/beskid_corelib" \
     --expected-corelib-fingerprint "${corelib_fingerprint}" \
     --json "${output_dir}/cli-surface-evidence-v1.json" \
-    >"${logs_dir}/cli-surface-gate.log" 2>&1
+    >"${logs_dir}/cli-surface-gate.log" 2>&1 || {
+    tail -n 80 "${logs_dir}/cli-surface-gate.log" >&2
+    echo 'Linux CLI surface gate failed' >&2
+    exit 1
+  }
   node "${root}/scripts/ci/woodpecker-cli-surface-evidence.mjs" create \
     "${output_dir}/cli-surface-evidence-v1.json" "${cli_path}" \
     "${output_dir}/cli-surface-receipt-v1.json" "${version}" \
