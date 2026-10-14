@@ -183,6 +183,14 @@ export function ProduceReleaseCases(options) {
 
     const rows = [];
     const failures = [];
+    // Retained case logs stay with the packet; the pipeline log gets a bounded tail of the first
+    // failing assertions so a failure can be triaged when the packet is not handed off.
+    const diagnostics = [];
+    const diagnose = (label, ...streams) => {
+      if (diagnostics.length >= 12) return;
+      const text = streams.map(stream => stream.toString("utf8").split(/\r?\n/).slice(-40).join("\n")).join("\n").slice(-6000);
+      diagnostics.push(`--- ${label} ---\n${text}`);
+    };
     for (const item of manifest.cases) {
       const binding = item.binding;
       const values = {
@@ -203,6 +211,7 @@ export function ProduceReleaseCases(options) {
         try { passed = nativeReportOutcomes(stdout, binding.target, item.id); } catch (error) { failures.push(`${item.id}: ${error.message}`); exitCode = exitCode === 0 ? 1 : exitCode; }
         tests = passed.map(id => ({ id, outcome: "passed" }));
         for (const id of binding.required_test_ids) if (!passed.includes(id)) failures.push(`${item.id}: required assertion ${id} did not pass`);
+        if (binding.required_test_ids.some(id => !passed.includes(id))) diagnose(item.id, stdout, stderr);
       } else {
         const outParts = [], errParts = [];
         tests = [];
@@ -216,7 +225,7 @@ export function ProduceReleaseCases(options) {
           if (outcome === "passed" && result.status !== 0) outcome = "failed";
           const proven = result.stderr.toString("utf8").split(/\r?\n/).some(line => INVOCATION_LINE.test(line));
           if (outcome === "passed" && !proven) outcome = "not_executed";
-          if (outcome !== "passed") { exitCode = result.status === 0 || result.status === null ? 1 : result.status; timedOut ||= result.timedOut; failures.push(`${item.id}: ${id} ${outcome}`); }
+          if (outcome !== "passed") { exitCode = result.status === 0 || result.status === null ? 1 : result.status; timedOut ||= result.timedOut; failures.push(`${item.id}: ${id} ${outcome}`); diagnose(`${item.id} ${id} ${outcome}`, result.stdout, result.stderr); }
           tests.push({ id, outcome });
         }
         stdout = Buffer.from(outParts.join(""), "utf8");
@@ -253,6 +262,7 @@ export function ProduceReleaseCases(options) {
       cases: rows, rust_profile_matrix, obligation_matrix, not_applicable: { dotnet_glue: "stretch" },
     };
     writeFileSync(join(output, FEATURE_FILE), `${JSON.stringify(feature, null, 2)}\n`, { flag: "wx" });
+    if (diagnostics.length) process.stderr.write(`${diagnostics.join("\n")}\n`);
     if (failures.length) fail(`${failures.length} release case failures:\n${failures.join("\n")}`);
     return { cases: rows.length, target };
   } finally {

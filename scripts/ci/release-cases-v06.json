@@ -8,7 +8,7 @@
             "end": 4354,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "e0c390b61ce415181d089f7d985d196aa31cbfec1d177bb6bb3cecd5f8f47638"
+              "sha256": "fd5ffc30f68be6e843383e56ced69d2f758420a4ef754be1372febf6366947b7"
             },
             "start": 4329,
             "test_id": "bytes_new_has_length"
@@ -18,7 +18,7 @@
             "end": 4516,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "e0c390b61ce415181d089f7d985d196aa31cbfec1d177bb6bb3cecd5f8f47638"
+              "sha256": "fd5ffc30f68be6e843383e56ced69d2f758420a4ef754be1372febf6366947b7"
             },
             "start": 4474,
             "test_id": "bytes_from_string_matches_utf8_length"
@@ -28,7 +28,7 @@
             "end": 4717,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "e0c390b61ce415181d089f7d985d196aa31cbfec1d177bb6bb3cecd5f8f47638"
+              "sha256": "fd5ffc30f68be6e843383e56ced69d2f758420a4ef754be1372febf6366947b7"
             },
             "start": 4691,
             "test_id": "bytes_fill_sets_range"
@@ -38,7 +38,7 @@
             "end": 4941,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "e0c390b61ce415181d089f7d985d196aa31cbfec1d177bb6bb3cecd5f8f47638"
+              "sha256": "fd5ffc30f68be6e843383e56ced69d2f758420a4ef754be1372febf6366947b7"
             },
             "start": 4908,
             "test_id": "bytes_subslice_copies_window"
@@ -48,7 +48,7 @@
             "end": 5197,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "e0c390b61ce415181d089f7d985d196aa31cbfec1d177bb6bb3cecd5f8f47638"
+              "sha256": "fd5ffc30f68be6e843383e56ced69d2f758420a4ef754be1372febf6366947b7"
             },
             "start": 5165,
             "test_id": "bytes_compare_lexicographic"
@@ -58,7 +58,7 @@
             "end": 5387,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "e0c390b61ce415181d089f7d985d196aa31cbfec1d177bb6bb3cecd5f8f47638"
+              "sha256": "fd5ffc30f68be6e843383e56ced69d2f758420a4ef754be1372febf6366947b7"
             },
             "start": 5366,
             "test_id": "bytes_copy_range"
@@ -68,7 +68,7 @@
             "end": 5809,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "e0c390b61ce415181d089f7d985d196aa31cbfec1d177bb6bb3cecd5f8f47638"
+              "sha256": "fd5ffc30f68be6e843383e56ced69d2f758420a4ef754be1372febf6366947b7"
             },
             "start": 5757,
             "test_id": "bytes_new_one_mebibyte_is_one_zeroed_allocation"
@@ -78,7 +78,7 @@
             "end": 6399,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "e0c390b61ce415181d089f7d985d196aa31cbfec1d177bb6bb3cecd5f8f47638"
+              "sha256": "fd5ffc30f68be6e843383e56ced69d2f758420a4ef754be1372febf6366947b7"
             },
             "start": 6356,
             "test_id": "bytes_new_non_positive_length_is_empty"
@@ -88,7 +88,7 @@
             "end": 6668,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "e0c390b61ce415181d089f7d985d196aa31cbfec1d177bb6bb3cecd5f8f47638"
+              "sha256": "fd5ffc30f68be6e843383e56ced69d2f758420a4ef754be1372febf6366947b7"
             },
             "start": 6617,
             "test_id": "bytes_four_mebibyte_live_buffer_survives_churn"
@@ -98,7 +98,7 @@
             "end": 7540,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "e0c390b61ce415181d089f7d985d196aa31cbfec1d177bb6bb3cecd5f8f47638"
+              "sha256": "fd5ffc30f68be6e843383e56ced69d2f758420a4ef754be1372febf6366947b7"
             },
             "start": 7474,
             "test_id": "bytes_three_live_64k_buffers_with_garbage_do_not_exhaust_heap"
@@ -124,7 +124,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-core-CoreSuite.bd",
-          "sha256": "e0c390b61ce415181d089f7d985d196aa31cbfec1d177bb6bb3cecd5f8f47638"
+          "sha256": "fd5ffc30f68be6e843383e56ced69d2f758420a4ef754be1372febf6366947b7"
         },
         "input": null,
         "log": "case-foundations.core_bytes.json",
@@ -161,7 +161,7 @@
             "end": 8391,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "e0c390b61ce415181d089f7d985d196aa31cbfec1d177bb6bb3cecd5f8f47638"
+              "sha256": "fd5ffc30f68be6e843383e56ced69d2f758420a4ef754be1372febf6366947b7"
             },
             "start": 8367,
             "test_id": "utf8_is_valid_ascii"
@@ -171,7 +171,7 @@
             "end": 8543,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "e0c390b61ce415181d089f7d985d196aa31cbfec1d177bb6bb3cecd5f8f47638"
+              "sha256": "fd5ffc30f68be6e843383e56ced69d2f758420a4ef754be1372febf6366947b7"
             },
             "start": 8516,
             "test_id": "utf8_is_valid_two_byte"
@@ -181,7 +181,7 @@
             "end": 8754,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "e0c390b61ce415181d089f7d985d196aa31cbfec1d177bb6bb3cecd5f8f47638"
+              "sha256": "fd5ffc30f68be6e843383e56ced69d2f758420a4ef754be1372febf6366947b7"
             },
             "start": 8716,
             "test_id": "utf8_is_invalid_solo_continuation"
@@ -191,7 +191,7 @@
             "end": 8938,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "e0c390b61ce415181d089f7d985d196aa31cbfec1d177bb6bb3cecd5f8f47638"
+              "sha256": "fd5ffc30f68be6e843383e56ced69d2f758420a4ef754be1372febf6366947b7"
             },
             "start": 8901,
             "test_id": "utf8_decode_from_bytes_roundtrip"
@@ -201,7 +201,7 @@
             "end": 9335,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "e0c390b61ce415181d089f7d985d196aa31cbfec1d177bb6bb3cecd5f8f47638"
+              "sha256": "fd5ffc30f68be6e843383e56ced69d2f758420a4ef754be1372febf6366947b7"
             },
             "start": 9300,
             "test_id": "utf8_encode_to_bytes_roundtrip"
@@ -211,7 +211,7 @@
             "end": 9663,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "e0c390b61ce415181d089f7d985d196aa31cbfec1d177bb6bb3cecd5f8f47638"
+              "sha256": "fd5ffc30f68be6e843383e56ced69d2f758420a4ef754be1372febf6366947b7"
             },
             "start": 9632,
             "test_id": "hex_encode_bytes_roundtrip"
@@ -221,7 +221,7 @@
             "end": 10449,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "e0c390b61ce415181d089f7d985d196aa31cbfec1d177bb6bb3cecd5f8f47638"
+              "sha256": "fd5ffc30f68be6e843383e56ced69d2f758420a4ef754be1372febf6366947b7"
             },
             "start": 10414,
             "test_id": "hex_decode_odd_length_rejected"
@@ -231,7 +231,7 @@
             "end": 10753,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "e0c390b61ce415181d089f7d985d196aa31cbfec1d177bb6bb3cecd5f8f47638"
+              "sha256": "fd5ffc30f68be6e843383e56ced69d2f758420a4ef754be1372febf6366947b7"
             },
             "start": 10719,
             "test_id": "base64_encode_bytes_roundtrip"
@@ -241,7 +241,7 @@
             "end": 11479,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "e0c390b61ce415181d089f7d985d196aa31cbfec1d177bb6bb3cecd5f8f47638"
+              "sha256": "fd5ffc30f68be6e843383e56ced69d2f758420a4ef754be1372febf6366947b7"
             },
             "start": 11437,
             "test_id": "base64_decode_invalid_length_rejected"
@@ -267,7 +267,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-core-CoreSuite.bd",
-          "sha256": "e0c390b61ce415181d089f7d985d196aa31cbfec1d177bb6bb3cecd5f8f47638"
+          "sha256": "fd5ffc30f68be6e843383e56ced69d2f758420a4ef754be1372febf6366947b7"
         },
         "input": null,
         "log": "case-foundations.encoding_utf8.json",

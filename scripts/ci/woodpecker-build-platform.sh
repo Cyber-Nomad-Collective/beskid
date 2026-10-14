@@ -199,6 +199,32 @@ if [[ "${schema2}" == 1 ]]; then
     echo 'release harness build failed' >&2
     exit 1
   }
+  # Glue cases build a Rust owner with explicit tools (glue_owned.rs require_tools). Pin the
+  # toolchain's own cargo and rustc, not rustup proxies: each case runs with a private HOME, and
+  # the harness canonicalizes the paths it receives.
+  if [[ -z "${BESKID_V06_GLUE_CARGO:-}" || -z "${BESKID_V06_GLUE_RUSTC:-}" || -z "${BESKID_V06_GLUE_LINKER:-}" ]]; then
+    rust_sysroot="$(rustc --print sysroot | tr -d '\r')"
+    glue_extension=""
+    case "${platform}" in
+      windows)
+        glue_extension=.exe
+        rust_sysroot="$(cygpath -m "${rust_sysroot}")"
+        if [[ -n "${VCToolsInstallDir:-}" ]]; then
+          glue_linker="$(cygpath -m "${VCToolsInstallDir}")/bin/Hostx64/x64/link.exe"
+        else
+          glue_linker="$(cygpath -m "$(command -v link.exe)")"
+        fi
+        ;;
+      *) glue_linker="$(command -v cc)" ;;
+    esac
+    export BESKID_V06_GLUE_CARGO="${BESKID_V06_GLUE_CARGO:-${rust_sysroot}/bin/cargo${glue_extension}}"
+    export BESKID_V06_GLUE_RUSTC="${BESKID_V06_GLUE_RUSTC:-${rust_sysroot}/bin/rustc${glue_extension}}"
+    export BESKID_V06_GLUE_LINKER="${BESKID_V06_GLUE_LINKER:-${glue_linker}}"
+  fi
+  for glue_tool in BESKID_V06_GLUE_CARGO BESKID_V06_GLUE_RUSTC BESKID_V06_GLUE_LINKER; do
+    [[ -f "${!glue_tool}" ]] || { echo "${glue_tool} does not name a file: ${!glue_tool}" >&2; exit 2; }
+  done
+  printf 'glue tools: cargo=%s rustc=%s linker=%s\n' "${BESKID_V06_GLUE_CARGO}" "${BESKID_V06_GLUE_RUSTC}" "${BESKID_V06_GLUE_LINKER}"
   case_arguments=("${platform}" "${version}" "${output_dir}" "${bundle_root}" --harness-dir "${harness_dir}")
   [[ -z "${release_cases_manifest}" ]] || case_arguments+=(--manifest "${release_cases_manifest}")
   node "${release_cases_runner}" "${case_arguments[@]}"
