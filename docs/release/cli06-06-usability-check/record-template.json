@@ -16,7 +16,8 @@
     {
       "id": "P1",
       "target": "x86_64-unknown-linux-gnu",
-      "help_only": true,
+      "materials": "cli-help+language-rules",
+      "language_rules_sha256": "8f0e0ebb4f8c180cecc09ee63d1e85e57c14b744068d984a157127cb005993ed",
       "add_found_seconds": null,
       "journey_completed": false,
       "journey_seconds": null,
@@ -39,7 +40,8 @@
     {
       "id": "P2",
       "target": "aarch64-apple-darwin",
-      "help_only": true,
+      "materials": "cli-help+language-rules",
+      "language_rules_sha256": "8f0e0ebb4f8c180cecc09ee63d1e85e57c14b744068d984a157127cb005993ed",
       "add_found_seconds": null,
       "journey_completed": false,
       "journey_seconds": null,
@@ -62,7 +64,8 @@
     {
       "id": "P3",
       "target": "x86_64-pc-windows-msvc",
-      "help_only": true,
+      "materials": "cli-help+language-rules",
+      "language_rules_sha256": "8f0e0ebb4f8c180cecc09ee63d1e85e57c14b744068d984a157127cb005993ed",
       "add_found_seconds": null,
       "journey_completed": false,
       "journey_seconds": null,
@@ -85,7 +88,8 @@
     {
       "id": "P4",
       "target": "x86_64-unknown-linux-gnu",
-      "help_only": true,
+      "materials": "cli-help+language-rules",
+      "language_rules_sha256": "8f0e0ebb4f8c180cecc09ee63d1e85e57c14b744068d984a157127cb005993ed",
       "add_found_seconds": null,
       "journey_completed": false,
       "journey_seconds": null,
@@ -108,7 +112,8 @@
     {
       "id": "P5",
       "target": "aarch64-apple-darwin",
-      "help_only": true,
+      "materials": "cli-help+language-rules",
+      "language_rules_sha256": "8f0e0ebb4f8c180cecc09ee63d1e85e57c14b744068d984a157127cb005993ed",
       "add_found_seconds": null,
       "journey_completed": false,
       "journey_seconds": null,

@@ -1,12 +1,15 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
-import { ValidateObservation } from "../release-user-observation.mjs";
+import { LANGUAGE_RULES_PATH, LanguageRulesDigest, RecordPath, ValidateCommittedObservation, ValidateObservation } from "../release-user-observation.mjs";
 
 const script = new URL("../release-user-observation.mjs", import.meta.url).pathname;
+const repoRoot = new URL("../../../", import.meta.url).pathname;
+const kit = join(repoRoot, "docs/release/cli06-06-usability-check");
+const RULES = LanguageRulesDigest();
 const VERSION = "0.6.0";
 const SUPERREPO = "a".repeat(40);
 const COMPILER = "b".repeat(40);
@@ -30,7 +33,7 @@ function transcript(start, steps) {
   return entries;
 }
 function participant(id, target, { addFound = 30, completed = true, journey = 240 } = {}) {
-  return { id, target, help_only: true, add_found_seconds: addFound, journey_completed: completed, journey_seconds: completed ? journey : null,
+  return { id, target, materials: "cli-help+language-rules", language_rules_sha256: RULES, add_found_seconds: addFound, journey_completed: completed, journey_seconds: completed ? journey : null,
     transcript: transcript("2026-10-20T10:00:00Z", [["beskid --help", 0], ["beskid new hello", 0], ["beskid add --help", 0], ["beskid add Greeter --path ../Greeter", 0], ...(completed ? [["beskid run", 0]] : [["beskid run", 1]])]),
     failures: completed ? [] : ["did not reach run within five minutes"] };
 }
@@ -64,10 +67,13 @@ test("thresholds are enforced on both halves", () => {
   const incomplete = record(); incomplete.participants[3].journey_completed = false; incomplete.participants[3].journey_seconds = null;
   rejects(incomplete, /only 3 of 5/);
 });
-test("participants are exactly five, unique, help-only and on candidate targets", () => {
+test("participants are exactly five, unique, limited to the pinned materials and on candidate targets", () => {
   rejects(record({ participants: record().participants.slice(0, 4) }), /exactly five/);
   const duplicate = record(); duplicate.participants[1].id = "p1"; rejects(duplicate, /repeated/);
-  const coached = record(); coached.participants[0].help_only = false; rejects(coached, /more than the installed CLI/);
+  const coached = record(); coached.participants[0].materials = "cli-help+language-rules+tutor"; rejects(coached, /more than the installed CLI/);
+  const helpOnly = record(); delete helpOnly.participants[0].materials; helpOnly.participants[0].help_only = true; rejects(helpOnly, /unexpected fields/);
+  const otherRules = record(); otherRules.participants[0].language_rules_sha256 = "0".repeat(64); rejects(otherRules, /not the committed handout/);
+  const missingRules = record(); delete missingRules.participants[0].language_rules_sha256; rejects(missingRules, /unexpected fields/);
   const foreign = record(); foreign.participants[0].target = "riscv64gc-unknown-linux-gnu"; rejects(foreign, /candidate target/);
 });
 test("transcripts ground the candidate identity", () => {
@@ -104,4 +110,77 @@ test("the command line validates files, refuses symlinks and prints the record",
   writeFileSync(join(root, "failing.json"), JSON.stringify(failing));
   const blocked = spawnSync(process.execPath, [script, join(root, "failing.json"), VERSION, SUPERREPO, COMPILER, join(root, "evidence.json")], { encoding: "utf8" });
   assert.notEqual(blocked.status, 0, "a failing record blocks publication");
+});
+
+test("the kit example validates and the kit names the committed handout digest", () => {
+  assert.match(RULES, /^[a-f0-9]{64}$/);
+  assert.equal(LANGUAGE_RULES_PATH, "docs/release/cli06-06-usability-check/language-rules.md");
+  const example = JSON.parse(readFileSync(join(kit, "record-example.json"), "utf8"));
+  const exampleEvidence = JSON.parse(readFileSync(join(kit, "example-validated-evidence.json"), "utf8"));
+  assert.equal(ValidateObservation(example, VERSION, SUPERREPO, COMPILER, exampleEvidence).thresholds.add_found_within_60s, 4);
+  for (const name of ["README.md", "observer-sheet.md", "record-template.json"]) {
+    assert.ok(readFileSync(join(kit, name), "utf8").includes(RULES), `${name} names the handout digest`);
+  }
+  const handout = readFileSync(join(kit, "language-rules.md"), "utf8");
+  assert.doesNotMatch(handout, /beskid (add|new|run|build|check)\b/, "the handout does not reveal the CLI journey");
+});
+
+function git(cwd, ...args) {
+  const result = spawnSync("git", ["-C", cwd, ...args], { encoding: "utf8" });
+  assert.equal(result.status, 0, result.stderr);
+  return result.stdout.trim();
+}
+function candidateRepo(t) {
+  const root = mkdtempSync(join(tmpdir(), "beskid-observation-repo-"));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  git(root, "init", "-q"); git(root, "config", "user.email", "observation@example.invalid"); git(root, "config", "user.name", "observation");
+  writeFileSync(join(root, "README"), "candidate\n");
+  git(root, "add", "README");
+  git(root, "update-index", "--add", "--cacheinfo", `160000,${COMPILER},compiler`);
+  git(root, "commit", "-q", "-m", "candidate");
+  return { root, candidate: git(root, "rev-parse", "HEAD") };
+}
+function commitRecord(root, value, extra = () => {}) {
+  mkdirSync(join(root, "docs/release"), { recursive: true });
+  writeFileSync(join(root, RecordPath(VERSION)), JSON.stringify(value));
+  git(root, "add", RecordPath(VERSION));
+  extra(root);
+  git(root, "commit", "-q", "-m", "record");
+  return git(root, "rev-parse", "HEAD");
+}
+
+test("the release gate reads the committed record of the candidate", (t) => {
+  const { root, candidate } = candidateRepo(t);
+  assert.throws(() => ValidateCommittedObservation(root, VERSION, candidate, COMPILER, evidence), /no record is committed at docs\/release\/cli06-06-record-v0\.6\.0\.json/);
+  const head = commitRecord(root, record({ superrepo_commit: candidate }));
+  assert.equal(ValidateCommittedObservation(root, VERSION, head, COMPILER, evidence).superrepo_commit, candidate);
+  assert.throws(() => ValidateCommittedObservation(root, VERSION, candidate, COMPILER, evidence), /not the release commit/);
+  const cli = spawnSync(process.execPath, [script, "--release", root, VERSION, head, COMPILER, join(root, "missing-evidence.json")], { encoding: "utf8" });
+  assert.notEqual(cli.status, 0);
+});
+test("the release gate refuses a record that is not the only change since the candidate", (t) => {
+  const { root, candidate } = candidateRepo(t);
+  const head = commitRecord(root, record({ superrepo_commit: candidate }), (dir) => { writeFileSync(join(dir, "README"), "changed\n"); git(dir, "add", "README"); });
+  assert.throws(() => ValidateCommittedObservation(root, VERSION, head, COMPILER, evidence), /only by docs\/release\/cli06-06-record-v0\.6\.0\.json/);
+  const unrelated = record({ superrepo_commit: "c".repeat(40) });
+  const second = commitRecord(root, unrelated);
+  assert.throws(() => ValidateCommittedObservation(root, VERSION, second, COMPILER, evidence), /not an ancestor/);
+});
+test("the release gate refuses a candidate with another compiler pointer and a failing record", (t) => {
+  const { root, candidate } = candidateRepo(t);
+  const head = commitRecord(root, record({ superrepo_commit: candidate }));
+  assert.throws(() => ValidateCommittedObservation(root, VERSION, head, "d".repeat(40), evidence), /compiler pointer/);
+  const failing = record({ superrepo_commit: candidate }); failing.participants[3].add_found_seconds = 61;
+  const { root: other, candidate: base } = candidateRepo(t);
+  failing.superrepo_commit = base;
+  const failingHead = commitRecord(other, failing);
+  assert.throws(() => ValidateCommittedObservation(other, VERSION, failingHead, COMPILER, evidence), /only 3 of 5/);
+});
+test("the release gate refuses a symlinked record", (t) => {
+  const { root, candidate } = candidateRepo(t);
+  writeFileSync(join(root, "real.json"), JSON.stringify(record({ superrepo_commit: candidate })));
+  mkdirSync(join(root, "docs/release"), { recursive: true });
+  symlinkSync("../../real.json", join(root, RecordPath(VERSION)));
+  git(root, "add", RecordPath(VERSION)); git(root, "commit", "-q", "-m", "link");
+  assert.throws(() => ValidateCommittedObservation(root, VERSION, git(root, "rev-parse", "HEAD"), COMPILER, evidence), /regular file/);
 });

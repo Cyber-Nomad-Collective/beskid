@@ -7,6 +7,9 @@ clone:
   git:
     image: woodpeckerci/plugin-git:2.10.1
     settings:
+      # Full history: the CLI06-06 gate checks that HEAD descends from the candidate commit that the
+      # committed record (docs/release/cli06-06-record-v<version>.json) names.
+      depth: 0
       recursive: false
 
 steps:

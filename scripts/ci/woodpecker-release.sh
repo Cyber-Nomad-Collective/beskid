@@ -121,16 +121,13 @@ state="$qualified/release-state.json"
 assets="$qualified/assets"
 
 # CLI06-06 (0.6 series): the five-participant uncoached observation is an observer-attested record,
-# not machine evidence. A failing or absent record blocks the candidate before any installer work;
-# the dated owner waiver is the only fallback and expires at 0.6.1.
+# not machine evidence. The record (or the dated owner waiver, which expires at 0.6.1) is committed at
+# docs/release/cli06-06-record-v<version>.json; it names the frozen candidate, and HEAD must differ
+# from that candidate only by the record. A failing or absent record blocks the candidate before any
+# installer work.
 case "$version" in
   0.6.*)
-    observation_file="${BESKID_V06_USER_OBSERVATION_FILE:-}"
-    if [[ -z "$observation_file" ]]; then
-      echo 'BESKID_V06_USER_OBSERVATION_FILE is required for a 0.6 candidate (observer-attested CLI06-06 record or dated owner waiver)' >&2
-      exit 1
-    fi
-    observation="$(node "$scripts/release-user-observation.mjs" "$observation_file" "$version" "$source_sha" "$compiler_sha" \
+    observation="$(node "$scripts/release-user-observation.mjs" --release "$repo" "$version" "$source_sha" "$compiler_sha" \
       "$qualified/validated-evidence.json")"
     node - "$state" "$observation" <<'NODE'
 const {readFileSync,renameSync,writeFileSync}=require('node:fs');

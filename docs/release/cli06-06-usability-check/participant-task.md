@@ -2,7 +2,7 @@
 
 Thank you for helping. You are testing the tool, not being tested. If something is unclear or fails, that is useful to know.
 
-You have a computer with the `beskid` command installed, and a folder named `Greeter` that sits next to the folder where you will work. You may use `beskid --help` and the help of any command. You may not use the internet, other documents, or ask the observer for help. The observer will only write things down.
+You have a computer with the `beskid` command installed, and a folder named `Greeter` that sits next to the folder where you will work. You may use `beskid --help`, the help of any command, and the sheet "Beskid language rules" that you got with this task. You may not use the internet, other documents, or ask the observer for help. The observer will only write things down.
 
 Work in the folder the observer gave you. Do these things in order.
 
