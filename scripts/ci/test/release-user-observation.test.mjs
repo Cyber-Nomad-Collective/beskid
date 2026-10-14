@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
-import { LANGUAGE_RULES_PATH, LanguageRulesDigest, RecordPath, ValidateCommittedObservation, ValidateObservation } from "../release-user-observation.mjs";
+import { LANGUAGE_RULES_PATH, LanguageRulesDigest, RecordPath, ReleaseSource, ValidateCommittedObservation, ValidateObservation } from "../release-user-observation.mjs";
 
 const script = new URL("../release-user-observation.mjs", import.meta.url).pathname;
 const repoRoot = new URL("../../../", import.meta.url).pathname;
@@ -140,6 +140,7 @@ function candidateRepo(t) {
   git(root, "commit", "-q", "-m", "candidate");
   return { root, candidate: git(root, "rev-parse", "HEAD") };
 }
+const built = (candidate) => ({ ...evidence, source: { superrepo_commit: candidate, compiler_commit: COMPILER } });
 function commitRecord(root, value, extra = () => {}) {
   mkdirSync(join(root, "docs/release"), { recursive: true });
   writeFileSync(join(root, RecordPath(VERSION)), JSON.stringify(value));
@@ -149,32 +150,43 @@ function commitRecord(root, value, extra = () => {}) {
   return git(root, "rev-parse", "HEAD");
 }
 
-test("the release gate reads the committed record of the candidate", (t) => {
+test("the release source of a 0.6 version is the candidate the committed record names", (t) => {
   const { root, candidate } = candidateRepo(t);
-  assert.throws(() => ValidateCommittedObservation(root, VERSION, candidate, COMPILER, evidence), /no record is committed at docs\/release\/cli06-06-record-v0\.6\.0\.json/);
+  assert.equal(ReleaseSource(root, "0.7.0", candidate), candidate, "other series release HEAD");
+  assert.throws(() => ReleaseSource(root, VERSION, candidate), /no record is committed at docs\/release\/cli06-06-record-v0\.6\.0\.json/);
   const head = commitRecord(root, record({ superrepo_commit: candidate }));
-  assert.equal(ValidateCommittedObservation(root, VERSION, head, COMPILER, evidence).superrepo_commit, candidate);
-  assert.throws(() => ValidateCommittedObservation(root, VERSION, candidate, COMPILER, evidence), /not the release commit/);
+  assert.equal(ReleaseSource(root, VERSION, head), candidate);
+  const cli = spawnSync(process.execPath, [script, "--source", root, VERSION, head], { encoding: "utf8" });
+  assert.equal(cli.status, 0, cli.stderr);
+  assert.equal(cli.stdout.trim(), candidate);
+  assert.throws(() => ReleaseSource(root, VERSION, candidate), /not the release commit/);
+});
+test("the release gate checks the record against the candidate's own build evidence", (t) => {
+  const { root, candidate } = candidateRepo(t);
+  const head = commitRecord(root, record({ superrepo_commit: candidate }));
+  assert.equal(ValidateCommittedObservation(root, VERSION, head, COMPILER, built(candidate)).superrepo_commit, candidate);
+  assert.throws(() => ValidateCommittedObservation(root, VERSION, head, COMPILER, built(head)), /not the build of the record's candidate/);
+  assert.throws(() => ValidateCommittedObservation(root, VERSION, head, COMPILER, evidence), /not the build of the record's candidate/);
+  const otherCli = built(candidate); otherCli.platforms = otherCli.platforms.map((platform, index) => index ? platform : { ...platform, artifacts: [{ name: platform.release_assets[0], sha256: "e".repeat(64) }] });
+  assert.throws(() => ValidateCommittedObservation(root, VERSION, head, COMPILER, otherCli), /not the validated artifact/);
   const cli = spawnSync(process.execPath, [script, "--release", root, VERSION, head, COMPILER, join(root, "missing-evidence.json")], { encoding: "utf8" });
   assert.notEqual(cli.status, 0);
 });
 test("the release gate refuses a record that is not the only change since the candidate", (t) => {
   const { root, candidate } = candidateRepo(t);
   const head = commitRecord(root, record({ superrepo_commit: candidate }), (dir) => { writeFileSync(join(dir, "README"), "changed\n"); git(dir, "add", "README"); });
-  assert.throws(() => ValidateCommittedObservation(root, VERSION, head, COMPILER, evidence), /only by docs\/release\/cli06-06-record-v0\.6\.0\.json/);
-  const unrelated = record({ superrepo_commit: "c".repeat(40) });
-  const second = commitRecord(root, unrelated);
-  assert.throws(() => ValidateCommittedObservation(root, VERSION, second, COMPILER, evidence), /not an ancestor/);
+  assert.throws(() => ReleaseSource(root, VERSION, head), /only by docs\/release\/cli06-06-record-v0\.6\.0\.json/);
+  const second = commitRecord(root, record({ superrepo_commit: "c".repeat(40) }));
+  assert.throws(() => ReleaseSource(root, VERSION, second), /not an ancestor/);
 });
-test("the release gate refuses a candidate with another compiler pointer and a failing record", (t) => {
+test("the release gate refuses another compiler pointer and a failing record", (t) => {
   const { root, candidate } = candidateRepo(t);
   const head = commitRecord(root, record({ superrepo_commit: candidate }));
-  assert.throws(() => ValidateCommittedObservation(root, VERSION, head, "d".repeat(40), evidence), /compiler pointer/);
-  const failing = record({ superrepo_commit: candidate }); failing.participants[3].add_found_seconds = 61;
+  assert.throws(() => ValidateCommittedObservation(root, VERSION, head, "d".repeat(40), built(candidate)), /compiler pointer/);
   const { root: other, candidate: base } = candidateRepo(t);
-  failing.superrepo_commit = base;
+  const failing = record({ superrepo_commit: base }); failing.participants[3].add_found_seconds = 61;
   const failingHead = commitRecord(other, failing);
-  assert.throws(() => ValidateCommittedObservation(other, VERSION, failingHead, COMPILER, evidence), /only 3 of 5/);
+  assert.throws(() => ValidateCommittedObservation(other, VERSION, failingHead, COMPILER, built(base)), /only 3 of 5/);
 });
 test("the release gate refuses a symlinked record", (t) => {
   const { root, candidate } = candidateRepo(t);
@@ -182,5 +194,5 @@ test("the release gate refuses a symlinked record", (t) => {
   mkdirSync(join(root, "docs/release"), { recursive: true });
   symlinkSync("../../real.json", join(root, RecordPath(VERSION)));
   git(root, "add", RecordPath(VERSION)); git(root, "commit", "-q", "-m", "link");
-  assert.throws(() => ValidateCommittedObservation(root, VERSION, git(root, "rev-parse", "HEAD"), COMPILER, evidence), /regular file/);
+  assert.throws(() => ReleaseSource(root, VERSION, git(root, "rev-parse", "HEAD")), /regular file/);
 });

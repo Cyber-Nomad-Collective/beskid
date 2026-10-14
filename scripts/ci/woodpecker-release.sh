@@ -9,16 +9,21 @@ scripts="$(cd "$(dirname "$0")" && pwd)"
 repo="$(cd "$scripts/../.." && pwd)"
 [[ "$build_run" =~ ^[1-9][0-9]*$ ]] || { echo 'build run must be a positive pipeline number' >&2; exit 2; }
 version="$(node "$scripts/release-version.mjs" "$requested_version" --stable-only)"
-source_sha="$(git -C "$repo" rev-parse HEAD)"
-compiler_sha="$(git -C "$repo" rev-parse HEAD:compiler)"
-distrib_sha="$(git -C "$repo" rev-parse HEAD:beskid_distrib)"
+head_sha="$(git -C "$repo" rev-parse HEAD)"
+# The release source is the commit whose build handoff is released and whose identity the release
+# state carries. For 0.6 it is the CLI06-06 candidate: HEAD only adds the committed observation record
+# (docs/release/cli06-06-record-v<version>.json) on top of it, so the participants' CLI files are the
+# released files. Otherwise it is HEAD.
+source_sha="$(node "$scripts/release-user-observation.mjs" --source "$repo" "$version" "$head_sha")"
+compiler_sha="$(git -C "$repo" rev-parse "$source_sha:compiler")"
+distrib_sha="$(git -C "$repo" rev-parse "$source_sha:beskid_distrib")"
 pipeline="${CI_PIPELINE_NUMBER:-manual-${build_run}}"
 [[ "$pipeline" =~ ^([1-9][0-9]*|manual-[1-9][0-9]*)$ ]] && \
-  [[ -z "${CI_COMMIT_SHA:-}" || "${CI_COMMIT_SHA}" == "$source_sha" ]] || {
+  [[ -z "${CI_COMMIT_SHA:-}" || "${CI_COMMIT_SHA}" == "$head_sha" ]] || {
   echo 'release pipeline/source identity does not match the checkout' >&2; exit 1;
 }
 if [[ "${CI_SYSTEM_NAME:-}" == woodpecker ]]; then
-  [[ "${CI_PIPELINE_NUMBER:-}" =~ ^[1-9][0-9]*$ && "${CI_COMMIT_SHA:-}" == "$source_sha" ]] || {
+  [[ "${CI_PIPELINE_NUMBER:-}" =~ ^[1-9][0-9]*$ && "${CI_COMMIT_SHA:-}" == "$head_sha" ]] || {
     echo 'Woodpecker release preparation requires its own pipeline/source identity' >&2; exit 1;
   }
 fi
@@ -122,12 +127,12 @@ assets="$qualified/assets"
 
 # CLI06-06 (0.6 series): the five-participant uncoached observation is an observer-attested record,
 # not machine evidence. The record (or the dated owner waiver, which expires at 0.6.1) is committed at
-# docs/release/cli06-06-record-v<version>.json; it names the frozen candidate, and HEAD must differ
-# from that candidate only by the record. A failing or absent record blocks the candidate before any
-# installer work.
+# docs/release/cli06-06-record-v<version>.json and names the candidate ($source_sha). Its CLI digests
+# are checked against the validated evidence aggregated from that candidate's build handoff. A failing
+# or absent record blocks the candidate before any installer work.
 case "$version" in
   0.6.*)
-    observation="$(node "$scripts/release-user-observation.mjs" --release "$repo" "$version" "$source_sha" "$compiler_sha" \
+    observation="$(node "$scripts/release-user-observation.mjs" --release "$repo" "$version" "$head_sha" "$compiler_sha" \
       "$qualified/validated-evidence.json")"
     node - "$state" "$observation" <<'NODE'
 const {readFileSync,renameSync,writeFileSync}=require('node:fs');
@@ -260,4 +265,4 @@ for stream in cli lsp bundle; do
   bash "$scripts/publish-release-stream.sh" "$stream" "$version" "$compiler_sha" "$assets" rolling stable "$state"
 done
 gh release upload cli-stable --repo Cyber-Nomad-Collective/beskid_compiler "${release_assets[@]/#/$assets/}" --clobber
-echo "Woodpecker release published: $version ($source_sha)"
+echo "Woodpecker release published: $version (source $source_sha, release commit $head_sha)"

@@ -3,12 +3,16 @@
 //
 // Usage:
 //   release-user-observation.mjs <record.json> <version> <candidate-superrepo-sha> <compiler-sha> <validated-evidence.json>
+//   release-user-observation.mjs --source <repo> <version> <head-sha>
 //   release-user-observation.mjs --release <repo> <version> <head-sha> <compiler-sha> <validated-evidence.json>
 //
-// The first form validates one record file. The second form is the release gate: it reads the record
-// committed at docs/release/cli06-06-record-v<version>.json in HEAD. The record names the frozen
-// candidate commit, which cannot contain its own record, so HEAD must descend from that candidate and
-// differ from it only by the record file. An absent record fails, which blocks publication.
+// The first form validates one record file. A 0.6 release runs on a record commit: HEAD adds only
+// docs/release/cli06-06-record-v<version>.json on top of the frozen candidate that the record names
+// (a commit cannot contain its own sha). `--source` prints the release source commit: that candidate
+// for a 0.6 version, HEAD otherwise. The release fetches, aggregates and publishes the candidate's own
+// build handoff, so the record is checked against the exact CLI files the participants installed and
+// those files are what ships. `--release` is the gate on the record itself. An absent record fails,
+// which blocks publication.
 //
 // Participants see the installed CLI, its help and the language-rules handout of the kit, nothing
 // else. Each participant declares `materials: "cli-help+language-rules"` and the sha256 of the
@@ -155,10 +159,14 @@ function git(repo, args) {
   return { ok: result.status === 0, out: result.stdout ?? "" };
 }
 
-// Release gate: the committed record of `version` in HEAD of `repo`, checked against the candidate it names.
-export function ValidateCommittedObservation(repo, version, head, compiler, evidence) {
+export function ObservationRequired(version) {
+  return /^0\.6\.\d+$/.test(parseExactReleaseVersion(version, { stableOnly: true }));
+}
+
+// The candidate named by the record committed in HEAD, after the record-commit shape checks.
+export function CommittedCandidate(repo, version, head) {
   const path = RecordPath(version);
-  if (!COMMIT.test(head) || !COMMIT.test(compiler)) Fail("release identity must name two 40-character commits");
+  if (!COMMIT.test(head)) Fail("release identity must name a 40-character HEAD commit");
   if (git(repo, ["rev-parse", "--verify", "HEAD^{commit}"]).out.trim() !== head) Fail("HEAD is not the release commit");
   const entry = git(repo, ["ls-tree", "HEAD", "--", path]).out.trim();
   if (!entry) Fail(`no record is committed at ${path}; publication is blocked`);
@@ -171,9 +179,27 @@ export function ValidateCommittedObservation(repo, version, head, compiler, evid
   if (typeof candidate !== "string" || !COMMIT.test(candidate)) Fail("record does not name a 40-character candidate superrepo commit");
   if (candidate === head) Fail("the record cannot name the commit that contains it");
   if (!git(repo, ["merge-base", "--is-ancestor", candidate, head]).ok) Fail(`candidate ${candidate} is not an ancestor of the release commit`);
-  if (git(repo, ["rev-parse", "--verify", `${candidate}:compiler`]).out.trim() !== compiler) Fail("candidate compiler pointer differs from the release commit");
   const changed = git(repo, ["diff", "--no-renames", "--name-only", candidate, head]);
   if (!changed.ok || changed.out.trim() !== path) Fail(`the release commit must differ from candidate ${candidate} only by ${path}`);
+  return { candidate, record };
+}
+
+// The commit whose build handoff the release consumes and whose identity the release state carries.
+export function ReleaseSource(repo, version, head) {
+  if (!ObservationRequired(version)) {
+    if (!COMMIT.test(head)) Fail("release identity must name a 40-character HEAD commit");
+    return head;
+  }
+  return CommittedCandidate(repo, version, head).candidate;
+}
+
+// Release gate: the committed record of `version` in HEAD of `repo`, checked against the candidate it
+// names and the validated evidence aggregated from that candidate's build handoff.
+export function ValidateCommittedObservation(repo, version, head, compiler, evidence) {
+  if (!COMMIT.test(compiler)) Fail("release identity must name a 40-character compiler commit");
+  const { candidate, record } = CommittedCandidate(repo, version, head);
+  if (git(repo, ["rev-parse", "--verify", `${candidate}:compiler`]).out.trim() !== compiler) Fail("candidate compiler pointer differs from the release identity");
+  if (evidence?.source?.superrepo_commit !== candidate || evidence?.source?.compiler_commit !== compiler) Fail("validated evidence is not the build of the record's candidate");
   return ValidateObservation(record, version, candidate, compiler, evidence, LanguageRulesDigest());
 }
 
@@ -185,19 +211,22 @@ function regularFile(path) {
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   try {
     const args = process.argv.slice(2);
-    let result;
-    if (args[0] === "--release") {
+    let output;
+    if (args[0] === "--source") {
+      if (args.length !== 4) Fail("usage: release-user-observation.mjs --source <repo> <version> <head-sha>");
+      output = ReleaseSource(args[1], args[2], args[3]);
+    } else if (args[0] === "--release") {
       const [, repo, version, head, compiler, evidencePath] = args;
       if (args.length !== 6) Fail("usage: release-user-observation.mjs --release <repo> <version> <head-sha> <compiler-sha> <validated-evidence.json>");
       regularFile(evidencePath);
-      result = ValidateCommittedObservation(repo, version, head, compiler, JSON.parse(readFileSync(evidencePath, "utf8")));
+      output = JSON.stringify(ValidateCommittedObservation(repo, version, head, compiler, JSON.parse(readFileSync(evidencePath, "utf8"))));
     } else {
       const [recordPath, version, superrepo, compiler, evidencePath] = args;
       if (args.length !== 5) Fail("usage: release-user-observation.mjs <record.json> <version> <candidate-superrepo-sha> <compiler-sha> <validated-evidence.json>");
       for (const path of [recordPath, evidencePath]) regularFile(path);
-      result = ValidateObservation(JSON.parse(readFileSync(recordPath, "utf8")), version, superrepo, compiler, JSON.parse(readFileSync(evidencePath, "utf8")));
+      output = JSON.stringify(ValidateObservation(JSON.parse(readFileSync(recordPath, "utf8")), version, superrepo, compiler, JSON.parse(readFileSync(evidencePath, "utf8"))));
     }
-    process.stdout.write(`${JSON.stringify(result)}\n`);
+    process.stdout.write(`${output}\n`);
   } catch (error) {
     console.error(error.message);
     process.exitCode = 1;

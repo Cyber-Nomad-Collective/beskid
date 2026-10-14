@@ -43,7 +43,7 @@ Check the file before the sessions with `shasum -a 256 docs/release/cli06-06-usa
 ## Before the sessions
 
 1. Freeze the candidate. Note the two 40-character commits: the superrepo commit and the compiler commit (`git rev-parse HEAD` and `git rev-parse HEAD:compiler` in the release checkout). The record must carry these exactly.
-2. Get the CI build artifacts of that candidate from the Woodpecker builds (one packet per platform). For each target you need the bundle `beskid-0.6.0-<target>.tar.gz` and the CLI file (`beskid-linux-amd64`, `beskid-darwin-arm64`, `beskid-windows-amd64.exe`). Check them against the packet `SHA256SUMS`.
+2. Get the CI build artifacts of that candidate from one Woodpecker build pipeline of the candidate commit (one packet per platform). Note the build pipeline number: the release ships exactly this build (`BESKID_BUILD_PIPELINE_NUMBER`). For each target you need the bundle `beskid-0.6.0-<target>.tar.gz` and the CLI file (`beskid-linux-amd64`, `beskid-darwin-arm64`, `beskid-windows-amd64.exe`). Check them against the packet `SHA256SUMS`.
 3. Get the digests that the validator will compare against. They are the `sha256` of the three CLI files above, as listed in `validated-evidence.json` of the aggregated release (`<release>/qualified/validated-evidence.json`, produced by `scripts/ci/woodpecker-aggregate-release.mjs`). If you do not have that file yet, take the digests from `SHA256SUMS`, and re-check them against `validated-evidence.json` before you validate.
 4. Prepare a clean machine or a fresh user account for each participant, with no Beskid, no Rust, no checkout and no prior shell history. Use a real machine of the target (the spec checks the CLI digest of the target the participant uses). Remove any `beskid` already on the PATH.
 5. Install the candidate: extract the bundle `beskid-0.6.0-<target>.tar.gz` into a folder, and add its `bin` folder to the PATH of the participant's terminal. Do not use a source build or a checkout. Verify that the installed `bin/beskid` (`bin\beskid.exe` on Windows) has the same sha256 as the target's CLI digest. If the digests differ, stop: this is not the candidate.
@@ -117,27 +117,32 @@ node scripts/ci/release-user-observation.mjs docs/release/cli06-06-usability-che
 
 The repository test is `node --test scripts/ci/test/release-user-observation.test.mjs`.
 
-## Commit the record
+## Commit the record and release
 
-The record names the frozen candidate in `superrepo_commit`. A commit cannot contain its own sha, so the record goes into a separate commit on top of the candidate:
+The record names the frozen candidate in `superrepo_commit`. A commit cannot contain its own sha, so the record goes into a separate record commit on top of the candidate. The release then ships the candidate's own Woodpecker build, the same files the participants installed. Nothing is rebuilt.
 
 1. Check out the candidate commit (the `superrepo_commit` of the record).
 2. Add only `docs/release/cli06-06-record-v<version>.json` and commit it. Change no other file in that commit.
-3. Build and release that commit.
+3. Start the manual release pipeline on the record commit. Set `BESKID_BUILD_PIPELINE_NUMBER` to the Woodpecker build pipeline of the candidate, the build whose artifacts you installed for the participants. Do not build the record commit.
 
-`scripts/ci/woodpecker-release.sh` reads the record from `HEAD` for every 0.6 version:
+The release resolves its source commit with:
+
+```
+node scripts/ci/release-user-observation.mjs --source <repo> <version> <head-sha>
+```
+
+For a 0.6 version this prints the candidate that the committed record names. `.woodpecker/release.yml` fetches the build handoff `<build-run>-<candidate>`, and `scripts/ci/woodpecker-release.sh` validates, aggregates and publishes that handoff with the candidate as the source identity (`release-state.json` provenance, installers, streams). Then the release checks the record:
 
 ```
 node scripts/ci/release-user-observation.mjs --release <repo> <version> <head-sha> <compiler-sha> <validated-evidence.json>
 ```
 
-It fails, and the release stops before any installer work, when:
+The release fails, and stops before any installer work, when:
 
 - no record is committed at `docs/release/cli06-06-record-v<version>.json`, or the record is a symlink;
-- the candidate commit of the record is not an ancestor of `HEAD`, or `HEAD` changes any file other than the record;
-- the compiler pointer of the candidate differs from the release commit;
-- the record is invalid, below a threshold, or names other CLI digests than the release's `$qualified/validated-evidence.json`.
+- the candidate of the record is not an ancestor of the record commit, or the record commit changes any file other than the record;
+- the selected build handoff is not a build of the candidate (the handoff capsule, `UPLOAD_COMPLETE` and the aggregated evidence all carry the candidate commit);
+- the compiler pointer of the candidate differs from the release identity;
+- the record is invalid, below a threshold, or its CLI digests differ from the CLI files of that build (`$qualified/validated-evidence.json`, which is checked against each packet's `SHA256SUMS`).
 
-The validated record is stored in `release-state.json` as `user_observation`. The dated owner waiver goes at the same path.
-
-The release compares the CLI digests in the record with the CLI artifacts built from the release commit. Because the release commit adds the record, its build must give the same CLI files as the candidate build. If the digests differ, the release stops; the release owner then decides how to continue.
+The validated record is stored in `release-state.json` as `user_observation`. The dated owner waiver goes at the same path and follows the same rules.

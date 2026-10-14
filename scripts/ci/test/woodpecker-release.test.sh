@@ -417,4 +417,33 @@ if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=true CI_PIPELINE_NUMBER=79 CI_C
 fi
 test ! -s "$tmp/gh.log" || fail 'nonmanual owner waiver reached GitHub'
 
+# CLI06-06 (0.6): the release runs on a record commit and consumes the build handoff of the candidate
+# that the committed record names, never a build of the record commit.
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=80 CI_COMMIT_SHA="$source_sha" \
+  PATH="$tmp/bin:$PATH" bash "$script" 42 0.6.0 2>"$tmp/v06-no-record.err"; then
+  fail '0.6 release preparation ran without a committed CLI06-06 record'
+fi
+grep -Fq 'no record is committed at docs/release/cli06-06-record-v0.6.0.json' "$tmp/v06-no-record.err" || \
+  fail 'absent CLI06-06 record was not diagnosed'
+test ! -e "$tmp/rootfs/woodpecker-output/releases/80-${source_sha}" || fail 'absent record reached release preparation'
+mkdir -p "$root/docs/release"
+printf '{"superrepo_commit":"%s"}\n' "$source_sha" >"$root/docs/release/cli06-06-record-v0.6.0.json"
+git -C "$root" add docs/release/cli06-06-record-v0.6.0.json
+git -C "$root" -c user.name='Release test' -c user.email='release-test@example.invalid' commit -qm record
+record_sha="$(git -C "$root" rev-parse HEAD)"
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=81 CI_COMMIT_SHA="$source_sha" \
+  PATH="$tmp/bin:$PATH" bash "$script" 42 0.6.0 2>"$tmp/v06-pipeline.err"; then
+  fail '0.6 release accepted a pipeline commit that is not the checked-out record commit'
+fi
+grep -Fq 'release pipeline/source identity does not match the checkout' "$tmp/v06-pipeline.err" || \
+  fail 'record commit pipeline identity mismatch was not diagnosed'
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=82 CI_COMMIT_SHA="$record_sha" \
+  PATH="$tmp/bin:$PATH" bash "$script" 42 0.6.0 2>"$tmp/v06-handoff.err"; then
+  fail '0.6 release preparation ran without the candidate build handoff'
+fi
+grep -Fq "incoming/42-${source_sha}/linux" "$tmp/v06-handoff.err" || \
+  fail '0.6 release did not look for the build handoff of the record candidate'
+test "$(node "$root/scripts/ci/release-user-observation.mjs" --source "$root" 0.6.0 "$record_sha")" = "$source_sha" || \
+  fail '0.6 release source is not the record candidate'
+
 echo 'woodpecker release tests OK'
