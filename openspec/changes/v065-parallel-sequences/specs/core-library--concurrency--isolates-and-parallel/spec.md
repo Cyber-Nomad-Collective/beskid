@@ -65,7 +65,7 @@ A terminal SHALL evaluate the operator chain once per element inside the worker 
 - **THEN** exactly one chunk is recorded and the body runs on the calling isolate
 
 ### Requirement: Combiner contracts and reductions
-`Core.Parallel` SHALL declare `pub contract Associative<T> { T Combine(T left, T right); }` and `pub contract Commutative<T> { T Combine(T left, T right); }` as marker contracts carrying the combiner's algebraic claim; the compiler SHALL NOT prove the claim. `T ParallelSeq<T>.Reduce<C>(T seed, C combiner) where C: Associative<T>` SHALL fold each chunk left to right from `seed`, then combine the chunk results in chunk (input) order, so that the combination order equals the serial left fold's association for an associative combiner. `T ParallelSeq<T>.ReduceUnordered<C>(T seed, C combiner) where C: Associative<T>, C: Commutative<T>` MAY combine chunk results in any order. A combiner type that does not conform to the required contract SHALL be rejected with **E1610** naming the missing contract. The corelib SHALL ship conforming combiner types `SumI64`, `SumF64`, `MaxI64`, `MinI64`, `Concat` (strings) and `Count`, each declared with both contracts where the operation is commutative and with `Associative` only otherwise (`Concat`). `Count()` SHALL equal `Map((x) => 1_i64).Reduce(0_i64, SumI64 {})`.
+`Core.Parallel` SHALL declare `pub contract Associative<T> { T Combine(T left, T right); }` and `pub contract Commutative<T> { T Combine(T left, T right); }` as marker contracts carrying the combiner's algebraic claim; the compiler SHALL NOT prove the claim. `T ParallelSeq<T>.Reduce<C>(T seed, C combiner) where C: Associative<T>, C: Transferable` SHALL fold each chunk left to right from `seed`, then combine the chunk results in chunk (input) order, so that the combination order equals the serial left fold's association for an associative combiner. `T ParallelSeq<T>.ReduceUnordered<C>(T seed, C combiner) where C: Associative<T>, C: Commutative<T>, C: Transferable` MAY combine chunk results in any order. The combiner is captured by every chunk body, so `C` SHALL be `Transferable`: a combiner type that is `Never` (for example a type with a function-typed field and no `[Immutable]` marker) SHALL be rejected with **E1610**. The seed is captured by every chunk body and is therefore used more than once; the seed argument SHALL have class `Shared` or `Copied`, and a seed of class `Moved` SHALL be rejected with **E1236** naming the class `Moved` at the argument. A caller that needs a `Moved` accumulator SHALL build it inside the combiner. A combiner type that does not conform to the required contract SHALL be rejected with **E1610** naming the missing contract. The corelib SHALL ship conforming combiner types `SumI64`, `SumF64`, `MaxI64`, `MinI64`, `Concat` (strings) and `Count`, each declared `[Immutable]` (so that each is `Shared` and satisfies the bound `C: Transferable`) and with both contracts where the operation is commutative and with `Associative` only otherwise (`Concat`). `Count()` SHALL equal `Map((x) => 1_i64).Reduce(0_i64, SumI64 {})`.
 
 #### Scenario: User combiner with both markers
 - **GIVEN**
@@ -73,6 +73,7 @@ A terminal SHALL evaluate the operator chain once per element inside the worker 
   [Immutable]
   pub type Stats { i64 count, f64 total, f64 max }
 
+  [Immutable]
   pub type MergeStats : Associative<Stats>, Commutative<Stats> {
       pub Stats Combine(Stats a, Stats b) {
           mut f64 m = a.max;
@@ -92,9 +93,19 @@ A terminal SHALL evaluate the operator chain once per element inside the worker 
 - **THEN** the result is `Stats { count: 3, total: 7.0, max: 4.0 }` on every run
 
 #### Scenario: Missing Commutative is rejected
-- **GIVEN** `pub type Append : Associative<string> { pub string Combine(string a, string b) { return a + b; } }` and `words.Parallel().ReduceUnordered("", Append {})`
+- **GIVEN** `[Immutable] pub type Append : Associative<string> { pub string Combine(string a, string b) { return a + b; } }` and `words.Parallel().ReduceUnordered("", Append {})`
 - **WHEN** the call is type-checked
 - **THEN** the compiler reports **E1610** naming `Commutative<string>`
+
+#### Scenario: Moved seed is rejected
+- **GIVEN** a `Moved` accumulator type `Buffer` and `chunks.Parallel().Reduce(Buffer.New(), Merge {})`
+- **WHEN** the call is type-checked
+- **THEN** the compiler reports **E1236** at the seed argument naming the class `Moved`
+
+#### Scenario: Never-transferable combiner is rejected
+- **GIVEN** a combiner type with a function-typed field and no `[Immutable]` marker, passed to `Reduce`
+- **WHEN** the call is type-checked
+- **THEN** the compiler reports **E1610** for the bound `C: Transferable`
 
 #### Scenario: Ordered Reduce preserves association order
 - **GIVEN** `words.Parallel().Chunk(1_i64).Reduce("", Concat {})` over `["a", "b", "c", "d"]`
