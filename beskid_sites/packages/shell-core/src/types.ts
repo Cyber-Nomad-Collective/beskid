@@ -61,6 +61,8 @@ export interface AppShellProps {
 	sidebarExtra?: ReactNode;
 	/** Sign-out href (POST endpoint or Authelia `/logout`). Defaults to `/logout`. */
 	signOutHref?: string;
+	/** Topbar "Sign in" target for signed-out visitors. Defaults to `/api/auth/login`. */
+	signInHref?: string;
 	/** Branding label shown in the sidebar header. */
 	brandLabel?: string;
 	/** Branding subtitle shown in the sidebar header. */
@@ -82,6 +84,8 @@ export interface TopbarProps {
 	/** Whether to render the avatar dropdown in the topbar (sidebar-disabled mode). */
 	showUserMenu?: boolean;
 	signOutHref?: string;
+	/** Where the topbar "Sign in" button goes when no user is signed in. */
+	signInHref?: string;
 }
 
 export interface AppSidebarProps {

@@ -30,6 +30,7 @@ export function AppShell({
 	rightSlot,
 	sidebarExtra,
 	signOutHref,
+	signInHref,
 	brandLabel,
 	brandSubtitle,
 	homeHref,
@@ -57,6 +58,7 @@ export function AppShell({
 								user={user}
 								showUserMenu={false}
 								signOutHref={signOutHref}
+								signInHref={signInHref}
 							/>
 							<div className="app-shell__body flex min-h-0 flex-1">
 								<div className="app-shell__main flex min-h-0 min-w-0 flex-1 flex-col">
@@ -74,6 +76,7 @@ export function AppShell({
 							user={user}
 							showUserMenu
 							signOutHref={signOutHref}
+							signInHref={signInHref}
 						/>
 						<div className="app-shell__body flex min-h-0 flex-1">
 							<div className="app-shell__main flex min-h-0 min-w-0 flex-1 flex-col">

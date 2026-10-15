@@ -1,6 +1,7 @@
 "use client";
 
 import {
+	buttonVariants,
 	Separator,
 	SidebarTrigger,
 } from "@cyber-nomad-collective/beskid-ui-react";
@@ -25,6 +26,7 @@ export function Topbar({
 	user,
 	showUserMenu = false,
 	signOutHref,
+	signInHref = "/api/auth/login",
 }: TopbarProps) {
 	return (
 		<header className="app-shell__header flex h-14 shrink-0 items-center border-b border-border px-4">
@@ -56,6 +58,14 @@ export function Topbar({
 							</button>
 						}
 					/>
+				) : null}
+				{showUserMenu && !user ? (
+					<a
+						href={signInHref}
+						className={buttonVariants({ variant: "outline", size: "sm" })}
+					>
+						Sign in
+					</a>
 				) : null}
 				<ThemeToggle />
 			</div>

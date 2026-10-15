@@ -39,3 +39,25 @@ describe("AppShell topbar slots", () => {
 		expect(screen.getByText("Right")).not.toBeNull();
 	});
 });
+
+describe("AppShell sign-in entry", () => {
+	it("offers Sign in in the topbar when nobody is signed in", () => {
+		render(
+			<AppShell sidebarEnabled={false} signInHref="/auth/start">
+				<div>page</div>
+			</AppShell>,
+		);
+		expect(
+			screen.getByRole("link", { name: "Sign in" }).getAttribute("href"),
+		).toBe("/auth/start");
+	});
+
+	it("shows the account menu instead once signed in", () => {
+		render(
+			<AppShell sidebarEnabled={false} user={{ username: "akadmin", groups: [] }}>
+				<div>page</div>
+			</AppShell>,
+		);
+		expect(screen.queryByRole("link", { name: "Sign in" })).toBeNull();
+	});
+});
