@@ -17,6 +17,11 @@ set -euo pipefail
 [[ "$#" == 2 ]] || { echo 'usage: woodpecker-repackage-platform.sh <linux|macos|windows> <build-pipeline>' >&2; exit 2; }
 platform="$1"; build="$2"
 root="$(cd "$(dirname "$0")/../.." && pwd)"
+# Woodpecker's git plugin clones with --depth=1 even when depth: 0 is set; the provenance checks
+# below walk ancestry from this commit to the build source, so they need full history.
+if [[ "$(git -C "$root" rev-parse --is-shallow-repository)" == true ]]; then
+  git -C "$root" fetch --quiet --unshallow --no-tags origin
+fi
 [[ "$build" =~ ^[1-9][0-9]*$ ]] || { echo 'build pipeline must be a positive number' >&2; exit 2; }
 [[ "${CI_PIPELINE_EVENT:-}" == manual && "${CI_PIPELINE_NUMBER:-}" =~ ^[1-9][0-9]*$ ]] || {
   echo 'repackaging runs only in a manual pipeline' >&2; exit 1;

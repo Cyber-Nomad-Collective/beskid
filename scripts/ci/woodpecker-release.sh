@@ -14,6 +14,11 @@ roles=(linux macos windows)
 builds=("$2" "$3" "$4")
 scripts="$(cd "$(dirname "$0")" && pwd)"
 repo="$(cd "$scripts/../.." && pwd)"
+# Woodpecker's git plugin clones with --depth=1 even when depth: 0 is set; the provenance checks
+# below walk ancestry from this commit to the build source, so they need full history.
+if [[ "$(git -C "$repo" rev-parse --is-shallow-repository)" == true ]]; then
+  git -C "$repo" fetch --quiet --unshallow --no-tags origin
+fi
 for index in 0 1 2; do
   [[ "${builds[$index]}" =~ ^[1-9][0-9]*$ ]] || { echo "${roles[$index]} build must be a positive pipeline number" >&2; exit 2; }
 done
