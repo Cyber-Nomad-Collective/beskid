@@ -7,6 +7,7 @@ import {
 	CardTitle,
 } from "@cyber-nomad-collective/beskid-ui-react";
 import { Link } from "@tanstack/react-router";
+import { formatCount, formatDate } from "#/lib/format";
 import { packageKindPresentation } from "#/lib/package-kind-presentation";
 import type { PackageCommunityStatus, PackageDetails } from "#/lib/pckg-api";
 import { CommunityLink, CommunityRecentPosts } from "./community-card";
@@ -127,10 +128,10 @@ export function PackageDetail({
 			<CommunityRecentPosts status={community} />
 
 			<FactsCard>
-				<span>{pkg.totalDownloads.toLocaleString()} downloads</span>
+				<span>{formatCount(pkg.totalDownloads)} downloads</span>
 				<span>Published by {pkg.ownerDisplayName}</span>
-				<span>Updated {new Date(pkg.updatedAtUtc).toLocaleDateString()}</span>
-				<span>{details.dependentsCount.toLocaleString()} dependents</span>
+				<span>Updated {formatDate(pkg.updatedAtUtc)}</span>
+				<span>{formatCount(details.dependentsCount)} dependents</span>
 				{pkg.repositoryUrl && (
 					<a className="text-primary underline" href={pkg.repositoryUrl}>
 						Source repository

@@ -1,81 +1,74 @@
 import { cn } from "@cyber-nomad-collective/beskid-ui-react/lib/utils";
-import { useNavigate, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 
 export type PckgMode = "docs" | "registry";
 
+const MODES: { mode: PckgMode; label: string; to: "/docs" | "/packages" }[] = [
+	{ mode: "docs", label: "Docs", to: "/docs" },
+	{ mode: "registry", label: "Registry", to: "/packages" },
+];
+
 /**
- * Animated docs/registry mode switcher for the pckg topbar.
- *
- * pckg has two modes with an animated shifting index between them:
- *  - Docs     → `/docs`
- *  - Registry → `/packages`
- *
- * The active segment is derived from the current route pathname (so it stays
- * correct on deep links and reloads), and the sliding indicator animates via
- * a CSS transform transition (see `styles.css`). Clicking a segment navigates
- * to the mode's landing route.
+ * pckg topbar identity: the Beskid ridge mark, then a segmented Docs /
+ * Registry switch. The active segment follows the route (so deep links and
+ * reloads stay correct) and an indicator slides between the two segments.
+ * Styling is plain Tailwind on purpose: the switch must not depend on a
+ * separate stylesheet.
  */
 export function ModeSwitcher() {
 	const pathname = useRouterState({ select: (s) => s.location.pathname });
 	const navigate = useNavigate();
-
 	const mode: PckgMode = pathname.startsWith("/docs") ? "docs" : "registry";
 
-	const go = (next: PckgMode) => {
-		if (next === mode) return;
-		void navigate({ to: next === "docs" ? "/docs" : "/packages" });
-	};
-
 	return (
-		<div
-			className="pckg-mode-switcher"
-			role="tablist"
-			aria-label="pckg mode"
-			data-mode={mode}
-		>
-			<span
-				className={cn(
-					"pckg-mode-switcher__indicator",
-					mode === "registry" && "pckg-mode-switcher__indicator--right",
-				)}
-				aria-hidden="true"
-			/>
-			<button
-				type="button"
-				role="tab"
-				aria-selected={mode === "docs"}
-				className={cn(
-					"pckg-mode-switcher__btn",
-					mode === "docs" && "pckg-mode-switcher__btn--active",
-				)}
-				onClick={() => go("docs")}
-				onKeyDown={(e) => {
-					if (e.key === "Enter" || e.key === " ") {
-						e.preventDefault();
-						go("docs");
-					}
-				}}
+		<div className="flex items-center gap-2 sm:gap-3">
+			<Link
+				to="/"
+				aria-label="Beskid pckg home"
+				className="flex items-center gap-2 rounded-md pr-1 text-foreground"
 			>
-				Docs
-			</button>
-			<button
-				type="button"
-				role="tab"
-				aria-selected={mode === "registry"}
-				className={cn(
-					"pckg-mode-switcher__btn",
-					mode === "registry" && "pckg-mode-switcher__btn--active",
-				)}
-				onClick={() => go("registry")}
-				onKeyDown={(e) => {
-					if (e.key === "Enter" || e.key === " ") {
-						e.preventDefault();
-						go("registry");
-					}
-				}}
+				<img src="/logo.svg" alt="" className="size-7 dark:hidden" />
+				<img src="/logo-dark.svg" alt="" className="hidden size-7 dark:block" />
+				<span className="hidden font-mono text-sm font-semibold tracking-tight sm:inline">
+					pckg
+				</span>
+			</Link>
+			<div
+				role="tablist"
+				aria-label="pckg mode"
+				data-mode={mode}
+				className="relative grid grid-cols-2 rounded-full border border-border bg-muted/60 p-0.5 text-sm"
 			>
-				Registry
-			</button>
+				<span
+					aria-hidden="true"
+					className={cn(
+						"absolute inset-y-0.5 left-0.5 w-[calc(50%-2px)] rounded-full bg-primary shadow-sm transition-transform duration-200 ease-out motion-reduce:transition-none",
+						mode === "registry" && "translate-x-full",
+					)}
+				/>
+				{MODES.map((item) => {
+					const active = item.mode === mode;
+					return (
+						<button
+							key={item.mode}
+							type="button"
+							role="tab"
+							aria-selected={active}
+							onClick={() => {
+								if (!active) void navigate({ to: item.to });
+							}}
+							className={cn(
+								"relative z-10 rounded-full px-2.5 py-1 font-medium sm:px-3 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+								active
+									? "text-primary-foreground"
+									: "text-muted-foreground hover:text-foreground",
+							)}
+						>
+							{item.label}
+						</button>
+					);
+				})}
+			</div>
 		</div>
 	);
 }

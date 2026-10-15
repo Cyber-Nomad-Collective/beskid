@@ -1,5 +1,6 @@
 import { buttonVariants } from "@cyber-nomad-collective/beskid-ui-react";
 import { MessageSquare } from "lucide-react";
+import { formatDateTime } from "#/lib/format";
 import type { PackageCommunity, PackageCommunityStatus } from "#/lib/pckg-api";
 
 /**
@@ -75,7 +76,7 @@ export function CommunityRecentPosts({
 								className="hover:underline"
 							>
 								<time dateTime={post.postedAtUtc}>
-									{new Date(post.postedAtUtc).toLocaleString()}
+									{formatDateTime(post.postedAtUtc)}
 								</time>
 							</a>
 						</p>

@@ -1,7 +1,7 @@
 import { buttonVariants } from "@cyber-nomad-collective/beskid-ui-react";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { PackageGrid } from "#/components/package-grid";
+import { PackageList } from "#/components/package-list";
 import { pckgApi } from "#/lib/api";
 
 export const Route = createFileRoute("/dashboard/my-packages")({
@@ -31,7 +31,7 @@ function MyPackagesPage() {
 					Open release center
 				</Link>
 			</header>
-			<PackageGrid
+			<PackageList
 				items={packages.data}
 				emptyMessage="You do not own any packages yet."
 			/>

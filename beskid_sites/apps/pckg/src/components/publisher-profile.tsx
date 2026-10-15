@@ -1,5 +1,5 @@
 import type { PackageSummary, PublisherSummary } from "#/lib/pckg-api";
-import { PackageGrid } from "./package-grid";
+import { PackageList } from "./package-list";
 
 /**
  * Publisher profile page — the "profile" the user wants preserved (research
@@ -11,7 +11,7 @@ import { PackageGrid } from "./package-grid";
  *
  * Layout:
  *  1. Hero — display name + bio.
- *  2. "Published packages" — reuses the shared {@link PackageGrid}.
+ *  2. "Published packages" — reuses the shared {@link PackageList}.
  *
  * Presentational: the route owns the queries and passes data. The 404 "no
  * public profile" case is handled by the route (renders a dedicated card)
@@ -37,7 +37,7 @@ export function PublisherProfile({
 			<section className="mt-8">
 				<h2 className="text-xl font-semibold">Published packages</h2>
 				<div className="mt-3">
-					<PackageGrid
+					<PackageList
 						items={packages}
 						emptyMessage="This publisher has no public packages yet."
 					/>

@@ -14,6 +14,17 @@
 
 ### Changed
 
+- pckg: `/packages` is a compact, filterable list: instant search over
+  name, description and tags, kind filters with counts, sorting by name,
+  update time or downloads (all in the URL), and direct Docs and Files
+  links per package. Publisher and "my packages" pages use the same list.
+- pckg: `/docs` is a documentation hub with a filter, the standard library
+  as its own section, other libraries, project templates, and links to the
+  language docs, the Book and the standard.
+- pckg: the topbar shows the Beskid mark and a styled Docs / Registry
+  switch; its stylesheet had never been committed, so the two modes
+  rendered as plain text.
+
 - pckg: the package page shows "Discuss on the forum" linking to the
   package's NodeBB thread with live reply/view counters and the newest
   forum posts; the client no longer
@@ -26,5 +37,7 @@
 
 ### Fixed
 
+- pckg: numbers and dates use a fixed locale and UTC, so server-rendered
+  pages no longer differ from the browser render (React hydration error).
 - pckg: the server render links the stylesheet the client build emits;
   Tailwind scans only `src`, so image builds no longer read `.output`.

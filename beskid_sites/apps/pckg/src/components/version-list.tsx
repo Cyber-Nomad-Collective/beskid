@@ -1,5 +1,6 @@
 import { buttonVariants } from "@cyber-nomad-collective/beskid-ui-react";
 import { pckgApi } from "#/lib/api";
+import { formatDate } from "#/lib/format";
 import type { PackageVersion } from "#/lib/pckg-api";
 
 /**
@@ -33,8 +34,7 @@ export function VersionList({
 							</span>
 							<p className="mt-1 text-xs text-muted-foreground">
 								{(version.sizeBytes / 1024).toFixed(1)} KiB · published{" "}
-								{new Date(version.publishedAtUtc).toLocaleDateString()} · SHA-256{" "}
-								{version.checksumSha256}
+								{formatDate(version.publishedAtUtc)} · SHA-256 {version.checksumSha256}
 								{version.hasReadme ? " · README" : ""}
 							</p>
 						</div>
