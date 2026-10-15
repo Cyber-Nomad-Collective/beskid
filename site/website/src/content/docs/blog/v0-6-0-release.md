@@ -200,12 +200,12 @@ beskid has no users yet, so there is no migration guide. For the record, these c
 
 ## What is still missing
 
-- **Glue extensions.** Records by value, callbacks, function types across the boundary, enums and Glue-driven exports wait for 0.6.1. The Rust side of an export is linked by hand today. `glue-dotnet` is unavailable.
+- **Glue extensions.** Records by value, callbacks, function types across the boundary, enums and Glue-driven exports wait for 0.6.6. The Rust side of an export is linked by hand today. `glue-dotnet` is unavailable.
 - **Parallelism.** 0.6.0 runs fibers. It does not run your code on more than one core at a time.
 
 ## What comes next
 
-Parallel execution arrives in steps, each one depending on the previous. 0.6.1 brings attributes on every declaration and the prerequisites for isolates. 0.6.2 adds incremental marking to the collector and the `move` keyword. 0.6.3 adds isolates and `Parallel.Scope`. 0.6.4 adds ports. 0.6.5 adds `.Parallel()` on sequences, with sharing between heaps modelled on ORCA, the protocol Pony uses to collect objects that actors share. No dates. Dates are the part of a roadmap that ages worst.
+Parallel execution arrives in one release, 0.6.6, built in steps that each depend on the previous: attributes on every declaration and the prerequisites for isolates; incremental marking in the collector and the `move` keyword; isolates and `Parallel.Scope`; ports; and `.Parallel()` on sequences, with sharing between heaps modelled on ORCA, the protocol Pony uses to collect objects that actors share. No dates. Dates are the part of a roadmap that ages worst.
 
 ## Install or upgrade
 
