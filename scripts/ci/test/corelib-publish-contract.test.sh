@@ -10,14 +10,12 @@ RUNNER="$(cat "${ROOT}/scripts/ci/lib/corelib-publish-runner.mjs")"
 RUNNER_READY="$(sed -n '/^async function assertRegistryReady/,/^}/p' "${ROOT}/scripts/ci/lib/corelib-publish-runner.mjs")"
 PUBLISHER="$(cat "${ROOT}/scripts/ci/corelib-publish.sh")"
 
-assert_contains "${RUNNER}" '"interop"' \
-  "the interop package is part of the production corelib inventory"
-assert_contains "${RUNNER}" '"network"' \
-  "the network package is part of the production corelib inventory"
-assert_contains "${RUNNER}" '"http"' \
-  "the HTTP package is part of the production corelib inventory"
-assert_contains "${RUNNER}" '"glue"' \
-  "the glue package is part of the production corelib inventory"
+assert_contains "${RUNNER}" '[...members.keys()].filter((memberId) => !EXCLUDED_CORELIB_MEMBERS.has(memberId))' \
+  "the production corelib inventory is derived from the CoreLib.bws members"
+assert_eq "absent" "$({ grep -Fq 'PUBLISHED_CORELIB_MEMBERS' <<<"${RUNNER}" && echo present; } || echo absent)" \
+  "the hard-coded corelib member list is removed"
+assert_contains "${RUNNER}" 'parseVersionPolicy(process.env.BESKID_PCKG_VERSION_BUMP)' \
+  "the version policy is the BESKID_PCKG_VERSION_BUMP pipeline input"
 assert_contains "${RUNNER}" '"fiber_demo"' \
   "all first-party templates are part of the publication inventory"
 assert_contains "${RUNNER}" 'EXCLUDED_CORELIB_MEMBERS' \

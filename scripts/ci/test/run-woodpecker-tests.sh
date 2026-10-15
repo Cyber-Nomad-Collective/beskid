@@ -19,6 +19,7 @@ bash scripts/ci/test/publish-linux-package-derivative.test.sh
 node --test scripts/ci/test/package-source-authority.test.mjs \
   scripts/ci/test/release-publication-eligibility.test.mjs \
   scripts/ci/test/qualified-pckg-toolchain.test.mjs \
+  scripts/ci/test/corelib-publish-runner.test.mjs \
   scripts/ci/test/template-quality-gate.test.mjs \
   scripts/ci/test/release-version.test.mjs \
   scripts/ci/test/woodpecker-cli-surface-evidence.test.mjs \

@@ -2,6 +2,11 @@
 /**
  * Pack and publish the production corelib closure plus first-party templates.
  *
+ * The corelib publish set is derived from the members of CoreLib.bws minus the
+ * explicit EXCLUDED_CORELIB_MEMBERS list, so a new workspace member is published
+ * without a change here. The version policy is BESKID_PCKG_VERSION_BUMP:
+ * patch (default), minor, major or an exact MAJOR.MINOR.PATCH version.
+ *
  * Every artifact is built and validated before the first registry mutation.
  * Set BESKID_PUBLISH_DRY_RUN=1 to exercise the complete local pack path without
  * a publisher key or any network access.
@@ -19,6 +24,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { basename, join } from "node:path";
+import { pathToFileURL } from "node:url";
 import { tmpdir } from "node:os";
 import { runTemplateQualityGate } from "./template-quality-gate.mjs";
 
@@ -27,22 +33,21 @@ const CORELIB_REPOSITORY_BASE =
 const TEMPLATES_REPOSITORY_BASE =
   "https://github.com/Cyber-Nomad-Collective/beskid_templates/tree/main";
 
-const PUBLISHED_CORELIB_MEMBERS = [
-  "foundation",
-  "compiler_sdk",
-  "concurrency",
-  "runtime",
-  "console",
-  "interop",
-  "network",
-  "http",
-  "glue",
-  "corelib",
-];
-const EXCLUDED_CORELIB_MEMBERS = new Set([
-  "pest_gen_schema",
-  "corelib_pest_gen",
-  "corelib_tests",
+// Workspace members that must never be published, each with its reason. Every
+// other member of CoreLib.bws is published. An entry that names no workspace
+// member fails, so this list cannot go stale.
+//
+// Mods: `serialization_mod` is published. `corelib_serialization` (and through
+// it the aggregate) depends on it, and every dependency of a published package
+// must be in the plan; to a consumer a Mod is an ordinary registry dependency.
+// The previous design excluded only the development generator below.
+export const EXCLUDED_CORELIB_MEMBERS = new Map([
+  // Test project (category Test, the workspace defaultTestMember); no consumer depends on it.
+  ["corelib_tests", "test project"],
+  // Development Mod that generates Pest parsers inside the Corelib repository; no published package depends on it.
+  ["corelib_pest_gen", "development Mod of the Corelib repository"],
+  // BSOL schema of the corelib_pest_gen tunables; it exists only for that development Mod.
+  ["pest_gen_schema", "schema of the corelib_pest_gen development Mod"],
 ]);
 const TEMPLATE_MEMBER_IDS = [
   "console",
@@ -147,20 +152,43 @@ function resolveTemplatesRoot() {
   return root;
 }
 
-function corelibInventory(workspaceRoot) {
+// Order packages so that every dependency is packed and uploaded before its dependents.
+function dependencyOrder(packages) {
+  const byName = new Map(packages.map((meta) => [meta.registryName, meta]));
+  const ordered = [];
+  const state = new Map();
+  const visit = (meta, path) => {
+    if (state.get(meta.registryName) === "done") return;
+    if (state.get(meta.registryName) === "active") {
+      throw new Error(`corelib dependency cycle: ${[...path, meta.registryName].join(" -> ")}`);
+    }
+    state.set(meta.registryName, "active");
+    for (const dependency of meta.dependencyNames) {
+      const target = byName.get(dependency);
+      if (target) visit(target, [...path, meta.registryName]);
+    }
+    state.set(meta.registryName, "done");
+    ordered.push(meta);
+  };
+  for (const meta of packages) visit(meta, []);
+  return ordered;
+}
+
+export function corelibInventory(workspaceRoot) {
   const workspacePath = join(workspaceRoot, "CoreLib.bws");
   const workspaceText = readFileSync(workspacePath, "utf8");
   if (projectField(workspaceText, "name") !== "corelib") {
     throw new Error(`${workspacePath}: workspace.name must be corelib`);
   }
   const members = parseWorkspaceMembers(workspaceText, workspacePath);
-  requireExactIds(
-    members.keys(),
-    [...PUBLISHED_CORELIB_MEMBERS, ...EXCLUDED_CORELIB_MEMBERS],
-    "classified corelib inventory",
-  );
+  for (const memberId of EXCLUDED_CORELIB_MEMBERS.keys()) {
+    if (!members.has(memberId)) {
+      throw new Error(`${workspacePath}: excluded corelib member ${memberId} is not a workspace member`);
+    }
+  }
+  if (!members.has("corelib")) throw new Error(`${workspacePath}: the corelib aggregate member is missing`);
 
-  const packages = PUBLISHED_CORELIB_MEMBERS.map((memberId) => {
+  const packages = [...members.keys()].filter((memberId) => !EXCLUDED_CORELIB_MEMBERS.has(memberId)).map((memberId) => {
     const member = members.get(memberId);
     const sourceRel = projectField(member.body, "path");
     const registryName = projectField(member.body, "package");
@@ -168,7 +196,7 @@ function corelibInventory(workspaceRoot) {
     const category = projectField(member.body, "category");
     const tags = parseTags(projectField(member.body, "tags"), `${workspacePath}:${memberId}`);
     if (!sourceRel || !registryName || !description || category !== "Library") {
-      throw new Error(`${workspacePath}:${memberId}: incomplete production package metadata`);
+      throw new Error(`${workspacePath}:${memberId}: incomplete production package metadata (path, package, description and category = "Library" are required, or exclude the member)`);
     }
     const source = join(workspaceRoot, sourceRel);
     const manifest = discoverProjectManifest(source);
@@ -177,12 +205,14 @@ function corelibInventory(workspaceRoot) {
     if (projectField(manifestText, "name") !== registryName) {
       throw new Error(`${manifest}: project.name must be ${registryName}`);
     }
+    // A readme is optional for the packer; a declared readme must exist.
     const readme = projectField(manifestText, "readme");
-    if (!readme || !existsSync(join(source, readme))) {
-      throw new Error(`${manifest}: declared readme is missing`);
+    if (readme && !existsSync(join(source, readme))) {
+      throw new Error(`${manifest}: declared readme ${readme} is missing`);
     }
     return {
       kind: "library",
+      projectType: projectField(manifestText, "type") ?? "Lib",
       // Facade-only and aggregate/dependency-heavy packages are packable, but
       // the source doc command cannot yet normalize every non-root source path.
       hasApiDocs: ["foundation", "concurrency", "runtime"].includes(memberId),
@@ -197,10 +227,12 @@ function corelibInventory(workspaceRoot) {
     };
   });
 
+  // The aggregate depends on exactly the published libraries: every published
+  // member except itself and Mods, which are published as dependencies.
   const aggregate = packages.find((meta) => meta.memberId === "corelib");
   requireExactIds(
     aggregate.dependencyNames,
-    packages.filter((meta) => meta.memberId !== "corelib").map((meta) => meta.registryName),
+    packages.filter((meta) => meta !== aggregate && meta.projectType !== "Mod").map((meta) => meta.registryName),
     "production corelib aggregate dependencies",
   );
   const publishedNames = new Set(packages.map((meta) => meta.registryName));
@@ -211,7 +243,7 @@ function corelibInventory(workspaceRoot) {
       }
     }
   }
-  return packages;
+  return dependencyOrder(packages);
 }
 
 function templateInventory(workspaceRoot) {
@@ -324,8 +356,23 @@ function compareSemver(left, right) {
   return left.major - right.major || left.minor - right.minor || left.patch - right.patch;
 }
 
-function nextVersion(latest, bump) {
+// BESKID_PCKG_VERSION_BUMP: patch | minor | major | an exact MAJOR.MINOR.PATCH version.
+export function parseVersionPolicy(raw) {
+  const value = String(raw ?? "").trim().toLowerCase() || "patch";
+  if (["patch", "minor", "major"].includes(value)) return value;
+  if (/^\d+\.\d+\.\d+$/.test(value)) return parseSemver(value, "BESKID_PCKG_VERSION_BUMP").raw;
+  throw new Error("BESKID_PCKG_VERSION_BUMP must be patch, minor, major, or an exact MAJOR.MINOR.PATCH version");
+}
+
+export function nextVersion(latest, bump) {
   const base = latest ? parseSemver(latest, "registry version") : parseSemver("0.1.0", "initial version");
+  if (/^\d/.test(bump)) {
+    const exact = parseSemver(bump, "BESKID_PCKG_VERSION_BUMP");
+    if (latest && compareSemver(exact, base) <= 0) {
+      throw new Error(`exact version ${exact.raw} is not greater than the latest registry version ${base.raw}`);
+    }
+    return exact.raw;
+  }
   if (bump === "major") return `${base.major + 1}.0.0`;
   if (bump === "minor") return `${base.major}.${base.minor + 1}.0`;
   return `${base.major}.${base.minor}.${base.patch + 1}`;
@@ -553,10 +600,7 @@ function publishArtifact(cliBin, baseUrl, token, meta) {
 
 async function main() {
   const dryRun = enabled("BESKID_PUBLISH_DRY_RUN");
-  const bump = (process.env.BESKID_PCKG_VERSION_BUMP ?? "patch").trim().toLowerCase();
-  if (!["patch", "minor", "major"].includes(bump)) {
-    throw new Error("BESKID_PCKG_VERSION_BUMP must be patch, minor, or major");
-  }
+  const bump = parseVersionPolicy(process.env.BESKID_PCKG_VERSION_BUMP);
   const token = dryRun ? null : requirePublisherToken();
   const baseUrl = dryRun
     ? null
@@ -602,7 +646,9 @@ async function main() {
   }
 }
 
-main().catch((error) => {
-  console.error(error instanceof Error ? error.message : error);
-  process.exit(1);
-});
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch((error) => {
+    console.error(error instanceof Error ? error.message : error);
+    process.exit(1);
+  });
+}

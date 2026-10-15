@@ -26,7 +26,7 @@
 - [x] 5.1 Derive the publish set from `CoreLib.bws` members minus the commented `EXCLUDED_CORELIB_MEMBERS` (`corelib_tests`, `corelib_pest_gen`, `pest_gen_schema`); publish `serialization_mod` as the dependency of `corelib_serialization`.
 - [x] 5.2 Make `BESKID_PCKG_VERSION_BUMP` (`patch`, `minor`, `major` or an exact version; default `patch`) the pipeline input in `.woodpecker/pckg.yml`, `scripts/ci/corelib-publish.sh` and the runner.
 - [x] 5.3 Add `scripts/ci/test/corelib-publish-runner.test.mjs`: derivation, exclusion, an unlisted new member, a stale exclusion and the bump input.
-- [ ] 5.4 Before the first 0.6 publication, add the missing `readme` declarations of `corelib_bsol`, `corelib_serialization` and `serialization_mod` in the compiler repository (the derived plan fails closed on them with an exact message).
+- [ ] 5.4 Add readmes to `corelib_bsol`, `corelib_serialization` and `serialization_mod` in the compiler repository (quality only; a readme is optional for the packer). Run `corelib-publish.sh --dry-run` on the 0.6 bundle to confirm that `beskid pckg pack` packs the Mod `serialization_mod`.
 
 ## 6. Deferred to 0.6.1
 

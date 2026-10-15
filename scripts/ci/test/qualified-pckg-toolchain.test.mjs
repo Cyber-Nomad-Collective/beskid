@@ -33,14 +33,14 @@ function Fixture() {
   Put(join(prefix, 'release-version.txt'), '0.5.1\n');
   Put(join(prefix, 'bin/beskid'), '#!/usr/bin/env bash\n[[ "$1" == --version ]] || exit 99\necho "beskid 0.5.1"\n', 0o755);
   for (const profile of ['debug', 'release']) Put(join(prefix, `lib/beskid-runtime/abi-5/x86_64-unknown-linux-gnu/${profile}/abi.json`), '{}\n');
-  Put(join(fixtureScripts, 'lib/corelib-publish-runner.mjs'), `import {writeFileSync} from 'node:fs';\nwriteFileSync(process.env.RECEIPT,JSON.stringify(Object.fromEntries(['BESKID_CLI_BIN','BESKID_CORELIB_ROOT','BESKID_RUNTIME_PREFIX'].map(k=>[k,process.env[k]]))));\n`);
+  Put(join(fixtureScripts, 'lib/corelib-publish-runner.mjs'), `import {writeFileSync} from 'node:fs';\nwriteFileSync(process.env.RECEIPT,JSON.stringify(Object.fromEntries(['BESKID_CLI_BIN','BESKID_CORELIB_ROOT','BESKID_RUNTIME_PREFIX','BESKID_PCKG_VERSION_BUMP'].map(k=>[k,process.env[k]]))));\n`);
   Put(join(repo, 'beskid_templates/beskid_templates.bws'), 'fixture\n');
   Put(join(bin, 'cargo'), '#!/usr/bin/env bash\necho "unexpected Cargo fallback" >&2\nexit 99\n', 0o755);
   Put(join(bin, 'uname'), '#!/usr/bin/env bash\ncase "$1" in -m) echo x86_64 ;; -s) echo Linux ;; *) exit 99 ;; esac\n', 0o755);
   const receipt = join(root, 'receipt.json');
   const env = { PATH: `${bin}:${process.env.PATH}`, HOME: root, RECEIPT: receipt,
     BESKID_TOOLCHAIN_PREFIX: prefix, BESKID_CLI_BIN: join(prefix, 'bin/beskid') };
-  const run = (overrides = {}) => Run('bash', [join(fixtureScripts, 'corelib-publish.sh'), 'patch', '--dry-run'], { env: { ...env, ...overrides } });
+  const run = (overrides = {}, args = ['--dry-run']) => Run('bash', [join(fixtureScripts, 'corelib-publish.sh'), ...args], { env: { ...env, ...overrides } });
   return { root, prefix, repo, receipt, run };
 }
 
@@ -53,7 +53,26 @@ test('publisher derives every execution root from the qualified prefix, never th
       BESKID_CLI_BIN: join(f.prefix, 'bin/beskid'),
       BESKID_CORELIB_ROOT: join(f.prefix, 'beskid_corelib'),
       BESKID_RUNTIME_PREFIX: f.prefix,
+      BESKID_PCKG_VERSION_BUMP: 'patch',
     });
+  } finally { rmSync(f.root, { recursive: true, force: true }); }
+});
+
+test('the version policy is the BESKID_PCKG_VERSION_BUMP pipeline input', () => {
+  const f = Fixture();
+  try {
+    for (const policy of ['minor', 'major', '0.7.0']) {
+      const result = f.run({ BESKID_PCKG_VERSION_BUMP: policy });
+      assert.equal(result.status, 0, result.stderr);
+      assert.equal(JSON.parse(readFileSync(f.receipt)).BESKID_PCKG_VERSION_BUMP, policy);
+    }
+    rmSync(f.receipt);
+    const invalid = f.run({ BESKID_PCKG_VERSION_BUMP: 'latest' });
+    assert.notEqual(invalid.status, 0);
+    assert.match(invalid.stderr, /BESKID_PCKG_VERSION_BUMP must be/);
+    const positional = f.run({}, ['minor', '--dry-run']);
+    assert.notEqual(positional.status, 0, 'the positional bump argument is removed');
+    assert.equal(existsSync(f.receipt), false);
   } finally { rmSync(f.root, { recursive: true, force: true }); }
 });
 

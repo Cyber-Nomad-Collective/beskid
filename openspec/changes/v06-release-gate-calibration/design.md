@@ -91,7 +91,7 @@ The publisher parses every `member "<id>" { ... }` block of `CoreLib.bws`. The p
 | `corelib_pest_gen` | Development Mod that generates Pest parsers inside the Corelib repository; no published package depends on it. |
 | `pest_gen_schema` | BSOL schema of `corelib_pest_gen` tunables; it exists only for that development Mod. |
 
-An exclusion that names no workspace member fails, so the list cannot go stale. Every published member must have complete metadata (`path`, `package`, `description`, a readme declared in its project and present). A new member is published automatically, or fails with an exact metadata message.
+An exclusion that names no workspace member fails, so the list cannot go stale. Every published member must have complete metadata (`path`, `package`, `description`, `category = "Library"`). A readme is optional, as it is for `beskid pckg pack`; a declared readme must exist. Packages are packed and uploaded in dependency order, the aggregate last. A new member is published automatically, or fails with an exact metadata message.
 
 Mods: `serialization_mod` is published. `corelib_serialization` declares a dependency on it, the aggregate depends on `corelib_serialization`, and the publication plan requires every dependency of a published package to be in the plan. A Mod is an ordinary registry package to its consumer; the existing design excluded only the development generator `corelib_pest_gen`. The aggregate check now compares the aggregate's dependencies with the published library members (members whose project `type` is neither `Aggregate` nor `Mod`), so Mods are published as dependencies, not as aggregate members.
 
