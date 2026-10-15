@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useParams } from "@tanstack/react-router";
+import { PackageDetailSkeleton } from "#/components/loading-skeletons";
 import { PackageDetail } from "#/components/package-detail";
 import { PckgApiError, pckgApi } from "#/lib/api";
 
@@ -21,8 +22,7 @@ function PackageDetailsPage() {
 		queryFn: () => pckgApi.getPackageCommunity(name),
 	});
 
-	if (details.isPending)
-		return <p className="text-muted-foreground">Loading package…</p>;
+	if (details.isPending) return <PackageDetailSkeleton />;
 	if (details.isError) {
 		if (details.error instanceof PckgApiError && details.error.status === 404) {
 			return (

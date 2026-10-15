@@ -1,4 +1,4 @@
-import { cn, Input, Skeleton } from "@cyber-nomad-collective/beskid-ui-react";
+import { cn, Input } from "@cyber-nomad-collective/beskid-ui-react";
 import { useQuery } from "@tanstack/react-query";
 import {
 	createFileRoute,
@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-router";
 import { Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { PackageListSkeleton } from "#/components/loading-skeletons";
 import { PackageList } from "#/components/package-list";
 import { pckgApi } from "#/lib/api";
 import {
@@ -144,11 +145,7 @@ function PackagesPage() {
 
 			<div className="mt-5">
 				{packages.isPending ? (
-					<div className="space-y-2">
-						{[0, 1, 2, 3].map((row) => (
-							<Skeleton key={row} className="h-24 w-full" />
-						))}
-					</div>
+					<PackageListSkeleton />
 				) : (
 					<>
 						<p className="mb-2 text-sm text-muted-foreground" aria-live="polite">
