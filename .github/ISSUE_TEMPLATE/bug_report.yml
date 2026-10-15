@@ -1,0 +1,74 @@
+name: Bug report
+description: Something in beskid, its docs or its services does not work as documented.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. Features and roadmap items belong in the
+        [Tracker](https://tracker.beskid-lang.org), and vulnerabilities belong in a
+        private report (see SECURITY.md), not here.
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      options:
+        - Compiler / CLI
+        - Language server / VS Code extension
+        - Zed extension
+        - Corelib
+        - Runtime / runtime kit
+        - Package registry (pckg)
+        - Website, Docs or Book
+        - Tracker
+        - Nexus
+        - Auth
+        - Build, release or install scripts
+        - Other / not sure
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Minimal reproduction
+      description: The smallest source file, project or steps that show the bug.
+      render: beskid
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Output
+      description: Diagnostics, logs or stack traces. Text, not screenshots.
+      render: text
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Output of `beskid --version`, or the extension version.
+    validations:
+      required: true
+  - type: dropdown
+    id: target
+    attributes:
+      label: Platform
+      options:
+        - Linux x86_64
+        - macOS arm64
+        - Windows x86_64
+        - Browser / hosted service
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: standard
+    attributes:
+      label: Standard reference
+      description: If you know which rule of the Beskid Standard is violated, link it.

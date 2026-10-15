@@ -78,7 +78,7 @@ selects it through `clang`; macOS and Windows keep their platform linkers.
    publish immutable artifacts before advancing rolling aliases. Leave
    production reconciliation solely to Watchtower.
 5. Run focused tests plus strict OpenSpec/provenance validation and GitNexus change detection before commit.
-6. Update `CHANGELOG.md`; update `GLOSSARY.md` when canonical terminology changes. Do not add `Co-authored-by` trailers.
+6. Update `CHANGELOG.md`; update the glossary wiki (`docs/glossary-wiki/keywords/`) when canonical terminology changes. Do not add `Co-authored-by` trailers.
 
 ## Authority boundaries
 
@@ -147,6 +147,6 @@ Parallel agents must use disjoint write scopes. Knowledge files live outside the
 
 ## Related docs
 
-- [GLOSSARY.md](./GLOSSARY.md)
+- [Glossary wiki](./docs/glossary-wiki/index.md)
 - [CHANGELOG.md](./CHANGELOG.md)
 - [Root README](./README.md)

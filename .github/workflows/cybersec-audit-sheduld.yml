@@ -1,0 +1,131 @@
+# NOTE: it should perform things like `npm audit`, `npm audit fix` and `npm audit fix --force` category of procedures. checkings of CVS vurnabilities and exploit-db etc. code analysis will be nice to have here also
+#
+# Scheduled security audit. Repository-native maintenance only: it reads the
+# tree, reports, and never pushes, publishes or deploys.
+#
+# - dependency-audit: `pnpm audit` over every pnpm lockfile in the superrepo.
+#   On manual runs with `propose-fixes`, it also runs `pnpm audit --fix` and
+#   uploads the result as a patch for a human to review. It never applies
+#   `--force`-style fixes on its own: major upgrades are a maintainer decision.
+# - vulnerability-scan: Trivy over the whole checkout for known CVEs (all
+#   lockfile ecosystems), committed secrets and infrastructure misconfiguration.
+#
+# Submodules are not checked out: each submodule repository audits itself.
+
+name: Security audit
+
+on:
+  schedule:
+    - cron: "37 21 * * 2"
+  workflow_dispatch:
+    inputs:
+      propose-fixes:
+        description: Run `pnpm audit --fix` and upload the change as a patch artifact
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-audit
+  cancel-in-progress: true
+
+jobs:
+  dependency-audit:
+    name: Dependency audit (pnpm)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+
+      - name: Set up Node
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: 22
+
+      - name: Audit every lockfile
+        run: |
+          set -u
+          status=0
+          : > audit-report.txt
+          while IFS= read -r lockfile; do
+            dir="$(dirname "${lockfile}")"
+            printf '\n## %s\n\n' "${dir}" >> audit-report.txt
+            (cd "${dir}" && pnpm audit --audit-level=high) >> audit-report.txt 2>&1 || status=1
+          done < <(git ls-files '*pnpm-lock.yaml')
+          cat audit-report.txt
+          {
+            printf '## pnpm audit\n\n```text\n'
+            cat audit-report.txt
+            printf '```\n'
+          } >> "${GITHUB_STEP_SUMMARY}"
+          exit "${status}"
+
+      - name: Propose fixes as a patch
+        if: always() && github.event_name == 'workflow_dispatch' && inputs.propose-fixes
+        run: |
+          while IFS= read -r lockfile; do
+            (cd "$(dirname "${lockfile}")" && pnpm audit --fix) || true
+          done < <(git ls-files '*pnpm-lock.yaml')
+          git diff > audit-fix.patch
+          if [ -s audit-fix.patch ]; then
+            echo "Proposed overrides are in the pnpm-audit artifact. Review before applying." >> "${GITHUB_STEP_SUMMARY}"
+          else
+            echo "pnpm audit --fix proposed no changes." >> "${GITHUB_STEP_SUMMARY}"
+          fi
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: pnpm-audit
+          path: |
+            audit-report.txt
+            audit-fix.patch
+          if-no-files-found: ignore
+          retention-days: 30
+
+  vulnerability-scan:
+    name: Vulnerability, secret and misconfiguration scan (Trivy)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+
+      - name: Scan the checkout
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln,secret,misconfig
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          format: table
+          output: trivy-report.txt
+          exit-code: "1"
+
+      - name: Summarize
+        if: always()
+        run: |
+          if [ -f trivy-report.txt ]; then
+            { printf '## Trivy\n\n```text\n'; cat trivy-report.txt; printf '```\n'; } >> "${GITHUB_STEP_SUMMARY}"
+          fi
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: trivy-report
+          path: trivy-report.txt
+          if-no-files-found: ignore
+          retention-days: 30

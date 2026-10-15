@@ -1,0 +1,23 @@
+# pckg
+
+> pckg is the package registry for the Beskid programming language. It hosts Beskid packages, including the core library and first-party templates, and is used through the `beskid pckg` commands of the Beskid CLI.
+
+The registry assigns versions; package authors do not pick semver numbers by hand. Projects record resolved packages in a lockfile. Package pages, generated package documentation and publisher pages are public. Publishing needs a signed-in account through the Beskid auth hub.
+
+## Browse
+
+- [Packages](https://pckg.beskid-lang.org/packages): all published packages
+- [Package documentation](https://pckg.beskid-lang.org/docs): API documentation generated from package sources
+
+## Use
+
+- [Packages without npm trauma](https://beskid-lang.org/book/18-packages-without-npm-trauma): how packages, versions and lockfiles work
+- [The pckg CLI](https://beskid-lang.org/book/18-packages-without-npm-trauma/pckg-cli): fetch, update and publish from the command line
+- [Publish your first package](https://beskid-lang.org/book/18-packages-without-npm-trauma/publish-first-package): step by step
+- [Registry versions](https://beskid-lang.org/book/18-packages-without-npm-trauma/registry-versions): why the registry assigns versions
+
+## Optional
+
+- [Beskid](https://beskid-lang.org): the language, the Book and the Docs
+- [Beskid Standard](https://beskid-lang.org/docs/standard/): normative rules, including package and registry behaviour
+- [Source code](https://github.com/Cyber-Nomad-Collective/beskid): the registry service lives in the compiler workspace, the web app in beskid_sites
