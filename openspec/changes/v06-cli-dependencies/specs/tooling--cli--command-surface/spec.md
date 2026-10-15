@@ -110,7 +110,7 @@ CLI SHALL provide a versioned capability description of CLI version, canonical c
 - **THEN** every active command matches canonical grammar and historical artifacts remain unchanged
 
 ### Requirement: Installed beginner workflow acceptance
-Release qualification SHALL repeat create/add/use/check/build/run and path dependency workflows using installed immutable candidate artifacts outside checkout on Linux x64, macOS arm64 and Windows x64; these scripted journeys SHALL be native release cells of the `installed_host_harness` kind. Five fresh users SHALL receive the installed CLI, its help and the pinned language-rules handout alone; the handout SHALL summarize language rules only and SHALL NOT name CLI commands or journey steps, and the record SHALL carry the sha256 of the handout shown; at least four SHALL find add within 60 seconds and at least four SHALL complete create/add/use/run within five minutes. The observation SHALL be recorded as one observer-attested record per candidate (`verification: "observer-attested"`), never as machine evidence: it SHALL retain one transcript per participant with command, time, exit status and the `beskid --version` output of the candidate, the candidate CLI digests of every target, failures and the observer identity. The record SHALL be committed at a fixed repository path for the version, in a commit that descends from the candidate and changes only the record. The release SHALL publish the candidate's own build artifacts under the candidate source identity and SHALL NOT rebuild the record commit. The release tooling SHALL read the record from that path, SHALL validate it against the aggregated candidate identity, the CLI digests of that build and the committed handout digest, and SHALL block publication when the record is absent or either threshold is unmet. A dated release-owner waiver MAY stand in for the observation of 0.6.0 only; it SHALL record the unmet SHALL and a 0.6.1 obligation, and it SHALL expire at 0.6.1. Coaching, snapshots or other material SHALL NOT substitute for observations.
+Release qualification SHALL repeat create/add/use/check/build/run and path dependency workflows using installed immutable candidate artifacts outside checkout on Linux x64, macOS arm64 and Windows x64; these scripted journeys SHALL be native release cells of the `installed_host_harness` kind. Five fresh users SHALL receive the installed CLI, its help and the pinned language-rules handout alone; the handout SHALL summarize language rules only and SHALL NOT name CLI commands or journey steps, and the record SHALL carry the sha256 of the handout shown; at least four SHALL find add within 60 seconds and at least four SHALL complete create/add/use/run within five minutes. The observation SHALL be recorded as one observer-attested record per candidate (`verification: "observer-attested"`), never as machine evidence: it SHALL retain one transcript per participant with command, time, exit status and the `beskid --version` output of the candidate, the candidate CLI digests of every target, failures and the observer identity. The record SHALL be committed at a fixed repository path for the version, in a commit that descends from the candidate. The release SHALL publish the candidate's own build artifacts under the candidate source identity and SHALL NOT rebuild for the record. Until Beskid has real users, the observation SHALL be a published quality target that does not block publication. When a record is committed, the release tooling SHALL read it from that path and SHALL validate its shape, the candidate identity, the CLI digests of the candidate build and the committed handout digest; a record that fails one of these checks, such as a wrong digest or a wrong candidate, SHALL block publication. The release state and the release notes SHALL state the result for each threshold: `pass` when both thresholds are met, `below-threshold` when a valid record misses either threshold, and `not-performed` when no record is committed; a missing record or a record below a threshold SHALL NOT block publication. Coaching, snapshots or other material SHALL NOT substitute for observations.
 
 #### Scenario: CLI06-06 Qualification
 - **GIVEN** a frozen installed candidate on all three native targets
@@ -119,13 +119,18 @@ Release qualification SHALL repeat create/add/use/check/build/run and path depen
 
 #### Scenario: CLI06-06-OBS Uncoached observation
 - **GIVEN** a frozen candidate and five participants with no prior Beskid exposure who receive only the installed CLI, its help and the pinned language-rules handout, and no coaching or other material
-- **WHEN** the observer records each participant's transcript, add discovery time and journey outcome
-- **THEN** the observer-attested record, committed at the fixed release path, validates against the candidate identity and the handout digest with at least four finding add within 60 seconds and at least four completing create/add/use/run within five minutes, and a record below either threshold blocks publication
+- **WHEN** the observer records each participant's transcript, add discovery time and journey outcome, and the record is committed at the fixed release path
+- **THEN** the release validates the record against the candidate identity, the candidate CLI digests and the handout digest, and the release state and notes report `pass` with at least four finding add within 60 seconds and at least four completing create/add/use/run within five minutes, or `below-threshold` otherwise, without blocking publication
 
-#### Scenario: CLI06-06-OBS Expired waiver
-- **GIVEN** a release-owner user observation waiver recorded for 0.6.0
-- **WHEN** a 0.6.1 or later candidate is prepared
-- **THEN** the waiver is rejected and the observation record is required
+#### Scenario: CLI06-06-OBS Missing observation
+- **GIVEN** a candidate whose release commit has no committed CLI06-06 record
+- **WHEN** the release is prepared
+- **THEN** publication is not blocked and the release state and notes state `CLI06-06 observation: not performed`
+
+#### Scenario: CLI06-06-OBS Forged record
+- **GIVEN** a committed record that names another candidate or carries CLI digests that differ from the candidate build
+- **WHEN** the release is prepared
+- **THEN** the release fails closed before any installer work
 
 
 ### Requirement: Toolchain operations bind to the running installation owner

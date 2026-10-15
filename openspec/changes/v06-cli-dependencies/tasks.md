@@ -25,4 +25,5 @@
   Harness written, not executed against an installed prefix on any target.
 - [ ] 3.2 Observe five fresh users; four find add in 60 seconds and four complete create/add/use/run in five minutes.
   Observer-attested record validator exists (`scripts/ci/release-user-observation.mjs`); no observation recorded.
+  Since 2026-10-15 (`v06-release-gate-calibration`) the observation is a published, non-blocking quality target: the release reports `pass`, `below-threshold` or `not-performed` and fails only on an invalid or forged record.
 - [ ] 3.3 Complete source-bound review, changelog and evidence linkage before coordinator archive/integration.
