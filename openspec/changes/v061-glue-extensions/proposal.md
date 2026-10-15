@@ -16,9 +16,9 @@ Beskid 0.6 delivers Rust Glue as the in-process checked C ABI owned path (`v06-r
 - None.
 
 ### Modified Capabilities
-- `language-meta--interop--beskid-glue`: record, callback, enum and export admission (spec deltas are written when this proposal is accepted).
-- `language-meta--interop--c-abi-profile`: record and function-pointer representations.
-- `language-meta--interop--interop-contracts`: one Glue boundary vocabulary.
+- `language-meta--interop--beskid-glue`: record, callback, enum, Rust owner type and generated export consumer admission.
+- `language-meta--interop--c-abi-profile`: record, enum discriminant and function-pointer representations; Bool and Unicode scalar domains.
+- `language-meta--interop--interop-contracts`: one Glue boundary vocabulary (Glue lowers to `TypeShape`/`InteropSignature`; design decision 1).
 
 ## Impact
 

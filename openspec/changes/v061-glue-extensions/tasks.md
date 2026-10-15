@@ -1,6 +1,6 @@
 ## 1. Validate
-- [ ] 1.1 Write spec deltas for each item below and validate the change with OpenSpec before implementation.
-- [ ] 1.2 Decide the boundary vocabulary: lower `GlueLogicalType` to `TypeShape`/`InteropSignature`, or retire Interop.Contracts from the Glue text.
+- [x] 1.1 Write spec deltas for each item below and validate the change with OpenSpec before implementation.
+- [x] 1.2 Decide the boundary vocabulary: lower `GlueLogicalType` to `TypeShape`/`InteropSignature`, or retire Interop.Contracts from the Glue text. Ruling: lower (design decision 1).
 
 ## 2. Introduce
 - [ ] 2.1 Records by value: manual C ABI fixture, record shape in the C profile, `logical_type` admission, generated adapters for both directions.
