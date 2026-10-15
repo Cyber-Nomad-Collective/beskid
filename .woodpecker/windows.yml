@@ -81,7 +81,9 @@ steps:
       - |
         # Submodule checkouts in this step must be byte-exact too (see the clone step).
         export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=core.autocrlf GIT_CONFIG_VALUE_0=false
-        if grep -q $$'\r' scripts/ci/release-cases-v06.json; then
+        # Use printf, not ANSI-C quoting: the agent's command trace breaks on it (Woodpecker #291).
+        carriage_return="$$(printf '\r')"
+        if grep -q "$${carriage_return}" scripts/ci/release-cases-v06.json; then
           echo 'the clone converted line endings; release evidence needs a byte-exact checkout' >&2
           exit 1
         fi
