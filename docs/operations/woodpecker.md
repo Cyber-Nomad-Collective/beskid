@@ -53,12 +53,15 @@ routes.
 
 ### Secret scoping
 
-Repository secrets on `ci.beskid-lang.org` carry two server-side filters. Each
-secret is available only to `manual` events, and only to steps whose image
-matches the secret's image filter: `node` for `compiler_release_token`,
-`open_vsx_token`, and `pckg_release_publisher_key`, and `docker` for the
-`registry_*` credentials. A push, tag, or pull-request pipeline cannot receive
-them, and neither can a step that runs another image.
+Repository secrets on `ci.beskid-lang.org` are available only to `manual`
+events. A push, tag, or pull-request pipeline cannot receive them.
+
+Woodpecker 3 gives a secret with an image filter only to plugin steps, never
+to a step with `commands`. The `registry_*` credentials therefore carry no
+image filter: `platform.yml:platform-publish` runs the image script as
+commands, and a filter makes the pipeline fail at compile time with "only
+allowed to be used by plugins". The tracked-workflow test below is what
+confines them to that one step.
 
 The tracked workflows add a second layer. `woodpecker-secret-scope.test.py`
 fails the Linux validation when a step binds a secret without a pinned image,
