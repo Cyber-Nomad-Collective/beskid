@@ -79,12 +79,12 @@ steps:
     image: bash
     commands:
       - |
-        # Submodule checkouts in this step must be byte-exact too (see the clone step).
+        # Submodule checkouts in this step must be byte-exact too, see the clone step.
+        # These lines contain no quote or backslash characters: the Windows agent hands this
+        # script to MSYS bash on one command line, and MSYS re-parses quotes there (Woodpecker 291, 292).
         export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=core.autocrlf GIT_CONFIG_VALUE_0=false
-        # Use printf, not ANSI-C quoting: the agent's command trace breaks on it (Woodpecker #291).
-        carriage_return="$$(printf '\r')"
-        if grep -q "$${carriage_return}" scripts/ci/release-cases-v06.json; then
-          echo 'the clone converted line endings; release evidence needs a byte-exact checkout' >&2
+        if git ls-files --eol scripts/ci/release-cases-v06.json | grep -q -e w/crlf -e w/mixed; then
+          echo the clone converted line endings, release evidence needs a byte-exact checkout >&2
           exit 1
         fi
         if [ "$${CI_PIPELINE_EVENT}" = tag ]; then
