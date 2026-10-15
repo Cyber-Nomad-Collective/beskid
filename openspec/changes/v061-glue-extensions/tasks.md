@@ -5,7 +5,7 @@
 ## 2. Introduce
 - [x] 2.1 Records by value: manual C ABI fixture, record shape in the C profile, `logical_type` admission, generated adapters for both directions.
 - [x] 2.2 Callbacks and function types: manual fixture, root/lifetime/thread/panic rules, removal of the `Type::Function` rejection for admitted forms. Foreign function pointers as Beskid values: evaluated, deferred (design decision 4).
-- [x] 2.3 Glue-driven exports: generated Rust consumer through the owner build, replacing the hand-linked `export_caller.rs` path.
+- [x] 2.3 Glue-driven exports: generated Rust consumer through the owner build, replacing the hand-linked `export_caller.rs` path. Ruling: the owner crate's generated `beskid` module is the Glue path; `export_caller.rs` stays for the plain C export profile (design decision 5).
 - [x] 2.4 Enums: fieldless enum admission as checked discriminants; evaluate tagged variants. Tagged variants: evaluated, deferred (design decision 3).
 - [x] 2.5 Boundary vocabulary: implement the decision of task 1.2 with a round-trip test over every admitted form.
 
