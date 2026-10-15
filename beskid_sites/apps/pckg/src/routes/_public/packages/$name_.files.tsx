@@ -11,6 +11,7 @@ import {
 	type FileQueryState,
 	PackageFileBrowser,
 } from "#/components/files/package-file-browser";
+import { PackageFilesSkeleton } from "#/components/loading-skeletons";
 import { PckgApiError, pckgApi } from "#/lib/api";
 import { defaultFile } from "#/lib/file-tree";
 import { searchString } from "#/lib/search-params";
@@ -72,12 +73,7 @@ function PackageFilesPage() {
 		}
 	}, [listing.data, version, path, name, navigate]);
 
-	if (listing.isPending || details.isPending)
-		return (
-			<p className="mx-auto max-w-6xl px-5 py-10 text-muted-foreground">
-				Loading package files…
-			</p>
-		);
+	if (listing.isPending || details.isPending) return <PackageFilesSkeleton />;
 	if (listing.isError) {
 		const missing =
 			listing.error instanceof PckgApiError && listing.error.status === 404;

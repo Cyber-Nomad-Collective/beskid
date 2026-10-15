@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useParams } from "@tanstack/react-router";
+import { PublisherProfileSkeleton } from "#/components/loading-skeletons";
 import { PublisherProfile } from "#/components/publisher-profile";
 import { PckgApiError, pckgApi } from "#/lib/api";
 
@@ -24,8 +25,7 @@ function PublisherPage() {
 		queryFn: () => pckgApi.listPublisherPackages(name),
 	});
 
-	if (profile.isPending)
-		return <p className="text-muted-foreground">Loading publisher profile…</p>;
+	if (profile.isPending) return <PublisherProfileSkeleton />;
 	if (
 		profile.isError &&
 		profile.error instanceof PckgApiError &&

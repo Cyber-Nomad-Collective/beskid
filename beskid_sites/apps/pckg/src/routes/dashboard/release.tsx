@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { ReleaseCenterSkeleton } from "#/components/loading-skeletons";
 import { ReleaseCenter } from "#/components/release-center";
 import { pckgApi } from "#/lib/api";
 
@@ -28,8 +29,7 @@ function ReleasePage() {
 		onSuccess: () =>
 			void queryClient.invalidateQueries({ queryKey: ["api-keys"] }),
 	});
-	if (keys.isPending)
-		return <p className="text-muted-foreground">Loading release center…</p>;
+	if (keys.isPending) return <ReleaseCenterSkeleton />;
 	if (keys.isError) throw keys.error;
 	return (
 		<ReleaseCenter
