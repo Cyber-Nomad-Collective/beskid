@@ -56,6 +56,10 @@ const BOT_PRIVILEGES = [
 	'groups:topics:reply',
 	'groups:topics:tag',
 	'groups:posts:edit',
+	// Category moderators skip NodeBB's posting delays (src/user/posts.js
+	// isReady); the general postDelay has no group exemption otherwise, and
+	// the registry opens many threads in a row during reconcile.
+	'groups:moderate',
 ];
 const TOPIC_CREATORS_TO_REMOVE = ['registered-users', 'guests', 'spiders', 'fediverse'];
 
