@@ -11,7 +11,7 @@ Two language rules were not specified, and the reference compiler did not implem
 - New rule: the operands of the base of an index expression are evaluated first, then the index, then the assigned value. The array or string is read from the base after these steps, so the read observes their side effects. A store goes into the array that the place holds at the time of the store.
 - C#, Java, Kotlin and C++17 read the array reference before the index. Beskid uses a different order because a growth operation replaces the array in its owner place, while the place keeps its identity. Thus the place, not the array object, is the target of the store. This is the same result that a `List<T>` in those languages gives. The order of all calls in the expression stays left to right.
 - The type grammar accepts any number of `[]` suffixes. `T[][]` is an array whose elements are `T[]`.
-- New rule: an unsuffixed integer literal takes the integer type of its declared destination; without one it has its natural type (`i32`, else `i64`, else `word` for a 64-bit hexadecimal value). A module constant use has the type of its declared literal at that position. A value that does not fit its type is **T0905**; the compiler never truncates it.
+- New rule: an unsuffixed integer literal takes the integer type of its declared destination; without one it has its natural type (`i32`, else `i64`, else `word` for a 64-bit hexadecimal value). A literal or constant operand of a binary expression takes the type of the other operand (rule T1), with no promotion of that operand. A module constant use has the type of its declared literal at that position. A value that does not fit its type is **T0905**; the compiler never truncates it.
 
 ## Capabilities
 

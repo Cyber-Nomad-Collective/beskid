@@ -16,7 +16,7 @@ A type expression (`BeskidType`) MUST be exactly one of: a primitive (`bool`, `i
 ## ADDED Requirements
 
 ### Requirement: Integer literal and module constant types
-An integer literal with a type suffix (`_i8`, `_i16`, `_i32`, `_i64`, `_u8`, `_u16`, `_u32`, `_u64`) MUST have the type of its suffix. An unsuffixed integer literal MUST take the integer type of its destination when the destination declares a primitive integer type: a typed `let`, a `return` value of a function with a declared result, or an argument of a direct call. An unsuffixed integer literal without such a destination MUST have its natural type: `i32` when the value fits `i32`; else `i64` when the value fits `i64`; else `word` for a hexadecimal literal whose value fits 64 bits. A use of a module constant (`const Name = IntegerLiteral;`) MUST have the type that its declared literal has at the same position. A literal or a constant use whose value does not fit the type it takes MUST be rejected with **T0905** (numeric literal outside range) at that literal or use. The compiler MUST NOT truncate, wrap, or sign-change an integer value to make it fit a type, and MUST NOT report an internal compiler error in place of **T0905**.
+An integer literal with a type suffix (`_i8`, `_i16`, `_i32`, `_i64`, `_u8`, `_u16`, `_u32`, `_u64`) MUST have the type of its suffix. An unsuffixed integer literal MUST take the integer type of its destination when the destination declares a primitive integer type: a typed `let`, a `return` value of a function with a declared result, or an argument of a direct call. An unsuffixed integer literal that is an operand of a binary expression MUST take the type of the other operand, including when the other operand is a call result (rule T1); when both operands are unsuffixed literals or constant uses, both take the type that the binary expression takes from its own destination. The other operand MUST NOT be promoted to a wider type to hold the literal, in arithmetic or in a comparison. An unsuffixed integer literal without such a destination or operand MUST have its natural type: `i32` when the value fits `i32`; else `i64` when the value fits `i64`; else `word` for a hexadecimal literal whose value fits 64 bits. A use of a module constant (`const Name = IntegerLiteral;`) MUST have the type that its declared literal has at the same position. A literal or a constant use whose value does not fit the type it takes MUST be rejected with **T0905** (numeric literal outside range) at that literal or use. The compiler MUST NOT truncate, wrap, or sign-change an integer value to make it fit a type, and MUST NOT report an internal compiler error in place of **T0905**.
 
 #### Scenario: Wide literal in an inferred let keeps its value
 - **GIVEN** `let x = 3000000000;`
@@ -32,6 +32,16 @@ An integer literal with a type suffix (`_i8`, `_i16`, `_i32`, `_i64`, `_u8`, `_u
 - **GIVEN** `const BIG = 3000000000;` and the statement `i32 x = BIG;`
 - **WHEN** the program is checked
 - **THEN** the compiler reports **T0905** at the use of `BIG` and does not lower the program
+
+#### Scenario: Literal operand takes the type of the other operand
+- **GIVEN** `x` of type `i32` and the statement `i32 y = x + 3000000000;`
+- **WHEN** the program is checked
+- **THEN** the literal takes the type `i32` from `x`, and the compiler reports **T0905** at the literal instead of promoting `x` to `i64`
+
+#### Scenario: Constant compared with a narrower operand
+- **GIVEN** `const BIG = 3000000000;`, `x` of type `i32`, and the comparison `x == BIG`
+- **WHEN** the program is checked
+- **THEN** `BIG` takes the type `i32` from `x`, and the compiler reports **T0905** at the use of `BIG`; the comparison is not done at `i64`
 
 #### Scenario: Inferred literal without a natural integer type
 - **GIVEN** `let x = 10000000000000000000;`
