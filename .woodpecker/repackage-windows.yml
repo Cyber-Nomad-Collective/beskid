@@ -1,0 +1,27 @@
+labels:
+  platform: windows/amd64
+  backend: local
+  role: beskid-windows
+
+clone:
+  git:
+    image: plugin-git
+    settings:
+      recursive: false
+      # The repackaging root must prove it descends from the build source.
+      depth: 0
+    environment:
+      GIT_CONFIG_COUNT: "1"
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: "false"
+
+steps:
+  - name: repackage-windows
+    image: bash
+    commands:
+      # Packages the qualified outputs of build pipeline BESKID_REPACKAGE_FROM; nothing is rebuilt.
+      - bash scripts/ci/woodpecker-repackage-windows.sh
+
+when:
+  - event: manual
+    evaluate: 'BESKID_TASK == "package-windows"'

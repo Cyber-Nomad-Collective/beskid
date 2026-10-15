@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
-import { BuildIdentity, CASE_MANIFEST_PATH, ResolvePlatformSources, LANGUAGE_RULES_PATH, LanguageRulesDigest, ObservationReport, RecordPath, ReleaseObservation, ReleaseSource, ValidateObservation } from "../release-user-observation.mjs";
+import { BuildIdentity, CASE_MANIFEST_PATH, NON_BUILD_PATHS, REPACKAGE_ALLOWED_PATHS, ResolvePlatformSources, ValidatePackagingRoot, LANGUAGE_RULES_PATH, LanguageRulesDigest, ObservationReport, RecordPath, ReleaseObservation, ReleaseSource, ValidateObservation } from "../release-user-observation.mjs";
 
 const script = new URL("../release-user-observation.mjs", import.meta.url).pathname;
 const repoRoot = new URL("../../../", import.meta.url).pathname;
@@ -227,7 +227,7 @@ test("a below-threshold record does not block and a forged record does", (t) => 
   const forged = commitRecord(other, record({ superrepo_commit: base, version: "0.6.1" }));
   assert.throws(() => ReleaseObservation(other, VERSION, forged, base, COMPILER, built(base)), /identity mismatch/);
 });
-test("the candidate must be an ancestor with identical compiler, distribution and manifest identity", (t) => {
+test("the candidate must be an ancestor with identical compiler, bsol and manifest identity", (t) => {
   const { root, candidate } = candidateRepo(t);
   const foreign = commitRecord(root, record({ superrepo_commit: "c".repeat(40) }));
   assert.throws(() => ReleaseSource(root, VERSION, foreign), /not a commit of this repository/);
@@ -241,8 +241,9 @@ test("the candidate must be an ancestor with identical compiler, distribution an
   const pointer = (path, sha) => (dir) => git(dir, "update-index", "--cacheinfo", `160000,${sha},${path}`);
   const { root: c1, candidate: k1 } = candidateRepo(t);
   assert.throws(() => ReleaseSource(c1, VERSION, commit(c1, "compiler", pointer("compiler", "d".repeat(40))), k1), /compiler pointer of the release commit differs/);
+  // beskid_distrib is packaging identity, not build identity: a release commit may carry a newer one.
   const { root: c2, candidate: k2 } = candidateRepo(t);
-  assert.throws(() => ReleaseSource(c2, VERSION, commit(c2, "distrib", pointer("beskid_distrib", "d".repeat(40))), k2), /beskid_distrib pointer of the release commit differs/);
+  assert.equal(ReleaseSource(c2, VERSION, commit(c2, "distrib", pointer("beskid_distrib", "d".repeat(40))), k2), k2);
   const { root: c3, candidate: k3 } = candidateRepo(t);
   const manifest = commit(c3, "manifest", (dir) => { writeFileSync(join(dir, CASE_MANIFEST_PATH), "{\"cases\":[1]}\n"); git(dir, "add", CASE_MANIFEST_PATH); });
   assert.throws(() => ReleaseSource(c3, VERSION, manifest, k3), /release-case manifest digest/);
@@ -275,7 +276,7 @@ test("per-platform sources: C/C/D with only non-build root changes is one build 
   assert.deepEqual(resolved.sources, { linux: d, macos: candidate, windows: candidate });
   assert.equal(resolved.candidate, candidate, "the record's candidate carries the build identity");
   assert.deepEqual(resolved.build_identity, BuildIdentity(root, d));
-  assert.deepEqual(resolved.build_identity, { compiler_commit: COMPILER, beskid_bsol_commit: BSOL, beskid_distrib_commit: DISTRIB, release_case_manifest_sha256: resolved.build_identity.release_case_manifest_sha256 });
+  assert.deepEqual(resolved.build_identity, { compiler_commit: COMPILER, beskid_bsol_commit: BSOL, release_case_manifest_sha256: resolved.build_identity.release_case_manifest_sha256 });
   const cli = spawnSync(process.execPath, [script, "--platform-sources", root, VERSION, head, "", d, "", ""], { encoding: "utf8" });
   assert.equal(cli.status, 0, cli.stderr);
   assert.equal(JSON.parse(cli.stdout).sources.linux, d);
@@ -294,4 +295,43 @@ test("per-platform sources: a differing compiler pointer is refused", (t) => {
   assert.throws(() => ResolvePlatformSources(root, VERSION, head, candidate, { linux: d }), /compiler pointer of the linux source .* differs from candidate/);
   const bsol = commit(root, "bsol", (dir) => git(dir, "update-index", "--cacheinfo", `160000,${"d".repeat(40)},beskid_bsol`));
   assert.throws(() => ResolvePlatformSources(root, VERSION, bsol, candidate), /beskid_bsol pointer of the release commit differs/);
+});
+
+// Repackaging: a packaging root P packages the outputs of build source C.
+test("packaging root: the build source packages itself with its own distrib", (t) => {
+  const { root, candidate } = candidateRepo(t);
+  const head = commit(root, "docs", rootOnly);
+  assert.deepEqual(ValidatePackagingRoot(root, candidate, candidate, head), { source: candidate, packaging_commit: candidate, distrib_commit: DISTRIB });
+});
+test("packaging root: a descendant changing only packaging scripts and distrib is accepted", (t) => {
+  const { root, candidate } = candidateRepo(t);
+  const newDistrib = "e".repeat(40);
+  const p = commit(root, "repackage", (dir) => {
+    mkdirSync(join(dir, "scripts/ci/lib"), { recursive: true });
+    writeFileSync(join(dir, "scripts/ci/woodpecker-package-platform.mjs"), "// prune caches\n");
+    writeFileSync(join(dir, "scripts/ci/lib/bundle-caches.mjs"), "// caches\n");
+    git(dir, "add", "scripts/ci");
+    git(dir, "update-index", "--cacheinfo", `160000,${newDistrib},beskid_distrib`);
+  });
+  assert.deepEqual(ValidatePackagingRoot(root, candidate, p, p), { source: candidate, packaging_commit: p, distrib_commit: newDistrib });
+  for (const pattern of REPACKAGE_ALLOWED_PATHS) assert.ok(!NON_BUILD_PATHS.some(other => String(other) === String(pattern)), `${pattern} is a separate repackage set`);
+  assert.ok(!NON_BUILD_PATHS.some(pattern => pattern.test("beskid_distrib")), "beskid_distrib is not a non-build path");
+  const cli = spawnSync(process.execPath, [script, "--packaging-root", root, candidate, p, p], { encoding: "utf8" });
+  assert.equal(cli.status, 0, cli.stderr);
+  assert.equal(JSON.parse(cli.stdout).distrib_commit, newDistrib);
+  // A per-platform build source may still not differ in distrib.
+  assert.throws(() => ResolvePlatformSources(root, VERSION, p, candidate, { linux: p }), /changes build inputs relative to candidate .*: beskid_distrib/);
+});
+test("packaging root: build inputs, compiler drift, foreign history and non-ancestors are refused", (t) => {
+  const { root, candidate } = candidateRepo(t);
+  const build = commit(root, "build script", (dir) => { writeFileSync(join(dir, "scripts/ci/build-release-artifact.sh"), "echo other\n"); git(dir, "add", "scripts/ci/build-release-artifact.sh"); });
+  assert.throws(() => ValidatePackagingRoot(root, candidate, build, build), /changes inputs other than packaging .*scripts\/ci\/build-release-artifact\.sh/);
+  const { root: r2, candidate: c2 } = candidateRepo(t);
+  const compiler = commit(r2, "compiler", (dir) => git(dir, "update-index", "--cacheinfo", `160000,${"d".repeat(40)},compiler`));
+  assert.throws(() => ValidatePackagingRoot(r2, c2, compiler, compiler), /compiler pointer of the packaging root/);
+  const { root: r3, candidate: c3 } = candidateRepo(t);
+  const later = commit(r3, "docs", rootOnly);
+  assert.throws(() => ValidatePackagingRoot(r3, later, c3, later), /does not descend from the build source/);
+  assert.throws(() => ValidatePackagingRoot(r3, c3, later, c3), /not HEAD or an ancestor of HEAD/);
+  assert.throws(() => ValidatePackagingRoot(r3, "f".repeat(40), later, later), /not a commit of this repository/);
 });

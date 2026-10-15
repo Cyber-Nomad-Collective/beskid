@@ -14,6 +14,9 @@ test ! -e "${workflow_dir}/standard.yml"
 windows_build="${ROOT}/scripts/ci/woodpecker-build-windows.sh"
 test -f "${windows_build}"
 grep -Fxq '      - bash scripts/ci/woodpecker-build-windows.sh' "${workflow_dir}/windows.yml"
+grep -Fxq '      - bash scripts/ci/woodpecker-repackage-windows.sh' "${workflow_dir}/repackage-windows.yml"
+for name in linux macos; do grep -Fq "woodpecker-repackage-platform.sh ${name} " "${workflow_dir}/repackage-${name}.yml"; done
+grep -Fq 'woodpecker-repackage-platform.sh windows ' "${ROOT}/scripts/ci/woodpecker-repackage-windows.sh"
 build_body() {
   case "$1" in
     windows) printf '%s\n' "${windows_build}" ;;
@@ -66,13 +69,21 @@ const manual = name => {
   if (!/^BESKID_TASK == "[a-z-]+"( \|\| BESKID_TASK == "[a-z-]+")*$/.test(match[1])) throw new Error(`${name}.yml manual condition is not a plain BESKID_TASK equality chain: ${match[1]}`);
   return task => match[1].split(" || ").some(term => task !== undefined && term === `BESKID_TASK == "${task}"`);
 };
-const workflows = ["linux", "macos", "windows", "release"];
+const workflows = ["linux", "macos", "windows", "release", "repackage-linux", "repackage-macos", "repackage-windows"];
 const select = Object.fromEntries(workflows.map(name => [name, manual(name)]));
+// Repackaging (BESKID_TASK=package-<platform>) packages an earlier build's outputs; it never starts with
+// a build and a build never starts it.
 const expected = {
   build: ["linux", "macos", "windows"],
   "build-linux": ["linux"], "build-macos": ["macos"], "build-windows": ["windows"],
   validate: ["linux"], release: ["release"], platform: [], unset: [],
+  "package-linux": ["repackage-linux"], "package-macos": ["repackage-macos"], "package-windows": ["repackage-windows"],
 };
+for (const name of ["repackage-linux", "repackage-macos", "repackage-windows"]) {
+  const text = readFileSync(`${dir}/${name}.yml`, "utf8");
+  if (!/\n {6}depth: 0\n/.test(text)) throw new Error(`${name}.yml must clone full history to prove the packaging root`);
+  if (/event: (push|tag|\[)/.test(text)) throw new Error(`${name}.yml must run only on manual events`);
+}
 for (const [task, names] of Object.entries(expected)) {
   const actual = workflows.filter(name => select[name](task === "unset" ? undefined : task));
   if (JSON.stringify(actual) !== JSON.stringify(names)) throw new Error(`BESKID_TASK=${task} starts [${actual}], expected [${names}]`);

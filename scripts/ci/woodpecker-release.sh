@@ -22,7 +22,7 @@ head_sha="$(git -C "$repo" rev-parse HEAD)"
 # The release runs on HEAD and publishes the per-platform builds of candidate C ($source_sha): the
 # candidate named by the committed CLI06-06 record (docs/release/cli06-06-record-v<version>.json), else
 # the gate input BESKID_RELEASE_CANDIDATE, else HEAD. C is HEAD or an ancestor of HEAD with HEAD's build
-# identity (compiler, beskid_bsol and beskid_distrib pointers, release-case manifest digest), so root-only
+# identity (compiler and beskid_bsol pointers, release-case manifest digest), so root-only
 # commits after C (CI scripts, docs, the record) never force a rebuild. A platform may come from its own
 # source (BESKID_LINUX_SOURCE, BESKID_MACOS_SOURCE, BESKID_WINDOWS_SOURCE; default C) that has the same
 # build identity and differs from C only in non-build root paths.
@@ -32,7 +32,6 @@ source_sha="$(jq -r '.candidate' <<<"$platform_sources")"
 declare -A role_source=()
 for role in "${roles[@]}"; do role_source[$role]="$(jq -r --arg role "$role" '.sources[$role]' <<<"$platform_sources")"; done
 compiler_sha="$(git -C "$repo" rev-parse "$source_sha:compiler")"
-distrib_sha="$(git -C "$repo" rev-parse "$source_sha:beskid_distrib")"
 pipeline="${CI_PIPELINE_NUMBER:-manual-${builds[0]}-${builds[1]}-${builds[2]}}"
 [[ "$pipeline" =~ ^([1-9][0-9]*|manual-[1-9][0-9]*-[1-9][0-9]*-[1-9][0-9]*)$ ]] && \
   [[ -z "${CI_COMMIT_SHA:-}" || "${CI_COMMIT_SHA}" == "$head_sha" ]] || {
@@ -153,10 +152,34 @@ writeFileSync(temporary,`${JSON.stringify(state,null,2)}\n`,{flag:'wx'});
 renameSync(temporary,path);
 NODE
 
+# Packaging identity. A handoff's installers were packaged by its build source, or, for a repackaged
+# handoff, by the repackaging root its UPLOAD_COMPLETE and package-result both name: a descendant of
+# the source that changes only packaging inputs (release-user-observation.mjs --packaging-root). Each
+# package-result must carry the distrib commit of that packaging root.
+declare -A role_distrib=()
+for index in 0 1 2; do
+  role="${roles[$index]}"
+  result="$release/input/$role/package-result.json"
+  packaged_pipeline="$(jq -r '.packaged_by.pipeline // empty' "$result")"
+  packaged_commit="$(jq -r '.packaged_by.superrepo_commit // empty' "$result")"
+  packaged_build="$(jq -r '.packaged_by.build_pipeline // empty' "$result")"
+  marker_pipeline="$(jq -r --arg role "$role" '.[$role].packaged_by // empty' "$handoffs")"
+  marker_commit="$(jq -r --arg role "$role" '.[$role].packaged_by_commit // empty' "$handoffs")"
+  [[ "$packaged_pipeline" == "$marker_pipeline" && "$packaged_commit" == "$marker_commit" ]] || {
+    echo "$role package-result packaging identity differs from its UPLOAD_COMPLETE" >&2; exit 1;
+  }
+  [[ -z "$packaged_pipeline" || "$packaged_build" == "${builds[$index]}" ]] || {
+    echo "$role package-result was repackaged from another build pipeline" >&2; exit 1;
+  }
+  role_distrib[$role]="$(node "$scripts/release-user-observation.mjs" --packaging-root "$repo" "${role_source[$role]}" \
+    "${packaged_commit:-${role_source[$role]}}" "$head_sha" | jq -r '.distrib_commit')"
+done
+distrib_commits="$(jq -n --arg linux "${role_distrib[linux]}" --arg macos "${role_distrib[macos]}" --arg windows "${role_distrib[windows]}" '{linux:$linux,macos:$macos,windows:$windows}')"
+
 installers=()
 for role in "${roles[@]}"; do
   package_list="$release/package-${role}.list"
-  node - "$release/input/$role" "$role" "${role_source[$role]}" "$compiler_sha" "$distrib_sha" "$version" >"$package_list" <<'NODE'
+  node - "$release/input/$role" "$role" "${role_source[$role]}" "$compiler_sha" "${role_distrib[$role]}" "$version" >"$package_list" <<'NODE'
 const {createHash}=require("node:crypto"),{lstatSync,readFileSync}=require("node:fs"),{join}=require("node:path");
 const [dir,role,source,compiler,distrib,version]=process.argv.slice(2), result=JSON.parse(readFileSync(join(dir,"package-result.json"),"utf8"));
 const target={linux:"x86_64-unknown-linux-gnu",macos:"aarch64-apple-darwin",windows:"x86_64-pc-windows-msvc"}[role];
@@ -175,10 +198,10 @@ done
 # The release state is the single public version authority. Native aggregation
 # creates it first; enrich it only with installers whose package-result record
 # has already been checksum-validated above.
-node - "$state" "$version" "$platform_sources" "$compiler_sha" "$distrib_sha" \
+node - "$state" "$version" "$platform_sources" "$compiler_sha" "$distrib_commits" \
   "$release/input/linux" "$release/input/macos" "$release/input/windows" <<'NODE'
 const {createHash}=require("node:crypto"),{readFileSync,renameSync,writeFileSync}=require("node:fs"),{join}=require("node:path");
-const [statePath,version,resolved,compiler,distrib,...dirs]=process.argv.slice(2),{candidate:source,sources}=JSON.parse(resolved);
+const [statePath,version,resolved,compiler,distribJson,...dirs]=process.argv.slice(2),{candidate:source,sources}=JSON.parse(resolved),commits=JSON.parse(distribJson);
 const fail=m=>{throw new Error(m)}, digest=p=>createHash("sha256").update(readFileSync(p)).digest("hex");
 const state=JSON.parse(readFileSync(statePath,"utf8"));
 if(state.version!==version||state.provenance?.superrepo_commit!==source||state.provenance?.compiler_commit!==compiler)fail("qualified release state identity mismatch");
@@ -186,18 +209,20 @@ const expected={linux:[`beskid-${version}-amd64.deb`],macos:[`beskid-${version}-
 const packages=[], formulas=[];
 for(const dir of dirs){
   const result=JSON.parse(readFileSync(join(dir,"package-result.json"),"utf8"));
-  if(!expected[result.platform]||result.version!==version||result.distrib_commit!==distrib||result.source?.superrepo_commit!==sources[result.platform]||result.source?.compiler_commit!==compiler||result.status!=="success")fail(`${result.platform||"unknown"} package-result identity mismatch`);
+  if(!expected[result.platform]||result.version!==version||result.distrib_commit!==commits[result.platform]||result.source?.superrepo_commit!==sources[result.platform]||result.source?.compiler_commit!==compiler||result.status!=="success")fail(`${result.platform||"unknown"} package-result identity mismatch`);
   const names=(result.artifacts||[]).map(a=>a?.name);
   if(names.length!==expected[result.platform].length||expected[result.platform].some(name=>!names.includes(name)))fail(`${result.platform} package-result inventory mismatch`);
   for(const artifact of result.artifacts){
     if(!artifact||typeof artifact.name!=="string"||typeof artifact.sha256!=="string"||artifact.sha256!==digest(join(dir,artifact.name)))fail(`${result.platform} package-result checksum mismatch: ${artifact?.name}`);
-    const entry={platform:result.platform,name:artifact.name,sha256:artifact.sha256};
+    const entry={platform:result.platform,name:artifact.name,sha256:artifact.sha256,distrib_commit:result.distrib_commit,...(result.packaged_by?{packaged_by:result.packaged_by}:{})};
     if(artifact.name==="beskid.rb")formulas.push(entry);else packages.push(entry);
   }
 }
 if(formulas.length!==1)fail("expected exactly one Homebrew formula");
 state.available_artifacts=[...new Set([...state.available_artifacts,...packages.map(item=>item.name)])].sort();
-state.distribution={schema_version:1,commit:distrib,packages:packages.sort((a,b)=>a.name.localeCompare(b.name)),homebrew_formula:formulas[0]};
+// One distrib commit when every platform was packaged with the same one, else null; `commits` names each.
+const unique=[...new Set(Object.values(commits))];
+state.distribution={schema_version:1,commit:unique.length===1?unique[0]:null,commits,packages:packages.sort((a,b)=>a.name.localeCompare(b.name)),homebrew_formula:formulas[0]};
 const temporary=`${statePath}.tmp`;
 writeFileSync(temporary,`${JSON.stringify(state,null,2)}\n`,{flag:"wx"});
 renameSync(temporary,statePath);

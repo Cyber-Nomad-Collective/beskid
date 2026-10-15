@@ -249,8 +249,9 @@ WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=87 CI_COMMIT_SHA="
 mixed_state="$tmp/rootfs/woodpecker-output/releases/87-${source_sha}/qualified/release-state.json"
 jq -e --arg c "$source_sha" --arg d "$d_sha" --arg compiler "$compiler_sha" --arg bsol "$bsol_sha" --arg distrib "$distrib_sha" '
   .provenance.superrepo_commit == $c and .platform_sources == {linux:$d,macos:$c,windows:$c} and
-  .build_identity.compiler_commit == $compiler and .build_identity.beskid_bsol_commit == $bsol and
-  .build_identity.beskid_distrib_commit == $distrib and (.build_identity.release_case_manifest_sha256 | test("^[0-9a-f]{64}$"))
+  .build_identity == {compiler_commit:$compiler,beskid_bsol_commit:$bsol,release_case_manifest_sha256:.build_identity.release_case_manifest_sha256} and
+  (.build_identity.release_case_manifest_sha256 | test("^[0-9a-f]{64}$")) and
+  .distribution.commit == $distrib and .distribution.commits == {linux:$distrib,macos:$distrib,windows:$distrib}
 ' "$mixed_state" >/dev/null || fail 'release state does not record the platform sources and build identity'
 printf '\n# packaging change\n' >>"$root/scripts/ci/build-release-artifact.sh"
 git -C "$root" add scripts/ci/build-release-artifact.sh
@@ -264,7 +265,7 @@ fi
 grep -Fq 'changes build inputs relative to candidate' "$tmp/build-script.err" || fail 'build script drift was not diagnosed'
 grep -Fq 'scripts/ci/build-release-artifact.sh' "$tmp/build-script.err" || fail 'build script drift does not name the file'
 
-for drift in compiler beskid_distrib manifest; do
+for drift in compiler beskid_bsol manifest; do
   git -C "$root" reset -q --hard "$root_only_sha"
   case "$drift" in
     manifest) printf '\n' >>"$root/scripts/ci/release-cases-v06.json"; git -C "$root" add scripts/ci/release-cases-v06.json ;;
@@ -282,6 +283,72 @@ for drift in compiler beskid_distrib manifest; do
   esac || fail "$drift drift was not diagnosed"
   test ! -e "$tmp/rootfs/woodpecker-output/releases/85-${source_sha}" || fail "$drift drift created a transaction"
 done
+git -C "$root" reset -q --hard "$source_sha"
+
+# Repackaging. Linux and Windows handoffs of C are repackaged by pipelines 91 and 92 from P, a
+# descendant of C that changes only packaging inputs (a packaging script and beskid_distrib). Their
+# UPLOAD_COMPLETE keeps the build identity (source C, build pipeline) and adds packaged_by and
+# packaged_by_commit; their package-result names the same packaging root and P's distrib commit.
+handoff_of() { echo "$tmp/rootfs/woodpecker-handoff/$1/incoming/$(build_of "$1")-${source_sha}/$1"; }
+cp -R "$tmp/rootfs/woodpecker-handoff" "$tmp/handoff-before-repackage"
+new_distrib="$(printf '%040d' 9)"
+printf '\n// prune build caches\n' >>"$root/scripts/ci/woodpecker-package-platform.mjs"
+git -C "$root" add scripts/ci/woodpecker-package-platform.mjs
+git -C "$root" update-index --cacheinfo "160000,$new_distrib,beskid_distrib"
+commit_fixture 'repackaging root P'
+p_sha="$(git -C "$root" rev-parse HEAD)"
+repackage_role() {
+  local role="$1" by="$2" packaging="$3" distrib="$4" marker="${5:-yes}" dir; dir="$(handoff_of "$role")"
+  jq --argjson by "$by" --arg packaging "$packaging" --arg distrib "$distrib" --argjson build "$(build_of "$role")" \
+    '.distrib_commit = $distrib | .packaged_by = {pipeline:$by,superrepo_commit:$packaging,build_pipeline:$build}' \
+    "$dir/package-result.json" >"$dir/package-result.json.new"
+  mv "$dir/package-result.json.new" "$dir/package-result.json"
+  (cd "$dir" && find . -maxdepth 1 -type f ! -name 'UPLOAD_*' -exec basename {} \; | LC_ALL=C sort | while IFS= read -r name; do shasum -a 256 "$name"; done) >"$dir/UPLOAD_SHA256SUMS"
+  printf 'role=%s\nsource=%s\ncompiler=%s\nversion=%s\npipeline=%s\n' "$role" "$source_sha" "$compiler_sha" "$version" "$(build_of "$role")" >"$dir/UPLOAD_COMPLETE"
+  [[ "$marker" == no ]] || printf 'packaged_by=%s\npackaged_by_commit=%s\n' "$by" "$packaging" >>"$dir/UPLOAD_COMPLETE"
+}
+repackage_role linux 91 "$p_sha" "$new_distrib"
+repackage_role windows 92 "$p_sha" "$new_distrib"
+WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=93 CI_COMMIT_SHA="$p_sha" \
+  BESKID_RELEASE_CANDIDATE="$source_sha" PATH="$tmp/bin:$PATH" bash "$script" "$version" "${builds[@]}" >/dev/null 2>"$tmp/repackage.err" || {
+  cat "$tmp/repackage.err" >&2; fail 'repackaged Linux and Windows handoffs of C were refused'; }
+repackaged_state="$tmp/rootfs/woodpecker-output/releases/93-${source_sha}/qualified/release-state.json"
+jq -e --arg c "$source_sha" --arg p "$p_sha" --arg old "$distrib_sha" --arg new "$new_distrib" '
+  .provenance.superrepo_commit == $c and .platform_sources == {linux:$c,macos:$c,windows:$c} and
+  .distribution.commit == null and .distribution.commits == {linux:$new,macos:$old,windows:$new} and
+  ([.distribution.packages[] | select(.platform == "linux")][0].packaged_by == {pipeline:91,superrepo_commit:$p,build_pipeline:41}) and
+  ([.distribution.packages[] | select(.platform == "macos")][0] | has("packaged_by") | not)
+' "$repackaged_state" >/dev/null || fail 'release state does not record the repackaging provenance'
+jq -e '.handoffs.linux.packaged_by == 91 and .handoffs.windows.packaged_by == 92 and (.handoffs.macos | has("packaged_by") | not)' \
+  "$tmp/rootfs/woodpecker-output/releases/93-${source_sha}/qualified/validated-evidence.json" >/dev/null || \
+  fail 'validated evidence does not record the repackaging pipelines'
+# The completion marker must name the same packaging root as the package-result.
+repackage_role linux 91 "$p_sha" "$new_distrib" no
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=94 CI_COMMIT_SHA="$p_sha" \
+  BESKID_RELEASE_CANDIDATE="$source_sha" PATH="$tmp/bin:$PATH" bash "$script" "$version" "${builds[@]}" 2>"$tmp/repackage-marker.err"; then
+  fail 'a package-result repackaging identity without its UPLOAD_COMPLETE record was accepted'
+fi
+grep -Fq 'linux package-result packaging identity differs from its UPLOAD_COMPLETE' "$tmp/repackage-marker.err" || fail 'marker/package-result repackaging drift was not diagnosed'
+# A packaging root that changes a build input cannot repackage C.
+printf '\n# build change\n' >>"$root/scripts/ci/build-release-artifact.sh"
+git -C "$root" add scripts/ci/build-release-artifact.sh
+commit_fixture 'not a packaging-only root'
+q_sha="$(git -C "$root" rev-parse HEAD)"
+repackage_role linux 91 "$q_sha" "$new_distrib"
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=95 CI_COMMIT_SHA="$q_sha" \
+  BESKID_RELEASE_CANDIDATE="$source_sha" PATH="$tmp/bin:$PATH" bash "$script" "$version" "${builds[@]}" 2>"$tmp/repackage-build.err"; then
+  fail 'a repackaging root with a changed build script was accepted'
+fi
+grep -Fq 'changes inputs other than packaging' "$tmp/repackage-build.err" || fail 'non-packaging repackaging root was not diagnosed'
+# A repackaged package-result must carry its packaging root's distrib commit.
+git -C "$root" reset -q --hard "$p_sha"
+repackage_role linux 91 "$p_sha" "$distrib_sha"
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=96 CI_COMMIT_SHA="$p_sha" \
+  BESKID_RELEASE_CANDIDATE="$source_sha" PATH="$tmp/bin:$PATH" bash "$script" "$version" "${builds[@]}" 2>"$tmp/repackage-distrib.err"; then
+  fail 'a repackaged package-result with the build source distrib was accepted'
+fi
+grep -Fq 'linux package-result identity mismatch' "$tmp/repackage-distrib.err" || fail 'repackaged distrib drift was not diagnosed'
+rm -rf "$tmp/rootfs/woodpecker-handoff"; mv "$tmp/handoff-before-repackage" "$tmp/rootfs/woodpecker-handoff"
 git -C "$root" reset -q --hard "$source_sha"
 
 # A build number that names no handoff of this source fails before a transaction is created.

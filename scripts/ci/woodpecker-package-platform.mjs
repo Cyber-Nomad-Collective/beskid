@@ -7,6 +7,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 import { AssertCleanDistrib, AssertNoPrerequisitesLockOverride } from "./package-source-authority.mjs";
+import { PruneBundleCaches } from "./lib/bundle-caches.mjs";
 const scripts = dirname(fileURLToPath(import.meta.url));
 const distrib = resolve(scripts, "../../beskid_distrib");
 function run(command, args, cwd, label) {
@@ -20,14 +21,24 @@ function bashPath(path) {
 }
 function digest(path) { return createHash("sha256").update(readFileSync(path)).digest("hex"); }
 try {
-  if (process.argv.length !== 5) throw new Error("usage: woodpecker-package-platform.mjs <linux|macos|windows> <evidence-dir> <new-output-dir>");
-  const [platform, inputArg, outputArg] = process.argv.slice(2);
+  const usage = "usage: woodpecker-package-platform.mjs <linux|macos|windows> <evidence-dir> <new-output-dir> [--repackage <build-pipeline> <repackage-pipeline>]";
+  const args = process.argv.slice(2);
+  if (args.length !== 3 && !(args.length === 6 && args[3] === "--repackage")) throw new Error(usage);
+  const [platform, inputArg, outputArg] = args;
   if (!["linux", "macos", "windows"].includes(platform)) throw new Error("unsupported platform");
+  // Repackaging packages the qualified outputs of an earlier build pipeline from this newer root
+  // commit, which may differ from the build source only in packaging inputs (ValidatePackagingRoot).
+  const repackage = args.length === 6 ? { build: args[4], pipeline: args[5] } : null;
+  if (repackage && (!/^[1-9][0-9]*$/.test(repackage.build) || !/^[1-9][0-9]*$/.test(repackage.pipeline) || repackage.build === repackage.pipeline)) throw new Error(usage);
   const input = resolve(inputArg), output = resolve(outputArg);
   const evidence = JSON.parse(run(process.execPath, [join(scripts, "woodpecker-release-evidence.mjs"), input, platform], undefined, "invalid release evidence"));
   const root = resolve(scripts, "../..");
   const rootCommit = run("git", ["rev-parse", "HEAD"], root, "source lookup failed").trim();
-  if (rootCommit !== evidence.source.superrepo_commit) throw new Error("checkout does not match release evidence");
+  if (repackage) {
+    run(process.execPath, [join(scripts, "release-user-observation.mjs"), "--packaging-root", root, evidence.source.superrepo_commit, rootCommit, rootCommit], undefined, "repackaging root is not a packaging-only descendant of the build source");
+  } else if (rootCommit !== evidence.source.superrepo_commit) {
+    throw new Error("checkout does not match release evidence");
+  }
   const expectedDistrib = run("git", ["rev-parse", "HEAD:beskid_distrib"], root, "distribution gitlink lookup failed").trim();
   const actualDistrib = run("git", ["rev-parse", "HEAD"], distrib, "distribution checkout lookup failed").trim();
   if (actualDistrib !== expectedDistrib) throw new Error("distribution checkout does not match source gitlink");
@@ -41,6 +52,10 @@ try {
   if (digest(snapshot) !== archive.sha256) throw new Error("bundle changed while snapshotting");
   const bundle = join(output, "bundle");
   run("bash", [bashPath(join(distrib, "scripts/extract-release-bundle.sh")), bashPath(snapshot), evidence.version, target.target, bashPath(bundle)], output, "bundle extraction failed");
+  // Installers ship the toolchain, not the build caches that prebuilding the Corelib Mods left in the
+  // bundle; the release tarball itself stays byte-identical to the qualified build.
+  const pruned = PruneBundleCaches(bundle);
+  process.stderr.write(`distribution: removed ${pruned.length} build-cache path(s) from the installer bundle\n`);
   const version = evidence.version;
   let files;
   if (platform === "linux") {
@@ -67,7 +82,8 @@ try {
     if (!statSync(join(output, name)).isFile() || statSync(join(output, name)).size === 0) throw new Error(`missing installer: ${name}`);
     return { name, sha256: digest(join(output, name)) };
   });
-  const result = { schema_version: 1, platform, target: target.target, version, source: evidence.source, distrib_commit: actualDistrib, bundle_sha256: archive.sha256, status: "success", published: false, artifacts };
+  const packagedBy = repackage ? { packaged_by: { pipeline: Number(repackage.pipeline), superrepo_commit: rootCommit, build_pipeline: Number(repackage.build) } } : {};
+  const result = { schema_version: 1, platform, target: target.target, version, source: evidence.source, distrib_commit: actualDistrib, bundle_sha256: archive.sha256, status: "success", published: false, artifacts, ...packagedBy };
   writeFileSync(join(output, "package-result.json"), `${JSON.stringify(result, null, 2)}\n`, { flag: "wx" });
   process.stdout.write(`${JSON.stringify(result)}\n`);
 } catch (error) {

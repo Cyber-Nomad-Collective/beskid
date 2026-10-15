@@ -5,13 +5,14 @@
 //   release-user-observation.mjs <record.json> <version> <candidate-superrepo-sha> <compiler-sha> <validated-evidence.json>
 //   release-user-observation.mjs --source <repo> <version> <head-sha> [<candidate-sha>]
 //   release-user-observation.mjs --platform-sources <repo> <version> <head-sha> <candidate|''> <linux|''> <macos|''> <windows|''>
+//   release-user-observation.mjs --packaging-root <repo> <source-sha> <packaging-sha> <head-sha>
 //   release-user-observation.mjs --release <repo> <version> <head-sha> <candidate-sha> <compiler-sha> <validated-evidence.json>
 //
 // Candidate rule. The release runs on HEAD and publishes the per-platform builds of one candidate C.
 // C is the `superrepo_commit` of the record committed at docs/release/cli06-06-record-v<version>.json,
 // else the gate input (BESKID_RELEASE_CANDIDATE, passed as <candidate-sha>), else HEAD. When the record
 // and the input both name a candidate they must agree. C must be HEAD or an ancestor of HEAD, and HEAD's
-// `compiler` and `beskid_distrib` gitlinks and release-case manifest digest must equal C's: everything
+// `compiler` and `beskid_bsol` gitlinks and release-case manifest digest must equal C's: everything
 // that determines the artifacts is identical, so root-only commits after C (CI scripts, docs, the record)
 // never force a rebuild. `--source` prints C.
 //
@@ -48,7 +49,11 @@ const THRESHOLD = 4;
 export const CASE_MANIFEST_PATH = "scripts/ci/release-cases-v06.json";
 // Build identity: the gitlinks the platform builds consume (Corelib is a gitlink inside the compiler
 // commit, so the compiler pointer fixes it) plus the release-case manifest digest.
-export const BUILD_GITLINKS = ["compiler", "beskid_bsol", "beskid_distrib"];
+export const BUILD_GITLINKS = ["compiler", "beskid_bsol"];
+// Packaging identity: beskid_distrib turns a qualified build into native installers and is read by no
+// build step. Each package-result names the distrib commit of the root commit that packaged it: the
+// build's own source, or the repackaging root of a repackaged handoff (ValidatePackagingRoot).
+export const PACKAGING_GITLINK = "beskid_distrib";
 // Root paths that no platform build step reads. Per-platform handoff sources may differ from the
 // candidate only in these paths; every other path (build and packaging scripts, the per-platform
 // workflows, the evidence validator and handoff uploader the build runs) must be identical.
@@ -65,6 +70,19 @@ export const NON_BUILD_PATHS = [
   /^scripts\/ci\/publish-release-stream\.sh$/, /^scripts\/ci\/publish-homebrew-formula\.sh$/,
   // Corelib registry publisher: runs after a release, from the published bundle.
   /^scripts\/ci\/corelib-publish\.sh$/, /^scripts\/ci\/lib\/corelib-publish-runner\.mjs$/,
+];
+// Root paths a repackaging root may change relative to the build source it packages, in addition to
+// NON_BUILD_PATHS: the native packaging scripts and the distribution submodule. A repackaged handoff
+// keeps the build's artifacts, evidence and source identity; only its installers are produced by
+// these newer packaging inputs, and its UPLOAD_COMPLETE and package-result name the repackaging
+// pipeline and root commit.
+export const REPACKAGE_ALLOWED_PATHS = [
+  /^beskid_distrib$/,
+  /^\.woodpecker\/repackage-(linux|macos|windows)\.yml$/,
+  /^scripts\/ci\/woodpecker-package-platform\.mjs$/, /^scripts\/ci\/lib\/bundle-caches\.mjs$/,
+  /^scripts\/ci\/lib\/repackage\.mjs$/, /^scripts\/ci\/woodpecker-repackage-platform\.sh$/,
+  /^scripts\/ci\/woodpecker-repackage-windows\.sh$/,
+  /^scripts\/ci\/woodpecker-upload-handoff\.sh$/, /^scripts\/ci\/woodpecker-handoff\.mjs$/,
 ];
 const PLATFORM_ROLES = ["linux", "macos", "windows"];
 
@@ -271,6 +289,29 @@ export function ResolvePlatformSources(repo, version, head, input = "", override
   return { candidate, build_identity: identity, sources };
 }
 
+// The root commit that packaged one platform's handoff. `packaging` is the build source itself, or a
+// repackaging root P: a descendant of the source, HEAD or an ancestor of HEAD, with the source's build
+// identity, whose root diff from the source touches only NON_BUILD_PATHS and REPACKAGE_ALLOWED_PATHS.
+// Returns the distrib commit the installers were packaged with.
+export function ValidatePackagingRoot(repo, source, packaging, head) {
+  for (const [label, value] of [["source", source], ["packaging root", packaging], ["HEAD", head]]) {
+    if (!COMMIT.test(value) || commitAt(repo, value) !== value) Fail(`the ${label} ${value} is not a commit of this repository`);
+  }
+  if (!git(repo, ["merge-base", "--is-ancestor", packaging, head]).ok) Fail(`packaging root ${packaging} is not HEAD or an ancestor of HEAD`);
+  if (packaging !== source) {
+    if (!git(repo, ["merge-base", "--is-ancestor", source, packaging]).ok) Fail(`packaging root ${packaging} does not descend from the build source ${source}`);
+    sameBuildIdentity(repo, packaging, BuildIdentity(repo, source), `the packaging root ${packaging}`, source);
+    const diff = git(repo, ["diff", "--no-renames", "--name-only", source, packaging]);
+    if (!diff.ok) Fail(`cannot compare packaging root ${packaging} with the build source ${source}`);
+    const changed = diff.out.split("\n").filter(Boolean)
+      .filter(path => !NON_BUILD_PATHS.some(pattern => pattern.test(path)) && !REPACKAGE_ALLOWED_PATHS.some(pattern => pattern.test(path)));
+    if (changed.length) Fail(`packaging root ${packaging} changes inputs other than packaging relative to the build source ${source}: ${changed.join(", ")}`);
+  }
+  const distrib = gitlink(repo, packaging, PACKAGING_GITLINK);
+  if (!distrib) Fail(`packaging root ${packaging} has no ${PACKAGING_GITLINK} gitlink`);
+  return { source, packaging_commit: packaging, distrib_commit: distrib };
+}
+
 // The commit whose per-platform build handoffs the release consumes and whose identity the release state carries.
 export function ReleaseSource(repo, version, head, input = "") {
   return ResolveCandidate(repo, version, head, input).candidate;
@@ -304,6 +345,9 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
       if (args.length !== 8) Fail("usage: release-user-observation.mjs --platform-sources <repo> <version> <head-sha> <candidate-sha|''> <linux-sha|''> <macos-sha|''> <windows-sha|''>");
       const [, repo, version, head, input, linux, macos, windows] = args;
       output = JSON.stringify(ResolvePlatformSources(repo, version, head, input, { linux, macos, windows }));
+    } else if (args[0] === "--packaging-root") {
+      if (args.length !== 5) Fail("usage: release-user-observation.mjs --packaging-root <repo> <source-sha> <packaging-sha> <head-sha>");
+      output = JSON.stringify(ValidatePackagingRoot(args[1], args[2], args[3], args[4]));
     } else if (args[0] === "--release") {
       const [, repo, version, head, candidate, compiler, evidencePath] = args;
       if (args.length !== 7) Fail("usage: release-user-observation.mjs --release <repo> <version> <head-sha> <candidate-sha> <compiler-sha> <validated-evidence.json>");

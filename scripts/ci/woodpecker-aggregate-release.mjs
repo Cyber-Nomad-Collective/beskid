@@ -65,13 +65,19 @@ function readHandoffs(path, version, sources, compiler) {
   }
   return Object.fromEntries(platforms.map(platform => {
     const item = handoffs[platform];
+    // A repackaged handoff keeps the build pipeline and source and names the pipeline and root commit
+    // that packaged its installers.
     const keys = ["compiler", "pipeline", "role", "source", "upload_sha256sums_sha256", "version"];
-    if (!item || JSON.stringify(Object.keys(item).sort()) !== JSON.stringify(keys) || item.role !== platform
+    const repackaged = item && Object.hasOwn(item, "packaged_by");
+    const expected = repackaged ? [...keys, "packaged_by", "packaged_by_commit"].sort() : keys;
+    if (!item || JSON.stringify(Object.keys(item).sort()) !== JSON.stringify(expected) || item.role !== platform
       || item.source !== sources[platform] || item.compiler !== compiler || item.version !== version
-      || !Number.isSafeInteger(item.pipeline) || item.pipeline < 1 || !/^[0-9a-f]{64}$/.test(item.upload_sha256sums_sha256)) {
+      || !Number.isSafeInteger(item.pipeline) || item.pipeline < 1 || !/^[0-9a-f]{64}$/.test(item.upload_sha256sums_sha256)
+      || (repackaged && (!Number.isSafeInteger(item.packaged_by) || item.packaged_by < 1 || !/^[0-9a-f]{40}$/.test(item.packaged_by_commit)))) {
       throw new Error(`${platform} handoff record does not match the requested release source/version`);
     }
-    return [platform, { pipeline: item.pipeline, source: item.source, upload_sha256sums_sha256: item.upload_sha256sums_sha256 }];
+    const packaged = repackaged ? { packaged_by: item.packaged_by, packaged_by_commit: item.packaged_by_commit } : {};
+    return [platform, { pipeline: item.pipeline, source: item.source, upload_sha256sums_sha256: item.upload_sha256sums_sha256, ...packaged }];
   }));
 }
 

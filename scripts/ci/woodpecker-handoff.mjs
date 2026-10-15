@@ -26,6 +26,12 @@ const FIELDS = {
   version: value => /^[0-9]+\.[0-9]+\.[0-9]+$/.test(value),
   pipeline: value => /^[1-9][0-9]*$/.test(value),
 };
+// A repackaged handoff (woodpecker-repackage-platform.sh) keeps the build's identity above, `pipeline`
+// being the build pipeline, and names the pipeline and root commit that packaged its installers.
+const REPACKAGE_FIELDS = {
+  packaged_by: value => /^[1-9][0-9]*$/.test(value),
+  packaged_by_commit: value => /^[0-9a-f]{40}$/.test(value),
+};
 
 function Fail(message) {
   throw new Error(message);
@@ -37,17 +43,22 @@ function Digest(path) {
   return createHash("sha256").update(readFileSync(path)).digest("hex");
 }
 
-// The identity fields of one completion marker, exactly the five the uploader writes.
+// The identity fields of one completion marker: exactly the five the uploader writes, plus both
+// repackaging fields or neither.
 export function ReadUploadComplete(path) {
   const item = Stat(path);
   if (item.isSymbolicLink() || !item.isFile()) Fail(`${MARKER} is not a regular file`);
   const fields = {};
   for (const line of readFileSync(path, "utf8").trimEnd().split("\n")) {
-    const match = /^([a-z]+)=(.*)$/.exec(line);
-    if (!match || !(match[1] in FIELDS) || fields[match[1]] !== undefined) Fail(`invalid ${MARKER}`);
+    const match = /^([a-z_]+)=(.*)$/.exec(line);
+    if (!match || !(match[1] in FIELDS || match[1] in REPACKAGE_FIELDS) || fields[match[1]] !== undefined) Fail(`invalid ${MARKER}`);
     fields[match[1]] = match[2];
   }
   for (const [key, valid] of Object.entries(FIELDS)) if (fields[key] === undefined || !valid(fields[key])) Fail(`invalid ${MARKER}`);
+  const repackaged = Object.keys(REPACKAGE_FIELDS).filter(key => fields[key] !== undefined);
+  if (repackaged.length !== 0 && repackaged.length !== Object.keys(REPACKAGE_FIELDS).length) Fail(`invalid ${MARKER}: incomplete repackaging identity`);
+  for (const key of repackaged) if (!REPACKAGE_FIELDS[key](fields[key])) Fail(`invalid ${MARKER}`);
+  if (repackaged.length && fields.packaged_by === fields.pipeline) Fail(`invalid ${MARKER}: a repackaging pipeline cannot be the build pipeline`);
   return fields;
 }
 
@@ -75,7 +86,8 @@ export function ValidateHandoff(dir, expected) {
   }
   if (payload.length !== sums.size || payload.some(name => !sums.has(name))) Fail("handoff checksum inventory mismatch");
   for (const name of payload) if (Digest(join(dir, name)) !== sums.get(name)) Fail(`handoff checksum mismatch: ${name}`);
-  return { ...fields, pipeline: Number(fields.pipeline), upload_sha256sums_sha256: Digest(join(dir, SUMS)) };
+  const packaged = fields.packaged_by === undefined ? {} : { packaged_by: Number(fields.packaged_by) };
+  return { ...fields, pipeline: Number(fields.pipeline), ...packaged, upload_sha256sums_sha256: Digest(join(dir, SUMS)) };
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

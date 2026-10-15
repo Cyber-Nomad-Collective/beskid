@@ -1,0 +1,26 @@
+labels:
+  platform: linux/amd64
+  backend: docker
+  role: beskid-linux
+
+clone:
+  git:
+    image: woodpeckerci/plugin-git:2.10.1
+    settings:
+      recursive: false
+      # The repackaging root must prove it descends from the build source.
+      depth: 0
+
+steps:
+  - name: repackage-linux
+    image: rust:1.98.1-bookworm@sha256:9a73a5088750b4c95158ab26629c854c3d6fc4b173cb7bc8079ad252d8ed7bfa
+    commands:
+      - apt-get update >/dev/null
+      - apt-get install -y --no-install-recommends ca-certificates git jq nodejs openssh-client >/dev/null
+      - bash scripts/ci/init-submodules.sh beskid_distrib
+      # Packages the qualified outputs of build pipeline BESKID_REPACKAGE_FROM; nothing is rebuilt.
+      - bash scripts/ci/woodpecker-repackage-platform.sh linux "$${BESKID_REPACKAGE_FROM:?set BESKID_REPACKAGE_FROM to the build pipeline}"
+
+when:
+  - event: manual
+    evaluate: 'BESKID_TASK == "package-linux"'
