@@ -30,6 +30,7 @@ export function AppSidebar({
 	user,
 	sidebarExtra,
 	signOutHref,
+	userMenuLinks,
 	brandLabel = "Beskid",
 	brandSubtitle = "Shell",
 	homeHref = "/",
@@ -90,7 +91,12 @@ export function AppSidebar({
 					</SidebarMenuItem>
 					{user ? (
 						<SidebarMenuItem>
-							<UserMenu user={user} signOutHref={signOutHref} side="top" />
+							<UserMenu
+								user={user}
+								signOutHref={signOutHref}
+								links={userMenuLinks}
+								side="top"
+							/>
 						</SidebarMenuItem>
 					) : (
 						<SidebarMenuItem>

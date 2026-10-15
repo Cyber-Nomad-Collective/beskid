@@ -63,6 +63,8 @@ export interface AppShellProps {
 	signOutHref?: string;
 	/** Topbar "Sign in" target for signed-out visitors. Defaults to `/api/auth/login`. */
 	signInHref?: string;
+	/** App links in the account menu, such as the app's dashboard. */
+	userMenuLinks?: UserMenuLink[];
 	/** Branding label shown in the sidebar header. */
 	brandLabel?: string;
 	/** Branding subtitle shown in the sidebar header. */
@@ -86,6 +88,7 @@ export interface TopbarProps {
 	signOutHref?: string;
 	/** Where the topbar "Sign in" button goes when no user is signed in. */
 	signInHref?: string;
+	userMenuLinks?: UserMenuLink[];
 }
 
 export interface AppSidebarProps {
@@ -93,9 +96,16 @@ export interface AppSidebarProps {
 	user?: ShellUser | null;
 	sidebarExtra?: ReactNode;
 	signOutHref?: string;
+	userMenuLinks?: UserMenuLink[];
 	brandLabel?: string;
 	brandSubtitle?: string;
 	homeHref?: string;
+}
+
+/** An app link shown in the account menu (for example the app's dashboard). */
+export interface UserMenuLink {
+	label: string;
+	href: string;
 }
 
 export interface UserMenuProps {
@@ -106,6 +116,8 @@ export interface UserMenuProps {
 	signOutHref?: string;
 	/** Dropdown alignment side (sidebar uses `top`, topbar uses `bottom`). */
 	side?: "top" | "bottom";
+	/** App links listed above the account entries. */
+	links?: UserMenuLink[];
 }
 
 export interface ShellUiContextValue {

@@ -13,6 +13,12 @@ import type { ReactNode } from "react";
 import { pckgApi } from "#/lib/api";
 import { ModeSwitcher } from "./mode-switcher";
 
+/** Signed-in entry points from the account menu on public pages. */
+const USER_MENU_LINKS = [
+	{ label: "Dashboard", href: "/dashboard" },
+	{ label: "Release center", href: "/dashboard/release" },
+];
+
 const SIDEBAR_ITEMS: SidebarNavItem[] = [
 	{ id: "packages", label: "Packages", href: "/packages", icon: Package },
 	{ id: "docs", label: "Docs", href: "/docs", icon: BookOpen },
@@ -68,6 +74,7 @@ export function PckgShell({
 			brandSubtitle="pckg"
 			homeHref="/"
 			signOutHref="/api/auth/logout"
+			userMenuLinks={USER_MENU_LINKS}
 			leftSlot={
 				<TopbarLeftSlot>
 					<ModeSwitcher />

@@ -20,6 +20,7 @@ export function TopbarAppShell({
 	rightSlot,
 	signOutHref,
 	signInHref,
+	userMenuLinks,
 	children,
 }: AppShellProps) {
 	return (
@@ -33,6 +34,7 @@ export function TopbarAppShell({
 						user={user}
 						signOutHref={signOutHref}
 						signInHref={signInHref}
+						userMenuLinks={userMenuLinks}
 					/>
 					<div className="app-shell__body flex min-h-0 flex-1">
 						<div className="app-shell__main flex min-h-0 min-w-0 flex-1 flex-col">

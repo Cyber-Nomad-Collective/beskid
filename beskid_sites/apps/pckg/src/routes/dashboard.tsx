@@ -12,9 +12,11 @@ import { PckgShell } from "#/components/pckg-shell";
  * menu in the sidebar footer.
  */
 export const Route = createFileRoute("/dashboard")({
-	beforeLoad: ({ context }) => {
+	beforeLoad: ({ context, location }) => {
 		if (!context.user) {
-			throw redirect({ href: "/api/auth/login" });
+			throw redirect({
+				href: `/api/auth/login?next=${encodeURIComponent(location.href)}`,
+			});
 		}
 		return { user: context.user };
 	},

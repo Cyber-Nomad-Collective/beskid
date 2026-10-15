@@ -12,7 +12,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@cyber-nomad-collective/beskid-ui-react/ui/dropdown-menu";
-import { ChevronUp, ExternalLink, LogOut } from "lucide-react";
+import { ChevronUp, ExternalLink, LayoutDashboard, LogOut } from "lucide-react";
 
 import type { UserMenuProps } from "../types";
 
@@ -27,6 +27,7 @@ export function UserMenu({
 	trigger,
 	signOutHref = "/api/auth/logout",
 	side = "top",
+	links = [],
 }: UserMenuProps) {
 	const fallback = user.username.slice(0, 2).toUpperCase();
 	const avatarUrl = user.avatarUrl ?? `https://github.com/${user.username}.png`;
@@ -68,6 +69,15 @@ export function UserMenu({
 					</p>
 				</div>
 				<DropdownMenuSeparator />
+				{links.map((link) => (
+					<DropdownMenuItem key={link.href} asChild>
+						<a href={link.href}>
+							<LayoutDashboard className="size-4" />
+							{link.label}
+						</a>
+					</DropdownMenuItem>
+				))}
+				{links.length > 0 ? <DropdownMenuSeparator /> : null}
 				<DropdownMenuItem asChild>
 					<a
 						href={`https://github.com/${user.username}`}

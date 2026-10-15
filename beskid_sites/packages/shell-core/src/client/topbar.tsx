@@ -27,6 +27,7 @@ export function Topbar({
 	showUserMenu = false,
 	signOutHref,
 	signInHref = "/api/auth/login",
+	userMenuLinks,
 }: TopbarProps) {
 	return (
 		<header className="app-shell__header flex h-14 shrink-0 items-center border-b border-border px-4">
@@ -44,6 +45,7 @@ export function Topbar({
 				{showUserMenu && user ? (
 					<UserMenu
 						user={user}
+						links={userMenuLinks}
 						signOutHref={signOutHref}
 						side="bottom"
 						trigger={

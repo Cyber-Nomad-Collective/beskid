@@ -44,5 +44,6 @@ export type {
 	SidebarNavItem,
 	ThemeProviderProps,
 	TopbarProps,
+	UserMenuLink,
 	UserMenuProps,
 } from "./types";

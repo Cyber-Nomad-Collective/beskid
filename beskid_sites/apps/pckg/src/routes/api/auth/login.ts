@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-
+import { env } from "#/env.server";
+import { safeNextPath } from "#/lib/next-path";
 import {
 	buildAuthorizationUrl,
 	oidcStateCookieHeader,
 	readOidcStateCookie,
 } from "#/server/shell-auth";
-import { env } from "#/env.server";
 
 /**
  * Starts the OIDC authorization-code flow: redirects the browser to
@@ -27,9 +27,14 @@ export const Route = createFileRoute("/api/auth/login")({
 					!env.SHELL_TEMPLATE_OIDC_CLIENT_ID ||
 					!env.SHELL_TEMPLATE_OIDC_CLIENT_SECRET
 				) {
+					// Start the Authentik outpost flow directly and come back to
+					// the requested page (the dashboard by default).
+					const next = safeNextPath(url.searchParams.get("next"));
+					const start = new URL("/outpost.goauthentik.io/start", url.origin);
+					start.searchParams.set("rd", new URL(next, url.origin).toString());
 					return new Response(null, {
 						status: 302,
-						headers: { Location: "/auth" },
+						headers: { Location: start.toString() },
 					});
 				}
 				const redirectUri = `${url.origin}/api/auth/callback`;
