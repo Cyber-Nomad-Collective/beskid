@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-# Compiler Rust gate: clippy (deny warnings) + runtime-kit staging + workspace tests.
+# Compiler Rust gate: clippy (report-only) + runtime-kit staging + workspace tests.
+#
+# Clippy is lint, non-blocking for release: the lint phase logs every finding and their count and
+# never fails the gate. Runtime-kit staging and the workspace tests stay blocking.
 #
 # Runs directly on a native CI worker or contributor machine. Run from the
 # superrepo root; the compiler workspace lives in
@@ -32,10 +35,23 @@ run_bounded_phase() {
 }
 
 run_lint_phase() {
-  # Clippy denies warnings. `--no-deps` keeps the gate scoped to workspace crates.
+  # Clippy is report-only for the release gate: it logs findings with a count and does not fail.
+  # `--no-deps` keeps the report scoped to workspace crates.
   rustup component add clippy >/dev/null 2>&1 || true
-  run_bounded_phase "Clippy" "${BESKID_CLIPPY_TIMEOUT:-600}" \
-    cargo clippy --workspace --all-targets --no-deps -- -D warnings
+  local report status findings
+  report="$(mktemp "${TMPDIR:-/tmp}/beskid-clippy.XXXXXX")"
+  set +e
+  run_bounded_phase "Clippy (report-only)" "${BESKID_CLIPPY_TIMEOUT:-600}" \
+    cargo clippy --workspace --all-targets --no-deps -- -D warnings 2>&1 | tee "${report}"
+  status="${PIPESTATUS[0]}"
+  set -e
+  # One finding per diagnostic header; summary lines ("generated N warnings", "could not compile",
+  # "aborting due to") are not findings.
+  findings="$(grep -E '^(warning|error)(\[[^]]+\])?: ' "${report}" \
+    | grep -cvE 'generated [0-9]+ (warning|error)|could not compile|aborting due to|build failed' || true)"
+  rm -f "${report}"
+  echo "clippy findings: ${findings} (exit ${status}; report-only, non-blocking for release)"
+  return 0
 }
 
 run_runtime_phase() {

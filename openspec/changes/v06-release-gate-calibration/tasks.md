@@ -10,6 +10,9 @@
 - [x] 2.2 `scripts/ci/woodpecker-release.sh` and `.woodpecker/release.yml`: pass `BESKID_RELEASE_CANDIDATE` to `--source` and `--release`.
 - [x] 2.3 Tests in `scripts/ci/test/release-user-observation.test.mjs` and `scripts/ci/test/woodpecker-release.test.sh`: root-only commits after C are accepted; changed compiler, distribution or manifest identity, a non-ancestor and a record/input conflict are refused.
 
+- [x] 2.4 Per-platform sources: `--platform-sources` resolves the build identity (`compiler`, `beskid_bsol`, `beskid_distrib`, manifest digest) and each platform's source (default C) against `NON_BUILD_PATHS`; `woodpecker-fetch-handoffs.sh`, `woodpecker-aggregate-release.mjs`, `build-release-state.sh`, `woodpecker-release.sh` and `.woodpecker/release.yml` consume them; the release state records `platform_sources` and `build_identity`.
+- [x] 2.5 Tests: C/C/D with an allowlisted diff is accepted, a build-script diff and a different compiler pointer are refused (`release-user-observation.test.mjs`, `woodpecker-release.test.sh`, `woodpecker-release-evidence.test.mjs`).
+
 ## 3. CLI06-06 as a published, non-blocking target (0.6.0)
 
 - [x] 3.1 `--release` reports `pass`, `below-threshold` or `not-performed` and exits 0; an invalid or forged record exits 1. Remove the owner waiver.
@@ -20,6 +23,7 @@
 
 - [x] 4.1 Remove the `legacy_patterns` loop from `run_lint_phase` in `scripts/ci/compiler-rust-gate.sh`; keep clippy.
 - [x] 4.2 Extend `scripts/ci/test/compiler-rust-gate-timeout.test.sh`: the lint phase passes on sources with retired names, runs clippy, and the script has no `legacy_patterns`.
+- [x] 4.3 Run clippy report-only in the release gate (findings logged with a count; never fails); test it in `compiler-rust-gate-timeout.test.sh`.
 
 ## 5. Corelib publisher (0.6.0)
 
@@ -29,6 +33,9 @@
 - [ ] 5.4 Add readmes to `corelib_bsol`, `corelib_serialization` and `serialization_mod` in the compiler repository (quality only; a readme is optional for the packer). Run `corelib-publish.sh --dry-run` on the 0.6 bundle to confirm that `beskid pckg pack` packs the Mod `serialization_mod`.
 
 ## 6. Deferred to 0.6.1
+
+- [ ] 6.0 Reorder `.woodpecker/linux.yml`: build, release gates with the status captured, packaging, upload, then exit with the gate status (design D5). A failed gate still blocks publication through the aggregate.
+- [ ] 6.4 `verify-linux-package-derivative.mjs` validates the qualified evidence as one source; make it validate per platform like the aggregate before a release with mixed platform sources publishes a Linux package derivative.
 
 - [ ] 6.1 Remove the duplicate `V06_CASE_MANIFEST_SHA256` pin in `scripts/ci/woodpecker-release-evidence.mjs`; CI recomputes the digest of the committed `scripts/ci/release-cases-v06.json` and compares it with the manifest that the evidence names.
 - [ ] 6.2 Change the CLI surface gate (`scripts/ci/woodpecker-cli-surface-evidence.mjs`) to check exit codes, JSON documents and command presence instead of exact help prose.

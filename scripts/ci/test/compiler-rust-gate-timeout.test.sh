@@ -38,4 +38,23 @@ PATH="$fixture/bin:$PATH" BESKID_TIMEOUT_CAPTURE="$fixture/lint.log" \
   bash "$fixture/scripts/ci/compiler-rust-gate.sh" lint
 grep -Fxq -- '--kill-after=60s 600 cargo clippy --workspace --all-targets --no-deps -- -D warnings' "$fixture/lint.log"
 
+# Clippy is lint, non-blocking for release: findings are counted and logged, the gate passes.
+cat >"$fixture/bin/timeout" <<'SH'
+#!/usr/bin/env bash
+printf '%s\n' "$*" >>"$BESKID_TIMEOUT_CAPTURE"
+if [[ "$*" == *"cargo clippy"* ]]; then
+  printf 'warning: this expression creates a reference\n  --> crates/beskid_execution/src/a.rs:1:1\n'
+  printf 'error[E0599]: no method named `x`\n'
+  printf 'warning: unneeded return statement\n'
+  printf 'warning: `beskid_execution` (lib) generated 2 warnings\n'
+  printf 'error: could not compile `beskid_execution` due to 1 previous error\n'
+  exit 101
+fi
+SH
+chmod +x "$fixture/bin/timeout"
+lint_output="$(PATH="$fixture/bin:$PATH" BESKID_TIMEOUT_CAPTURE="$fixture/lint-fail.log" \
+  bash "$fixture/scripts/ci/compiler-rust-gate.sh" lint)" || { echo 'clippy findings failed the release gate' >&2; exit 1; }
+grep -Fq 'clippy findings: 3 (exit 101; report-only, non-blocking for release)' <<<"$lint_output" || {
+  echo "clippy findings were not counted: $lint_output" >&2; exit 1; }
+
 echo 'compiler Rust gate timeout contract OK'
