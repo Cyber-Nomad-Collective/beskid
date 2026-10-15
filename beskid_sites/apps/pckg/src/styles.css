@@ -1,4 +1,7 @@
-@import "tailwindcss";
+/* Scan only `src`: without `.gitignore` (image builds copy none) the root scan
+ * also reads the `.output` the client build just wrote, so the server render
+ * would link a stylesheet hash the client never emitted. */
+@import "tailwindcss" source("../src");
 
 /* Scan the shared lib's source for shadcn utility classes. Under a workspace
  * `workspace:*` link the package resolves into the pnpm virtual store, so we
