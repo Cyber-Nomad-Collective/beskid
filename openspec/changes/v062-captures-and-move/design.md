@@ -382,3 +382,21 @@ Specification and prior design:
 11. The two-heap case of the barrier filter (another heap marking, the
     calling heap idle) cannot be exercised in 0.6.2, which has one runtime
     instance; v063's isolate tests cover it.
+
+## Implementation rulings (2026-10-15, v06x parallel program)
+
+Sources: `~/.claude/handoffs/v06x-lang-progress.md` (rulings P4-1 to P4-7), `v06x-rt-progress.md` (D7-D10), `v06x-barrier-progress.md` (D1-D6).
+
+- Environment variables (rt D5). The sentence "the runtime reads no `BESKID_GC_*` variable" exempts `BESKID_GC_STRESS` and `BESKID_GC_QUARANTINE`, which 0.6.1 introduced for stress and quarantine; pacing stays free of variables.
+- Literal initializers (lang P4-1). A struct or array literal initializer consumes an owning name without `move`, because construction is a binding of a fresh object and the source becomes a Moved place. E1242 stays for field and element assignment, `move` parameters and `exchange` values.
+- Borrowed `move` operand (lang P4-2). `move b` on a borrowed name is E1239 when it is the argument of a `move` parameter and E1241 everywhere else; both carry the help "declare the parameter".
+- Tracked owners (lang P4-3). Owners are bindings of concrete class `Moved`, `move T` parameters over `Transferable` `T`, and `Fiber` handles. A binding that is `Never` only through an unbounded type parameter in a generic corelib body is not tracked, and `move this` and `move` parameters on `[Isolated]` nominals in those bodies are admitted (decided per instantiation).
+- Loop revival (lang P4-4). An assignment statement directly in the loop body, after the consuming use, revives the name (`x = f(move x)`); a conditional reassignment is not analyzed.
+- Repeatable lambdas (lang P4-5). A `[Captures]` lambda is repeatable: a non-`move` consuming use of a captured `Moved` name is E1241 and `move x` consumes at the lambda. Only `spawn` operands consume without `move` (one-shot).
+- Function type spelling (lang P4-6). Function types print canonically as `T()`; the formatter corpus asserts `[Captures(Bound: Transferable)] i64() body`.
+- `exchange` shadowing (lang P4-7). `exchange` is the builtin whenever no lexical binding of that name is in scope and the call has two arguments; a top-level function named `exchange` is shadowed.
+- `MoveExpression` is transparent for typing; the destructive read form (`move x.f`) leaves the canonical empty (`Option::None`, empty array, empty list) through the barriered store.
+- Barrier on deletions (barrier D1). `Clear` and `RemoveLast` zeroing of a managed element are barriered with a null value, keyed on the source fact `collection_element_managed` (a missing fact is a lowering error), because the deletion half of the hybrid barrier protects a value moved into a root only. Appending at the old length stays barrier-free (barrier D2). The barrier call is a non-collecting import for root elision (barrier D3).
+- Canonical empty layout (barrier D4 to D6). The applied field type is read through the query `canonical_empty_value`; an empty list is a `List<T>` object whose only fields are `storage` and `count`, and any other shape fails closed. The empty value is allocated before the receiver is evaluated.
+- Incremental marking state (rt D7 to D10). The 0.6.2 heap-state fields occupy offsets 400 to 512; a black large object allocated while marking keeps its mark word (`InitializeObjectHeader` does not clear word 8); a failed phase counts as restartable, so `gc_cycle_start` and the cycle completion start a cycle from it.
+- `beskid_rt_v5_array_write_barrier` is retired. Native adapters and dynamic mappings use the existing insertion barrier `gc_write_barrier(parent, child)` for init stores of pointer elements.
