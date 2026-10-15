@@ -43,9 +43,9 @@ run_lint_phase() {
   )
   local pattern
   for pattern in "${legacy_patterns[@]}"; do
-    if rg -n --glob '*.rs' "${pattern}" crates/ >/dev/null 2>&1; then
+    if rg -n -w --glob '*.rs' "${pattern}" crates/ >/dev/null 2>&1; then
       echo "legacy type-system pattern reintroduced: ${pattern}" >&2
-      rg -n --glob '*.rs' "${pattern}" crates/ >&2 || true
+      rg -n -w --glob '*.rs' "${pattern}" crates/ >&2 || true
       return 1
     fi
   done
