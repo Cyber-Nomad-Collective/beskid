@@ -30,9 +30,31 @@ function copyGateEvidence(from, to) {
   }
 }
 
+// The per-platform build handoffs the evidence was collected from. Each platform is built by its own
+// pipeline, so validated-evidence.json records each platform's pipeline number and the digest of its
+// verified UPLOAD_SHA256SUMS, all bound to the one release source.
+function readHandoffs(path, version, superrepo, compiler) {
+  const handoffs = JSON.parse(readFileSync(path, "utf8"));
+  const platforms = ["linux", "macos", "windows"];
+  if (!handoffs || Array.isArray(handoffs) || typeof handoffs !== "object" || JSON.stringify(Object.keys(handoffs).sort()) !== JSON.stringify(platforms)) {
+    throw new Error("handoff record must name exactly the linux, macos and windows builds");
+  }
+  return Object.fromEntries(platforms.map(platform => {
+    const item = handoffs[platform];
+    const keys = ["compiler", "pipeline", "role", "source", "upload_sha256sums_sha256", "version"];
+    if (!item || JSON.stringify(Object.keys(item).sort()) !== JSON.stringify(keys) || item.role !== platform
+      || item.source !== superrepo || item.compiler !== compiler || item.version !== version
+      || !Number.isSafeInteger(item.pipeline) || item.pipeline < 1 || !/^[0-9a-f]{64}$/.test(item.upload_sha256sums_sha256)) {
+      throw new Error(`${platform} handoff record does not match the requested release source/version`);
+    }
+    return [platform, { pipeline: item.pipeline, upload_sha256sums_sha256: item.upload_sha256sums_sha256 }];
+  }));
+}
+
 try {
-  if (process.argv.length !== 7) throw new Error("usage: woodpecker-aggregate-release.mjs <evidence-dir> <new-output-dir> <version> <superrepo-sha> <compiler-sha>");
-  const [inputArg, outputArg, version, superrepo, compiler] = process.argv.slice(2);
+  if (process.argv.length !== 8) throw new Error("usage: woodpecker-aggregate-release.mjs <evidence-dir> <new-output-dir> <version> <superrepo-sha> <compiler-sha> <handoffs.json>");
+  const [inputArg, outputArg, version, superrepo, compiler, handoffsArg] = process.argv.slice(2);
+  const handoffs = readHandoffs(resolve(handoffsArg), version, superrepo, compiler);
   const input = resolve(inputArg);
   const output = resolve(outputArg);
   const evidence = validate(input);
@@ -54,7 +76,7 @@ try {
   // Recheck the private snapshot so concurrent input changes cannot be promoted.
   const checked = validate(snapshot);
   if (JSON.stringify(checked) !== JSON.stringify(evidence)) throw new Error("evidence changed while snapshotting");
-  json(join(output, "validated-evidence.json"), checked);
+  json(join(output, "validated-evidence.json"), { ...checked, handoffs });
   const assets = join(output, "assets");
   mkdirSync(assets);
   const reports = join(output, "gate-reports");

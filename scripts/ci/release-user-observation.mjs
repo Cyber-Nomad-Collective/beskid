@@ -10,7 +10,7 @@
 // docs/release/cli06-06-record-v<version>.json on top of the frozen candidate that the record names
 // (a commit cannot contain its own sha). `--source` prints the release source commit: that candidate
 // for a 0.6 version, HEAD otherwise. The release fetches, aggregates and publishes the candidate's own
-// build handoff, so the record is checked against the exact CLI files the participants installed and
+// per-platform build handoffs, so the record is checked against the exact CLI files the participants installed and
 // those files are what ships. `--release` is the gate on the record itself. An absent record fails,
 // which blocks publication.
 //
@@ -184,7 +184,7 @@ export function CommittedCandidate(repo, version, head) {
   return { candidate, record };
 }
 
-// The commit whose build handoff the release consumes and whose identity the release state carries.
+// The commit whose per-platform build handoffs the release consumes and whose identity the release state carries.
 export function ReleaseSource(repo, version, head) {
   if (!ObservationRequired(version)) {
     if (!COMMIT.test(head)) Fail("release identity must name a 40-character HEAD commit");
@@ -194,7 +194,7 @@ export function ReleaseSource(repo, version, head) {
 }
 
 // Release gate: the committed record of `version` in HEAD of `repo`, checked against the candidate it
-// names and the validated evidence aggregated from that candidate's build handoff.
+// names and the validated evidence aggregated from that candidate's per-platform build handoffs.
 export function ValidateCommittedObservation(repo, version, head, compiler, evidence) {
   if (!COMMIT.test(compiler)) Fail("release identity must name a 40-character compiler commit");
   const { candidate, record } = CommittedCandidate(repo, version, head);

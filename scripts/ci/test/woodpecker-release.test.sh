@@ -18,7 +18,10 @@ git -C "$root" -c user.name='Release test' -c user.email='release-test@example.i
 script="$root/scripts/ci/woodpecker-release.sh"
 version=0.4.744
 source_sha="$(git -C "$root" rev-parse HEAD)"
-build_run=41
+# Each platform is built by its own pipeline, so the three handoffs carry different pipeline numbers.
+linux_build=41; macos_build=43; windows_build=47
+builds=("$linux_build" "$macos_build" "$windows_build")
+build_of() { case "$1" in linux) echo "$linux_build" ;; macos) echo "$macos_build" ;; windows) echo "$windows_build" ;; esac; }
 
 fail() { echo "FAIL: $*" >&2; exit 1; }
 sha() { shasum -a 256 "$1" | awk '{print $1}'; }
@@ -30,6 +33,7 @@ write_role() {
     macos) target=aarch64-apple-darwin; cli=beskid-darwin-arm64; lsp=beskid_lsp-darwin-arm64 ;;
     windows) target=x86_64-pc-windows-msvc; cli=beskid-windows-amd64.exe; lsp=beskid_lsp-windows-amd64.exe ;;
   esac
+  local build_run; build_run="$(build_of "$role")"
   installer_dir="$tmp/rootfs/woodpecker-handoff/$role/incoming/${build_run}-${source_sha}/$role"
   mkdir -p "$installer_dir"
   if [[ "$role" == linux ]]; then
@@ -181,7 +185,7 @@ chmod +x "$tmp/bin/gh"
 
 # Preparation consumes the real handoff format and must not touch GitHub.
 WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=70 CI_COMMIT_SHA="$source_sha" \
-  PATH="$tmp/bin:$PATH" bash "$script" "$build_run" "$version"
+  PATH="$tmp/bin:$PATH" bash "$script" "$version" "${builds[@]}"
 output="$tmp/rootfs/woodpecker-output/releases/70-${source_sha}/qualified"
 for name in "beskid-${version}-amd64.deb" "beskid-${version}-macos-arm64.dmg" \
   "beskid-${version}-windows-amd64.msi" "beskid-${version}-windows-amd64.exe"; do
@@ -192,10 +196,43 @@ done
 test "$(jq -r '.distribution.homebrew_formula.name' "$output/release-state.json")" = beskid.rb || \
   fail 'release state omitted the Homebrew formula'
 test ! -s "$tmp/gh.log" || fail 'prepare mode reached GitHub'
+# validated-evidence.json records the build of every platform: its own pipeline and checksum list.
+jq -e --argjson linux "$linux_build" --argjson macos "$macos_build" --argjson windows "$windows_build" \
+  '.handoffs.linux.pipeline == $linux and .handoffs.macos.pipeline == $macos and .handoffs.windows.pipeline == $windows' \
+  "$output/validated-evidence.json" >/dev/null || fail 'validated evidence omitted the per-platform build pipelines'
+test "$(jq -r '.handoffs.macos.upload_sha256sums_sha256' "$output/validated-evidence.json")" = \
+  "$(sha "$tmp/rootfs/woodpecker-handoff/macos/incoming/${macos_build}-${source_sha}/macos/UPLOAD_SHA256SUMS")" || \
+  fail 'validated evidence does not bind the macOS checksum list'
+
+# A build number that names no handoff of this source fails before a transaction is created.
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=700 CI_COMMIT_SHA="$source_sha" \
+  PATH="$tmp/bin:$PATH" bash "$script" "$version" "$linux_build" "$linux_build" "$windows_build" 2>"$tmp/wrong-build.err"; then
+  fail 'release preparation accepted a macOS build without a handoff'
+fi
+grep -Fq "incoming/${linux_build}-${source_sha}/macos" "$tmp/wrong-build.err" || fail 'missing macOS handoff was not diagnosed'
+test ! -e "$tmp/rootfs/woodpecker-output/releases/700-${source_sha}" || fail 'missing handoff created a transaction'
+
+# A handoff renamed to another pipeline still names its own build in UPLOAD_COMPLETE.
+cp -R "$tmp/rootfs/woodpecker-handoff/macos/incoming/${macos_build}-${source_sha}" \
+  "$tmp/rootfs/woodpecker-handoff/macos/incoming/44-${source_sha}"
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=703 CI_COMMIT_SHA="$source_sha" \
+  PATH="$tmp/bin:$PATH" bash "$script" "$version" "$linux_build" 44 "$windows_build" 2>"$tmp/renamed-build.err"; then
+  fail 'release preparation accepted a handoff renamed to another pipeline'
+fi
+grep -Fq 'UPLOAD_COMPLETE identity mismatch: pipeline' "$tmp/renamed-build.err" || fail 'renamed handoff was not diagnosed'
+rm -rf "$tmp/rootfs/woodpecker-handoff/macos/incoming/44-${source_sha}"
+
+for bad in 0 abc; do
+  if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=704 CI_COMMIT_SHA="$source_sha" \
+    bash "$script" "$version" "$linux_build" "$macos_build" "$bad" 2>/dev/null; then
+    fail "release preparation accepted windows build $bad"
+  fi
+done
+if bash "$script" "$version" "$linux_build" "$macos_build" 2>/dev/null; then fail 'release preparation accepted two builds'; fi
 
 # The handoff itself can be complete while the source-bound compiler report is
 # absent. That run must fail before reaching any publication call.
-linux_input="$tmp/rootfs/woodpecker-handoff/linux/incoming/${build_run}-${source_sha}/linux"
+linux_input="$tmp/rootfs/woodpecker-handoff/linux/incoming/${linux_build}-${source_sha}/linux"
 rm "$linux_input/release-gate-compiler.json"
 (
   cd "$linux_input"
@@ -203,7 +240,7 @@ rm "$linux_input/release-gate-compiler.json"
 ) >"$linux_input/UPLOAD_SHA256SUMS"
 if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=701 CI_COMMIT_SHA="$source_sha" \
   GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
-  bash "$script" "$build_run" "$version" 2>"$tmp/missing-gate.err"; then
+  bash "$script" "$version" "${builds[@]}" 2>"$tmp/missing-gate.err"; then
   fail 'release preparation accepted a handoff without compiler gate evidence'
 fi
 grep -Fq 'release-gate-compiler.json' "$tmp/missing-gate.err" || fail 'missing compiler gate was not diagnosed'
@@ -211,7 +248,7 @@ test ! -s "$tmp/gh.log" || fail 'missing compiler gate reached GitHub'
 write_role linux
 
 # The CLI inventory and PTY gate is a required Linux handoff component.
-linux_input="$tmp/rootfs/woodpecker-handoff/linux/incoming/${build_run}-${source_sha}/linux"
+linux_input="$tmp/rootfs/woodpecker-handoff/linux/incoming/${linux_build}-${source_sha}/linux"
 rm "$linux_input/cli-surface-receipt-v1.json"
 (
   cd "$linux_input"
@@ -219,7 +256,7 @@ rm "$linux_input/cli-surface-receipt-v1.json"
 ) >"$linux_input/UPLOAD_SHA256SUMS"
 if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=702 CI_COMMIT_SHA="$source_sha" \
   GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
-  bash "$script" "$build_run" "$version" 2>"$tmp/missing-cli-receipt.err"; then
+  bash "$script" "$version" "${builds[@]}" 2>"$tmp/missing-cli-receipt.err"; then
   fail 'release preparation accepted handoff without CLI surface receipt'
 fi
 grep -Fq 'cli-surface-receipt-v1.json' "$tmp/missing-cli-receipt.err" || fail 'missing CLI receipt was not diagnosed'
@@ -227,10 +264,10 @@ test ! -s "$tmp/gh.log" || fail 'missing CLI receipt reached GitHub'
 write_role linux
 
 # A handoff checksum failure is rejected before a transaction is created.
-printf 'tampered\n' >>"$tmp/rootfs/woodpecker-handoff/linux/incoming/${build_run}-${source_sha}/linux/beskid-${version}-amd64.deb"
-touch "$tmp/rootfs/woodpecker-handoff/linux/incoming/${build_run}-${source_sha}/linux/UPLOAD_COMPLETE"
+printf 'tampered\n' >>"$tmp/rootfs/woodpecker-handoff/linux/incoming/${linux_build}-${source_sha}/linux/beskid-${version}-amd64.deb"
+touch "$tmp/rootfs/woodpecker-handoff/linux/incoming/${linux_build}-${source_sha}/linux/UPLOAD_COMPLETE"
 if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=71 CI_COMMIT_SHA="$source_sha" \
-  bash "$script" "$build_run" "$version" 2>"$tmp/tamper.err"; then
+  bash "$script" "$version" "${builds[@]}" 2>"$tmp/tamper.err"; then
   fail 'tampered handoff was accepted'
 fi
 grep -Fq 'handoff checksum mismatch' "$tmp/tamper.err" || fail 'tamper rejection was not diagnosed'
@@ -239,7 +276,7 @@ write_role linux
 
 # The uploader checksum is necessary but not sufficient: the package result's
 # own installer hash remains authoritative before publication.
-linux_input="$tmp/rootfs/woodpecker-handoff/linux/incoming/${build_run}-${source_sha}/linux"
+linux_input="$tmp/rootfs/woodpecker-handoff/linux/incoming/${linux_build}-${source_sha}/linux"
 printf 'replaced after packaging\n' >"$linux_input/beskid-${version}-amd64.deb"
 (
   cd "$linux_input"
@@ -247,7 +284,7 @@ printf 'replaced after packaging\n' >"$linux_input/beskid-${version}-amd64.deb"
 ) >"$linux_input/UPLOAD_SHA256SUMS"
 touch "$linux_input/UPLOAD_COMPLETE"
 if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=72 CI_COMMIT_SHA="$source_sha" \
-  bash "$script" "$build_run" "$version" 2>"$tmp/package-tamper.err"; then
+  bash "$script" "$version" "${builds[@]}" 2>"$tmp/package-tamper.err"; then
   fail 'installer differing from package-result was accepted'
 fi
 grep -Fq 'installer checksum mismatch' "$tmp/package-tamper.err" || fail 'package-result mismatch was not diagnosed'
@@ -259,7 +296,7 @@ export BESKID_MANUAL_PUBLISH=1
 if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=true CI_PIPELINE_NUMBER=720 CI_COMMIT_SHA="$source_sha" \
   CI_PIPELINE_EVENT=manual CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
   GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
-  bash "$script" "$build_run" "$version" 2>"$tmp/spoofed-main.err"; then
+  bash "$script" "$version" "${builds[@]}" 2>"$tmp/spoofed-main.err"; then
   fail 'spoofed CI manual/main values authorized publication'
 fi
 grep -Fq 'clean local main checkout' "$tmp/spoofed-main.err" || fail 'spoofed publication was not rejected by real Git state'
@@ -268,7 +305,7 @@ test ! -s "$tmp/gh.log" || fail 'spoofed publication reached GitHub'
 printf 'not in the release commit\n' >"$root/untracked-source.bd"
 if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=false CI_PIPELINE_NUMBER=722 CI_COMMIT_SHA="$source_sha" \
   GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
-  bash "$script" "$build_run" "$version" 2>"$tmp/dirty-main.err"; then
+  bash "$script" "$version" "${builds[@]}" 2>"$tmp/dirty-main.err"; then
   fail 'dirty local main authorized publication with test root'
 fi
 grep -Fq 'clean local main checkout' "$tmp/dirty-main.err" || fail 'dirty checkout rejection was not diagnosed'
@@ -277,7 +314,7 @@ rm "$root/untracked-source.bd"
 
 if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=true CI_PIPELINE_NUMBER=72 CI_COMMIT_SHA="$source_sha" \
   CI_PIPELINE_EVENT=pull_request CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
-  PATH="$tmp/bin:$PATH" bash "$script" "$build_run" "$version"; then
+  PATH="$tmp/bin:$PATH" bash "$script" "$version" "${builds[@]}"; then
   fail 'pull request publication was accepted'
 fi
 test ! -s "$tmp/gh.log" || fail 'untrusted publication reached GitHub'
@@ -287,7 +324,7 @@ test ! -s "$tmp/gh.log" || fail 'untrusted publication reached GitHub'
 if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=false CI_PIPELINE_NUMBER=721 CI_COMMIT_SHA="$source_sha" \
   CI_PIPELINE_EVENT=manual CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
   GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
-  bash "$script" "$build_run" "$version" 2>"$tmp/missing-smoke.err"; then
+  bash "$script" "$version" "${builds[@]}" 2>"$tmp/missing-smoke.err"; then
   fail 'publication without Windows installer smoke evidence was accepted'
 fi
 grep -Fq 'BESKID_WINDOWS_INSTALLER_SMOKE_DIR' "$tmp/missing-smoke.err" || fail 'missing installer smoke gate was not diagnosed'
@@ -296,8 +333,8 @@ test ! -s "$tmp/gh.log" || fail 'missing installer smoke gate reached GitHub'
 # Synthetic evidence passes structural validation but cannot authorize publication.
 smoke_dir="$tmp/smoke-evidence"
 mkdir "$smoke_dir"
-node - "$smoke_dir" "$(sha "$tmp/rootfs/woodpecker-handoff/windows/incoming/${build_run}-${source_sha}/windows/beskid-${version}-windows-amd64.exe")" \
-  "$(sha "$tmp/rootfs/woodpecker-handoff/windows/incoming/${build_run}-${source_sha}/windows/beskid-${version}-windows-amd64.msi")" <<'NODE'
+node - "$smoke_dir" "$(sha "$tmp/rootfs/woodpecker-handoff/windows/incoming/${windows_build}-${source_sha}/windows/beskid-${version}-windows-amd64.exe")" \
+  "$(sha "$tmp/rootfs/woodpecker-handoff/windows/incoming/${windows_build}-${source_sha}/windows/beskid-${version}-windows-amd64.msi")" <<'NODE'
 const fs=require('node:fs'),path=require('node:path');
 const [dir,setup,msi]=process.argv.slice(2);
 const cases=['runtime','developer','community','preexisting','offline','hash-failure','cancel','repair-deselect','upgrade','uninstall'];
@@ -314,8 +351,8 @@ for(const scenario of cases){
 }
 NODE
 node "$root/scripts/ci/windows-installer-smoke-gate.mjs" "$smoke_dir" \
-  "$(sha "$tmp/rootfs/woodpecker-handoff/windows/incoming/${build_run}-${source_sha}/windows/beskid-${version}-windows-amd64.exe")" \
-  "$(sha "$tmp/rootfs/woodpecker-handoff/windows/incoming/${build_run}-${source_sha}/windows/beskid-${version}-windows-amd64.msi")" \
+  "$(sha "$tmp/rootfs/woodpecker-handoff/windows/incoming/${windows_build}-${source_sha}/windows/beskid-${version}-windows-amd64.exe")" \
+  "$(sha "$tmp/rootfs/woodpecker-handoff/windows/incoming/${windows_build}-${source_sha}/windows/beskid-${version}-windows-amd64.msi")" \
   "$smoke_dir/prerequisites.lock.json" >/dev/null
 
 # Synthetic evidence must never authorize production publication.
@@ -324,7 +361,7 @@ if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=false CI_PIPELINE_NUMBER=73 CI_
   CI_PIPELINE_EVENT=manual CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
   BESKID_WINDOWS_INSTALLER_SMOKE_DIR="$smoke_dir" \
   GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
-  bash "$script" "$build_run" "$version" 2>"$tmp/unattested-smoke.err"; then
+  bash "$script" "$version" "${builds[@]}" 2>"$tmp/unattested-smoke.err"; then
   fail 'synthetic installer evidence authorized publication'
 fi
 grep -Fq 'no CI-attested disposable-VM provenance' "$tmp/unattested-smoke.err" || fail 'unattested evidence was not diagnosed'
@@ -333,7 +370,7 @@ test ! -s "$tmp/gh.log" || fail 'unattested installer evidence reached GitHub'
 # An explicit owner decision is a separate manual-only route. It must name
 # this exact source and setup executable, and only then reach publication.
 waiver="$tmp/windows-owner-waiver.json"
-setup_digest="$(sha "$tmp/rootfs/woodpecker-handoff/windows/incoming/${build_run}-${source_sha}/windows/beskid-${version}-windows-amd64.exe")"
+setup_digest="$(sha "$tmp/rootfs/woodpecker-handoff/windows/incoming/${windows_build}-${source_sha}/windows/beskid-${version}-windows-amd64.exe")"
 jq -n --arg source "$source_sha" --arg version "$version" --arg setup "$setup_digest" \
   '{schema_version:1,decision:"release-owner-installer-test-waiver",scope:"windows-installer-scenario-tests-only",source_commit:$source,version:$version,installer_sha256:$setup,approved_utc:"2026-09-28T00:00:00Z"}' >"$waiver"
 : >"$tmp/gh.log"
@@ -341,7 +378,7 @@ if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=false CI_PIPELINE_NUMBER=74 CI_
   CI_PIPELINE_EVENT=manual CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
   BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_FILE="$waiver" \
   GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
-  bash "$script" "$build_run" "$version" 2>"$tmp/owner-waiver.err"; then
+  bash "$script" "$version" "${builds[@]}" 2>"$tmp/owner-waiver.err"; then
   :
 fi
 test -s "$tmp/gh.log" || fail 'matching owner waiver did not pass the installer publication gate'
@@ -357,7 +394,7 @@ if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=false CI_PIPELINE_NUMBER=741 CI
   CI_PIPELINE_EVENT=manual CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
   BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_JSON="$(jq -c . "$waiver")" \
   GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
-  bash "$script" "$build_run" "$version" 2>"$tmp/inline-waiver.err"; then
+  bash "$script" "$version" "${builds[@]}" 2>"$tmp/inline-waiver.err"; then
   :
 fi
 test -s "$tmp/gh.log" || fail 'matching inline owner waiver did not pass the installer publication gate'
@@ -369,7 +406,7 @@ if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=false CI_PIPELINE_NUMBER=75 CI_
   CI_PIPELINE_EVENT=manual CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
   BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_FILE="$tmp/wrong-source-waiver.json" \
   GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
-  bash "$script" "$build_run" "$version" 2>"$tmp/wrong-source-waiver.err"; then
+  bash "$script" "$version" "${builds[@]}" 2>"$tmp/wrong-source-waiver.err"; then
   fail 'owner waiver for another source was accepted'
 fi
 test ! -s "$tmp/gh.log" || fail 'wrong-source owner waiver reached GitHub'
@@ -380,7 +417,7 @@ if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=false CI_PIPELINE_NUMBER=76 CI_
   CI_PIPELINE_EVENT=manual CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
   BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_FILE="$tmp/wrong-installer-waiver.json" \
   GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
-  bash "$script" "$build_run" "$version" 2>"$tmp/wrong-installer-waiver.err"; then
+  bash "$script" "$version" "${builds[@]}" 2>"$tmp/wrong-installer-waiver.err"; then
   fail 'owner waiver for another installer was accepted'
 fi
 test ! -s "$tmp/gh.log" || fail 'wrong-installer owner waiver reached GitHub'
@@ -391,7 +428,7 @@ if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=false CI_PIPELINE_NUMBER=77 CI_
   CI_PIPELINE_EVENT=manual CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
   BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_FILE="$tmp/linked-waiver.json" \
   GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
-  bash "$script" "$build_run" "$version" 2>"$tmp/linked-waiver.err"; then
+  bash "$script" "$version" "${builds[@]}" 2>"$tmp/linked-waiver.err"; then
   fail 'symlinked owner waiver was accepted'
 fi
 test ! -s "$tmp/gh.log" || fail 'symlinked owner waiver reached GitHub'
@@ -402,7 +439,7 @@ if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=false CI_PIPELINE_NUMBER=78 CI_
   CI_PIPELINE_EVENT=manual CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
   BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_FILE="$tmp/wide-waiver.json" \
   GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
-  bash "$script" "$build_run" "$version" 2>"$tmp/wide-waiver.err"; then
+  bash "$script" "$version" "${builds[@]}" 2>"$tmp/wide-waiver.err"; then
   fail 'owner waiver with broader scope was accepted'
 fi
 test ! -s "$tmp/gh.log" || fail 'broader owner waiver reached GitHub'
@@ -412,7 +449,7 @@ if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=true CI_PIPELINE_NUMBER=79 CI_C
   CI_PIPELINE_EVENT=pull_request CI_COMMIT_BRANCH=main GH_TOKEN=test BESKID_PUBLISH_RELEASE=1 \
   BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_FILE="$waiver" \
   GH_LOG="$tmp/gh.log" GH_REMOTE="$tmp/remote" PATH="$tmp/bin:$PATH" \
-  bash "$script" "$build_run" "$version" 2>"$tmp/nonmanual-waiver.err"; then
+  bash "$script" "$version" "${builds[@]}" 2>"$tmp/nonmanual-waiver.err"; then
   fail 'owner waiver authorized a nonmanual publication'
 fi
 test ! -s "$tmp/gh.log" || fail 'nonmanual owner waiver reached GitHub'
@@ -420,7 +457,7 @@ test ! -s "$tmp/gh.log" || fail 'nonmanual owner waiver reached GitHub'
 # CLI06-06 (0.6): the release runs on a record commit and consumes the build handoff of the candidate
 # that the committed record names, never a build of the record commit.
 if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=80 CI_COMMIT_SHA="$source_sha" \
-  PATH="$tmp/bin:$PATH" bash "$script" 42 0.6.0 2>"$tmp/v06-no-record.err"; then
+  PATH="$tmp/bin:$PATH" bash "$script" 0.6.0 42 42 42 2>"$tmp/v06-no-record.err"; then
   fail '0.6 release preparation ran without a committed CLI06-06 record'
 fi
 grep -Fq 'no record is committed at docs/release/cli06-06-record-v0.6.0.json' "$tmp/v06-no-record.err" || \
@@ -432,13 +469,13 @@ git -C "$root" add docs/release/cli06-06-record-v0.6.0.json
 git -C "$root" -c user.name='Release test' -c user.email='release-test@example.invalid' commit -qm record
 record_sha="$(git -C "$root" rev-parse HEAD)"
 if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=81 CI_COMMIT_SHA="$source_sha" \
-  PATH="$tmp/bin:$PATH" bash "$script" 42 0.6.0 2>"$tmp/v06-pipeline.err"; then
+  PATH="$tmp/bin:$PATH" bash "$script" 0.6.0 42 42 42 2>"$tmp/v06-pipeline.err"; then
   fail '0.6 release accepted a pipeline commit that is not the checked-out record commit'
 fi
 grep -Fq 'release pipeline/source identity does not match the checkout' "$tmp/v06-pipeline.err" || \
   fail 'record commit pipeline identity mismatch was not diagnosed'
 if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=82 CI_COMMIT_SHA="$record_sha" \
-  PATH="$tmp/bin:$PATH" bash "$script" 42 0.6.0 2>"$tmp/v06-handoff.err"; then
+  PATH="$tmp/bin:$PATH" bash "$script" 0.6.0 42 42 42 2>"$tmp/v06-handoff.err"; then
   fail '0.6 release preparation ran without the candidate build handoff'
 fi
 grep -Fq "incoming/42-${source_sha}/linux" "$tmp/v06-handoff.err" || \

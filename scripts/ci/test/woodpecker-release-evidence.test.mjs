@@ -328,11 +328,23 @@ test("packaging rejects evidence for another checkout before output creation", (
   assert.equal(existsSync(output), false);
 });
 
+// Each platform is built by its own pipeline: the collected handoffs carry different pipeline numbers.
+const HANDOFF_PIPELINES = { linux: 301, macos: 305, windows: 299 };
+function aggregateArgs(root, output, { superrepo = SOURCE.superrepo_commit, handoffs } = {}) {
+  const record = handoffs ?? Object.fromEntries(Object.entries(HANDOFF_PIPELINES).map(([role, pipeline]) => [role, {
+    role, source: SOURCE.superrepo_commit, compiler: SOURCE.compiler_commit, version: VERSION, pipeline,
+    upload_sha256sums_sha256: sha256(`${role}-${pipeline}`),
+  }]));
+  const path = join(root, "handoffs.json");
+  writeFileSync(path, `${JSON.stringify(record)}\n`);
+  return [aggregatePath.pathname, root, output, VERSION, superrepo, SOURCE.compiler_commit, path];
+}
+
 test("aggregation refuses to qualify native builds without compiler and Corelib gate reports", (t) => {
   const root = createFixture();
   const output = join(root, "aggregate");
   t.after(() => rmSync(root, { recursive: true, force: true }));
-  const args = [aggregatePath.pathname, root, output, VERSION, SOURCE.superrepo_commit, SOURCE.compiler_commit];
+  const args = aggregateArgs(root, output);
   const result = spawnSync(process.execPath, args, { encoding: "utf8" });
   assert.notEqual(result.status, 0);
   assert.match(result.stderr, /release-gate-compiler.json/);
@@ -345,7 +357,7 @@ test("aggregation carries source-bound gate logs into qualified release state", 
   writeGateFixture(root);
   const output = join(root, "aggregate");
   t.after(() => rmSync(root, { recursive: true, force: true }));
-  const result = spawnSync(process.execPath, [aggregatePath.pathname, root, output, VERSION, SOURCE.superrepo_commit, SOURCE.compiler_commit], { encoding: "utf8" });
+  const result = spawnSync(process.execPath, aggregateArgs(root, output), { encoding: "utf8" });
   assert.equal(result.status, 0, result.stderr);
   const state = JSON.parse(readFileSync(join(output, "release-state.json")));
   assert.equal(state.publishable, true);
@@ -361,7 +373,33 @@ test("aggregation carries source-bound gate logs into qualified release state", 
   assert.equal(existsSync(join(output, "evidence", "linux", "feature-evidence-v1.json")), true);
   const validated = JSON.parse(readFileSync(join(output, "validated-evidence.json"), "utf8"));
   assert.equal(validated.platforms[0].features.cases.length, FEATURE_CASES.length);
+  assert.deepEqual(Object.fromEntries(Object.entries(validated.handoffs).map(([role, item]) => [role, item.pipeline])), HANDOFF_PIPELINES);
+  assert.equal(validated.handoffs.macos.upload_sha256sums_sha256, sha256("macos-305"));
 });
+
+for (const [name, mutate] of [
+  ["a missing platform", record => { delete record.windows; }],
+  ["a handoff of another source", record => { record.macos.source = "c".repeat(40); }],
+  ["a handoff of another version", record => { record.linux.version = "0.4.745"; }],
+  ["a handoff of another platform", record => { record.windows.role = "linux"; }],
+  ["a handoff without a pipeline number", record => { delete record.linux.pipeline; }],
+]) {
+  test(`aggregation rejects a handoff record with ${name} before creating output`, (t) => {
+    const root = createFixture();
+    writeGateFixture(root);
+    const output = join(root, "aggregate");
+    t.after(() => rmSync(root, { recursive: true, force: true }));
+    const record = Object.fromEntries(Object.entries(HANDOFF_PIPELINES).map(([role, pipeline]) => [role, {
+      role, source: SOURCE.superrepo_commit, compiler: SOURCE.compiler_commit, version: VERSION, pipeline,
+      upload_sha256sums_sha256: "e".repeat(64),
+    }]));
+    mutate(record);
+    const result = spawnSync(process.execPath, aggregateArgs(root, output, { handoffs: record }), { encoding: "utf8" });
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /handoff record/);
+    assert.equal(existsSync(output), false);
+  });
+}
 
 test("qualification rejects absent, uncovered, and tampered CLI surface evidence", (t) => {
   for (const mutation of [
@@ -418,7 +456,7 @@ for (const [name, mutate, expected] of [
     mutate(root);
     t.after(() => rmSync(root, { recursive: true, force: true }));
     const output = join(root, "aggregate");
-    const result = spawnSync(process.execPath, [aggregatePath.pathname, root, output, VERSION, SOURCE.superrepo_commit, SOURCE.compiler_commit], { encoding: "utf8" });
+    const result = spawnSync(process.execPath, aggregateArgs(root, output), { encoding: "utf8" });
     assert.notEqual(result.status, 0);
     assert.match(result.stderr, expected);
     if (existsSync(join(output, "release-state.json"))) {
@@ -431,12 +469,12 @@ test("aggregation rejects wrong requested source and failed evidence before crea
   const root = createFixture();
   const output = join(root, "aggregate");
   t.after(() => rmSync(root, { recursive: true, force: true }));
-  const result = spawnSync(process.execPath, [aggregatePath.pathname, root, output, VERSION, "c".repeat(40), SOURCE.compiler_commit], { encoding: "utf8" });
+  const result = spawnSync(process.execPath, aggregateArgs(root, output, { superrepo: "c".repeat(40) }), { encoding: "utf8" });
   assert.notEqual(result.status, 0);
   assert.match(result.stderr, /requested release source\/version/);
   assert.equal(existsSync(output), false);
   rmSync(join(root, "windows", "beskid-windows-amd64.exe"));
-  const failed = spawnSync(process.execPath, [aggregatePath.pathname, root, output, VERSION, SOURCE.superrepo_commit, SOURCE.compiler_commit], { encoding: "utf8" });
+  const failed = spawnSync(process.execPath, aggregateArgs(root, output), { encoding: "utf8" });
   assert.notEqual(failed.status, 0);
   assert.match(failed.stderr, /missing required artifact/);
   assert.equal(existsSync(output), false);

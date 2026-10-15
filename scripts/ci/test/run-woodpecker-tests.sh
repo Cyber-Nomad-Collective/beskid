@@ -25,4 +25,5 @@ node --test scripts/ci/test/package-source-authority.test.mjs \
   scripts/ci/test/woodpecker-release-evidence.test.mjs \
   scripts/ci/test/v06-release-matrix.test.mjs \
   scripts/ci/test/v06-release-producer.test.mjs \
-  scripts/ci/test/release-user-observation.test.mjs
+  scripts/ci/test/release-user-observation.test.mjs \
+  scripts/ci/test/woodpecker-handoff.test.mjs

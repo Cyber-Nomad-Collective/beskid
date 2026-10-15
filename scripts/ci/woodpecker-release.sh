@@ -1,24 +1,33 @@
 #!/usr/bin/env bash
-# Prepare one three-platform stable release and, only when explicitly enabled,
-# publish its canonical compiler streams and native installers.
+# Prepare one three-platform stable release from the collected per-platform build handoffs and, only
+# when explicitly enabled, publish its canonical compiler streams and native installers.
+#
+# Usage: woodpecker-release.sh <version> <linux-build> <macos-build> <windows-build>
+#
+# Each platform is built by its own pipeline, so each handoff is named by its own pipeline number:
+# `<handoff-root>/<role>/incoming/<build>-<source>/<role>`. woodpecker-fetch-handoffs.sh selects them.
 set -euo pipefail
 
-[[ "$#" == 2 ]] || { echo 'usage: woodpecker-release.sh <build-run> <version>' >&2; exit 2; }
-build_run="$1"; requested_version="$2"
+[[ "$#" == 4 ]] || { echo 'usage: woodpecker-release.sh <version> <linux-build> <macos-build> <windows-build>' >&2; exit 2; }
+requested_version="$1"
+roles=(linux macos windows)
+builds=("$2" "$3" "$4")
 scripts="$(cd "$(dirname "$0")" && pwd)"
 repo="$(cd "$scripts/../.." && pwd)"
-[[ "$build_run" =~ ^[1-9][0-9]*$ ]] || { echo 'build run must be a positive pipeline number' >&2; exit 2; }
+for index in 0 1 2; do
+  [[ "${builds[$index]}" =~ ^[1-9][0-9]*$ ]] || { echo "${roles[$index]} build must be a positive pipeline number" >&2; exit 2; }
+done
 version="$(node "$scripts/release-version.mjs" "$requested_version" --stable-only)"
 head_sha="$(git -C "$repo" rev-parse HEAD)"
-# The release source is the commit whose build handoff is released and whose identity the release
+# The release source is the commit whose per-platform build handoffs are released and whose identity the release
 # state carries. For 0.6 it is the CLI06-06 candidate: HEAD only adds the committed observation record
 # (docs/release/cli06-06-record-v<version>.json) on top of it, so the participants' CLI files are the
 # released files. Otherwise it is HEAD.
 source_sha="$(node "$scripts/release-user-observation.mjs" --source "$repo" "$version" "$head_sha")"
 compiler_sha="$(git -C "$repo" rev-parse "$source_sha:compiler")"
 distrib_sha="$(git -C "$repo" rev-parse "$source_sha:beskid_distrib")"
-pipeline="${CI_PIPELINE_NUMBER:-manual-${build_run}}"
-[[ "$pipeline" =~ ^([1-9][0-9]*|manual-[1-9][0-9]*)$ ]] && \
+pipeline="${CI_PIPELINE_NUMBER:-manual-${builds[0]}-${builds[1]}-${builds[2]}}"
+[[ "$pipeline" =~ ^([1-9][0-9]*|manual-[1-9][0-9]*-[1-9][0-9]*-[1-9][0-9]*)$ ]] && \
   [[ -z "${CI_COMMIT_SHA:-}" || "${CI_COMMIT_SHA}" == "$head_sha" ]] || {
   echo 'release pipeline/source identity does not match the checkout' >&2; exit 1;
 }
@@ -50,48 +59,30 @@ elif [[ "${BESKID_PUBLISH_RELEASE:-0}" != 0 ]]; then
   echo 'BESKID_PUBLISH_RELEASE must be 0 or 1' >&2; exit 2
 fi
 
+# One handoff of one platform: identity (role, source, compiler, version, its own pipeline) and checksums.
 validate_handoff() {
-  node - "$1" "$2" "$source_sha" "$compiler_sha" "$version" "$build_run" <<'NODE'
-const {createHash}=require("node:crypto"), {lstatSync,readdirSync,readFileSync}=require("node:fs"), {join}=require("node:path");
-const [dir,role,source,compiler,version,pipeline]=process.argv.slice(2);
-const fail=m=>{throw new Error(m)}, stat=p=>{try{return lstatSync(p)}catch{fail(`missing handoff file: ${p}`)}};
-const root=stat(dir); if(root.isSymbolicLink()||!root.isDirectory()) fail("handoff role is not a real directory");
-const names=readdirSync(dir), marker="UPLOAD_COMPLETE", sumsName="UPLOAD_SHA256SUMS";
-for(const name of names){
-  if(!/^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(name)) fail(`unsafe handoff name: ${name}`);
-  const item=stat(join(dir,name)); if(item.isSymbolicLink()||!item.isFile()) fail(`handoff entry is not a regular file: ${name}`);
-}
-if(!names.includes(marker)||!names.includes(sumsName)) fail("handoff is incomplete");
-const fields={}; for(const line of readFileSync(join(dir,marker),"utf8").trimEnd().split("\n")){
-  const match=/^([a-z]+)=(.*)$/.exec(line); if(!match||fields[match[1]]!==undefined) fail("invalid UPLOAD_COMPLETE"); fields[match[1]]=match[2];
-}
-const expected={role,source,compiler,version,pipeline};
-if(Object.keys(fields).length!==5||Object.entries(expected).some(([key,value])=>fields[key]!==value)) fail("UPLOAD_COMPLETE identity mismatch");
-const payload=names.filter(name=>!name.startsWith("UPLOAD_")).sort(), sums=new Map();
-for(const line of readFileSync(join(dir,sumsName),"utf8").split(/\r?\n/)){
-  if(!line) continue; const match=/^([0-9a-fA-F]{64}) [ *]([^/\\]+)$/.exec(line);
-  if(!match||sums.has(match[2])) fail("malformed or repeated handoff checksum"); sums.set(match[2],match[1].toLowerCase());
-}
-if(payload.length!==sums.size||payload.some(name=>!sums.has(name))) fail("handoff checksum inventory mismatch");
-for(const name of payload){const actual=createHash("sha256").update(readFileSync(join(dir,name))).digest("hex"); if(actual!==sums.get(name)) fail(`handoff checksum mismatch: ${name}`);}
-NODE
+  node "$scripts/woodpecker-handoff.mjs" validate "$1" "$2" "$source_sha" "$compiler_sha" "$version" "$3"
 }
 
-roles=(linux macos windows)
-for role in "${roles[@]}"; do
-  incoming="$handoff_root/$role/incoming/${build_run}-${source_sha}/$role"
-  validate_handoff "$incoming" "$role"
+for index in 0 1 2; do
+  role="${roles[$index]}"
+  validate_handoff "$handoff_root/$role/incoming/${builds[$index]}-${source_sha}/$role" "$role" "${builds[$index]}" >/dev/null
 done
 
 release="$output_root/releases/${pipeline}-${source_sha}"
 mkdir -p "$output_root/releases"
 mkdir -m 700 "$release"
 mkdir "$release/input" "$release/native"
-for role in "${roles[@]}"; do
-  incoming="$handoff_root/$role/incoming/${build_run}-${source_sha}/$role"
+handoffs="$release/handoffs.json"
+printf '{' >"$handoffs"
+for index in 0 1 2; do
+  role="${roles[$index]}"
+  incoming="$handoff_root/$role/incoming/${builds[$index]}-${source_sha}/$role"
   mkdir "$release/input/$role" "$release/native/$role"
   cp -p "$incoming"/* "$release/input/$role/"
-  validate_handoff "$release/input/$role" "$role"
+  # The private copy is what the release consumes; its identity record names this platform's build.
+  [[ "$index" == 0 ]] || printf ',' >>"$handoffs"
+  printf '"%s":%s' "$role" "$(validate_handoff "$release/input/$role" "$role" "${builds[$index]}")" >>"$handoffs"
   case "$role" in
     linux) target=x86_64-unknown-linux-gnu; cli=beskid-linux-amd64; lsp=beskid_lsp-linux-amd64 ;;
     macos) target=aarch64-apple-darwin; cli=beskid-darwin-arm64; lsp=beskid_lsp-darwin-arm64 ;;
@@ -119,16 +110,18 @@ for role in "${roles[@]}"; do
   fi
 done
 
+printf '}\n' >>"$handoffs"
+
 qualified="$release/qualified"
 node "$scripts/woodpecker-aggregate-release.mjs" "$release/native" "$qualified" \
-  "$version" "$source_sha" "$compiler_sha" >/dev/null
+  "$version" "$source_sha" "$compiler_sha" "$handoffs" >/dev/null
 state="$qualified/release-state.json"
 assets="$qualified/assets"
 
 # CLI06-06 (0.6 series): the five-participant uncoached observation is an observer-attested record,
 # not machine evidence. The record (or the dated owner waiver, which expires at 0.6.1) is committed at
 # docs/release/cli06-06-record-v<version>.json and names the candidate ($source_sha). Its CLI digests
-# are checked against the validated evidence aggregated from that candidate's build handoff. A failing
+# are checked against the validated evidence aggregated from that candidate's per-platform build handoffs. A failing
 # or absent record blocks the candidate before any installer work.
 case "$version" in
   0.6.*)
