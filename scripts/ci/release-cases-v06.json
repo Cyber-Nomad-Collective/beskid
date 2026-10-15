@@ -8036,12 +8036,12 @@
         "assertion_provenance": [
           {
             "declaration": "test process_spawn_passes_unicode_space_quote_and_shell_metacharacter_argv_exactly",
-            "end": 3185,
+            "end": 3298,
             "source": {
               "path": "source-process-ProcessSuite.bd",
-              "sha256": "389020df736d9dfd14585d436c920c2306cdab6e75704a5e86cd60cdc076a2a5"
+              "sha256": "f9b0126581051b0ac66954fd45bebae4e1649018e4f489d12e7639d5a4707de6"
             },
-            "start": 3103,
+            "start": 3216,
             "test_id": "process_spawn_passes_unicode_space_quote_and_shell_metacharacter_argv_exactly"
           }
         ],
@@ -8067,7 +8067,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-process-ProcessSuite.bd",
-          "sha256": "389020df736d9dfd14585d436c920c2306cdab6e75704a5e86cd60cdc076a2a5"
+          "sha256": "f9b0126581051b0ac66954fd45bebae4e1649018e4f489d12e7639d5a4707de6"
         },
         "input": null,
         "log": "case-R4-PROC-01.json",
@@ -8099,12 +8099,12 @@
         "assertion_provenance": [
           {
             "declaration": "test process_binary_stdin_stdout_roundtrip_with_partial_transfers_preserves_order",
-            "end": 4284,
+            "end": 4397,
             "source": {
               "path": "source-process-ProcessSuite.bd",
-              "sha256": "389020df736d9dfd14585d436c920c2306cdab6e75704a5e86cd60cdc076a2a5"
+              "sha256": "f9b0126581051b0ac66954fd45bebae4e1649018e4f489d12e7639d5a4707de6"
             },
-            "start": 4203,
+            "start": 4316,
             "test_id": "process_binary_stdin_stdout_roundtrip_with_partial_transfers_preserves_order"
           }
         ],
@@ -8130,7 +8130,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-process-ProcessSuite.bd",
-          "sha256": "389020df736d9dfd14585d436c920c2306cdab6e75704a5e86cd60cdc076a2a5"
+          "sha256": "f9b0126581051b0ac66954fd45bebae4e1649018e4f489d12e7639d5a4707de6"
         },
         "input": null,
         "log": "case-R4-PROC-02.json",
@@ -8162,12 +8162,12 @@
         "assertion_provenance": [
           {
             "declaration": "test process_stderr_flood_is_drained_concurrently_without_deadlock",
-            "end": 7885,
+            "end": 7998,
             "source": {
               "path": "source-process-ProcessSuite.bd",
-              "sha256": "389020df736d9dfd14585d436c920c2306cdab6e75704a5e86cd60cdc076a2a5"
+              "sha256": "f9b0126581051b0ac66954fd45bebae4e1649018e4f489d12e7639d5a4707de6"
             },
-            "start": 7819,
+            "start": 7932,
             "test_id": "process_stderr_flood_is_drained_concurrently_without_deadlock"
           }
         ],
@@ -8193,7 +8193,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-process-ProcessSuite.bd",
-          "sha256": "389020df736d9dfd14585d436c920c2306cdab6e75704a5e86cd60cdc076a2a5"
+          "sha256": "f9b0126581051b0ac66954fd45bebae4e1649018e4f489d12e7639d5a4707de6"
         },
         "input": null,
         "log": "case-R4-PROC-03.json",
@@ -8225,22 +8225,22 @@
         "assertion_provenance": [
           {
             "declaration": "test process_wait_returns_exit_code_and_run_reports_typed_exit_and_missing_executable",
-            "end": 8622,
+            "end": 8735,
             "source": {
               "path": "source-process-ProcessSuite.bd",
-              "sha256": "389020df736d9dfd14585d436c920c2306cdab6e75704a5e86cd60cdc076a2a5"
+              "sha256": "f9b0126581051b0ac66954fd45bebae4e1649018e4f489d12e7639d5a4707de6"
             },
-            "start": 8537,
+            "start": 8650,
             "test_id": "process_wait_returns_exit_code_and_run_reports_typed_exit_and_missing_executable"
           },
           {
             "declaration": "test process_wait_deadline_expiry_is_timed_out_and_close_reaps",
-            "end": 9971,
+            "end": 10084,
             "source": {
               "path": "source-process-ProcessSuite.bd",
-              "sha256": "389020df736d9dfd14585d436c920c2306cdab6e75704a5e86cd60cdc076a2a5"
+              "sha256": "f9b0126581051b0ac66954fd45bebae4e1649018e4f489d12e7639d5a4707de6"
             },
-            "start": 9909,
+            "start": 10022,
             "test_id": "process_wait_deadline_expiry_is_timed_out_and_close_reaps"
           }
         ],
@@ -8266,7 +8266,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-process-ProcessSuite.bd",
-          "sha256": "389020df736d9dfd14585d436c920c2306cdab6e75704a5e86cd60cdc076a2a5"
+          "sha256": "f9b0126581051b0ac66954fd45bebae4e1649018e4f489d12e7639d5a4707de6"
         },
         "input": null,
         "log": "case-R4-PROC-04.json",
@@ -8299,12 +8299,12 @@
         "assertion_provenance": [
           {
             "declaration": "test process_terminate_and_close_reap_the_child_tree_within_five_seconds",
-            "end": 10619,
+            "end": 10732,
             "source": {
               "path": "source-process-ProcessSuite.bd",
-              "sha256": "389020df736d9dfd14585d436c920c2306cdab6e75704a5e86cd60cdc076a2a5"
+              "sha256": "f9b0126581051b0ac66954fd45bebae4e1649018e4f489d12e7639d5a4707de6"
             },
-            "start": 10547,
+            "start": 10660,
             "test_id": "process_terminate_and_close_reap_the_child_tree_within_five_seconds"
           }
         ],
@@ -8330,7 +8330,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-process-ProcessSuite.bd",
-          "sha256": "389020df736d9dfd14585d436c920c2306cdab6e75704a5e86cd60cdc076a2a5"
+          "sha256": "f9b0126581051b0ac66954fd45bebae4e1649018e4f489d12e7639d5a4707de6"
         },
         "input": null,
         "log": "case-R4-PROC-05.json",
@@ -8362,22 +8362,22 @@
         "assertion_provenance": [
           {
             "declaration": "test process_close_is_idempotent_through_aliases",
-            "end": 11702,
+            "end": 11815,
             "source": {
               "path": "source-process-ProcessSuite.bd",
-              "sha256": "389020df736d9dfd14585d436c920c2306cdab6e75704a5e86cd60cdc076a2a5"
+              "sha256": "f9b0126581051b0ac66954fd45bebae4e1649018e4f489d12e7639d5a4707de6"
             },
-            "start": 11654,
+            "start": 11767,
             "test_id": "process_close_is_idempotent_through_aliases"
           },
           {
             "declaration": "test process_failed_spawn_setup_leaves_no_child_and_later_spawns_succeed",
-            "end": 12448,
+            "end": 12561,
             "source": {
               "path": "source-process-ProcessSuite.bd",
-              "sha256": "389020df736d9dfd14585d436c920c2306cdab6e75704a5e86cd60cdc076a2a5"
+              "sha256": "f9b0126581051b0ac66954fd45bebae4e1649018e4f489d12e7639d5a4707de6"
             },
-            "start": 12376,
+            "start": 12489,
             "test_id": "process_failed_spawn_setup_leaves_no_child_and_later_spawns_succeed"
           }
         ],
@@ -8403,7 +8403,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-process-ProcessSuite.bd",
-          "sha256": "389020df736d9dfd14585d436c920c2306cdab6e75704a5e86cd60cdc076a2a5"
+          "sha256": "f9b0126581051b0ac66954fd45bebae4e1649018e4f489d12e7639d5a4707de6"
         },
         "input": null,
         "log": "case-R4-PROC-06.json",
