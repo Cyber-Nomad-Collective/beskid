@@ -24,13 +24,16 @@ steps:
       # Each platform was built by its own pipeline; the fetch selects the newest complete, verified
       # handoff of C per platform, or the pipeline pinned by BESKID_LINUX_BUILD, BESKID_MACOS_BUILD or
       # BESKID_WINDOWS_BUILD, and prints the three pipeline numbers. Any missing platform, identity drift
-      # or checksum mismatch fails.
+      # or checksum mismatch fails. BESKID_LINUX_SOURCE, BESKID_MACOS_SOURCE or BESKID_WINDOWS_SOURCE
+      # name a platform's own handoff source when it differs from C in non-build root paths only.
       - |
         version="$(node scripts/ci/release-version.mjs "$${BESKID_RELEASE_VERSION:?set stable version}" --stable-only)"
-        source_sha="$(node scripts/ci/release-user-observation.mjs --source . "$${version}" "$${CI_COMMIT_SHA}" "$${BESKID_RELEASE_CANDIDATE:-}")"
+        resolved="$(node scripts/ci/release-user-observation.mjs --platform-sources . "$${version}" "$${CI_COMMIT_SHA}" "$${BESKID_RELEASE_CANDIDATE:-}" "$${BESKID_LINUX_SOURCE:-}" "$${BESKID_MACOS_SOURCE:-}" "$${BESKID_WINDOWS_SOURCE:-}")"
+        source_sha="$(jq -r '.candidate' <<<"$${resolved}")"
+        sources="$(jq -r '[.sources.linux, .sources.macos, .sources.windows] | join(",")' <<<"$${resolved}")"
         compiler_sha="$(git rev-parse "$${source_sha}:compiler")"
-        builds="$(bash scripts/ci/woodpecker-fetch-handoffs.sh "$${source_sha}" "$${compiler_sha}" "$${version}" /woodpecker-handoff)"
-        echo "collected candidate $${source_sha}: linux, macos, windows builds $${builds}"
+        builds="$(bash scripts/ci/woodpecker-fetch-handoffs.sh "$${sources}" "$${compiler_sha}" "$${version}" /woodpecker-handoff)"
+        echo "collected candidate $${source_sha} (linux, macos, windows sources $${sources}): builds $${builds}"
         bash scripts/ci/woodpecker-release.sh "$${version}" $${builds}
     when:
       - evaluate: 'BESKID_TASK == "release"'

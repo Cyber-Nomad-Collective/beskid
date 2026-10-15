@@ -87,7 +87,7 @@ fi
 grep -Fq 'woodpecker-fetch-handoffs.sh' "${workflow_dir}/release.yml"
 for role in LINUX MACOS WINDOWS; do grep -Fq "BESKID_${role}_BUILD" "${workflow_dir}/release.yml"; done
 # The candidate gate input reaches the source resolver (record, else input, else HEAD).
-grep -Fq 'release-user-observation.mjs --source . "$${version}" "$${CI_COMMIT_SHA}" "$${BESKID_RELEASE_CANDIDATE:-}"' "${workflow_dir}/release.yml"
+grep -Fq 'release-user-observation.mjs --platform-sources . "$${version}" "$${CI_COMMIT_SHA}" "$${BESKID_RELEASE_CANDIDATE:-}" "$${BESKID_LINUX_SOURCE:-}" "$${BESKID_MACOS_SOURCE:-}" "$${BESKID_WINDOWS_SOURCE:-}"' "${workflow_dir}/release.yml"
 
 for file in "${workflow_dir}/linux.yml" "${workflow_dir}/macos.yml"; do
   grep -Fq 'woodpecker-release-tag-guard.sh "$${CI_COMMIT_TAG}" --check-only' "${file}"

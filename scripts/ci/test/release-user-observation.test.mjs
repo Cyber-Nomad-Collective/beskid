@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
-import { CASE_MANIFEST_PATH, LANGUAGE_RULES_PATH, LanguageRulesDigest, ObservationReport, RecordPath, ReleaseObservation, ReleaseSource, ValidateObservation } from "../release-user-observation.mjs";
+import { BuildIdentity, CASE_MANIFEST_PATH, ResolvePlatformSources, LANGUAGE_RULES_PATH, LanguageRulesDigest, ObservationReport, RecordPath, ReleaseObservation, ReleaseSource, ValidateObservation } from "../release-user-observation.mjs";
 
 const script = new URL("../release-user-observation.mjs", import.meta.url).pathname;
 const repoRoot = new URL("../../../", import.meta.url).pathname;
@@ -14,6 +14,7 @@ const VERSION = "0.6.0";
 const SUPERREPO = "a".repeat(40);
 const COMPILER = "b".repeat(40);
 const DISTRIB = "9".repeat(40);
+const BSOL = "8".repeat(40);
 const TARGETS = ["x86_64-unknown-linux-gnu", "aarch64-apple-darwin", "x86_64-pc-windows-msvc"];
 const digests = Object.fromEntries(TARGETS.map((target, index) => [target, String(index + 1).repeat(64)]));
 const evidence = {
@@ -151,6 +152,9 @@ function candidateRepo(t) {
   git(root, "add", "README", CASE_MANIFEST_PATH);
   git(root, "update-index", "--add", "--cacheinfo", `160000,${COMPILER},compiler`);
   git(root, "update-index", "--add", "--cacheinfo", `160000,${DISTRIB},beskid_distrib`);
+  git(root, "update-index", "--add", "--cacheinfo", `160000,${BSOL},beskid_bsol`);
+  writeFileSync(join(root, "scripts/ci/build-release-artifact.sh"), "echo build\n");
+  git(root, "add", "scripts/ci/build-release-artifact.sh");
   git(root, "commit", "-q", "-m", "candidate");
   return { root, candidate: git(root, "rev-parse", "HEAD") };
 }
@@ -255,4 +259,39 @@ test("the release gate refuses a symlinked or malformed record", (t) => {
   const { root: plain } = candidateRepo(t);
   const bad = commitRecord(plain, { superrepo_commit: 42 });
   assert.throws(() => ReleaseSource(plain, VERSION, bad), /40-character candidate/);
+});
+
+test("per-platform sources: C/C/D with only non-build root changes is one build identity", (t) => {
+  const { root, candidate } = candidateRepo(t);
+  const d = commit(root, "gate changes", (dir) => {
+    mkdirSync(join(dir, "openspec/changes/x"), { recursive: true });
+    writeFileSync(join(dir, "openspec/changes/x/design.md"), "x\n");
+    writeFileSync(join(dir, "scripts/ci/compiler-rust-gate.sh"), "clippy report-only\n");
+    writeFileSync(join(dir, "scripts/ci/release-user-observation.mjs"), "// validator\n");
+    git(dir, "add", "openspec", "scripts/ci/compiler-rust-gate.sh", "scripts/ci/release-user-observation.mjs");
+  });
+  const head = commitRecord(root, record({ superrepo_commit: candidate }));
+  const resolved = ResolvePlatformSources(root, VERSION, head, "", { linux: d, macos: "", windows: "" });
+  assert.deepEqual(resolved.sources, { linux: d, macos: candidate, windows: candidate });
+  assert.equal(resolved.candidate, candidate, "the record's candidate carries the build identity");
+  assert.deepEqual(resolved.build_identity, BuildIdentity(root, d));
+  assert.deepEqual(resolved.build_identity, { compiler_commit: COMPILER, beskid_bsol_commit: BSOL, beskid_distrib_commit: DISTRIB, release_case_manifest_sha256: resolved.build_identity.release_case_manifest_sha256 });
+  const cli = spawnSync(process.execPath, [script, "--platform-sources", root, VERSION, head, "", d, "", ""], { encoding: "utf8" });
+  assert.equal(cli.status, 0, cli.stderr);
+  assert.equal(JSON.parse(cli.stdout).sources.linux, d);
+});
+test("per-platform sources: a build script change is refused", (t) => {
+  const { root, candidate } = candidateRepo(t);
+  const d = commit(root, "build change", (dir) => { writeFileSync(join(dir, "scripts/ci/build-release-artifact.sh"), "echo other\n"); git(dir, "add", "scripts/ci/build-release-artifact.sh"); });
+  assert.throws(() => ResolvePlatformSources(root, VERSION, d, candidate, { linux: d }), /changes build inputs relative to candidate .*: scripts\/ci\/build-release-artifact\.sh/);
+  const workflow = commit(root, "linux workflow", (dir) => { mkdirSync(join(dir, ".woodpecker"), { recursive: true }); writeFileSync(join(dir, ".woodpecker/linux.yml"), "steps: {}\n"); git(dir, "add", ".woodpecker/linux.yml"); });
+  assert.throws(() => ResolvePlatformSources(root, VERSION, workflow, candidate, { linux: workflow }), /\.woodpecker\/linux\.yml/);
+});
+test("per-platform sources: a differing compiler pointer is refused", (t) => {
+  const { root, candidate } = candidateRepo(t);
+  const d = commit(root, "compiler", (dir) => git(dir, "update-index", "--cacheinfo", `160000,${"d".repeat(40)},compiler`));
+  const head = commit(root, "revert compiler", (dir) => git(dir, "update-index", "--cacheinfo", `160000,${COMPILER},compiler`));
+  assert.throws(() => ResolvePlatformSources(root, VERSION, head, candidate, { linux: d }), /compiler pointer of the linux source .* differs from candidate/);
+  const bsol = commit(root, "bsol", (dir) => git(dir, "update-index", "--cacheinfo", `160000,${"d".repeat(40)},beskid_bsol`));
+  assert.throws(() => ResolvePlatformSources(root, VERSION, bsol, candidate), /beskid_bsol pointer of the release commit differs/);
 });

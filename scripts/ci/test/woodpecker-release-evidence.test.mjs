@@ -330,15 +330,30 @@ test("packaging rejects evidence for another checkout before output creation", (
 
 // Each platform is built by its own pipeline: the collected handoffs carry different pipeline numbers.
 const HANDOFF_PIPELINES = { linux: 301, macos: 305, windows: 299 };
-function aggregateArgs(root, output, { superrepo = SOURCE.superrepo_commit, handoffs } = {}) {
+function aggregateArgs(root, output, { superrepo = SOURCE.superrepo_commit, handoffs, sources } = {}) {
+  const platformSources = sources ?? { linux: SOURCE.superrepo_commit, macos: SOURCE.superrepo_commit, windows: SOURCE.superrepo_commit };
   const record = handoffs ?? Object.fromEntries(Object.entries(HANDOFF_PIPELINES).map(([role, pipeline]) => [role, {
-    role, source: SOURCE.superrepo_commit, compiler: SOURCE.compiler_commit, version: VERSION, pipeline,
+    role, source: platformSources[role], compiler: SOURCE.compiler_commit, version: VERSION, pipeline,
     upload_sha256sums_sha256: sha256(`${role}-${pipeline}`),
   }]));
   const path = join(root, "handoffs.json");
   writeFileSync(path, `${JSON.stringify(record)}\n`);
-  return [aggregatePath.pathname, root, output, VERSION, superrepo, SOURCE.compiler_commit, path];
+  const sourcesPath = join(root, "platform-sources.json");
+  writeFileSync(sourcesPath, `${JSON.stringify(platformSources)}\n`);
+  return [aggregatePath.pathname, root, output, VERSION, superrepo, SOURCE.compiler_commit, path, sourcesPath];
 }
+
+test("aggregation binds each platform's evidence to its own handoff source", (t) => {
+  const root = createFixture();
+  writeGateFixture(root);
+  const output = join(root, "aggregate");
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  const other = { linux: "d".repeat(40), macos: SOURCE.superrepo_commit, windows: SOURCE.superrepo_commit };
+  const result = spawnSync(process.execPath, aggregateArgs(root, output, { sources: other }), { encoding: "utf8" });
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /linux evidence is not the build of its handoff source d{40}/);
+  assert.equal(existsSync(output), false);
+});
 
 test("aggregation refuses to qualify native builds without compiler and Corelib gate reports", (t) => {
   const root = createFixture();
@@ -375,6 +390,7 @@ test("aggregation carries source-bound gate logs into qualified release state", 
   assert.equal(validated.platforms[0].features.cases.length, FEATURE_CASES.length);
   assert.deepEqual(Object.fromEntries(Object.entries(validated.handoffs).map(([role, item]) => [role, item.pipeline])), HANDOFF_PIPELINES);
   assert.equal(validated.handoffs.macos.upload_sha256sums_sha256, sha256("macos-305"));
+  assert.deepEqual(validated.platform_sources, { linux: SOURCE.superrepo_commit, macos: SOURCE.superrepo_commit, windows: SOURCE.superrepo_commit });
 });
 
 for (const [name, mutate] of [

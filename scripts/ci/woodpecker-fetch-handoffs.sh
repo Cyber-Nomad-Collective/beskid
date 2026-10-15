@@ -2,7 +2,11 @@
 # Collect the release candidate: for one source commit, select and fetch one complete, verified build
 # handoff per platform through the read-only release SFTP account.
 #
-# Usage: woodpecker-fetch-handoffs.sh <source-sha> <compiler-sha> <version> <destination>
+# Usage: woodpecker-fetch-handoffs.sh <source-sha|linux-sha,macos-sha,windows-sha> <compiler-sha> <version> <destination>
+#
+# One source names the commit of all three handoffs. Three comma-separated sources name each platform's
+# own source commit (linux, macos, windows); release-user-observation.mjs --platform-sources has already
+# proven that they share one build identity.
 #
 # Each platform is built by its own pipeline (BESKID_TASK=build-<platform>, or all three with
 # BESKID_TASK=build), so the three handoffs of one candidate can carry different pipeline numbers.
@@ -19,12 +23,20 @@
 # platforms, and stdout carries the selected pipeline numbers: `<linux> <macos> <windows>`.
 set -euo pipefail
 
-[[ "$#" == 4 ]] || { echo 'usage: woodpecker-fetch-handoffs.sh <source-sha> <compiler-sha> <version> <destination>' >&2; exit 2; }
-source_sha="$1"; compiler_sha="$2"; version="$3"; destination="$4"
-[[ "$source_sha" =~ ^[a-f0-9]{40}$ && "$compiler_sha" =~ ^[a-f0-9]{40}$ && "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || {
+[[ "$#" == 4 ]] || { echo 'usage: woodpecker-fetch-handoffs.sh <source-sha|linux-sha,macos-sha,windows-sha> <compiler-sha> <version> <destination>' >&2; exit 2; }
+source_arg="$1"; compiler_sha="$2"; version="$3"; destination="$4"
+roles=(linux macos windows)
+declare -A sources=()
+if [[ "$source_arg" =~ ^([a-f0-9]{40}),([a-f0-9]{40}),([a-f0-9]{40})$ ]]; then
+  sources[linux]="${BASH_REMATCH[1]}"; sources[macos]="${BASH_REMATCH[2]}"; sources[windows]="${BASH_REMATCH[3]}"
+elif [[ "$source_arg" =~ ^[a-f0-9]{40}$ ]]; then
+  for role in "${roles[@]}"; do sources[$role]="$source_arg"; done
+else
+  echo 'invalid handoff identity' >&2; exit 2
+fi
+[[ "$compiler_sha" =~ ^[a-f0-9]{40}$ && "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || {
   echo 'invalid handoff identity' >&2; exit 2
 }
-roles=(linux macos windows)
 declare -A pins=()
 for role in "${roles[@]}"; do
   variable="BESKID_${role^^}_BUILD"
@@ -59,15 +71,15 @@ for role in "${roles[@]}"; do
   listing="$(run_batch "$staged/list-$role.batch")"
   found="$(while IFS= read -r entry; do
       entry="${entry%"${entry##*[![:space:]]}"}"; entry="${entry##*/}"
-      if [[ "$entry" =~ ^([1-9][0-9]*)-${source_sha}$ ]]; then printf '%s\n' "${BASH_REMATCH[1]}"; fi
+      if [[ "$entry" =~ ^([1-9][0-9]*)-${sources[$role]}$ ]]; then printf '%s\n' "${BASH_REMATCH[1]}"; fi
     done <<<"$listing" | sort -rn -u)"
   if [[ -n "${pins[$role]:-}" ]]; then
     grep -Fxq -- "${pins[$role]}" <<<"$found" || {
-      echo "no $role handoff from pipeline ${pins[$role]} for source $source_sha" >&2; exit 1
+      echo "no $role handoff from pipeline ${pins[$role]} for source ${sources[$role]}" >&2; exit 1
     }
     found="${pins[$role]}"
   fi
-  [[ -n "$found" ]] || { echo "no $role handoff for source $source_sha" >&2; exit 1; }
+  [[ -n "$found" ]] || { echo "no $role handoff for source ${sources[$role]}" >&2; exit 1; }
   candidates[$role]="$found"
 done
 
@@ -77,7 +89,7 @@ mkdir "$staged/markers"
 for role in "${roles[@]}"; do
   while IFS= read -r run; do
     printf -- '-get "/%s/incoming/%s-%s/%s/UPLOAD_COMPLETE" "%s/markers/%s-%s"\n' \
-      "$role" "$run" "$source_sha" "$role" "$staged" "$role" "$run" >>"$staged/markers.batch"
+      "$role" "$run" "${sources[$role]}" "$role" "$staged" "$role" "$run" >>"$staged/markers.batch"
   done <<<"${candidates[$role]}"
 done
 run_batch "$staged/markers.batch" >/dev/null
@@ -93,7 +105,7 @@ for role in "${roles[@]}"; do
     fields="$(node "$scripts/woodpecker-handoff.mjs" marker "$marker")" || {
       echo "$role handoff from pipeline $run has an invalid completion marker" >&2; exit 1
     }
-    node - "$fields" "$role" "$source_sha" "$compiler_sha" "$run" <<'NODE' || { echo "$role handoff from pipeline $run is not a build of source $source_sha" >&2; exit 1; }
+    node - "$fields" "$role" "${sources[$role]}" "$compiler_sha" "$run" <<'NODE' || { echo "$role handoff from pipeline $run is not a build of source ${sources[$role]}" >&2; exit 1; }
 const [fields, role, source, compiler, pipeline] = process.argv.slice(2), marker = JSON.parse(fields);
 const expected = { role, source, compiler, pipeline };
 for (const [key, value] of Object.entries(expected)) if (marker[key] !== value) { console.error(`UPLOAD_COMPLETE ${key} is ${marker[key]}, expected ${value}`); process.exit(1); }
@@ -105,7 +117,7 @@ NODE
     selected[$role]="$run"; break
   done <<<"${candidates[$role]}"
   [[ -n "${selected[$role]:-}" ]] || {
-    echo "no complete $role handoff of $version for source $source_sha" >&2; exit 1
+    echo "no complete $role handoff of $version for source ${sources[$role]}" >&2; exit 1
   }
 done
 
@@ -114,13 +126,13 @@ done
 for role in "${roles[@]}"; do
   mkdir -p "$staged/handoff/$role/incoming"
   printf 'get -R "/%s/incoming/%s-%s" "%s/handoff/%s/incoming/"\n' \
-    "$role" "${selected[$role]}" "$source_sha" "$staged" "$role" >>"$staged/fetch.batch"
+    "$role" "${selected[$role]}" "${sources[$role]}" "$staged" "$role" >>"$staged/fetch.batch"
 done
 run_batch "$staged/fetch.batch" >/dev/null
 for role in "${roles[@]}"; do
-  incoming="$staged/handoff/$role/incoming/${selected[$role]}-${source_sha}/$role"
+  incoming="$staged/handoff/$role/incoming/${selected[$role]}-${sources[$role]}/$role"
   test -d "$incoming" || { echo "missing fetched $role handoff" >&2; exit 1; }
-  node "$scripts/woodpecker-handoff.mjs" validate "$incoming" "$role" "$source_sha" "$compiler_sha" \
+  node "$scripts/woodpecker-handoff.mjs" validate "$incoming" "$role" "${sources[$role]}" "$compiler_sha" \
     "$version" "${selected[$role]}" >/dev/null
   echo "selected $role handoff from pipeline ${selected[$role]}" >&2
 done

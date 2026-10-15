@@ -4,6 +4,7 @@
 // Usage:
 //   release-user-observation.mjs <record.json> <version> <candidate-superrepo-sha> <compiler-sha> <validated-evidence.json>
 //   release-user-observation.mjs --source <repo> <version> <head-sha> [<candidate-sha>]
+//   release-user-observation.mjs --platform-sources <repo> <version> <head-sha> <candidate|''> <linux|''> <macos|''> <windows|''>
 //   release-user-observation.mjs --release <repo> <version> <head-sha> <candidate-sha> <compiler-sha> <validated-evidence.json>
 //
 // Candidate rule. The release runs on HEAD and publishes the per-platform builds of one candidate C.
@@ -45,7 +46,27 @@ const PARTICIPANT_KEYS = ["id", "target", "materials", "language_rules_sha256", 
 const ENTRY_KEYS = ["utc", "command", "exit_code", "output"];
 const THRESHOLD = 4;
 export const CASE_MANIFEST_PATH = "scripts/ci/release-cases-v06.json";
-const PINNED_GITLINKS = ["compiler", "beskid_distrib"];
+// Build identity: the gitlinks the platform builds consume (Corelib is a gitlink inside the compiler
+// commit, so the compiler pointer fixes it) plus the release-case manifest digest.
+export const BUILD_GITLINKS = ["compiler", "beskid_bsol", "beskid_distrib"];
+// Root paths that no platform build step reads. Per-platform handoff sources may differ from the
+// candidate only in these paths; every other path (build and packaging scripts, the per-platform
+// workflows, the evidence validator and handoff uploader the build runs) must be identical.
+export const NON_BUILD_PATHS = [
+  /^openspec\//, /^docs\//, /^CHANGELOG\.md$/,
+  /^\.woodpecker\/release\.yml$/, /^\.woodpecker\/pckg\.yml$/,
+  /^scripts\/ci\/test\//,
+  // Gate and check scripts: they write gate reports, never artifacts.
+  /^scripts\/ci\/compiler-rust-gate\.sh$/, /^scripts\/ci\/woodpecker-release-gates\.sh$/,
+  // CLI06-06 validator, release collector and publisher scripts: they run after the builds.
+  /^scripts\/ci\/release-user-observation\.mjs$/, /^scripts\/ci\/woodpecker-release\.sh$/,
+  /^scripts\/ci\/woodpecker-fetch-handoffs\.sh$/, /^scripts\/ci\/woodpecker-aggregate-release\.mjs$/,
+  /^scripts\/ci\/build-release-state\.sh$/, /^scripts\/ci\/render-compiler-release-notes\.sh$/,
+  /^scripts\/ci\/publish-release-stream\.sh$/, /^scripts\/ci\/publish-homebrew-formula\.sh$/,
+  // Corelib registry publisher: runs after a release, from the published bundle.
+  /^scripts\/ci\/corelib-publish\.sh$/, /^scripts\/ci\/lib\/corelib-publish-runner\.mjs$/,
+];
+const PLATFORM_ROLES = ["linux", "macos", "windows"];
 
 export function RecordPath(version) {
   parseExactReleaseVersion(version);
@@ -203,13 +224,51 @@ export function ResolveCandidate(repo, version, head, input = "") {
   }
   if (commitAt(repo, candidate) !== candidate) Fail(`candidate ${candidate} is not a commit of this repository`);
   if (!git(repo, ["merge-base", "--is-ancestor", candidate, head]).ok) Fail(`candidate ${candidate} is not an ancestor of the release commit`);
-  for (const path of PINNED_GITLINKS) {
-    const pinned = gitlink(repo, candidate, path);
-    if (!pinned) Fail(`candidate ${candidate} has no ${path} gitlink`);
-    if (gitlink(repo, head, path) !== pinned) Fail(`the ${path} pointer of the release commit differs from candidate ${candidate}`);
+  const identity = BuildIdentity(repo, candidate);
+  sameBuildIdentity(repo, head, identity, "the release commit", candidate);
+  return { candidate, record, identity };
+}
+
+// The artifact-determining inputs of one root commit.
+export function BuildIdentity(repo, commit) {
+  const identity = {};
+  for (const path of BUILD_GITLINKS) {
+    const pinned = gitlink(repo, commit, path);
+    if (!pinned) Fail(`commit ${commit} has no ${path} gitlink`);
+    identity[`${path}_commit`] = pinned;
   }
-  if (manifestDigest(repo, head) !== manifestDigest(repo, candidate)) Fail(`the release-case manifest digest of the release commit differs from candidate ${candidate}`);
-  return { candidate, record };
+  identity.release_case_manifest_sha256 = manifestDigest(repo, commit);
+  return identity;
+}
+function sameBuildIdentity(repo, commit, identity, label, candidate) {
+  const actual = {};
+  for (const path of BUILD_GITLINKS) actual[`${path}_commit`] = gitlink(repo, commit, path);
+  for (const path of BUILD_GITLINKS) {
+    if (actual[`${path}_commit`] !== identity[`${path}_commit`]) Fail(`the ${path} pointer of ${label} differs from candidate ${candidate}`);
+  }
+  if (manifestDigest(repo, commit) !== identity.release_case_manifest_sha256) Fail(`the release-case manifest digest of ${label} differs from candidate ${candidate}`);
+}
+
+// Per-platform handoff sources. Each platform's build may come from its own root commit P (default:
+// the candidate C) when P has C's build identity, is HEAD or an ancestor of HEAD, and the root diff
+// C..P touches only NON_BUILD_PATHS. Any two such sources then differ only in non-build paths.
+export function ResolvePlatformSources(repo, version, head, input = "", overrides = {}) {
+  const { candidate, identity } = ResolveCandidate(repo, version, head, input);
+  const sources = {};
+  for (const role of PLATFORM_ROLES) {
+    const source = overrides[role] || candidate;
+    if (!COMMIT.test(source)) Fail(`the ${role} source must be a 40-character commit`);
+    if (commitAt(repo, source) !== source) Fail(`${role} source ${source} is not a commit of this repository`);
+    if (!git(repo, ["merge-base", "--is-ancestor", source, head]).ok) Fail(`${role} source ${source} is not an ancestor of the release commit`);
+    sameBuildIdentity(repo, source, identity, `the ${role} source ${source}`, candidate);
+    const diff = git(repo, ["diff", "--no-renames", "--name-only", candidate, source]);
+    if (!diff.ok) Fail(`cannot compare the ${role} source ${source} with candidate ${candidate}`);
+    const build = diff.out.split("\n").filter(Boolean).filter(path => !NON_BUILD_PATHS.some(pattern => pattern.test(path)));
+    if (build.length) Fail(`the ${role} source ${source} changes build inputs relative to candidate ${candidate}: ${build.join(", ")}`);
+    sources[role] = source;
+  }
+  if (!Object.values(sources).includes(candidate)) Fail(`no platform source is the candidate ${candidate}; the release source identity must be a built commit`);
+  return { candidate, build_identity: identity, sources };
 }
 
 // The commit whose per-platform build handoffs the release consumes and whose identity the release state carries.
@@ -241,6 +300,10 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     if (args[0] === "--source") {
       if (args.length !== 4 && args.length !== 5) Fail("usage: release-user-observation.mjs --source <repo> <version> <head-sha> [<candidate-sha>]");
       output = ReleaseSource(args[1], args[2], args[3], args[4] ?? "");
+    } else if (args[0] === "--platform-sources") {
+      if (args.length !== 8) Fail("usage: release-user-observation.mjs --platform-sources <repo> <version> <head-sha> <candidate-sha|''> <linux-sha|''> <macos-sha|''> <windows-sha|''>");
+      const [, repo, version, head, input, linux, macos, windows] = args;
+      output = JSON.stringify(ResolvePlatformSources(repo, version, head, input, { linux, macos, windows }));
     } else if (args[0] === "--release") {
       const [, repo, version, head, candidate, compiler, evidencePath] = args;
       if (args.length !== 7) Fail("usage: release-user-observation.mjs --release <repo> <version> <head-sha> <candidate-sha> <compiler-sha> <validated-evidence.json>");

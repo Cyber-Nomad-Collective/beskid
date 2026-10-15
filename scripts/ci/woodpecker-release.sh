@@ -21,11 +21,16 @@ version="$(node "$scripts/release-version.mjs" "$requested_version" --stable-onl
 head_sha="$(git -C "$repo" rev-parse HEAD)"
 # The release runs on HEAD and publishes the per-platform builds of candidate C ($source_sha): the
 # candidate named by the committed CLI06-06 record (docs/release/cli06-06-record-v<version>.json), else
-# the gate input BESKID_RELEASE_CANDIDATE, else HEAD. C is HEAD or an ancestor of HEAD, and HEAD's
-# compiler and beskid_distrib pointers and release-case manifest digest equal C's, so root-only commits
-# after C (CI scripts, docs, the record) never force a rebuild.
-candidate_input="${BESKID_RELEASE_CANDIDATE:-}"
-source_sha="$(node "$scripts/release-user-observation.mjs" --source "$repo" "$version" "$head_sha" "$candidate_input")"
+# the gate input BESKID_RELEASE_CANDIDATE, else HEAD. C is HEAD or an ancestor of HEAD with HEAD's build
+# identity (compiler, beskid_bsol and beskid_distrib pointers, release-case manifest digest), so root-only
+# commits after C (CI scripts, docs, the record) never force a rebuild. A platform may come from its own
+# source (BESKID_LINUX_SOURCE, BESKID_MACOS_SOURCE, BESKID_WINDOWS_SOURCE; default C) that has the same
+# build identity and differs from C only in non-build root paths.
+platform_sources="$(node "$scripts/release-user-observation.mjs" --platform-sources "$repo" "$version" "$head_sha" \
+  "${BESKID_RELEASE_CANDIDATE:-}" "${BESKID_LINUX_SOURCE:-}" "${BESKID_MACOS_SOURCE:-}" "${BESKID_WINDOWS_SOURCE:-}")"
+source_sha="$(jq -r '.candidate' <<<"$platform_sources")"
+declare -A role_source=()
+for role in "${roles[@]}"; do role_source[$role]="$(jq -r --arg role "$role" '.sources[$role]' <<<"$platform_sources")"; done
 compiler_sha="$(git -C "$repo" rev-parse "$source_sha:compiler")"
 distrib_sha="$(git -C "$repo" rev-parse "$source_sha:beskid_distrib")"
 pipeline="${CI_PIPELINE_NUMBER:-manual-${builds[0]}-${builds[1]}-${builds[2]}}"
@@ -61,14 +66,14 @@ elif [[ "${BESKID_PUBLISH_RELEASE:-0}" != 0 ]]; then
   echo 'BESKID_PUBLISH_RELEASE must be 0 or 1' >&2; exit 2
 fi
 
-# One handoff of one platform: identity (role, source, compiler, version, its own pipeline) and checksums.
+# One handoff of one platform: identity (role, its own source, compiler, version, its own pipeline) and checksums.
 validate_handoff() {
-  node "$scripts/woodpecker-handoff.mjs" validate "$1" "$2" "$source_sha" "$compiler_sha" "$version" "$3"
+  node "$scripts/woodpecker-handoff.mjs" validate "$1" "$2" "${role_source[$2]}" "$compiler_sha" "$version" "$3"
 }
 
 for index in 0 1 2; do
   role="${roles[$index]}"
-  validate_handoff "$handoff_root/$role/incoming/${builds[$index]}-${source_sha}/$role" "$role" "${builds[$index]}" >/dev/null
+  validate_handoff "$handoff_root/$role/incoming/${builds[$index]}-${role_source[$role]}/$role" "$role" "${builds[$index]}" >/dev/null
 done
 
 release="$output_root/releases/${pipeline}-${source_sha}"
@@ -79,7 +84,7 @@ handoffs="$release/handoffs.json"
 printf '{' >"$handoffs"
 for index in 0 1 2; do
   role="${roles[$index]}"
-  incoming="$handoff_root/$role/incoming/${builds[$index]}-${source_sha}/$role"
+  incoming="$handoff_root/$role/incoming/${builds[$index]}-${role_source[$role]}/$role"
   mkdir "$release/input/$role" "$release/native/$role"
   cp -p "$incoming"/* "$release/input/$role/"
   # The private copy is what the release consumes; its identity record names this platform's build.
@@ -115,8 +120,9 @@ done
 printf '}\n' >>"$handoffs"
 
 qualified="$release/qualified"
+jq '.sources' <<<"$platform_sources" >"$release/platform-sources.json"
 node "$scripts/woodpecker-aggregate-release.mjs" "$release/native" "$qualified" \
-  "$version" "$source_sha" "$compiler_sha" "$handoffs" >/dev/null
+  "$version" "$source_sha" "$compiler_sha" "$handoffs" "$release/platform-sources.json" >/dev/null
 state="$qualified/release-state.json"
 assets="$qualified/assets"
 
@@ -136,10 +142,21 @@ renameSync(temporary,path);
 NODE
 jq -r '.user_observation.summary' "$state"
 
+# The release evidence names each platform's handoff source and the build identity they share.
+node - "$state" "$platform_sources" <<'NODE'
+const {readFileSync,renameSync,writeFileSync}=require('node:fs');
+const [path,resolved]=process.argv.slice(2),state=JSON.parse(readFileSync(path,'utf8')),{build_identity,sources}=JSON.parse(resolved);
+state.build_identity=build_identity;
+state.platform_sources=sources;
+const temporary=`${path}.identity.tmp`;
+writeFileSync(temporary,`${JSON.stringify(state,null,2)}\n`,{flag:'wx'});
+renameSync(temporary,path);
+NODE
+
 installers=()
 for role in "${roles[@]}"; do
   package_list="$release/package-${role}.list"
-  node - "$release/input/$role" "$role" "$source_sha" "$compiler_sha" "$distrib_sha" "$version" >"$package_list" <<'NODE'
+  node - "$release/input/$role" "$role" "${role_source[$role]}" "$compiler_sha" "$distrib_sha" "$version" >"$package_list" <<'NODE'
 const {createHash}=require("node:crypto"),{lstatSync,readFileSync}=require("node:fs"),{join}=require("node:path");
 const [dir,role,source,compiler,distrib,version]=process.argv.slice(2), result=JSON.parse(readFileSync(join(dir,"package-result.json"),"utf8"));
 const target={linux:"x86_64-unknown-linux-gnu",macos:"aarch64-apple-darwin",windows:"x86_64-pc-windows-msvc"}[role];
@@ -158,10 +175,10 @@ done
 # The release state is the single public version authority. Native aggregation
 # creates it first; enrich it only with installers whose package-result record
 # has already been checksum-validated above.
-node - "$state" "$version" "$source_sha" "$compiler_sha" "$distrib_sha" \
+node - "$state" "$version" "$platform_sources" "$compiler_sha" "$distrib_sha" \
   "$release/input/linux" "$release/input/macos" "$release/input/windows" <<'NODE'
 const {createHash}=require("node:crypto"),{readFileSync,renameSync,writeFileSync}=require("node:fs"),{join}=require("node:path");
-const [statePath,version,source,compiler,distrib,...dirs]=process.argv.slice(2);
+const [statePath,version,resolved,compiler,distrib,...dirs]=process.argv.slice(2),{candidate:source,sources}=JSON.parse(resolved);
 const fail=m=>{throw new Error(m)}, digest=p=>createHash("sha256").update(readFileSync(p)).digest("hex");
 const state=JSON.parse(readFileSync(statePath,"utf8"));
 if(state.version!==version||state.provenance?.superrepo_commit!==source||state.provenance?.compiler_commit!==compiler)fail("qualified release state identity mismatch");
@@ -169,7 +186,7 @@ const expected={linux:[`beskid-${version}-amd64.deb`],macos:[`beskid-${version}-
 const packages=[], formulas=[];
 for(const dir of dirs){
   const result=JSON.parse(readFileSync(join(dir,"package-result.json"),"utf8"));
-  if(!expected[result.platform]||result.version!==version||result.distrib_commit!==distrib||result.source?.superrepo_commit!==source||result.source?.compiler_commit!==compiler||result.status!=="success")fail(`${result.platform||"unknown"} package-result identity mismatch`);
+  if(!expected[result.platform]||result.version!==version||result.distrib_commit!==distrib||result.source?.superrepo_commit!==sources[result.platform]||result.source?.compiler_commit!==compiler||result.status!=="success")fail(`${result.platform||"unknown"} package-result identity mismatch`);
   const names=(result.artifacts||[]).map(a=>a?.name);
   if(names.length!==expected[result.platform].length||expected[result.platform].some(name=>!names.includes(name)))fail(`${result.platform} package-result inventory mismatch`);
   for(const artifact of result.artifacts){
@@ -208,10 +225,10 @@ if [[ -n "$owner_waiver_file" || -n "$owner_waiver_json" ]]; then
   # source and to the exact installer already verified by package-result.
   if [[ -n "$owner_waiver_file" ]]; then
     owner_waiver="$(node "$scripts/windows-installer-owner-waiver.mjs" "$owner_waiver_file" \
-      "$source_sha" "$version" "$assets/beskid-${version}-windows-amd64.exe")"
+      "${role_source[windows]}" "$version" "$assets/beskid-${version}-windows-amd64.exe")"
   else
     owner_waiver="$(node "$scripts/windows-installer-owner-waiver.mjs" --json "$owner_waiver_json" \
-      "$source_sha" "$version" "$assets/beskid-${version}-windows-amd64.exe")"
+      "${role_source[windows]}" "$version" "$assets/beskid-${version}-windows-amd64.exe")"
   fi
   node - "$state" "$owner_waiver" <<'NODE'
 const {readFileSync,renameSync,writeFileSync}=require('node:fs');

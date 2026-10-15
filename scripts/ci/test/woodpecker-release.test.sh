@@ -11,9 +11,11 @@ mkdir -p "$root/scripts"
 cp -R "$source_root/scripts/ci" "$root/scripts/"
 compiler_sha="$(git -C "$source_root" rev-parse HEAD:compiler)"
 distrib_sha="$(git -C "$source_root" rev-parse HEAD:beskid_distrib)"
+bsol_sha="$(git -C "$source_root" rev-parse HEAD:beskid_bsol)"
 git -C "$root" add scripts/ci
 git -C "$root" update-index --add --cacheinfo "160000,$compiler_sha,compiler"
 git -C "$root" update-index --add --cacheinfo "160000,$distrib_sha,beskid_distrib"
+git -C "$root" update-index --add --cacheinfo "160000,$bsol_sha,beskid_bsol"
 git -C "$root" -c user.name='Release test' -c user.email='release-test@example.invalid' commit -qm fixture
 script="$root/scripts/ci/woodpecker-release.sh"
 version=0.4.744
@@ -229,6 +231,39 @@ if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=84 CI_COMMIT_SH
 fi
 grep -Fq "incoming/${linux_build}-${root_only_sha}/linux" "$tmp/head-candidate.err" || \
   fail 'the default candidate is not HEAD'
+# Mixed per-platform sources (C/C/D): Linux rebuilt on D, which differs from C only in non-build
+# root paths (gate scripts, OpenSpec); macOS and Windows stay on C. The release names C as source
+# identity and records each platform's source and the shared build identity.
+git -C "$root" reset -q --hard "$source_sha"
+mkdir -p "$root/openspec/changes/fixture"
+printf 'gate calibration\n' >"$root/openspec/changes/fixture/design.md"
+printf '\n# clippy report-only\n' >>"$root/scripts/ci/compiler-rust-gate.sh"
+git -C "$root" add openspec scripts/ci/compiler-rust-gate.sh
+commit_fixture 'gate changes on D'
+d_sha="$(git -C "$root" rev-parse HEAD)"
+saved_source="$source_sha"; source_sha="$d_sha"; linux_build=51; write_role linux; source_sha="$saved_source"; linux_build=41
+WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=87 CI_COMMIT_SHA="$d_sha" \
+  BESKID_RELEASE_CANDIDATE="$source_sha" BESKID_LINUX_SOURCE="$d_sha" PATH="$tmp/bin:$PATH" \
+  bash "$script" "$version" 51 "$macos_build" "$windows_build" >/dev/null 2>"$tmp/mixed.err" || {
+  cat "$tmp/mixed.err" >&2; fail 'C/C/D handoffs with only non-build root changes were refused'; }
+mixed_state="$tmp/rootfs/woodpecker-output/releases/87-${source_sha}/qualified/release-state.json"
+jq -e --arg c "$source_sha" --arg d "$d_sha" --arg compiler "$compiler_sha" --arg bsol "$bsol_sha" --arg distrib "$distrib_sha" '
+  .provenance.superrepo_commit == $c and .platform_sources == {linux:$d,macos:$c,windows:$c} and
+  .build_identity.compiler_commit == $compiler and .build_identity.beskid_bsol_commit == $bsol and
+  .build_identity.beskid_distrib_commit == $distrib and (.build_identity.release_case_manifest_sha256 | test("^[0-9a-f]{64}$"))
+' "$mixed_state" >/dev/null || fail 'release state does not record the platform sources and build identity'
+printf '\n# packaging change\n' >>"$root/scripts/ci/build-release-artifact.sh"
+git -C "$root" add scripts/ci/build-release-artifact.sh
+commit_fixture 'build script change on E'
+e_sha="$(git -C "$root" rev-parse HEAD)"
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=88 CI_COMMIT_SHA="$e_sha" \
+  BESKID_RELEASE_CANDIDATE="$source_sha" BESKID_LINUX_SOURCE="$e_sha" PATH="$tmp/bin:$PATH" \
+  bash "$script" "$version" 51 "$macos_build" "$windows_build" 2>"$tmp/build-script.err"; then
+  fail 'a Linux source with a changed build script was accepted'
+fi
+grep -Fq 'changes build inputs relative to candidate' "$tmp/build-script.err" || fail 'build script drift was not diagnosed'
+grep -Fq 'scripts/ci/build-release-artifact.sh' "$tmp/build-script.err" || fail 'build script drift does not name the file'
+
 for drift in compiler beskid_distrib manifest; do
   git -C "$root" reset -q --hard "$root_only_sha"
   case "$drift" in
