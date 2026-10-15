@@ -65,13 +65,14 @@ The production host is `root@bdziam.dev`; the runtime directory defaults to
   Docker proxy. Beskid joins this network but does not own its ports or proxy.
 
 - NodeBB community linking for `pckg` (optional, all-or-nothing):
-  `PCKG_NODEBB_API_URL`, `PCKG_NODEBB_ADMIN_TOKEN`,
-  `PCKG_NODEBB_PACKAGES_PARENT_CID`, and `PCKG_COMMUNITY_URL` in the host
-  `.env`. NodeBB itself (`community.beskid-lang.org`) is not part of this
-  Compose stack. Create the parent "Packages" category and a Write API token
-  with category administration rights in NodeBB, then set the four variables;
-  `pckg` reads them through `env_file`. Existing public packages are linked
-  once by an administrator with `POST /api/admin/community/reconcile`.
+  `PCKG_NODEBB_API_URL`, `PCKG_NODEBB_BOT_TOKEN`,
+  `PCKG_NODEBB_PACKAGES_CID`, and `PCKG_COMMUNITY_URL` in the host `.env`.
+  NodeBB itself (`community.beskid-lang.org`) is not part of this Compose
+  stack. Create the "Packages" category and a bot user with a Write API token
+  (it opens one thread per public package and replies on every release), then
+  set the four variables; `pckg` reads them through `env_file`. Existing
+  public packages get their threads once an administrator calls
+  `POST /api/admin/community/reconcile`.
 
 Apply the runtime definition:
 

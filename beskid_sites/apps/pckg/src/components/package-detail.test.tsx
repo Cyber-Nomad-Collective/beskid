@@ -38,9 +38,9 @@ const details: PackageDetails = {
 		updatedAtUtc: "2026-01-02T00:00:00Z",
 		ownerDisplayName: "octocat",
 		community: {
-			url: "https://community.beskid-lang.org/category/12/beskid-http",
-			categoryId: 12,
-			categorySlug: "12/beskid-http",
+			url: "https://community.beskid-lang.org/topic/12/beskid-http",
+			topicId: 12,
+			topicSlug: "12/beskid-http",
 		},
 	},
 	versions: [
@@ -75,11 +75,20 @@ describe("PackageDetail", () => {
 			<PackageDetail
 				details={details}
 				community={{
-					url: "https://community.beskid-lang.org/category/12/beskid-http",
-					categoryId: 12,
-					categorySlug: "12/beskid-http",
-					topicCount: 2,
-					postCount: 5,
+					url: "https://community.beskid-lang.org/topic/12/beskid-http",
+					topicId: 12,
+					topicSlug: "12/beskid-http",
+					replyCount: 2,
+					viewCount: 57,
+					recentPosts: [
+						{
+							pid: 900,
+							author: "octocat",
+							postedAtUtc: "2026-10-09T08:53:20Z",
+							excerpt: "Version 1.2.3 of beskid.http was published.",
+							url: "https://community.beskid-lang.org/post/900",
+						},
+					],
 				}}
 			/>,
 		);
@@ -90,12 +99,23 @@ describe("PackageDetail", () => {
 		expect(screen.getByText(/Download latest/)).toBeInTheDocument();
 		expect(screen.getByText("Documentation")).toBeInTheDocument();
 		expect(screen.getByText("Browse files")).toBeInTheDocument();
-		const discuss = screen.getByText(/Discuss beskid.http/).closest("a");
+		const discuss = screen.getByText(/Discuss on the forum/).closest("a");
 		expect(discuss).toHaveAttribute(
 			"href",
-			"https://community.beskid-lang.org/category/12/beskid-http",
+			"https://community.beskid-lang.org/topic/12/beskid-http",
 		);
-		expect(discuss).toHaveTextContent("2 topics, 5 posts");
+		expect(discuss).toHaveTextContent("2 replies, 57 views");
+		expect(
+			screen.getByRole("heading", { name: "Recent forum posts" }),
+		).toBeInTheDocument();
+		expect(screen.getByText("octocat")).toBeInTheDocument();
+		expect(
+			screen.getByText("Version 1.2.3 of beskid.http was published."),
+		).toBeInTheDocument();
+		expect(screen.getByText("Open the thread")).toHaveAttribute(
+			"href",
+			"https://community.beskid-lang.org/topic/12/beskid-http",
+		);
 
 		// Facts
 		expect(screen.getAllByText(/downloads/).length).toBeGreaterThan(0);
@@ -125,7 +145,7 @@ describe("PackageDetail", () => {
 		expect(screen.queryByText("Post review")).not.toBeInTheDocument();
 	});
 
-	it("shows no discussion link when the registry has not linked a NodeBB category", () => {
+	it("shows no discussion link when the registry has not opened a NodeBB thread", () => {
 		render(
 			<PackageDetail
 				details={{ ...details, package: { ...details.package, community: null } }}

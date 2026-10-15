@@ -479,11 +479,12 @@ describe("PckgApiClient", () => {
 				calls += 1;
 				return calls === 1
 					? Response.json({
-							url: "https://community.beskid-lang.org/category/12/beskid-demo",
-							categoryId: 12,
-							categorySlug: "12/beskid-demo",
-							topicCount: 3,
-							postCount: 9,
+							url: "https://community.beskid-lang.org/topic/12/beskid-demo",
+							topicId: 12,
+							topicSlug: "12/beskid-demo",
+							replyCount: 3,
+							viewCount: 90,
+							recentPosts: [],
 						})
 					: new Response(null, { status: 404 });
 			},
@@ -492,8 +493,8 @@ describe("PckgApiClient", () => {
 		await expect(
 			client.getPackageCommunity("beskid.demo"),
 		).resolves.toMatchObject({
-			categoryId: 12,
-			topicCount: 3,
+			topicId: 12,
+			replyCount: 3,
 		});
 		await expect(client.getPackageCommunity("beskid.other")).resolves.toBeNull();
 	});

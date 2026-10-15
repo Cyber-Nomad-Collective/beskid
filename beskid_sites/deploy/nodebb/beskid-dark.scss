@@ -1,0 +1,65 @@
+// Beskid Emerald Ridge, dark. Custom skin variables: NodeBB compiles them
+// after `beskid-light.scss`, so plain assignments override the light palette.
+// The variable set follows Bootswatch Darkly, which NodeBB ships.
+$beskid-primary: #6ee7b7;
+$beskid-surface: #0f1414;
+$beskid-on-surface: #c2d5d4;
+
+$white: #ffffff;
+$gray-100: #e6efee;
+$gray-200: #c2d5d4;
+$gray-300: #a3b6b5;
+$gray-400: #8aa09f;
+$gray-500: #6b7f7e;
+$gray-600: #536463;
+$gray-700: #2f3d3c;
+$gray-800: #1a2322;
+$gray-900: #0f1414;
+
+$primary: $beskid-primary;
+$secondary: $gray-700;
+$success: #34d399;
+$info: #67e8f9;
+$warning: #fbbf24;
+$danger: #f87171;
+$light: $gray-700;
+$dark: $gray-800;
+$min-contrast-ratio: 1.9;
+
+$body-bg: $beskid-surface;
+$body-color: $beskid-on-surface;
+$body-secondary-color: $gray-400;
+$link-color: $beskid-primary;
+$link-hover-color: #a7f3d0;
+$text-muted: $gray-400;
+$border-color: $gray-700;
+
+$card-bg: $gray-800;
+$card-cap-bg: $gray-700;
+$input-bg: $gray-800;
+$input-color: $beskid-on-surface;
+$input-border-color: $gray-700;
+$input-placeholder-color: $gray-500;
+$input-group-addon-bg: $gray-700;
+$input-group-addon-color: $gray-300;
+$form-check-input-bg: $gray-800;
+$dropdown-bg: $gray-800;
+$dropdown-border-color: $gray-700;
+$dropdown-divider-bg: $gray-700;
+$dropdown-link-color: $beskid-on-surface;
+$dropdown-link-hover-color: $white;
+$dropdown-link-hover-bg: $gray-700;
+$nav-link-color: $beskid-on-surface;
+$nav-tabs-border-color: $gray-700;
+$nav-tabs-link-active-color: $white;
+$list-group-bg: $gray-800;
+$list-group-border-color: $gray-700;
+$list-group-hover-bg: $gray-700;
+$modal-content-bg: $gray-800;
+$modal-header-border-color: $gray-700;
+$popover-bg: $gray-800;
+$table-color: $beskid-on-surface;
+$table-border-color: $gray-700;
+$component-active-color: #022c22;
+$btn-color: $beskid-on-surface;
+$focus-ring-color: rgba(110, 231, 183, 0.35);

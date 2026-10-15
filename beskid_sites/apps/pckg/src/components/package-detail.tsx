@@ -9,7 +9,7 @@ import {
 import { Link } from "@tanstack/react-router";
 import { packageKindPresentation } from "#/lib/package-kind-presentation";
 import type { PackageCommunityStatus, PackageDetails } from "#/lib/pckg-api";
-import { CommunityLink } from "./community-card";
+import { CommunityLink, CommunityRecentPosts } from "./community-card";
 import { FactsCard } from "./facts-card";
 import { Markdown } from "./markdown";
 import { VersionList } from "./version-list";
@@ -123,6 +123,8 @@ export function PackageDetail({
 					</Badge>
 				))}
 			</div>
+
+			<CommunityRecentPosts status={community} />
 
 			<FactsCard>
 				<span>{pkg.totalDownloads.toLocaleString()} downloads</span>

@@ -1,0 +1,25 @@
+// Global custom CSS. Compiled on its own, so only CSS custom properties and
+// selectors are available here, not Bootstrap or Harmony SCSS variables.
+
+// Harmony hard-codes Inter without `!default`; use the Beskid system stack.
+body,
+.ff-sans {
+	font-family: -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif !important;
+}
+
+// Primary buttons on the dark skin need dark text against the light emerald.
+body.skin-beskid-dark .btn-primary {
+	--bs-btn-color: #022c22;
+	--bs-btn-hover-color: #022c22;
+	--bs-btn-active-color: #022c22;
+}
+
+// The ridge mark is drawn in the light-theme emerald; use the light mark on dark.
+body.skin-beskid-dark [component="brand/logo"] {
+	content: url("https://beskid-lang.org/logo-dark.svg");
+}
+
+[component="brand/logo"] {
+	max-height: 2rem;
+	width: auto;
+}

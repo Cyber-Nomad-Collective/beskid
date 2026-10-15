@@ -21,20 +21,31 @@ export interface PackageSummary {
 	totalDownloads: number;
 	updatedAtUtc: string;
 	ownerDisplayName: string;
-	/** NodeBB discussion category; absent until the registry linked one. */
+	/** NodeBB discussion thread; absent until the registry opened one. */
 	community: PackageCommunity | null;
 }
 
 export interface PackageCommunity {
 	url: string;
-	categoryId: number;
-	categorySlug: string;
+	topicId: number;
+	topicSlug: string;
 }
 
 /** Discussion link plus live NodeBB counters (null when NodeBB is unreachable). */
 export interface PackageCommunityStatus extends PackageCommunity {
-	topicCount: number | null;
-	postCount: number | null;
+	replyCount: number | null;
+	viewCount: number | null;
+	/** Newest posts first (at most 3); empty when NodeBB cannot be read. */
+	recentPosts: CommunityPost[];
+}
+
+export interface CommunityPost {
+	pid: number;
+	author: string;
+	postedAtUtc: string;
+	/** Plain-text excerpt prepared by the registry (no HTML). */
+	excerpt: string;
+	url: string;
 }
 
 export interface PackageVersion {

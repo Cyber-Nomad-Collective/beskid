@@ -1,0 +1,44 @@
+// Beskid Emerald Ridge, light. NodeBB prepends this to Bootstrap and Harmony
+// (`bsVariables`), so these assignments win over their `!default` values.
+// Values match the resolved shared tokens in `@beskid/beskid-ui-react`.
+$beskid-primary: #047857;
+$beskid-primary-container: #d1fae5;
+$beskid-surface: #f4fbfa;
+$beskid-on-surface: #02291f;
+$beskid-secondary: #4a6361;
+
+$gray-100: #f4fbfa;
+$gray-200: #e5eeed;
+$gray-300: #d2dfdd;
+$gray-400: #b5c6c4;
+$gray-500: #8d9897;
+$gray-600: #627170;
+$gray-700: #4a6361;
+$gray-800: #2b3b39;
+$gray-900: #02291f;
+
+$green: #059669;
+$teal: #0d9488;
+$cyan: #0e7490;
+
+$primary: $beskid-primary;
+$secondary: $beskid-secondary;
+$success: $green;
+$info: $cyan;
+$light: $gray-200;
+$dark: $gray-900;
+
+$body-bg: $beskid-surface;
+$body-color: $beskid-on-surface;
+$body-secondary-color: $gray-600;
+$link-color: $beskid-primary;
+$link-hover-color: #065f46;
+$border-color: $gray-300;
+$card-bg: #f8fcfc;
+$input-bg: #ffffff;
+$component-active-bg: $beskid-primary;
+$focus-ring-color: rgba(4, 120, 87, 0.35);
+
+$border-radius: 0.5rem;
+$border-radius-sm: 0.375rem;
+$border-radius-lg: 0.75rem;

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "3e5bdcd356ee84d83907663e9442263741f025295a4be95ecf1222fe9e672bc5",
+  "revision": "5e5f472f605381b1f7c0a10512febd119da9f73aaeed783cf4fabe36de966270",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -61278,7 +61278,7 @@
       "decision": null,
       "title": "pckg client contract",
       "status": "Standard",
-      "sourceHash": "96c282f0b9a2dee60cbb01476a9e5f51f535d099089373e0d9cf30d5a658048f"
+      "sourceHash": "2fd8a182ec8f1519b7a769733ab2d8b0c3b217efad9adef833233a751a464b9e"
     },
     {
       "id": "BSP-CAP-5A23843812F0",

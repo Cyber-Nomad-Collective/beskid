@@ -14,11 +14,13 @@
 
 ### Changed
 
-- pckg: the package page shows the discussion link and live topic/post
-  counters the registry linked for the package; the client no longer guesses
-  a NodeBB category URL from the package name. README renders as Markdown.
-- deploy: document the optional `PCKG_NODEBB_*` / `PCKG_COMMUNITY_URL`
-  variables for pckg community linking.
+- pckg: the package page shows "Discuss on the forum" linking to the
+  package's NodeBB thread with live reply/view counters and the newest
+  forum posts; the client no longer
+  guesses a NodeBB URL from the package name. README renders as Markdown.
+- deploy: document the optional `PCKG_NODEBB_API_URL`,
+  `PCKG_NODEBB_BOT_TOKEN`, `PCKG_NODEBB_PACKAGES_CID` and
+  `PCKG_COMMUNITY_URL` variables for pckg community threads.
 
 - Apply canonical Emerald Ridge branding to application icons and browser assets.
 
