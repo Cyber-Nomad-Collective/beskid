@@ -63,6 +63,17 @@ else
      else "`\(.log_path)`" end) as $log |
     "- `\(.identifier)` — \(.location.file):\(.location.line):\(.location.column) — \(.reason) (log: \($log))"' "${state}"
 fi
+if jq -e 'has("user_observation")' "${state}" >/dev/null; then
+  # CLI06-06 is a published, non-blocking quality target: state its result plainly.
+  cat <<'EOF'
+
+## CLI06-06 user observation
+
+EOF
+  jq -r '"- \(.user_observation.summary)"' "${state}"
+  jq -r '.user_observation.thresholds // {} | to_entries[] |
+    "- \(.key): \(.value.observed) of 5, \(.value.required) required: \(if .value.met then "pass" else "fail" end)"' "${state}"
+fi
 cat <<EOF
 
 ## Commit provenance
