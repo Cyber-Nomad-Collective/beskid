@@ -175,10 +175,14 @@ export function ProduceReleaseCases(options) {
         retain(output, binding.input.path, archive);
         const root = join(scratch, "inputs", binding.input.id);
         mkdirSync(root, { recursive: true });
-        // Stream the verified bytes: GNU tar reads an archive name like C:/... as a remote host:path
-        // (Windows agent), and bsdtar has no --force-local, so the archive never appears as a name.
-        const extract = spawnSync("tar", ["-xf", "-", "-C", root], { input: archive, encoding: "utf8", windowsHide: true });
-        if (extract.error || extract.status !== 0) fail(`cannot extract input ${binding.input.id}: ${extract.error?.message || extract.stderr}`);
+        // Name the archive relative to the packet directory: GNU tar (MSYS on the Windows agent) reads
+        // an archive name like C:/... as a remote host:path, and bsdtar has no --force-local. Only the
+        // -f name is parsed that way; -C takes the absolute extraction root as-is.
+        if (!/^[A-Za-z0-9._-]+$/.test(binding.input.path)) fail(`${item.id} input packet name is not a plain file name`);
+        const extract = spawnSync("tar", ["-xf", binding.input.path, "-C", root], { cwd: output, encoding: "utf8", windowsHide: true });
+        if (extract.error || extract.status !== 0) {
+          fail(`cannot extract input ${binding.input.id}: status ${extract.status} ${extract.error?.message ?? ""} ${extract.stderr ?? ""}`.trim());
+        }
         inputs.set(binding.input.id, root);
       }
     }
