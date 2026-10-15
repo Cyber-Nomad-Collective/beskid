@@ -5,6 +5,9 @@ import {
 	screen,
 	waitFor,
 } from "@testing-library/react";
+import { act } from "react";
+import { hydrateRoot } from "react-dom/client";
+import { renderToString } from "react-dom/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { SearchResult } from "../client/global-search";
 import { GlobalSearch } from "../client/global-search";
@@ -48,6 +51,33 @@ describe("GlobalSearch", () => {
 	it("renders the trigger button with the keyboard hint", () => {
 		render(<GlobalSearch searchFn={makeSearchFn()} />);
 		expect(screen.getByRole("button", { name: "Open search" })).not.toBeNull();
+	});
+
+	it("hydrates the shortcut hint without a text mismatch on Mac clients", async () => {
+		// Node exposes `navigator` too, so the server must not pick the glyph
+		// from its own platform: it always renders the neutral modifier.
+		vi.spyOn(navigator, "platform", "get").mockReturnValue("Linux x86_64");
+		const searchFn = makeSearchFn();
+		const container = document.createElement("div");
+		container.innerHTML = renderToString(<GlobalSearch searchFn={searchFn} />);
+		document.body.appendChild(container);
+		try {
+			expect(container.querySelector("kbd")?.textContent).toBe("CtrlK");
+
+			vi.spyOn(navigator, "platform", "get").mockReturnValue("MacIntel");
+			const onRecoverableError = vi.fn();
+			let root: ReturnType<typeof hydrateRoot> | undefined;
+			await act(async () => {
+				root = hydrateRoot(container, <GlobalSearch searchFn={searchFn} />, {
+					onRecoverableError,
+				});
+			});
+			expect(onRecoverableError).not.toHaveBeenCalled();
+			expect(container.querySelector("kbd")?.textContent).toBe("⌘K");
+			act(() => root?.unmount());
+		} finally {
+			container.remove();
+		}
 	});
 
 	it("opens the palette on trigger click and shows the input", async () => {
