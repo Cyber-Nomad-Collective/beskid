@@ -229,20 +229,31 @@ function corelibInventory(workspaceRoot) {
   });
 
   const aggregate = packages.find((meta) => meta.memberId === "corelib");
-  requireExactIds(
-    aggregate.dependencyNames,
-    packages.filter((meta) => meta.memberId !== "corelib").map((meta) => meta.registryName),
-    "production corelib aggregate dependencies",
-  );
-  const publishedNames = new Set(packages.map((meta) => meta.registryName));
-  for (const meta of packages) {
+  let plan = packages;
+  if (librariesOnly()) {
+    // Operator choice for a release whose aggregate depends on packages that
+    // are not workspace members: publish the member libraries, never a partial
+    // aggregate. Without the flag the exact-dependency check fails closed.
+    console.log(
+      `[plan] corelib aggregate skipped by --libraries-only (depends on: ${aggregate.dependencyNames.join(", ")})`,
+    );
+    plan = packages.filter((meta) => meta.memberId !== "corelib");
+  } else {
+    requireExactIds(
+      aggregate.dependencyNames,
+      packages.filter((meta) => meta.memberId !== "corelib").map((meta) => meta.registryName),
+      "production corelib aggregate dependencies",
+    );
+  }
+  const publishedNames = new Set(plan.map((meta) => meta.registryName));
+  for (const meta of plan) {
     for (const dependency of meta.dependencyNames) {
       if (!publishedNames.has(dependency)) {
         throw new Error(`${meta.registryName}: dependency ${dependency} is not in the production publication plan`);
       }
     }
   }
-  return packages;
+  return plan;
 }
 
 function templateInventory(workspaceRoot) {
@@ -582,6 +593,11 @@ function publishArtifact(cliBin, baseUrl, token, meta) {
   console.log(`PCKG_PUBLISHED_VERSION=${meta.registryName}@${meta.version}`);
 }
 
+/** `--libraries-only`: corelib member libraries without aggregate or templates. */
+function librariesOnly() {
+  return process.env.BESKID_PCKG_LIBRARIES_ONLY === "1";
+}
+
 async function main() {
   const dryRun = enabled("BESKID_PUBLISH_DRY_RUN");
   const bump = (process.env.BESKID_PCKG_VERSION_BUMP ?? "patch").trim().toLowerCase();
@@ -596,8 +612,15 @@ async function main() {
   const corelibRoot = resolveCorelibRoot();
   const templatesRoot = resolveTemplatesRoot();
   const corelibPackages = corelibInventory(corelibRoot);
-  const templatePackages = templateInventory(templatesRoot);
-  process.stdout.write(runTemplateQualityGate(cliBin, templatesRoot, corelibRoot));
+  // Templates build against the corelib aggregate, so they are verified and
+  // published only together with it.
+  let templatePackages = [];
+  if (librariesOnly()) {
+    console.log("[plan] templates skipped by --libraries-only (they depend on the corelib aggregate)");
+  } else {
+    templatePackages = templateInventory(templatesRoot);
+    process.stdout.write(runTemplateQualityGate(cliBin, templatesRoot, corelibRoot));
+  }
   const allPackages = [...corelibPackages, ...templatePackages];
 
   const plans = new Map();

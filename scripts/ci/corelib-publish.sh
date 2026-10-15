@@ -11,6 +11,10 @@
 # Usage: corelib-publish.sh [version-bump] [--dry-run]
 #   version-bump  patch | minor | major (default: patch)
 #   --dry-run     build and validate every artifact without registry access
+#   --libraries-only  publish the corelib member libraries only: no `corelib`
+#                 aggregate and no templates (which build against it). For a
+#                 release whose aggregate depends on packages that are not
+#                 workspace members; without it the run fails closed on that.
 # Env: BESKID_PCKG_API_KEY (required unless --dry-run)
 #      BESKID_PCKG_BASE_URL (default https://pckg.beskid-lang.org)
 #      BESKID_TOOLCHAIN_PREFIX (required extracted, verified release bundle)
@@ -18,11 +22,13 @@ set -euo pipefail
 
 VERSION_BUMP="patch"
 DRY_RUN=0
+LIBRARIES_ONLY=0
 for argument in "$@"; do
   case "$argument" in
     patch|minor|major) VERSION_BUMP="$argument" ;;
     --dry-run) DRY_RUN=1 ;;
-    *) echo "usage: corelib-publish.sh [patch|minor|major] [--dry-run]" >&2; exit 1 ;;
+    --libraries-only) LIBRARIES_ONLY=1 ;;
+    *) echo "usage: corelib-publish.sh [patch|minor|major] [--dry-run] [--libraries-only]" >&2; exit 1 ;;
   esac
 done
 
@@ -38,6 +44,7 @@ if [[ "$DRY_RUN" == 0 ]]; then
 fi
 export BESKID_PCKG_BASE_URL="${BESKID_PCKG_BASE_URL:-https://pckg.beskid-lang.org}"
 export BESKID_PCKG_VERSION_BUMP="$VERSION_BUMP"
+export BESKID_PCKG_LIBRARIES_ONLY="$LIBRARIES_ONLY"
 export BESKID_PUBLISH_DRY_RUN="$DRY_RUN"
 
 : "${BESKID_TOOLCHAIN_PREFIX:?BESKID_TOOLCHAIN_PREFIX must name a qualified extracted release bundle}"
