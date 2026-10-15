@@ -18,9 +18,10 @@ set -euo pipefail
 platform="$1"; build="$2"
 root="$(cd "$(dirname "$0")/../.." && pwd)"
 # Woodpecker's git plugin clones with --depth=1 even when depth: 0 is set; the provenance checks
-# below walk ancestry from this commit to the build source, so they need full history.
+# below walk ancestry and diff trees from this commit to the build source, so they need full history
+# with trees present: the plugin's --filter=tree:0 would fetch every tree lazily, one request each.
 if [[ "$(git -C "$root" rev-parse --is-shallow-repository)" == true ]]; then
-  git -C "$root" fetch --quiet --unshallow --no-tags origin
+  git -C "$root" fetch --quiet --unshallow --refetch --filter=blob:none --no-tags origin
 fi
 [[ "$build" =~ ^[1-9][0-9]*$ ]] || { echo 'build pipeline must be a positive number' >&2; exit 2; }
 [[ "${CI_PIPELINE_EVENT:-}" == manual && "${CI_PIPELINE_NUMBER:-}" =~ ^[1-9][0-9]*$ ]] || {
