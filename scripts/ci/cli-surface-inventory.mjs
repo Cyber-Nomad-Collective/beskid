@@ -8,7 +8,7 @@ export const SMOKE_LEAVES = [
   "dev import lib", "dev repl", "dev capabilities", "dev syntax parse", "dev syntax tree",
   "dev syntax clif", "dev project fetch", "dev project lock", "dev project graph",
   "dev bsol validate", "dev bsol migrate", "package search", "package info", "package pack",
-  "package template list", "toolchain status",
+  "package template list", "toolchain status", "dev toolchain-owner",
 ];
 // dev import is a branch; lib is its leaf. dev lsp has optional nested install.
 BRANCHES.push("dev import");
