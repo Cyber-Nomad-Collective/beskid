@@ -12,5 +12,7 @@
 
 ## 3. Verify
 
-- [ ] 3.1 Run `cargo test --locked -p beskid_engine --test native_kit use_after_collection` on the baseline runtime (expected failure: the services return a substitute) and with this change (expected pass).
-- [ ] 3.2 Run the affected crates, `beskid_tests_projects`, the Corelib tests (33/33), the Serialization Mod tests, `runtime_semantics` (9/9), and the interop suite against a release-shaped prefix.
+- [x] 3.1 Run `cargo test --locked -p beskid_engine --test native_kit use_after_collection` on the baseline runtime (expected failure: the services return a substitute) and with this change (expected pass).
+  - Evidence (2026-10-15, builder slot w2): baseline failed with `aot/str_len: ... substituted 9` (a freed string still reported its old length) and exit status 0; with compiler commit `5b859b18` the test passes in the static and the shared runtime library.
+- [x] 3.2 Run the affected crates, `beskid_tests_projects`, the Corelib tests (33/33), the Serialization Mod tests, `runtime_semantics` (9/9), and the interop suite against a release-shaped prefix.
+  - Evidence (2026-10-15, builder slot w2, compiler `5b859b18`): affected crates 651 passed, 0 failed; `beskid_tests_projects` 239 ok, 1 ignored, 0 failed of 240; Corelib 33/33; Serialization Mod 2/2; `runtime_semantics` 9/9; interop against a release-shaped prefix with the release fixture 32 passed, 0 failed.
