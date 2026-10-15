@@ -58,6 +58,31 @@ export interface PackageVersion {
 	hasReadme: boolean;
 }
 
+/**
+ * One row of `GET /api/packages/{name}/versions` and the `version` of a
+ * yank/unyank response (`PackageVersionSummaryResponse` in
+ * `beskid_pckg_contract`).
+ */
+export interface PackageVersionSummary {
+	id: string;
+	packageId: string;
+	packageName: string;
+	version: string;
+	isYanked: boolean;
+	checksumSha256: string;
+	sizeBytes: number;
+	publishedAtUtc: string;
+	yankedAtUtc: string | null;
+	hasReadme: boolean;
+}
+
+/** Response of `POST .../versions/{version}/yank` and `/unyank`. */
+export interface PackageVersionLifecycleResult {
+	success: boolean;
+	message: string;
+	version: PackageVersionSummary | null;
+}
+
 export interface PackageDetails {
 	package: PackageSummary;
 	versions: PackageVersion[];
@@ -354,6 +379,37 @@ export class PckgApiClient {
 				: null,
 		};
 	}
+	/** Version summaries of one package (owner sees private packages too). */
+	async listPackageVersions(
+		packageName: string,
+	): Promise<PackageVersionSummary[]> {
+		return this.get<PackageVersionSummary[]>(
+			`/api/packages/${encodeURIComponent(packageName)}/versions`,
+		);
+	}
+
+	/** Mark a published version as yanked; owner only. */
+	async yankVersion(
+		packageName: string,
+		version: string,
+	): Promise<PackageVersionLifecycleResult> {
+		return this.postJson<PackageVersionLifecycleResult>(
+			this.artifactPath(packageName, version, "yank"),
+			{},
+		);
+	}
+
+	/** Restore a yanked version; owner only. */
+	async unyankVersion(
+		packageName: string,
+		version: string,
+	): Promise<PackageVersionLifecycleResult> {
+		return this.postJson<PackageVersionLifecycleResult>(
+			this.artifactPath(packageName, version, "unyank"),
+			{},
+		);
+	}
+
 	async listPackageCommunityReviews(
 		packageName: string,
 	): Promise<PackageCommunityReview[]> {

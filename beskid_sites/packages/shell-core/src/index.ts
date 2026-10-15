@@ -20,7 +20,7 @@ export type {
 export { GlobalSearch } from "./client/global-search";
 export { getContext } from "./client/root-provider";
 export { ShellUiProvider, useShellUi } from "./client/shell-context";
-export { SidebarNav } from "./client/sidebar-nav";
+export { isSidebarItemActive, SidebarNav } from "./client/sidebar-nav";
 export { ThemeProvider } from "./client/theme-provider";
 export { ThemeToggle } from "./client/theme-toggle";
 export { Topbar, TopbarLeftSlot, TopbarRightSlot } from "./client/topbar";

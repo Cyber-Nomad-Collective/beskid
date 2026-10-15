@@ -7,7 +7,8 @@ import {
 	PackageDetailSkeleton,
 	PackageFilesSkeleton,
 	PublisherProfileSkeleton,
-	ReleaseCenterSkeleton,
+	ReleaseOverviewSkeleton,
+	ReleaseTableSkeleton,
 } from "./loading-skeletons";
 
 describe("loading skeletons", () => {
@@ -19,7 +20,11 @@ describe("loading skeletons", () => {
 		["Loading package files", <PackageFilesSkeleton key="files" />],
 		["Loading publisher profile", <PublisherProfileSkeleton key="publisher" />],
 		["Loading your packages", <MyPackagesSkeleton key="mine" />],
-		["Loading release center", <ReleaseCenterSkeleton key="release" />],
+		["Loading recent releases", <ReleaseOverviewSkeleton key="release" />],
+		[
+			"Loading API keys",
+			<ReleaseTableSkeleton key="keys" label="Loading API keys" />,
+		],
 		["Loading guide", <DocumentBodySkeleton key="guide" label="Loading guide" />],
 	])("announces %s as a busy status region", (label, node) => {
 		render(node);

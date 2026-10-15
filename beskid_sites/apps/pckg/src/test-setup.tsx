@@ -21,6 +21,27 @@ if (typeof window !== "undefined" && !window.matchMedia) {
 	});
 }
 
+// jsdom lacks ResizeObserver and pointer-capture APIs that the radix dialog,
+// checkbox and dropdown primitives call. Provide no-op stubs.
+if (typeof window !== "undefined" && typeof ResizeObserver === "undefined") {
+	class ResizeObserverStub {
+		observe() {}
+		unobserve() {}
+		disconnect() {}
+	}
+	window.ResizeObserver = ResizeObserverStub as unknown as typeof ResizeObserver;
+	globalThis.ResizeObserver =
+		ResizeObserverStub as unknown as typeof ResizeObserver;
+}
+if (typeof window !== "undefined" && typeof Element !== "undefined") {
+	if (!Element.prototype.hasPointerCapture) {
+		Element.prototype.hasPointerCapture = () => false;
+	}
+	if (!Element.prototype.scrollIntoView) {
+		Element.prototype.scrollIntoView = () => {};
+	}
+}
+
 // Mock @tanstack/react-router's router-bound primitives so shell components
 // (which use <Link> and useRouteContext) render in isolation under jsdom.
 vi.mock("@tanstack/react-router", () => ({
@@ -37,7 +58,10 @@ vi.mock("@tanstack/react-router", () => ({
 			{children}
 		</a>
 	),
-	useRouterState: () => ({ location: { pathname: "/" } }),
+	useRouterState: (options?: { select?: (state: unknown) => unknown }) => {
+		const state = { location: { pathname: "/" } };
+		return options?.select ? options.select(state) : state;
+	},
 	useRouteContext: () => ({ user: null }),
 	useNavigate: () => () => {},
 }));

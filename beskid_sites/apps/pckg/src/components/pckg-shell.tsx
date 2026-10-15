@@ -8,33 +8,90 @@ import {
 } from "@cyber-nomad-collective/beskid-shell-core";
 import { BeskidHub } from "@cyber-nomad-collective/beskid-ui-react";
 import { useNavigate, useRouterState } from "@tanstack/react-router";
-import { BookOpen, LayoutDashboard, Package } from "lucide-react";
+import {
+	BookOpen,
+	KeyRound,
+	LayoutDashboard,
+	ListChecks,
+	Package,
+	Rocket,
+	Tags,
+} from "lucide-react";
 import type { ReactNode } from "react";
 import { pckgApi } from "#/lib/api";
 import { ModeSwitcher } from "./mode-switcher";
 
 /** Signed-in entry points from the account menu on public pages. */
-const USER_MENU_LINKS = [
+export const USER_MENU_LINKS = [
 	{ label: "Dashboard", href: "/dashboard" },
 	{ label: "Release center", href: "/dashboard/release" },
+	{ label: "API keys", href: "/dashboard/release/keys" },
 ];
 
-const SIDEBAR_ITEMS: SidebarNavItem[] = [
-	{ id: "packages", label: "Packages", href: "/packages", icon: Package },
-	{ id: "docs", label: "Docs", href: "/docs", icon: BookOpen },
-	{
-		id: "dashboard",
-		label: "Dashboard",
-		href: "/dashboard",
-		icon: LayoutDashboard,
-	},
-	{
-		id: "release",
-		label: "Release center",
-		href: "/dashboard/release",
-		icon: Package,
-	},
-];
+const within = (pathname: string, href: string) =>
+	pathname === href || pathname.startsWith(`${href}/`);
+
+/**
+ * Sidebar navigation for the given pathname. The release center is a group
+ * whose sub-items (Overview, Releases, API keys) are the dashboard's
+ * secondary navigation; "Dashboard" itself covers the remaining dashboard
+ * pages (my packages).
+ */
+export function resolveSidebarItems(pathname: string): SidebarNavItem[] {
+	const inRelease = within(pathname, "/dashboard/release");
+	return [
+		{
+			id: "packages",
+			label: "Packages",
+			href: "/packages",
+			icon: Package,
+			active: within(pathname, "/packages"),
+		},
+		{
+			id: "docs",
+			label: "Docs",
+			href: "/docs",
+			icon: BookOpen,
+			active: within(pathname, "/docs"),
+		},
+		{
+			id: "dashboard",
+			label: "Dashboard",
+			href: "/dashboard",
+			icon: LayoutDashboard,
+			active: within(pathname, "/dashboard") && !inRelease,
+		},
+		{
+			id: "release",
+			label: "Release center",
+			href: "/dashboard/release",
+			icon: Rocket,
+			children: [
+				{
+					id: "release-overview",
+					label: "Overview",
+					href: "/dashboard/release",
+					icon: ListChecks,
+					active: pathname === "/dashboard/release",
+				},
+				{
+					id: "release-versions",
+					label: "Releases",
+					href: "/dashboard/release/versions",
+					icon: Tags,
+					active: within(pathname, "/dashboard/release/versions"),
+				},
+				{
+					id: "release-keys",
+					label: "API keys",
+					href: "/dashboard/release/keys",
+					icon: KeyRound,
+					active: within(pathname, "/dashboard/release/keys"),
+				},
+			],
+		},
+	];
+}
 
 /**
  * Shared pckg shell — wraps the shell-core `AppShell` with the pckg topbar
@@ -55,15 +112,7 @@ export function PckgShell({
 }) {
 	const pathname = useRouterState({ select: (s) => s.location.pathname });
 	const navigate = useNavigate();
-	const items = SIDEBAR_ITEMS.map((item) => ({
-		...item,
-		active:
-			item.id === "packages"
-				? pathname.startsWith("/packages")
-				: item.id === "docs"
-					? pathname.startsWith("/docs")
-					: pathname.startsWith("/dashboard"),
-	}));
+	const items = resolveSidebarItems(pathname);
 
 	return (
 		<AppShell

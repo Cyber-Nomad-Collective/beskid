@@ -3,6 +3,18 @@
 ## [Unreleased]
 ### Added
 
+- pckg: the dashboard's Release center is a sidebar group with its own
+  sections: Overview (`/dashboard/release`: the `beskid pckg configure` /
+  `pack` / `upload` recipe with copy buttons, recent releases, quick links),
+  Releases (`/dashboard/release/versions`: every published version across
+  the publisher's packages with confirmed yank / unyank) and API keys
+  (`/dashboard/release/keys`: key table with prefix, scopes, created date
+  and status; create dialog with scope selection that reveals the secret
+  once in a copyable panel; revoke confirmation; loading, empty and error
+  states). The account menu links to all three.
+- shell-core: `SidebarNavItem.children` renders a one-level sub-navigation
+  under a sidebar item; the parent is active when any child is.
+
 - pckg: `/packages/$name/files` browses the verified release artifact with
   the shared file explorer, rendered Markdown, Shiki highlighting with the
   canonical `@beskid/trudoc` Beskid grammar (HCL for BSOL manifests), and
@@ -13,6 +25,14 @@
   and guide tabs.
 
 ### Changed
+
+- pckg: the registry client exposes `listPackageVersions`, `yankVersion`
+  and `unyankVersion`.
+
+### Removed
+
+- pckg: the single-page release center (`release-center.tsx`) and its
+  browser `alert()` that was the only place a new API key was shown.
 
 - pckg: `/packages` is a compact, filterable list: instant search over
   name, description and tags, kind filters with counts, sorting by name,

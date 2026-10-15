@@ -227,15 +227,31 @@ export function MyPackagesSkeleton() {
 	);
 }
 
-export function ReleaseCenterSkeleton() {
+/** Table-shaped placeholder for the release center lists (keys, releases). */
+export function ReleaseTableSkeleton({
+	label,
+	rows = 4,
+}: {
+	label: string;
+	rows?: number;
+}) {
 	return (
-		<LoadingRegion
-			label="Loading release center"
-			className="mx-auto max-w-4xl space-y-6 px-5 py-10"
-		>
-			<HeadingBlock lead />
-			<Skeleton className="h-40 w-full" />
-			<Skeleton className="h-56 w-full" />
+		<LoadingRegion label={label} className="space-y-2">
+			<Skeleton className="h-10 w-full rounded-md" />
+			{Array.from({ length: rows }, (_, row) => (
+				<Skeleton key={row} className="h-12 w-full rounded-md" />
+			))}
+		</LoadingRegion>
+	);
+}
+
+/** Rows of the "Recent releases" card on the release center overview. */
+export function ReleaseOverviewSkeleton({ rows = 3 }: { rows?: number }) {
+	return (
+		<LoadingRegion label="Loading recent releases" className="space-y-2">
+			{Array.from({ length: rows }, (_, row) => (
+				<Skeleton key={row} className="h-8 w-full rounded-md" />
+			))}
 		</LoadingRegion>
 	);
 }

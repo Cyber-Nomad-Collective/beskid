@@ -27,7 +27,7 @@ function MyPackagesPage() {
 						Packages owned by your GitHub-backed Auth Hub subject.
 					</p>
 				</div>
-				<Link to="/dashboard" className={buttonVariants()}>
+				<Link to="/dashboard/release" className={buttonVariants()}>
 					Open release center
 				</Link>
 			</header>

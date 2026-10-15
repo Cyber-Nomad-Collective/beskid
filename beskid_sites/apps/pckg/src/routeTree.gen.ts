@@ -16,7 +16,6 @@ import { Route as ApiSplatRouteImport } from './routes/api/$'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as DashboardMyPackagesRouteImport } from './routes/dashboard/my-packages'
-import { Route as DashboardReleaseRouteImport } from './routes/dashboard/release'
 import { Route as PublicDocsIndexRouteImport } from './routes/_public/docs/index'
 import { Route as PublicDocsPackageRouteImport } from './routes/_public/docs/$package'
 import { Route as PublicPackagesIndexRouteImport } from './routes/_public/packages/index'
@@ -25,6 +24,9 @@ import { Route as PublicPublishersNameRouteImport } from './routes/_public/publi
 import { Route as ApiAuthCallbackRouteImport } from './routes/api/auth/callback'
 import { Route as ApiAuthLoginRouteImport } from './routes/api/auth/login'
 import { Route as ApiAuthLogoutRouteImport } from './routes/api/auth/logout'
+import { Route as DashboardReleaseIndexRouteImport } from './routes/dashboard/release/index'
+import { Route as DashboardReleaseKeysRouteImport } from './routes/dashboard/release/keys'
+import { Route as DashboardReleaseVersionsRouteImport } from './routes/dashboard/release/versions'
 import { Route as PublicPackagesNameFilesRouteImport } from './routes/_public/packages/$name_.files'
 
 const PublicRoute = PublicRouteImport.update({
@@ -59,11 +61,6 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
 const DashboardMyPackagesRoute = DashboardMyPackagesRouteImport.update({
   id: '/my-packages',
   path: '/my-packages',
-  getParentRoute: () => DashboardRoute,
-} as any)
-const DashboardReleaseRoute = DashboardReleaseRouteImport.update({
-  id: '/release',
-  path: '/release',
   getParentRoute: () => DashboardRoute,
 } as any)
 const PublicDocsIndexRoute = PublicDocsIndexRouteImport.update({
@@ -106,6 +103,22 @@ const ApiAuthLogoutRoute = ApiAuthLogoutRouteImport.update({
   path: '/api/auth/logout',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardReleaseIndexRoute = DashboardReleaseIndexRouteImport.update({
+  id: '/release/',
+  path: '/release/',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardReleaseKeysRoute = DashboardReleaseKeysRouteImport.update({
+  id: '/release/keys',
+  path: '/release/keys',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardReleaseVersionsRoute =
+  DashboardReleaseVersionsRouteImport.update({
+    id: '/release/versions',
+    path: '/release/versions',
+    getParentRoute: () => DashboardRoute,
+  } as any)
 const PublicPackagesNameFilesRoute = PublicPackagesNameFilesRouteImport.update({
   id: '/packages/$name_/files',
   path: '/packages/$name/files',
@@ -118,7 +131,6 @@ export interface FileRoutesByFullPath {
   '/api/$': typeof ApiSplatRoute
   '/api/health': typeof ApiHealthRoute
   '/dashboard/my-packages': typeof DashboardMyPackagesRoute
-  '/dashboard/release': typeof DashboardReleaseRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/docs/$package': typeof PublicDocsPackageRoute
   '/packages/$name': typeof PublicPackagesNameRoute
@@ -126,15 +138,17 @@ export interface FileRoutesByFullPath {
   '/api/auth/callback': typeof ApiAuthCallbackRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
+  '/dashboard/release/keys': typeof DashboardReleaseKeysRoute
+  '/dashboard/release/versions': typeof DashboardReleaseVersionsRoute
   '/docs/': typeof PublicDocsIndexRoute
   '/packages/': typeof PublicPackagesIndexRoute
+  '/dashboard/release/': typeof DashboardReleaseIndexRoute
   '/packages/$name/files': typeof PublicPackagesNameFilesRoute
 }
 export interface FileRoutesByTo {
   '/api/$': typeof ApiSplatRoute
   '/api/health': typeof ApiHealthRoute
   '/dashboard/my-packages': typeof DashboardMyPackagesRoute
-  '/dashboard/release': typeof DashboardReleaseRoute
   '/': typeof PublicIndexRoute
   '/dashboard': typeof DashboardIndexRoute
   '/docs/$package': typeof PublicDocsPackageRoute
@@ -143,8 +157,11 @@ export interface FileRoutesByTo {
   '/api/auth/callback': typeof ApiAuthCallbackRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
+  '/dashboard/release/keys': typeof DashboardReleaseKeysRoute
+  '/dashboard/release/versions': typeof DashboardReleaseVersionsRoute
   '/docs': typeof PublicDocsIndexRoute
   '/packages': typeof PublicPackagesIndexRoute
+  '/dashboard/release': typeof DashboardReleaseIndexRoute
   '/packages/$name/files': typeof PublicPackagesNameFilesRoute
 }
 export interface FileRoutesById {
@@ -154,7 +171,6 @@ export interface FileRoutesById {
   '/api/$': typeof ApiSplatRoute
   '/api/health': typeof ApiHealthRoute
   '/dashboard/my-packages': typeof DashboardMyPackagesRoute
-  '/dashboard/release': typeof DashboardReleaseRoute
   '/_public/': typeof PublicIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/_public/docs/$package': typeof PublicDocsPackageRoute
@@ -163,8 +179,11 @@ export interface FileRoutesById {
   '/api/auth/callback': typeof ApiAuthCallbackRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
+  '/dashboard/release/keys': typeof DashboardReleaseKeysRoute
+  '/dashboard/release/versions': typeof DashboardReleaseVersionsRoute
   '/_public/docs/': typeof PublicDocsIndexRoute
   '/_public/packages/': typeof PublicPackagesIndexRoute
+  '/dashboard/release/': typeof DashboardReleaseIndexRoute
   '/_public/packages/$name_/files': typeof PublicPackagesNameFilesRoute
 }
 export interface FileRouteTypes {
@@ -175,7 +194,6 @@ export interface FileRouteTypes {
     | '/api/$'
     | '/api/health'
     | '/dashboard/my-packages'
-    | '/dashboard/release'
     | '/dashboard/'
     | '/docs/$package'
     | '/packages/$name'
@@ -183,15 +201,17 @@ export interface FileRouteTypes {
     | '/api/auth/callback'
     | '/api/auth/login'
     | '/api/auth/logout'
+    | '/dashboard/release/keys'
+    | '/dashboard/release/versions'
     | '/docs/'
     | '/packages/'
+    | '/dashboard/release/'
     | '/packages/$name/files'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/api/$'
     | '/api/health'
     | '/dashboard/my-packages'
-    | '/dashboard/release'
     | '/'
     | '/dashboard'
     | '/docs/$package'
@@ -200,8 +220,11 @@ export interface FileRouteTypes {
     | '/api/auth/callback'
     | '/api/auth/login'
     | '/api/auth/logout'
+    | '/dashboard/release/keys'
+    | '/dashboard/release/versions'
     | '/docs'
     | '/packages'
+    | '/dashboard/release'
     | '/packages/$name/files'
   id:
     | '__root__'
@@ -210,7 +233,6 @@ export interface FileRouteTypes {
     | '/api/$'
     | '/api/health'
     | '/dashboard/my-packages'
-    | '/dashboard/release'
     | '/_public/'
     | '/dashboard/'
     | '/_public/docs/$package'
@@ -219,8 +241,11 @@ export interface FileRouteTypes {
     | '/api/auth/callback'
     | '/api/auth/login'
     | '/api/auth/logout'
+    | '/dashboard/release/keys'
+    | '/dashboard/release/versions'
     | '/_public/docs/'
     | '/_public/packages/'
+    | '/dashboard/release/'
     | '/_public/packages/$name_/files'
   fileRoutesById: FileRoutesById
 }
@@ -285,13 +310,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardMyPackagesRouteImport
       parentRoute: typeof DashboardRoute
     }
-    '/dashboard/release': {
-      id: '/dashboard/release'
-      path: '/release'
-      fullPath: '/dashboard/release'
-      preLoaderRoute: typeof DashboardReleaseRouteImport
-      parentRoute: typeof DashboardRoute
-    }
     '/_public/docs/': {
       id: '/_public/docs/'
       path: '/docs'
@@ -348,6 +366,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthLogoutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/release/': {
+      id: '/dashboard/release/'
+      path: '/release'
+      fullPath: '/dashboard/release/'
+      preLoaderRoute: typeof DashboardReleaseIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/release/keys': {
+      id: '/dashboard/release/keys'
+      path: '/release/keys'
+      fullPath: '/dashboard/release/keys'
+      preLoaderRoute: typeof DashboardReleaseKeysRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/release/versions': {
+      id: '/dashboard/release/versions'
+      path: '/release/versions'
+      fullPath: '/dashboard/release/versions'
+      preLoaderRoute: typeof DashboardReleaseVersionsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/_public/packages/$name_/files': {
       id: '/_public/packages/$name_/files'
       path: '/packages/$name/files'
@@ -383,14 +422,18 @@ const PublicRouteWithChildren =
 
 interface DashboardRouteChildren {
   DashboardMyPackagesRoute: typeof DashboardMyPackagesRoute
-  DashboardReleaseRoute: typeof DashboardReleaseRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardReleaseKeysRoute: typeof DashboardReleaseKeysRoute
+  DashboardReleaseVersionsRoute: typeof DashboardReleaseVersionsRoute
+  DashboardReleaseIndexRoute: typeof DashboardReleaseIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardMyPackagesRoute: DashboardMyPackagesRoute,
-  DashboardReleaseRoute: DashboardReleaseRoute,
   DashboardIndexRoute: DashboardIndexRoute,
+  DashboardReleaseKeysRoute: DashboardReleaseKeysRoute,
+  DashboardReleaseVersionsRoute: DashboardReleaseVersionsRoute,
+  DashboardReleaseIndexRoute: DashboardReleaseIndexRoute,
 }
 
 const DashboardRouteWithChildren = DashboardRoute._addFileChildren(

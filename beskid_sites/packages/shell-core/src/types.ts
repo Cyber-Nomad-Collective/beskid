@@ -44,6 +44,13 @@ export interface SidebarNavItem {
 	external?: boolean;
 	/** Optional tooltip (defaults to label). */
 	tooltip?: string;
+	/**
+	 * Nested entries rendered as a sub-navigation under this item. The parent
+	 * stays a link to its own `href`; it is shown as active when it or any
+	 * child is active. Sub-items are hidden while the sidebar is collapsed to
+	 * icons (the parent link still works there).
+	 */
+	children?: SidebarNavItem[];
 }
 
 export interface AppShellProps {

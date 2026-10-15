@@ -158,6 +158,55 @@ describe("PckgApiClient", () => {
 		expect(await requests[1].text()).toBe('{"name":"CI","scopes":["publish"]}');
 	});
 
+	it("lists package versions and toggles the yank lifecycle through owner-only routes", async () => {
+		const requests: Request[] = [];
+		const summary = {
+			id: "v1",
+			packageId: "p1",
+			packageName: "beskid.http",
+			version: "1.2.3",
+			isYanked: true,
+			checksumSha256: "abc",
+			sizeBytes: 10,
+			publishedAtUtc: "2026-07-16T00:00:00Z",
+			yankedAtUtc: "2026-07-17T00:00:00Z",
+			hasReadme: false,
+		};
+		const client = new PckgApiClient({
+			fetch: async (request) => {
+				const captured = new Request(request);
+				requests.push(captured);
+				return captured.method === "POST"
+					? Response.json({ success: true, message: "ok", version: summary })
+					: Response.json([summary]);
+			},
+		});
+
+		await expect(client.listPackageVersions("beskid.http")).resolves.toEqual([
+			summary,
+		]);
+		await expect(
+			client.yankVersion("beskid.http", "1.2.3"),
+		).resolves.toMatchObject({ success: true });
+		await expect(
+			client.unyankVersion("beskid.http", "1.2.3"),
+		).resolves.toMatchObject({ success: true });
+
+		expect(
+			requests.map(
+				(request) =>
+					`${request.method} ${new URL(request.url, "https://pckg.test").pathname}`,
+			),
+		).toEqual([
+			"GET /api/packages/beskid.http/versions",
+			"POST /api/packages/beskid.http/versions/1.2.3/yank",
+			"POST /api/packages/beskid.http/versions/1.2.3/unyank",
+		]);
+		expect(requests.every((request) => request.credentials === "include")).toBe(
+			true,
+		);
+	});
+
 	it("uses credentialed GitHub-subject admin user and permission contracts", async () => {
 		const requests: Request[] = [];
 		const client = new PckgApiClient({
