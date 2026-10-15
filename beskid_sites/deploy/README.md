@@ -64,6 +64,15 @@ The production host is `root@bdziam.dev`; the runtime directory defaults to
 - `BESKID_EDGE_NETWORK`, the existing host network used by the shared Caddy
   Docker proxy. Beskid joins this network but does not own its ports or proxy.
 
+- NodeBB community linking for `pckg` (optional, all-or-nothing):
+  `PCKG_NODEBB_API_URL`, `PCKG_NODEBB_ADMIN_TOKEN`,
+  `PCKG_NODEBB_PACKAGES_PARENT_CID`, and `PCKG_COMMUNITY_URL` in the host
+  `.env`. NodeBB itself (`community.beskid-lang.org`) is not part of this
+  Compose stack. Create the parent "Packages" category and a Write API token
+  with category administration rights in NodeBB, then set the four variables;
+  `pckg` reads them through `env_file`. Existing public packages are linked
+  once by an administrator with `POST /api/admin/community/reconcile`.
+
 Apply the runtime definition:
 
 ```bash

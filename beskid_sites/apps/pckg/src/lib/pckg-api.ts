@@ -21,6 +21,20 @@ export interface PackageSummary {
 	totalDownloads: number;
 	updatedAtUtc: string;
 	ownerDisplayName: string;
+	/** NodeBB discussion category; absent until the registry linked one. */
+	community: PackageCommunity | null;
+}
+
+export interface PackageCommunity {
+	url: string;
+	categoryId: number;
+	categorySlug: string;
+}
+
+/** Discussion link plus live NodeBB counters (null when NodeBB is unreachable). */
+export interface PackageCommunityStatus extends PackageCommunity {
+	topicCount: number | null;
+	postCount: number | null;
 }
 
 export interface PackageVersion {
@@ -55,7 +69,103 @@ export interface PackageBrowseEntry {
 
 export interface StructuredPackageDocs {
 	readme: string | null;
-	metadata: unknown | null;
+	/** Generated `.beskid/docs/api.json` (schema v4, graph-v1 navigation). */
+	api: ApiDocRoot | null;
+}
+
+export interface PackageFileList {
+	package: string;
+	version: string;
+	entries: PackageBrowseEntry[];
+}
+
+export type PackageFileEncoding = "utf-8" | "binary" | "too-large";
+
+export interface PackageFileContent {
+	path: string;
+	sizeBytes: number;
+	encoding: PackageFileEncoding;
+	limitBytes: number | null;
+	content: string | null;
+}
+
+// ── api.json (beskid_analysis::doc::ApiDocRoot, schema v4) ──────────────────
+
+export interface ApiTypeAnnotation {
+	display: string;
+	refItemId?: number;
+}
+
+export interface ApiParameterDoc {
+	name: string;
+	type: ApiTypeAnnotation;
+	modifier?: string;
+	docMarkdown?: string;
+}
+
+export interface ApiDocArgument {
+	name: string;
+	markdown: string;
+}
+
+export interface ApiItemDoc {
+	summaryMarkdown?: string;
+	returnsMarkdown?: string;
+	arguments?: ApiDocArgument[];
+	enumVariants?: ApiDocArgument[];
+	typeParameters?: ApiDocArgument[];
+}
+
+export interface ApiLocation {
+	file: string;
+	startLine: number;
+	startColumn: number;
+	endLine: number;
+	endColumn: number;
+}
+
+export type ApiItemKind =
+	| "module"
+	| "type"
+	| "enum"
+	| "contract"
+	| "function"
+	| "field"
+	| "enum_variant"
+	| "contract_method"
+	| "parameter"
+	| "test"
+	| (string & {});
+
+export interface ApiDocItem {
+	id?: number;
+	qualifiedName: string;
+	symbolKey?: string;
+	name: string;
+	kind: ApiItemKind;
+	visibility?: string | null;
+	location: ApiLocation;
+	parentId?: number;
+	memberIds?: number[];
+	displayName?: string;
+	modulePath?: string[];
+	signature?: string;
+	fieldType?: ApiTypeAnnotation;
+	returnType?: ApiTypeAnnotation;
+	parameters?: ApiParameterDoc[];
+	genericParameters?: Array<{ name: string }>;
+	docMarkdown?: string;
+	doc?: ApiItemDoc;
+	declaringPackage?: string;
+	tier?: string;
+}
+
+export interface ApiDocRoot {
+	schemaVersion: number;
+	navigationModel?: string;
+	generator: string;
+	source: string;
+	items: ApiDocItem[];
 }
 
 export interface Session {
@@ -247,6 +357,35 @@ export class PckgApiClient {
 		return this.postJson<PackageCommunityReview>(
 			`/api/packages/${encodeURIComponent(packageName)}/community-reviews`,
 			input,
+		);
+	}
+
+	async getPackageCommunity(
+		packageName: string,
+	): Promise<PackageCommunityStatus | null> {
+		const response = await this.request(
+			`/api/packages/${encodeURIComponent(packageName)}/community`,
+		);
+		if (response.status === 404) return null;
+		return this.readJson<PackageCommunityStatus>(response);
+	}
+
+	async listPackageFiles(
+		packageName: string,
+		version: string,
+	): Promise<PackageFileList> {
+		return this.get<PackageFileList>(
+			this.artifactPath(packageName, version, "files"),
+		);
+	}
+
+	async getPackageFile(
+		packageName: string,
+		version: string,
+		path: string,
+	): Promise<PackageFileContent> {
+		return this.get<PackageFileContent>(
+			`${this.artifactPath(packageName, version, "files/content")}?path=${encodeURIComponent(path)}`,
 		);
 	}
 

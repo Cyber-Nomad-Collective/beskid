@@ -25,6 +25,10 @@ export default defineConfig({
 	],
 	resolve: {
 		alias: {
+			"@beskid/beskid-grammar": path.resolve(
+				path.dirname(fileURLToPath(import.meta.url)),
+				"../../../beskid_web_common/packages/trudoc/grammars/beskid.tmLanguage.json",
+			),
 			"@beskid/material-theme": path.resolve(
 				path.dirname(fileURLToPath(import.meta.url)),
 				"../../../beskid_web_common/packages/beskid-ui/src/styles/theme.material.css",

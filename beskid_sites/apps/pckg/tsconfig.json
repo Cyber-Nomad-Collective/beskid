@@ -3,7 +3,10 @@
 	"include": ["**/*.ts", "**/*.tsx"],
 	"compilerOptions": {
 		"paths": {
-			"#/*": ["./src/*"]
+			"#/*": ["./src/*"],
+			"@beskid/beskid-grammar": [
+				"../../../beskid_web_common/packages/trudoc/grammars/beskid.tmLanguage.json"
+			]
 		},
 		"types": ["vite/client", "node"],
 		"lib": ["ES2022", "DOM", "DOM.Iterable"]

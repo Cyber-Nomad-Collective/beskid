@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "acc696d7d2b8f31a57277c46501b3198a38d698cef2e211b29ad5870c8550264",
+  "revision": "afd3dbc99c2712bdc0aed9ca535a49d7f39e37bb3174387e4a813f16ab137cf6",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
     "nodes": 1042,
     "capabilities": 197,
-    "requirements": 576,
+    "requirements": 579,
     "normativeSources": 304,
     "provisionalCapabilities": 52,
     "legacyArtifacts": 3189,
@@ -33079,6 +33079,17 @@
           "status": "Standard",
           "normative": true,
           "migrationStatus": "extracted"
+        },
+        {
+          "id": "BSP-REQ-7C362D267B97",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--cli--api-json-contract/spec.md",
+          "sourceHash": "b059f741906294ca656d5861f7d8a7c94f33962272a843ce04410c19743ebb1f",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Structured documentation serves the packed api.json",
+          "anchor": "requirement-structured-documentation-serves-the-packed-api-json"
         }
       ],
       "records": [
@@ -37675,6 +37686,28 @@
           "status": "Standard",
           "normative": true,
           "migrationStatus": "extracted"
+        },
+        {
+          "id": "BSP-REQ-53278981A295",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--registry-client--pckg-client-contract/spec.md",
+          "sourceHash": "96c282f0b9a2dee60cbb01476a9e5f51f535d099089373e0d9cf30d5a658048f",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Verified artifact file browsing",
+          "anchor": "requirement-verified-artifact-file-browsing"
+        },
+        {
+          "id": "BSP-REQ-A4FBEF2D7343",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--registry-client--pckg-client-contract/spec.md",
+          "sourceHash": "96c282f0b9a2dee60cbb01476a9e5f51f535d099089373e0d9cf30d5a658048f",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Registry-owned NodeBB discussion category",
+          "anchor": "requirement-registry-owned-nodebb-discussion-category"
         }
       ],
       "records": [
@@ -39108,7 +39141,7 @@
   "documents": [
     {
       "path": "AGENTS.md",
-      "title": "Beskid — guide for agents",
+      "title": "Beskid — Toolchain & Stack",
       "authority": "informative",
       "sourceHash": "3122d60e4fa0954925bfc9a3c37b819dd8f8d4d2a1dc7ffde4a8832f9c7276f0",
       "standardLinks": [],
@@ -60706,7 +60739,7 @@
       "decision": null,
       "title": "api.json contract",
       "status": "Standard",
-      "sourceHash": "611b68a1ab5900a4d5ccccc5c94b60cbdda748db1e6b6ea102ef3c7e37ab57b4"
+      "sourceHash": "b059f741906294ca656d5861f7d8a7c94f33962272a843ce04410c19743ebb1f"
     },
     {
       "id": "BSP-CAP-9AC9ED4570D4",
@@ -61234,7 +61267,7 @@
       "decision": null,
       "title": "pckg client contract",
       "status": "Standard",
-      "sourceHash": "e97fcde631c5966d3141236ffd26197a7be59035878f76b7fd76594a5cbd3716"
+      "sourceHash": "96c282f0b9a2dee60cbb01476a9e5f51f535d099089373e0d9cf30d5a658048f"
     },
     {
       "id": "BSP-CAP-5A23843812F0",

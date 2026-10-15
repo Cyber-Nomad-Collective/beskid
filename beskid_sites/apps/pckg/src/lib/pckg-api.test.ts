@@ -381,7 +381,15 @@ describe("PckgApiClient", () => {
 				const captured = new Request(request);
 				requests.push(captured);
 				if (captured.url.includes("/docs/structured"))
-					return Response.json({ readme: "# Demo", metadata: { title: "Demo" } });
+					return Response.json({
+						readme: "# Demo",
+						api: {
+							schemaVersion: 4,
+							generator: "t",
+							source: "src/main.bd",
+							items: [],
+						},
+					});
 				if (captured.url.endsWith("/docs") || captured.url.includes("/source/tree"))
 					return Response.json([{ path: "docs/guide.md", sizeBytes: 12 }]);
 				return new Response("module Demo", {
@@ -401,7 +409,7 @@ describe("PckgApiClient", () => {
 		).resolves.toBe("module Demo");
 		await expect(
 			client.getStructuredPackageDocs("beskid.demo", "1.2.3"),
-		).resolves.toMatchObject({ metadata: { title: "Demo" } });
+		).resolves.toMatchObject({ readme: "# Demo", api: { schemaVersion: 4 } });
 		await expect(
 			client.listPackageSource("beskid.demo", "1.2.3"),
 		).resolves.toEqual([{ path: "docs/guide.md", sizeBytes: 12 }]);
@@ -422,5 +430,71 @@ describe("PckgApiClient", () => {
 			"GET /api/packages/beskid.demo/versions/1.2.3/source/tree",
 			"GET /api/packages/beskid.demo/versions/1.2.3/source/file?path=src%2Fmain.bsk",
 		]);
+	});
+
+	it("browses verified artifact files and reads one file through the guarded content endpoint", async () => {
+		const requests: Request[] = [];
+		const client = new PckgApiClient({
+			fetch: async (request) => {
+				const captured = new Request(request);
+				requests.push(captured);
+				if (captured.url.includes("/files/content"))
+					return Response.json({
+						path: "src/main.bd",
+						sizeBytes: 12,
+						encoding: "utf-8",
+						limitBytes: null,
+						content: "module Main\n",
+					});
+				return Response.json({
+					package: "beskid.demo",
+					version: "1.2.3",
+					entries: [{ path: "src/main.bd", sizeBytes: 12 }],
+				});
+			},
+		});
+
+		await expect(
+			client.listPackageFiles("beskid.demo", "latest"),
+		).resolves.toEqual({
+			package: "beskid.demo",
+			version: "1.2.3",
+			entries: [{ path: "src/main.bd", sizeBytes: 12 }],
+		});
+		await expect(
+			client.getPackageFile("beskid.demo", "1.2.3", "src/main.bd"),
+		).resolves.toMatchObject({ encoding: "utf-8", content: "module Main\n" });
+		expect(new URL(requests[0].url, "https://pckg.test").pathname).toBe(
+			"/api/packages/beskid.demo/versions/latest/files",
+		);
+		expect(new URL(requests[1].url, "https://pckg.test").search).toBe(
+			"?path=src%2Fmain.bd",
+		);
+	});
+
+	it("resolves the community status and treats an unlinked package as null", async () => {
+		let calls = 0;
+		const client = new PckgApiClient({
+			fetch: async () => {
+				calls += 1;
+				return calls === 1
+					? Response.json({
+							url: "https://community.beskid-lang.org/category/12/beskid-demo",
+							categoryId: 12,
+							categorySlug: "12/beskid-demo",
+							topicCount: 3,
+							postCount: 9,
+						})
+					: new Response(null, { status: 404 });
+			},
+		});
+
+		await expect(
+			client.getPackageCommunity("beskid.demo"),
+		).resolves.toMatchObject({
+			categoryId: 12,
+			topicCount: 3,
+		});
+		await expect(client.getPackageCommunity("beskid.other")).resolves.toBeNull();
 	});
 });

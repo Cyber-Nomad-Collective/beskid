@@ -12,6 +12,10 @@ export default defineConfig({
 		alias: {
 			"#": path.resolve(rootDir, "src"),
 			"#/*": path.resolve(rootDir, "src"),
+			"@beskid/beskid-grammar": path.resolve(
+				rootDir,
+				"../../../beskid_web_common/packages/trudoc/grammars/beskid.tmLanguage.json",
+			),
 		},
 		dedupe: ["react", "react-dom"],
 	},

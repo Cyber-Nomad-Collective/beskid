@@ -55,7 +55,7 @@ export function PackageCard({ item }: { item: PackageSummary }) {
 					<Link
 						to="/docs/$package"
 						params={{ package: item.name }}
-						search={{ version: "", doc: "", source: "" }}
+						search={{ version: "", tab: "api", item: "", doc: "" }}
 						className="ml-auto font-medium text-primary hover:underline"
 					>
 						Docs

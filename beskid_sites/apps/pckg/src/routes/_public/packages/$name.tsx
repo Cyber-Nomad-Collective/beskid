@@ -13,6 +13,13 @@ function PackageDetailsPage() {
 		queryKey: ["package", name],
 		queryFn: () => pckgApi.getPackage(name),
 	});
+	// Counters are fetched separately so the package page never waits on NodeBB.
+	const community = useQuery({
+		queryKey: ["package-community", name],
+		enabled: details.data?.package.community != null,
+		retry: false,
+		queryFn: () => pckgApi.getPackageCommunity(name),
+	});
 
 	if (details.isPending)
 		return <p className="text-muted-foreground">Loading package…</p>;
@@ -30,10 +37,5 @@ function PackageDetailsPage() {
 		throw details.error;
 	}
 
-	const communitySlug = details.data.package.name
-		.toLowerCase()
-		.replace(/[^a-z0-9]+/g, "-")
-		.replace(/^-|-$/g, "");
-
-	return <PackageDetail details={details.data} communitySlug={communitySlug} />;
+	return <PackageDetail details={details.data} community={community.data} />;
 }

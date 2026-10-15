@@ -25,6 +25,7 @@ import { Route as PublicPublishersNameRouteImport } from './routes/_public/publi
 import { Route as ApiAuthCallbackRouteImport } from './routes/api/auth/callback'
 import { Route as ApiAuthLoginRouteImport } from './routes/api/auth/login'
 import { Route as ApiAuthLogoutRouteImport } from './routes/api/auth/logout'
+import { Route as PublicPackagesNameFilesRouteImport } from './routes/_public/packages/$name_.files'
 
 const PublicRoute = PublicRouteImport.update({
   id: '/_public',
@@ -105,6 +106,11 @@ const ApiAuthLogoutRoute = ApiAuthLogoutRouteImport.update({
   path: '/api/auth/logout',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PublicPackagesNameFilesRoute = PublicPackagesNameFilesRouteImport.update({
+  id: '/packages/$name_/files',
+  path: '/packages/$name/files',
+  getParentRoute: () => PublicRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof PublicIndexRoute
@@ -122,6 +128,7 @@ export interface FileRoutesByFullPath {
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/docs/': typeof PublicDocsIndexRoute
   '/packages/': typeof PublicPackagesIndexRoute
+  '/packages/$name/files': typeof PublicPackagesNameFilesRoute
 }
 export interface FileRoutesByTo {
   '/api/$': typeof ApiSplatRoute
@@ -138,6 +145,7 @@ export interface FileRoutesByTo {
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/docs': typeof PublicDocsIndexRoute
   '/packages': typeof PublicPackagesIndexRoute
+  '/packages/$name/files': typeof PublicPackagesNameFilesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -157,6 +165,7 @@ export interface FileRoutesById {
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/_public/docs/': typeof PublicDocsIndexRoute
   '/_public/packages/': typeof PublicPackagesIndexRoute
+  '/_public/packages/$name_/files': typeof PublicPackagesNameFilesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -176,6 +185,7 @@ export interface FileRouteTypes {
     | '/api/auth/logout'
     | '/docs/'
     | '/packages/'
+    | '/packages/$name/files'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/api/$'
@@ -192,6 +202,7 @@ export interface FileRouteTypes {
     | '/api/auth/logout'
     | '/docs'
     | '/packages'
+    | '/packages/$name/files'
   id:
     | '__root__'
     | '/_public'
@@ -210,6 +221,7 @@ export interface FileRouteTypes {
     | '/api/auth/logout'
     | '/_public/docs/'
     | '/_public/packages/'
+    | '/_public/packages/$name_/files'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -336,6 +348,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthLogoutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_public/packages/$name_/files': {
+      id: '/_public/packages/$name_/files'
+      path: '/packages/$name/files'
+      fullPath: '/packages/$name/files'
+      preLoaderRoute: typeof PublicPackagesNameFilesRouteImport
+      parentRoute: typeof PublicRoute
+    }
   }
 }
 
@@ -346,6 +365,7 @@ interface PublicRouteChildren {
   PublicPublishersNameRoute: typeof PublicPublishersNameRoute
   PublicDocsIndexRoute: typeof PublicDocsIndexRoute
   PublicPackagesIndexRoute: typeof PublicPackagesIndexRoute
+  PublicPackagesNameFilesRoute: typeof PublicPackagesNameFilesRoute
 }
 
 const PublicRouteChildren: PublicRouteChildren = {
@@ -355,6 +375,7 @@ const PublicRouteChildren: PublicRouteChildren = {
   PublicPublishersNameRoute: PublicPublishersNameRoute,
   PublicDocsIndexRoute: PublicDocsIndexRoute,
   PublicPackagesIndexRoute: PublicPackagesIndexRoute,
+  PublicPackagesNameFilesRoute: PublicPackagesNameFilesRoute,
 }
 
 const PublicRouteWithChildren =
