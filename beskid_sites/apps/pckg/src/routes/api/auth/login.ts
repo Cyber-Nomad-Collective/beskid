@@ -30,8 +30,15 @@ export const Route = createFileRoute("/api/auth/login")({
 					// Start the Authentik outpost flow directly and come back to
 					// the requested page (the dashboard by default).
 					const next = safeNextPath(url.searchParams.get("next"));
-					const start = new URL("/outpost.goauthentik.io/start", url.origin);
-					start.searchParams.set("rd", new URL(next, url.origin).toString());
+					// Behind Caddy the server sees plain HTTP; the public scheme
+					// arrives as X-Forwarded-Proto. Only the scheme is taken from it.
+					const scheme =
+						request.headers.get("x-forwarded-proto") === "https"
+							? "https:"
+							: url.protocol;
+					const origin = `${scheme}//${url.host}`;
+					const start = new URL("/outpost.goauthentik.io/start", origin);
+					start.searchParams.set("rd", new URL(next, origin).toString());
 					return new Response(null, {
 						status: 302,
 						headers: { Location: start.toString() },
