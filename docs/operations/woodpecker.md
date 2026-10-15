@@ -63,28 +63,64 @@ text. `setup-handoff-sftp.sh` provisions the restricted server-side inboxes.
 ## Operator commands
 
 The CLI uses its authenticated context for `https://ci.beskid-lang.org`.
-Run all targets from one branch revision; retain that exact source for release
-preparation. Replace the example version and build number with reviewed values.
+Build all targets from one branch revision; that revision is the release
+candidate. Replace the example version and pipeline numbers with reviewed values.
+
+Each platform is its own pipeline, so a failure on one platform does not fail
+the others, and one platform can be rebuilt alone. `BESKID_TASK=build` starts
+all three platform workflows in one pipeline; each still uploads its own
+handoff. Every handoff records its platform, pipeline number, source commit,
+compiler commit and version in `UPLOAD_COMPLETE`, and its file checksums in
+`UPLOAD_SHA256SUMS`.
 
 ```bash
 woodpecker-cli pipeline create Cyber-Nomad-Collective/beskid --branch main \
   --var BESKID_TASK=validate
+# One platform per pipeline:
+woodpecker-cli pipeline create Cyber-Nomad-Collective/beskid --branch main \
+  --var BESKID_TASK=build-linux --var BESKID_RELEASE_VERSION=0.4.744
+woodpecker-cli pipeline create Cyber-Nomad-Collective/beskid --branch main \
+  --var BESKID_TASK=build-macos --var BESKID_RELEASE_VERSION=0.4.744
+woodpecker-cli pipeline create Cyber-Nomad-Collective/beskid --branch main \
+  --var BESKID_TASK=build-windows --var BESKID_RELEASE_VERSION=0.4.744
+# Or all three platforms in one pipeline:
 woodpecker-cli pipeline create Cyber-Nomad-Collective/beskid --branch main \
   --var BESKID_TASK=build --var BESKID_RELEASE_VERSION=0.4.744
+# Collect the candidate and prepare the release:
+woodpecker-cli pipeline create Cyber-Nomad-Collective/beskid --branch main \
+  --var BESKID_TASK=release --var BESKID_RELEASE_VERSION=0.4.744
+# Optional: pin each platform to one build pipeline.
 woodpecker-cli pipeline create Cyber-Nomad-Collective/beskid --branch main \
   --var BESKID_TASK=release --var BESKID_RELEASE_VERSION=0.4.744 \
-  --var BESKID_BUILD_PIPELINE_NUMBER=41
+  --var BESKID_LINUX_BUILD=41 --var BESKID_MACOS_BUILD=43 --var BESKID_WINDOWS_BUILD=47
 ```
+
+A version tag `v<version>` starts one pipeline with the three platform
+workflows. It uploads three handoffs that the release collects in the same way.
+
+`release` collects the candidate with `scripts/ci/woodpecker-fetch-handoffs.sh`.
+For the release source commit it lists each platform inbox and selects the
+newest handoff of that commit whose `UPLOAD_COMPLETE` marker is present, or the
+pinned pipeline. A handoff without the marker is an unfinished upload and is
+skipped. A complete handoff of another release version is skipped. The
+collection fails when a platform has no complete handoff of the source, when a
+pinned pipeline has none, when a selected marker names another platform,
+source, compiler or pipeline, or when a checksum does not match. It never falls
+back to an older handoff after a selected one fails. The aggregated
+`validated-evidence.json` records each platform's pipeline number and
+`UPLOAD_SHA256SUMS` digest in `handoffs`.
 
 `release` only prepares local output and needs no publisher credential.
 After reviewing the prepared state and exact artifact hashes, run
-`scripts/ci/woodpecker-release.sh <build-run> <version>` from a clean local
+`scripts/ci/woodpecker-release.sh <version> <linux-build> <macos-build> <windows-build>`
+with the collected pipeline numbers from a clean local
 `main` checkout on the trusted manual release host, with
 `BESKID_MANUAL_PUBLISH=1`, `BESKID_PUBLISH_RELEASE=1`, and `GH_TOKEN` supplied
 to that process outside Woodpecker. The host must have the selected handoffs
 at `/woodpecker-handoff` and a durable `/woodpecker-output` directory. The
 script checks the source SHA, compiler/distribution
-gitlinks, version, all three targets, upload completion, and checksums before
+gitlinks, version, all three targets, each platform's own pipeline number,
+upload completion, and checksums before
 calling the existing stream publisher. A changed `main` cannot consume an older
 build: rebuild from the selected revision. Immutable release retries must be
 byte-identical; conflicting assets are not overwritten.
@@ -102,7 +138,7 @@ manual-only publisher guard. Without a matching record, publication remains
 blocked; structural smoke evidence alone is not trusted VM provenance.
 
 Review the final `main` commit and the exact setup executable in the Windows
-handoff from the chosen build run. Supply this JSON to the manual publisher,
+handoff collected for the release. Supply this JSON to the manual publisher,
 replacing the example values with the reviewed facts:
 
 ```json
@@ -312,7 +348,8 @@ all targets as unconfirmed until an operator checks the Marketplace. Hosted
 Marketplace bytes can be service-signed; do not claim their hashes equal the
 staged VSIX hashes.
 
-The SFTP inbox is `/var/lib/woodpecker-handoff/<role>/incoming/<build>-<sha>/<role>`.
+The SFTP inbox is `/var/lib/woodpecker-handoff/<role>/incoming/<build>-<sha>/<role>`,
+where `<build>` is the pipeline number of that platform's build.
 Prepared output is `/var/lib/woodpecker/beskid-output/releases/<release-run>-<sha>`.
 Each invocation creates a new private snapshot; interrupted output remains for
 inspection. No separate controller, signing keys, or gate protocol is required.
