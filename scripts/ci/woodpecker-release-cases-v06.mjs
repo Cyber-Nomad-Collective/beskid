@@ -175,7 +175,9 @@ export function ProduceReleaseCases(options) {
         retain(output, binding.input.path, archive);
         const root = join(scratch, "inputs", binding.input.id);
         mkdirSync(root, { recursive: true });
-        const extract = spawnSync("tar", ["-xf", join(output, binding.input.path), "-C", root], { encoding: "utf8", windowsHide: true });
+        // Stream the verified bytes: GNU tar reads an archive name like C:/... as a remote host:path
+        // (Windows agent), and bsdtar has no --force-local, so the archive never appears as a name.
+        const extract = spawnSync("tar", ["-xf", "-", "-C", root], { input: archive, encoding: "utf8", windowsHide: true });
         if (extract.error || extract.status !== 0) fail(`cannot extract input ${binding.input.id}: ${extract.error?.message || extract.stderr}`);
         inputs.set(binding.input.id, root);
       }
