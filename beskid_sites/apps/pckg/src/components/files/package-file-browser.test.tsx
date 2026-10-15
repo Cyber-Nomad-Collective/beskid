@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { PackageFileBrowser } from "./package-file-browser";
 
@@ -37,7 +37,7 @@ function renderBrowser(
 }
 
 describe("PackageFileBrowser", () => {
-	it("renders the tree, highlights the selected source and reports selections", () => {
+	it("renders the tree, highlights the selected source and reports selections", async () => {
 		const onSelect = renderBrowser();
 		expect(screen.getByText("3 files · 4.0 KiB")).toBeInTheDocument();
 		expect(
@@ -46,8 +46,11 @@ describe("PackageFileBrowser", () => {
 		expect(
 			screen.getByRole("heading", { level: 2, name: "src/main.bd" }),
 		).toBeInTheDocument();
-		expect(screen.getByText("pub")).toHaveClass("pckg-tok-keyword");
-		expect(screen.getByText("Main")).toHaveClass("pckg-tok-type");
+		await waitFor(() =>
+			expect(screen.getByText("pub").getAttribute("style")).toContain(
+				"--shiki-dark",
+			),
+		);
 
 		fireEvent.click(screen.getByText("README.md"));
 		expect(onSelect).toHaveBeenCalledWith("README.md");

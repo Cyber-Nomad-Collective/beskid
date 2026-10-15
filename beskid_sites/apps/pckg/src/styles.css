@@ -30,31 +30,9 @@
 
 /* ── Package file viewer and rendered Markdown ──────────────────────────── */
 
-.pckg-code .pckg-tok-keyword {
-	color: var(--primary);
-	font-weight: 600;
-}
-.pckg-code .pckg-tok-type {
-	color: var(--chart-2, var(--primary));
-}
-.pckg-code .pckg-tok-string {
-	color: var(--chart-3, var(--foreground));
-}
-.pckg-code .pckg-tok-number {
-	color: var(--chart-4, var(--foreground));
-}
-.pckg-code .pckg-tok-comment {
-	color: var(--muted-foreground);
-	font-style: italic;
-}
-.pckg-code .pckg-tok-attribute {
-	color: var(--chart-5, var(--primary));
-}
-.pckg-code .pckg-tok-property {
-	color: var(--chart-1, var(--primary));
-}
-.pckg-code .pckg-tok-punctuation {
-	color: var(--muted-foreground);
+/* Shiki writes light colors inline and dark colors as `--shiki-dark`. */
+[data-theme="dark"] .pckg-code span[style*="--shiki-dark"] {
+	color: var(--shiki-dark) !important;
 }
 
 .pckg-prose {

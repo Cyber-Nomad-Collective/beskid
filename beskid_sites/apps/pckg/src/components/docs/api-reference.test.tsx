@@ -54,7 +54,9 @@ describe("ApiReference", () => {
 		expect(
 			screen.getByRole("heading", { level: 2, name: "Definition" }),
 		).toBeInTheDocument();
-		expect(screen.getByText("type")).toBeInTheDocument();
+		expect(
+			document.querySelector('[data-language="beskid"]')?.textContent,
+		).toContain("type List<T>");
 		expect(
 			screen.getByRole("heading", { level: 2, name: "Fields" }),
 		).toBeInTheDocument();

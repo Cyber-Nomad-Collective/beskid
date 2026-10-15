@@ -10,12 +10,16 @@ through `GET /api/packages/{name}/versions/{version}/files/content?path=`.
 `version` MAY be `latest`, which SHALL resolve to the greatest non-yanked
 release and SHALL be echoed as the concrete version in the listing. The
 registry SHALL exclude any entry with a dot-prefixed path segment, except the
-generated `.beskid/docs/` tree, from listings and reads. A traversal path, a
+generated `.beskid/docs/` tree, from listings and reads. When an entry inside
+`docs/`, `src/`, `content/`, `workspace/`, `item/`, or `.beskid/docs/` has a
+dot-prefixed segment below that root, the registry SHALL refuse to browse the
+artifact, and every browse route for that version SHALL answer not-found. A
+traversal path, a
 hidden path, an unknown path, a yanked version, or a private package requested
 by a non-owner SHALL answer with the same not-found response. A file read SHALL
 report `encoding: "utf-8"` with its text, `encoding: "binary"` without bytes
 when the entry contains a NUL byte or is not UTF-8, or `encoding: "too-large"`
-with the byte limit when the entry exceeds the browse read limit.
+with the byte limit when the entry exceeds the 1 MiB browse read limit.
 
 **Stable ID:** `BSP-REQ-PCKG-ARTIFACT-FILES-001`
 

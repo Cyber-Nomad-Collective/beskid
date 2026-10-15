@@ -1,11 +1,15 @@
 import { cn } from "@cyber-nomad-collective/beskid-ui-react";
-import { useMemo } from "react";
-import { type Language, tokenize } from "#/lib/highlight";
+import type { CSSProperties } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { highlightLines as highlight } from "#/lib/highlighter";
+import type { Language } from "#/lib/languages";
+
+type Line = { text: string; style?: CSSProperties }[];
 
 /**
- * Line-numbered source view with the dependency-free tokenizer. Token kinds
- * map to `pckg-tok-*` classes defined in `styles.css` so colors follow the
- * shared Beskid design tokens in both themes.
+ * Line-numbered source view. Plain text renders first (and during SSR); Shiki
+ * tokens replace it once the highlighter loads. Dark colors arrive as the
+ * `--shiki-dark` variable that `styles.css` applies under the dark theme.
  */
 export function CodeView({
 	source,
@@ -21,10 +25,43 @@ export function CodeView({
 	/** Inclusive 1-based line range to emphasize (for example a declaration). */
 	highlightLines?: [number, number];
 }) {
-	const lines = useMemo(
-		() => tokenize(source.replace(/\n$/, ""), language),
-		[source, language],
+	const text = source.replace(/\n$/, "");
+	const plain = useMemo<Line[]>(
+		() => text.split("\n").map((line) => [{ text: line }]),
+		[text],
 	);
+	const [highlighted, setHighlighted] = useState<{
+		key: string;
+		lines: Line[];
+	}>();
+	const key = `${language}\u0000${text}`;
+
+	useEffect(() => {
+		let current = true;
+		highlight(text, language).then(
+			(tokens) => {
+				if (current && tokens) {
+					setHighlighted({
+						key,
+						lines: tokens.map((line) =>
+							line.map((token) => ({
+								text: token.content,
+								style: token.htmlStyle as CSSProperties | undefined,
+							})),
+						),
+					});
+				}
+			},
+			() => {
+				// Highlighting is cosmetic; the plain rendering stays on failure.
+			},
+		);
+		return () => {
+			current = false;
+		};
+	}, [key, text, language]);
+
+	const lines = highlighted?.key === key ? highlighted.lines : plain;
 	const width = String(startLine + lines.length - 1).length;
 	return (
 		<pre
@@ -55,17 +92,12 @@ export function CodeView({
 								{number}
 							</span>
 							<span className="whitespace-pre px-4">
-								{tokens.map((token, tokenIndex) => {
+								{tokens.map((token, tokenIndex) => (
 									// Tokens are positional and immutable, so the index is a stable key.
-									const key = `${number}:${tokenIndex}`;
-									return token.kind === "plain" ? (
-										<span key={key}>{token.text}</span>
-									) : (
-										<span key={key} className={`pckg-tok-${token.kind}`}>
-											{token.text}
-										</span>
-									);
-								})}
+									<span key={`${number}:${tokenIndex}`} style={token.style}>
+										{token.text}
+									</span>
+								))}
 							</span>
 						</span>
 					);

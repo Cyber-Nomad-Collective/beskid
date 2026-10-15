@@ -8,7 +8,7 @@ import { useMemo } from "react";
 import { CodeView } from "#/components/code-view";
 import { Markdown } from "#/components/markdown";
 import { buildFileTree, formatBytes } from "#/lib/file-tree";
-import { isMarkdownPath, languageForPath } from "#/lib/highlight";
+import { isMarkdownPath, languageForPath } from "#/lib/languages";
 import type { PackageBrowseEntry, PackageFileContent } from "#/lib/pckg-api";
 
 export type FileQueryState =

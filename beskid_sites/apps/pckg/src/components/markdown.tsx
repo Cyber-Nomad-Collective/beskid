@@ -2,7 +2,7 @@ import { cn } from "@cyber-nomad-collective/beskid-ui-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { CodeView } from "#/components/code-view";
-import type { Language } from "#/lib/highlight";
+import type { Language } from "#/lib/languages";
 
 const FENCE_LANGUAGES: Record<string, Language> = {
 	beskid: "beskid",
