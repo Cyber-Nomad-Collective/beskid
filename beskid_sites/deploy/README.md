@@ -68,11 +68,30 @@ The production host is `root@bdziam.dev`; the runtime directory defaults to
   `PCKG_NODEBB_API_URL`, `PCKG_NODEBB_BOT_TOKEN`,
   `PCKG_NODEBB_PACKAGES_CID`, and `PCKG_COMMUNITY_URL` in the host `.env`.
   NodeBB itself (`community.beskid-lang.org`) is not part of this Compose
-  stack. Create the "Packages" category and a bot user with a Write API token
-  (it opens one thread per public package and replies on every release), then
-  set the four variables; `pckg` reads them through `env_file`. Existing
-  public packages get their threads once an administrator calls
-  `POST /api/admin/community/reconcile`.
+  stack. `nodebb/provision.js` creates the "Packages" category, the
+  `Beskid Packages` bot user in the `Package bots` group (the only group that
+  opens threads there, exempt from the post queue and posting delays), and
+  registers the bot token you pass as `PCKG_NODEBB_BOT_TOKEN`. It prints the
+  category id for `PCKG_NODEBB_PACKAGES_CID`. The bot opens one thread per
+  public package and replies on every release. Set the four variables;
+  `pckg` reads them through `env_file`. Existing public packages get their
+  threads once an administrator calls `POST /api/admin/community/reconcile`.
+
+- NodeBB branding: `nodebb/provision.js` also applies the Emerald Ridge look
+  (`beskid-light.scss` as Bootstrap variables, the selectable `Beskid Dark`
+  skin from `beskid-dark.scss`, `beskid-custom.scss` as custom CSS, logo,
+  favicon, title, and category colors). It is idempotent; run it inside the
+  NodeBB container and restart the container, whose entrypoint rebuilds the
+  assets:
+
+  ```bash
+  docker cp beskid_sites/deploy/nodebb beskid-community:/tmp/beskid-nodebb
+  docker exec -e PCKG_NODEBB_BOT_TOKEN="$token" beskid-community \
+    node /tmp/beskid-nodebb/provision.js
+  docker restart beskid-community
+  ```
+
+  `DRY_RUN=1` reports the planned changes without writing.
 
 Apply the runtime definition:
 

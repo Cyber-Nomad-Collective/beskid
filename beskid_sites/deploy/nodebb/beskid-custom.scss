@@ -19,7 +19,8 @@ body.skin-beskid-dark [component="brand/logo"] {
 	content: url("https://beskid-lang.org/logo-dark.svg");
 }
 
+// The ridge SVGs carry only a viewBox, so they need explicit dimensions.
 [component="brand/logo"] {
-	max-height: 2rem;
-	width: auto;
+	width: 2rem;
+	height: 2rem;
 }
