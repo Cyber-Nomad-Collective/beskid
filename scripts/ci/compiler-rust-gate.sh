@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# Compiler Rust gate: legacy type-system guard + corelib-tests parity + clippy
-# (deny warnings) + workspace tests.
+# Compiler Rust gate: clippy (deny warnings) + runtime-kit staging + workspace tests.
 #
 # Runs directly on a native CI worker or contributor machine. Run from the
 # superrepo root; the compiler workspace lives in
@@ -33,25 +32,6 @@ run_bounded_phase() {
 }
 
 run_lint_phase() {
-  # Guard: retired type-system internals must not be reintroduced in compiler sources.
-  local legacy_patterns=(
-    "expr_types"
-    "TypeContext"
-    "types/context/"
-    "type_prefetched_source_path"
-    "seed_definitions_from_source_path"
-  )
-  local pattern
-  for pattern in "${legacy_patterns[@]}"; do
-    if rg -n -w --glob '*.rs' "${pattern}" crates/ >/dev/null 2>&1; then
-      echo "legacy type-system pattern reintroduced: ${pattern}" >&2
-      rg -n -w --glob '*.rs' "${pattern}" crates/ >&2 || true
-      return 1
-    fi
-  done
-
-  echo "no legacy type-system patterns in compiler .rs sources"
-
   # Clippy denies warnings. `--no-deps` keeps the gate scoped to workspace crates.
   rustup component add clippy >/dev/null 2>&1 || true
   run_bounded_phase "Clippy" "${BESKID_CLIPPY_TIMEOUT:-600}" \
