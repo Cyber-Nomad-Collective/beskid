@@ -44,8 +44,10 @@ test ! -s "${marker}"
 test "$(run_workflow_guard v0.5.1)" -eq 73
 test "$(cat "${marker}")" = reached
 
-for file in linux macos windows; do
+for file in linux macos; do
   grep -Fq 'woodpecker-release-tag-guard.sh "$${CI_COMMIT_TAG}"' "${root}/.woodpecker/${file}.yml"
 done
+# The Windows build body lives in a script (see woodpecker-workflow-contract.test.sh).
+grep -Fq 'woodpecker-release-tag-guard.sh "${CI_COMMIT_TAG}"' "${root}/scripts/ci/woodpecker-build-windows.sh"
 
 echo 'Woodpecker release tag guard behavior tests OK'

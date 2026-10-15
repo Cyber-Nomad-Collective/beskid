@@ -9,10 +9,22 @@ env_example="${ROOT}/deploy/woodpecker/.env.example"
 test -d "${workflow_dir}"
 test ! -e "${workflow_dir}/standard.yml"
 
+# The Windows agent hands inline commands to MSYS bash on one command line, where a long script
+# parses differently depending on its length, so the Windows build body lives in a script file.
+windows_build="${ROOT}/scripts/ci/woodpecker-build-windows.sh"
+test -f "${windows_build}"
+grep -Fxq '      - bash scripts/ci/woodpecker-build-windows.sh' "${workflow_dir}/windows.yml"
+build_body() {
+  case "$1" in
+    windows) printf '%s\n' "${windows_build}" ;;
+    *) printf '%s\n' "${workflow_dir}/$1.yml" ;;
+  esac
+}
+
 for name in linux macos windows; do
   file="${workflow_dir}/${name}.yml"
   test -f "${file}"
-  grep -Fq 'woodpecker-build-platform.sh' "${file}"
+  grep -Fq 'woodpecker-build-platform.sh' "$(build_body "${name}")"
   grep -Fq 'recursive: false' "${file}"
 done
 
@@ -40,11 +52,12 @@ for file in "${workflow_dir}/macos.yml" "${workflow_dir}/windows.yml"; do
   grep -Fq 'BESKID_TASK == "build"' "${file}"
 done
 
-for file in "${workflow_dir}/linux.yml" "${workflow_dir}/macos.yml" "${workflow_dir}/windows.yml"; do
+for file in "${workflow_dir}/linux.yml" "${workflow_dir}/macos.yml"; do
   grep -Fq 'woodpecker-release-tag-guard.sh "$${CI_COMMIT_TAG}" --check-only' "${file}"
 done
+grep -Fq 'woodpecker-release-tag-guard.sh "${CI_COMMIT_TAG}" --check-only' "${windows_build}"
 
-for file in "${workflow_dir}/linux.yml" "${workflow_dir}/macos.yml" "${workflow_dir}/windows.yml"; do
+for file in "${workflow_dir}/linux.yml" "${workflow_dir}/macos.yml" "${windows_build}"; do
   grep -Fq 'woodpecker-package-platform.mjs' "${file}"
   grep -Fq 'package-result.json' "${file}"
   ! grep -Fq 'BESKID_RELEASE_EVIDENCE_DIR' "${file}"
@@ -81,7 +94,7 @@ grep -Fq 'apt-get install -y --no-install-recommends ca-certificates clang gh gi
 # This contract owns only native build and standard validation lanes. Editor,
 # security and protected publishing lanes have separate policy contracts;
 # adding them must not grant publication authority to these four workflows.
-if grep -iqE 'from_secret|GH_TOKEN|S3|rclone' "${workflow_dir}/linux.yml" "${workflow_dir}/macos.yml" "${workflow_dir}/windows.yml"; then
+if grep -iqE 'from_secret|GH_TOKEN|S3|rclone' "${workflow_dir}/linux.yml" "${workflow_dir}/macos.yml" "${workflow_dir}/windows.yml" "${windows_build}"; then
   echo 'Woodpecker build workflows must not publish or stage artifacts externally' >&2
   exit 1
 fi
