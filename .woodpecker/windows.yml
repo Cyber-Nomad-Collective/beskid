@@ -85,5 +85,8 @@ steps:
 when:
   - event: tag
     ref: refs/tags/v*
+  # Each platform is its own pipeline with BESKID_TASK=build-<platform>, so one platform can be rebuilt
+  # alone; BESKID_TASK=build starts all three. Woodpecker evaluates an unset variable as nil, so these
+  # equality tests are false, never an error, when BESKID_TASK is absent.
   - event: manual
-    evaluate: 'BESKID_TASK == "build"'
+    evaluate: 'BESKID_TASK == "build" || BESKID_TASK == "build-windows"'

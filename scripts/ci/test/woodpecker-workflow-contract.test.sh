@@ -52,6 +52,41 @@ for file in "${workflow_dir}/macos.yml" "${workflow_dir}/windows.yml"; do
   grep -Fq 'BESKID_TASK == "build"' "${file}"
 done
 
+# Manual selection matrix. Each platform is its own pipeline (BESKID_TASK=build-<platform>) so one
+# platform can fail or be rebuilt without the others; BESKID_TASK=build starts all three, each uploading
+# its own handoff; release collects. The manual `evaluate` expressions are evaluated here with the
+# Woodpecker semantics they rely on: an unset variable is nil, so an equality test is false.
+node - "${workflow_dir}" <<'NODE'
+const { readFileSync } = require("node:fs");
+const dir = process.argv[2];
+const manual = name => {
+  const text = readFileSync(`${dir}/${name}.yml`, "utf8"), when = text.slice(text.lastIndexOf("\nwhen:"));
+  const match = /- event: manual\n(?:\s*#.*\n)*\s*evaluate: '([^']*)'/.exec(when);
+  if (!match) throw new Error(`${name}.yml has no manual evaluate condition`);
+  if (!/^BESKID_TASK == "[a-z-]+"( \|\| BESKID_TASK == "[a-z-]+")*$/.test(match[1])) throw new Error(`${name}.yml manual condition is not a plain BESKID_TASK equality chain: ${match[1]}`);
+  return task => match[1].split(" || ").some(term => task !== undefined && term === `BESKID_TASK == "${task}"`);
+};
+const workflows = ["linux", "macos", "windows", "release"];
+const select = Object.fromEntries(workflows.map(name => [name, manual(name)]));
+const expected = {
+  build: ["linux", "macos", "windows"],
+  "build-linux": ["linux"], "build-macos": ["macos"], "build-windows": ["windows"],
+  validate: ["linux"], release: ["release"], platform: [], unset: [],
+};
+for (const [task, names] of Object.entries(expected)) {
+  const actual = workflows.filter(name => select[name](task === "unset" ? undefined : task));
+  if (JSON.stringify(actual) !== JSON.stringify(names)) throw new Error(`BESKID_TASK=${task} starts [${actual}], expected [${names}]`);
+}
+NODE
+
+# The release collects one handoff per platform; there is no single build pipeline number.
+if git -C "${ROOT}" grep -In -e 'BESKID_BUILD_PIPELINE''_NUMBER' >&2; then
+  echo 'BESKID_BUILD_PIPELINE''_NUMBER was replaced by per-platform handoff collection' >&2
+  exit 1
+fi
+grep -Fq 'woodpecker-fetch-handoffs.sh' "${workflow_dir}/release.yml"
+for role in LINUX MACOS WINDOWS; do grep -Fq "BESKID_${role}_BUILD" "${workflow_dir}/release.yml"; done
+
 for file in "${workflow_dir}/linux.yml" "${workflow_dir}/macos.yml"; do
   grep -Fq 'woodpecker-release-tag-guard.sh "$${CI_COMMIT_TAG}" --check-only' "${file}"
 done
@@ -63,7 +98,7 @@ for file in "${workflow_dir}/linux.yml" "${workflow_dir}/macos.yml" "${windows_b
   ! grep -Fq 'BESKID_RELEASE_EVIDENCE_DIR' "${file}"
   ! grep -Fq 'output}/package' "${file}"
 done
-grep -Fq 'BESKID_TASK == "build" || BESKID_TASK == "validate"' "${workflow_dir}/linux.yml"
+grep -Fq 'BESKID_TASK == "build" || BESKID_TASK == "build-linux" || BESKID_TASK == "validate"' "${workflow_dir}/linux.yml"
 grep -Fq 'BESKID_TASK == "release"' "${workflow_dir}/release.yml"
 if grep -iqE 'from_secret|GH_TOKEN|BESKID_PUBLISH_RELEASE|release-publish' "${workflow_dir}/release.yml"; then
   echo 'Woodpecker release preparation must not receive publication credentials or a publish route' >&2
