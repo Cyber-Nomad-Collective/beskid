@@ -95,6 +95,10 @@ test("cache detection lists every .beskid or obj path outside a sealed Mod entry
 const CLIPPY_LOG = `no legacy type-system patterns in compiler .rs sources
 ==> Clippy (timeout: 600s)
     Checking beskid_execution v0.6.0
+error: unused variable: \`linker\`
+   --> crates/beskid_execution/src/compiler_driver.rs:136:9
+    = note: \`-D unused-variables\` implied by \`-D warnings\`
+
 error: unsafe function's docs are missing a \`# Safety\` section
   --> crates/beskid_execution/src/lib.rs:60:5
    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.98.0/index.html#missing_safety_doc
@@ -104,12 +108,12 @@ error: \`format!\` in \`format!\` args
    --> crates/beskid_execution/src/compiler_driver.rs:182:43
     = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.98.0/index.html#format_in_format_args
 
-error: could not compile \`beskid_execution\` (lib) due to 2 previous errors
+error: could not compile \`beskid_execution\` (lib) due to 3 previous errors
 warning: build failed, waiting for other jobs to finish...
 `;
 
 test("a compiler gate that failed only on clippy lints is recognized", () => {
-  assert.deepEqual(ClippyOnlyFailure(CLIPPY_LOG), { clippyOnly: true, findings: 2 });
+  assert.deepEqual(ClippyOnlyFailure(CLIPPY_LOG), { clippyOnly: true, findings: 3 });
 });
 test("a compiler gate that failed beyond clippy is not", () => {
   const rustc = CLIPPY_LOG.replace("error: `format!`", "error[E0308]: mismatched types\nerror: `format!`");
@@ -118,6 +122,8 @@ test("a compiler gate that failed beyond clippy is not", () => {
   assert.equal(ClippyOnlyFailure("legacy type-system pattern reintroduced: TypeContext\n").clippyOnly, false);
   assert.equal(ClippyOnlyFailure(CLIPPY_LOG.replace(/^error: `format!`[\s\S]*?(?=\n\nerror: could)/m, "error: linker `cc` not found")).clippyOnly, false);
   assert.equal(ClippyOnlyFailure("==> Clippy (timeout: 600s)\nerror: could not compile `x`\n").clippyOnly, false);
+  // A codeless hard error (a parse error) is not a denied lint.
+  assert.match(ClippyOnlyFailure(CLIPPY_LOG.replace("error: unused variable", "error: expected one of `;` or `}`\n\nerror: unused variable")).reason, /not a denied lint: error: expected one of/);
 });
 
 // ---------------------------------------------------------------------------------------------
@@ -265,7 +271,7 @@ test("Linux repackaging accepts a clippy-only compiler gate failure and re-issue
   assert.equal(report.raw_log_sha256, sha256(CLIPPY_LOG), "the build's raw log stays the evidence");
   assert.deepEqual({ ...report.reissued, original_report_sha256: "" }, {
     rule: "clippy is report-only in the compiler release gate", original_status: "failed", original_exit_code: 101,
-    original_report: "release-gate-compiler.build.json", original_report_sha256: "", clippy_findings: 2,
+    original_report: "release-gate-compiler.build.json", original_report_sha256: "", clippy_findings: 3,
     phases_not_run: ["native runtime-kit staging", "compiler workspace tests"], by_pipeline: 340, by_commit: head,
   });
   const handoff = join(verified.evidenceRoot, "linux-repackage-340");

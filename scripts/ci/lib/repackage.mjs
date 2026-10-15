@@ -98,7 +98,10 @@ export function VerifyReleaseCases(directory, target, manifest, source) {
 }
 
 // A compiler gate log that failed only in its clippy phase: the clippy phase began, no later phase
-// began, and every error diagnostic is a clippy lint (no rustc error codes, no other errors).
+// began, and every error diagnostic is a lint that `cargo clippy -- -D warnings` denied (a clippy
+// lint, or a rustc warning lint promoted by `-D warnings`). A rustc error code, or any error that is
+// not recognizably a denied lint, rejects. Clippy is report-only in the compiler release gate, so such
+// a log is a report, not a failure.
 export function ClippyOnlyFailure(log) {
   const lines = log.split(/\r?\n/);
   const clippy = lines.findIndex(line => /^==> Clippy\b/.test(line));
@@ -114,8 +117,9 @@ export function ClippyOnlyFailure(log) {
   }
   const errors = blocks.filter(block => block.error);
   if (errors.length === 0) return { clippyOnly: false, reason: "the clippy phase reported no lint errors" };
-  const other = errors.filter(block => !block.body.some(line => /rust-clippy|clippy::/.test(line)));
-  if (other.length) return { clippyOnly: false, reason: `non-clippy error: ${other[0].body[0]}` };
+  const lint = line => /rust-clippy|clippy::|implied by `-D warnings`/.test(line);
+  const other = errors.filter(block => !block.body.some(lint));
+  if (other.length) return { clippyOnly: false, reason: `an error that is not a denied lint: ${other[0].body[0]}` };
   return { clippyOnly: true, findings: errors.length };
 }
 
