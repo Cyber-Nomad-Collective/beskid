@@ -35,7 +35,12 @@ const PLATFORMS = {
 };
 const PASSTHROUGH_ENV = ["PATH", "SYSTEMROOT", "SystemRoot", "TEMP", "TMP", "TMPDIR", "COMSPEC", "PATHEXT", "WINDIR", "LANG", "LC_ALL",
   "BESKID_V06_GLUE_CARGO", "BESKID_V06_GLUE_RUSTC", "BESKID_V06_GLUE_LINKER", "CARGO_HOME", "RUSTUP_HOME", "BESKID_V06_QUALIFIED_PROFILE",
-  "BESKID_CODEGEN_THREADS", "RUST_MIN_STACK", "SSL_CERT_FILE", "LD_LIBRARY_PATH", "DYLD_LIBRARY_PATH"];
+  "BESKID_CODEGEN_THREADS", "RUST_MIN_STACK", "SSL_CERT_FILE", "LD_LIBRARY_PATH", "DYLD_LIBRARY_PATH",
+  // Windows system locations the installed CLI's MSVC discovery reads, as on a user's machine:
+  // vswhere under ProgramFiles(x86), its instance data under ProgramData, VsDevCmd.bat's own
+  // variables, and LLVM under ProgramFiles. Absent on other hosts.
+  "ProgramFiles", "ProgramFiles(x86)", "ProgramW6432", "CommonProgramFiles", "CommonProgramFiles(x86)",
+  "CommonProgramW6432", "ProgramData", "ALLUSERSPROFILE", "PROCESSOR_ARCHITECTURE", "NUMBER_OF_PROCESSORS", "OS"];
 
 function parseArguments(argv) {
   const positional = [];
