@@ -203,6 +203,51 @@ jq -e --argjson linux "$linux_build" --argjson macos "$macos_build" --argjson wi
 test "$(jq -r '.handoffs.macos.upload_sha256sums_sha256' "$output/validated-evidence.json")" = \
   "$(sha "$tmp/rootfs/woodpecker-handoff/macos/incoming/${macos_build}-${source_sha}/macos/UPLOAD_SHA256SUMS")" || \
   fail 'validated evidence does not bind the macOS checksum list'
+# CLI06-06 is published, not blocking: without a committed record the state says so plainly.
+jq -e '.user_observation.status == "not-performed" and .user_observation.blocking == false and
+  .user_observation.summary == "CLI06-06 observation: not performed"' "$output/release-state.json" >/dev/null || \
+  fail 'release state does not report the missing CLI06-06 observation'
+
+# Candidate rule: the release runs on HEAD and publishes candidate C's builds. Root-only commits after
+# C (CI scripts, docs) are allowed; a changed compiler or beskid_distrib pointer or release-case
+# manifest is refused before any transaction.
+commit_fixture() { git -C "$root" -c user.name='Release test' -c user.email='release-test@example.invalid' commit -qm "$1"; }
+printf '# release note\n' >"$root/RELEASE-NOTES.md"
+printf '\n# root-only CI fix after the candidate\n' >>"$root/scripts/ci/render-ci-failure.sh"
+git -C "$root" add RELEASE-NOTES.md scripts/ci/render-ci-failure.sh
+commit_fixture 'root-only change after the candidate'
+root_only_sha="$(git -C "$root" rev-parse HEAD)"
+WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=83 CI_COMMIT_SHA="$root_only_sha" \
+  BESKID_RELEASE_CANDIDATE="$source_sha" PATH="$tmp/bin:$PATH" bash "$script" "$version" "${builds[@]}" >/dev/null || \
+  fail 'a root-only commit after the candidate forced a rebuild'
+jq -e --arg source "$source_sha" '.provenance.superrepo_commit == $source' \
+  "$tmp/rootfs/woodpecker-output/releases/83-${source_sha}/qualified/release-state.json" >/dev/null || \
+  fail 'the release state does not carry the candidate as source identity'
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=84 CI_COMMIT_SHA="$root_only_sha" \
+  PATH="$tmp/bin:$PATH" bash "$script" "$version" "${builds[@]}" 2>"$tmp/head-candidate.err"; then
+  fail 'without a candidate input the release did not default to HEAD'
+fi
+grep -Fq "incoming/${linux_build}-${root_only_sha}/linux" "$tmp/head-candidate.err" || \
+  fail 'the default candidate is not HEAD'
+for drift in compiler beskid_distrib manifest; do
+  git -C "$root" reset -q --hard "$root_only_sha"
+  case "$drift" in
+    manifest) printf '\n' >>"$root/scripts/ci/release-cases-v06.json"; git -C "$root" add scripts/ci/release-cases-v06.json ;;
+    *) git -C "$root" update-index --cacheinfo "160000,$(printf '%040d' 7),$drift" ;;
+  esac
+  commit_fixture "$drift drift"
+  drift_sha="$(git -C "$root" rev-parse HEAD)"
+  if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=85 CI_COMMIT_SHA="$drift_sha" \
+    BESKID_RELEASE_CANDIDATE="$source_sha" PATH="$tmp/bin:$PATH" bash "$script" "$version" "${builds[@]}" 2>"$tmp/drift.err"; then
+    fail "the release accepted a $drift change after the candidate"
+  fi
+  case "$drift" in
+    manifest) grep -Fq 'release-case manifest digest of the release commit differs' "$tmp/drift.err" ;;
+    *) grep -Fq "the $drift pointer of the release commit differs" "$tmp/drift.err" ;;
+  esac || fail "$drift drift was not diagnosed"
+  test ! -e "$tmp/rootfs/woodpecker-output/releases/85-${source_sha}" || fail "$drift drift created a transaction"
+done
+git -C "$root" reset -q --hard "$source_sha"
 
 # A build number that names no handoff of this source fails before a transaction is created.
 if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=700 CI_COMMIT_SHA="$source_sha" \
@@ -454,15 +499,15 @@ if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI=true CI_PIPELINE_NUMBER=79 CI_C
 fi
 test ! -s "$tmp/gh.log" || fail 'nonmanual owner waiver reached GitHub'
 
-# CLI06-06 (0.6): the release runs on a record commit and consumes the build handoff of the candidate
-# that the committed record names, never a build of the record commit.
+# CLI06-06 (0.6): a committed record names the candidate; the release consumes that candidate's build
+# handoff, never a build of the record commit. Without a record the 0.6 release is not blocked.
 if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=80 CI_COMMIT_SHA="$source_sha" \
   PATH="$tmp/bin:$PATH" bash "$script" 0.6.0 42 42 42 2>"$tmp/v06-no-record.err"; then
-  fail '0.6 release preparation ran without a committed CLI06-06 record'
+  fail '0.6 release preparation ran without the candidate build handoff'
 fi
-grep -Fq 'no record is committed at docs/release/cli06-06-record-v0.6.0.json' "$tmp/v06-no-record.err" || \
-  fail 'absent CLI06-06 record was not diagnosed'
-test ! -e "$tmp/rootfs/woodpecker-output/releases/80-${source_sha}" || fail 'absent record reached release preparation'
+grep -Fq 'no record is committed' "$tmp/v06-no-record.err" && fail 'a missing CLI06-06 record blocked the release'
+grep -Fq "incoming/42-${source_sha}/linux" "$tmp/v06-no-record.err" || \
+  fail '0.6 release without a record did not collect the HEAD candidate'
 mkdir -p "$root/docs/release"
 printf '{"superrepo_commit":"%s"}\n' "$source_sha" >"$root/docs/release/cli06-06-record-v0.6.0.json"
 git -C "$root" add docs/release/cli06-06-record-v0.6.0.json
@@ -482,5 +527,10 @@ grep -Fq "incoming/42-${source_sha}/linux" "$tmp/v06-handoff.err" || \
   fail '0.6 release did not look for the build handoff of the record candidate'
 test "$(node "$root/scripts/ci/release-user-observation.mjs" --source "$root" 0.6.0 "$record_sha")" = "$source_sha" || \
   fail '0.6 release source is not the record candidate'
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=86 CI_COMMIT_SHA="$record_sha" \
+  BESKID_RELEASE_CANDIDATE="$record_sha" PATH="$tmp/bin:$PATH" bash "$script" 0.6.0 42 42 42 2>"$tmp/v06-conflict.err"; then
+  fail 'a candidate input that differs from the record was accepted'
+fi
+grep -Fq "differs from the record's candidate" "$tmp/v06-conflict.err" || fail 'record/input conflict was not diagnosed'
 
 echo 'woodpecker release tests OK'

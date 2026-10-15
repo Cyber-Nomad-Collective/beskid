@@ -7,8 +7,7 @@ clone:
   git:
     image: woodpeckerci/plugin-git:2.10.1
     settings:
-      # Full history: the release source for 0.6 is the candidate commit that the committed CLI06-06
-      # record (docs/release/cli06-06-record-v<version>.json) names, an ancestor of HEAD.
+      # Full history: the release source is candidate C, HEAD or an ancestor of HEAD.
       depth: 0
       recursive: false
 
@@ -18,14 +17,17 @@ steps:
     commands:
       - apt-get update >/dev/null
       - apt-get install -y --no-install-recommends ca-certificates gh git jq openssh-client >/dev/null
-      # Collect the candidate: the release source is the CLI06-06 candidate named by the committed record
-      # for 0.6 (the release commit only adds that record), HEAD otherwise. Each platform was built by its
-      # own pipeline; the fetch selects the newest complete, verified handoff of that source per platform,
-      # or the pipeline pinned by BESKID_LINUX_BUILD, BESKID_MACOS_BUILD or BESKID_WINDOWS_BUILD, and
-      # prints the three pipeline numbers. Any missing platform, identity drift or checksum mismatch fails.
+      # Collect the candidate. The release runs on HEAD and publishes the builds of candidate C: the
+      # candidate named by the committed CLI06-06 record (docs/release/cli06-06-record-v<version>.json),
+      # else BESKID_RELEASE_CANDIDATE, else HEAD. HEAD's compiler and beskid_distrib pointers and
+      # release-case manifest digest must equal C's; root-only commits after C never force a rebuild.
+      # Each platform was built by its own pipeline; the fetch selects the newest complete, verified
+      # handoff of C per platform, or the pipeline pinned by BESKID_LINUX_BUILD, BESKID_MACOS_BUILD or
+      # BESKID_WINDOWS_BUILD, and prints the three pipeline numbers. Any missing platform, identity drift
+      # or checksum mismatch fails.
       - |
         version="$(node scripts/ci/release-version.mjs "$${BESKID_RELEASE_VERSION:?set stable version}" --stable-only)"
-        source_sha="$(node scripts/ci/release-user-observation.mjs --source . "$${version}" "$${CI_COMMIT_SHA}")"
+        source_sha="$(node scripts/ci/release-user-observation.mjs --source . "$${version}" "$${CI_COMMIT_SHA}" "$${BESKID_RELEASE_CANDIDATE:-}")"
         compiler_sha="$(git rev-parse "$${source_sha}:compiler")"
         builds="$(bash scripts/ci/woodpecker-fetch-handoffs.sh "$${source_sha}" "$${compiler_sha}" "$${version}" /woodpecker-handoff)"
         echo "collected candidate $${source_sha}: linux, macos, windows builds $${builds}"

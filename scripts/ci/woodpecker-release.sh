@@ -19,11 +19,13 @@ for index in 0 1 2; do
 done
 version="$(node "$scripts/release-version.mjs" "$requested_version" --stable-only)"
 head_sha="$(git -C "$repo" rev-parse HEAD)"
-# The release source is the commit whose per-platform build handoffs are released and whose identity the release
-# state carries. For 0.6 it is the CLI06-06 candidate: HEAD only adds the committed observation record
-# (docs/release/cli06-06-record-v<version>.json) on top of it, so the participants' CLI files are the
-# released files. Otherwise it is HEAD.
-source_sha="$(node "$scripts/release-user-observation.mjs" --source "$repo" "$version" "$head_sha")"
+# The release runs on HEAD and publishes the per-platform builds of candidate C ($source_sha): the
+# candidate named by the committed CLI06-06 record (docs/release/cli06-06-record-v<version>.json), else
+# the gate input BESKID_RELEASE_CANDIDATE, else HEAD. C is HEAD or an ancestor of HEAD, and HEAD's
+# compiler and beskid_distrib pointers and release-case manifest digest equal C's, so root-only commits
+# after C (CI scripts, docs, the record) never force a rebuild.
+candidate_input="${BESKID_RELEASE_CANDIDATE:-}"
+source_sha="$(node "$scripts/release-user-observation.mjs" --source "$repo" "$version" "$head_sha" "$candidate_input")"
 compiler_sha="$(git -C "$repo" rev-parse "$source_sha:compiler")"
 distrib_sha="$(git -C "$repo" rev-parse "$source_sha:beskid_distrib")"
 pipeline="${CI_PIPELINE_NUMBER:-manual-${builds[0]}-${builds[1]}-${builds[2]}}"
@@ -118,25 +120,21 @@ node "$scripts/woodpecker-aggregate-release.mjs" "$release/native" "$qualified" 
 state="$qualified/release-state.json"
 assets="$qualified/assets"
 
-# CLI06-06 (0.6 series): the five-participant uncoached observation is an observer-attested record,
-# not machine evidence. The record (or the dated owner waiver, which expires at 0.6.1) is committed at
-# docs/release/cli06-06-record-v<version>.json and names the candidate ($source_sha). Its CLI digests
-# are checked against the validated evidence aggregated from that candidate's per-platform build handoffs. A failing
-# or absent record blocks the candidate before any installer work.
-case "$version" in
-  0.6.*)
-    observation="$(node "$scripts/release-user-observation.mjs" --release "$repo" "$version" "$head_sha" "$compiler_sha" \
-      "$qualified/validated-evidence.json")"
-    node - "$state" "$observation" <<'NODE'
+# CLI06-06: the five-participant uncoached observation is a published, non-blocking quality target.
+# The report (status pass, below-threshold or not-performed) is stored in the release state and printed
+# in the release notes. A committed record is validated strictly against candidate $source_sha and the
+# CLI digests of its collected builds; an invalid or forged record fails here, before installer work.
+observation="$(node "$scripts/release-user-observation.mjs" --release "$repo" "$version" "$head_sha" "$source_sha" "$compiler_sha" \
+  "$qualified/validated-evidence.json")"
+node - "$state" "$observation" <<'NODE'
 const {readFileSync,renameSync,writeFileSync}=require('node:fs');
-const [path,record]=process.argv.slice(2),state=JSON.parse(readFileSync(path,'utf8'));
-state.user_observation=JSON.parse(record);
+const [path,report]=process.argv.slice(2),state=JSON.parse(readFileSync(path,'utf8'));
+state.user_observation=JSON.parse(report);
 const temporary=`${path}.observation.tmp`;
 writeFileSync(temporary,`${JSON.stringify(state,null,2)}\n`,{flag:'wx'});
 renameSync(temporary,path);
 NODE
-    ;;
-esac
+jq -r '.user_observation.summary' "$state"
 
 installers=()
 for role in "${roles[@]}"; do
