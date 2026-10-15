@@ -7,6 +7,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@cyber-nomad-collective/beskid-ui-react/ui/table";
+import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
 import type { ReactNode } from "react";
 import { CodeView } from "#/components/code-view";
@@ -16,6 +17,8 @@ import {
 	breadcrumbs,
 	displayName,
 	exampleOf,
+	isOwn,
+	itemSelector,
 	kindLabel,
 	memberGroups,
 	remarksOf,
@@ -60,6 +63,20 @@ export function ApiPage({
 			typeof type.refItemId === "number"
 				? index.byId.get(type.refItemId)
 				: undefined;
+		if (target && !isOwn(target) && target.declaringPackage) {
+			// Declared by a dependency: open it in that package's reference.
+			return (
+				<Link
+					to="/docs/$package"
+					params={{ package: target.declaringPackage }}
+					search={{ version: "", tab: "api", item: itemSelector(target), doc: "" }}
+					className="font-mono text-primary hover:underline"
+					title={`${target.qualifiedName} in ${target.declaringPackage}`}
+				>
+					{type.display}
+				</Link>
+			);
+		}
 		return target ? (
 			<button
 				type="button"

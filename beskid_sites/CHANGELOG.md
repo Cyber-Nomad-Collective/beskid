@@ -37,6 +37,11 @@
 
 ### Fixed
 
+- pckg: the API reference shows only the package's own API. `api.json`
+  carries the whole dependency closure (`declaringPackage`); dependency
+  items now stay out of navigation and member tables, references to them
+  open the declaring package's reference, unnamed root namespaces are not a
+  tree level, and generated workspace-entry members are hidden.
 - pckg: numbers and dates use a fixed locale and UTC, so server-rendered
   pages no longer differ from the browser render (React hydration error).
 - pckg: the server render links the stylesheet the client build emits;
