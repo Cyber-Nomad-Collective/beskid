@@ -42,6 +42,18 @@ assert_contains "${RUNNER}" 'beskid_compiler/tree/main/corelib' \
   "corelib package metadata links to the compiler repository's real corelib root"
 assert_contains "${RUNNER}" 'generateCorelibDocsForPackage(cliBin, meta.workspace, meta);' \
   "each documented corelib package is generated immediately before packing"
+assert_contains "${RUNNER}" 'hasApiDocs: !aggregate && !docsUnsupported,' \
+  "every non-aggregate corelib library ships API docs unless an explicit failure is recorded"
+assert_contains "${RUNNER}" 'projectField(manifestText, "type") === "Aggregate"' \
+  "the docs-less aggregate is derived from its project type, not a member list"
+assert_contains "${RUNNER}" 'const API_DOCS_UNSUPPORTED = new Map([' \
+  "members without API docs are listed explicitly with their doc failure"
+assert_contains "${RUNNER}" 'library artifact is missing .beskid/docs/api.json' \
+  "documented library artifacts are rejected without generated API docs"
+assert_eq "absent" "$({ grep -Fq '["foundation", "concurrency", "runtime"].includes(memberId)' <<<"${RUNNER}" && echo present; } || echo absent)" \
+  "the hard-coded API docs allow-list is removed"
+assert_eq "4" "$(sed -n '/^const API_DOCS_UNSUPPORTED/,/^]);/p' "${ROOT}/scripts/ci/lib/corelib-publish-runner.mjs" | grep -cE '^  \[$|^  \["[a-z_]+", ')" \
+  "the API docs exclusion list names exactly the members whose docs fail with 0.5.3"
 assert_contains "${PUBLISHER}" 'BESKID_PUBLISH_DRY_RUN' \
   "the publisher exposes a no-secret, no-mutation validation mode"
 assert_contains "$(cat "${ROOT}/.woodpecker/pckg.yml")" 'node scripts/ci/prepare-pckg-toolchain.mjs' \

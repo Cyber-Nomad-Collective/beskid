@@ -44,6 +44,33 @@ const EXCLUDED_CORELIB_MEMBERS = new Set([
   "corelib_pest_gen",
   "corelib_tests",
 ]);
+// Library members whose `beskid doc` fails with the qualified 0.5.3 release
+// bundle. They are published without `.beskid/docs/api.json` until the
+// compiler bug is fixed; remove an entry as soon as its docs generate. Every
+// other library member with own sources must ship generated API docs.
+const API_DOCS_UNSUPPORTED = new Map([
+  ["console", "entry resolution for api.json: name resolution failed"],
+  [
+    "interop",
+    "parse error in src/Core/Interop/CArrayView.bd 8:20 `pub pointer ptr;`: " +
+      "expected ImplMethodWithDocs or AssociatedTypeBindingWithDocs",
+  ],
+  [
+    "glue",
+    "parse error in src/Core/Glue/StdioBridge.bd 13:20 `pub GlueTag tag;`: " +
+      "expected ImplMethodWithDocs or AssociatedTypeBindingWithDocs",
+  ],
+  [
+    "compiler_sdk",
+    "parse error in src/Beskid/Compiler/Query.bd 28:53 " +
+      "`pub SyntaxQuery At(Beskid.Syntax.Nodes.NodeRef root);`: expected KwWhereWord or Block",
+  ],
+]);
+for (const memberId of API_DOCS_UNSUPPORTED.keys()) {
+  if (!PUBLISHED_CORELIB_MEMBERS.includes(memberId)) {
+    throw new Error(`API_DOCS_UNSUPPORTED names unpublished corelib member ${memberId}`);
+  }
+}
 const TEMPLATE_MEMBER_IDS = [
   "console",
   "lib",
@@ -181,11 +208,15 @@ function corelibInventory(workspaceRoot) {
     if (!readme || !existsSync(join(source, readme))) {
       throw new Error(`${manifest}: declared readme is missing`);
     }
+    // An Aggregate project has no own sources, so it has no API to document.
+    const aggregate = projectField(manifestText, "type") === "Aggregate";
+    const docsUnsupported = API_DOCS_UNSUPPORTED.get(memberId);
     return {
       kind: "library",
-      // Facade-only and aggregate/dependency-heavy packages are packable, but
-      // the source doc command cannot yet normalize every non-root source path.
-      hasApiDocs: ["foundation", "concurrency", "runtime"].includes(memberId),
+      hasApiDocs: !aggregate && !docsUnsupported,
+      apiDocsOmission: aggregate
+        ? "aggregate package without own sources"
+        : docsUnsupported && `beskid doc fails: ${docsUnsupported}`,
       category,
       memberId,
       registryName,
@@ -287,7 +318,7 @@ function generateCorelibDocsForPackage(cliBin, workspaceRoot, meta) {
   const docsOut = join(source, ".beskid", "docs");
   rmSync(docsOut, { recursive: true, force: true });
   if (!meta.hasApiDocs) {
-    console.log(`[pack] ${meta.registryName}: declaration-only facade; API docs omitted`);
+    console.log(`[pack] ${meta.registryName}: API docs omitted (${meta.apiDocsOmission})`);
     return;
   }
   const manifest = discoverProjectManifest(source);
@@ -408,7 +439,7 @@ function validateArtifact(artifact, meta, expectedVersion) {
   } else if (meta.hasApiDocs && !entries.includes(".beskid/docs/api.json")) {
     throw new Error(`${artifact}: library artifact is missing .beskid/docs/api.json`);
   } else if (!meta.hasApiDocs && entries.includes(".beskid/docs/api.json")) {
-    throw new Error(`${artifact}: declaration-only package unexpectedly advertises generated API docs`);
+    throw new Error(`${artifact}: package without API docs (${meta.apiDocsOmission}) unexpectedly contains .beskid/docs/api.json`);
   }
 }
 
