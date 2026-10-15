@@ -27,6 +27,7 @@ import { copyFileSync, existsSync, lstatSync, mkdirSync, readFileSync, readdirSy
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { ValidatePackagingRoot } from "../release-user-observation.mjs";
+import { ValidatePacketEvidence } from "./packet-evidence.mjs";
 
 const scripts = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const TARGETS = { linux: "x86_64-unknown-linux-gnu", macos: "aarch64-apple-darwin", windows: "x86_64-pc-windows-msvc" };
@@ -180,8 +181,11 @@ export function VerifyRepackage({ outputRoot, platform, build, pipeline, repo, h
 }
 
 function DefaultEvidenceValidator(evidenceRoot, platform) {
-  const checked = spawnSync(process.execPath, [join(scripts, "woodpecker-release-evidence.mjs"), evidenceRoot, platform], { encoding: "utf8", maxBuffer: 256 * 1024 * 1024 });
-  if (checked.status !== 0) Fail(`release evidence rejected: ${checked.stderr.trim()}`);
+  try {
+    ValidatePacketEvidence(evidenceRoot, platform);
+  } catch (error) {
+    Fail(`release evidence rejected: ${error.message}`);
+  }
 }
 
 // The flat handoff directory of a verified repackage, before the installers are added.

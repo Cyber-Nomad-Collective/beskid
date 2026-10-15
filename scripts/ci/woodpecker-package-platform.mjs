@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 import { AssertCleanDistrib, AssertNoPrerequisitesLockOverride } from "./package-source-authority.mjs";
 import { PruneBundleCaches } from "./lib/bundle-caches.mjs";
+import { ValidatePacketEvidence } from "./lib/packet-evidence.mjs";
 const scripts = dirname(fileURLToPath(import.meta.url));
 const distrib = resolve(scripts, "../../beskid_distrib");
 function run(command, args, cwd, label) {
@@ -31,7 +32,8 @@ try {
   const repackage = args.length === 6 ? { build: args[4], pipeline: args[5] } : null;
   if (repackage && (!/^[1-9][0-9]*$/.test(repackage.build) || !/^[1-9][0-9]*$/.test(repackage.pipeline) || repackage.build === repackage.pipeline)) throw new Error(usage);
   const input = resolve(inputArg), output = resolve(outputArg);
-  const evidence = JSON.parse(run(process.execPath, [join(scripts, "woodpecker-release-evidence.mjs"), input, platform], undefined, "invalid release evidence"));
+  // Validate exactly the build's checksummed packet (lib/packet-evidence.mjs).
+  const evidence = ValidatePacketEvidence(input, platform);
   const root = resolve(scripts, "../..");
   const rootCommit = run("git", ["rev-parse", "HEAD"], root, "source lookup failed").trim();
   if (repackage) {

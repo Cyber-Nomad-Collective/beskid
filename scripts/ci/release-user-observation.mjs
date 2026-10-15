@@ -80,7 +80,7 @@ export const REPACKAGE_ALLOWED_PATHS = [
   /^beskid_distrib$/,
   /^\.woodpecker\/repackage-(linux|macos|windows)\.yml$/,
   /^scripts\/ci\/woodpecker-package-platform\.mjs$/, /^scripts\/ci\/lib\/bundle-caches\.mjs$/,
-  /^scripts\/ci\/lib\/repackage\.mjs$/, /^scripts\/ci\/woodpecker-repackage-platform\.sh$/,
+  /^scripts\/ci\/lib\/repackage\.mjs$/, /^scripts\/ci\/lib\/packet-evidence\.mjs$/, /^scripts\/ci\/woodpecker-repackage-platform\.sh$/,
   /^scripts\/ci\/woodpecker-repackage-windows\.sh$/,
   /^scripts\/ci\/woodpecker-upload-handoff\.sh$/, /^scripts\/ci\/woodpecker-handoff\.mjs$/,
 ];

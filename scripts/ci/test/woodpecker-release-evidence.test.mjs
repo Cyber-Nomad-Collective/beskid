@@ -223,7 +223,7 @@ function createPackageFixture() {
   }
   const scripts = join(checkout, "scripts/ci");
   mkdirSync(join(scripts, "lib"), { recursive: true });
-  for (const file of ["woodpecker-package-platform.mjs", "package-source-authority.mjs", "woodpecker-release-evidence.mjs", "woodpecker-cli-surface-evidence.mjs", "cli-surface-inventory.mjs", "release-cases-v06.json", "release-case-common.mjs", "lib/bundle-caches.mjs"]) {
+  for (const file of ["woodpecker-package-platform.mjs", "package-source-authority.mjs", "woodpecker-release-evidence.mjs", "woodpecker-cli-surface-evidence.mjs", "cli-surface-inventory.mjs", "release-cases-v06.json", "release-case-common.mjs", "lib/bundle-caches.mjs", "lib/packet-evidence.mjs"]) {
     copyFileSync(new URL(`../${file}`, import.meta.url), join(scripts, file));
   }
   const distrib = join(checkout, "beskid_distrib");
@@ -311,9 +311,12 @@ test("packaging orchestration consumes the complete verified bundle", { skip: ![
     return `${sha256(readFileSync(join(root, platform, file)))}  ${file}`;
   });
   writeFileSync(sumsPath, `${sums.join("\n")}\n`);
+  // The Linux release gates write their reports after SHA256SUMS; packaging validates only the packet.
+  for (const name of ["release-gate-compiler.json", "release-gate-compiler.log"]) writeFileSync(join(root, platform, name), "{}\n");
   const output = join(root, "packages");
   const result = spawnSync(process.execPath, [packageScript, platform, root, output], { encoding: "utf8" });
   assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stderr, /removed 2 build-cache path\(s\)/);
   const report = JSON.parse(readFileSync(join(output, "package-result.json")));
   assert.equal(report.status, "success");
   assert.equal(report.published, false);
