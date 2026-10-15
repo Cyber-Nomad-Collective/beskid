@@ -97,7 +97,7 @@ The following uses SHALL consume an owning Moved-class name, after which the nam
 - **THEN** the compiler SHALL report **E1234** at the second `f`, and `f.Cancel()` before the first `Join` would not consume `f`
 
 ### Requirement: Branch and loop rules for consumption
-Consumption SHALL be tracked per binding along `if`/`else` arms: a consumption in one arm SHALL NOT make a use in the other arm **E1234**, and a use after the `if` statement SHALL be **E1234** when any arm consumed the binding. A consumption inside a `while` or `for` body of a binding declared before the loop SHALL be reported as **E1240** at the consuming use unless the body assigns the binding, on every path, after the consumption and before the end of the body; an assignment to a Moved place SHALL make the name owning again (revival). A consumption of a binding declared inside the loop body SHALL be ordinary. `match` arms SHALL be treated like `if` arms. The analysis SHALL be one generation-bound fact per callable (`affine_ownership`), replacing the Fiber-only `spawn_handle_diagnostics`, and SHALL reuse its branch-path and loop detection unchanged.
+Consumption SHALL be tracked per binding along `if`/`else` arms: a consumption in one arm SHALL NOT make a use in the other arm **E1234**, and a use after the `if` statement SHALL be **E1234** when an arm consumed the binding and that arm can complete normally. A consumed state SHALL flow only along edges that do not diverge: a consumption followed on its own path by `return` SHALL NOT reach any later use in the callable (or in the enclosing lambda body), and a consumption followed by `break` or `continue` SHALL NOT reach the rest of that loop body; an `if` statement whose arms all diverge diverges. A consumption that `return` or `break` follows SHALL NOT be reported as **E1240** for the loops that statement leaves. A consumption inside a `while` or `for` body of a binding declared before the loop SHALL be reported as **E1240** at the consuming use unless the body assigns the binding, on every path, after the consumption and before the end of the body; an assignment to a Moved place SHALL make the name owning again (revival). An assignment SHALL decide whether the name is owning or borrowed at the uses its path reaches, by the classification of its value as for an initializer: an owned expression makes a borrowed `mut` local owning, a place read makes it borrowed. An assignment inside one arm SHALL NOT change the classification after the `if` or `match`. A consumption of a binding declared inside the loop body SHALL be ordinary. `match` arms SHALL be treated like `if` arms. The analysis SHALL be one generation-bound fact per callable (`affine_ownership`), replacing the Fiber-only `spawn_handle_diagnostics`, and SHALL reuse its branch-path and loop detection unchanged.
 
 #### Scenario: Consume in one arm, use in the other
 - **GIVEN** `unit Main(move u8[] data, bool keep) { if keep { Archive.Store(move data); } else { Log.Info(Array.Len<u8>(data)); } }`
@@ -108,6 +108,21 @@ Consumption SHALL be tracked per binding along `if`/`else` arms: a consumption i
 - **GIVEN** `unit Main(move u8[] data, bool keep) { if keep { Archive.Store(move data); } i64 n = Array.Len<u8>(data); }`
 - **WHEN** the item is checked
 - **THEN** the compiler SHALL report **E1234** at `data` in the `Len` call
+
+#### Scenario: Consume in an arm that returns
+- **GIVEN** `u8[] Main(move u8[] data, bool fail) { if fail { return Archive.Seal(move data); } return Archive.Seal(move data); }` where `Archive.Seal(move u8[] data)` returns `u8[]`
+- **WHEN** the item is checked
+- **THEN** no diagnostic is reported
+
+#### Scenario: Consume then break
+- **GIVEN** `unit Main(move u8[] data, i64 rounds) { mut i64 i = 0; while i < rounds { if i == 2 { Archive.Store(move data); break; } i = i + 1; } }`
+- **WHEN** the item is checked
+- **THEN** no diagnostic is reported
+
+#### Scenario: Borrowed local reassigned with an owned value
+- **GIVEN** `unit Grow(Holder h, u8[] tail) { mut u8[] buf = h.bytes; buf = Bytes.Join(buf, tail); h.bytes = move buf; }` where `Bytes.Join` returns a new `u8[]`
+- **WHEN** the item is checked
+- **THEN** no diagnostic is reported
 
 #### Scenario: Consume in a loop without reassignment
 - **GIVEN** `unit Main(move u8[] data, i64 rounds) { mut i64 i = 0; while i < rounds { Archive.Store(move data); i = i + 1; } }`
