@@ -177,9 +177,11 @@ export function ProduceReleaseCases(options) {
         mkdirSync(root, { recursive: true });
         // Name the archive relative to the packet directory: GNU tar (MSYS on the Windows agent) reads
         // an archive name like C:/... as a remote host:path, and bsdtar has no --force-local. Only the
-        // -f name is parsed that way; -C takes the absolute extraction root as-is.
+        // -f name is parsed that way. The -C root uses forward slashes: MSYS tar mangles a Windows
+        // path with backslashes (C:\WINDOWS\TEMP\...), and forward slashes are a no-op elsewhere.
         if (!/^[A-Za-z0-9._-]+$/.test(binding.input.path)) fail(`${item.id} input packet name is not a plain file name`);
-        const extract = spawnSync("tar", ["-xf", binding.input.path, "-C", root], { cwd: output, encoding: "utf8", windowsHide: true });
+        const extractRoot = root.split("\\").join("/");
+        const extract = spawnSync("tar", ["-xf", binding.input.path, "-C", extractRoot], { cwd: output, encoding: "utf8", windowsHide: true });
         if (extract.error || extract.status !== 0) {
           fail(`cannot extract input ${binding.input.id}: status ${extract.status} ${extract.error?.message ?? ""} ${extract.stderr ?? ""}`.trim());
         }
