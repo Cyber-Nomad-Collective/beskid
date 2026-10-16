@@ -117,6 +117,17 @@ for file in "${workflow_dir}/linux.yml" "${workflow_dir}/macos.yml" "${windows_b
   ! grep -Fq 'output}/package' "${file}"
 done
 grep -Fq 'BESKID_TASK == "build" || BESKID_TASK == "build-linux" || BESKID_TASK == "validate"' "${workflow_dir}/linux.yml"
+# Design D5: the Linux build captures the gate status, packages and uploads, then exits with it.
+grep -Fq 'woodpecker-release-gates.sh "$${release_version}" "$${output}" || gate_status=$$?' "${workflow_dir}/linux.yml"
+gate_line="$(grep -n 'woodpecker-release-gates.sh' "${workflow_dir}/linux.yml" | head -n1 | cut -d: -f1)"
+package_line="$(grep -n 'woodpecker-package-platform.mjs' "${workflow_dir}/linux.yml" | head -n1 | cut -d: -f1)"
+upload_line="$(grep -n 'woodpecker-upload-handoff.sh' "${workflow_dir}/linux.yml" | head -n1 | cut -d: -f1)"
+exit_line="$(grep -n 'exit "$${gate_status}"' "${workflow_dir}/linux.yml" | head -n1 | cut -d: -f1)"
+[[ -n "${gate_line}" && -n "${package_line}" && -n "${upload_line}" && -n "${exit_line}" ]] && \
+  (( gate_line < package_line && package_line < upload_line && upload_line < exit_line )) || {
+  echo 'linux.yml must run the release gates, package, upload, then exit with the gate status' >&2
+  exit 1
+}
 grep -Fq 'BESKID_TASK == "release"' "${workflow_dir}/release.yml"
 grep -Fq 'BESKID_TASK == "release-publish"' "${workflow_dir}/release.yml"
 # Only the final release-publish step binds a secret; the structural step,

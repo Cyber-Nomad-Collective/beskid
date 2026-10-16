@@ -17,6 +17,8 @@ mkdir -p "${tmp}/root/scripts/ci" "${tmp}/root/compiler/crates/beskid_cli" \
   "${tmp}/root/compiler/corelib/mods/example_mod" \
   "${tmp}/root/compiler/scripts" "${tmp}/bin"
 cp "${builder}" "${root}/scripts/ci/qualify-native-tool-driver.py" "${tmp}/root/scripts/ci/"
+mkdir -p "${tmp}/root/scripts/ci/lib"
+cp "${root}/scripts/ci/lib/bundle-caches.mjs" "${tmp}/root/scripts/ci/lib/"
 for manifest in beskid_cli beskid_lsp beskid_up; do
   printf '[package]\nname = "%s"\nversion = "1.2.3"\n\n[dependencies]\nclap = { version = "4.4" }\n' "${manifest}" >"${tmp}/root/compiler/crates/${manifest}/Cargo.toml"
 done
@@ -89,9 +91,19 @@ if [[ "${1:-}" == dev && "${2:-}" == mod && "${3:-}" == rebuild ]]; then
   [[ -n "${triple}" && "${BESKID_RUNTIME_KIT_PROFILE:-}" == debug ]] || exit 1
   [[ -f "${BESKID_RUNTIME_PREFIX}/lib/beskid-runtime/abi-5/${triple}/debug/abi.json" ]] || exit 1
   [[ -z "${FAIL_MOD_BUILD:-}" ]] || exit 1
-  artifact="$(dirname "${manifest}")/.beskid/obj/mods/$(basename "${manifest}" .bproj)/key/${triple}"
-  mkdir -p "${artifact}"
+  project="$(dirname "${manifest}")"
+  mods="${project}/.beskid/obj/mods/$(basename "${manifest}" .bproj)"
+  artifact="${mods}/0123456789abcdef0123456789abcdef/${triple}"
+  mkdir -p "${artifact}/sources" "${project}/obj/beskid/cache/salsa" "${project}/obj/beskid/deps/src/corelib_foundation-36af"
   printf '{}\n' >"${artifact}/mod.descriptor.json"
+  printf 'lock\n' >"${artifact}/sources/Project.lock"
+  # The working state a real Mod rebuild leaves beside the sealed entry.
+  printf 'lock\n' >"${mods}/.cache-lock"
+  printf 'lock\n' >"${project}/obj/beskid/.materialize-lock"
+  printf '{}\n' >"${project}/obj/beskid/cache/salsa/db.json"
+  printf 'pub i64 X() { return 0; }\n' >"${project}/obj/beskid/deps/src/corelib_foundation-36af/Core.bd"
+  mkdir -p "${BESKID_CORELIB_ROOT}/packages/foundation/.beskid/obj/units"
+  printf 'cache\n' >"${BESKID_CORELIB_ROOT}/packages/foundation/.beskid/obj/units/cache.bin"
   exit 0
 fi
 [[ "${1:-}" == dev && "${2:-}" == corelib ]] || exit 1
@@ -144,8 +156,14 @@ assert_bundle() {
   test -f "${extracted}/beskid_corelib/beskid_corelib/corelib.bproj"
   test -f "${extracted}/beskid_corelib/packages/foundation/foundation.bproj"
   test -f "${extracted}/beskid_corelib/mods/example_mod/example_mod.bproj"
-  test -f "${extracted}/beskid_corelib/mods/example_mod/.beskid/obj/mods/example_mod/key/${target}/mod.descriptor.json"
+  local sealed="${extracted}/beskid_corelib/mods/example_mod/.beskid/obj/mods/example_mod/0123456789abcdef0123456789abcdef/${target}"
+  test -f "${sealed}/mod.descriptor.json"
+  test -f "${sealed}/sources/Project.lock"
+  # Assembly prunes the Mod prebuild caches; the archive carries none (task 6.5).
   test ! -e "${extracted}/beskid_corelib/packages/foundation/.beskid"
+  test ! -e "${extracted}/beskid_corelib/mods/example_mod/obj"
+  test ! -e "${extracted}/beskid_corelib/mods/example_mod/.beskid/obj/mods/example_mod/.cache-lock"
+  tar -tzf "${tmp}/root/${archive}" | node "${root}/scripts/ci/lib/bundle-caches.mjs" check "beskid-1.2.3-${target}"
   test ! -e "${extracted}/packages"
   grep -Fxq 1.2.3 "${extracted}/release-version.txt"
   test ! -e "${extracted}/native-runtime-kit"

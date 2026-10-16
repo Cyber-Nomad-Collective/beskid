@@ -237,6 +237,10 @@ if [[ "$PACKAGE" == "beskid_bundle" ]]; then
     done
   done <<<"${corelib_members}"
   rm -rf "${mod_state}"
+  # The Mod prebuild leaves its working state (obj/beskid dependency sources, the Salsa cache,
+  # materialization and Mod cache locks) beside each sealed Mod entry. An installed toolchain never
+  # reads it, so the bundle ships only the sealed entries (OpenSpec v06-release-gate-calibration 6.5).
+  node "${ROOT}/scripts/ci/lib/bundle-caches.mjs" prune "${bundle_dir}"
   printf '%s\n' "${RELEASE_VERSION}" >"${bundle_dir}/release-version.txt"
   tar -C "${release_stage}" -czf "${ROOT}/${ASSET_NAME}" "$(basename "$bundle_dir")"
   echo "built ${ASSET_NAME} (Beskid ${RELEASE_VERSION} bundle for ${TARGET})"

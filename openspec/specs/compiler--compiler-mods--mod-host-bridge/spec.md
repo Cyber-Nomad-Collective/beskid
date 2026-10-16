@@ -214,7 +214,7 @@ Hosts **must** store each built mod artifact under the workspace **object store*
 | Path segment | Meaning |
 | --- | --- |
 | `<packageId>` | Stable package identity from lock/manifest (normalized, case-sensitive as resolved). |
-| `<artifactKey>` | Lowercase hex SHA-256 of the **cache key tuple** (see below). |
+| `<artifactKey>` | First 32 lowercase hex digits (128 bits) of the SHA-256 of the **cache key tuple** (see below). |
 | `<targetTriple>` | LLVM-style triple string for the built artifact (e.g. `aarch64-apple-darwin`). |
 
 Registry-fetched mods use the same layout under the workspace object store after materialization; global package caches **may** mirror the tuple but the host **must** treat the workspace path above as authoritative for an active compilation.
@@ -230,7 +230,7 @@ Rebuild is required when any component of the tuple changes:
 | `target_triple` | Active host target for AOT link/load. |
 | `compiler_version` | Reference compiler version token (CLI `--version` / embedded build id). |
 
-**`artifactKey`** = `SHA256(canonical_json({ lock_hash, mod_source_hash, target_triple, compiler_version }))`.
+**`artifactKey`** = the first 32 hex digits of `SHA256(canonical_json({ lock_hash, mod_source_hash, target_triple, compiler_version }))`.
 
 `beskid mod rebuild` **must** invalidate entries whose tuple diverges; `beskid mod clean` **must** remove `.beskid/obj/mods/` (or the documented subset for named projects).
 

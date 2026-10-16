@@ -7,7 +7,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 import { AssertCleanDistrib, AssertNoPrerequisitesLockOverride } from "./package-source-authority.mjs";
-import { PruneBundleCaches } from "./lib/bundle-caches.mjs";
+import { AssertNoBundleCaches, BundleFiles } from "./lib/bundle-caches.mjs";
 import { ValidatePacketEvidence } from "./lib/packet-evidence.mjs";
 const scripts = dirname(fileURLToPath(import.meta.url));
 const distrib = resolve(scripts, "../../beskid_distrib");
@@ -57,10 +57,9 @@ try {
   if (digest(snapshot) !== archive.sha256) throw new Error("bundle changed while snapshotting");
   const bundle = join(output, "bundle");
   run("bash", [bashPath(join(distrib, "scripts/extract-release-bundle.sh")), bashPath(snapshot), evidence.version, target.target, bashPath(bundle)], output, "bundle extraction failed");
-  // Installers ship the toolchain, not the build caches that prebuilding the Corelib Mods left in the
-  // bundle; the release tarball itself stays byte-identical to the qualified build.
-  const pruned = PruneBundleCaches(bundle);
-  process.stderr.write(`distribution: removed ${pruned.length} build-cache path(s) from the installer bundle\n`);
+  // Bundle assembly prunes the Corelib Mod prebuild caches, so installers package the release tarball
+  // as qualified; a bundle that still carries a cache is refused, never repaired here.
+  AssertNoBundleCaches(BundleFiles(bundle), "the qualified release bundle");
   const version = evidence.version;
   let files;
   if (platform === "linux") {

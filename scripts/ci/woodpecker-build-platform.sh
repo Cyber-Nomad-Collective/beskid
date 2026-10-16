@@ -131,6 +131,8 @@ for required in \
     exit 1
   }
 done
+# Bundle assembly prunes the Corelib Mod prebuild caches; a bundle that still carries one fails here.
+node "${root}/scripts/ci/lib/bundle-caches.mjs" check "${bundle_root}" <"${logs_dir}/bundle-contents.log"
 [[ "$(tar -xOzf "${bundle_path}" "${bundle_root}/release-version.txt")" == "${version}" ]] || {
   echo 'bundle release-version.txt does not match the requested version' >&2
   exit 1
