@@ -13,12 +13,12 @@
 
 ## 3. Marker contracts and transfer classes (contracts capability)
 
-- [ ] 3.1 `Core.Parallel` marker contracts `Transferable`, `Shared`, `Moved`, `Copied` with `[CompilerDerived]`; E1607 on declared conformance and on other derived contracts; E1003 on members. (Compiler-derived marker contracts; Conformance satisfaction and diagnostics) (implemented on v06x/lang d46d87a8, v06x/par corelib 1487f95; awaiting gate)
+- [x] 3.1 `Core.Parallel` marker contracts `Transferable`, `Shared`, `Moved`, `Copied` with `[CompilerDerived]`; E1607 on declared conformance and on other derived contracts; E1003 on members. (Compiler-derived marker contracts; Conformance satisfaction and diagnostics) (implemented on v06x/lang d46d87a8, v06x/par corelib 1487f95; verified by gate 3 on Linux x64)
 - [x] 3.2 `transfer_class` query (`semantic_contract/transfer.rs`) with the ten rules, generic substitution, bound-derived parameter classes, marker exclusivity; hook in `prove_applied_conformance` and `implementation_bounds_hold`; E1610 reason text. (Transfer class query)
 - [x] 3.3 `[Immutable]`: E1244 field rule, E1245 assignment and `[ImmutableStorage]` escape rule as a legality collector beside `legality/values.rs`; corelib-only `[ImmutableStorage]`. (Immutable types)
 - [x] 3.4 `[Isolated]` and `[Copyable]` field rules, E1247; independence from `[Serialize]`. (Isolated and Copyable types)
-- [ ] 3.5 `[NeverTransferable]` on `Fiber`, `Channel`, `Hub`, `Mutex`, `MutexGuard`, `WaitGroup`, `TcpStream`, `TcpListener`, `UdpSocket` and Glue owners; E1246. (Never-transferable handle types) (implemented on v06x/lang corelib df4c6e2; awaiting gate)
-- [ ] 3.6 `[Isolated]` on `List`, `Stack`, `Queue`, `Set`, `Map`, `PriorityQueue`, `I64Map`, `StringMap`, `HashTable`. (Collections are Isolated types) (implemented on v06x/lang corelib df4c6e2; awaiting gate)
+- [x] 3.5 `[NeverTransferable]` on `Fiber`, `Channel`, `Hub`, `Mutex`, `MutexGuard`, `WaitGroup`, `TcpStream`, `TcpListener`, `UdpSocket` and Glue owners; E1246. (Never-transferable handle types) (implemented on v06x/lang corelib df4c6e2; verified by gate 3 on Linux x64)
+- [x] 3.6 `[Isolated]` on `List`, `Stack`, `Queue`, `Set`, `Map`, `PriorityQueue`, `I64Map`, `StringMap`, `HashTable`. (Collections are Isolated types) (implemented on v06x/lang corelib df4c6e2; verified by gate 3 on Linux x64)
 - [ ] 3.7 Memory model text: proven immutability through the class query, string construction-only setter invariant with a runtime corpus review test, the three field-read rules. (Cross-fiber sharing; String immutability invariant; Field reads through typed receivers) (open: runtime-corpus string setter review test not written, request R-rt-1)
 
 ## 3a. Generic methods and inference (type-system capabilities)
@@ -34,15 +34,15 @@
 
 ## 5. Runtime groundwork
 
-- [ ] 5.1 Manifest intrinsics `thread_create`, `thread_join` with target bindings; C implementations on Linux, macOS, Windows; `ThreadCreate`/`ThreadJoin` wrappers in `Native.bd`. (Thread intrinsics) (implemented on v06x/runtime a1ad12eb..2a3f0e0d; awaiting gate)
-- [ ] 5.2 Manifest intrinsics `atomic_word_load`, `atomic_word_store`, `atomic_word_compare_exchange`, `atomic_word_fetch_add`, `atomic_fence`; C11 implementations; wrappers in `Native.bd`; `clif` allowlist unchanged. (Atomic intrinsics) (implemented on v06x/runtime a1ad12eb..2a3f0e0d; awaiting gate)
-- [ ] 5.3 Process-wide reference-counted worker pool in `external_wait.h`; `worker_pool_init`/`worker_pool_shutdown` semantics. (Process-wide worker pool shared by runtime instances) (implemented on v06x/runtime a1ad12eb..2a3f0e0d; awaiting gate)
-- [ ] 5.4 `IsolateCreate`/`IsolateDestroy` split out of `ProcessInit` in `Lifecycle.bd`; limits inherited; `ProcessInit`/`ProcessShutdown` as wrappers; manifest exports. (Runtime instance lifecycle split; Lifecycle and region exports in the manifest) (implemented on v06x/runtime a1ad12eb..2a3f0e0d; awaiting gate)
-- [ ] 5.5 Panic message copy-out before heap release; `beskid_rt_v5_isolate_panic_message`. (Panic message survives heap release) (implemented on v06x/runtime a1ad12eb..2a3f0e0d; awaiting gate)
-- [ ] 5.6 Process-wide region-to-owner map (`Runtime/Mem/Gc/RegionMap.bd`), registration on create and growth, atomic publication, `beskid_rt_v5_region_owner`. (Process-wide region-to-owner map) (implemented on v06x/runtime a1ad12eb..2a3f0e0d; awaiting gate)
-- [ ] 5.7 `TYPE_DESCRIPTOR_IMMUTABLE` emitted in `aggregate_static.rs` for Shared nominal types and set on the string record; `TypeDescriptorImmutableFlag()`. (Heap objects carry type descriptors for scanning) (implemented on v06x/runtime a1ad12eb..2a3f0e0d; awaiting gate)
-- [ ] 5.7a `host_processor_count` intrinsic and `__host_processor_count` corelib service, C implementations on three targets (`sysconf(_SC_NPROCESSORS_ONLN)`, `GetActiveProcessorCount`), `HostProcessorCount` wrapper, `Concurrency.HostProcessorCount()`; `ProcessorCount()` unchanged. (Host logical processor count intrinsic) (implemented on v06x/runtime a1ad12eb..2a3f0e0d; awaiting gate)
-- [ ] 5.8 Spec restatements only, no code: non-moving collector rule, foreign reference definition and stop rule, Phase A per heap in the GC and scheduler contracts. (Non-moving collector; Foreign references; Ship Phase A GC before parallel mutators; Phase A single GC mutator on scheduler threads)
+- [x] 5.1 Manifest intrinsics `thread_create`, `thread_join` with target bindings; C implementations on Linux, macOS, Windows; `ThreadCreate`/`ThreadJoin` wrappers in `Native.bd`. (Thread intrinsics) (implemented on v06x/runtime a1ad12eb..2a3f0e0d; verified by gate 3 on Linux x64)
+- [x] 5.2 Manifest intrinsics `atomic_word_load`, `atomic_word_store`, `atomic_word_compare_exchange`, `atomic_word_fetch_add`, `atomic_fence`; C11 implementations; wrappers in `Native.bd`; `clif` allowlist unchanged. (Atomic intrinsics) (implemented on v06x/runtime a1ad12eb..2a3f0e0d; verified by gate 3 on Linux x64)
+- [x] 5.3 Process-wide reference-counted worker pool in `external_wait.h`; `worker_pool_init`/`worker_pool_shutdown` semantics. (Process-wide worker pool shared by runtime instances) (implemented on v06x/runtime a1ad12eb..2a3f0e0d; verified by gate 3 on Linux x64)
+- [x] 5.4 `IsolateCreate`/`IsolateDestroy` split out of `ProcessInit` in `Lifecycle.bd`; limits inherited; `ProcessInit`/`ProcessShutdown` as wrappers; manifest exports. (Runtime instance lifecycle split; Lifecycle and region exports in the manifest) (implemented on v06x/runtime a1ad12eb..2a3f0e0d; verified by gate 3 on Linux x64)
+- [x] 5.5 Panic message copy-out before heap release; `beskid_rt_v5_isolate_panic_message`. (Panic message survives heap release) (implemented on v06x/runtime a1ad12eb..2a3f0e0d; verified by gate 3 on Linux x64)
+- [x] 5.6 Process-wide region-to-owner map (`Runtime/Mem/Gc/RegionMap.bd`), registration on create and growth, atomic publication, `beskid_rt_v5_region_owner`. (Process-wide region-to-owner map) (implemented on v06x/runtime a1ad12eb..2a3f0e0d; verified by gate 3 on Linux x64)
+- [x] 5.7 `TYPE_DESCRIPTOR_IMMUTABLE` emitted in `aggregate_static.rs` for Shared nominal types and set on the string record; `TypeDescriptorImmutableFlag()`. (Heap objects carry type descriptors for scanning) (implemented on v06x/runtime a1ad12eb..2a3f0e0d; verified by gate 3 on Linux x64)
+- [x] 5.7a `host_processor_count` intrinsic and `__host_processor_count` corelib service, C implementations on three targets (`sysconf(_SC_NPROCESSORS_ONLN)`, `GetActiveProcessorCount`), `HostProcessorCount` wrapper, `Concurrency.HostProcessorCount()`; `ProcessorCount()` unchanged. (Host logical processor count intrinsic) (implemented on v06x/runtime a1ad12eb..2a3f0e0d; verified by gate 3 on Linux x64)
+- [x] 5.8 Spec restatements only, no code: non-moving collector rule, foreign reference definition and stop rule, Phase A per heap in the GC and scheduler contracts. (Non-moving collector; Foreign references; Ship Phase A GC before parallel mutators; Phase A single GC mutator on scheduler threads) (spec delta in this change)
 
 ## 6. Tooling
 
