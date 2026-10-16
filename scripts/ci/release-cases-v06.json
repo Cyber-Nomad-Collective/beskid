@@ -5547,12 +5547,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations(",
-            "end": 104048,
+            "end": 104388,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 103971,
+            "start": 104311,
             "test_id": "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
           }
         ],
@@ -5574,7 +5574,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+          "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
         },
         "input": null,
         "log": "case-R4-BIND-01.json",
@@ -5607,12 +5607,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations(",
-            "end": 104048,
+            "end": 104388,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 103971,
+            "start": 104311,
             "test_id": "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
           }
         ],
@@ -5634,7 +5634,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+          "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
         },
         "input": null,
         "log": "case-R4-BIND-02.json",
@@ -5667,22 +5667,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_published_images_fail_closed_on_substitution(",
-            "end": 75857,
+            "end": 76197,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 75796,
+            "start": 76136,
             "test_id": "v06_glue_cli_published_images_fail_closed_on_substitution"
           },
           {
             "declaration": "fn v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations(",
-            "end": 104048,
+            "end": 104388,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 103971,
+            "start": 104311,
             "test_id": "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
           }
         ],
@@ -5704,7 +5704,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+          "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
         },
         "input": null,
         "log": "case-R4-BIND-03.json",
@@ -5743,12 +5743,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_rejects_closed_boundary_metadata_violations(",
-            "end": 110209,
+            "end": 110549,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 110149,
+            "start": 110489,
             "test_id": "v06_glue_cli_rejects_closed_boundary_metadata_violations"
           }
         ],
@@ -5770,7 +5770,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+          "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
         },
         "input": null,
         "log": "case-R4-BIND-04.json",
@@ -5809,32 +5809,32 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 74132,
+            "end": 74472,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 74089,
+            "start": 74429,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 100371,
+            "end": 100711,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 100321,
+            "start": 100661,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           },
           {
             "declaration": "fn v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations(",
-            "end": 104048,
+            "end": 104388,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 103971,
+            "start": 104311,
             "test_id": "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
           }
         ],
@@ -5856,7 +5856,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+          "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
         },
         "input": null,
         "log": "case-R4-ABI-01.json",
@@ -5890,22 +5890,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 74132,
+            "end": 74472,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 74089,
+            "start": 74429,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 100371,
+            "end": 100711,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 100321,
+            "start": 100661,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -5927,7 +5927,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+          "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
         },
         "input": null,
         "log": "case-R4-ABI-02.json",
@@ -6058,22 +6058,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 74132,
+            "end": 74472,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 74089,
+            "start": 74429,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 100371,
+            "end": 100711,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 100321,
+            "start": 100661,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -6095,7 +6095,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+          "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
         },
         "input": null,
         "log": "case-R4-ABI-03.json",
@@ -6226,22 +6226,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 74132,
+            "end": 74472,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 74089,
+            "start": 74429,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 100371,
+            "end": 100711,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 100321,
+            "start": 100661,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -6263,7 +6263,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+          "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
         },
         "input": null,
         "log": "case-R4-ABI-04.json",
@@ -6346,22 +6346,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 74132,
+            "end": 74472,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 74089,
+            "start": 74429,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 100371,
+            "end": 100711,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 100321,
+            "start": 100661,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -6383,7 +6383,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+          "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
         },
         "input": null,
         "log": "case-R4-ABI-05.json",
@@ -6449,22 +6449,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 74132,
+            "end": 74472,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 74089,
+            "start": 74429,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 100371,
+            "end": 100711,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 100321,
+            "start": 100661,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -6486,7 +6486,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+          "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
         },
         "input": null,
         "log": "case-R4-ABI-06.json",
@@ -6552,22 +6552,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 74132,
+            "end": 74472,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 74089,
+            "start": 74429,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 100371,
+            "end": 100711,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 100321,
+            "start": 100661,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -6589,7 +6589,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+          "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
         },
         "input": null,
         "log": "case-R4-ABI-07.json",
@@ -6660,22 +6660,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 74132,
+            "end": 74472,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 74089,
+            "start": 74429,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 100371,
+            "end": 100711,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 100321,
+            "start": 100661,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -6697,7 +6697,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+          "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
         },
         "input": null,
         "log": "case-R4-ABI-08.json",
@@ -6756,22 +6756,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 74132,
+            "end": 74472,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 74089,
+            "start": 74429,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 100371,
+            "end": 100711,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 100321,
+            "start": 100661,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -6793,7 +6793,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+          "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
         },
         "input": null,
         "log": "case-R4-ABI-09.json",
@@ -6852,42 +6852,42 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 74132,
+            "end": 74472,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 74089,
+            "start": 74429,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_published_borrow_survives_release(",
-            "end": 101084,
+            "end": 101424,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 101034,
+            "start": 101374,
             "test_id": "v06_glue_cli_published_borrow_survives_release"
           },
           {
             "declaration": "fn v06_glue_cli_published_images_fail_closed_on_substitution(",
-            "end": 75857,
+            "end": 76197,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 75796,
+            "start": 76136,
             "test_id": "v06_glue_cli_published_images_fail_closed_on_substitution"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 100371,
+            "end": 100711,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 100321,
+            "start": 100661,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -6909,7 +6909,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+          "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
         },
         "input": null,
         "log": "case-R4-ABI-10.json",
@@ -6996,32 +6996,32 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 74132,
+            "end": 74472,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 74089,
+            "start": 74429,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 100371,
+            "end": 100711,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 100321,
+            "start": 100661,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           },
           {
             "declaration": "fn v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations(",
-            "end": 104048,
+            "end": 104388,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 103971,
+            "start": 104311,
             "test_id": "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
           }
         ],
@@ -7043,7 +7043,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+          "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
         },
         "input": null,
         "log": "case-R4-ABI-11.json",
@@ -7110,12 +7110,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 74132,
+            "end": 74472,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 74089,
+            "start": 74429,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           }
         ],
@@ -7137,7 +7137,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+          "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
         },
         "input": null,
         "log": "case-R4-ABI-12.json",
@@ -7176,12 +7176,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 100371,
+            "end": 100711,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 100321,
+            "start": 100661,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -7203,7 +7203,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+          "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
         },
         "input": null,
         "log": "case-R4-CALL-01.json",
@@ -7226,12 +7226,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 100371,
+            "end": 100711,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 100321,
+            "start": 100661,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -7253,7 +7253,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+          "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
         },
         "input": null,
         "log": "case-R4-CALL-02.json",
@@ -7276,12 +7276,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 74132,
+            "end": 74472,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 74089,
+            "start": 74429,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           }
         ],
@@ -7303,7 +7303,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+          "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
         },
         "input": null,
         "log": "case-R4-CALL-03.json",
@@ -7335,22 +7335,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 74132,
+            "end": 74472,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 74089,
+            "start": 74429,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_owner_abort_is_a_terminal_process_failure(",
-            "end": 101983,
+            "end": 102323,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 101925,
+            "start": 102265,
             "test_id": "v06_glue_cli_owner_abort_is_a_terminal_process_failure"
           }
         ],
@@ -7372,7 +7372,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+          "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
         },
         "input": null,
         "log": "case-R4-CALL-04.json",
@@ -7417,12 +7417,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_equivalent_projects_issue_identical_packets(",
-            "end": 108758,
+            "end": 109098,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 108698,
+            "start": 109038,
             "test_id": "v06_glue_cli_equivalent_projects_issue_identical_packets"
           }
         ],
@@ -7444,7 +7444,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+          "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
         },
         "input": null,
         "log": "case-R4-GEN-01.json",
@@ -7467,12 +7467,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations(",
-            "end": 104048,
+            "end": 104388,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 103971,
+            "start": 104311,
             "test_id": "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
           }
         ],
@@ -7494,7 +7494,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+          "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
         },
         "input": null,
         "log": "case-R4-GEN-02.json",
@@ -7517,32 +7517,32 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations(",
-            "end": 104048,
+            "end": 104388,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 103971,
+            "start": 104311,
             "test_id": "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
           },
           {
             "declaration": "fn v06_glue_cli_published_images_fail_closed_on_substitution(",
-            "end": 75857,
+            "end": 76197,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 75796,
+            "start": 76136,
             "test_id": "v06_glue_cli_published_images_fail_closed_on_substitution"
           },
           {
             "declaration": "fn v06_glue_cli_rebuild_replaces_and_failed_rebuild_preserves(",
-            "end": 80665,
+            "end": 81005,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 80603,
+            "start": 80943,
             "test_id": "v06_glue_cli_rebuild_replaces_and_failed_rebuild_preserves"
           }
         ],
@@ -7564,7 +7564,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+          "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
         },
         "input": null,
         "log": "case-R4-GEN-03.json",
@@ -7589,12 +7589,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_tool_selection_names_the_required_form(",
-            "end": 111542,
+            "end": 111882,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 111487,
+            "start": 111827,
             "test_id": "v06_glue_cli_tool_selection_names_the_required_form"
           }
         ],
@@ -7616,7 +7616,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+          "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
         },
         "input": null,
         "log": "case-R4-TOOL-01.json",
@@ -7651,12 +7651,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_rustc_without_the_target_library_is_rejected_before_build(",
-            "end": 119058,
+            "end": 119398,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 118984,
+            "start": 119324,
             "test_id": "v06_glue_cli_rustc_without_the_target_library_is_rejected_before_build"
           }
         ],
@@ -7678,7 +7678,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+          "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
         },
         "input": null,
         "log": "case-R4-TOOL-02.json",
@@ -7701,12 +7701,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_unusable_tools_fail_before_publication(",
-            "end": 113282,
+            "end": 113622,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 113227,
+            "start": 113567,
             "test_id": "v06_glue_cli_unusable_tools_fail_before_publication"
           }
         ],
@@ -7728,7 +7728,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+          "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
         },
         "input": null,
         "log": "case-R4-TOOL-03.json",
@@ -7751,12 +7751,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_hanging_tool_probe_is_terminated(",
-            "end": 120179,
+            "end": 120519,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 120130,
+            "start": 120470,
             "test_id": "v06_glue_cli_hanging_tool_probe_is_terminated"
           }
         ],
@@ -7779,7 +7779,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+          "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
         },
         "input": null,
         "log": "case-R4-TOOL-04.json",
@@ -7802,22 +7802,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_ignores_inherited_rust_environment(",
-            "end": 78856,
+            "end": 79196,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 78805,
+            "start": 79145,
             "test_id": "v06_glue_cli_ignores_inherited_rust_environment"
           },
           {
             "declaration": "fn v06_glue_cli_rejects_ancestor_cargo_config(",
-            "end": 79619,
+            "end": 79959,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 79573,
+            "start": 79913,
             "test_id": "v06_glue_cli_rejects_ancestor_cargo_config"
           }
         ],
@@ -7839,7 +7839,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+          "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
         },
         "input": null,
         "log": "case-R4-TOOL-05.json",
@@ -7863,12 +7863,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_published_images_fail_closed_on_substitution(",
-            "end": 75857,
+            "end": 76197,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 75796,
+            "start": 76136,
             "test_id": "v06_glue_cli_published_images_fail_closed_on_substitution"
           }
         ],
@@ -7890,7 +7890,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+          "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
         },
         "input": null,
         "log": "case-R4-TOOL-06.json",
@@ -7913,12 +7913,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_rebuild_replaces_and_failed_rebuild_preserves(",
-            "end": 80665,
+            "end": 81005,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 80603,
+            "start": 80943,
             "test_id": "v06_glue_cli_rebuild_replaces_and_failed_rebuild_preserves"
           }
         ],
@@ -7940,7 +7940,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+          "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
         },
         "input": null,
         "log": "case-R4-TOOL-07.json",
@@ -7963,12 +7963,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_private_prefix_driver_admission_fails_closed(",
-            "end": 116364,
+            "end": 116704,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+              "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
             },
-            "start": 116303,
+            "start": 116643,
             "test_id": "v06_glue_cli_private_prefix_driver_admission_fails_closed"
           }
         ],
@@ -7990,7 +7990,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
+          "sha256": "63e4bf26ad7332a31954f658bc0c6d3d15c5a81169c376ef19bd96d9ade1f547"
         },
         "input": null,
         "log": "case-R4-TOOL-08.json",
@@ -8430,6 +8430,708 @@
         "R4-PROC-06"
       ],
       "spec_change": "v06-rust-glue-integration"
+    },
+    {
+      "binding": {
+        "assertion_provenance": [
+          {
+            "declaration": "test isolate_handles_compare_by_id",
+            "end": 1797,
+            "source": {
+              "path": "source-parallel-ParallelSuite.bd",
+              "sha256": "d0337026f483464e2b3e0145e9a80d02d072fed8f3b31449b6c40e1c374c3271"
+            },
+            "start": 1763,
+            "test_id": "isolate_handles_compare_by_id"
+          },
+          {
+            "declaration": "test task_body_reports_its_isolate",
+            "end": 2060,
+            "source": {
+              "path": "source-parallel-ParallelSuite.bd",
+              "sha256": "d0337026f483464e2b3e0145e9a80d02d072fed8f3b31449b6c40e1c374c3271"
+            },
+            "start": 2026,
+            "test_id": "task_body_reports_its_isolate"
+          },
+          {
+            "declaration": "test scope_joins_every_task_before_returning",
+            "end": 2612,
+            "source": {
+              "path": "source-parallel-ParallelSuite.bd",
+              "sha256": "d0337026f483464e2b3e0145e9a80d02d072fed8f3b31449b6c40e1c374c3271"
+            },
+            "start": 2568,
+            "test_id": "scope_joins_every_task_before_returning"
+          },
+          {
+            "declaration": "test unit_task_joins_without_a_value",
+            "end": 3120,
+            "source": {
+              "path": "source-parallel-ParallelSuite.bd",
+              "sha256": "d0337026f483464e2b3e0145e9a80d02d072fed8f3b31449b6c40e1c374c3271"
+            },
+            "start": 3084,
+            "test_id": "unit_task_joins_without_a_value"
+          },
+          {
+            "declaration": "test early_error_return_still_joins",
+            "end": 3567,
+            "source": {
+              "path": "source-parallel-ParallelSuite.bd",
+              "sha256": "d0337026f483464e2b3e0145e9a80d02d072fed8f3b31449b6c40e1c374c3271"
+            },
+            "start": 3532,
+            "test_id": "early_error_return_still_joins"
+          },
+          {
+            "declaration": "test failures_are_reported_in_spawn_order",
+            "end": 6825,
+            "source": {
+              "path": "source-parallel-ParallelSuite.bd",
+              "sha256": "d0337026f483464e2b3e0145e9a80d02d072fed8f3b31449b6c40e1c374c3271"
+            },
+            "start": 6784,
+            "test_id": "failures_are_reported_in_spawn_order"
+          },
+          {
+            "declaration": "test failure_cancels_siblings",
+            "end": 8447,
+            "source": {
+              "path": "source-parallel-ParallelSuite.bd",
+              "sha256": "d0337026f483464e2b3e0145e9a80d02d072fed8f3b31449b6c40e1c374c3271"
+            },
+            "start": 8418,
+            "test_id": "failure_cancels_siblings"
+          },
+          {
+            "declaration": "test nested_scopes_complete",
+            "end": 10764,
+            "source": {
+              "path": "source-parallel-ParallelSuite.bd",
+              "sha256": "d0337026f483464e2b3e0145e9a80d02d072fed8f3b31449b6c40e1c374c3271"
+            },
+            "start": 10737,
+            "test_id": "nested_scopes_complete"
+          },
+          {
+            "declaration": "test serial_scope_runs_every_body_on_the_caller",
+            "end": 11182,
+            "source": {
+              "path": "source-parallel-ParallelSuite.bd",
+              "sha256": "d0337026f483464e2b3e0145e9a80d02d072fed8f3b31449b6c40e1c374c3271"
+            },
+            "start": 11135,
+            "test_id": "serial_scope_runs_every_body_on_the_caller"
+          },
+          {
+            "declaration": "test frozen_array_is_shared_with_a_task",
+            "end": 12252,
+            "source": {
+              "path": "source-parallel-ParallelSuite.bd",
+              "sha256": "d0337026f483464e2b3e0145e9a80d02d072fed8f3b31449b6c40e1c374c3271"
+            },
+            "start": 12213,
+            "test_id": "frozen_array_is_shared_with_a_task"
+          }
+        ],
+        "command": {
+          "argv": [
+            "{installed_cli}",
+            "test",
+            "--plain",
+            "--json",
+            "--project",
+            "{installed_corelib}/CoreLib.bws",
+            "--target",
+            "ParallelSuite",
+            "--target-timeout",
+            "900"
+          ],
+          "env": {},
+          "tool_file": "{installed_cli}"
+        },
+        "fixture": null,
+        "harness_language": "beskid",
+        "harness_source": {
+          "path": "source-parallel-ParallelSuite.bd",
+          "sha256": "d0337026f483464e2b3e0145e9a80d02d072fed8f3b31449b6c40e1c374c3271"
+        },
+        "input": null,
+        "log": "case-PAR066-01.json",
+        "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+        "required_test_ids": [
+          "isolate_handles_compare_by_id",
+          "task_body_reports_its_isolate",
+          "scope_joins_every_task_before_returning",
+          "unit_task_joins_without_a_value",
+          "early_error_return_still_joins",
+          "failures_are_reported_in_spawn_order",
+          "failure_cancels_siblings",
+          "nested_scopes_complete",
+          "serial_scope_runs_every_body_on_the_caller",
+          "frozen_array_is_shared_with_a_task"
+        ],
+        "reviewed_source_binding": true,
+        "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/parallel/ParallelSuite.bd",
+        "target": "ParallelSuite"
+      },
+      "execution": "installed_native",
+      "id": "PAR066-01",
+      "obligation": "Fork-join scopes, isolate placement and task failure in the installed Corelib",
+      "requirement_ids": [
+        "PAR066-01"
+      ],
+      "spec_change": "v063-isolates-and-scope"
+    },
+    {
+      "binding": {
+        "assertion_provenance": [
+          {
+            "declaration": "fn par066_02_scope_spawn_join_result_at_one_isolate_and_default(",
+            "end": 4163,
+            "source": {
+              "path": "source-tests-features_host_v066.rs",
+              "sha256": "f11bdd6ee2f6a5ad9752c5cd2a737498d9fa45b1a6bb2f38f565778c7c98b329"
+            },
+            "start": 4099,
+            "test_id": "par066_02_scope_spawn_join_result_at_one_isolate_and_default"
+          }
+        ],
+        "command": {
+          "argv": [
+            "{harness}",
+            "--exact",
+            "{test_id}",
+            "--test-threads=1",
+            "--nocapture"
+          ],
+          "env": {
+            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+          },
+          "tool_file": "{harness}"
+        },
+        "fixture": null,
+        "harness": "beskid_tests_release",
+        "harness_language": "rust",
+        "harness_source": {
+          "path": "source-tests-features_host_v066.rs",
+          "sha256": "f11bdd6ee2f6a5ad9752c5cd2a737498d9fa45b1a6bb2f38f565778c7c98b329"
+        },
+        "input": null,
+        "log": "case-PAR066-02.json",
+        "required_test_ids": [
+          "par066_02_scope_spawn_join_result_at_one_isolate_and_default"
+        ],
+        "reviewed_source_binding": true,
+        "source_file": "compiler/crates/beskid_tests_release/tests/features_host_v066.rs"
+      },
+      "execution": "installed_host_harness",
+      "id": "PAR066-02",
+      "obligation": "Fork-join Spawn/Join results with one isolate and with the default isolate bound",
+      "requirement_ids": [
+        "PAR066-02"
+      ],
+      "spec_change": "v063-isolates-and-scope"
+    },
+    {
+      "binding": {
+        "assertion_provenance": [
+          {
+            "declaration": "test bounded_producer_and_consumer",
+            "end": 12915,
+            "source": {
+              "path": "source-parallel-ParallelSuite.bd",
+              "sha256": "d0337026f483464e2b3e0145e9a80d02d072fed8f3b31449b6c40e1c374c3271"
+            },
+            "start": 12881,
+            "test_id": "bounded_producer_and_consumer"
+          },
+          {
+            "declaration": "test try_receive_on_an_empty_open_port_would_block",
+            "end": 13752,
+            "source": {
+              "path": "source-parallel-ParallelSuite.bd",
+              "sha256": "d0337026f483464e2b3e0145e9a80d02d072fed8f3b31449b6c40e1c374c3271"
+            },
+            "start": 13702,
+            "test_id": "try_receive_on_an_empty_open_port_would_block"
+          },
+          {
+            "declaration": "test closed_port_drains_then_reports_closed",
+            "end": 14273,
+            "source": {
+              "path": "source-parallel-ParallelSuite.bd",
+              "sha256": "d0337026f483464e2b3e0145e9a80d02d072fed8f3b31449b6c40e1c374c3271"
+            },
+            "start": 14230,
+            "test_id": "closed_port_drains_then_reports_closed"
+          },
+          {
+            "declaration": "test port_handle_crosses_a_port",
+            "end": 15178,
+            "source": {
+              "path": "source-parallel-ParallelSuite.bd",
+              "sha256": "d0337026f483464e2b3e0145e9a80d02d072fed8f3b31449b6c40e1c374c3271"
+            },
+            "start": 15147,
+            "test_id": "port_handle_crosses_a_port"
+          },
+          {
+            "declaration": "test two_workers_share_one_inbox",
+            "end": 16218,
+            "source": {
+              "path": "source-parallel-ParallelSuite.bd",
+              "sha256": "d0337026f483464e2b3e0145e9a80d02d072fed8f3b31449b6c40e1c374c3271"
+            },
+            "start": 16186,
+            "test_id": "two_workers_share_one_inbox"
+          },
+          {
+            "declaration": "test three_stage_pipeline_keeps_input_order",
+            "end": 18166,
+            "source": {
+              "path": "source-parallel-ParallelSuite.bd",
+              "sha256": "d0337026f483464e2b3e0145e9a80d02d072fed8f3b31449b6c40e1c374c3271"
+            },
+            "start": 18123,
+            "test_id": "three_stage_pipeline_keeps_input_order"
+          },
+          {
+            "declaration": "test stage_failure_cancels_the_pipeline",
+            "end": 19578,
+            "source": {
+              "path": "source-parallel-ParallelSuite.bd",
+              "sha256": "d0337026f483464e2b3e0145e9a80d02d072fed8f3b31449b6c40e1c374c3271"
+            },
+            "start": 19539,
+            "test_id": "stage_failure_cancels_the_pipeline"
+          }
+        ],
+        "command": {
+          "argv": [
+            "{installed_cli}",
+            "test",
+            "--plain",
+            "--json",
+            "--project",
+            "{installed_corelib}/CoreLib.bws",
+            "--target",
+            "ParallelSuite",
+            "--target-timeout",
+            "900"
+          ],
+          "env": {},
+          "tool_file": "{installed_cli}"
+        },
+        "fixture": null,
+        "harness_language": "beskid",
+        "harness_source": {
+          "path": "source-parallel-ParallelSuite.bd",
+          "sha256": "d0337026f483464e2b3e0145e9a80d02d072fed8f3b31449b6c40e1c374c3271"
+        },
+        "input": null,
+        "log": "case-PORT066-01.json",
+        "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+        "required_test_ids": [
+          "bounded_producer_and_consumer",
+          "try_receive_on_an_empty_open_port_would_block",
+          "closed_port_drains_then_reports_closed",
+          "port_handle_crosses_a_port",
+          "two_workers_share_one_inbox",
+          "three_stage_pipeline_keeps_input_order",
+          "stage_failure_cancels_the_pipeline"
+        ],
+        "reviewed_source_binding": true,
+        "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/parallel/ParallelSuite.bd",
+        "target": "ParallelSuite"
+      },
+      "execution": "installed_native",
+      "id": "PORT066-01",
+      "obligation": "Bounded ports, port close and cancellation, and ordered pipelines in the installed Corelib",
+      "requirement_ids": [
+        "PORT066-01"
+      ],
+      "spec_change": "v064-ports-and-pipelines"
+    },
+    {
+      "binding": {
+        "assertion_provenance": [
+          {
+            "declaration": "fn port066_02_bounded_port_and_ordered_pipeline_at_one_isolate_and_default(",
+            "end": 8087,
+            "source": {
+              "path": "source-tests-features_host_v066.rs",
+              "sha256": "f11bdd6ee2f6a5ad9752c5cd2a737498d9fa45b1a6bb2f38f565778c7c98b329"
+            },
+            "start": 8012,
+            "test_id": "port066_02_bounded_port_and_ordered_pipeline_at_one_isolate_and_default"
+          }
+        ],
+        "command": {
+          "argv": [
+            "{harness}",
+            "--exact",
+            "{test_id}",
+            "--test-threads=1",
+            "--nocapture"
+          ],
+          "env": {
+            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+          },
+          "tool_file": "{harness}"
+        },
+        "fixture": null,
+        "harness": "beskid_tests_release",
+        "harness_language": "rust",
+        "harness_source": {
+          "path": "source-tests-features_host_v066.rs",
+          "sha256": "f11bdd6ee2f6a5ad9752c5cd2a737498d9fa45b1a6bb2f38f565778c7c98b329"
+        },
+        "input": null,
+        "log": "case-PORT066-02.json",
+        "required_test_ids": [
+          "port066_02_bounded_port_and_ordered_pipeline_at_one_isolate_and_default"
+        ],
+        "reviewed_source_binding": true,
+        "source_file": "compiler/crates/beskid_tests_release/tests/features_host_v066.rs"
+      },
+      "execution": "installed_host_harness",
+      "id": "PORT066-02",
+      "obligation": "Bounded port producer/consumer and input-ordered pipeline with one isolate and with the default isolate bound",
+      "requirement_ids": [
+        "PORT066-02"
+      ],
+      "spec_change": "v064-ports-and-pipelines"
+    },
+    {
+      "binding": {
+        "assertion_provenance": [
+          {
+            "declaration": "test where_and_map_fuse_into_a_reduction",
+            "end": 20922,
+            "source": {
+              "path": "source-parallel-ParallelSuite.bd",
+              "sha256": "d0337026f483464e2b3e0145e9a80d02d072fed8f3b31449b6c40e1c374c3271"
+            },
+            "start": 20882,
+            "test_id": "where_and_map_fuse_into_a_reduction"
+          },
+          {
+            "declaration": "test source_stays_usable_and_count_matches",
+            "end": 21351,
+            "source": {
+              "path": "source-parallel-ParallelSuite.bd",
+              "sha256": "d0337026f483464e2b3e0145e9a80d02d072fed8f3b31449b6c40e1c374c3271"
+            },
+            "start": 21309,
+            "test_id": "source_stays_usable_and_count_matches"
+          },
+          {
+            "declaration": "test collect_preserves_input_order",
+            "end": 21655,
+            "source": {
+              "path": "source-parallel-ParallelSuite.bd",
+              "sha256": "d0337026f483464e2b3e0145e9a80d02d072fed8f3b31449b6c40e1c374c3271"
+            },
+            "start": 21621,
+            "test_id": "collect_preserves_input_order"
+          },
+          {
+            "declaration": "test ordered_reduce_preserves_association_order",
+            "end": 22720,
+            "source": {
+              "path": "source-parallel-ParallelSuite.bd",
+              "sha256": "d0337026f483464e2b3e0145e9a80d02d072fed8f3b31449b6c40e1c374c3271"
+            },
+            "start": 22673,
+            "test_id": "ordered_reduce_preserves_association_order"
+          },
+          {
+            "declaration": "test user_combiner_with_both_markers",
+            "end": 23778,
+            "source": {
+              "path": "source-parallel-ParallelSuite.bd",
+              "sha256": "d0337026f483464e2b3e0145e9a80d02d072fed8f3b31449b6c40e1c374c3271"
+            },
+            "start": 23742,
+            "test_id": "user_combiner_with_both_markers"
+          },
+          {
+            "declaration": "test shipped_combiners",
+            "end": 25031,
+            "source": {
+              "path": "source-parallel-ParallelSuite.bd",
+              "sha256": "d0337026f483464e2b3e0145e9a80d02d072fed8f3b31449b6c40e1c374c3271"
+            },
+            "start": 25009,
+            "test_id": "shipped_combiners"
+          }
+        ],
+        "command": {
+          "argv": [
+            "{installed_cli}",
+            "test",
+            "--plain",
+            "--json",
+            "--project",
+            "{installed_corelib}/CoreLib.bws",
+            "--target",
+            "ParallelSuite",
+            "--target-timeout",
+            "900"
+          ],
+          "env": {},
+          "tool_file": "{installed_cli}"
+        },
+        "fixture": null,
+        "harness_language": "beskid",
+        "harness_source": {
+          "path": "source-parallel-ParallelSuite.bd",
+          "sha256": "d0337026f483464e2b3e0145e9a80d02d072fed8f3b31449b6c40e1c374c3271"
+        },
+        "input": null,
+        "log": "case-PSEQ066-01.json",
+        "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+        "required_test_ids": [
+          "where_and_map_fuse_into_a_reduction",
+          "source_stays_usable_and_count_matches",
+          "collect_preserves_input_order",
+          "ordered_reduce_preserves_association_order",
+          "user_combiner_with_both_markers",
+          "shipped_combiners"
+        ],
+        "reviewed_source_binding": true,
+        "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/parallel/ParallelSuite.bd",
+        "target": "ParallelSuite"
+      },
+      "execution": "installed_native",
+      "id": "PSEQ066-01",
+      "obligation": "Parallel sequence Map/Where/Reduce/Collect equal serial elision in the installed Corelib",
+      "requirement_ids": [
+        "PSEQ066-01"
+      ],
+      "spec_change": "v065-parallel-sequences"
+    },
+    {
+      "binding": {
+        "assertion_provenance": [
+          {
+            "declaration": "fn pseq066_02_parallel_map_reduce_equals_serial_at_one_isolate_and_default(",
+            "end": 10521,
+            "source": {
+              "path": "source-tests-features_host_v066.rs",
+              "sha256": "f11bdd6ee2f6a5ad9752c5cd2a737498d9fa45b1a6bb2f38f565778c7c98b329"
+            },
+            "start": 10446,
+            "test_id": "pseq066_02_parallel_map_reduce_equals_serial_at_one_isolate_and_default"
+          }
+        ],
+        "command": {
+          "argv": [
+            "{harness}",
+            "--exact",
+            "{test_id}",
+            "--test-threads=1",
+            "--nocapture"
+          ],
+          "env": {
+            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+          },
+          "tool_file": "{harness}"
+        },
+        "fixture": null,
+        "harness": "beskid_tests_release",
+        "harness_language": "rust",
+        "harness_source": {
+          "path": "source-tests-features_host_v066.rs",
+          "sha256": "f11bdd6ee2f6a5ad9752c5cd2a737498d9fa45b1a6bb2f38f565778c7c98b329"
+        },
+        "input": null,
+        "log": "case-PSEQ066-02.json",
+        "required_test_ids": [
+          "pseq066_02_parallel_map_reduce_equals_serial_at_one_isolate_and_default"
+        ],
+        "reviewed_source_binding": true,
+        "source_file": "compiler/crates/beskid_tests_release/tests/features_host_v066.rs"
+      },
+      "execution": "installed_host_harness",
+      "id": "PSEQ066-02",
+      "obligation": "Parallel Map/Reduce and Collect equal the serial result with one isolate and with the default isolate bound",
+      "requirement_ids": [
+        "PSEQ066-02"
+      ],
+      "spec_change": "v065-parallel-sequences"
+    },
+    {
+      "binding": {
+        "assertion_provenance": [
+          {
+            "declaration": "fn move066_01_move_and_exchange_run_and_use_after_move_is_e1234(",
+            "end": 12214,
+            "source": {
+              "path": "source-tests-features_host_v066.rs",
+              "sha256": "f11bdd6ee2f6a5ad9752c5cd2a737498d9fa45b1a6bb2f38f565778c7c98b329"
+            },
+            "start": 12150,
+            "test_id": "move066_01_move_and_exchange_run_and_use_after_move_is_e1234"
+          }
+        ],
+        "command": {
+          "argv": [
+            "{harness}",
+            "--exact",
+            "{test_id}",
+            "--test-threads=1",
+            "--nocapture"
+          ],
+          "env": {
+            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+          },
+          "tool_file": "{harness}"
+        },
+        "fixture": null,
+        "harness": "beskid_tests_release",
+        "harness_language": "rust",
+        "harness_source": {
+          "path": "source-tests-features_host_v066.rs",
+          "sha256": "f11bdd6ee2f6a5ad9752c5cd2a737498d9fa45b1a6bb2f38f565778c7c98b329"
+        },
+        "input": null,
+        "log": "case-MOVE066-01.json",
+        "related_evidence": [
+          {
+            "crate": "beskid_codegen",
+            "kind": "cargo_test",
+            "test_ids": [
+              "exchange_of_a_field_stores_the_value_behind_the_barrier_and_yields_the_old_value",
+              "destructive_read_of_an_array_field_stores_the_empty_array_behind_the_barrier"
+            ]
+          }
+        ],
+        "required_test_ids": [
+          "move066_01_move_and_exchange_run_and_use_after_move_is_e1234"
+        ],
+        "reviewed_source_binding": true,
+        "source_file": "compiler/crates/beskid_tests_release/tests/features_host_v066.rs"
+      },
+      "execution": "installed_host_harness",
+      "id": "MOVE066-01",
+      "obligation": "move and exchange transfer at run time; a read after move is rejected as E1234",
+      "requirement_ids": [
+        "MOVE066-01"
+      ],
+      "spec_change": "v062-captures-and-move"
+    },
+    {
+      "binding": {
+        "assertion_provenance": [
+          {
+            "declaration": "fn v066_glue_cli_extensions_records_enums_callbacks_roundtrip(",
+            "end": 11601,
+            "source": {
+              "path": "source-glue_owned-extensions.rs",
+              "sha256": "1511f1106ae23a86a58e2eb65a440c839024f8a3144b0978e504404758d46baf"
+            },
+            "start": 11539,
+            "test_id": "v066_glue_cli_extensions_records_enums_callbacks_roundtrip"
+          }
+        ],
+        "command": {
+          "argv": [
+            "{harness}",
+            "--exact",
+            "{test_id}",
+            "--test-threads=1",
+            "--nocapture"
+          ],
+          "env": {
+            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+          },
+          "tool_file": "{harness}"
+        },
+        "fixture": null,
+        "harness": "beskid_tests_interop",
+        "harness_language": "rust",
+        "harness_source": {
+          "path": "source-glue_owned-extensions.rs",
+          "sha256": "1511f1106ae23a86a58e2eb65a440c839024f8a3144b0978e504404758d46baf"
+        },
+        "input": null,
+        "log": "case-GLUE066-01.json",
+        "related_evidence": [
+          {
+            "crate": "beskid_tests_interop",
+            "kind": "cargo_test",
+            "test_ids": [
+              "v061_glue_extensions_manual_c_abi",
+              "v061_glue_extensions_owned_roundtrip"
+            ]
+          }
+        ],
+        "required_test_ids": [
+          "v066_glue_cli_extensions_records_enums_callbacks_roundtrip"
+        ],
+        "reviewed_source_binding": true,
+        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned/extensions.rs"
+      },
+      "execution": "installed_host_harness",
+      "id": "GLUE066-01",
+      "obligation": "Generated Rust owner records, fieldless enums and call-scoped callbacks through the installed CLI",
+      "requirement_ids": [
+        "GLUE066-01"
+      ],
+      "spec_change": "v061-glue-extensions"
+    },
+    {
+      "binding": {
+        "assertion_provenance": [
+          {
+            "declaration": "fn gcs066_01_gc_stress_alloc_64_verify_smoke(",
+            "end": 16050,
+            "source": {
+              "path": "source-tests-features_host_v066.rs",
+              "sha256": "f11bdd6ee2f6a5ad9752c5cd2a737498d9fa45b1a6bb2f38f565778c7c98b329"
+            },
+            "start": 16005,
+            "test_id": "gcs066_01_gc_stress_alloc_64_verify_smoke"
+          }
+        ],
+        "command": {
+          "argv": [
+            "{harness}",
+            "--exact",
+            "{test_id}",
+            "--test-threads=1",
+            "--nocapture"
+          ],
+          "env": {
+            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+          },
+          "tool_file": "{harness}"
+        },
+        "fixture": null,
+        "harness": "beskid_tests_release",
+        "harness_language": "rust",
+        "harness_source": {
+          "path": "source-tests-features_host_v066.rs",
+          "sha256": "f11bdd6ee2f6a5ad9752c5cd2a737498d9fa45b1a6bb2f38f565778c7c98b329"
+        },
+        "input": null,
+        "log": "case-GCS066-01.json",
+        "required_test_ids": [
+          "gcs066_01_gc_stress_alloc_64_verify_smoke"
+        ],
+        "reviewed_source_binding": true,
+        "source_file": "compiler/crates/beskid_tests_release/tests/features_host_v066.rs"
+      },
+      "execution": "installed_host_harness",
+      "id": "GCS066-01",
+      "obligation": "BESKID_GC_STRESS=alloc:64,verify smoke run and malformed-setting rejection",
+      "requirement_ids": [
+        "GCS066-01"
+      ],
+      "spec_change": "v061-gc-stress-and-poison"
     }
   ],
   "execution_kinds": {
@@ -8484,8 +9186,17 @@
     "case-DYN-06-03.json",
     "case-DYN-06-04.json",
     "case-DYN-06-05.json",
+    "case-GCS066-01.json",
+    "case-GLUE066-01.json",
     "case-MOD-06-01.json",
     "case-MOD-06-02.json",
+    "case-MOVE066-01.json",
+    "case-PAR066-01.json",
+    "case-PAR066-02.json",
+    "case-PORT066-01.json",
+    "case-PORT066-02.json",
+    "case-PSEQ066-01.json",
+    "case-PSEQ066-02.json",
     "case-R4-ABI-01.json",
     "case-R4-ABI-02.json",
     "case-R4-ABI-03.json",
@@ -8559,12 +9270,14 @@
     "source-core-CoreSuite.bd",
     "source-dynamic-DynamicMappingSuite.bd",
     "source-dynamic-DynamicSuite.bd",
+    "source-glue_owned-extensions.rs",
     "source-http-CodecTests.bd",
     "source-http-ExchangeTests.bd",
     "source-http-SerializationTests.bd",
     "source-http-ValidationTests.bd",
     "source-interop-glue_owned.rs",
     "source-network-NetworkSuite.bd",
+    "source-parallel-ParallelSuite.bd",
     "source-process-ProcessSuite.bd",
     "source-serialization-GeneratedTests.bd",
     "source-serialization-ModEligibilityTests.bd",
@@ -8573,6 +9286,7 @@
     "source-tests-bsol_host_v06.rs",
     "source-tests-cli_journeys_v06.rs",
     "source-tests-dependency_journeys_v06.rs",
+    "source-tests-features_host_v066.rs",
     "source-tests-serialization_host_v06.rs",
     "stderr-BSOL-06-01.log",
     "stderr-BSOL-06-02.log",
@@ -8599,8 +9313,17 @@
     "stderr-DYN-06-03.log",
     "stderr-DYN-06-04.log",
     "stderr-DYN-06-05.log",
+    "stderr-GCS066-01.log",
+    "stderr-GLUE066-01.log",
     "stderr-MOD-06-01.log",
     "stderr-MOD-06-02.log",
+    "stderr-MOVE066-01.log",
+    "stderr-PAR066-01.log",
+    "stderr-PAR066-02.log",
+    "stderr-PORT066-01.log",
+    "stderr-PORT066-02.log",
+    "stderr-PSEQ066-01.log",
+    "stderr-PSEQ066-02.log",
     "stderr-R4-ABI-01.log",
     "stderr-R4-ABI-02.log",
     "stderr-R4-ABI-03.log",
@@ -8685,8 +9408,17 @@
     "stdout-DYN-06-03.log",
     "stdout-DYN-06-04.log",
     "stdout-DYN-06-05.log",
+    "stdout-GCS066-01.log",
+    "stdout-GLUE066-01.log",
     "stdout-MOD-06-01.log",
     "stdout-MOD-06-02.log",
+    "stdout-MOVE066-01.log",
+    "stdout-PAR066-01.log",
+    "stdout-PAR066-02.log",
+    "stdout-PORT066-01.log",
+    "stdout-PORT066-02.log",
+    "stdout-PSEQ066-01.log",
+    "stdout-PSEQ066-02.log",
     "stdout-R4-ABI-01.log",
     "stdout-R4-ABI-02.log",
     "stdout-R4-ABI-03.log",

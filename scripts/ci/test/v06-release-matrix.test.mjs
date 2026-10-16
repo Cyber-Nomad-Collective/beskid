@@ -22,11 +22,11 @@ const PREFIX = "/reader-fixture/candidate";
 const SOURCE = { superrepo_commit: "1".repeat(40), compiler_commit: "2".repeat(40) };
 const identifier = id => `reader_fixture_${id.replace(/[^A-Za-z0-9_]/g, "_")}`;
 const HOST_HARNESS = { "R4-ABI": "beskid_tests_interop", "R4-BIND": "beskid_tests_interop", "R4-CALL": "beskid_tests_interop",
-  "R4-GEN": "beskid_tests_interop", "R4-TOOL": "beskid_tests_interop" };
+  "R4-GEN": "beskid_tests_interop", "R4-TOOL": "beskid_tests_interop", "GLUE066-01": "beskid_tests_interop" };
 function plannedExecution(id) {
   const prefix = id.split("-").slice(0, 2).join("-");
   if (HOST_HARNESS[prefix]) return { execution: "installed_host_harness", harness: HOST_HARNESS[prefix] };
-  if (/^(CLI06|DEP06|MOD-06)-|^SER-04$|^BSOL-06-01$/.test(id)) return { execution: "installed_host_harness", harness: "beskid_tests_release" };
+  if (/^(CLI06|DEP06|MOD-06)-|^SER-04$|^BSOL-06-01$|^(PAR066|PORT066|PSEQ066)-02$|^(MOVE066|GCS066)-/.test(id)) return { execution: "installed_host_harness", harness: "beskid_tests_release" };
   return { execution: "installed_native", harness: null };
 }
 function libtestSection(id, { outcome = "ok", running = 1, exit = 0, qualified = id } = {}) {
@@ -194,9 +194,9 @@ const nativeCase = "foundations.time";
 const hostCase = "DEP06-02";
 
 test("the draft manifest retains all mandatory IDs and only reviewed bindings", () => {
-  assert.equal(planned.cases.length, 86);
+  assert.equal(planned.cases.length, 95);
   assert.equal(planned.cases.filter(item => item.spec_change === null).length, 16);
-  assert.equal(new Set(planned.cases.map(item => item.id)).size, 86);
+  assert.equal(new Set(planned.cases.map(item => item.id)).size, 95);
   assert.equal(planned.provisional_cases.length, 15);
   assert(planned.provisional_cases.every(item => item.moved_from === "v06-rust-glue-integration" && typeof item.reason === "string" && item.reason.length > 0));
   // R4-IO-* live on in the provisional stdio bridge change; R4-GEN-04..06 (Glue Mod contracts) are deleted in 0.6 and kept by no change.

@@ -19,7 +19,7 @@ const VERSION = "0.6.0";
 const SOURCE = { superrepo_commit: "a".repeat(40), compiler_commit: "b".repeat(40) };
 const sha256 = bytes => createHash("sha256").update(bytes).digest("hex");
 const identifier = id => `fixture_${id.replace(/[^A-Za-z0-9_]/g, "_")}`;
-const HOST_HARNESS = { "R4-ABI": "beskid_tests_interop", "R4-BIND": "beskid_tests_interop", "R4-CALL": "beskid_tests_interop", "R4-GEN": "beskid_tests_interop", "R4-TOOL": "beskid_tests_interop" };
+const HOST_HARNESS = { "R4-ABI": "beskid_tests_interop", "R4-BIND": "beskid_tests_interop", "R4-CALL": "beskid_tests_interop", "R4-GEN": "beskid_tests_interop", "R4-TOOL": "beskid_tests_interop", "GLUE066-01": "beskid_tests_interop" };
 
 /** A fixture checkout: every case bound to a synthetic source under the layout the freeze tool expects. */
 function fixtureRepo(root) {
@@ -172,7 +172,7 @@ test("the producer emits a schema-2 packet that the reader validates end to end"
   const names = readdirSync(value.output).sort();
   const packet_files = Object.fromEntries(names.map(name => [name, sha256(readFileSync(join(value.output, name)))]));
   const feature = JSON.parse(readFileSync(join(value.output, "feature-evidence-v2.json"), "utf8"));
-  assert.equal(feature.cases.length, 86);
+  assert.equal(feature.cases.length, 95);
   assert(feature.cases.every(row => row.status === "success"));
   assert.equal(feature.rust_profile_matrix.length, 68);
   assert.equal(feature.obligation_matrix.length, 18);
@@ -190,7 +190,7 @@ test("the producer emits a schema-2 packet that the reader validates end to end"
     candidate_cli_sha256: packet_files["beskid-linux-amd64"], candidate_bundle_sha256: packet_files[`beskid-${VERSION}-${TARGET}.tar.gz`], installed_cli: value.buildResult.installed_cli };
   // The reader sees exactly the packet files; the platform assets are part of the closure too.
   const result = ValidateV06FeatureEvidence(feature, value.manifestBytes, expected);
-  assert.equal(result.cases.length, 86);
+  assert.equal(result.cases.length, 95);
   assert.deepEqual(result.provisional_cases.length, 15);
   const manifest = value.manifest;
   for (const name of [...manifest.packet_files, ...manifest.target_packet_files[TARGET]]) assert(names.includes(name), `${name} retained`);

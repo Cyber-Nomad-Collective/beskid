@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "slice": "features-v066",
+  "cases": {
+    "PAR066-01": {
+      "execution": "installed_native",
+      "target": "ParallelSuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/parallel/ParallelSuite.bd",
+      "required_test_ids": [
+        "isolate_handles_compare_by_id",
+        "task_body_reports_its_isolate",
+        "scope_joins_every_task_before_returning",
+        "unit_task_joins_without_a_value",
+        "early_error_return_still_joins",
+        "failures_are_reported_in_spawn_order",
+        "failure_cancels_siblings",
+        "nested_scopes_complete",
+        "serial_scope_runs_every_body_on_the_caller",
+        "frozen_array_is_shared_with_a_task"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "PAR066-02": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/features_host_v066.rs",
+      "required_test_ids": [
+        "par066_02_scope_spawn_join_result_at_one_isolate_and_default"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "PORT066-01": {
+      "execution": "installed_native",
+      "target": "ParallelSuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/parallel/ParallelSuite.bd",
+      "required_test_ids": [
+        "bounded_producer_and_consumer",
+        "try_receive_on_an_empty_open_port_would_block",
+        "closed_port_drains_then_reports_closed",
+        "port_handle_crosses_a_port",
+        "two_workers_share_one_inbox",
+        "three_stage_pipeline_keeps_input_order",
+        "stage_failure_cancels_the_pipeline"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "PORT066-02": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/features_host_v066.rs",
+      "required_test_ids": [
+        "port066_02_bounded_port_and_ordered_pipeline_at_one_isolate_and_default"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "PSEQ066-01": {
+      "execution": "installed_native",
+      "target": "ParallelSuite",
+      "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
+      "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/parallel/ParallelSuite.bd",
+      "required_test_ids": [
+        "where_and_map_fuse_into_a_reduction",
+        "source_stays_usable_and_count_matches",
+        "collect_preserves_input_order",
+        "ordered_reduce_preserves_association_order",
+        "user_combiner_with_both_markers",
+        "shipped_combiners"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "PSEQ066-02": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/features_host_v066.rs",
+      "required_test_ids": [
+        "pseq066_02_parallel_map_reduce_equals_serial_at_one_isolate_and_default"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "MOVE066-01": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/features_host_v066.rs",
+      "required_test_ids": [
+        "move066_01_move_and_exchange_run_and_use_after_move_is_e1234"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        {
+          "kind": "cargo_test",
+          "crate": "beskid_codegen",
+          "test_ids": [
+            "exchange_of_a_field_stores_the_value_behind_the_barrier_and_yields_the_old_value",
+            "destructive_read_of_an_array_field_stores_the_empty_array_behind_the_barrier"
+          ]
+        }
+      ]
+    },
+    "GLUE066-01": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned/extensions.rs",
+      "required_test_ids": [
+        "v066_glue_cli_extensions_records_enums_callbacks_roundtrip"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        {
+          "kind": "cargo_test",
+          "crate": "beskid_tests_interop",
+          "test_ids": [
+            "v061_glue_extensions_manual_c_abi",
+            "v061_glue_extensions_owned_roundtrip"
+          ]
+        }
+      ]
+    },
+    "GCS066-01": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/features_host_v066.rs",
+      "required_test_ids": [
+        "gcs066_01_gc_stress_alloc_64_verify_smoke"
+      ],
+      "input": null,
+      "fixture": null
+    }
+  }
+}

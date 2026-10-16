@@ -82,6 +82,14 @@ Draft release notes: `docs/release/v0.6.6-release-notes.md`.
 - `beskid_cli`, `beskid_lsp`, `beskid_up`, the VS Code extension and the Zed
   extension carry version 0.6.6. The release case manifest is re-frozen
   against the merged sources.
+- Nine mandatory 0.6.6 release cases (95 mandatory in total): fork-join scopes
+  (`PAR066-01`, `PAR066-02`, also at `BESKID_ISOLATES_MAX=1`), ports and
+  pipelines (`PORT066-01`, `PORT066-02`), parallel sequences (`PSEQ066-01`,
+  `PSEQ066-02`), `move`/`exchange` with E1234 through the CLI (`MOVE066-01`),
+  Glue extensions built by the installed CLI (`GLUE066-01`) and a
+  `BESKID_GC_STRESS=alloc:64,verify` smoke (`GCS066-01`). Fragment
+  `scripts/ci/release-case-bindings/features-v066.json`; the new manifest digest
+  is pinned (task 6.7).
 
 ### Breaking changes
 
