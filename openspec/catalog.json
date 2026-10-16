@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "3c3dbbaa5e7523a9d98725f2bcdd1136e90a035a75379c554b2e5596dfbfefba",
+  "revision": "6aeab483c364a6b972a9ba120bae183516d4b74085cceb20ed4f0eb1c19defef",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -59839,7 +59839,7 @@
       "decision": null,
       "title": "Mod host bridge",
       "status": "Standard",
-      "sourceHash": "39ac21b2a253d6e83c557fdd7bc9ddd8f2a3f6711c8481ae042e9952e16e9125"
+      "sourceHash": "4ebff0b07f62f53aefcf867853da5a65d6df66e4a4b742d3c42be43f60f5482b"
     },
     {
       "id": "BSP-CAP-BF4207C24429",
