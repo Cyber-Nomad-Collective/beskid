@@ -51,7 +51,7 @@ steps:
   # runs without GH_TOKEN, and woodpecker-release.sh passes it only to gh and
   # the two GitHub publisher scripts.
   - name: publish-release
-    image: cr.beskid-lang.org/beskid/release-publisher:0.6.0
+    image: cr.beskid-lang.org/beskid/release-publisher:0.6.0@sha256:61b8232d13fe050744a99b379daa77483f39caf6b249500b3bd4d104530b0fb5
     settings:
       action: release-publish
       task: '${BESKID_TASK}'

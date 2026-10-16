@@ -25,7 +25,7 @@ PINNED_IMAGE = re.compile(
 PUBLISHER_DIR = ROOT / "ci/plugins/release-publisher"
 PUBLISHER_VERSION = (PUBLISHER_DIR / "VERSION").read_text().strip()
 PUBLISHER_IMAGE = re.compile(
-    r"^cr\.beskid-lang\.org/beskid/release-publisher:" + re.escape(PUBLISHER_VERSION) + r"(@sha256:[0-9a-f]{64})?$"
+    r"^cr\.beskid-lang\.org/beskid/release-publisher:" + re.escape(PUBLISHER_VERSION) + r"@sha256:[0-9a-f]{64}$"
 )
 # Secrets filtered to the publisher image, and the dispatcher action of each step that binds them.
 PLUGIN_SECRETS = {"compiler_release_token", "pckg_release_publisher_key", "open_vsx_token"}

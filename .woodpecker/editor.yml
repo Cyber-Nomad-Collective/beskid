@@ -28,7 +28,7 @@ steps:
   # filtered to. Its dispatcher re-verifies the prepared snapshot, then gives
   # OVSX_PAT only to prebuilt-editor-publish.py publish.
   - name: publish-editor-release
-    image: cr.beskid-lang.org/beskid/release-publisher:0.6.0
+    image: cr.beskid-lang.org/beskid/release-publisher:0.6.0@sha256:61b8232d13fe050744a99b379daa77483f39caf6b249500b3bd4d104530b0fb5
     settings:
       action: editor-publish
       task: '${BESKID_TASK}'

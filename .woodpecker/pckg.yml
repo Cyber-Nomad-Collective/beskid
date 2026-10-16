@@ -16,7 +16,7 @@ steps:
   # digest-verified release bundle) and BESKID_PCKG_API_KEY only to
   # corelib-publish.sh with BESKID_TOOLCHAIN_PREFIX=/woodpecker-toolchain/prefix.
   - name: publish-corelib-and-templates
-    image: cr.beskid-lang.org/beskid/release-publisher:0.6.0
+    image: cr.beskid-lang.org/beskid/release-publisher:0.6.0@sha256:61b8232d13fe050744a99b379daa77483f39caf6b249500b3bd4d104530b0fb5
     settings:
       action: pckg-publish
       task: '${BESKID_TASK}'
