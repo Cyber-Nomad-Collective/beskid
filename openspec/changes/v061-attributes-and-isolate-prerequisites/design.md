@@ -513,3 +513,18 @@ requirements. The dry archive was repeated after these edits.
 - Marker attributes live in `Core.Attributes` until a `Core.Parallel` module exists (0.6.3), then move there.
 - Attribute name resolution order: the declaring unit, then imported units, then `Core.Attributes`, then any declaration in the assembly (this admits Mod-declared attributes such as `Serialize`). A user declaration in scope shadows a recognized name.
 - Follow-ups for this change: Glue and `Export` code paths must recognize attributes through the resolved declaration, not the bare name; signature help shows call-site type-parameter bindings; the E1229 shadowing message gets its own wording; `TypeParameter` spans include their attributes.
+
+## Implementation rulings (2026-10-15, v06x parallel program)
+
+Sources: `~/.claude/handoffs/v06x-lang-progress.md` (decisions D1-D7, R-lang rulings) and `v06x-par-progress.md`.
+
+- Marker attributes stay in `Core.Attributes` (lang R-lang-2; revises the 2026-10-13 ruling "markers move to `Core.Parallel` in 0.6.3"). `Core.Parallel` lives in the concurrency package above foundation, and `List` in foundation already carries `[Isolated]`, so the attributes cannot move. `Core.Parallel` declares only the contracts `Transferable`, `Shared`, `Moved`, `Copied` (`[CompilerDerived]`) and MUST NOT redeclare the attributes; the compiler recognizes markers by name and by the recognized `[CompilerDerived]` contract.
+- Generic field at the declaration (lang D1). A field whose type mentions the declaring type's own parameters is not judged by E1244, E1246 and E1247 at the declaration; the class is decided per instantiation (`Box<string>` is `Moved`, `Box<Mutex>` is `Never`).
+- "some Transferable" fields (lang D2). A `Transferable`-bounded field inside a marked type makes the type `Never` (an `[Isolated] Box<T>` with `T` `Copied` would otherwise be unsound). In an enum, `Shared` plus "some Transferable" fields give "some Transferable", so `Option<T>` is transferable for every `T`.
+- Recursive types (lang D3) assume their marker class coinductively, as Rust auto traits do; a recursive enum adds `Shared`.
+- `MapEntry<K, V>` is `[Isolated]` (lang D4), so a `Map` with `Copied` values is `Never` in 0.6.x; no marker admits all three classes.
+- Event fields count as function-typed and are `Never` (lang D5); injected fields are classified by their type. "Inside corelib" for `[ImmutableStorage]` means a unit whose module path starts with `Core` (lang D6). A marker bound issues no contract witness (lang D7).
+- `[ScopeBorrowed]` (lang R-lang-4) is a corelib-only attribute on `TypeDefinition` (E1510 outside `Core.*`): an `[Immutable]` type carrying it whose only non-`Shared` field is an `[ImmutableStorage] T[]` with `T: Transferable` is `Shared`. `ParallelSeq`'s `SeqSource<T>` uses it; the exemption rests on corelib review like `[ImmutableStorage]` itself.
+- `[Captures(Bound: C)]` targets `Parameter` and `Field` (lang R-lang-3). A value read from a bounded parameter or field, or from an immutable binding initialized only from one, satisfies the bound as a capture and as an argument or field initializer.
+- A cross-package inherent `impl<T> List<T> { ... }` resolves as a method of `List<T>` (lang R-lang-6): the declaring unit is searched first, then every unit of the generation.
+- Every generated Glue owner type carries `[NeverTransferable]` (glue R-glue-1).

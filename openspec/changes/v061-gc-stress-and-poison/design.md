@@ -30,3 +30,13 @@ The runtime already has two test hooks: `gc_heap_set_stress_interval` (a collect
 
 - The stress pass can exceed the CI time budget. Mitigation: `alloc:<n>` with n chosen per suite, recorded in the CI script.
 - Quarantine raises the debug-kit footprint by the budget. The budget is bounded and documented.
+
+## Implementation rulings (2026-10-15, v06x parallel program)
+
+Sources: `~/.claude/handoffs/v06x-rt-progress.md` (decisions D1-D6).
+
+- Kit debug fact (rt D1). The runtime corpus is lowered once per kit independent of the profile, so a generated constant cannot differ between kits. The manifest declares the intrinsic `kit_debug_profile` (`u8`), implemented as the macro `BESKID_RUNTIME_KIT_DEBUG` in `host_threads.h`; an absent macro means release and disables poisoning (fail closed). The kit builder passes `-DBESKID_RUNTIME_KIT_DEBUG=1` for a debug kit, and `HeapInit` caches the value in the heap state.
+- Heap state (rt D2). The stress and quarantine fields (stress interval and counter, flags, test hook, quarantine head, tail, bytes and budget, debug flag) are appended at offsets 328 to 400.
+- Slot encoding (rt D3). A quarantined slot holds the FIFO link in word 0, the tag `0xDEADBEEFFEEDFAC0` in word 1 and `0xDEADBEEFFEEDFACE` in every other word; a free-list slot of the debug kit holds the link in word 0 and poison elsewhere. A span with quarantined slots is never freed. A budget of 0 poisons only.
+- Malformed values (rt D4). A malformed `BESKID_GC_STRESS` or `BESKID_GC_QUARANTINE` traps with code 5, as `BESKID_HEAP_MAX` and `BESKID_FIBER_STACK_MAX` do.
+- Variable scope (rt D5). `BESKID_GC_STRESS` and `BESKID_GC_QUARANTINE` are the only `BESKID_GC_*` variables the runtime reads. The 0.6.2 requirement that the runtime reads no `BESKID_GC_*` variable concerns pacing knobs and exempts these two.
