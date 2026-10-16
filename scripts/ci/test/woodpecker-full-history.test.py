@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Every Woodpecker step that resolves a release candidate or collects handoffs walks history.
+"""Every release step that resolves a candidate or collects handoffs walks full history first.
 
-Woodpecker's git plugin clones shallow even with depth: 0, so a step that runs
+Woodpecker's git plugin clones shallow even with depth: 0, so code that runs
 release-user-observation.mjs or woodpecker-fetch-handoffs.sh must first run
-scripts/ci/woodpecker-full-history.sh. Plugin steps on the release publisher
-image delegate this to the image dispatcher, which must do the same.
+scripts/ci/woodpecker-full-history.sh. This holds for inline step commands, for
+the release lane script the steps call, and for the release publisher
+dispatcher, which reaches the walkers only through that lane script.
 """
 import re
 import sys
@@ -14,43 +15,52 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[3]
 WORKFLOWS = ROOT / ".woodpecker"
-HISTORY = "scripts/ci/woodpecker-full-history.sh"
 WALKERS = re.compile(r"release-user-observation\.mjs|woodpecker-fetch-handoffs\.sh")
-DISPATCHER = ROOT / "ci/plugins/release-publisher/dispatch.sh"
+HISTORY = "woodpecker-full-history.sh"
+LANE = "scripts/ci/woodpecker-release-lane.sh"
+DISPATCHER = "ci/plugins/release-publisher/dispatch.sh"
 failures = []
 
 
-def FirstIndex(lines, predicate):
+def FirstIndex(lines, pattern):
     for index, line in enumerate(lines):
-        if predicate(line):
+        if re.search(pattern, line):
             return index
     return None
 
 
-checked = 0
+def CheckOrder(label, lines):
+    walker = FirstIndex(lines, WALKERS.pattern)
+    if walker is None:
+        return False
+    history = FirstIndex(lines, re.escape(HISTORY))
+    if history is None or history >= walker:
+        failures.append(f"{label} resolves the candidate before {HISTORY}")
+    return True
+
+
+def CodeLines(path):
+    return [l for l in (ROOT / path).read_text().splitlines() if not l.lstrip().startswith("#")]
+
+
+if not CheckOrder(LANE, CodeLines(LANE)):
+    failures.append(f"{LANE} no longer resolves the candidate; the contract matched nothing")
+dispatcher = CodeLines(DISPATCHER)
+CheckOrder(DISPATCHER, dispatcher)
+if not any("woodpecker-release-lane.sh publish" in l for l in dispatcher):
+    failures.append(f"{DISPATCHER} must publish through {LANE}")
+
+lane_steps = 0
 for path in sorted(WORKFLOWS.glob("*.yml")):
     document = yaml.safe_load(path.read_text())
     for step in document.get("steps") or []:
-        label = f"{path.name}:{step.get('name')}"
         commands = [str(c) for c in step.get("commands") or []]
-        walker = FirstIndex(commands, lambda c: WALKERS.search(c) is not None)
-        if walker is None:
-            continue
-        checked += 1
-        history = FirstIndex(commands, lambda c: HISTORY in c)
-        if history is None or history >= walker:
-            failures.append(f"{label} resolves the candidate before {HISTORY}")
+        CheckOrder(f"{path.name}:{step.get('name')}", commands)
+        lane_steps += sum(1 for c in commands if "woodpecker-release-lane.sh" in c)
+if lane_steps != 2:
+    failures.append(f"expected prepare-release and verify-release to run {LANE}, found {lane_steps} calls")
 
-if DISPATCHER.exists():
-    lines = [l for l in DISPATCHER.read_text().splitlines() if not l.lstrip().startswith("#")]
-    walker = FirstIndex(lines, lambda l: WALKERS.search(l) is not None)
-    history = FirstIndex(lines, lambda l: "woodpecker-full-history.sh" in l)
-    if walker is not None and (history is None or history >= walker):
-        failures.append(f"{DISPATCHER.relative_to(ROOT)} resolves the candidate before the full-history fetch")
-
-if checked == 0:
-    failures.append("no step resolves the release candidate; the contract matched nothing")
 if failures:
     print("\n".join(f"FAIL: {f}" for f in failures), file=sys.stderr)
     sys.exit(1)
-print(f"Woodpecker full-history contract OK ({checked} steps)")
+print("Woodpecker full-history contract OK")

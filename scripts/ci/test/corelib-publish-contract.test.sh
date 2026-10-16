@@ -42,9 +42,11 @@ assert_contains "${RUNNER}" 'generateCorelibDocsForPackage(cliBin, meta.workspac
   "each documented corelib package is generated immediately before packing"
 assert_contains "${PUBLISHER}" 'BESKID_PUBLISH_DRY_RUN' \
   "the publisher exposes a no-secret, no-mutation validation mode"
-assert_contains "$(cat "${ROOT}/.woodpecker/pckg.yml")" 'node scripts/ci/prepare-pckg-toolchain.mjs' \
+assert_contains "$(cat "${ROOT}/ci/plugins/release-publisher/dispatch.sh")" 'node scripts/ci/prepare-pckg-toolchain.mjs' \
   "the PCKG pipeline obtains the immutable digest-verified full bundle"
-assert_contains "$(cat "${ROOT}/.woodpecker/pckg.yml")" 'BESKID_TOOLCHAIN_PREFIX=/woodpecker-toolchain/prefix' \
+assert_contains "$(cat "${ROOT}/.woodpecker/pckg.yml")" 'action: pckg-publish' \
+  "the PCKG pipeline publishes through the release publisher plugin"
+assert_contains "$(cat "${ROOT}/ci/plugins/release-publisher/dispatch.sh")" 'BESKID_TOOLCHAIN_PREFIX="$toolchain_root/prefix"' \
   "the PCKG pipeline passes the complete installed prefix to publication"
 assert_contains "${PUBLISHER}" 'https://pckg.beskid-lang.org' \
   "the publisher default uses the canonical public registry URL"

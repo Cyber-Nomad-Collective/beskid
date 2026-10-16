@@ -6,7 +6,8 @@ root="$(cd "$(dirname "$0")/../../.." && pwd)"; runner="$root/scripts/ci/woodpec
 tmp="$(mktemp -d)"; trap 'rm -rf "$tmp"' EXIT
 fail() { echo "FAIL: $*" >&2; exit 1; }
 grep -Fq 'role: beskid-release' "$root/.woodpecker/release.yml"
-grep -Fq 'woodpecker-fetch-handoffs.sh' "$root/.woodpecker/release.yml"
+grep -Fq 'woodpecker-release-lane.sh' "$root/.woodpecker/release.yml"
+grep -Fq 'woodpecker-fetch-handoffs.sh' "$root/scripts/ci/woodpecker-release-lane.sh"
 source=0123456789abcdef0123456789abcdef01234567; other=fedcba9876543210fedcba9876543210fedcba98
 compiler=89abcdef0123456789abcdef0123456789abcdef; version=0.6.0
 mkdir -p "$tmp/bin"; : >"$tmp/key"; : >"$tmp/known hosts"

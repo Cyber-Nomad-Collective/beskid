@@ -95,10 +95,15 @@ if git -C "${ROOT}" grep -In -e 'BESKID_BUILD_PIPELINE''_NUMBER' >&2; then
   echo 'BESKID_BUILD_PIPELINE''_NUMBER was replaced by per-platform handoff collection' >&2
   exit 1
 fi
-grep -Fq 'woodpecker-fetch-handoffs.sh' "${workflow_dir}/release.yml"
-for role in LINUX MACOS WINDOWS; do grep -Fq "BESKID_${role}_BUILD" "${workflow_dir}/release.yml"; done
+# The release steps run the bash lane script; Woodpecker runs `commands` with /bin/sh.
+release_lane="${ROOT}/scripts/ci/woodpecker-release-lane.sh"
+grep -Fq 'bash scripts/ci/woodpecker-release-lane.sh prepare' "${workflow_dir}/release.yml"
+grep -Fq 'bash scripts/ci/woodpecker-release-lane.sh verify' "${workflow_dir}/release.yml"
+grep -Fq 'woodpecker-fetch-handoffs.sh' "${release_lane}"
+for role in LINUX MACOS WINDOWS; do grep -Fq "BESKID_${role}_BUILD" "${release_lane}" "${workflow_dir}/release.yml"; done
 # The candidate gate input reaches the source resolver (record, else input, else HEAD).
-grep -Fq 'release-user-observation.mjs --platform-sources . "$${version}" "$${CI_COMMIT_SHA}" "$${BESKID_RELEASE_CANDIDATE:-}" "$${BESKID_LINUX_SOURCE:-}" "$${BESKID_MACOS_SOURCE:-}" "$${BESKID_WINDOWS_SOURCE:-}"' "${workflow_dir}/release.yml"
+grep -Fq '"${BESKID_RELEASE_CANDIDATE:-}" "${BESKID_LINUX_SOURCE:-}" "${BESKID_MACOS_SOURCE:-}" "${BESKID_WINDOWS_SOURCE:-}"' "${release_lane}"
+grep -Fq 'release-user-observation.mjs" --platform-sources . "$version" "${CI_COMMIT_SHA:?}"' "${release_lane}"
 
 for file in "${workflow_dir}/linux.yml" "${workflow_dir}/macos.yml"; do
   grep -Fq 'woodpecker-release-tag-guard.sh "$${CI_COMMIT_TAG}" --check-only' "${file}"
@@ -120,6 +125,7 @@ test "$(grep -c 'from_secret' "${workflow_dir}/release.yml")" -eq 1
 grep -Fq 'from_secret: compiler_release_token' "${workflow_dir}/release.yml"
 python3 "${ROOT}/scripts/ci/test/woodpecker-secret-scope.test.py"
 python3 "${ROOT}/scripts/ci/test/woodpecker-full-history.test.py"
+python3 "${ROOT}/scripts/ci/test/woodpecker-posix-commands.test.py"
 
 # Marketplace releases consume reviewed native evidence on the trusted manual
 # Woodpecker host. Only the final publish step receives the existing secret.
@@ -140,7 +146,7 @@ test "$(grep -c 'npm install --prefix' "${workflow_dir}/editor.yml")" -eq 1
 ! grep -Eq 'GITHUB_EVENT_NAME|GITHUB_REF|GITHUB_REPOSITORY|OVSX_TOKEN' "${workflow_dir}/editor.yml"
 test "$(grep -c 'from_secret: github_packages_publish_token' "${workflow_dir}/javascript.yml")" -eq 2
 ! grep -Eq 'GITHUB_TOKEN|NPM_TOKEN|GH_TOKEN' "${workflow_dir}/javascript.yml"
-grep -Fq 'apt-get install -y --no-install-recommends ca-certificates clang gh git jq python3 unzip' "${workflow_dir}/pckg.yml"
+grep -Fq 'ca-certificates clang gh git jq openssh-client python3 unzip' "${ROOT}/ci/plugins/release-publisher/Dockerfile"
 
 # This contract owns only native build and standard validation lanes. Editor,
 # security and protected publishing lanes have separate policy contracts;

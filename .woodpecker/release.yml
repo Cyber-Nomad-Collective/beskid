@@ -12,40 +12,23 @@ clone:
       recursive: false
 
 steps:
+  # Step bodies live in scripts/ci/woodpecker-release-lane.sh: Woodpecker runs `commands` with
+  # /bin/sh, and the lane needs bash. It fetches full history first, resolves candidate C, collects
+  # one verified handoff per platform and runs woodpecker-release.sh; see its header for C, the
+  # BESKID_*_BUILD pins, BESKID_RELEASE_CANDIDATE and BESKID_*_SOURCE.
   - name: prepare-release
     image: node:22.16.0-bookworm
     commands:
       - apt-get update >/dev/null
       - apt-get install -y --no-install-recommends ca-certificates gh git jq openssh-client >/dev/null
-      # Collect the candidate. The release runs on HEAD and publishes the builds of candidate C: the
-      # candidate named by the committed CLI06-06 record (docs/release/cli06-06-record-v<version>.json),
-      # else BESKID_RELEASE_CANDIDATE, else HEAD. HEAD's compiler and beskid_distrib pointers and
-      # release-case manifest digest must equal C's; root-only commits after C never force a rebuild.
-      # Each platform was built by its own pipeline; the fetch selects the newest complete, verified
-      # handoff of C per platform, or the pipeline pinned by BESKID_LINUX_BUILD, BESKID_MACOS_BUILD or
-      # BESKID_WINDOWS_BUILD, and prints the three pipeline numbers. Any missing platform, identity drift
-      # or checksum mismatch fails. BESKID_LINUX_SOURCE, BESKID_MACOS_SOURCE or BESKID_WINDOWS_SOURCE
-      # name a platform's own handoff source when it differs from C in non-build root paths only. When a
-      # build was repackaged with BESKID_REPACKAGE_SUPERSEDES, the newest packaging of its supersede
-      # chain (`<build>-<source>@<packaging>`) is selected; a pin still names the build pipeline.
-      - bash scripts/ci/woodpecker-full-history.sh
-      - |
-        version="$(node scripts/ci/release-version.mjs "$${BESKID_RELEASE_VERSION:?set stable version}" --stable-only)"
-        resolved="$(node scripts/ci/release-user-observation.mjs --platform-sources . "$${version}" "$${CI_COMMIT_SHA}" "$${BESKID_RELEASE_CANDIDATE:-}" "$${BESKID_LINUX_SOURCE:-}" "$${BESKID_MACOS_SOURCE:-}" "$${BESKID_WINDOWS_SOURCE:-}")"
-        source_sha="$(jq -r '.candidate' <<<"$${resolved}")"
-        sources="$(jq -r '[.sources.linux, .sources.macos, .sources.windows] | join(",")' <<<"$${resolved}")"
-        compiler_sha="$(git rev-parse "$${source_sha}:compiler")"
-        builds="$(bash scripts/ci/woodpecker-fetch-handoffs.sh "$${sources}" "$${compiler_sha}" "$${version}" /woodpecker-handoff)"
-        echo "collected candidate $${source_sha} (linux, macos, windows sources $${sources}): builds $${builds}"
-        bash scripts/ci/woodpecker-release.sh "$${version}" $${builds}
+      - bash scripts/ci/woodpecker-release-lane.sh prepare
     when:
       - event: manual
         evaluate: 'BESKID_TASK == "release"'
 
   # Credential-free proof of the qualified state, including the owner waiver. The three platform
   # builds are pinned (BESKID_LINUX_BUILD, BESKID_MACOS_BUILD, BESKID_WINDOWS_BUILD) so that this step
-  # and publish-release consume the same handoffs; BESKID_RELEASE_CANDIDATE and BESKID_*_SOURCE work
-  # as in prepare-release.
+  # and publish-release consume the same handoffs.
   - name: verify-release
     image: node:22.16.0-bookworm
     environment:
@@ -53,47 +36,38 @@ steps:
     commands:
       - apt-get update >/dev/null
       - apt-get install -y --no-install-recommends ca-certificates git jq openssh-client >/dev/null
-      - test -n "$${BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_JSON:-}" || { echo 'set BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_JSON' >&2; exit 1; }
-      - bash scripts/ci/woodpecker-full-history.sh
-      - |
-        : "$${BESKID_LINUX_BUILD:?pin the Linux build}" "$${BESKID_MACOS_BUILD:?pin the macOS build}" "$${BESKID_WINDOWS_BUILD:?pin the Windows build}"
-        version="$(node scripts/ci/release-version.mjs "$${BESKID_RELEASE_VERSION:?set stable version}" --stable-only)"
-        resolved="$(node scripts/ci/release-user-observation.mjs --platform-sources . "$${version}" "$${CI_COMMIT_SHA}" "$${BESKID_RELEASE_CANDIDATE:-}" "$${BESKID_LINUX_SOURCE:-}" "$${BESKID_MACOS_SOURCE:-}" "$${BESKID_WINDOWS_SOURCE:-}")"
-        source_sha="$(jq -r '.candidate' <<<"$${resolved}")"
-        sources="$(jq -r '[.sources.linux, .sources.macos, .sources.windows] | join(",")' <<<"$${resolved}")"
-        compiler_sha="$(git rev-parse "$${source_sha}:compiler")"
-        builds="$(bash scripts/ci/woodpecker-fetch-handoffs.sh "$${sources}" "$${compiler_sha}" "$${version}" /woodpecker-handoff)"
-        echo "verifying candidate $${source_sha} (linux, macos, windows sources $${sources}): builds $${builds}"
-        BESKID_PUBLISH_RELEASE=0 bash scripts/ci/woodpecker-release.sh "$${version}" $${builds}
+      - bash scripts/ci/woodpecker-release-lane.sh verify
     when:
       - event: manual
         branch: main
         evaluate: 'BESKID_TASK == "release-publish"'
 
-  # The only step that receives the scoped GitHub publication secret. It
-  # re-fetches and re-validates the same pinned handoffs before any GitHub call;
-  # the collection helpers run without GH_TOKEN, and woodpecker-release.sh passes
-  # it only to gh and the two GitHub publisher scripts.
+  # The only step that receives the scoped GitHub publication secret. It is a
+  # plugin step on the release publisher image (ci/plugins/release-publisher),
+  # the one image the secret is filtered to: no commands, entrypoint or
+  # environment. Manual variables reach it only through `settings:`. Its
+  # dispatcher runs `woodpecker-release-lane.sh publish`, which re-fetches and
+  # re-validates the same pinned handoffs before any GitHub call; collection
+  # runs without GH_TOKEN, and woodpecker-release.sh passes it only to gh and
+  # the two GitHub publisher scripts.
   - name: publish-release
-    image: node:22.16.0-bookworm
-    environment:
-      BESKID_PUBLISH_RELEASE: "1"
-      GH_TOKEN:
+    image: cr.beskid-lang.org/beskid/release-publisher:0.6.0
+    settings:
+      action: release-publish
+      task: '${BESKID_TASK}'
+      release_version: '${BESKID_RELEASE_VERSION}'
+      release_candidate: '${BESKID_RELEASE_CANDIDATE}'
+      linux_build: '${BESKID_LINUX_BUILD}'
+      macos_build: '${BESKID_MACOS_BUILD}'
+      windows_build: '${BESKID_WINDOWS_BUILD}'
+      linux_source: '${BESKID_LINUX_SOURCE}'
+      macos_source: '${BESKID_MACOS_SOURCE}'
+      windows_source: '${BESKID_WINDOWS_SOURCE}'
+      # Settings are single-quoted YAML strings: a SHA such as 1234e5... must not parse as a
+      # number, and the owner waiver is one line of JSON without single quotes.
+      windows_installer_owner_waiver_json: '${BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_JSON}'
+      gh_token:
         from_secret: compiler_release_token
-    commands:
-      - apt-get update >/dev/null
-      - apt-get install -y --no-install-recommends ca-certificates gh git jq openssh-client >/dev/null
-      - env -u GH_TOKEN bash scripts/ci/woodpecker-full-history.sh
-      - |
-        : "$${BESKID_LINUX_BUILD:?pin the Linux build}" "$${BESKID_MACOS_BUILD:?pin the macOS build}" "$${BESKID_WINDOWS_BUILD:?pin the Windows build}"
-        version="$(env -u GH_TOKEN node scripts/ci/release-version.mjs "$${BESKID_RELEASE_VERSION:?set stable version}" --stable-only)"
-        resolved="$(env -u GH_TOKEN node scripts/ci/release-user-observation.mjs --platform-sources . "$${version}" "$${CI_COMMIT_SHA}" "$${BESKID_RELEASE_CANDIDATE:-}" "$${BESKID_LINUX_SOURCE:-}" "$${BESKID_MACOS_SOURCE:-}" "$${BESKID_WINDOWS_SOURCE:-}")"
-        source_sha="$(jq -r '.candidate' <<<"$${resolved}")"
-        sources="$(jq -r '[.sources.linux, .sources.macos, .sources.windows] | join(",")' <<<"$${resolved}")"
-        compiler_sha="$(git rev-parse "$${source_sha}:compiler")"
-        builds="$(env -u GH_TOKEN bash scripts/ci/woodpecker-fetch-handoffs.sh "$${sources}" "$${compiler_sha}" "$${version}" /woodpecker-handoff)"
-        echo "publishing candidate $${source_sha} (linux, macos, windows sources $${sources}): builds $${builds}"
-        BESKID_PUBLISH_RELEASE=1 bash scripts/ci/woodpecker-release.sh "$${version}" $${builds}
     when:
       - event: manual
         branch: main

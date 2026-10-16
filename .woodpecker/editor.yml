@@ -24,21 +24,17 @@ steps:
       - test -x "$${toolchain}/node_modules/.bin/ovsx"
       - python3 scripts/ci/prebuilt-editor-publish.py verify "$${snapshot}" --version "$${BESKID_EDITOR_PUBLISH_VERSION:-0.5.1}"
 
+  # Plugin step on the release publisher image, the one image open_vsx_token is
+  # filtered to. Its dispatcher re-verifies the prepared snapshot, then gives
+  # OVSX_PAT only to prebuilt-editor-publish.py publish.
   - name: publish-editor-release
-    image: node:22.16.0-bookworm
-    environment:
-      OVSX_PAT:
+    image: cr.beskid-lang.org/beskid/release-publisher:0.6.0
+    settings:
+      action: editor-publish
+      task: '${BESKID_TASK}'
+      editor_version: '${BESKID_EDITOR_PUBLISH_VERSION}'
+      ovsx_pat:
         from_secret: open_vsx_token
-    commands:
-      - apt-get update >/dev/null
-      - apt-get install -y --no-install-recommends ca-certificates git python3 >/dev/null
-      - snapshot="/woodpecker-output/editor-$${CI_PIPELINE_NUMBER}-$${CI_COMMIT_SHA}"
-      - toolchain="$${snapshot}/ovsx-toolchain"
-      - ovsx="$${toolchain}/node_modules/.bin/ovsx"
-      - test -x "$${ovsx}"
-      - python3 scripts/ci/prebuilt-editor-publish.py verify "$${snapshot}" --version "$${BESKID_EDITOR_PUBLISH_VERSION:-0.5.1}"
-      - python3 scripts/ci/prebuilt-editor-publish.py publish "$${snapshot}" --ovsx "$${ovsx}" --version "$${BESKID_EDITOR_PUBLISH_VERSION:-0.5.1}"
-      - test -s "$${snapshot}/publish-results.json"
 
 when:
   - event: manual

@@ -40,11 +40,30 @@ steps:
         branch: main
         evaluate: 'BESKID_TASK == "platform-publish"'
 
-# Registry credentials exist only in the protected explicit publisher step.
+  # Build and push the release publisher plugin image (ci/plugins/release-publisher)
+  # that the publication secrets are filtered to; the publication steps then pin
+  # the printed digest. See scripts/ci/woodpecker-publisher-image.sh.
+  - name: publisher-image
+    image: docker:27.5.1-cli
+    environment:
+      BESKID_PLATFORM_DOCKER_TRUSTED: "1"
+      REGISTRY_USERNAME:
+        from_secret: registry_username
+      REGISTRY_PASSWORD:
+        from_secret: registry_password
+    commands:
+      - apk add --no-cache bash git jq
+      - bash scripts/ci/woodpecker-publisher-image.sh
+    when:
+      - event: manual
+        branch: main
+        evaluate: 'BESKID_TASK == "publisher-image"'
+
+# Registry credentials exist only in the protected explicit publisher steps.
 
 when:
   - event: push
     branch: main
   - event: manual
     branch: main
-    evaluate: 'BESKID_TASK == "platform" || BESKID_TASK == "platform-publish"'
+    evaluate: 'BESKID_TASK == "platform" || BESKID_TASK == "platform-publish" || BESKID_TASK == "publisher-image"'

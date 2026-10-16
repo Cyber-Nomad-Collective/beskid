@@ -10,6 +10,10 @@ scripts=(
   scripts/ci/publish-homebrew-formula.sh
   scripts/ci/render-compiler-release-notes.sh
   scripts/ci/woodpecker-fetch-handoffs.sh
+  scripts/ci/woodpecker-release-lane.sh
+  scripts/ci/woodpecker-full-history.sh
+  scripts/ci/woodpecker-publisher-image.sh
+  ci/plugins/release-publisher/dispatch.sh
 )
 fail() { echo "FAIL: $*" >&2; exit 1; }
 

@@ -10,23 +10,23 @@ clone:
       recursive: false
 
 steps:
+  # Plugin step on the release publisher image, the one image the publication
+  # secrets are filtered to. Its dispatcher initializes the submodules, gives
+  # GH_TOKEN only to node scripts/ci/prepare-pckg-toolchain.mjs (the
+  # digest-verified release bundle) and BESKID_PCKG_API_KEY only to
+  # corelib-publish.sh with BESKID_TOOLCHAIN_PREFIX=/woodpecker-toolchain/prefix.
   - name: publish-corelib-and-templates
-    image: node:22.16.0-bookworm
-    environment:
-      BESKID_PCKG_API_KEY:
-        from_secret: pckg_release_publisher_key
-      GH_TOKEN:
-        from_secret: compiler_release_token
-    commands:
-      - apt-get update >/dev/null
-      - apt-get install -y --no-install-recommends ca-certificates clang gh git jq python3 unzip >/dev/null
-      - bash scripts/ci/init-submodules.sh compiler beskid_bsol beskid_templates beskid_distrib
-      - |
-        version="$${BESKID_COMPILER_RELEASE_VERSION:?set the verified compiler release version}"
-        mkdir -p /woodpecker-toolchain
-        node scripts/ci/prepare-pckg-toolchain.mjs "$${version}" /woodpecker-toolchain/prefix
+    image: cr.beskid-lang.org/beskid/release-publisher:0.6.0
+    settings:
+      action: pckg-publish
+      task: '${BESKID_TASK}'
+      compiler_release_version: '${BESKID_COMPILER_RELEASE_VERSION}'
       # Version policy is a pipeline input: patch (default), minor, major or an exact version.
-      - BESKID_PCKG_VERSION_BUMP="$${BESKID_PCKG_VERSION_BUMP:-patch}" BESKID_TOOLCHAIN_PREFIX=/woodpecker-toolchain/prefix bash scripts/ci/corelib-publish.sh
+      version_bump: '${BESKID_PCKG_VERSION_BUMP}'
+      gh_token:
+        from_secret: compiler_release_token
+      pckg_api_key:
+        from_secret: pckg_release_publisher_key
     when:
       - event: manual
         branch: main
