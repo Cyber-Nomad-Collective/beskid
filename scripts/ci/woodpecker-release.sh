@@ -157,6 +157,11 @@ for index in 0 1 2; do
       cp "$release/input/linux/release-gate-${component}.json" \
         "$release/input/linux/release-gate-${component}.log" "$release/native/linux/"
     done
+    # A repackage that re-issued the compiler gate report retains the build's own report beside it;
+    # the aggregator accepts the re-issue only as the repackage lane's exact transformation of it.
+    if [[ -e "$release/input/linux/release-gate-compiler.build.json" ]]; then
+      cp "$release/input/linux/release-gate-compiler.build.json" "$release/native/linux/"
+    fi
   fi
 done
 

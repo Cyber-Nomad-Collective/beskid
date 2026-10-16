@@ -1,11 +1,12 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { mkdtempSync, mkdirSync, rmSync, symlinkSync, writeFileSync, readFileSync, existsSync, copyFileSync } from "node:fs";
+import { mkdtempSync, mkdirSync, readdirSync, rmSync, symlinkSync, writeFileSync, readFileSync, existsSync, copyFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import { cliSurfaceFixture } from "./cli-surface-fixture.mjs";
+import { VerifyLinuxGates } from "../lib/repackage.mjs";
 
 const validatorPath = new URL("../woodpecker-release-evidence.mjs", import.meta.url);
 const aggregatePath = new URL("../woodpecker-aggregate-release.mjs", import.meta.url);
@@ -404,6 +405,134 @@ test("aggregation carries source-bound gate logs into qualified release state", 
   assert.deepEqual(validated.platform_sources, { linux: SOURCE.superrepo_commit, macos: SOURCE.superrepo_commit, windows: SOURCE.superrepo_commit });
 });
 
+// The input of a platform is its packet; Linux also carries the gate reports the build writes after its
+// SHA256SUMS. The qualified snapshot holds the packets alone, so it satisfies the strict packet closure.
+function packetNames(directory) {
+  return readFileSync(join(directory, "SHA256SUMS"), "utf8").split("\n").filter(Boolean).map(line => line.slice(66)).sort();
+}
+test("aggregation snapshots exactly each platform packet and keeps the gate reports beside it", (t) => {
+  const root = createFixture();
+  writeGateFixture(root);
+  const output = join(root, "aggregate");
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  const result = spawnSync(process.execPath, aggregateArgs(root, output), { encoding: "utf8" });
+  assert.equal(result.status, 0, result.stderr);
+  for (const platform of Object.keys(PLATFORMS)) {
+    const snapshot = join(output, "evidence", platform);
+    assert.deepEqual(readdirSync(snapshot).filter(name => name !== "SHA256SUMS").sort(), packetNames(snapshot), `${platform} snapshot is its packet`);
+  }
+  assert.deepEqual(readdirSync(join(output, "gate-evidence")).sort(),
+    ["release-gate-compiler.json", "release-gate-compiler.log", "release-gate-corelib.json", "release-gate-corelib.log"]);
+});
+
+for (const [name, mutate, pattern] of [
+  ["an undeclared Linux file", root => writeFileSync(join(root, "linux", "undeclared.log"), "extra\n"), /linux evidence directory is not its packet and gate evidence: extra \[undeclared.log\]/],
+  ["an undeclared macOS file", root => writeFileSync(join(root, "macos", "repackage-provenance.json"), "{}\n"), /macos evidence directory is not its packet: extra \[repackage-provenance.json\]/],
+  ["a gate report on another platform", root => copyFileSync(join(root, "linux", "release-gate-compiler.json"), join(root, "windows", "release-gate-compiler.json")), /windows evidence directory is not its packet: extra \[release-gate-compiler.json\]/],
+  ["a retained build report without a re-issue", root => copyFileSync(join(root, "linux", "release-gate-compiler.json"), join(root, "linux", "release-gate-compiler.build.json")), /release-gate-compiler.build.json is retained but the compiler gate report was not re-issued/],
+]) {
+  test(`aggregation rejects ${name} before creating output`, (t) => {
+    const root = createFixture();
+    writeGateFixture(root);
+    mutate(root);
+    const output = join(root, "aggregate");
+    t.after(() => rmSync(root, { recursive: true, force: true }));
+    const result = spawnSync(process.execPath, aggregateArgs(root, output), { encoding: "utf8" });
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, pattern);
+    assert.equal(existsSync(output), false);
+  });
+}
+
+// A compiler gate that failed only on denied clippy lints, as the repackage lane re-issues it.
+const CLIPPY_ONLY_LOG = `==> Clippy (timeout: 600s)
+error: unused variable: \`linker\`
+    = note: \`-D unused-variables\` implied by \`-D warnings\`
+
+error: could not compile \`beskid_execution\` (lib) due to 1 previous error
+`;
+const REPACKAGED_BY = { pipeline: 356, commit: "e".repeat(40) };
+// Write the Linux gate reports of a repackaged build exactly as lib/repackage.mjs WriteRepackageHandoff
+// does: the build's own failed report retained as release-gate-compiler.build.json, the re-issued one in
+// its place.
+function writeReissuedGateFixture(root, by = REPACKAGED_BY) {
+  writeGateFixture(root);
+  const linux = join(root, "linux");
+  writeFileSync(join(linux, "release-gate-compiler.log"), CLIPPY_ONLY_LOG);
+  const build = JSON.parse(readFileSync(join(linux, "release-gate-compiler.json"), "utf8"));
+  writeJson(join(linux, "release-gate-compiler.json"), { ...build, status: "failed", exit_code: 101, raw_log_sha256: sha256(CLIPPY_ONLY_LOG) });
+  const gates = VerifyLinuxGates(linux, SOURCE, VERSION, { pipeline: String(by.pipeline), commit: by.commit });
+  assert.equal(gates.reissued, true);
+  copyFileSync(join(linux, "release-gate-compiler.json"), join(linux, "release-gate-compiler.build.json"));
+  writeFileSync(join(linux, "release-gate-compiler.json"), `${JSON.stringify(gates.report, null, 2)}\n`);
+}
+function repackagedHandoffs(by = REPACKAGED_BY) {
+  return Object.fromEntries(Object.entries(HANDOFF_PIPELINES).map(([role, pipeline]) => [role, {
+    role, source: SOURCE.superrepo_commit, compiler: SOURCE.compiler_commit, version: VERSION, pipeline,
+    upload_sha256sums_sha256: sha256(`${role}-${pipeline}`),
+    ...(role === "linux" ? { packaged_by: by.pipeline, packaged_by_commit: by.commit } : {}),
+  }]));
+}
+
+test("aggregation accepts a repackaged Linux handoff carrying the lane's exact gate re-issue", (t) => {
+  const root = createFixture();
+  writeReissuedGateFixture(root);
+  const output = join(root, "aggregate");
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  const result = spawnSync(process.execPath, aggregateArgs(root, output, { handoffs: repackagedHandoffs() }), { encoding: "utf8" });
+  assert.equal(result.status, 0, result.stderr);
+  const snapshot = join(output, "evidence", "linux");
+  assert.deepEqual(readdirSync(snapshot).filter(name => name !== "SHA256SUMS").sort(), packetNames(snapshot));
+  assert.deepEqual(readdirSync(join(output, "gate-evidence")).sort(), ["release-gate-compiler.build.json", "release-gate-compiler.json",
+    "release-gate-compiler.log", "release-gate-corelib.json", "release-gate-corelib.log"]);
+  const stage = JSON.parse(readFileSync(join(output, "gate-reports", "stages", "compiler.json"), "utf8"));
+  assert.equal(stage.status, "success");
+  assert.equal(stage.reissued.by_pipeline, REPACKAGED_BY.pipeline);
+  assert.equal(stage.reissued.original_report_sha256, sha256(readFileSync(join(output, "gate-evidence", "release-gate-compiler.build.json"))));
+  assert.equal(JSON.parse(readFileSync(join(output, "validated-evidence.json"), "utf8")).handoffs.linux.packaged_by, REPACKAGED_BY.pipeline);
+});
+
+for (const [name, mutate, pattern, handoffs = () => repackagedHandoffs()] of [
+  ["a handoff that is not a repackage", () => {}, /re-issued but the linux handoff is not a repackage/, () => repackagedHandoffs({})],
+  ["a re-issue by another packaging pipeline", () => {}, /not the repackage transformation/, () => repackagedHandoffs({ pipeline: 357, commit: REPACKAGED_BY.commit })],
+  ["a re-issue by another packaging commit", () => {}, /not the repackage transformation/, () => repackagedHandoffs({ pipeline: REPACKAGED_BY.pipeline, commit: "d".repeat(40) })],
+  ["a missing build report", root => rmSync(join(root, "linux", "release-gate-compiler.build.json")), /invalid release gate artifact: release-gate-compiler.build.json/],
+  ["a changed build report", root => {
+    const path = join(root, "linux", "release-gate-compiler.build.json");
+    writeJson(path, { ...JSON.parse(readFileSync(path, "utf8")), command: "another gate" });
+  }, /not the repackage transformation/],
+  ["a changed re-issued report", root => {
+    const path = join(root, "linux", "release-gate-compiler.json");
+    const report = JSON.parse(readFileSync(path, "utf8"));
+    writeJson(path, { ...report, reissued: { ...report.reissued, clippy_findings: 0 } });
+  }, /not the repackage transformation/],
+  ["an added re-issued report field", root => {
+    const path = join(root, "linux", "release-gate-compiler.json");
+    writeJson(path, { ...JSON.parse(readFileSync(path, "utf8")), waived: true });
+  }, /not the repackage transformation/],
+  ["a compiler log that failed beyond clippy", root => {
+    const log = `${CLIPPY_ONLY_LOG}error[E0425]: cannot find value \`x\`\n`;
+    writeFileSync(join(root, "linux", "release-gate-compiler.log"), log);
+    for (const name of ["release-gate-compiler.build.json", "release-gate-compiler.json"]) {
+      const path = join(root, "linux", name);
+      writeJson(path, { ...JSON.parse(readFileSync(path, "utf8")), raw_log_sha256: sha256(log) });
+    }
+  }, /not the repackage transformation: .*compiler gate failed beyond clippy/],
+  ["a repackaged macOS packet file", root => writeFileSync(join(root, "macos", "repackage-provenance.json"), "{}\n"), /macos evidence directory is not its packet/],
+]) {
+  test(`aggregation rejects a gate re-issue with ${name} before creating output`, (t) => {
+    const root = createFixture();
+    writeReissuedGateFixture(root);
+    mutate(root);
+    const output = join(root, "aggregate");
+    t.after(() => rmSync(root, { recursive: true, force: true }));
+    const result = spawnSync(process.execPath, aggregateArgs(root, output, { handoffs: handoffs() }), { encoding: "utf8" });
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, pattern);
+    assert.equal(existsSync(output), false);
+  });
+}
+
 for (const [name, mutate] of [
   ["a missing platform", record => { delete record.windows; }],
   ["a handoff of another source", record => { record.macos.source = "c".repeat(40); }],
@@ -503,7 +632,7 @@ test("aggregation rejects wrong requested source and failed evidence before crea
   rmSync(join(root, "windows", "beskid-windows-amd64.exe"));
   const failed = spawnSync(process.execPath, aggregateArgs(root, output), { encoding: "utf8" });
   assert.notEqual(failed.status, 0);
-  assert.match(failed.stderr, /missing required artifact/);
+  assert.match(failed.stderr, /packet entry beskid-windows-amd64\.exe is not a regular file/);
   assert.equal(existsSync(output), false);
 });
 

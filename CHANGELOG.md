@@ -414,6 +414,20 @@ summary; the itemized development log stays under [Unreleased] below and in
 
 ### Fixed
 
+- Release aggregation of schema-2 (0.6) evidence. The Linux gate reports sit
+  beside the Linux packet but are not listed in its `SHA256SUMS`, so the strict
+  packet-closure check rejected every 0.6 Linux packet. Aggregation now
+  validates each input as its packet-only view and requires each input
+  directory to hold exactly its packet, plus the gate reports on Linux. The
+  qualified snapshot holds the packets alone, and the gate reports go to
+  `gate-evidence/`. A compiler gate report that the repackage lane re-issued is
+  accepted only when re-deriving it from the retained
+  `release-gate-compiler.build.json` and the gate logs, for the handoff's
+  `packaged_by` pipeline and commit, gives the shipped report exactly. The
+  evidence validator now takes the file name of recorded harness and fixture
+  paths without regard to the host, so a Windows packet with `C:\...` paths
+  passes validation on the Linux release runner.
+
 - Correct the published Homebrew tap instructions to use its explicit Git URL
   and fully qualified formula, without granting whole-tap trust.
 

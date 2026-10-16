@@ -430,6 +430,22 @@ test("command templates resolve to the installed candidate and the retained harn
   const windows = fixture(planned.targets[2]);
   rewriteRow(windows, nativeCase, row => { row.command.argv[0] = `${PREFIX}\\bin\\beskid.exe`; row.command.tool_file = row.command.argv[0]; row.command.argv[5] = `${PREFIX}\\beskid_corelib\\CoreLib.bws`; });
   assert.doesNotThrow(() => validate(windows), "backslash paths from the Windows producer compare by segments");
+  // A Windows packet is validated on the Linux release runner: its recorded harness and fixture paths
+  // name the retained executable by their last segment whatever the separator.
+  const windowsPath = path => path.replace("/producer/out/", "C:\\producer\\out\\");
+  const windowsHost = fixture(planned.targets[2]);
+  for (const id of [hostCase, "R4-PROC-01"]) rewriteRow(windowsHost, id, row => {
+    row.command.argv[0] = windowsPath(row.command.argv[0]); row.command.tool_file = windowsPath(row.command.tool_file);
+    for (const key of Object.keys(row.command.env)) row.command.env[key] = windowsPath(row.command.env[key]);
+  });
+  assert.match(windowsHost.feature.cases.find(row => row.id === hostCase).command.argv[0], /^C:\\producer\\out\\harness-beskid_tests_release\.exe$/);
+  assert.doesNotThrow(() => validate(windowsHost), "Windows-recorded harness paths name the retained harness");
+  const windowsForeign = fixture(planned.targets[2]);
+  rewriteRow(windowsForeign, hostCase, row => { row.command.argv[0] = "C:\\producer\\out\\harness-other.exe"; row.command.tool_file = row.command.argv[0]; });
+  reject(windowsForeign, /retained harness/);
+  const windowsForeignFixture = fixture(planned.targets[2]);
+  rewriteRow(windowsForeignFixture, "R4-PROC-01", row => { row.command.env.BESKID_V06_RELEASE_FIXTURE = "C:\\producer\\out\\fixture-other.exe"; });
+  reject(windowsForeignFixture, /retained fixture/);
   const extraEnv = fixture();
   rewriteRow(extraEnv, nativeCase, row => { row.command.env.BESKID_CORELIB_ROOT = "/developer/corelib"; });
   reject(extraEnv, /env keys/);

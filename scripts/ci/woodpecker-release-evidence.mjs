@@ -13,14 +13,14 @@
  */
 import { createHash } from "node:crypto";
 import { lstatSync, readFileSync, readdirSync, existsSync } from "node:fs";
-import { basename, dirname, join, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import {
   CORELIB_FINGERPRINT_FILE, EXECUTION_KINDS, FEATURE_FILE, HARNESS_LANGUAGES, INSTALLED_RECEIPT, INVOCATION_LINE, MANIFEST_FILE,
   ManifestDigest, OUTPUT_LIMIT, ParseCanonicalManifest, RUNTIME_ABI_RECEIPT, RUNTIME_KIT_RECEIPT, caseLogName, caseStderrName,
   caseStdoutName, checkProvenance, confinedRelativePath, fixturePacketName, harnessPacketName, inputPacketName, libtestOutcome, libtestPath,
-  nativeReportOutcomes, packetName, parseSections, samePathSegments, sourcePacketName, substituteTemplate,
+  nativeReportOutcomes, packetName, parseSections, pathSegments, samePathSegments, sourcePacketName, substituteTemplate,
 } from "./release-case-common.mjs";
 
 const PLATFORMS = [
@@ -193,6 +193,11 @@ function featureLogName(id) {
   return `feature-${id.replaceAll(".", "-")}.json`;
 }
 
+// The last segment of a path recorded by a producer on its own host. A Windows packet records `C:\...`
+// paths, so the separator must not depend on the validating host (`node:path` basename is POSIX on Linux).
+function recordedBasename(path) {
+  return pathSegments(path).at(-1);
+}
 const equalValue = (actual, expected, label) => {
   if (JSON.stringify(actual) !== JSON.stringify(expected)) fail(`${label} does not match frozen expected identity`);
 };
@@ -240,7 +245,7 @@ function commandMatches(template, actual, values, label) {
       return;
     }
     if (templateText === "{harness}" || templateText === "{fixture}") {
-      if (basename(actualText) !== values[templateText.slice(1, -1)]) fail(`${label} command ${field} does not name the retained ${templateText.slice(1, -1)} executable`);
+      if (recordedBasename(actualText) !== values[templateText.slice(1, -1)]) fail(`${label} command ${field} does not name the retained ${templateText.slice(1, -1)} executable`);
       return;
     }
     if (templateText.includes("{input_root}")) {
@@ -393,8 +398,8 @@ export function ValidateV06FeatureEvidence(feature, manifestBytes, expected) {
       toolFile = installed.cli.packet_copy;
     } else {
       const harnessFile = harnessDigests.get(binding.harness);
-      if (!harnessFile || basename(row.command.argv[0]) !== harnessFile.file || row.command.tool_sha256 !== harnessFile.sha256
-          || basename(row.command.tool_file) !== harnessFile.file) fail(`${row.id} command must execute the retained harness executable`);
+      if (!harnessFile || recordedBasename(row.command.argv[0]) !== harnessFile.file || row.command.tool_sha256 !== harnessFile.sha256
+          || recordedBasename(row.command.tool_file) !== harnessFile.file) fail(`${row.id} command must execute the retained harness executable`);
       if (!samePathSegments(row.command.env.BESKID_V06_QUALIFIED_PREFIX ?? "", installed.prefix)) fail(`${row.id} harness must receive the installed prefix`);
       toolFile = harnessFile.file;
     }

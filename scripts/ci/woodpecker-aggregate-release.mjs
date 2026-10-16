@@ -1,10 +1,13 @@
 #!/usr/bin/env node
 // Local, non-publishing fan-in. Evidence must come from trusted workers.
 // Integrity checking is not authentication; never accept arbitrary uploaded evidence.
-import { copyFileSync, lstatSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
+import { ValidatePacketEvidence } from "./lib/packet-evidence.mjs";
+import { VerifyLinuxGates } from "./lib/repackage.mjs";
 
 const scripts = dirname(fileURLToPath(import.meta.url));
 function run(command, args, env = process.env) {
@@ -19,8 +22,14 @@ const PLATFORMS = ["linux", "macos", "windows"];
 // Each platform is validated against its own handoff source: per-platform sources may differ in
 // non-build root paths only (release-user-observation.mjs --platform-sources). The compiler commit and
 // version are shared; the release source identity is the candidate.
-function validate(path, candidate, sources) {
-  const parts = PLATFORMS.map(platform => JSON.parse(run(process.execPath, [join(scripts, "woodpecker-release-evidence.mjs"), path, platform])));
+//
+// The input directory of a platform is its checksummed packet plus, on Linux, the release gate
+// reports, which the build writes after its SHA256SUMS and which are never packet members. The input is
+// therefore validated as its packet-only view (lib/packet-evidence.mjs); the private snapshot holds the
+// packets alone and is validated with the strict packet-closure check as it is.
+function validate(path, candidate, sources, { packetView }) {
+  const parts = PLATFORMS.map(platform => packetView ? ValidatePacketEvidence(path, platform)
+    : JSON.parse(run(process.execPath, [join(scripts, "woodpecker-release-evidence.mjs"), path, platform])));
   const [first] = parts;
   for (const [index, part] of parts.entries()) {
     const platform = PLATFORMS[index];
@@ -42,15 +51,67 @@ function readSources(path) {
   }
   return sources;
 }
-function copyGateEvidence(from, to) {
-  for (const component of ["compiler", "corelib"]) {
-    for (const suffix of ["json", "log"]) {
-      const name = `release-gate-${component}.${suffix}`;
-      const source = join(from, name);
-      const stat = lstatSync(source);
-      if (stat.isSymbolicLink() || !stat.isFile()) throw new Error(`invalid release gate artifact: ${name}`);
-      copyFileSync(source, join(to, name));
+const GATE_FILES = ["release-gate-compiler.json", "release-gate-compiler.log", "release-gate-corelib.json", "release-gate-corelib.log"];
+// The build's own compiler gate report, retained by a repackage that re-issued it (lib/repackage.mjs).
+const BUILD_COMPILER_REPORT = "release-gate-compiler.build.json";
+function regularFile(path, name) {
+  let stat;
+  try { stat = lstatSync(path); } catch { throw new Error(`invalid release gate artifact: ${name}`); }
+  if (stat.isSymbolicLink() || !stat.isFile()) throw new Error(`invalid release gate artifact: ${name}`);
+}
+function canonical(value) {
+  if (Array.isArray(value)) return value.map(canonical);
+  if (value && typeof value === "object") return Object.fromEntries(Object.keys(value).sort().map(key => [key, canonical(value[key])]));
+  return value;
+}
+// The Linux gate reports, beside the packet. A compiler gate report re-issued by the repackage lane is
+// accepted only as that lane's exact transformation: the handoff is a repackage whose packaging
+// pipeline and root commit the re-issue names, the build's original report is retained under
+// BUILD_COMPILER_REPORT, and re-deriving the re-issue from that original report and the retained gate
+// logs (lib/repackage.mjs VerifyLinuxGates) yields the shipped report (compared as canonical JSON). Any other
+// re-issue, a re-issue without the retained build report, and a retained build report without a
+// re-issue reject.
+function verifyGateEvidence(directory, linux, version, compiler) {
+  for (const name of GATE_FILES) regularFile(join(directory, name), name);
+  let shipped;
+  try { shipped = JSON.parse(readFileSync(join(directory, "release-gate-compiler.json"), "utf8")); } catch {
+    throw new Error("invalid release gate artifact: release-gate-compiler.json");
+  }
+  const reissued = shipped !== null && typeof shipped === "object" && Object.hasOwn(shipped, "reissued");
+  if (!reissued) {
+    if (existsSync(join(directory, BUILD_COMPILER_REPORT))) throw new Error(`${BUILD_COMPILER_REPORT} is retained but the compiler gate report was not re-issued`);
+    return GATE_FILES;
+  }
+  regularFile(join(directory, BUILD_COMPILER_REPORT), BUILD_COMPILER_REPORT);
+  if (linux.packaged_by === undefined) throw new Error("the compiler gate report was re-issued but the linux handoff is not a repackage");
+  const view = mkdtempSync(join(tmpdir(), "beskid-gate-reissue-"));
+  try {
+    for (const name of GATE_FILES) copyFileSync(join(directory, name === "release-gate-compiler.json" ? BUILD_COMPILER_REPORT : name), join(view, name));
+    let derived;
+    try {
+      derived = VerifyLinuxGates(view, { superrepo_commit: linux.source, compiler_commit: compiler }, version,
+        { pipeline: String(linux.packaged_by), commit: linux.packaged_by_commit });
+    } catch (error) {
+      throw new Error(`the re-issued compiler gate report is not the repackage transformation: ${error.message}`);
     }
+    if (!derived.reissued || JSON.stringify(canonical(derived.report)) !== JSON.stringify(canonical(shipped))) {
+      throw new Error("the re-issued compiler gate report is not the repackage transformation of the build report");
+    }
+  } finally {
+    rmSync(view, { recursive: true, force: true });
+  }
+  return [...GATE_FILES, BUILD_COMPILER_REPORT];
+}
+
+// The input directory of each platform holds exactly its packet (SHA256SUMS and the files it lists)
+// and, on Linux, the gate evidence verified above; any other file rejects.
+function verifyInputClosure(input, platform, gateFiles) {
+  const listed = readFileSync(join(input, platform, "SHA256SUMS"), "utf8").split(/\r?\n/).filter(Boolean).map(line => line.slice(66));
+  const expected = [...listed, ...(platform === "linux" ? gateFiles : [])].sort();
+  const actual = readdirSync(join(input, platform)).filter(name => name !== "SHA256SUMS").sort();
+  if (new Set(expected).size !== expected.length || JSON.stringify(actual) !== JSON.stringify(expected)) {
+    const extra = actual.filter(name => !expected.includes(name)), missing = expected.filter(name => !actual.includes(name));
+    throw new Error(`${platform} evidence directory is not its packet${platform === "linux" ? " and gate evidence" : ""}: extra [${extra.join(", ")}], missing [${missing.join(", ")}]`);
   }
 }
 
@@ -93,10 +154,12 @@ try {
   const handoffs = readHandoffs(resolve(handoffsArg), version, sources, compiler);
   const input = resolve(inputArg);
   const output = resolve(outputArg);
-  const evidence = validate(input, superrepo, sources);
+  const evidence = validate(input, superrepo, sources, { packetView: true });
   if (evidence.version !== version || evidence.source.superrepo_commit !== superrepo || evidence.source.compiler_commit !== compiler) {
     throw new Error("evidence does not match the requested release source/version");
   }
+  const gateFiles = verifyGateEvidence(join(input, "linux"), handoffs.linux, version, compiler);
+  for (const platform of PLATFORMS) verifyInputClosure(input, platform, gateFiles);
   // Exclusive creation is the transaction lock. Interrupted transactions remain
   // inspectable and are never silently reused or overwritten.
   mkdirSync(output, { mode: 0o700 });
@@ -108,9 +171,12 @@ try {
       copyFileSync(join(input, platform.platform, name), join(snapshot, platform.platform, name));
     }
   }
-  copyGateEvidence(join(input, "linux"), join(snapshot, "linux"));
+  const gates = join(output, "gate-evidence");
+  mkdirSync(gates);
+  for (const name of gateFiles) copyFileSync(join(input, "linux", name), join(gates, name));
+  if (JSON.stringify(verifyGateEvidence(gates, handoffs.linux, version, compiler)) !== JSON.stringify(gateFiles)) throw new Error("gate evidence changed while snapshotting");
   // Recheck the private snapshot so concurrent input changes cannot be promoted.
-  const checked = validate(snapshot, superrepo, sources);
+  const checked = validate(snapshot, superrepo, sources, { packetView: false });
   if (JSON.stringify(checked) !== JSON.stringify(evidence)) throw new Error("evidence changed while snapshotting");
   json(join(output, "validated-evidence.json"), { ...checked, handoffs });
   const assets = join(output, "assets");
@@ -119,8 +185,8 @@ try {
   mkdirSync(reports);
   mkdirSync(join(reports, "stages"));
   for (const component of ["compiler", "corelib"]) {
-    copyFileSync(join(snapshot, "linux", `release-gate-${component}.json`), join(reports, "stages", `${component}.json`));
-    copyFileSync(join(snapshot, "linux", `release-gate-${component}.log`), join(reports, `release-gate-${component}.log`));
+    copyFileSync(join(gates, `release-gate-${component}.json`), join(reports, "stages", `${component}.json`));
+    copyFileSync(join(gates, `release-gate-${component}.log`), join(reports, `release-gate-${component}.log`));
   }
   for (const [index, platform] of checked.platforms.entries()) {
     json(join(reports, "stages", `${index}.json`), {
