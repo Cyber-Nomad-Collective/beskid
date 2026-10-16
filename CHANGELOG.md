@@ -185,6 +185,9 @@ summary; the itemized development log stays under [Unreleased] below and in
   value fails `initialize`. Project preparation failures are published as a
   `project-preparation` diagnostic.
 - VS Code extension 0.6.0: checks `beskid dev capabilities --json`, starts the language server with `beskid dev lsp`, installs it with `beskid dev lsp install`, and uses `check` instead of `analyze`.
+- The Windows MSI and setup EXE install `LICENSE.txt` and `NOTICE.txt` as part
+  of the owned toolchain prefix, so `beskid toolchain status` accepts a fresh
+  Windows install instead of reporting a changed payload inventory.
 
 ### Breaking changes
 
