@@ -7,6 +7,90 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/standard/).
 
+## [0.6.6] - 2026-10-16
+
+Not released until the three-platform build of the 0.6.6 candidate passes and
+the owner confirms publication. One release carries the work planned as 0.6.1
+to 0.6.5 (OpenSpec changes `v061-attributes-and-isolate-prerequisites`,
+`v061-gc-stress-and-poison`, `v061-glue-extensions`, `v062-captures-and-move`,
+`v063-isolates-and-scope`, `v064-ports-and-pipelines` and
+`v065-parallel-sequences`). The itemized log is in `compiler/CHANGELOG.md`.
+Draft release notes: `docs/release/v0.6.6-release-notes.md`.
+
+### Language
+
+- Transfer classes. Every type is Shared, Moved, Copied or Never. Markers
+  `[Immutable]`, `[Isolated]`, `[Copyable]` and `[NeverTransferable]` in
+  `Core.Attributes` decide the class of a nominal type; a bound
+  `where T: Transferable` is proven from the class. Attributes are accepted on
+  every declaration site, checked against a target catalogue (E1508-E1510).
+- Ownership with `move`. `move x` consumes an owning name, `move x.f` is a
+  destructive read, `exchange(place, move value)` swaps a field or element and
+  returns the old value, and `move this` makes a receiver owning. Use after
+  move and the related ownership errors are E1234-E1243.
+- `[Captures(Bound: C)]` judges the captures of every lambda passed to a
+  function-typed parameter or field.
+- Generic methods: own type parameters and `where` clauses on methods,
+  explicit type arguments on member calls and inference from the receiver,
+  the arguments and lambda bodies.
+
+### Runtime and memory
+
+- Incremental marking with a hybrid write barrier and lazy sweeping.
+- GC stress mode (`BESKID_GC_STRESS`), heap verification and a debug-kit
+  quarantine (`BESKID_GC_QUARANTINE`).
+- Isolates: a task runs on its own thread with its own heap, bounded by
+  `BESKID_ISOLATES_MAX` (default: host processor count). A finished task's heap
+  is adopted by the joiner.
+- Ports: bounded channels between isolates. Shared and Moved values cross by
+  pointer, Copied values are copied. Cross-heap references are counted
+  (ORCA-style) and released by the collector.
+
+### Corelib
+
+- `Core.Parallel`: fork-join scopes, tasks, `Isolate` handles, `Port<T>`,
+  long-lived isolate workers, pipelines and `ParallelSeq<T>` with fused
+  `Where`/`Map`, adaptive chunking and `Reduce` over associative combiners.
+- Collections are `[Isolated]` and their mutators take `move this`
+  (`list = list.Push(v)`).
+
+### Interop (Rust Glue)
+
+- Records by value, fieldless enums, callbacks of function type, and a
+  generated Rust module for consumer exports. Glue lowers to the
+  Interop.Contracts vocabulary.
+
+### CLI and tooling
+
+- `beskid check --project` checks every target of the manifest.
+- LSP quick fixes insert `move` and rewrite a store as `exchange`; hover shows
+  transfer classes and capture lists.
+- pckg: file browser for verified package artifacts and NodeBB discussion
+  threads per package.
+
+### Build and release
+
+- The Linux build packages and uploads its handoff before it exits with the
+  release gate status, so a failed gate keeps the artifacts for inspection
+  (OpenSpec `v06-release-gate-calibration` task 6.0).
+- Bundle assembly removes the Corelib Mod prebuild caches; the platform build
+  checks the archive and packaging refuses a bundle that still carries one
+  (task 6.5).
+- A native Mod cache entry is named by a 32-digit key, so the deepest sealed
+  Corelib Mod file of an installed toolchain is 32 characters shorter (task
+  6.6).
+- `beskid_cli`, `beskid_lsp`, `beskid_up`, the VS Code extension and the Zed
+  extension carry version 0.6.6. The release case manifest is re-frozen
+  against the merged sources.
+
+### Breaking changes
+
+- Corelib collection mutators consume `this`; code that kept using a list
+  after `Push` must rebind it.
+- Storing a borrowed Moved value, using a Moved value after a consuming use,
+  and capturing a Never value in an isolate task are compile errors.
+- A native Mod cache from 0.6.0 is not reused; the first build rebuilds it.
+
 ## [0.6.0] - Unreleased (in qualification)
 
 Not released. The candidate is in qualification on Linux x64, macOS arm64 and
