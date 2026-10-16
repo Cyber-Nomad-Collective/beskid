@@ -134,6 +134,54 @@ for field in source compiler pipeline; do
   grep -Fq "linux handoff from pipeline 300 is not a build of source $source" "$tmp/err" || fail "marker $field drift was not diagnosed"
 done
 
+# Superseding repackages: build 335 was repackaged by 340 (the base entry) and superseded by 360
+# (`335-<source>@360`). The newest packaging of the chain is selected and fetched into the build's own
+# layout; the pin still names the build pipeline.
+repackaged() {
+  local role="$1" run="$2" packaging="$3" supersedes="${4:-}" entry dir
+  entry="$run-$source"; [[ -z "$supersedes" ]] || entry="$run-$source@$packaging"
+  dir="$tmp/remote/$role/incoming/$entry/$role"
+  mkdir -p "$dir"
+  printf '%s installer packaged by %s\n' "$role" "$packaging" >"$dir/beskid-$role"
+  printf '{"pipeline":%s}\n' "$packaging" >"$dir/package-result.json"
+  (cd "$dir" && shasum -a 256 beskid-"$role" package-result.json) >"$dir/UPLOAD_SHA256SUMS"
+  printf 'role=%s\nsource=%s\ncompiler=%s\nversion=%s\npipeline=%s\npackaged_by=%s\npackaged_by_commit=%s\n' \
+    "$role" "$source" "$compiler" "$version" "$run" "$packaging" "$(printf '%040d' "$packaging")" >"$dir/UPLOAD_COMPLETE"
+  [[ -z "$supersedes" ]] || printf 'supersedes=%s\nsupersedes_commit=%s\n' "$supersedes" "$(printf '%040d' "$supersedes")" >>"$dir/UPLOAD_COMPLETE"
+}
+superseding_remote() { reset_remote; handoff linux 300; handoff macos 305; repackaged windows 335 340; repackaged windows 335 360 340; }
+superseding_remote
+old_sum="$(cd "$tmp/remote/windows/incoming/335-$source/windows" && cat * | shasum -a 256)"
+for pin in "" 335; do
+  selection="$(fetch "$tmp/result-supersede$pin" ${pin:+BESKID_WINDOWS_BUILD=$pin} 2>"$tmp/err")" || { cat "$tmp/err" >&2; fail "superseding packaging was rejected (pin '$pin')"; }
+  [[ "$selection" == '300 305 335' ]] || fail "unexpected superseding selection: $selection"
+  fetched="$tmp/result-supersede$pin/windows/incoming/335-$source/windows"
+  grep -Fq 'packaged by 360' "$fetched/beskid-windows" || fail 'the superseded packaging was fetched instead of the newest'
+  grep -Fxq 'supersedes=340' "$fetched/UPLOAD_COMPLETE" || fail 'the fetched marker does not name the superseded packaging'
+  [[ "$(ls "$tmp/result-supersede$pin/windows/incoming")" == "335-$source" ]] || fail 'superseding handoff was not fetched into the build layout'
+  grep -Fq 'windows build 335: packaging 340' "$tmp/err" || fail 'the superseded packaging was not reported'
+done
+[[ "$(cd "$tmp/remote/windows/incoming/335-$source/windows" && cat * | shasum -a 256)" == "$old_sum" ]] || fail 'the superseded handoff changed'
+# An unfinished superseding upload is skipped; the previous packaging stays current.
+superseding_remote; repackaged windows 335 370 360; rm "$tmp/remote/windows/incoming/335-$source@370/windows/UPLOAD_COMPLETE"
+fetch "$tmp/result-unfinished-supersede" >/dev/null 2>"$tmp/err" || { cat "$tmp/err" >&2; fail 'an unfinished superseding upload blocked the collection'; }
+grep -Fq 'packaged by 360' "$tmp/result-unfinished-supersede/windows/incoming/335-$source/windows/beskid-windows" || fail 'the unfinished superseding upload was selected'
+grep -Fq "skipping incomplete windows handoff 335-$source@370" "$tmp/err" || fail 'the unfinished superseding upload was not reported'
+# Ambiguous or broken chains fail closed: two packagings superseding one, a supersede of a packaging
+# that is not current, and a superseding entry without the handoff it supersedes.
+superseding_remote; repackaged windows 335 361 340
+if fetch "$tmp/result-ambiguous" 2>"$tmp/err"; then fail 'two packagings superseding one were accepted'; fi
+grep -Fq "335-$source@361 supersedes packaging 340" "$tmp/err" || fail 'the ambiguous chain was not diagnosed'
+superseding_remote; repackaged windows 335 370 350
+if fetch "$tmp/result-broken" 2>"$tmp/err"; then fail 'a supersede of a packaging that is not current was accepted'; fi
+reset_remote; handoff linux 300; handoff macos 305; repackaged windows 335 360 340
+if fetch "$tmp/result-orphan" 2>"$tmp/err"; then fail 'a superseding handoff without its predecessor was accepted'; fi
+grep -Fq 'supersedes packaging 340, which has no complete handoff' "$tmp/err" || fail 'the missing predecessor was not diagnosed'
+superseding_remote; sed -i.bak 's/^packaged_by=360$/packaged_by=365/' "$tmp/remote/windows/incoming/335-$source@360/windows/UPLOAD_COMPLETE"; rm -f "$tmp/remote/windows/incoming/335-$source@360/windows/UPLOAD_COMPLETE.bak"
+if fetch "$tmp/result-misnamed" 2>"$tmp/err"; then fail 'a superseding entry packaged by another pipeline was accepted'; fi
+grep -Fq "must be packaged by pipeline 360" "$tmp/err" || fail 'the misnamed superseding entry was not diagnosed'
+for result in ambiguous broken orphan misnamed; do test ! -e "$tmp/result-$result" || fail "a rejected chain created $result"; done
+
 # Identity and destination guards.
 if bash "$runner" "$source" "$compiler" "$version" 2>/dev/null; then fail 'missing argument was accepted'; fi
 if bash "$runner" "${source:0:39}" "$compiler" "$version" "$tmp/bad" 2>/dev/null; then fail 'short source was accepted'; fi

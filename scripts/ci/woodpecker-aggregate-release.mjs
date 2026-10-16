@@ -69,14 +69,17 @@ function readHandoffs(path, version, sources, compiler) {
     // that packaged its installers.
     const keys = ["compiler", "pipeline", "role", "source", "upload_sha256sums_sha256", "version"];
     const repackaged = item && Object.hasOwn(item, "packaged_by");
-    const expected = repackaged ? [...keys, "packaged_by", "packaged_by_commit"].sort() : keys;
+    // A superseding repackage also names the packaging it superseded (woodpecker-handoff.mjs).
+    const superseding = repackaged && Object.hasOwn(item, "supersedes");
+    const expected = repackaged ? [...keys, "packaged_by", "packaged_by_commit", ...(superseding ? ["supersedes", "supersedes_commit"] : [])].sort() : keys;
     if (!item || JSON.stringify(Object.keys(item).sort()) !== JSON.stringify(expected) || item.role !== platform
       || item.source !== sources[platform] || item.compiler !== compiler || item.version !== version
       || !Number.isSafeInteger(item.pipeline) || item.pipeline < 1 || !/^[0-9a-f]{64}$/.test(item.upload_sha256sums_sha256)
-      || (repackaged && (!Number.isSafeInteger(item.packaged_by) || item.packaged_by < 1 || !/^[0-9a-f]{40}$/.test(item.packaged_by_commit)))) {
+      || (repackaged && (!Number.isSafeInteger(item.packaged_by) || item.packaged_by < 1 || !/^[0-9a-f]{40}$/.test(item.packaged_by_commit)))
+      || (superseding && (!Number.isSafeInteger(item.supersedes) || item.supersedes < item.pipeline || item.supersedes >= item.packaged_by || !/^[0-9a-f]{40}$/.test(item.supersedes_commit)))) {
       throw new Error(`${platform} handoff record does not match the requested release source/version`);
     }
-    const packaged = repackaged ? { packaged_by: item.packaged_by, packaged_by_commit: item.packaged_by_commit } : {};
+    const packaged = repackaged ? { packaged_by: item.packaged_by, packaged_by_commit: item.packaged_by_commit, ...(superseding ? { supersedes: item.supersedes, supersedes_commit: item.supersedes_commit } : {}) } : {};
     return [platform, { pipeline: item.pipeline, source: item.source, upload_sha256sums_sha256: item.upload_sha256sums_sha256, ...packaged }];
   }));
 }

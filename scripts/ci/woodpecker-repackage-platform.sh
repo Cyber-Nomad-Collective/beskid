@@ -11,6 +11,12 @@
 # (`/incoming/<build>-<source>/<platform>`, UPLOAD_COMPLETE pipeline=<build>) with packaged_by and
 # packaged_by_commit naming this pipeline and its root commit.
 #
+# A build whose handoff was already repackaged is repackaged again only with
+# BESKID_REPACKAGE_SUPERSEDES=<pipeline>, the packaging pipeline of the current handoff (its packaged_by,
+# or the build pipeline when the build packaged itself). The new handoff is uploaded beside the current
+# one as `/incoming/<build>-<source>@<this pipeline>/<platform>`, which the release collector selects as
+# the newest packaging of the build; the superseded handoff is left untouched.
+#
 # BESKID_REPACKAGE_OUTPUT_ROOT (tests and local validation only, forbidden in Woodpecker) replaces the
 # platform output root; BESKID_REPACKAGE_SKIP_UPLOAD=1 (same restriction) stops before the upload.
 set -euo pipefail
@@ -41,19 +47,29 @@ esac
 output_root="${BESKID_REPACKAGE_OUTPUT_ROOT:-$output_root}"
 [[ "$(git -C "$root" rev-parse HEAD)" == "${CI_COMMIT_SHA:-}" ]] || { echo 'checkout is not this pipeline commit' >&2; exit 1; }
 
-verified="$(node "$root/scripts/ci/lib/repackage.mjs" verify "$output_root" "$platform" "$build" "$pipeline")"
+supersedes="${BESKID_REPACKAGE_SUPERSEDES:-}"
+supersede_args=()
+if [[ -n "$supersedes" ]]; then
+  [[ "$supersedes" =~ ^[1-9][0-9]*$ ]] || { echo 'BESKID_REPACKAGE_SUPERSEDES must be a pipeline number' >&2; exit 2; }
+  supersede_args=(--supersedes "$supersedes")
+fi
+verified="$(node "$root/scripts/ci/lib/repackage.mjs" verify "$output_root" "$platform" "$build" "$pipeline" ${supersede_args[@]+"${supersede_args[@]}"})"
 field() { node -e 'process.stdout.write(String(JSON.parse(process.argv[1])[process.argv[2]]))' "$verified" "$1"; }
 evidence_root="$(field evidence_root)"; handoff="$(field handoff)"
 source="$(field source)"; compiler="$(field compiler)"; version="$(field version)"
 echo "repackaging ${platform} build ${build} (source ${source}) in pipeline ${pipeline}"
 
 package_output="${handoff}-package"
-node "$root/scripts/ci/woodpecker-package-platform.mjs" "$platform" "$evidence_root" "$package_output" --repackage "$build" "$pipeline"
+node "$root/scripts/ci/woodpecker-package-platform.mjs" "$platform" "$evidence_root" "$package_output" --repackage "$build" "$pipeline" ${supersede_args[@]+"${supersede_args[@]}"}
 node -e 'const fs=require("fs"),p=process.argv[1],o=process.argv[2],r=JSON.parse(fs.readFileSync(p+"/package-result.json")); for(const a of r.artifacts) fs.copyFileSync(p+"/"+a.name,o+"/"+a.name); fs.copyFileSync(p+"/package-result.json",o+"/package-result.json")' "$package_output" "$handoff"
 
 if [[ "${BESKID_REPACKAGE_SKIP_UPLOAD:-0}" == 1 ]]; then
   echo "repackaged handoff prepared without upload: ${handoff}"
   exit 0
 fi
-bash "$root/scripts/ci/woodpecker-upload-handoff.sh" "$platform" "$handoff" "$source" "$compiler" "$version" "$build" --repackaged-by "$pipeline"
-echo "repackaged handoff uploaded: /incoming/${build}-${source}/${platform} (packaged by pipeline ${pipeline})"
+bash "$root/scripts/ci/woodpecker-upload-handoff.sh" "$platform" "$handoff" "$source" "$compiler" "$version" "$build" --repackaged-by "$pipeline" ${supersede_args[@]+"${supersede_args[@]}"}
+if [[ -n "$supersedes" ]]; then
+  echo "repackaged handoff uploaded: /incoming/${build}-${source}@${pipeline}/${platform} (packaged by pipeline ${pipeline}, supersedes ${supersedes})"
+else
+  echo "repackaged handoff uploaded: /incoming/${build}-${source}/${platform} (packaged by pipeline ${pipeline})"
+fi

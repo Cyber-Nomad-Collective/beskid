@@ -22,15 +22,18 @@ function bashPath(path) {
 }
 function digest(path) { return createHash("sha256").update(readFileSync(path)).digest("hex"); }
 try {
-  const usage = "usage: woodpecker-package-platform.mjs <linux|macos|windows> <evidence-dir> <new-output-dir> [--repackage <build-pipeline> <repackage-pipeline>]";
+  const usage = "usage: woodpecker-package-platform.mjs <linux|macos|windows> <evidence-dir> <new-output-dir> [--repackage <build-pipeline> <repackage-pipeline> [--supersedes <pipeline>]]";
   const args = process.argv.slice(2);
-  if (args.length !== 3 && !(args.length === 6 && args[3] === "--repackage")) throw new Error(usage);
+  if (args.length !== 3 && !(args.length === 6 && args[3] === "--repackage") && !(args.length === 8 && args[3] === "--repackage" && args[6] === "--supersedes")) throw new Error(usage);
   const [platform, inputArg, outputArg] = args;
   if (!["linux", "macos", "windows"].includes(platform)) throw new Error("unsupported platform");
   // Repackaging packages the qualified outputs of an earlier build pipeline from this newer root
   // commit, which may differ from the build source only in packaging inputs (ValidatePackagingRoot).
-  const repackage = args.length === 6 ? { build: args[4], pipeline: args[5] } : null;
+  const repackage = args.length >= 6 ? { build: args[4], pipeline: args[5] } : null;
   if (repackage && (!/^[1-9][0-9]*$/.test(repackage.build) || !/^[1-9][0-9]*$/.test(repackage.pipeline) || repackage.build === repackage.pipeline)) throw new Error(usage);
+  // A superseding repackage (lib/repackage.mjs --supersedes) names the packaging it replaces.
+  const supersedes = args.length === 8 ? args[7] : null;
+  if (supersedes !== null && (!/^[1-9][0-9]*$/.test(supersedes) || Number(supersedes) < Number(repackage.build) || Number(supersedes) >= Number(repackage.pipeline))) throw new Error(usage);
   const input = resolve(inputArg), output = resolve(outputArg);
   // Validate exactly the build's checksummed packet (lib/packet-evidence.mjs).
   const evidence = ValidatePacketEvidence(input, platform);
@@ -84,7 +87,7 @@ try {
     if (!statSync(join(output, name)).isFile() || statSync(join(output, name)).size === 0) throw new Error(`missing installer: ${name}`);
     return { name, sha256: digest(join(output, name)) };
   });
-  const packagedBy = repackage ? { packaged_by: { pipeline: Number(repackage.pipeline), superrepo_commit: rootCommit, build_pipeline: Number(repackage.build) } } : {};
+  const packagedBy = repackage ? { packaged_by: { pipeline: Number(repackage.pipeline), superrepo_commit: rootCommit, build_pipeline: Number(repackage.build), ...(supersedes !== null ? { supersedes: Number(supersedes) } : {}) } } : {};
   const result = { schema_version: 1, platform, target: target.target, version, source: evidence.source, distrib_commit: actualDistrib, bundle_sha256: archive.sha256, status: "success", published: false, artifacts, ...packagedBy };
   writeFileSync(join(output, "package-result.json"), `${JSON.stringify(result, null, 2)}\n`, { flag: "wx" });
   process.stdout.write(`${JSON.stringify(result)}\n`);

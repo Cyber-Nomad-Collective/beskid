@@ -19,6 +19,12 @@
 # selected marker whose role, source, compiler or pipeline differs, or a checksum mismatch stops the
 # collection. It never falls back to an older handoff after a selected one fails verification.
 #
+# A build's installers may be repackaged more than once. The first packaging is the handoff
+# `<pipeline>-<source>/<role>`; a repackage that supersedes it is uploaded beside it as
+# `<pipeline>-<source>@<packaging-pipeline>/<role>`, naming the packaging it supersedes. For each build
+# the newest packaging of that chain is selected (woodpecker-handoff.mjs resolve); a broken or
+# ambiguous chain fails closed. A pin names the build pipeline, never a packaging pipeline.
+#
 # On success the destination holds `<role>/incoming/<pipeline>-<source>/<role>` for the three
 # platforms, and stdout carries the selected pipeline numbers: `<linux> <macos> <windows>`.
 set -euo pipefail
@@ -64,15 +70,18 @@ run_batch() {
     -o "UserKnownHostsFile=\"$known_hosts\"" "$user@$host"
 }
 
-# 1. Discovery: the handoff capsules of this source in each role inbox, newest pipeline first.
-declare -A candidates=()
+# 1. Discovery: the handoff entries of this source in each role inbox, grouped by build pipeline, newest
+# build first. An entry is `<pipeline>-<source>` or a superseding `<pipeline>-<source>@<packaging>`.
+declare -A candidates=() entries=()
 for role in "${roles[@]}"; do
   printf 'ls -1 "/%s/incoming"\n' "$role" >"$staged/list-$role.batch"
   listing="$(run_batch "$staged/list-$role.batch")"
-  found="$(while IFS= read -r entry; do
+  names="$(while IFS= read -r entry; do
       entry="${entry%"${entry##*[![:space:]]}"}"; entry="${entry##*/}"
-      if [[ "$entry" =~ ^([1-9][0-9]*)-${sources[$role]}$ ]]; then printf '%s\n' "${BASH_REMATCH[1]}"; fi
-    done <<<"$listing" | sort -rn -u)"
+      if [[ "$entry" =~ ^[1-9][0-9]*-${sources[$role]}(@[1-9][0-9]*)?$ ]]; then printf '%s\n' "$entry"; fi
+    done <<<"$listing" | LC_ALL=C sort -u)"
+  entries[$role]="$names"
+  found="$(sed -e 's/-.*//' <<<"$names" | grep -E '^[0-9]+$' | sort -rn -u || true)"
   if [[ -n "${pins[$role]:-}" ]]; then
     grep -Fxq -- "${pins[$role]}" <<<"$found" || {
       echo "no $role handoff from pipeline ${pins[$role]} for source ${sources[$role]}" >&2; exit 1
@@ -82,59 +91,69 @@ for role in "${roles[@]}"; do
   [[ -n "$found" ]] || { echo "no $role handoff for source ${sources[$role]}" >&2; exit 1; }
   candidates[$role]="$found"
 done
+build_entries() { grep -E "^$2-${sources[$1]}(@[1-9][0-9]*)?\$" <<<"${entries[$1]}" || true; }
 
 # 2. Completion markers only; an absent marker is an unfinished upload.
-mkdir "$staged/markers"
 : >"$staged/markers.batch"
 for role in "${roles[@]}"; do
+  mkdir -p "$staged/markers/$role"
   while IFS= read -r run; do
-    printf -- '-get "/%s/incoming/%s-%s/%s/UPLOAD_COMPLETE" "%s/markers/%s-%s"\n' \
-      "$role" "$run" "${sources[$role]}" "$role" "$staged" "$role" "$run" >>"$staged/markers.batch"
+    while IFS= read -r entry; do
+      printf -- '-get "/%s/incoming/%s/%s/UPLOAD_COMPLETE" "%s/markers/%s/%s"\n' \
+        "$role" "$entry" "$role" "$staged" "$role" "$entry" >>"$staged/markers.batch"
+    done < <(build_entries "$role" "$run")
   done <<<"${candidates[$role]}"
 done
 run_batch "$staged/markers.batch" >/dev/null
 
-# 3. Selection: the newest complete handoff of this release; identity drift fails closed.
-declare -A selected=()
+# 3. Selection: the newest build with a complete handoff of this release, and within it the newest
+# packaging of its supersede chain; identity drift or an ambiguous chain fails closed.
+declare -A selected=() selected_entry=() selected_packaging=()
 for role in "${roles[@]}"; do
   while IFS= read -r run; do
-    marker="$staged/markers/$role-$run"
-    if [[ ! -f "$marker" ]]; then
+    mapfile -t build_names < <(build_entries "$role" "$run")
+    resolved="$(node "$scripts/woodpecker-handoff.mjs" resolve "$staged/markers/$role" "$role" "${sources[$role]}" "$compiler_sha" "$run" "${build_names[@]}")" || exit 1
+    while IFS= read -r entry; do
+      [[ -z "$entry" ]] || echo "skipping incomplete $role handoff $entry" >&2
+    done < <(jq -r '.incomplete[]' <<<"$resolved")
+    if [[ "$(jq -r '.selected == null' <<<"$resolved")" == true ]]; then
       echo "skipping incomplete $role handoff from pipeline $run" >&2; continue
     fi
-    fields="$(node "$scripts/woodpecker-handoff.mjs" marker "$marker")" || {
-      echo "$role handoff from pipeline $run has an invalid completion marker" >&2; exit 1
-    }
-    node - "$fields" "$role" "${sources[$role]}" "$compiler_sha" "$run" <<'NODE' || { echo "$role handoff from pipeline $run is not a build of source ${sources[$role]}" >&2; exit 1; }
-const [fields, role, source, compiler, pipeline] = process.argv.slice(2), marker = JSON.parse(fields);
-const expected = { role, source, compiler, pipeline };
-for (const [key, value] of Object.entries(expected)) if (marker[key] !== value) { console.error(`UPLOAD_COMPLETE ${key} is ${marker[key]}, expected ${value}`); process.exit(1); }
-NODE
-    marker_version="$(node -e 'process.stdout.write(JSON.parse(process.argv[1]).version)' "$fields")"
+    marker_version="$(jq -r '.selected.fields.version' <<<"$resolved")"
     if [[ "$marker_version" != "$version" ]]; then
       echo "skipping $role handoff from pipeline $run: it is a $marker_version build" >&2; continue
     fi
-    selected[$role]="$run"; break
+    selected[$role]="$run"
+    selected_entry[$role]="$(jq -r '.selected.entry' <<<"$resolved")"
+    selected_packaging[$role]="$(jq -r '.selected.packaging.pipeline' <<<"$resolved")"
+    while IFS= read -r line; do
+      [[ -z "$line" ]] || echo "$role build $run: packaging $line is superseded" >&2
+    done < <(jq -r '.superseded[] | "\(.pipeline) (\(.entry))"' <<<"$resolved")
+    break
   done <<<"${candidates[$role]}"
   [[ -n "${selected[$role]:-}" ]] || {
     echo "no complete $role handoff of $version for source ${sources[$role]}" >&2; exit 1
   }
 done
 
-# 4. Fetch the selected handoffs and verify every checksum before they become visible.
+# 4. Fetch the selected handoffs and verify every checksum before they become visible. A superseding
+# entry is fetched into the build's own layout `<role>/incoming/<pipeline>-<source>/<role>`.
 : >"$staged/fetch.batch"
 for role in "${roles[@]}"; do
-  mkdir -p "$staged/handoff/$role/incoming"
-  printf 'get -R "/%s/incoming/%s-%s" "%s/handoff/%s/incoming/"\n' \
-    "$role" "${selected[$role]}" "${sources[$role]}" "$staged" "$role" >>"$staged/fetch.batch"
+  mkdir -p "$staged/handoff/$role/incoming/${selected[$role]}-${sources[$role]}"
+  printf 'get -R "/%s/incoming/%s/%s" "%s/handoff/%s/incoming/%s-%s/"\n' \
+    "$role" "${selected_entry[$role]}" "$role" "$staged" "$role" "${selected[$role]}" "${sources[$role]}" >>"$staged/fetch.batch"
 done
 run_batch "$staged/fetch.batch" >/dev/null
 for role in "${roles[@]}"; do
   incoming="$staged/handoff/$role/incoming/${selected[$role]}-${sources[$role]}/$role"
   test -d "$incoming" || { echo "missing fetched $role handoff" >&2; exit 1; }
-  node "$scripts/woodpecker-handoff.mjs" validate "$incoming" "$role" "${sources[$role]}" "$compiler_sha" \
-    "$version" "${selected[$role]}" >/dev/null
-  echo "selected $role handoff from pipeline ${selected[$role]}" >&2
+  validated="$(node "$scripts/woodpecker-handoff.mjs" validate "$incoming" "$role" "${sources[$role]}" "$compiler_sha" \
+    "$version" "${selected[$role]}")"
+  [[ "$(jq -r '.packaged_by // .pipeline' <<<"$validated")" == "${selected_packaging[$role]}" ]] || {
+    echo "fetched $role handoff ${selected_entry[$role]} changed its packaging after selection" >&2; exit 1
+  }
+  echo "selected $role handoff from pipeline ${selected[$role]} (${selected_entry[$role]})" >&2
 done
 mv "$staged/handoff" "$destination"
 printf '%s %s %s\n' "${selected[linux]}" "${selected[macos]}" "${selected[windows]}"

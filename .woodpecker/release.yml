@@ -25,7 +25,9 @@ steps:
       # handoff of C per platform, or the pipeline pinned by BESKID_LINUX_BUILD, BESKID_MACOS_BUILD or
       # BESKID_WINDOWS_BUILD, and prints the three pipeline numbers. Any missing platform, identity drift
       # or checksum mismatch fails. BESKID_LINUX_SOURCE, BESKID_MACOS_SOURCE or BESKID_WINDOWS_SOURCE
-      # name a platform's own handoff source when it differs from C in non-build root paths only.
+      # name a platform's own handoff source when it differs from C in non-build root paths only. When a
+      # build was repackaged with BESKID_REPACKAGE_SUPERSEDES, the newest packaging of its supersede
+      # chain (`<build>-<source>@<packaging>`) is selected; a pin still names the build pipeline.
       - |
         version="$(node scripts/ci/release-version.mjs "$${BESKID_RELEASE_VERSION:?set stable version}" --stable-only)"
         resolved="$(node scripts/ci/release-user-observation.mjs --platform-sources . "$${version}" "$${CI_COMMIT_SHA}" "$${BESKID_RELEASE_CANDIDATE:-}" "$${BESKID_LINUX_SOURCE:-}" "$${BESKID_MACOS_SOURCE:-}" "$${BESKID_WINDOWS_SOURCE:-}")"

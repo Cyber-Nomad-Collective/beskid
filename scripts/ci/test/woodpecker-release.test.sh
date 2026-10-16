@@ -298,14 +298,15 @@ git -C "$root" update-index --cacheinfo "160000,$new_distrib,beskid_distrib"
 commit_fixture 'repackaging root P'
 p_sha="$(git -C "$root" rev-parse HEAD)"
 repackage_role() {
-  local role="$1" by="$2" packaging="$3" distrib="$4" marker="${5:-yes}" dir; dir="$(handoff_of "$role")"
-  jq --argjson by "$by" --arg packaging "$packaging" --arg distrib "$distrib" --argjson build "$(build_of "$role")" \
-    '.distrib_commit = $distrib | .packaged_by = {pipeline:$by,superrepo_commit:$packaging,build_pipeline:$build}' \
+  local role="$1" by="$2" packaging="$3" distrib="$4" marker="${5:-yes}" supersedes="${6:-}" result_supersedes="${7-${6:-}}" dir; dir="$(handoff_of "$role")"
+  jq --argjson by "$by" --arg packaging "$packaging" --arg distrib "$distrib" --argjson build "$(build_of "$role")" --arg supersedes "$result_supersedes" \
+    '.distrib_commit = $distrib | .packaged_by = ({pipeline:$by,superrepo_commit:$packaging,build_pipeline:$build} + (if $supersedes == "" then {} else {supersedes:($supersedes|tonumber)} end))' \
     "$dir/package-result.json" >"$dir/package-result.json.new"
   mv "$dir/package-result.json.new" "$dir/package-result.json"
   (cd "$dir" && find . -maxdepth 1 -type f ! -name 'UPLOAD_*' -exec basename {} \; | LC_ALL=C sort | while IFS= read -r name; do shasum -a 256 "$name"; done) >"$dir/UPLOAD_SHA256SUMS"
   printf 'role=%s\nsource=%s\ncompiler=%s\nversion=%s\npipeline=%s\n' "$role" "$source_sha" "$compiler_sha" "$version" "$(build_of "$role")" >"$dir/UPLOAD_COMPLETE"
   [[ "$marker" == no ]] || printf 'packaged_by=%s\npackaged_by_commit=%s\n' "$by" "$packaging" >>"$dir/UPLOAD_COMPLETE"
+  [[ "$marker" == no || -z "$supersedes" ]] || printf 'supersedes=%s\nsupersedes_commit=%s\n' "$supersedes" "$packaging" >>"$dir/UPLOAD_COMPLETE"
 }
 repackage_role linux 91 "$p_sha" "$new_distrib"
 repackage_role windows 92 "$p_sha" "$new_distrib"
@@ -322,6 +323,25 @@ jq -e --arg c "$source_sha" --arg p "$p_sha" --arg old "$distrib_sha" --arg new 
 jq -e '.handoffs.linux.packaged_by == 91 and .handoffs.windows.packaged_by == 92 and (.handoffs.macos | has("packaged_by") | not)' \
   "$tmp/rootfs/woodpecker-output/releases/93-${source_sha}/qualified/validated-evidence.json" >/dev/null || \
   fail 'validated evidence does not record the repackaging pipelines'
+# A superseding repackage: pipeline 97 superseded the Windows packaging 92. Both the marker and the
+# package-result name the superseded packaging, and the evidence records both packagings.
+repackage_role windows 97 "$p_sha" "$new_distrib" yes 92
+WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=98 CI_COMMIT_SHA="$p_sha" \
+  BESKID_RELEASE_CANDIDATE="$source_sha" PATH="$tmp/bin:$PATH" bash "$script" "$version" "${builds[@]}" >/dev/null 2>"$tmp/supersede.err" || {
+  cat "$tmp/supersede.err" >&2; fail 'a superseding Windows repackage was refused'; }
+jq -e --arg p "$p_sha" '.handoffs.windows.packaged_by == 97 and .handoffs.windows.packaged_by_commit == $p and .handoffs.windows.supersedes == 92 and .handoffs.windows.supersedes_commit == $p and (.handoffs.linux | has("supersedes") | not)' \
+  "$tmp/rootfs/woodpecker-output/releases/98-${source_sha}/qualified/validated-evidence.json" >/dev/null || \
+  fail 'validated evidence does not record the superseded and the superseding packaging'
+jq -e --arg p "$p_sha" '[.distribution.packages[] | select(.platform == "windows")] | length == 2 and all(.packaged_by == {pipeline:97,superrepo_commit:$p,build_pipeline:47,supersedes:92})' \
+  "$tmp/rootfs/woodpecker-output/releases/98-${source_sha}/qualified/release-state.json" >/dev/null || \
+  fail 'release state does not record the superseded packaging'
+repackage_role windows 97 "$p_sha" "$new_distrib" yes 92 ""
+if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=99 CI_COMMIT_SHA="$p_sha" \
+  BESKID_RELEASE_CANDIDATE="$source_sha" PATH="$tmp/bin:$PATH" bash "$script" "$version" "${builds[@]}" 2>"$tmp/supersede-drift.err"; then
+  fail 'a superseding marker without the package-result record was accepted'
+fi
+grep -Fq 'windows package-result packaging identity differs from its UPLOAD_COMPLETE' "$tmp/supersede-drift.err" || fail 'supersede drift was not diagnosed'
+repackage_role windows 92 "$p_sha" "$new_distrib"
 # The completion marker must name the same packaging root as the package-result.
 repackage_role linux 91 "$p_sha" "$new_distrib" no
 if WOODPECKER_RELEASE_TEST_ROOT="$tmp/rootfs" CI_PIPELINE_NUMBER=94 CI_COMMIT_SHA="$p_sha" \

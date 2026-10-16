@@ -837,3 +837,17 @@ test("rejects symlinked platform directories, metadata, and artifacts", (t) => {
   assert.notEqual(artifact.status, 0);
   assert.match(artifact.stderr, /linux artifact beskid-linux-amd64 must not be a symbolic link/);
 });
+
+test("superseding repackage arguments name an earlier packaging of the build", (t) => {
+  const root = createFixture({ linux: { buildResult: { platform_result_status: "failed" } } });
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  const run = (...extra) => spawnSync(process.execPath, [packagePath.pathname, "linux", root, join(root, "packages"), "--repackage", "335", "360", ...extra], { encoding: "utf8" });
+  for (const supersedes of ["334", "360", "361", "x"]) assert.match(run("--supersedes", supersedes).stderr, /usage: woodpecker-package-platform\.mjs/);
+  assert.match(run("--superseded", "340").stderr, /usage: woodpecker-package-platform\.mjs/);
+  for (const supersedes of ["335", "353"]) {
+    const result = run("--supersedes", supersedes);
+    assert.notEqual(result.status, 0);
+    assert.doesNotMatch(result.stderr, /usage:/, "a valid superseded packaging passes argument validation");
+    assert.match(result.stderr, /platform_result_status/);
+  }
+});

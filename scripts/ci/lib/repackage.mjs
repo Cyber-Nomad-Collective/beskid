@@ -2,7 +2,7 @@
 // Verify that an earlier build pipeline's retained outputs may be repackaged, and prepare its handoff.
 //
 // Usage:
-//   repackage.mjs verify <output-root> <linux|macos|windows> <build-pipeline> <repackage-pipeline>
+//   repackage.mjs verify <output-root> <linux|macos|windows> <build-pipeline> <repackage-pipeline> [--supersedes <pipeline>]
 //
 // The repackage lane (woodpecker-repackage-platform.sh) reuses the qualified outputs of build pipeline
 // N instead of rebuilding them. It fails closed unless:
@@ -12,7 +12,11 @@
 //   - the v0.6 feature evidence lists every release case of the reviewed manifest for this target,
 //     each successful (exit 0, not timed out), and each case record agrees;
 //   - the full release evidence validator accepts the platform;
-//   - the build was never packaged (no package-result.json);
+//   - the build was never packaged (no package-result.json), unless this repackage supersedes a
+//     packaging explicitly (--supersedes S, from BESKID_REPACKAGE_SUPERSEDES): S is then the build
+//     pipeline itself (its package-result.json present) or an earlier repackage of this build whose
+//     complete local handoff `<platform>-repackage-S` names it; the provenance records S. That S is the
+//     current remote handoff is checked by the uploader (woodpecker-upload-handoff.sh --supersedes);
 //   - on Linux, the Corelib gate succeeded and the compiler gate either succeeded or failed in its
 //     clippy phase only. Clippy is report-only in the compiler release gate; such a report is
 //     re-issued as successful with the original verdict, report digest and the phases that did not
@@ -161,8 +165,29 @@ export function VerifyLinuxGates(directory, source, version, repackaging) {
   };
 }
 
-export function VerifyRepackage({ outputRoot, platform, build, pipeline, repo, head, validateEvidence = DefaultEvidenceValidator }) {
+// The earlier packaging of this build that a superseding repackage replaces, from its local outputs.
+export function SupersededPackaging(located, platform, build, supersedes) {
+  if (supersedes === build) {
+    const result = ReadJson(join(located.directory, "package-result.json"), "package result of the superseded build packaging");
+    if (result.status !== "success" || result.packaged_by !== undefined) Fail(`the build ${build} did not package itself successfully`);
+    return { pipeline: Number(build), superrepo_commit: located.source, distrib_commit: result.distrib_commit };
+  }
+  const handoff = join(located.evidenceRoot, `${platform}-repackage-${supersedes}`);
+  const provenance = ReadJson(join(handoff, "repackage-provenance.json"), `provenance of the superseded repackage ${supersedes}`);
+  const result = ReadJson(join(handoff, "package-result.json"), `package result of the superseded repackage ${supersedes}`);
+  if (provenance.kind !== "beskid-repackage" || provenance.build?.pipeline !== Number(build) || provenance.build?.superrepo_commit !== located.source
+    || provenance.packaged_by?.pipeline !== Number(supersedes) || result.status !== "success" || result.packaged_by?.pipeline !== Number(supersedes)
+    || result.packaged_by?.build_pipeline !== Number(build) || result.packaged_by?.superrepo_commit !== provenance.packaged_by.superrepo_commit) {
+    Fail(`the local handoff ${platform}-repackage-${supersedes} is not a complete repackage of build ${build}`);
+  }
+  return { pipeline: Number(supersedes), superrepo_commit: provenance.packaged_by.superrepo_commit, distrib_commit: provenance.packaged_by.distrib_commit };
+}
+
+export function VerifyRepackage({ outputRoot, platform, build, pipeline, repo, head, supersedes = "", validateEvidence = DefaultEvidenceValidator }) {
   if (!PIPELINE.test(pipeline) || pipeline === build) Fail("the repackaging pipeline must be a positive number other than the build pipeline");
+  if (supersedes && (!PIPELINE.test(supersedes) || Number(supersedes) < Number(build) || Number(supersedes) >= Number(pipeline))) {
+    Fail("the superseded packaging must be the build pipeline or an earlier repackaging pipeline");
+  }
   const located = LocateBuildOutput(outputRoot, platform, build);
   const { directory, source: sourceCommit } = located;
   const target = TARGETS[platform];
@@ -177,11 +202,12 @@ export function VerifyRepackage({ outputRoot, platform, build, pipeline, repo, h
   if (!["bundle", "cli", "lsp"].every(name => builds[name]?.status === "success") || (platformResult.diagnostics ?? []).length) Fail("the platform result is not successful");
   const manifest = ReadJson(join(scripts, "release-cases-v06.json"), "release-case manifest");
   const cases = VerifyReleaseCases(directory, target, manifest, result.source);
-  if (existsSync(join(directory, "package-result.json"))) Fail("the build was already packaged; repackage only an unpackaged build");
+  if (existsSync(join(directory, "package-result.json")) && supersedes !== build) Fail("the build was already packaged; repackage only an unpackaged build");
+  const superseded = supersedes ? SupersededPackaging(located, platform, build, supersedes) : null;
   const packaging = ValidatePackagingRoot(repo, sourceCommit, head, head);
   validateEvidence(located.evidenceRoot, platform);
   const gates = platform === "linux" ? VerifyLinuxGates(directory, result.source, result.version, { pipeline, commit: head }) : null;
-  return { ...located, target, version: result.version, compiler, cases, packaging, gates };
+  return { ...located, target, version: result.version, compiler, cases, packaging, gates, superseded };
 }
 
 function DefaultEvidenceValidator(evidenceRoot, platform) {
@@ -212,6 +238,7 @@ export function WriteRepackageHandoff(verified, handoff, build, pipeline) {
     build: { pipeline: Number(build), superrepo_commit: verified.source, compiler_commit: verified.compiler, release_cases_passed: verified.cases },
     packaged_by: { pipeline: Number(pipeline), superrepo_commit: verified.packaging.packaging_commit, distrib_commit: verified.packaging.distrib_commit },
     compiler_gate_reissued: Boolean(verified.gates?.reissued),
+    ...(verified.superseded ? { supersedes: verified.superseded } : {}),
   };
   writeFileSync(join(handoff, "repackage-provenance.json"), `${JSON.stringify(provenance, null, 2)}\n`);
   return provenance;
@@ -220,10 +247,11 @@ export function WriteRepackageHandoff(verified, handoff, build, pipeline) {
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   try {
     const [command, outputRoot, platform, build, pipeline, ...extra] = process.argv.slice(2);
-    if (command !== "verify" || !pipeline || extra.length) Fail("usage: repackage.mjs verify <output-root> <linux|macos|windows> <build-pipeline> <repackage-pipeline>");
+    const usage = "usage: repackage.mjs verify <output-root> <linux|macos|windows> <build-pipeline> <repackage-pipeline> [--supersedes <pipeline>]";
+    if (command !== "verify" || !pipeline || !(extra.length === 0 || (extra.length === 2 && extra[0] === "--supersedes"))) Fail(usage);
     const repo = resolve(scripts, "../..");
     const head = Git(repo, ["rev-parse", "HEAD"], "HEAD lookup failed");
-    const verified = VerifyRepackage({ outputRoot: resolve(outputRoot), platform, build, pipeline, repo, head });
+    const verified = VerifyRepackage({ outputRoot: resolve(outputRoot), platform, build, pipeline, repo, head, supersedes: extra[1] ?? "" });
     const handoff = join(verified.evidenceRoot, `${platform}-repackage-${pipeline}`);
     const provenance = WriteRepackageHandoff(verified, handoff, build, pipeline);
     process.stdout.write(`${JSON.stringify({ evidence_root: verified.evidenceRoot, handoff, source: verified.source, compiler: verified.compiler, version: verified.version, ...provenance })}\n`);

@@ -7,7 +7,7 @@ import { join } from "node:path";
 import test from "node:test";
 import { BundleCacheViolations, PruneBundleCaches } from "../lib/bundle-caches.mjs";
 import { ClippyOnlyFailure, VerifyRepackage, WriteRepackageHandoff } from "../lib/repackage.mjs";
-import { ReadUploadComplete, ValidateHandoff } from "../woodpecker-handoff.mjs";
+import { ReadUploadComplete, ResolveBuildHandoffs, ValidateHandoff } from "../woodpecker-handoff.mjs";
 
 const KEY = "c6f41294d3c605315e57ce670a3084567c3fac17e9aa83bb6b24f26bb09c217f";
 const COMPILER = "1".repeat(40), BSOL = "2".repeat(40), DISTRIB = "3".repeat(40), NEW_DISTRIB = "4".repeat(40);
@@ -182,7 +182,7 @@ const accept = () => {};
 function verify(t, platform, options = {}, override = {}) {
   const { repo, source, head } = repository(t);
   const { outputRoot, directory } = buildOutput(t, source, platform, options);
-  const run = () => VerifyRepackage({ outputRoot, platform, build: "335", pipeline: "340", repo, head, validateEvidence: accept, ...override });
+  const run = (call = {}) => VerifyRepackage({ outputRoot, platform, build: "335", pipeline: "340", repo, head, validateEvidence: accept, ...override, ...call });
   return { repo, source, head, outputRoot, directory, run };
 }
 
@@ -324,4 +324,107 @@ test("a repackaged handoff validates against the build identity and reports pack
   assert.equal(result.pipeline, 335);
   assert.equal(result.packaged_by, 340);
   assert.equal(result.packaged_by_commit, "c".repeat(40));
+});
+
+// ---------------------------------------------------------------------------------------------
+// Superseding a previous packaging of the same build
+
+const PACKAGED = (pipeline, commit = String(pipeline).padStart(40, "0")) => [`packaged_by=${pipeline}`, `packaged_by_commit=${commit}`];
+const SUPERSEDES = (pipeline, commit = String(pipeline).padStart(40, "0")) => [`supersedes=${pipeline}`, `supersedes_commit=${commit}`];
+test("a superseding UPLOAD_COMPLETE names an earlier packaging of the same build", (t) => {
+  const fields = ReadUploadComplete(marker(t, [...BUILD, ...PACKAGED(360), ...SUPERSEDES(353)]));
+  assert.equal(fields.supersedes, "353");
+  assert.equal(fields.supersedes_commit, "353".padStart(40, "0"));
+  assert.ok(ReadUploadComplete(marker(t, [...BUILD, ...PACKAGED(360), ...SUPERSEDES(335)])), "the build's own packaging can be superseded");
+  assert.throws(() => ReadUploadComplete(marker(t, [...BUILD, ...PACKAGED(360), "supersedes=353"])), /incomplete superseded packaging/);
+  assert.throws(() => ReadUploadComplete(marker(t, [...BUILD, ...SUPERSEDES(353)])), /only a repackaged handoff/);
+  for (const pipeline of [360, 361, 334]) {
+    assert.throws(() => ReadUploadComplete(marker(t, [...BUILD, ...PACKAGED(360), ...SUPERSEDES(pipeline)])), /build or an earlier repackaging/);
+  }
+});
+
+const SOURCE = "a".repeat(40);
+function inbox(t, entries) {
+  const dir = temp(t, "repackage-inbox-");
+  const markers = {};
+  for (const [entry, lines] of Object.entries(entries)) {
+    if (lines === null) { markers[entry] = null; continue; }
+    writeFileSync(join(dir, entry), [...BUILD, ...lines].join("\n") + "\n");
+    markers[entry] = join(dir, entry);
+  }
+  return markers;
+}
+const EXPECTED = { role: "windows", source: SOURCE, compiler: "b".repeat(40), pipeline: "335" };
+test("the newest valid packaging of a build is its current handoff", (t) => {
+  const resolved = ResolveBuildHandoffs(inbox(t, {
+    [`335-${SOURCE}`]: PACKAGED(353),
+    [`335-${SOURCE}@360`]: [...PACKAGED(360), ...SUPERSEDES(353)],
+    [`335-${SOURCE}@370`]: [...PACKAGED(370), ...SUPERSEDES(360)],
+    [`335-${SOURCE}@380`]: null,
+  }), EXPECTED);
+  assert.equal(resolved.selected.entry, `335-${SOURCE}@370`);
+  assert.deepEqual(resolved.selected.packaging, { pipeline: 370, commit: "370".padStart(40, "0") });
+  assert.deepEqual(resolved.superseded.map(item => item.pipeline), [353, 360]);
+  assert.deepEqual(resolved.incomplete, [`335-${SOURCE}@380`]);
+  const only = ResolveBuildHandoffs(inbox(t, { [`335-${SOURCE}`]: PACKAGED(353) }), EXPECTED);
+  assert.equal(only.selected.entry, `335-${SOURCE}`);
+  assert.deepEqual(only.superseded, []);
+  const self = ResolveBuildHandoffs(inbox(t, { [`335-${SOURCE}`]: [], [`335-${SOURCE}@360`]: [...PACKAGED(360), ...SUPERSEDES(335, SOURCE)] }), EXPECTED);
+  assert.equal(self.selected.packaging.pipeline, 360, "a build that packaged itself can be superseded");
+  assert.equal(ResolveBuildHandoffs(inbox(t, { [`335-${SOURCE}`]: null }), EXPECTED).selected, null);
+});
+test("a missing or ambiguous supersede chain is rejected", (t) => {
+  const base = { [`335-${SOURCE}`]: PACKAGED(353) };
+  const cases = [
+    [{ [`335-${SOURCE}@360`]: [...PACKAGED(360), ...SUPERSEDES(353)] }, /supersedes packaging 353, which has no complete handoff/],
+    [{ ...base, [`335-${SOURCE}`]: null, [`335-${SOURCE}@360`]: [...PACKAGED(360), ...SUPERSEDES(353)] }, /which has no complete handoff/],
+    [{ ...base, [`335-${SOURCE}@360`]: [...PACKAGED(360), ...SUPERSEDES(353)], [`335-${SOURCE}@361`]: [...PACKAGED(361), ...SUPERSEDES(353)] }, /@361 supersedes packaging 353 .*current packaging is 360/],
+    [{ ...base, [`335-${SOURCE}@360`]: [...PACKAGED(360), ...SUPERSEDES(340)] }, /supersedes packaging 340/],
+    [{ ...base, [`335-${SOURCE}@360`]: [...PACKAGED(360), ...SUPERSEDES(353, "9".repeat(40))] }, /supersedes packaging 353 \(9{40}\)/],
+    [{ ...base, [`335-${SOURCE}@360`]: [...PACKAGED(365), ...SUPERSEDES(353)] }, /must be packaged by pipeline 360/],
+    [{ ...base, [`335-${SOURCE}@360`]: PACKAGED(360) }, /must be packaged by pipeline 360 and name the packaging it supersedes/],
+    [{ [`335-${SOURCE}`]: [...PACKAGED(360), ...SUPERSEDES(353)] }, /base entry .* cannot supersede/],
+    [{ ...base, [`336-${SOURCE}@360`]: [...PACKAGED(360), ...SUPERSEDES(353)] }, /is not an entry of build 335/],
+  ];
+  for (const [entries, error] of cases) assert.throws(() => ResolveBuildHandoffs(inbox(t, entries), EXPECTED), error);
+  const foreign = inbox(t, { [`335-${SOURCE}`]: PACKAGED(353) });
+  writeFileSync(foreign[`335-${SOURCE}`], readFileSync(foreign[`335-${SOURCE}`], "utf8").replace("role=windows", "role=linux"));
+  assert.throws(() => ResolveBuildHandoffs(foreign, EXPECTED), /is not a build of source/);
+});
+
+// A completed earlier repackage of build 335 by pipeline 353, as repackage-platform leaves it locally.
+function previousRepackage(verified, pipeline = "353") {
+  const handoff = join(verified.evidenceRoot, `windows-repackage-${pipeline}`);
+  const provenance = WriteRepackageHandoff({ ...verified, packaging: { ...verified.packaging } }, handoff, "335", pipeline);
+  const result = { schema_version: 1, platform: "windows", status: "success", distrib_commit: NEW_DISTRIB, packaged_by: { pipeline: Number(pipeline), superrepo_commit: provenance.packaged_by.superrepo_commit, build_pipeline: 335 } };
+  writeFileSync(join(handoff, "package-result.json"), `${JSON.stringify(result)}\n`);
+  return handoff;
+}
+function snapshot(dir) {
+  return Object.fromEntries(files(dir).sort().map(path => [path, sha256(readFileSync(join(dir, path)))]));
+}
+test("a superseding repackage is accepted only when it names an earlier packaging of the build", (t) => {
+  const { head, run } = verify(t, "windows");
+  const first = run({});
+  const old = previousRepackage(first);
+  const before = snapshot(old);
+  const verified = run({ pipeline: "360", supersedes: "353" });
+  assert.deepEqual(verified.superseded, { pipeline: 353, superrepo_commit: head, distrib_commit: NEW_DISTRIB });
+  const handoff = join(verified.evidenceRoot, "windows-repackage-360");
+  const provenance = WriteRepackageHandoff(verified, handoff, "335", "360");
+  assert.deepEqual(provenance.packaged_by, { pipeline: 360, superrepo_commit: head, distrib_commit: NEW_DISTRIB });
+  assert.deepEqual(provenance.supersedes, { pipeline: 353, superrepo_commit: head, distrib_commit: NEW_DISTRIB });
+  assert.deepEqual(snapshot(old), before, "the superseded handoff is untouched");
+  assert.equal(run({ pipeline: "361" }).superseded, null, "without --supersedes nothing is superseded");
+  assert.throws(() => run({ pipeline: "361", supersedes: "352" }), /provenance of the superseded repackage 352/);
+  for (const supersedes of ["334", "361", "362", "x"]) assert.throws(() => run({ pipeline: "361", supersedes }), /build pipeline or an earlier repackaging pipeline/);
+  writeFileSync(join(old, "package-result.json"), "{\"status\":\"failed\"}\n");
+  assert.throws(() => run({ pipeline: "361", supersedes: "353" }), /is not a complete repackage of build 335/);
+});
+test("a superseding repackage of a build that packaged itself names the build pipeline", (t) => {
+  const { source, directory, run } = verify(t, "windows");
+  assert.throws(() => run({ supersedes: "335" }), /package result of the superseded build packaging/);
+  writeFileSync(join(directory, "package-result.json"), `${JSON.stringify({ status: "success", distrib_commit: DISTRIB })}\n`);
+  assert.throws(() => run({}), /already packaged/);
+  assert.deepEqual(run({ supersedes: "335" }).superseded, { pipeline: 335, superrepo_commit: source, distrib_commit: DISTRIB });
 });

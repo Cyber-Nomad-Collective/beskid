@@ -171,7 +171,10 @@ for index in 0 1 2; do
   packaged_build="$(jq -r '.packaged_by.build_pipeline // empty' "$result")"
   marker_pipeline="$(jq -r --arg role "$role" '.[$role].packaged_by // empty' "$handoffs")"
   marker_commit="$(jq -r --arg role "$role" '.[$role].packaged_by_commit // empty' "$handoffs")"
-  [[ "$packaged_pipeline" == "$marker_pipeline" && "$packaged_commit" == "$marker_commit" ]] || {
+  # A superseding repackage names the packaging it replaced in both records.
+  packaged_supersedes="$(jq -r '.packaged_by.supersedes // empty' "$result")"
+  marker_supersedes="$(jq -r --arg role "$role" '.[$role].supersedes // empty' "$handoffs")"
+  [[ "$packaged_pipeline" == "$marker_pipeline" && "$packaged_commit" == "$marker_commit" && "$packaged_supersedes" == "$marker_supersedes" ]] || {
     echo "$role package-result packaging identity differs from its UPLOAD_COMPLETE" >&2; exit 1;
   }
   [[ -z "$packaged_pipeline" || "$packaged_build" == "${builds[$index]}" ]] || {
