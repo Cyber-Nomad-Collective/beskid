@@ -281,6 +281,19 @@ test("per-platform sources: C/C/D with only non-build root changes is one build 
   assert.equal(cli.status, 0, cli.stderr);
   assert.equal(JSON.parse(cli.stdout).sources.linux, d);
 });
+test("website content is a non-build path for platform sources and packaging roots", (t) => {
+  const { root, candidate } = candidateRepo(t);
+  const site = commit(root, "blog", (dir) => {
+    mkdirSync(join(dir, "site/website/src/content/docs/blog"), { recursive: true });
+    writeFileSync(join(dir, "site/website/src/content/docs/blog/v0-6-0-release.md"), "release post\n");
+    git(dir, "add", "site");
+  });
+  assert.ok(NON_BUILD_PATHS.some(pattern => pattern.test("site/website/src/content/docs/blog/v0-6-0-release.md")));
+  assert.ok(!NON_BUILD_PATHS.some(pattern => pattern.test("sites/x")) && !NON_BUILD_PATHS.some(pattern => pattern.test("scripts/site/x")), "only the root site/ tree");
+  assert.deepEqual(ValidatePackagingRoot(root, candidate, site, site), { source: candidate, packaging_commit: site, distrib_commit: DISTRIB });
+  const head = commitRecord(root, record({ superrepo_commit: candidate }));
+  assert.deepEqual(ResolvePlatformSources(root, VERSION, head, "", { linux: site }).sources, { linux: site, macos: candidate, windows: candidate });
+});
 test("per-platform sources: a build script change is refused", (t) => {
   const { root, candidate } = candidateRepo(t);
   const d = commit(root, "build change", (dir) => { writeFileSync(join(dir, "scripts/ci/build-release-artifact.sh"), "echo other\n"); git(dir, "add", "scripts/ci/build-release-artifact.sh"); });

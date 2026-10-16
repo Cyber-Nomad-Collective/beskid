@@ -59,6 +59,9 @@ export const PACKAGING_GITLINK = "beskid_distrib";
 // workflows, the evidence validator and handoff uploader the build runs) must be identical.
 export const NON_BUILD_PATHS = [
   /^openspec\//, /^docs\//, /^CHANGELOG\.md$/,
+  // Website content (site/website, site/auth, site/learn): built into site images, never into a compiler,
+  // Corelib or installer artifact.
+  /^site\//,
   /^\.woodpecker\/release\.yml$/, /^\.woodpecker\/pckg\.yml$/,
   /^scripts\/ci\/test\//,
   // Gate and check scripts: they write gate reports, never artifacts.
