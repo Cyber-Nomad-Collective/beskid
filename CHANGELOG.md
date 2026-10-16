@@ -63,6 +63,8 @@ Draft release notes: `docs/release/v0.6.6-release-notes.md`.
 ### CLI and tooling
 
 - `beskid check --project` checks every target of the manifest.
+- Applications may call `Core.Parallel.Isolate.Main()`: the program entry is
+  matched by exact function identity, not by the name `Main`.
 - LSP quick fixes insert `move` and rewrite a store as `exchange`; hover shows
   transfer classes and capture lists.
 - pckg: file browser for verified package artifacts and NodeBB discussion

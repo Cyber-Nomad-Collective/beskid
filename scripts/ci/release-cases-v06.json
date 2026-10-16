@@ -8589,12 +8589,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn par066_02_scope_spawn_join_result_at_one_isolate_and_default(",
-            "end": 4163,
+            "end": 4160,
             "source": {
               "path": "source-tests-features_host_v066.rs",
-              "sha256": "f11bdd6ee2f6a5ad9752c5cd2a737498d9fa45b1a6bb2f38f565778c7c98b329"
+              "sha256": "5eb7db83d2b104f16505888144e5565319d445b09c5f8323ae55d6226a258b05"
             },
-            "start": 4099,
+            "start": 4096,
             "test_id": "par066_02_scope_spawn_join_result_at_one_isolate_and_default"
           }
         ],
@@ -8616,7 +8616,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-tests-features_host_v066.rs",
-          "sha256": "f11bdd6ee2f6a5ad9752c5cd2a737498d9fa45b1a6bb2f38f565778c7c98b329"
+          "sha256": "5eb7db83d2b104f16505888144e5565319d445b09c5f8323ae55d6226a258b05"
         },
         "input": null,
         "log": "case-PAR066-02.json",
@@ -8759,12 +8759,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn port066_02_bounded_port_and_ordered_pipeline_at_one_isolate_and_default(",
-            "end": 8087,
+            "end": 8084,
             "source": {
               "path": "source-tests-features_host_v066.rs",
-              "sha256": "f11bdd6ee2f6a5ad9752c5cd2a737498d9fa45b1a6bb2f38f565778c7c98b329"
+              "sha256": "5eb7db83d2b104f16505888144e5565319d445b09c5f8323ae55d6226a258b05"
             },
-            "start": 8012,
+            "start": 8009,
             "test_id": "port066_02_bounded_port_and_ordered_pipeline_at_one_isolate_and_default"
           }
         ],
@@ -8786,7 +8786,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-tests-features_host_v066.rs",
-          "sha256": "f11bdd6ee2f6a5ad9752c5cd2a737498d9fa45b1a6bb2f38f565778c7c98b329"
+          "sha256": "5eb7db83d2b104f16505888144e5565319d445b09c5f8323ae55d6226a258b05"
         },
         "input": null,
         "log": "case-PORT066-02.json",
@@ -8918,12 +8918,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn pseq066_02_parallel_map_reduce_equals_serial_at_one_isolate_and_default(",
-            "end": 10521,
+            "end": 10518,
             "source": {
               "path": "source-tests-features_host_v066.rs",
-              "sha256": "f11bdd6ee2f6a5ad9752c5cd2a737498d9fa45b1a6bb2f38f565778c7c98b329"
+              "sha256": "5eb7db83d2b104f16505888144e5565319d445b09c5f8323ae55d6226a258b05"
             },
-            "start": 10446,
+            "start": 10443,
             "test_id": "pseq066_02_parallel_map_reduce_equals_serial_at_one_isolate_and_default"
           }
         ],
@@ -8945,7 +8945,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-tests-features_host_v066.rs",
-          "sha256": "f11bdd6ee2f6a5ad9752c5cd2a737498d9fa45b1a6bb2f38f565778c7c98b329"
+          "sha256": "5eb7db83d2b104f16505888144e5565319d445b09c5f8323ae55d6226a258b05"
         },
         "input": null,
         "log": "case-PSEQ066-02.json",
@@ -8968,12 +8968,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn move066_01_move_and_exchange_run_and_use_after_move_is_e1234(",
-            "end": 12214,
+            "end": 12211,
             "source": {
               "path": "source-tests-features_host_v066.rs",
-              "sha256": "f11bdd6ee2f6a5ad9752c5cd2a737498d9fa45b1a6bb2f38f565778c7c98b329"
+              "sha256": "5eb7db83d2b104f16505888144e5565319d445b09c5f8323ae55d6226a258b05"
             },
-            "start": 12150,
+            "start": 12147,
             "test_id": "move066_01_move_and_exchange_run_and_use_after_move_is_e1234"
           }
         ],
@@ -8995,7 +8995,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-tests-features_host_v066.rs",
-          "sha256": "f11bdd6ee2f6a5ad9752c5cd2a737498d9fa45b1a6bb2f38f565778c7c98b329"
+          "sha256": "5eb7db83d2b104f16505888144e5565319d445b09c5f8323ae55d6226a258b05"
         },
         "input": null,
         "log": "case-MOVE066-01.json",
@@ -9088,12 +9088,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn gcs066_01_gc_stress_alloc_64_verify_smoke(",
-            "end": 16050,
+            "end": 16047,
             "source": {
               "path": "source-tests-features_host_v066.rs",
-              "sha256": "f11bdd6ee2f6a5ad9752c5cd2a737498d9fa45b1a6bb2f38f565778c7c98b329"
+              "sha256": "5eb7db83d2b104f16505888144e5565319d445b09c5f8323ae55d6226a258b05"
             },
-            "start": 16005,
+            "start": 16002,
             "test_id": "gcs066_01_gc_stress_alloc_64_verify_smoke"
           }
         ],
@@ -9115,7 +9115,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-tests-features_host_v066.rs",
-          "sha256": "f11bdd6ee2f6a5ad9752c5cd2a737498d9fa45b1a6bb2f38f565778c7c98b329"
+          "sha256": "5eb7db83d2b104f16505888144e5565319d445b09c5f8323ae55d6226a258b05"
         },
         "input": null,
         "log": "case-GCS066-01.json",
