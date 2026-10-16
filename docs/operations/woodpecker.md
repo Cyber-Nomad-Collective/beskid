@@ -63,6 +63,28 @@ commands, and a filter makes the pipeline fail at compile time with "only
 allowed to be used by plugins". The tracked-workflow test below is what
 confines them to that one step.
 
+The publication secrets `compiler_release_token`, `pckg_release_publisher_key`
+and `open_vsx_token` have the image filter
+`cr.beskid-lang.org/beskid/release-publisher`. The steps that bind them
+(`release.yml:publish-release`, `pckg.yml:publish-corelib-and-templates` and
+`editor.yml:publish-editor-release`) are plugin steps on that image. They have
+no `commands`, `entrypoint` or `environment`. The image is built from
+`ci/plugins/release-publisher` by the manual `BESKID_TASK=publisher-image` task
+in `platform.yml`. Its dispatcher reads the step `settings:` (`PLUGIN_*`) and
+runs the reviewed scripts of the checked-out workspace. It gives each secret
+only to its one publisher command. Woodpecker does not pass manual pipeline
+variables to plugins. The steps therefore substitute them into `settings:` when
+the workflow is parsed, for example `linux_build: '${BESKID_LINUX_BUILD}'`.
+The registry needs authentication for pulls, so the repository needs a
+Woodpecker registry entry for `cr.beskid-lang.org`. The image is versioned by
+`ci/plugins/release-publisher/VERSION`. A version tag is immutable, so a
+changed image needs a new version and a new digest pin in the three steps.
+
+Woodpecker runs step `commands` with `/bin/sh`. Bodies that need bash live in
+checked-in scripts, for example `scripts/ci/woodpecker-release-lane.sh`.
+`woodpecker-posix-commands.test.py` rejects bash-only syntax in Docker step
+commands.
+
 The tracked workflows add a second layer. `woodpecker-secret-scope.test.py`
 fails the Linux validation when a step binds a secret without a pinned image,
 outside a manual `main` pipeline, or expands a credential in its command text.
@@ -159,7 +181,8 @@ woodpecker-cli pipeline create Cyber-Nomad-Collective/beskid --branch main \
 consume the same handoffs. `BESKID_RELEASE_CANDIDATE` and the per-platform
 `BESKID_*_SOURCE` inputs work as in `release`. The waiver is the owner decision
 record described below; it is an ordinary pipeline variable, not a secret,
-because it carries no credential.
+because it carries no credential. Give it as one line of JSON without single
+quotes: the publish plugin step substitutes it into a single-quoted setting.
 
 The lane runs on `main` HEAD and publishes the builds of candidate C (the
 CLI06-06 record's candidate, else `BESKID_RELEASE_CANDIDATE`, else HEAD). C is
