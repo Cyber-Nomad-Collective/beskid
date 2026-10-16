@@ -4,20 +4,27 @@
 ## Purpose
 
 Canonical Result<T,E> error-handling primitives for fallible Beskid corelib operations.
-
 ## Requirements
-
 ### Requirement: Result type and predicates: Decision [D-CORE-PRIM-0140]
-The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
+`Result<T,E>` SHALL be the canonical fallible Corelib enum with variants
+`Ok(T)` and `Error(E)`. `IsOk()` and `IsError()` MUST report the active variant
+accurately for every valid specialization. `Unit` MUST be a valid success type:
+`Result<unit, E>` construction, generic instantiation, discriminant layout,
+matching, predicates, mapping, error propagation, ISLE lowering, JIT, and AOT
+MUST follow the same single semantic path as other `Result<T,E>` values.
+`Ok(Unit)` MUST NOT be encoded or exposed as an `Ok(bool)` compatibility
+payload.
 
-> `Result<T,E>` SHALL be the canonical error-handling enum with variants `Ok(T)` and `Error(E)`. `IsOk()` and `IsError()` MUST report the active variant accurately, and all fallible corelib APIs MUST return `Result`.
+#### Scenario: Unit success constructs and matches
+- **GIVEN** a function returning `Result<unit, E>`
+- **WHEN** it constructs `Result::Ok(Unit)` and a caller matches the result
+- **THEN** the `Ok(Unit)` arm executes, `IsOk()` is true, and no boolean
+  payload is required or observed
 
-**Stable ID:** `BSP-REQ-7A4C91E2F08B6D13`
-
-#### Scenario: Conformance exercises Decision
-- **GIVEN** an implementation claims conformance with this capability
-- **WHEN** behavior governed by this contract section is exercised
-- **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
+#### Scenario: Unit result preserves an error
+- **GIVEN** a `Result<unit, E>` containing `Error(error)`
+- **WHEN** predicates, matching, or propagation inspect it
+- **THEN** `IsError()` is true and the original typed error is preserved
 
 ### Requirement: Result transformations and unwrapping: Decision [D-CORE-PRIM-0141]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
@@ -42,3 +49,4 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **GIVEN** an implementation claims conformance with this capability
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
+

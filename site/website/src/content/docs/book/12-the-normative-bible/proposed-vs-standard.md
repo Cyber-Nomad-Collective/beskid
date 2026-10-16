@@ -22,7 +22,7 @@ stateDiagram-v2
 
 **Text equivalent:** New material is Proposed. It becomes Standard once it has normative prose, verification anchors and decisions. Placeholder-only or circular bundles must return to Proposed.
 
-From [Specification authority](/platform-spec/community/spec-maintenance/spec-authority-and-decisions/).
+From [Specification authority](/docs/standard/capabilities/community--spec-maintenance--spec-authority-and-decisions/).
 
 ## Standard gates
 
@@ -32,11 +32,11 @@ A **Standard** feature hub **must** have:
 - Verification anchors (tests, crates, registry links)
 - **`## Decisions`** on the hub and/or **`adr/`** per decision
 
-Placeholder-only bundles or circular canon stubs **must** downgrade to **Proposed** until fixed ([Feature hub template](/platform-spec/community/spec-maintenance/feature-hub-article-bundle-template/)).
+Placeholder-only bundles or circular canon stubs **must** downgrade to **Proposed** until fixed ([Feature hub template](/docs/standard/capabilities/community--spec-maintenance--feature-hub-article-bundle-template/)).
 
 ## v0.x bands
 
-Roadmap labels like **v0.2** describe **delivery scope**, not alternate spec URLs. See [Release and versioning policy](/platform-spec/community/spec-maintenance/release-and-versioning-policy/).
+Roadmap labels like **v0.2** describe **delivery scope**, not alternate spec URLs. See [Release and versioning policy](/docs/standard/capabilities/community--spec-maintenance--release-and-versioning-policy/).
 
 ## For readers
 

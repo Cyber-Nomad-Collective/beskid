@@ -481,7 +481,7 @@ flowchart TB
 | Slice | Role |
 | --- | --- |
 | CLIF modules | Per-compilation-unit functions and globals |
-| Builtin imports | `declare_builtin_imports` from `BUILTIN_SPECS` |
+| Builtin imports | `cranelift_host::declare_referenced_builtin_imports` declares only the referenced runtime imports. Shapes come from the generated ABI-v5 tables |
 | `ExternImport` rows | User contract symbols for link step |
 | Type descriptors | GC layout + array/string shapes for `alloc` |
 

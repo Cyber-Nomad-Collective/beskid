@@ -15,11 +15,11 @@ Beskid types are **nominal** and **static**. The compiler is not impressed by yo
 
 ## Generics
 
-Think `List<T>`, `Map<K,V>`, `Option<T>`: parameterized types must be explicit at boundaries; inference helpers exist but will not save you from ambiguous APIs (see [type inference](/platform-spec/language-meta/type-system/type-inference/)).
+Think `List<T>`, `Map<K,V>`, `Option<T>`: parameterized types must be explicit at boundaries; inference helpers exist but will not save you from ambiguous APIs (see [type inference](/docs/standard/capabilities/language-meta--type-system--type-inference/)).
 
 ## Method dispatch
 
-Instance calls resolve per [method dispatch](/platform-spec/language-meta/type-system/method-dispatch/) rules: no `null` receivers; use `Option<T>` + `match`.
+Instance calls resolve per [method dispatch](/docs/standard/capabilities/language-meta--type-system--method-dispatch/) rules: no `null` receivers; use `Option<T>` + `match`.
 
 ## Decision tree
 
@@ -34,8 +34,8 @@ flowchart TD
 
 ## Standard reference (informative)
 
-- [Types](/platform-spec/language-meta/type-system/types/)
-- [Enums and match](/platform-spec/language-meta/type-system/enums-and-match/)
+- [Types](/docs/standard/capabilities/language-meta--type-system--types/)
+- [Enums and match](/docs/standard/capabilities/language-meta--type-system--enums-and-match/)
 
 ## Next
 

@@ -54,8 +54,8 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 
 > | Rule | Detail |
 > | --- | --- |
-> | Authority | `compiler/runtime_manifest.toml` is the **sole normative authority** for runtime builtin classification |
-> | Generated outputs | `BUILTIN_SPECS`, `RUNTIME_EXPORT_SYMBOLS`, analysis `define_builtins!`, JIT registration, and bridge link anchors **must** be **generated** from the manifest at build time |
+> | Authority | `compiler/runtime_manifest.bsol` is the **sole normative authority** for runtime builtin classification |
+> | Generated outputs | The runtime import tables **must** be **generated** from the manifest at build time. `beskid_abi/build.rs` generates `ABI_V5_SOFT_BUILTINS`, `ABI_V5_CORELIB_SERVICE_BINDINGS`, and `ABI_V5_SOURCE_BUILTINS` in `beskid_abi::generated::abi_v5_contract`. These tables are the sole source of runtime import signatures. `compiler/crates/beskid_abi/tests/runtime_import_catalog_v06.rs` fails if they drift from the manifest |
 > | Hand edits | Hand-maintained symbol lists outside the manifest and generator **must not** ship |
 > | Entry shape | Each manifest row carries `symbol`, Cranelift kinds, `beskid_path`, `injected`, `dispatch_tag`, `return_group`, and optional `corelib_owner` |
 
@@ -267,7 +267,7 @@ Runtime ABI tables were maintained in four parallel Rust registries (`beskid_abi
 | Rule | Detail |
 | --- | --- |
 | Authority | `compiler/runtime_manifest.toml` is the **sole normative authority** for runtime builtin classification |
-| Generated outputs | `BUILTIN_SPECS`, `RUNTIME_EXPORT_SYMBOLS`, analysis `define_builtins!`, JIT registration, and bridge link anchors **must** be **generated** from the manifest at build time |
+| Generated outputs | The runtime import tables **must** be **generated** from the manifest at build time. In ABI v5 these are `ABI_V5_SOFT_BUILTINS`, `ABI_V5_CORELIB_SERVICE_BINDINGS`, and `ABI_V5_SOURCE_BUILTINS` from `compiler/runtime_manifest.bsol` |
 | Hand edits | Hand-maintained symbol lists outside the manifest and generator **must not** ship |
 | Entry shape | Each manifest row carries `symbol`, Cranelift kinds, `beskid_path`, `injected`, `dispatch_tag`, `return_group`, and optional `corelib_owner` |
 
@@ -598,8 +598,8 @@ flowchart LR
 
 `beskid_abi` `build.rs` runs the generator and writes:
 
-- `src/generated/builtins.rs` — `BUILTIN_SPECS`
-- `src/generated/symbols.rs` — `RUNTIME_EXPORT_SYMBOLS`, `SYM_*`
+- `beskid_abi::generated::abi_v5_contract` — `ABI_V5_SOFT_BUILTINS`, `ABI_V5_CORELIB_SERVICE_BINDINGS`, `ABI_V5_SOURCE_BUILTINS` (generated from `compiler/runtime_manifest.bsol`)
+- `src/generated/symbols.rs` is not generated. It is a frozen ABI-v4 name list (`RUNTIME_EXPORT_SYMBOLS`, `SYM_*`) that only reserves names from user FFI
 - dispatch lookup and tag tables consumed by compiler and tests
 - runtime dispatch tables with language fallback only
 - host-handler tables consumed by `beskid_host`

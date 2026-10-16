@@ -4,9 +4,9 @@ description: Runtime-facing Rust ABI, not arbitrary crate imports.
 tableOfContents: true
 ---
 
-[Rust ABI profile](/docs/standard/language-meta/interop/rust-abi-profile/) documents the language-owned runtime boundary. The linked normative Standard still defines ABI v4. The pinned compiler implementation uses ABI-v5 runtime kits and entrypoints. This conflict is under reconciliation by the Standard and compiler owners; do not claim that the linked Standard defines ABI-v5. The runtime exposes C-compatible entrypoints to loaders. Rust-specific choices stay inside its crate boundary.
+[Rust ABI profile](/docs/standard/capabilities/language-meta--interop--rust-abi-profile/) documents the language-owned runtime boundary. The linked normative Standard still defines ABI v4. The pinned compiler implementation uses ABI-v5 runtime kits and entrypoints. This conflict is under reconciliation by the Standard and compiler owners; do not claim that the linked Standard defines ABI-v5. The runtime exposes C-compatible entrypoints to loaders. Rust-specific choices stay inside its crate boundary.
 
-> **Caution:** This is a runtime-only profile, not a Rust-native application FFI. A user-authored `extern` target must stay on the [C ABI profile](/docs/standard/language-meta/interop/c-abi-profile/). When that target is implemented in Rust, provide a C-compatible shim rather than linking the Rust crate through this profile.
+> **Caution:** This is a runtime-only profile, not a Rust-native application FFI. A user-authored `extern` target must stay on the [C ABI profile](/docs/standard/capabilities/language-meta--interop--c-abi-profile/). When that target is implemented in Rust, use [Rust Glue](/book/21-ffi-and-forbidden-friendships/rust-glue/) or provide a C-compatible shim rather than linking the Rust crate through this profile.
 
 ## Treat the profile as an integration contract
 

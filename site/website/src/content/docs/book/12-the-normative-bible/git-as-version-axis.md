@@ -1,17 +1,17 @@
 ---
 title: "Git as version axis"
-description: Platform-spec is versioned by commit, not by version segments in URLs.
+description: The Standard is versioned by commit, not by version segments in URLs.
 tableOfContents: true
 ---
 
-There is no `/platform-spec/v0.2/...` tree. The contract at commit **`abc123`** is whatever normative text and metadata exist at **`abc123`**.
+There is no `/docs/standard/v0.2/...` tree. The contract at commit **`abc123`** is whatever normative text exists in `openspec/specs` at **`abc123`**.
 
-Policy: [Release and versioning policy](/platform-spec/community/spec-maintenance/release-and-versioning-policy/).
+Policy: [Release and versioning policy](/docs/standard/capabilities/community--spec-maintenance--release-and-versioning-policy/).
 
-## Stable URLs, moving prose
+## Stable identifiers, moving prose
 
-- Paths like `/platform-spec/language-meta/contracts-and-effects/contracts/` stay stable across releases.
-- Behavioral change edits the page body, `lastReviewed`, ADR status, and embedded decisions, not the URL.
+- Capability pages like `/docs/standard/capabilities/language-meta--contracts-and-effects--contracts/` keep their address across releases. Requirements keep their stable `BSP-REQ-...` identifiers.
+- Behavioral change edits the requirement text through an OpenSpec change, not the identifier.
 
 ## Rolling integration
 
@@ -19,11 +19,11 @@ Policy: [Release and versioning policy](/platform-spec/community/spec-maintenanc
 
 - Public docs site builds
 - CLI `cli-stable` / `cli-unstable` rolling releases ([Downloads](/downloads/))
-- Spec freshness via `lastReviewed` ([Last reviewed policy](/platform-spec/community/spec-maintenance/last-reviewed-policy/))
+- Spec freshness via `lastReviewed` ([Last reviewed policy](/docs/standard/capabilities/community--spec-maintenance--last-reviewed-policy/))
 
 ## Single normative entry
 
-[/platform-spec/](/platform-spec/) is the **one** normative documentation tree. Legacy trees remain bridges, not parallel law ([Non-normative bridge docs](/platform-spec/community/spec-maintenance/non-normative-bridge-docs-policy/)).
+The [Beskid Standard](/docs/standard/) is the **one** normative documentation tree. Legacy trees remain bridges, not parallel law ([Non-normative bridge docs](/docs/standard/capabilities/community--spec-maintenance--non-normative-bridge-docs-policy/)).
 
 ## Next
 

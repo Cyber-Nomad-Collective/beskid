@@ -58,7 +58,7 @@ impl LaunchChoice {
             },
             Self::CliOnPath(path) => LaunchSettings {
                 path: Some(path.clone()),
-                arguments: vec!["lsp".into()],
+                arguments: vec!["dev".into(), "lsp".into()],
                 environment: Vec::new(),
             },
             Self::Download => LaunchSettings {

@@ -22,11 +22,11 @@ Use [language law vs implementation](/book/12-the-normative-bible/language-law-v
 - Keep tutorials and rationale in the Book; link them with typed `spec` and `book` embeds.
 - Run `openspec validate --all --strict` from the repository root after edits.
 
-Templates: [Feature hub + article bundle](/platform-spec/community/spec-maintenance/feature-hub-article-bundle-template/), [Frontmatter template](/platform-spec/community/spec-maintenance/domain-area-feature-article-frontmatter-template/).
+Templates: [Feature hub + article bundle](/docs/standard/capabilities/community--spec-maintenance--feature-hub-article-bundle-template/), [Frontmatter template](/docs/standard/capabilities/community--spec-maintenance--domain-area-feature-article-frontmatter-template/).
 
 ## 3. Implement with anchors
 
-Update `compiler/` (or corelib/tooling) and refresh [crate-to-spec anchors](/platform-spec/compiler/implementation-map/crate-to-spec-anchors/) when crate boundaries move.
+Update `compiler/` (or corelib/tooling) and refresh [crate-to-spec anchors](/docs/standard/capabilities/compiler--implementation-map--crate-to-spec-anchors/) when crate boundaries move.
 
 ## 4. Verify
 
@@ -42,7 +42,7 @@ Update book chapters or [reference](/book/reference/) when tutorials should refl
 
 ## Community hub
 
-[Spec maintenance area](/platform-spec/community/spec-maintenance/)
+[Spec maintenance area](/docs/standard/capabilities/taxonomy--community--spec-maintenance/)
 
 ## Next chapter
 

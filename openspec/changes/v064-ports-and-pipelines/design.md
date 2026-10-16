@@ -1,0 +1,54 @@
+## Context
+
+0.6.3 gives fork-join only: an isolate receives its inputs at spawn and returns one result. 0.6.4 adds typed ports between isolates, long-lived isolates that serve an inbox, pipelines over ports, and the second ORCA step: reference counts for `Shared` values that cross ports by pointer. Locked inputs are rulings 6 (amended), 11 and 13, and D7, D10, D11, D13 (`docs/reports/2026-10-04-v06-decisions.md`, entries of 2026-10-13). Names, diagnostic codes and terms (foreign reference table, local reference count table, INC, DEC, heap retention) follow the shared vocabulary of `openspec/changes/v061-attributes-and-isolate-prerequisites/design.md`; this change modifies the chained requirement "Locals mut and assignment" listed there, starting from the 0.6.2 text. The fluent forms `s.Port<T>()`, `s.Isolate(body)`, `s.Source(...).Stage(...).Sink(...)` rely on the 0.6.1 method type parameters and inference.
+
+## Grounding in the current runtime
+
+| Spec element | Current code | What changes |
+| --- | --- | --- |
+| Owner mailbox | `crates/beskid_abi/assembly/common/external_wait.h:67-135`: `BeskidOwner { id, head, count, wake, commands[256] }`, posted under `BeskidLock()`, popped by the owner, `BeskidConditionSignal` on post; `BeskidOwnerPostCommandLocked` traps when the ring of 256 is full (`:112`) | ports post `EXTERNAL_READY` wake-ups and INC/DEC commands to it; the fixed ring must grow or spill, since count traffic is unbounded and must never trap |
+| Fiber-cooperative wait | `Runtime/Fiber/Scheduler/External.bd:143-177` (`ExternalWaitRegister` returns a token, retains one obligation), `:258-280` (`ExternalWaitPark` re-checks cancellation and pumps before parking), `:212-233` (`ExternalPump` pops commands and completes waits) | port receive and send register and park through exactly this path; wake-up arrives as `owner_post(owner, token, EXTERNAL_READY)` |
+| Completion arbitration | `External.bd:189-210` (`ExternalTryComplete` claims with `wait_claim`, a CAS in C, `external_wait.h:184-191`) | unchanged; a late wake-up after cancellation is a no-op |
+| Channel transit of values | `Runtime/Sync/Channel.bd:159-185` (`ChannelSend` commits a `BeskidAbiValue` slot, parks on `WOULD_BLOCK`, checks cancellation after commit), lock comment `:51-58` "foreign workers are not permitted to mutate this heap" | ports keep the slot shape but the ring is native and shared between threads; neither side writes the other's heap |
+| ABI slot | `Runtime/Mem/AbiValue.bd:1-8` (`{tag, payload, descriptor, owner_heap, owner_state}`) | the ring slot is one ABI value plus a class tag |
+| Atomics and threads | 0.6.1 intrinsics `atomic_word_load`, `atomic_word_store`, `atomic_word_compare_exchange`, `atomic_word_fetch_add`, `atomic_fence` (wrappers `AtomicWordLoad`, `AtomicWordStore`, `AtomicWordCompareExchange`, `AtomicWordFetchAdd`, `AtomicFence`) | ring claim and publish; closed flag |
+| Foreign pointer in marking | `Runtime/Mem/Gc/Marking.bd:116-119` and the 0.6.3 foreign reference table (`Runtime/Mem/Gc/Foreign.bd`) | entries gain real counts (FRC) and the owner gains the local reference count table (LRC) |
+| Mark roots and sweep | `Runtime/Mem/Gc/Collection.bd:150-184` (`GcCollect`: `MarkRoots`, `ProcessMarkWork`, `Sweep`) | the owner marks and traces every LRC>0 immutable object before `ProcessMarkWork` drains |
+| Region-to-owner map | 0.6.1 process-wide map; today `FindHeapRegionContaining` answers for one heap (`State.bd:136-150`) | DEC grouping resolves the owner through the map at posting time, so adoption re-targets counts without forwarding |
+| Region chain and adoption | 0.6.3 adoption (`HEAP_FIRST_REGION`, `State.bd:140-147`) | retained heaps are adopted at scope exit with the same procedure |
+| Builtin table | `__channel_create/send/receive_status/receive_value/close` in `corelib/packages/concurrency/src/Concurrency/Channel.bd` | `__port_create/send/receive/close` follow the same registration |
+| Channel default capacity | unbounded (D-CORE-CONC-0001); bounded through `ChannelOptions.Bounded(n)` | ports are bounded by default at 64 (ruling 11); the research recommends this over unbounded because a producer isolate on another core can otherwise outrun memory |
+
+## Decisions
+
+### Native ring plus owner mailbox (compiler-requirements 3.8, option 1 with option 3's wake-up)
+The port queue stays in Beskid as a native ring guarded by the 0.6.1 atomics; the owner mailbox is only the wake-up and count channel. Keeping the ring out of the mailbox is D10: the mailbox is the FIFO whose order ORCA's causality argument needs, and application payloads would only lengthen it. The ring is native memory because it is shared between threads and no heap may be written by a foreign thread (`Channel.bd:51-58`, Phase A per heap).
+
+### Fiber-cooperative receive (ruling 11)
+`ExternalWaitRegister`/`ExternalWaitPark` already turn a cross-thread completion into a parked fiber; a port wait is one more operation kind. This lets one isolate serve many ports with fibers, which is how a long-lived isolate multiplexes an inbox and a reply port.
+
+### Bounded by default at 64 (ruling 11)
+Unbounded ports across cores would let a fast producer exhaust the consumer's `BESKID_HEAP_MAX` with no feedback. Back-pressure as a parked fiber is the same mechanism as a bounded channel (`ChannelPark` on `WOULD_BLOCK`).
+
+### ORCA step 2 (ruling 6 amended, D10)
+ORCA (Clebsch, Franco, Drossopoulou, Yang, Wrigstad, Vitek, OOPSLA 2017, https://doi.org/10.1145/3133896): the owner keeps LRC entries for its objects that are reachable elsewhere, each holder keeps FRC entries, counts are stakes not paths, sends increment, receivers' collectors decrement, and causal FIFO delivery to the owner orders INC before DEC without acknowledgements (sec. 5.4; Clebsch et al., ICOOOLPS 2015, sec. 6). Franco et al. (ESOP 2018, https://doi.org/10.1007/978-3-319-89884-1_31) prove the invariants `LRC + OMC = FRC + AMC` hold at every step. In 0.6.4 only `Shared` (immutable) values cross by pointer, so every entry is immutable and the owner's treatment is "traced root" (`markimmut`); the mutable "shallow root" case is 0.6.5. The receiver inflates its live-byte estimate with its foreign entries (ORCA sec. 4.5.2), otherwise an isolate that allocates nothing never collects and never sends DECs.
+
+### Causality rule (D10)
+Pony's argument needs only synchronous enqueue, FIFO per receiver, and program order in the sender (OOPSLA 2017 sec. 3.1, 5.4). The Beskid owner mailbox is a locked FIFO with synchronous posting. The rule is local: every INC and DEC for owner `P` goes to `P`'s mailbox, and an INC is posted before the dependent port slot is published. In the B-C-A scenario the INC is in A's mailbox before B's send completes, C's DEC is posted after C dequeued that slot, and A's mailbox is FIFO.
+
+### Heap retention then adoption (D7, D11)
+D7 allows adoption in 0.6.3 only when the merge is a rename. With ports, a sibling may hold a count into a child heap at join; 0.6.4 therefore retains the heap (no mutator, no collector, mailbox drained by the owning scope) and copies the result, exactly as the proposal said, and adopts the retained heap at scope exit, when every sibling has been joined and every third-party stake has become the parent's own. D11 rejects Pony's actor cycle detector (Clebsch and Drossopoulou, OOPSLA 2013, https://doi.org/10.1145/2509136.2509557): isolates are scope-owned, so lifetime is structural; the only residual leak (a cancelled long-lived isolate with a referencing sibling) is closed by adoption at scope exit. Object cycles across heaps need nothing (OOPSLA 2017 sec. 5.6).
+
+### Identity handles (D13)
+`Port<T>` and `Isolate` are `[Immutable]` records over process-wide ids, so their `Shared` class is derived by `transfer_class`, not special-cased. This is Pony's `tag` without a new class. `Fiber` and `Channel` stay never-transferable.
+
+### Pipelines
+Stage output ports are handed to the next stage, so a stage never joins and resends (Fernandez-Reyes et al., COORDINATION 2018, https://doi.org/10.1007/978-3-319-92408-3_7, on forwarding instead of chaining). Stage parallelism is explicit because stage order is an ordering constraint the framework cannot infer (Khatchadourian et al., ICSE 2019, https://doi.org/10.1109/ICSE.2019.00072); `Ordered` buffers per input sequence number. Pipeline operations are methods (`s.Source`, `stage.Stage`, `stage.Ordered`, `stage.Sink`) so that a pipeline reads as one fluent chain; `U` of `Stage` is inferred from the step lambda's result.
+
+## Open issues
+
+Closed on 2026-10-13. Former issue 1 (generic `move` parameters): 0.6.2 rejects `move` on a parameter whose class is not Moved, and 0.6.1 gives a type parameter bounded by `Transferable` the class "some Transferable", so `Port<T>.Send(move T value)` was not expressible. This change keeps the locked surface `Send(move T)` and modifies "Locals mut and assignment" (chained after 0.6.2): a `move` parameter over a `Transferable`-bounded type parameter is owning in the definition and judged per instantiation at each call (`move` required for Moved, E1242; forbidden for Shared and Copied, E1239). The owner bound `where T: Transferable` on `Port<T>`'s methods is the 0.6.1 method `where` clause on an owner type parameter. Former issue 5 (lambda `move` parameters): 0.6.2 adds `move` to `Parameter` and `ReceiverParameter` only, not to `LambdaParameter` ("move grammar productions"), so 0.6.4 scenarios use Shared and Copied records; the remaining question is carried by open issue 2 of 0.6.5.
+
+1. Mailbox growth. `BeskidOwnerPostCommandLocked` traps when 256 commands are queued (`external_wait.h:112`). Count traffic is unbounded, so the mailbox must grow (chunked, like `ChunkTable`) or counts must be batched per collection per owner; the spec requires "never trap" and leaves the mechanism to the implementation.
+2. Transit record for ports. The 0.6.3 copier writes into a destination heap on the destination's mutator thread. A port send cannot park the sender until the receiver copies without destroying bounded-buffer semantics, so the port path serializes into a native record at send and copies in at receive (two walks, still O(size)). The spec requires the same descriptor walk and refusal rules; the record format is implementation-defined.
+3. Retained-heap mailbox draining happens at the owning scope's joins and exit. A long gap between joins delays the owner-side INC/DEC processing of a retained heap; this never affects correctness (the heap is retained) but can delay reclamation until scope exit.

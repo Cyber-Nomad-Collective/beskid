@@ -254,7 +254,7 @@ Unknown `type` values **must** be rejected at structural parse time (**E1807**).
 
 ### Host projects and corelib
 
-Every host project **must** resolve **corelib** through toolchain graph attachment (implicit `Std` / `corelib` path when not already declared). This is **dependency graph** wiring only—see **[Explicit use, no prelude](/platform-spec/tooling/manifests-and-lockfiles/adr/0006-explicit-use-no-prelude/)** for symbol visibility. Manifests **must not** define `noCorelib`, `useCorelib: false`, or equivalent opt-out keys.
+Every host project **must** resolve **corelib** through toolchain graph attachment (implicit `Core` / `corelib` path when not already declared). This is **dependency graph** wiring only—see **[Explicit use, no prelude](/platform-spec/tooling/manifests-and-lockfiles/adr/0006-explicit-use-no-prelude/)** for symbol visibility. Manifests **must not** define `noCorelib`, `useCorelib: false`, or equivalent opt-out keys.
 
 ### Aggregate projects (`Aggregate`)
 

@@ -48,7 +48,7 @@ Materialized dependencies land under `obj/beskid/` (layout details in [build wor
 
 ## Standard reference (informative)
 
-- [Project manifest contract](/docs/standard/tooling/manifests-and-lockfiles/project-manifest-contract/)
+- [Project manifest contract](/docs/standard/capabilities/tooling--manifests-and-lockfiles--project-manifest-contract/)
 - [Build workflow](/book/reference/projects/build-workflow/)
 
 ## Next

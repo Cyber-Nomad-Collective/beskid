@@ -1,0 +1,6 @@
+schema: spec-driven
+created: 2026-10-04
+dependsOn:
+  - v06-cli-dependencies
+  - v06-serialization-bsol
+  - v06-rust-glue-integration

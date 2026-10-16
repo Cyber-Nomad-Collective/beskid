@@ -69,7 +69,7 @@ The records below preserve migration history and are not normative except where 
 
 <SpecSection title="Implementation anchors" id="implementation-anchors">
 - `compiler/corelib/packages/console/src/Console/Controls/`
-- Tests: `ControlsFrameTests.bd`, `ControlsPanelTests.bd`, `ControlsProgressBarTests.bd`, `ControlsLayoutTests.bd`
+- Tests: `ConsoleSuite.bd#ControlsFrameTests`, `ConsoleSuite.bd#ControlsPanelTests`, `ConsoleSuite.bd#ControlsProgressBarTests`, `ConsoleSuite.bd#ControlsLayoutTests`
 </SpecSection>
 
 ## Decisions
@@ -366,10 +366,10 @@ Document **verification and traceability** for the **Console Controls** feature:
 
 | Test | Coverage |
 | --- | --- |
-| `ControlsFrameTests.bd` | Frame save/restore wrapping |
-| `ControlsPanelTests.bd` | Panel borders |
-| `ControlsProgressBarTests.bd` | Ratio rendering |
-| `ControlsLayoutTests.bd` | Stack measurement |
+| `ConsoleSuite.bd#ControlsFrameTests` | Frame save/restore wrapping |
+| `ConsoleSuite.bd#ControlsPanelTests` | Panel borders |
+| `ConsoleSuite.bd#ControlsProgressBarTests` | Ratio rendering |
+| `ConsoleSuite.bd#ControlsLayoutTests` | Stack measurement |
 
 Sources under `compiler/corelib/packages/console/src/Console/Controls/`.
 

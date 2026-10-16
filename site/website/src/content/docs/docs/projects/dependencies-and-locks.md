@@ -46,7 +46,7 @@ Select one project manifest. Ensure that each local dependency has one `.bproj` 
 3. Resolve dependencies and allow a lockfile update:
 
    ```bash
-   beskid fetch --project ./App.bproj --plain
+   beskid dev project fetch --project ./App.bproj --plain
    ```
 
 4. Inspect `Project.lock` after every registry resolution for a `resolved_version` that matches the requested version. A mismatch stops the workflow.
@@ -54,13 +54,13 @@ Select one project manifest. Ensure that each local dependency has one `.bproj` 
 6. Require an existing lockfile that matches resolution:
 
    ```bash
-   beskid fetch --project ./App.bproj --locked --plain
+   beskid dev project fetch --project ./App.bproj --locked --plain
    ```
 
 7. Prevent lockfile updates during resolution:
 
    ```bash
-   beskid fetch --project ./App.bproj --frozen --plain
+   beskid dev project fetch --project ./App.bproj --frozen --plain
    ```
 
 ## Expected result
@@ -73,7 +73,7 @@ After you review the resolved version, `--locked` requires `Project.lock` to exi
 
 ## Recovery
 
-If the manifest changed intentionally, run `beskid lock --project ./App.bproj --plain`, review the diff, and commit it. Registry fallback is an implementation limitation under reconciliation. If registry resolution selects a different version, stop and do not build or publish. This workflow does not materialize Git dependencies. Replace `source = "git"` with a path or registry dependency before a strict build.
+If the manifest changed intentionally, run `beskid dev project lock --project ./App.bproj --plain`, review the diff, and commit it. Registry fallback is an implementation limitation under reconciliation. If registry resolution selects a different version, stop and do not build or publish. This workflow does not materialize Git dependencies. Replace `source = "git"` with a path or registry dependency before a strict build.
 
 ## Next task
 

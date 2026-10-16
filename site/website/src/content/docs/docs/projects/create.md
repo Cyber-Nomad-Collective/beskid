@@ -16,24 +16,24 @@ verified:
   date: 2026-09-08
 ---
 
-Use `beskid new` to instantiate a template. The example creates a console project without an interactive prompt.
+Use `beskid new` to instantiate a template. The example creates a project from the bundled application template without an interactive prompt.
 
 ## Prerequisites
 
-Install Beskid. Confirm that you have an installed `console` template. Choose an empty output directory. The noninteractive command fails if a required template symbol is missing.
+Install Beskid. The bundled application template needs no installation and no network. Choose a project name whose directory does not exist. The noninteractive command fails if a required template symbol is missing.
 
 ## Actions
 
 1. List the installed templates:
 
    ```bash
-   beskid new list
+   beskid new --list
    ```
 
 2. Create the project:
 
    ```bash
-   beskid new console -n MyApp -o ./MyApp --no-interactive
+   beskid new MyApp --no-interactive
    ```
 
 3. Confirm that the command reports `Created template output at ./MyApp`. The installed template controls the emitted file names.
@@ -43,7 +43,7 @@ Install Beskid. Confirm that you have an installed `console` template. Choose an
    ```bash
    project_manifest=./MyApp/MyApp.bproj
    target_name=App
-   beskid analyze --project "$project_manifest" --target "$target_name" --plain
+   beskid check --project "$project_manifest" --target "$target_name" --plain
    ```
 
 ## Expected result
@@ -52,7 +52,7 @@ The create command reports `Created template output at` followed by the output p
 
 ## Recovery
 
-If `console` is absent, run `beskid new list --online`, then install the required template. If the output directory is not empty, choose another directory. Use `--force` only after you inspect the existing files because it permits writes into a non-empty directory.
+To use another template, pass `--template <short-name>`. Run `beskid package template list --online` to find templates and `beskid package template install` to install one. If the output directory is not empty, choose another directory. Use `--force` only after you inspect the existing files because it permits writes into a non-empty directory.
 
 ## Next task
 

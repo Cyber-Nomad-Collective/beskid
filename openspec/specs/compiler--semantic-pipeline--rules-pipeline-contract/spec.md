@@ -227,7 +227,7 @@ Semantic rules run as ordered **`SemanticPipelineRule`** stages on the **post-me
 
 ```mermaid
 flowchart LR
-  merge[mod merge + reparse]
+  merge[mod typed merge]
   gate[syntax generation gate]
   s1[early binding stages]
   s8[stage8_metaprogramming]

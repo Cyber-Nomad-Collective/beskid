@@ -5,7 +5,7 @@ description: "How to author, tag, skip, filter, and run Beskid tests."
 
 This guide describes the practical workflow for Beskid test harness usage.
 
-Language-level syntax is normative in `/platform-spec/language-meta/contracts-and-effects/testing/`.
+Language-level syntax is normative in the [Testing](/docs/standard/capabilities/language-meta--contracts-and-effects--testing/) capability of the Standard.
 
 ## Authoring tests
 
@@ -34,20 +34,20 @@ Recommended conventions:
 Use the CLI test command:
 
 ```bash
-beskid dev build test path/to/file.bd
+beskid test path/to/file.bd
 ```
 
 Filtering:
 
 ```bash
-beskid dev build test path/to/file.bd --include-tag fast --group analysis
-beskid dev build test path/to/file.bd --exclude-tag slow
+beskid test path/to/file.bd --include-tag fast --group analysis
+beskid test path/to/file.bd --exclude-tag slow
 ```
 
 Machine-readable output:
 
 ```bash
-beskid dev build test path/to/file.bd --json
+beskid test path/to/file.bd --json
 ```
 
 ## Result buckets

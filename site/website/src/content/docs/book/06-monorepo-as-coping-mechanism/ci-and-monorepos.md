@@ -45,7 +45,7 @@ The Beskid superrepo itself is an aggregate of submodules; your application mono
 ## Reference
 
 - [Workspace monorepo setup](/book/reference/workspace-monorepo/)
-- [Workspace and lock contracts](/docs/standard/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/)
+- [Workspace and lock contracts](/docs/standard/capabilities/tooling--manifests-and-lockfiles--workspace-and-lock-contracts/)
 
 ## Next chapter
 

@@ -1,0 +1,27 @@
+labels:
+  platform: darwin/arm64
+  backend: local
+  role: beskid-macos
+
+clone:
+  git:
+    image: plugin-git
+    settings:
+      recursive: false
+      # The repackaging root must prove it descends from the build source.
+      depth: 0
+
+steps:
+  - name: repackage-macos
+    image: bash
+    commands:
+      - |
+        bash scripts/ci/init-submodules.sh beskid_distrib
+        export BESKID_HANDOFF_SSH_KEY="/Users/mikserek/Library/Application Support/Woodpecker/handoff/macos.sftp"
+        export BESKID_HANDOFF_KNOWN_HOSTS="/Users/mikserek/Library/Application Support/Woodpecker/handoff/known_hosts"
+        # Packages the qualified outputs of build pipeline BESKID_REPACKAGE_FROM; nothing is rebuilt.
+        bash scripts/ci/woodpecker-repackage-platform.sh macos "$${BESKID_REPACKAGE_FROM:?set BESKID_REPACKAGE_FROM to the build pipeline}"
+
+when:
+  - event: manual
+    evaluate: 'BESKID_TASK == "package-macos"'

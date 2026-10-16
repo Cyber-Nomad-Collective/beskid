@@ -6,7 +6,7 @@ template: splash
 
 This book is the practical introduction to Beskid. It is written as a tutorial track first, with links into the normative spec when you want exact rules.
 
-> **Canonical specification:** Enforceable language and platform contracts live under the [Platform specification](/platform-spec/), especially [Language meta](/platform-spec/language-meta/). This book is informative: use it to learn, then confirm rules in platform-spec.
+> **Canonical specification:** Enforceable language and platform contracts live in the [Beskid Standard](/docs/standard/), especially [Language meta](/docs/standard/capabilities/taxonomy--language-meta/). This book is informative: use it to learn, then confirm rules in the Standard.
 
 ## Start here
 
@@ -17,13 +17,13 @@ This book is the practical introduction to Beskid. It is written as a tutorial t
 
 - Read chapters in order if you are new to Beskid.
 - Treat each chapter as "learn, apply, verify": read the concept, try it in a small file, then cross-check with linked spec pages.
-- Keep the [Platform specification](/platform-spec/) open for details and edge cases.
+- Keep the [Beskid Standard](/docs/standard/) open for details and edge cases.
 
 ## Learning tracks
 
 - **Language user:** [01. It works on my machine](/book/01-it-works-on-my-machine/) → [07. The compiler is not your therapist](/book/07-compiler-is-not-your-therapist/) → [08. Green tests, red production](/book/08-green-tests-red-production/) → [19. Public API that survives review](/book/19-public-api-that-survives-review/) → [20. /// comments that are not lies](/book/20-doc-comments-that-are-not-lies/)
 - **Monorepo / packages:** [03. Project.proj or it didn't happen](/book/03-project-proj-or-it-didnt-happen/) → [06. Monorepo as coping mechanism](/book/06-monorepo-as-coping-mechanism/) → [18. Packages without npm trauma](/book/18-packages-without-npm-trauma/) → [19. Public API that survives review](/book/19-public-api-that-survives-review/)
-- **Spec collaborator:** [12. The normative bible](/book/12-the-normative-bible/) → [13. Reading the law](/book/13-reading-the-law/) → feature under test in platform-spec
+- **Spec collaborator:** [12. The normative bible](/book/12-the-normative-bible/) → [13. Reading the law](/book/13-reading-the-law/) → feature under test in the Standard
 - **Compiler contributor:** [13. Reading the law](/book/13-reading-the-law/) → [14. From source to something that runs](/book/14-from-source-to-runs/) → [15. Mods: plugins with consequences](/book/15-mods-plugins-with-consequences/) → [17. Execution](/book/17-execution-abi-host-runtime/) → [22. So you want to contribute](/book/22-so-you-want-to-contribute/)
 - **Philosophy optional:** [00. Why Beskid exists](/book/00-why-beskid-exists/), or jump straight to [01](/book/01-it-works-on-my-machine/)
 
@@ -71,4 +71,4 @@ Informative deep dives merged from the former guides tree:
 - How Beskid source layout maps to module and name-resolution behavior.
 - How project/workspace manifests control build and dependency resolution.
 - How to design stable public APIs with `pub` and `pub use`, document them with `///`, and publish packages without manual version theatre.
-- Where platform-spec, compiler crates, and CI fit when you contribute.
+- Where the Standard, compiler crates, and CI fit when you contribute.

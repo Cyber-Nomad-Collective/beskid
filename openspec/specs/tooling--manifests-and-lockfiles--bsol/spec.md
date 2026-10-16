@@ -323,7 +323,7 @@ Build-time consumers load the manifest via `beskid_manifest::load_manifest`, whi
 | `dispatch_usize` / `dispatch_ptr` / `dispatch_unit` / `dispatch_i64` | many | Typed dispatch table entries |
 | `intrinsic` | many | Intrinsic symbol paths |
 
-Schema source: `compiler/crates/beskid_bsol/schemas/runtime.v1.bsol`.
+Schema source: `beskid_bsol/schemas/runtime.v1.bsol`.
 
 ## Example
 

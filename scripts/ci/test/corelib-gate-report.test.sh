@@ -29,24 +29,36 @@ make_fixture() {
   chmod +x "${fixture}/scripts/ci/corelib-gate.sh"
 
   cat > "${fixture}/compiler/corelib/CoreLib.bws" <<'EOF'
-name = "corelib"
+workspace {
+  name = "corelib"
+}
 member "corelib" {
+  path = "beskid_corelib"
   package = "corelib"
 }
 member "foundation" {
+  path = "packages/foundation"
   package = "corelib_foundation"
 }
 member "runtime" {
+  path = "packages/runtime"
   package = "corelib_runtime"
 }
 member "compiler_sdk" {
+  path = "packages/compiler-sdk"
   package = "corelib_compiler_sdk"
 }
 member "console" {
+  path = "packages/console"
   package = "corelib_console"
 }
 member "concurrency" {
+  path = "packages/concurrency"
   package = "corelib_concurrency"
+}
+member "corelib_tests" {
+  path = "beskid_corelib/tests/corelib_tests"
+  package = "corelib_tests"
 }
 EOF
   for item in \
@@ -85,6 +97,7 @@ EOF
     : > "${fixture}/compiler/corelib/${file}"
   done
   printf 'lock-version = 2\n' > "${fixture}/compiler/corelib/packages/foundation/Project.lock"
+  mkdir -p "${fixture}/beskid_bsol/conformance/cases" "${fixture}/beskid_bsol/schemas"
   : > "${fixture}/compiler/Cargo.toml"
   mkdir -p "${fixture}/compiler/scripts"
   # shellcheck disable=SC2016 # Fixture script must expand these at runtime.
@@ -96,10 +109,15 @@ EOF
 #!/usr/bin/env bash
 set -euo pipefail
 mkdir -p target/release
+if [[ " $* " == *" --bin beskid_release_fixture "* ]]; then
+  printf '#!/usr/bin/env bash\nexit 0\n' > target/release/beskid_release_fixture
+  chmod +x target/release/beskid_release_fixture
+  exit 0
+fi
 cat > target/release/beskid_cli <<'CLI'
 #!/usr/bin/env bash
 set -euo pipefail
-if [[ "${1:-}" == corelib ]]; then
+if [[ "${1:-}" == dev && "${2:-}" == corelib ]]; then
   cp -R "$BESKID_CORELIB_SOURCE/packages" "$BESKID_CORELIB_ROOT/packages"
   cp -R "$BESKID_CORELIB_SOURCE/beskid_corelib" "$BESKID_CORELIB_ROOT/beskid_corelib"
   rm "$BESKID_CORELIB_ROOT/packages/foundation/Project.lock"
@@ -110,6 +128,9 @@ if [[ "${1:-}" == corelib ]]; then
   fi
   exit 0
 fi
+[[ "${BESKID_BSOL_CORPUS:-}" == */beskid_bsol/conformance && -d "${BESKID_BSOL_CORPUS}/cases" ]] || {
+  echo "Corelib tests did not receive the pinned BSOL corpus" >&2; exit 65; }
+[[ -x "${BESKID_V06_RELEASE_FIXTURE:-}" ]] || { echo "Corelib tests did not receive the process fixture" >&2; exit 66; }
 if IFS= read -r unexpected; then
   printf 'unexpected inherited stdin: %s\n' "$unexpected" >&2
   exit 64
@@ -138,6 +159,17 @@ assert_contains "${PASS_MD}" "| quality checks | PASS |" "report records quality
 assert_contains "${PASS_MD}" "| build beskid_cli (release) | PASS |" "report records build command outcome"
 assert_contains "${PASS_MD}" "| stage native runtime kit | PASS |" "report records runtime staging outcome"
 assert_contains "${PASS_MD}" "| run Corelib tests | PASS |" "report records test command outcome"
+assert_contains "${PASS_MD}" "| provision release-case inputs | PASS |" "report records release-case input provisioning"
+
+NO_CORPUS_FIXTURE="${TMP}/no-corpus"
+make_fixture "${NO_CORPUS_FIXTURE}" pass
+rm -rf "${NO_CORPUS_FIXTURE}/beskid_bsol"
+if CORELIB_REPORT_DIR="${NO_CORPUS_FIXTURE}/report" PATH="${NO_CORPUS_FIXTURE}/bin:${PATH}" \
+  bash "${NO_CORPUS_FIXTURE}/scripts/ci/corelib-gate.sh" >"${NO_CORPUS_FIXTURE}/stdout" 2>"${NO_CORPUS_FIXTURE}/stderr"; then
+  fail "a missing BSOL corpus must fail the Corelib gate"
+fi
+assert_contains "$(cat "${NO_CORPUS_FIXTURE}/report/corelib-build-report.md")" \
+  "| provision release-case inputs | FAIL" "missing release-case inputs fail their reported stage"
 
 MANAGED_FIXTURE="${TMP}/managed"
 make_fixture "${MANAGED_FIXTURE}" pass

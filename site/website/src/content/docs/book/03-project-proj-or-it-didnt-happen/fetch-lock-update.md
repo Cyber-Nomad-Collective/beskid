@@ -61,7 +61,7 @@ With `source = path`, drift can mean different local folders. With `source = reg
 
 ## Standard reference (informative)
 
-- [Workspace and lock contracts](/docs/standard/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/)
+- [Workspace and lock contracts](/docs/standard/capabilities/tooling--manifests-and-lockfiles--workspace-and-lock-contracts/)
 
 ## Next
 

@@ -14,11 +14,11 @@ Documentation attaches to top-level declarations and nested members (fields, var
 2. Add structured tags only where they clarify the callable API or link a reader onward.
 3. Review the rendered or generated documentation with the declaration, not as a separate prose artifact.
 
-This page is a guide to the workflow. The [documentation-comments feature](/platform-spec/language-meta/surface-syntax/documentation-comments/) owns the exact syntax and attachment rules.
+This page is a guide to the workflow. The [documentation-comments feature](/docs/standard/capabilities/language-meta--surface-syntax--documentation-comments/) owns the exact syntax and attachment rules.
 
 ## Normative spec
 
-[Documentation comments](/platform-spec/language-meta/surface-syntax/documentation-comments/)
+[Documentation comments](/docs/standard/capabilities/language-meta--surface-syntax--documentation-comments/)
 
 ## Next
 

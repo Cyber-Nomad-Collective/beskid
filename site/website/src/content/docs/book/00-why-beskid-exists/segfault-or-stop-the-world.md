@@ -73,6 +73,6 @@ Go proves most teams want **GC and a small runtime**, not a proof assistant. Bes
 
 - **AOT-native** output: performance without JIT surprise bills.
 - **Compile-time metaprogramming** over reflection: power without opaque runtime discovery.
-- Memory strategy aligned with **application reality**, not kernel driver reality (details in platform-spec execution/core-library hubs).
+- Memory strategy aligned with **application reality**, not kernel driver reality (details in the Standard execution/core-library hubs).
 
 Next: [1.8 Why are we making this so hard?](/book/00-why-beskid-exists/why-are-we-making-this-so-hard/).

@@ -9,10 +9,25 @@ env_example="${ROOT}/deploy/woodpecker/.env.example"
 test -d "${workflow_dir}"
 test ! -e "${workflow_dir}/standard.yml"
 
+# The Windows agent hands inline commands to MSYS bash on one command line, where a long script
+# parses differently depending on its length, so the Windows build body lives in a script file.
+windows_build="${ROOT}/scripts/ci/woodpecker-build-windows.sh"
+test -f "${windows_build}"
+grep -Fxq '      - bash scripts/ci/woodpecker-build-windows.sh' "${workflow_dir}/windows.yml"
+grep -Fxq '      - bash scripts/ci/woodpecker-repackage-windows.sh' "${workflow_dir}/repackage-windows.yml"
+for name in linux macos; do grep -Fq "woodpecker-repackage-platform.sh ${name} " "${workflow_dir}/repackage-${name}.yml"; done
+grep -Fq 'woodpecker-repackage-platform.sh windows ' "${ROOT}/scripts/ci/woodpecker-repackage-windows.sh"
+build_body() {
+  case "$1" in
+    windows) printf '%s\n' "${windows_build}" ;;
+    *) printf '%s\n' "${workflow_dir}/$1.yml" ;;
+  esac
+}
+
 for name in linux macos windows; do
   file="${workflow_dir}/${name}.yml"
   test -f "${file}"
-  grep -Fq 'woodpecker-build-platform.sh' "${file}"
+  grep -Fq 'woodpecker-build-platform.sh' "$(build_body "${name}")"
   grep -Fq 'recursive: false' "${file}"
 done
 
@@ -40,17 +55,63 @@ for file in "${workflow_dir}/macos.yml" "${workflow_dir}/windows.yml"; do
   grep -Fq 'BESKID_TASK == "build"' "${file}"
 done
 
-for file in "${workflow_dir}/linux.yml" "${workflow_dir}/macos.yml" "${workflow_dir}/windows.yml"; do
+# Manual selection matrix. Each platform is its own pipeline (BESKID_TASK=build-<platform>) so one
+# platform can fail or be rebuilt without the others; BESKID_TASK=build starts all three, each uploading
+# its own handoff; release collects. The manual `evaluate` expressions are evaluated here with the
+# Woodpecker semantics they rely on: an unset variable is nil, so an equality test is false.
+node - "${workflow_dir}" <<'NODE'
+const { readFileSync } = require("node:fs");
+const dir = process.argv[2];
+const manual = name => {
+  const text = readFileSync(`${dir}/${name}.yml`, "utf8"), when = text.slice(text.lastIndexOf("\nwhen:"));
+  const match = /- event: manual\n(?:\s*#.*\n)*\s*evaluate: '([^']*)'/.exec(when);
+  if (!match) throw new Error(`${name}.yml has no manual evaluate condition`);
+  if (!/^BESKID_TASK == "[a-z-]+"( \|\| BESKID_TASK == "[a-z-]+")*$/.test(match[1])) throw new Error(`${name}.yml manual condition is not a plain BESKID_TASK equality chain: ${match[1]}`);
+  return task => match[1].split(" || ").some(term => task !== undefined && term === `BESKID_TASK == "${task}"`);
+};
+const workflows = ["linux", "macos", "windows", "release", "repackage-linux", "repackage-macos", "repackage-windows"];
+const select = Object.fromEntries(workflows.map(name => [name, manual(name)]));
+// Repackaging (BESKID_TASK=package-<platform>) packages an earlier build's outputs; it never starts with
+// a build and a build never starts it.
+const expected = {
+  build: ["linux", "macos", "windows"],
+  "build-linux": ["linux"], "build-macos": ["macos"], "build-windows": ["windows"],
+  validate: ["linux"], release: ["release"], platform: [], unset: [],
+  "package-linux": ["repackage-linux"], "package-macos": ["repackage-macos"], "package-windows": ["repackage-windows"],
+};
+for (const name of ["repackage-linux", "repackage-macos", "repackage-windows"]) {
+  const text = readFileSync(`${dir}/${name}.yml`, "utf8");
+  if (!/\n {6}depth: 0\n/.test(text)) throw new Error(`${name}.yml must clone full history to prove the packaging root`);
+  if (/event: (push|tag|\[)/.test(text)) throw new Error(`${name}.yml must run only on manual events`);
+}
+for (const [task, names] of Object.entries(expected)) {
+  const actual = workflows.filter(name => select[name](task === "unset" ? undefined : task));
+  if (JSON.stringify(actual) !== JSON.stringify(names)) throw new Error(`BESKID_TASK=${task} starts [${actual}], expected [${names}]`);
+}
+NODE
+
+# The release collects one handoff per platform; there is no single build pipeline number.
+if git -C "${ROOT}" grep -In -e 'BESKID_BUILD_PIPELINE''_NUMBER' >&2; then
+  echo 'BESKID_BUILD_PIPELINE''_NUMBER was replaced by per-platform handoff collection' >&2
+  exit 1
+fi
+grep -Fq 'woodpecker-fetch-handoffs.sh' "${workflow_dir}/release.yml"
+for role in LINUX MACOS WINDOWS; do grep -Fq "BESKID_${role}_BUILD" "${workflow_dir}/release.yml"; done
+# The candidate gate input reaches the source resolver (record, else input, else HEAD).
+grep -Fq 'release-user-observation.mjs --platform-sources . "$${version}" "$${CI_COMMIT_SHA}" "$${BESKID_RELEASE_CANDIDATE:-}" "$${BESKID_LINUX_SOURCE:-}" "$${BESKID_MACOS_SOURCE:-}" "$${BESKID_WINDOWS_SOURCE:-}"' "${workflow_dir}/release.yml"
+
+for file in "${workflow_dir}/linux.yml" "${workflow_dir}/macos.yml"; do
   grep -Fq 'woodpecker-release-tag-guard.sh "$${CI_COMMIT_TAG}" --check-only' "${file}"
 done
+grep -Fq 'woodpecker-release-tag-guard.sh "${CI_COMMIT_TAG}" --check-only' "${windows_build}"
 
-for file in "${workflow_dir}/linux.yml" "${workflow_dir}/macos.yml" "${workflow_dir}/windows.yml"; do
+for file in "${workflow_dir}/linux.yml" "${workflow_dir}/macos.yml" "${windows_build}"; do
   grep -Fq 'woodpecker-package-platform.mjs' "${file}"
   grep -Fq 'package-result.json' "${file}"
   ! grep -Fq 'BESKID_RELEASE_EVIDENCE_DIR' "${file}"
   ! grep -Fq 'output}/package' "${file}"
 done
-grep -Fq 'BESKID_TASK == "build" || BESKID_TASK == "validate"' "${workflow_dir}/linux.yml"
+grep -Fq 'BESKID_TASK == "build" || BESKID_TASK == "build-linux" || BESKID_TASK == "validate"' "${workflow_dir}/linux.yml"
 grep -Fq 'BESKID_TASK == "release"' "${workflow_dir}/release.yml"
 grep -Fq 'BESKID_TASK == "release-publish"' "${workflow_dir}/release.yml"
 # Only the final release-publish step binds a secret; the structural step,
@@ -83,7 +144,7 @@ grep -Fq 'apt-get install -y --no-install-recommends ca-certificates clang gh gi
 # This contract owns only native build and standard validation lanes. Editor,
 # security and protected publishing lanes have separate policy contracts;
 # adding them must not grant publication authority to these four workflows.
-if grep -iqE 'from_secret|GH_TOKEN|S3|rclone' "${workflow_dir}/linux.yml" "${workflow_dir}/macos.yml" "${workflow_dir}/windows.yml"; then
+if grep -iqE 'from_secret|GH_TOKEN|S3|rclone' "${workflow_dir}/linux.yml" "${workflow_dir}/macos.yml" "${workflow_dir}/windows.yml" "${windows_build}"; then
   echo 'Woodpecker build workflows must not publish or stage artifacts externally' >&2
   exit 1
 fi

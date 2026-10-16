@@ -1,0 +1,1054 @@
+{
+  "schema_version": 1,
+  "slice": "glue",
+  "cases": {
+    "R4-BIND-01": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "required_test_ids": [
+        "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        {
+          "kind": "cargo_test",
+          "crate": "beskid_codegen",
+          "test_ids": [
+            "canonical_glue_facts_preserve_logical_managed_and_scalar_identity",
+            "canonical_glue_metadata_is_closed_and_unique"
+          ]
+        }
+      ]
+    },
+    "R4-BIND-02": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "required_test_ids": [
+        "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        {
+          "kind": "cargo_test",
+          "crate": "beskid_codegen",
+          "test_ids": [
+            "canonical_glue_handle_brand_retains_qualified_owner_and_arguments",
+            "canonical_glue_type_closure_bounds_wide_signatures"
+          ]
+        }
+      ]
+    },
+    "R4-BIND-03": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "required_test_ids": [
+        "v06_glue_cli_published_images_fail_closed_on_substitution",
+        "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        {
+          "kind": "cargo_test",
+          "crate": "beskid_tests_interop",
+          "test_ids": [
+            "v06_glue_owned_denies_missing_import_row",
+            "v06_glue_owned_rejects_foreign_owner_brand",
+            "v06_glue_owned_denies_consumer_without_owner_domain",
+            "v06_glue_owned_denies_duplicate_owner_library",
+            "export_metadata_populates_codegen_artifact",
+            "export_table_from_artifact_matches_codegen_exports",
+            "export_on_non_pub_function_fails_codegen"
+          ]
+        }
+      ]
+    },
+    "R4-BIND-04": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "required_test_ids": [
+        "v06_glue_cli_rejects_closed_boundary_metadata_violations"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        {
+          "kind": "cargo_test",
+          "crate": "beskid_codegen",
+          "test_ids": [
+            "canonical_glue_metadata_decodes_escapes_and_rejects_decoded_nul"
+          ]
+        },
+        {
+          "kind": "cargo_test",
+          "crate": "beskid_aot",
+          "test_ids": [
+            "glue_declarations_select_only_manifest_glue_libraries"
+          ]
+        }
+      ]
+    },
+    "R4-ABI-01": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "required_test_ids": [
+        "v06_glue_cli_builds_owned_fixture_alone",
+        "v06_glue_cli_manual_and_generated_routes_agree",
+        "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        {
+          "kind": "cargo_test",
+          "crate": "beskid_tests_interop",
+          "test_ids": [
+            "v06_glue_owned_roundtrip_all_representations"
+          ]
+        }
+      ]
+    },
+    "R4-ABI-02": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "required_test_ids": [
+        "v06_glue_cli_builds_owned_fixture_alone",
+        "v06_glue_cli_manual_and_generated_routes_agree"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        {
+          "kind": "cargo_test",
+          "crate": "beskid_tests_interop",
+          "test_ids": [
+            "v06_glue_owned_roundtrip_all_representations"
+          ]
+        }
+      ],
+      "profile_assertions": [
+        {
+          "representation": "i8",
+          "implementation": "generated",
+          "direction": "import",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "i8",
+          "implementation": "generated",
+          "direction": "export",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "i8",
+          "implementation": "manual",
+          "direction": "import",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        },
+        {
+          "representation": "i8",
+          "implementation": "manual",
+          "direction": "export",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        },
+        {
+          "representation": "i16",
+          "implementation": "generated",
+          "direction": "import",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "i16",
+          "implementation": "generated",
+          "direction": "export",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "i16",
+          "implementation": "manual",
+          "direction": "import",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        },
+        {
+          "representation": "i16",
+          "implementation": "manual",
+          "direction": "export",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        },
+        {
+          "representation": "i32",
+          "implementation": "generated",
+          "direction": "import",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "i32",
+          "implementation": "generated",
+          "direction": "export",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "i32",
+          "implementation": "manual",
+          "direction": "import",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        },
+        {
+          "representation": "i32",
+          "implementation": "manual",
+          "direction": "export",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        },
+        {
+          "representation": "i64",
+          "implementation": "generated",
+          "direction": "import",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "i64",
+          "implementation": "generated",
+          "direction": "export",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "i64",
+          "implementation": "manual",
+          "direction": "import",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        },
+        {
+          "representation": "i64",
+          "implementation": "manual",
+          "direction": "export",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        }
+      ]
+    },
+    "R4-ABI-03": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "required_test_ids": [
+        "v06_glue_cli_builds_owned_fixture_alone",
+        "v06_glue_cli_manual_and_generated_routes_agree"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        {
+          "kind": "cargo_test",
+          "crate": "beskid_tests_interop",
+          "test_ids": [
+            "v06_glue_owned_roundtrip_all_representations"
+          ]
+        }
+      ],
+      "profile_assertions": [
+        {
+          "representation": "u8",
+          "implementation": "generated",
+          "direction": "import",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "u8",
+          "implementation": "generated",
+          "direction": "export",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "u8",
+          "implementation": "manual",
+          "direction": "import",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        },
+        {
+          "representation": "u8",
+          "implementation": "manual",
+          "direction": "export",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        },
+        {
+          "representation": "u16",
+          "implementation": "generated",
+          "direction": "import",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "u16",
+          "implementation": "generated",
+          "direction": "export",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "u16",
+          "implementation": "manual",
+          "direction": "import",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        },
+        {
+          "representation": "u16",
+          "implementation": "manual",
+          "direction": "export",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        },
+        {
+          "representation": "u32",
+          "implementation": "generated",
+          "direction": "import",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "u32",
+          "implementation": "generated",
+          "direction": "export",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "u32",
+          "implementation": "manual",
+          "direction": "import",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        },
+        {
+          "representation": "u32",
+          "implementation": "manual",
+          "direction": "export",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        },
+        {
+          "representation": "u64",
+          "implementation": "generated",
+          "direction": "import",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "u64",
+          "implementation": "generated",
+          "direction": "export",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "u64",
+          "implementation": "manual",
+          "direction": "import",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        },
+        {
+          "representation": "u64",
+          "implementation": "manual",
+          "direction": "export",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        }
+      ]
+    },
+    "R4-ABI-04": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "required_test_ids": [
+        "v06_glue_cli_builds_owned_fixture_alone",
+        "v06_glue_cli_manual_and_generated_routes_agree"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        {
+          "kind": "cargo_test",
+          "crate": "beskid_tests_interop",
+          "test_ids": [
+            "v06_glue_owned_roundtrip_all_representations"
+          ]
+        }
+      ],
+      "profile_assertions": [
+        {
+          "representation": "f32",
+          "implementation": "generated",
+          "direction": "import",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "f32",
+          "implementation": "generated",
+          "direction": "export",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "f32",
+          "implementation": "manual",
+          "direction": "import",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        },
+        {
+          "representation": "f32",
+          "implementation": "manual",
+          "direction": "export",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        },
+        {
+          "representation": "f64",
+          "implementation": "generated",
+          "direction": "import",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "f64",
+          "implementation": "generated",
+          "direction": "export",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "f64",
+          "implementation": "manual",
+          "direction": "import",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        },
+        {
+          "representation": "f64",
+          "implementation": "manual",
+          "direction": "export",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        }
+      ]
+    },
+    "R4-ABI-05": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "required_test_ids": [
+        "v06_glue_cli_builds_owned_fixture_alone",
+        "v06_glue_cli_manual_and_generated_routes_agree"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        {
+          "kind": "cargo_test",
+          "crate": "beskid_tests_interop",
+          "test_ids": [
+            "v06_glue_owned_roundtrip_all_representations"
+          ]
+        }
+      ],
+      "profile_assertions": [
+        {
+          "representation": "bool",
+          "implementation": "generated",
+          "direction": "import",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "bool",
+          "implementation": "generated",
+          "direction": "export",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "bool",
+          "implementation": "manual",
+          "direction": "import",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        },
+        {
+          "representation": "bool",
+          "implementation": "manual",
+          "direction": "export",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        }
+      ],
+      "obligation_assertions": [
+        {
+          "kind": "failure",
+          "obligation": "invalid_bool",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        }
+      ]
+    },
+    "R4-ABI-06": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "required_test_ids": [
+        "v06_glue_cli_builds_owned_fixture_alone",
+        "v06_glue_cli_manual_and_generated_routes_agree"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        {
+          "kind": "cargo_test",
+          "crate": "beskid_tests_interop",
+          "test_ids": [
+            "v06_glue_owned_roundtrip_all_representations"
+          ]
+        }
+      ],
+      "profile_assertions": [
+        {
+          "representation": "char",
+          "implementation": "generated",
+          "direction": "import",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "char",
+          "implementation": "generated",
+          "direction": "export",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "char",
+          "implementation": "manual",
+          "direction": "import",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        },
+        {
+          "representation": "char",
+          "implementation": "manual",
+          "direction": "export",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        }
+      ],
+      "obligation_assertions": [
+        {
+          "kind": "failure",
+          "obligation": "invalid_unicode_scalar",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        }
+      ]
+    },
+    "R4-ABI-07": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "required_test_ids": [
+        "v06_glue_cli_builds_owned_fixture_alone",
+        "v06_glue_cli_manual_and_generated_routes_agree"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        {
+          "kind": "cargo_test",
+          "crate": "beskid_tests_interop",
+          "test_ids": [
+            "v06_glue_owned_roundtrip_all_representations"
+          ]
+        }
+      ],
+      "profile_assertions": [
+        {
+          "representation": "utf8_view",
+          "implementation": "generated",
+          "direction": "import",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "utf8_view",
+          "implementation": "generated",
+          "direction": "export",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "utf8_view",
+          "implementation": "manual",
+          "direction": "import",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "utf8_view",
+          "implementation": "manual",
+          "direction": "export",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        }
+      ],
+      "obligation_assertions": [
+        {
+          "kind": "failure",
+          "obligation": "invalid_utf8",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "kind": "failure",
+          "obligation": "null_length_bounds",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        }
+      ]
+    },
+    "R4-ABI-08": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "required_test_ids": [
+        "v06_glue_cli_builds_owned_fixture_alone",
+        "v06_glue_cli_manual_and_generated_routes_agree"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        {
+          "kind": "cargo_test",
+          "crate": "beskid_tests_interop",
+          "test_ids": [
+            "v06_glue_owned_roundtrip_all_representations"
+          ]
+        }
+      ],
+      "profile_assertions": [
+        {
+          "representation": "byte_view",
+          "implementation": "generated",
+          "direction": "import",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "byte_view",
+          "implementation": "generated",
+          "direction": "export",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "byte_view",
+          "implementation": "manual",
+          "direction": "import",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "byte_view",
+          "implementation": "manual",
+          "direction": "export",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        }
+      ]
+    },
+    "R4-ABI-09": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "required_test_ids": [
+        "v06_glue_cli_builds_owned_fixture_alone",
+        "v06_glue_cli_manual_and_generated_routes_agree"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        {
+          "kind": "cargo_test",
+          "crate": "beskid_tests_interop",
+          "test_ids": [
+            "v06_glue_owned_roundtrip_all_representations"
+          ]
+        }
+      ],
+      "profile_assertions": [
+        {
+          "representation": "unit",
+          "implementation": "generated",
+          "direction": "import",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "unit",
+          "implementation": "generated",
+          "direction": "export",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "unit",
+          "implementation": "manual",
+          "direction": "import",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        },
+        {
+          "representation": "unit",
+          "implementation": "manual",
+          "direction": "export",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        }
+      ]
+    },
+    "R4-ABI-10": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "required_test_ids": [
+        "v06_glue_cli_builds_owned_fixture_alone",
+        "v06_glue_cli_published_borrow_survives_release",
+        "v06_glue_cli_published_images_fail_closed_on_substitution",
+        "v06_glue_cli_manual_and_generated_routes_agree"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        {
+          "kind": "cargo_test",
+          "crate": "beskid_tests_interop",
+          "test_ids": [
+            "v06_glue_owned_roundtrip_all_representations",
+            "v06_glue_owned_opaque_borrow_survives_release",
+            "v06_glue_owned_rejects_foreign_owner_brand",
+            "v06_glue_owned_denies_consumer_without_owner_domain",
+            "v06_glue_owned_denies_duplicate_owner_library"
+          ]
+        }
+      ],
+      "profile_assertions": [
+        {
+          "representation": "opaque_handle",
+          "implementation": "generated",
+          "direction": "import",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "opaque_handle",
+          "implementation": "generated",
+          "direction": "export",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "opaque_handle",
+          "implementation": "manual",
+          "direction": "import",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        },
+        {
+          "representation": "opaque_handle",
+          "implementation": "manual",
+          "direction": "export",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        }
+      ],
+      "obligation_assertions": [
+        {
+          "kind": "ownership",
+          "obligation": "borrowed_call",
+          "test_id": "v06_glue_cli_published_borrow_survives_release"
+        },
+        {
+          "kind": "ownership",
+          "obligation": "owned_transfer",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "kind": "ownership",
+          "obligation": "release_exactly_once",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "kind": "ownership",
+          "obligation": "stale_generation_reject",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        }
+      ]
+    },
+    "R4-ABI-11": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "required_test_ids": [
+        "v06_glue_cli_builds_owned_fixture_alone",
+        "v06_glue_cli_manual_and_generated_routes_agree",
+        "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        {
+          "kind": "cargo_test",
+          "crate": "beskid_tests_interop",
+          "test_ids": [
+            "v06_glue_owned_roundtrip_all_representations"
+          ]
+        }
+      ],
+      "profile_assertions": [
+        {
+          "representation": "native_width",
+          "implementation": "generated",
+          "direction": "import",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "native_width",
+          "implementation": "generated",
+          "direction": "export",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "representation": "native_width",
+          "implementation": "manual",
+          "direction": "import",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        },
+        {
+          "representation": "native_width",
+          "implementation": "manual",
+          "direction": "export",
+          "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
+        }
+      ],
+      "obligation_assertions": [
+        {
+          "kind": "failure",
+          "obligation": "target_width_mismatch",
+          "test_id": "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
+        }
+      ]
+    },
+    "R4-ABI-12": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "required_test_ids": [
+        "v06_glue_cli_builds_owned_fixture_alone"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        {
+          "kind": "cargo_test",
+          "crate": "beskid_tests_interop",
+          "test_ids": [
+            "v06_glue_owned_roundtrip_all_representations"
+          ]
+        }
+      ],
+      "obligation_assertions": [
+        {
+          "kind": "ownership",
+          "obligation": "forced_gc",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        }
+      ]
+    },
+    "R4-CALL-01": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "required_test_ids": [
+        "v06_glue_cli_manual_and_generated_routes_agree"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "R4-CALL-02": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "required_test_ids": [
+        "v06_glue_cli_manual_and_generated_routes_agree"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "R4-CALL-03": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "required_test_ids": [
+        "v06_glue_cli_builds_owned_fixture_alone"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        {
+          "kind": "cargo_test",
+          "crate": "beskid_tests_interop",
+          "test_ids": [
+            "v06_glue_owned_roundtrip_all_representations"
+          ]
+        }
+      ]
+    },
+    "R4-CALL-04": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "required_test_ids": [
+        "v06_glue_cli_builds_owned_fixture_alone",
+        "v06_glue_cli_owner_abort_is_a_terminal_process_failure"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        {
+          "kind": "cargo_test",
+          "crate": "beskid_tests_interop",
+          "test_ids": [
+            "v06_glue_owned_roundtrip_all_representations"
+          ]
+        }
+      ],
+      "obligation_assertions": [
+        {
+          "kind": "failure",
+          "obligation": "foreign_panic",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        },
+        {
+          "kind": "failure",
+          "obligation": "foreign_error",
+          "test_id": "v06_glue_cli_builds_owned_fixture_alone"
+        }
+      ]
+    },
+    "R4-GEN-01": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "required_test_ids": [
+        "v06_glue_cli_equivalent_projects_issue_identical_packets"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "R4-GEN-02": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "required_test_ids": [
+        "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "R4-GEN-03": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "required_test_ids": [
+        "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations",
+        "v06_glue_cli_published_images_fail_closed_on_substitution",
+        "v06_glue_cli_rebuild_replaces_and_failed_rebuild_preserves"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "R4-TOOL-01": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "required_test_ids": [
+        "v06_glue_cli_tool_selection_names_the_required_form"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        {
+          "kind": "cargo_test",
+          "crate": "beskid_cli",
+          "test_ids": [
+            "glue_rust_without_tool_flags_names_the_required_form",
+            "rust_toolchain_conflicts_with_cargo",
+            "cargo_without_rustc_is_rejected",
+            "missing_linker_is_rejected"
+          ]
+        }
+      ]
+    },
+    "R4-TOOL-02": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "required_test_ids": [
+        "v06_glue_cli_rustc_without_the_target_library_is_rejected_before_build"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "R4-TOOL-03": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "required_test_ids": [
+        "v06_glue_cli_unusable_tools_fail_before_publication"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "R4-TOOL-04": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "required_test_ids": [
+        "v06_glue_cli_hanging_tool_probe_is_terminated"
+      ],
+      "input": null,
+      "fixture": "beskid_release_fixture"
+    },
+    "R4-TOOL-05": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "required_test_ids": [
+        "v06_glue_cli_ignores_inherited_rust_environment",
+        "v06_glue_cli_rejects_ancestor_cargo_config"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "R4-TOOL-06": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "required_test_ids": [
+        "v06_glue_cli_published_images_fail_closed_on_substitution"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "R4-TOOL-07": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "required_test_ids": [
+        "v06_glue_cli_rebuild_replaces_and_failed_rebuild_preserves"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "R4-TOOL-08": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_interop",
+      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "required_test_ids": [
+        "v06_glue_cli_private_prefix_driver_admission_fails_closed"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        {
+          "kind": "cargo_test",
+          "crate": "beskid_tests_interop",
+          "test_ids": [
+            "v06_glue_driver_denied_from_build_tree",
+            "v06_glue_driver_admitted_only_from_private_prefix",
+            "v06_glue_driver_denied_when_sibling_tampered",
+            "v06_glue_driver_denied_when_sibling_missing",
+            "v06_glue_driver_denied_when_sibling_escapes_prefix",
+            "v06_glue_owned_rust_owner_fails_closed_outside_prefix"
+          ]
+        },
+        {
+          "kind": "cargo_test",
+          "crate": "beskid_cli",
+          "test_ids": [
+            "glue_dotnet_is_unavailable",
+            "non_shared_kind_is_rejected",
+            "app_and_test_targets_are_rejected"
+          ]
+        }
+      ]
+    }
+  }
+}

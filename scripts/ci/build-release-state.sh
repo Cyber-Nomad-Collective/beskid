@@ -63,7 +63,9 @@ failed_tests="$(jq '[.[] | select(.status == "failed") | "\(.component):\(.stage
 
 qualified_gates=false
 if [[ "${channel}" == stable ]]; then
-  if [[ "${stage_tree_safe}" == true ]] && jq -e --arg version "${version}" --arg compiler "${compiler_sha}" --arg superrepo "${superrepo_sha}" '
+  # Gate reports carry the source of the build that ran them (the Linux handoff source), which may
+  # differ from the release candidate in non-build root paths only.
+  if [[ "${stage_tree_safe}" == true ]] && jq -e --arg version "${version}" --arg compiler "${compiler_sha}" --arg superrepo "${GATE_SUPERREPO_SHA:-${superrepo_sha}}" '
     def required($component; $stage):
       [.[] | select(.component == $component and .stage == $stage)] as $matches |
       ($matches | length) == 1 and

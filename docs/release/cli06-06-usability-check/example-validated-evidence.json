@@ -1,0 +1,66 @@
+{
+  "version": "0.6.0",
+  "source": {
+    "superrepo_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "compiler_commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "platforms": [
+    {
+      "platform": "linux",
+      "target": "x86_64-unknown-linux-gnu",
+      "release_assets": [
+        "beskid-linux-amd64",
+        "lsp",
+        "bundle.tar.gz"
+      ],
+      "artifacts": [
+        {
+          "name": "beskid-linux-amd64",
+          "sha256": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        {
+          "name": "lsp",
+          "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        }
+      ]
+    },
+    {
+      "platform": "macos",
+      "target": "aarch64-apple-darwin",
+      "release_assets": [
+        "beskid-darwin-arm64",
+        "lsp",
+        "bundle.tar.gz"
+      ],
+      "artifacts": [
+        {
+          "name": "beskid-darwin-arm64",
+          "sha256": "2222222222222222222222222222222222222222222222222222222222222222"
+        },
+        {
+          "name": "lsp",
+          "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        }
+      ]
+    },
+    {
+      "platform": "windows",
+      "target": "x86_64-pc-windows-msvc",
+      "release_assets": [
+        "beskid-windows-amd64.exe",
+        "lsp",
+        "bundle.tar.gz"
+      ],
+      "artifacts": [
+        {
+          "name": "beskid-windows-amd64.exe",
+          "sha256": "3333333333333333333333333333333333333333333333333333333333333333"
+        },
+        {
+          "name": "lsp",
+          "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        }
+      ]
+    }
+  ]
+}

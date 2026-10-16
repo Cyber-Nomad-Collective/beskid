@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { mkdtempSync, mkdirSync, rmSync, symlinkSync, writeFileSync, readFileSync, existsSync } from "node:fs";
+import { mkdtempSync, mkdirSync, rmSync, symlinkSync, writeFileSync, readFileSync, existsSync, copyFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -208,23 +208,65 @@ function runValidator(root) {
 }
 
 function createPackageFixture() {
-  const repo = new URL("../../../", import.meta.url).pathname;
-  const source = {
-    superrepo_commit: spawnSync("git", ["-C", repo, "rev-parse", "HEAD"], { encoding: "utf8" }).stdout.trim(),
-    compiler_commit: spawnSync("git", ["-C", repo, "rev-parse", "HEAD:compiler"], { encoding: "utf8" }).stdout.trim(),
-  };
+  // Exercise the real packager and extraction/provenance guards from an isolated
+  // committed checkout. Installer-tool execution has separate native gates.
+  const checkout = mkdtempSync(join(tmpdir(), "beskid-package-checkout-"));
+  function git(cwd, ...args) {
+    const result = spawnSync("git", args, { cwd, encoding: "utf8" });
+    assert.equal(result.status, 0, result.stderr);
+    return result.stdout.trim();
+  }
+  function init(cwd) {
+    git(cwd, "init", "-q");
+    git(cwd, "config", "user.name", "Release Test");
+    git(cwd, "config", "user.email", "release-test@example.invalid");
+  }
+  const scripts = join(checkout, "scripts/ci");
+  mkdirSync(join(scripts, "lib"), { recursive: true });
+  for (const file of ["woodpecker-package-platform.mjs", "package-source-authority.mjs", "woodpecker-release-evidence.mjs", "woodpecker-cli-surface-evidence.mjs", "cli-surface-inventory.mjs", "release-cases-v06.json", "release-case-common.mjs", "lib/bundle-caches.mjs", "lib/packet-evidence.mjs"]) {
+    copyFileSync(new URL(`../${file}`, import.meta.url), join(scripts, file));
+  }
+  const distrib = join(checkout, "beskid_distrib");
+  for (const directory of ["scripts", "deb", "macos/Formula"]) mkdirSync(join(distrib, directory), { recursive: true });
+  for (const file of ["extract-release-bundle.sh", "version.sh"]) copyFileSync(new URL(`../../../beskid_distrib/scripts/${file}`, import.meta.url), join(distrib, "scripts", file));
+  copyFileSync(new URL("../../../beskid_distrib/macos/Formula/beskid.rb.tpl", import.meta.url), join(distrib, "macos/Formula/beskid.rb.tpl"));
+  for (const [file, artifact] of [["deb/build-deb.sh", 'beskid-$1-amd64.deb'], ["macos/build-dmg.sh", 'beskid-$1-macos-arm64.dmg']]) {
+    // Installers receive the bundle without build caches: the prebuilt Mod entry stays, its build state does not.
+    writeFileSync(join(distrib, file), `#!/bin/sh\nset -eu\ntest -x "$2/bin/beskid"\ntest -f "$2/release-version.txt"\nif test -d "$2/beskid_corelib/mods"; then test ! -e "$2/beskid_corelib/mods/m/obj"; test ! -e "$2/beskid_corelib/mods/m/.beskid/obj/mods/m/.cache-lock"; test -f "$2/beskid_corelib/mods/m/.beskid/obj/mods/m/${"a".repeat(64)}/x86_64-unknown-linux-gnu/mod.descriptor.json"; fi\nprintf 'installer tool fixture\\n' > "${artifact}"\n`, { mode: 0o755 });
+  }
+  init(distrib);
+  git(distrib, "add", ".");
+  git(distrib, "-c", "commit.gpgsign=false", "commit", "-qm", "isolated distribution fixture");
+  init(checkout);
+  git(checkout, "add", "scripts");
+  git(checkout, "update-index", "--add", "--cacheinfo", `160000,${git(distrib, "rev-parse", "HEAD")},beskid_distrib`);
+  git(checkout, "update-index", "--add", "--cacheinfo", `160000,${SOURCE.compiler_commit},compiler`);
+  git(checkout, "-c", "commit.gpgsign=false", "commit", "-qm", "isolated packaging fixture");
+  const source = { superrepo_commit: git(checkout, "rev-parse", "HEAD"), compiler_commit: SOURCE.compiler_commit };
   const overrides = {};
   for (const platform of Object.keys(PLATFORMS)) overrides[platform] = { buildResult: { source } };
-  return { root: createFixture(overrides), source };
+  const root = createFixture(overrides);
+  return { root, source, checkout, packageScript: join(scripts, "woodpecker-package-platform.mjs") };
 }
 
 test("packaging rejects legacy flat bundles instead of reporting an installer success", (t) => {
-  const { root } = createPackageFixture();
-  t.after(() => rmSync(root, { recursive: true, force: true }));
-  const result = spawnSync(process.execPath, [packagePath.pathname, "linux", root, join(root, "packages")], { encoding: "utf8" });
+  const { root, checkout, packageScript } = createPackageFixture();
+  t.after(() => { rmSync(root, { recursive: true, force: true }); rmSync(checkout, { recursive: true, force: true }); });
+  const result = spawnSync(process.execPath, [packageScript, "linux", root, join(root, "packages")], { encoding: "utf8" });
   assert.notEqual(result.status, 0);
   assert.match(result.stderr, /bundle extraction failed/);
   assert.equal(existsSync(join(root, "packages", "package-result.json")), false);
+});
+
+test("packaging rejects a dirty pinned distribution before creating output", (t) => {
+  const { root, checkout, packageScript } = createPackageFixture();
+  t.after(() => { rmSync(root, { recursive: true, force: true }); rmSync(checkout, { recursive: true, force: true }); });
+  writeFileSync(join(checkout, "beskid_distrib/scripts/version.sh"), "changed fixture\n");
+  const output = join(root, "packages");
+  const result = spawnSync(process.execPath, [packageScript, "linux", root, output], { encoding: "utf8" });
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /distribution checkout is not clean/);
+  assert.equal(existsSync(output), false);
 });
 
 test("packaging rejects invalid evidence before creating output", (t) => {
@@ -237,10 +279,10 @@ test("packaging rejects invalid evidence before creating output", (t) => {
   assert.equal(existsSync(output), false);
 });
 
-test("native packaging consumes the complete verified bundle", { skip: !["darwin", "linux"].includes(process.platform) }, (t) => {
+test("packaging orchestration consumes the complete verified bundle", { skip: !["darwin", "linux"].includes(process.platform) }, (t) => {
   const platform = process.platform === "darwin" ? "macos" : "linux";
-  const { root, source } = createPackageFixture();
-  t.after(() => rmSync(root, { recursive: true, force: true }));
+  const { root, source, checkout, packageScript } = createPackageFixture();
+  t.after(() => { rmSync(root, { recursive: true, force: true }); rmSync(checkout, { recursive: true, force: true }); });
   const target = PLATFORMS[platform].target;
   const name = `beskid-${VERSION}-${target}`;
   const stage = join(root, "staging");
@@ -253,6 +295,13 @@ test("native packaging consumes the complete verified bundle", { skip: !["darwin
   writeFileSync(join(bundle, `lib/beskid-runtime/abi-5/${target}/debug/abi.json`), "{}\n");
   writeFileSync(join(bundle, `lib/beskid-runtime/abi-5/${target}/release/abi.json`), "{}\n");
   writeFileSync(join(bundle, "release-version.txt"), `${VERSION}\n`);
+  // Build caches the Corelib Mod prebuild leaves in the bundle; packaging removes them.
+  const sealed = join(bundle, `beskid_corelib/mods/m/.beskid/obj/mods/m/${"a".repeat(64)}/x86_64-unknown-linux-gnu`);
+  mkdirSync(sealed, { recursive: true });
+  writeFileSync(join(sealed, "mod.descriptor.json"), "{}\n");
+  writeFileSync(join(bundle, "beskid_corelib/mods/m/.beskid/obj/mods/m/.cache-lock"), "");
+  mkdirSync(join(bundle, "beskid_corelib/mods/m/obj/beskid/cache/salsa"), { recursive: true });
+  writeFileSync(join(bundle, "beskid_corelib/mods/m/obj/beskid/cache/salsa/db.json"), "{}\n");
   const archive = join(root, platform, `${name}.tar.gz`);
   const tar = spawnSync("tar", ["-czf", archive, "-C", stage, name], { encoding: "utf8" });
   assert.equal(tar.status, 0, tar.stderr);
@@ -262,9 +311,12 @@ test("native packaging consumes the complete verified bundle", { skip: !["darwin
     return `${sha256(readFileSync(join(root, platform, file)))}  ${file}`;
   });
   writeFileSync(sumsPath, `${sums.join("\n")}\n`);
+  // The Linux release gates write their reports after SHA256SUMS; packaging validates only the packet.
+  for (const name of ["release-gate-compiler.json", "release-gate-compiler.log"]) writeFileSync(join(root, platform, name), "{}\n");
   const output = join(root, "packages");
-  const result = spawnSync(process.execPath, [packagePath.pathname, platform, root, output], { encoding: "utf8" });
+  const result = spawnSync(process.execPath, [packageScript, platform, root, output], { encoding: "utf8" });
   assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stderr, /removed 2 build-cache path\(s\)/);
   const report = JSON.parse(readFileSync(join(output, "package-result.json")));
   assert.equal(report.status, "success");
   assert.equal(report.published, false);
@@ -287,11 +339,38 @@ test("packaging rejects evidence for another checkout before output creation", (
   assert.equal(existsSync(output), false);
 });
 
+// Each platform is built by its own pipeline: the collected handoffs carry different pipeline numbers.
+const HANDOFF_PIPELINES = { linux: 301, macos: 305, windows: 299 };
+function aggregateArgs(root, output, { superrepo = SOURCE.superrepo_commit, handoffs, sources } = {}) {
+  const platformSources = sources ?? { linux: SOURCE.superrepo_commit, macos: SOURCE.superrepo_commit, windows: SOURCE.superrepo_commit };
+  const record = handoffs ?? Object.fromEntries(Object.entries(HANDOFF_PIPELINES).map(([role, pipeline]) => [role, {
+    role, source: platformSources[role], compiler: SOURCE.compiler_commit, version: VERSION, pipeline,
+    upload_sha256sums_sha256: sha256(`${role}-${pipeline}`),
+  }]));
+  const path = join(root, "handoffs.json");
+  writeFileSync(path, `${JSON.stringify(record)}\n`);
+  const sourcesPath = join(root, "platform-sources.json");
+  writeFileSync(sourcesPath, `${JSON.stringify(platformSources)}\n`);
+  return [aggregatePath.pathname, root, output, VERSION, superrepo, SOURCE.compiler_commit, path, sourcesPath];
+}
+
+test("aggregation binds each platform's evidence to its own handoff source", (t) => {
+  const root = createFixture();
+  writeGateFixture(root);
+  const output = join(root, "aggregate");
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  const other = { linux: "d".repeat(40), macos: SOURCE.superrepo_commit, windows: SOURCE.superrepo_commit };
+  const result = spawnSync(process.execPath, aggregateArgs(root, output, { sources: other }), { encoding: "utf8" });
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /linux evidence is not the build of its handoff source d{40}/);
+  assert.equal(existsSync(output), false);
+});
+
 test("aggregation refuses to qualify native builds without compiler and Corelib gate reports", (t) => {
   const root = createFixture();
   const output = join(root, "aggregate");
   t.after(() => rmSync(root, { recursive: true, force: true }));
-  const args = [aggregatePath.pathname, root, output, VERSION, SOURCE.superrepo_commit, SOURCE.compiler_commit];
+  const args = aggregateArgs(root, output);
   const result = spawnSync(process.execPath, args, { encoding: "utf8" });
   assert.notEqual(result.status, 0);
   assert.match(result.stderr, /release-gate-compiler.json/);
@@ -304,7 +383,7 @@ test("aggregation carries source-bound gate logs into qualified release state", 
   writeGateFixture(root);
   const output = join(root, "aggregate");
   t.after(() => rmSync(root, { recursive: true, force: true }));
-  const result = spawnSync(process.execPath, [aggregatePath.pathname, root, output, VERSION, SOURCE.superrepo_commit, SOURCE.compiler_commit], { encoding: "utf8" });
+  const result = spawnSync(process.execPath, aggregateArgs(root, output), { encoding: "utf8" });
   assert.equal(result.status, 0, result.stderr);
   const state = JSON.parse(readFileSync(join(output, "release-state.json")));
   assert.equal(state.publishable, true);
@@ -320,7 +399,34 @@ test("aggregation carries source-bound gate logs into qualified release state", 
   assert.equal(existsSync(join(output, "evidence", "linux", "feature-evidence-v1.json")), true);
   const validated = JSON.parse(readFileSync(join(output, "validated-evidence.json"), "utf8"));
   assert.equal(validated.platforms[0].features.cases.length, FEATURE_CASES.length);
+  assert.deepEqual(Object.fromEntries(Object.entries(validated.handoffs).map(([role, item]) => [role, item.pipeline])), HANDOFF_PIPELINES);
+  assert.equal(validated.handoffs.macos.upload_sha256sums_sha256, sha256("macos-305"));
+  assert.deepEqual(validated.platform_sources, { linux: SOURCE.superrepo_commit, macos: SOURCE.superrepo_commit, windows: SOURCE.superrepo_commit });
 });
+
+for (const [name, mutate] of [
+  ["a missing platform", record => { delete record.windows; }],
+  ["a handoff of another source", record => { record.macos.source = "c".repeat(40); }],
+  ["a handoff of another version", record => { record.linux.version = "0.4.745"; }],
+  ["a handoff of another platform", record => { record.windows.role = "linux"; }],
+  ["a handoff without a pipeline number", record => { delete record.linux.pipeline; }],
+]) {
+  test(`aggregation rejects a handoff record with ${name} before creating output`, (t) => {
+    const root = createFixture();
+    writeGateFixture(root);
+    const output = join(root, "aggregate");
+    t.after(() => rmSync(root, { recursive: true, force: true }));
+    const record = Object.fromEntries(Object.entries(HANDOFF_PIPELINES).map(([role, pipeline]) => [role, {
+      role, source: SOURCE.superrepo_commit, compiler: SOURCE.compiler_commit, version: VERSION, pipeline,
+      upload_sha256sums_sha256: "e".repeat(64),
+    }]));
+    mutate(record);
+    const result = spawnSync(process.execPath, aggregateArgs(root, output, { handoffs: record }), { encoding: "utf8" });
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /handoff record/);
+    assert.equal(existsSync(output), false);
+  });
+}
 
 test("qualification rejects absent, uncovered, and tampered CLI surface evidence", (t) => {
   for (const mutation of [
@@ -329,8 +435,8 @@ test("qualification rejects absent, uncovered, and tampered CLI surface evidence
       const directory = join(root, "linux");
       const path = join(directory, "cli-surface-evidence-v1.json");
       const evidence = JSON.parse(readFileSync(path, "utf8"));
-      evidence.rows.find(row => row.path === "parse").status = "uncovered";
-      evidence.counts.pass = 53;
+      evidence.rows.find(row => row.path === "dev syntax parse").status = "uncovered";
+      evidence.counts.pass--;
       evidence.counts.uncovered = 1;
       writeJson(path, evidence);
       updateChecksum(directory, "cli-surface-evidence-v1.json");
@@ -377,7 +483,7 @@ for (const [name, mutate, expected] of [
     mutate(root);
     t.after(() => rmSync(root, { recursive: true, force: true }));
     const output = join(root, "aggregate");
-    const result = spawnSync(process.execPath, [aggregatePath.pathname, root, output, VERSION, SOURCE.superrepo_commit, SOURCE.compiler_commit], { encoding: "utf8" });
+    const result = spawnSync(process.execPath, aggregateArgs(root, output), { encoding: "utf8" });
     assert.notEqual(result.status, 0);
     assert.match(result.stderr, expected);
     if (existsSync(join(output, "release-state.json"))) {
@@ -390,12 +496,12 @@ test("aggregation rejects wrong requested source and failed evidence before crea
   const root = createFixture();
   const output = join(root, "aggregate");
   t.after(() => rmSync(root, { recursive: true, force: true }));
-  const result = spawnSync(process.execPath, [aggregatePath.pathname, root, output, VERSION, "c".repeat(40), SOURCE.compiler_commit], { encoding: "utf8" });
+  const result = spawnSync(process.execPath, aggregateArgs(root, output, { superrepo: "c".repeat(40) }), { encoding: "utf8" });
   assert.notEqual(result.status, 0);
   assert.match(result.stderr, /requested release source\/version/);
   assert.equal(existsSync(output), false);
   rmSync(join(root, "windows", "beskid-windows-amd64.exe"));
-  const failed = spawnSync(process.execPath, [aggregatePath.pathname, root, output, VERSION, SOURCE.superrepo_commit, SOURCE.compiler_commit], { encoding: "utf8" });
+  const failed = spawnSync(process.execPath, aggregateArgs(root, output), { encoding: "utf8" });
   assert.notEqual(failed.status, 0);
   assert.match(failed.stderr, /missing required artifact/);
   assert.equal(existsSync(output), false);
@@ -423,6 +529,33 @@ test("rejects build-only platform handoffs without feature evidence", (t) => {
   const result = runValidator(root);
   assert.notEqual(result.status, 0);
   assert.match(result.stderr, /SHA256SUMS is missing feature-evidence-v1\.json/);
+});
+
+test("rejects the historical Glue exemption for 0.6 and later release evidence", (t) => {
+  for (const version of ["0.6.0", "0.6.1", "0.10.0", "1.0.0"]) {
+    const root = createFixture({ version });
+    t.after(() => rmSync(root, { recursive: true, force: true }));
+    const result = runValidator(root);
+    assert.notEqual(result.status, 0, `${version} must require executed Rust Glue evidence`);
+    assert.match(result.stderr, /Glue is required.*historical.*exemption/);
+  }
+});
+
+test("schema dispatch follows the release series: 0.5 evidence cannot carry schema-2 files", (t) => {
+  const root = createFixture({ version: "0.5.2" });
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  writeJson(join(root, "linux", "feature-evidence-v2.json"), { schema_version: 2 });
+  const result = runValidator(root);
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /requires release series 0\.6/);
+});
+
+test("preserves historical Glue exemption validation for 0.5 evidence", (t) => {
+  const root = createFixture({ version: "0.5.2" });
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  const result = runValidator(root);
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(JSON.parse(result.stdout).platforms[0].features.not_applicable.glue.status, "not_applicable");
 });
 
 test("rejects source, version, and target drift in feature evidence", (t) => {
@@ -703,4 +836,18 @@ test("rejects symlinked platform directories, metadata, and artifacts", (t) => {
   assert.match(metadata.stderr, /linux build result must not be a symbolic link/);
   assert.notEqual(artifact.status, 0);
   assert.match(artifact.stderr, /linux artifact beskid-linux-amd64 must not be a symbolic link/);
+});
+
+test("superseding repackage arguments name an earlier packaging of the build", (t) => {
+  const root = createFixture({ linux: { buildResult: { platform_result_status: "failed" } } });
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  const run = (...extra) => spawnSync(process.execPath, [packagePath.pathname, "linux", root, join(root, "packages"), "--repackage", "335", "360", ...extra], { encoding: "utf8" });
+  for (const supersedes of ["334", "360", "361", "x"]) assert.match(run("--supersedes", supersedes).stderr, /usage: woodpecker-package-platform\.mjs/);
+  assert.match(run("--superseded", "340").stderr, /usage: woodpecker-package-platform\.mjs/);
+  for (const supersedes of ["335", "353"]) {
+    const result = run("--supersedes", supersedes);
+    assert.notEqual(result.status, 0);
+    assert.doesNotMatch(result.stderr, /usage:/, "a valid superseded packaging passes argument validation");
+    assert.match(result.stderr, /platform_result_status/);
+  }
 });

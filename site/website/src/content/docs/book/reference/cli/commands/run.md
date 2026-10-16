@@ -15,6 +15,7 @@ description: "AOT-compile, link, and execute a Beskid program in a subprocess."
 | `--workspace-member` | Workspace member when resolving via `Workspace.bws` |
 | `--frozen` | Require lockfile match; forbid updates |
 | `--locked` | Require an existing lockfile |
+| `--offline` | Forbid network requests; use verified cached dependency artifacts only |
 | `--entrypoint` | Function name to run (default `Main`) |
 | `--plain` | Disable animated progress and graph output |
 
@@ -24,7 +25,7 @@ description: "AOT-compile, link, and execute a Beskid program in a subprocess."
 beskid run --project path/to/App.bproj --entrypoint Main --plain
 ```
 
-The command requires an exact ABI-v5 runtime kit for the selected host and profile. The REPL and the current test engine use JIT execution; `beskid run` does not. See [Build, run, and test](/docs/tooling/build-run-test/) for the procedure and recovery steps.
+The command requires an exact ABI-v5 runtime kit for the selected host and profile. The experimental REPL (`beskid dev repl`) is a separate path. Its result is not evidence for `beskid run`. See [Build, run, and test](/docs/tooling/build-run-test/) for the procedure and recovery steps.
 
 For the executable check sequence and recovery steps, use [Build, run, and test](/docs/tooling/build-run-test/).
 

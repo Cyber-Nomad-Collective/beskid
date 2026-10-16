@@ -48,7 +48,7 @@ flowchart TD
 
 ## Standard reference (informative)
 
-- [Modules and Visibility](/platform-spec/language-meta/program-structure/modules-and-visibility/)
+- [Modules and Visibility](/docs/standard/capabilities/language-meta--program-structure--modules-and-visibility/)
 
 ## Next
 

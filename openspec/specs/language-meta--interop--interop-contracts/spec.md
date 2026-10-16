@@ -93,7 +93,7 @@ This feature specifies: **symbol identity**, **type-shape classes**, **call-shap
 </SpecSection>
 
 <SpecSection title="Implementation anchors" id="implementation-anchors">
-- Runtime export names and builtin dispatch tables: `compiler/crates/beskid_abi/src/symbols.rs`, `compiler/crates/beskid_abi/src/builtins.rs`
+- Runtime export names and builtin dispatch tables: `compiler/runtime_manifest.bsol` (generated ABI-v5 tables), `compiler/crates/beskid_abi/src/generated/symbols.rs` (frozen ABI-v4 names)
 - Stable FFI layouts for standard runtime types: `compiler/crates/beskid_abi/src/types.rs`
 - Runtime ABI version constant: `compiler/crates/beskid_abi/src/version.rs`
 - JIT symbol registration and extern import validation: `compiler/crates/beskid_engine/src/jit_module.rs`, `compiler/crates/beskid_engine/src/engine.rs`

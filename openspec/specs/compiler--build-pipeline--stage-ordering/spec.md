@@ -4,9 +4,7 @@
 ## Purpose
 
 Canonical ordering from resolved source through lowering into a backend-ready CodegenArtifact.
-
 ## Requirements
-
 ### Requirement: Feature hub authority: Decision [D-COMP-BUILD-0016]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
 
@@ -85,6 +83,37 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **GIVEN** an implementation claims conformance with this capability
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
+
+### Requirement: Reachability-scoped legality gate precedes specialization
+Before the reference compiler collects generic specializations or selects ISLE rules for a lowering request, it SHALL evaluate the legality facts of every item the request will lower: the requested roots, their direct-call closure, the scheduler helper closure, and every body discovered by conformance witness resolution. The compiler SHALL judge no item outside that set. When any legality fact yields a finding, the compiler SHALL report every finding of the pass as a coded diagnostic at its source site and SHALL NOT produce a backend artifact.
+
+**Stable ID:** `BSP-REQ-LEGALITY-GATE-PRECEDES-SPECIALIZATION`
+
+#### Scenario: Unimported type in a dependency unit
+- **GIVEN** a test unit that calls a helper in another unit whose `let`
+  declares `Result<u8[], FiberError>` without importing `FiberError`
+- **WHEN** `beskid test` lowers that test
+- **THEN** the run reports E1201 at the `let` in the helper's unit and
+  reports no missing lowering rule
+
+#### Scenario: Unreachable misuse does not poison the unit
+- **GIVEN** a unit with two test items, one of which calls a direct function
+  with the wrong number of arguments
+- **WHEN** only the other test is requested
+- **THEN** it lowers and runs; requesting the misusing test reports E1204 at
+  the call
+
+This requirement applies to every legality fact registered in
+`beskid_queries::semantic_contract::legality`. This change includes E1201,
+E1204, E1229, E1230, and E1231. Later changes can add the remaining entries
+from the diagnostics table without changing this requirement's shape.
+
+#### Scenario: Eager cleanup checks do not judge an unreachable item
+- **GIVEN** a unit that contains an unreachable scoped-cleanup rejection or
+  dead collection-growth violation
+- **WHEN** the compiler lowers a different reachable item in that unit
+- **THEN** the compiler SHALL NOT report E1230 or E1231 for the unreachable
+  item
 
 ## Informative Source Provenance
 
@@ -354,7 +383,7 @@ Backends (JIT and AOT) consume this artifact and must not reorder semantic phase
 2. Substitutes fragment arguments for **`$param`** in macro bodies (typed AST only).
 3. Repeats until no invocations remain or **`maxMacroExpansionDepth`** (default 32) is exceeded.
 
-When **`mod.generate`** re-parses merged syntax, hosts **must** run **`macro.expand`** again before the next **`mod.collect`** / semantic gate (same syntax generation). Emit **`syntax.generation`** when either macros or mods mutate the program snapshot.
+When **`mod.generate`** merges typed contributions into the syntax, hosts **must** run **`macro.expand`** again before the next **`mod.collect`** / semantic gate (same syntax generation). Emit **`syntax.generation`** when either macros or mods mutate the program snapshot.
 
 ## Mod phases and stable phase identifiers
 
@@ -362,7 +391,7 @@ When **`mod.generate`** re-parses merged syntax, hosts **must** run **`macro.exp
 
 1. **Phase vocabulary** — Register stable string ids in `compiler/crates/beskid_pipeline/src/phases.rs` and update `PIPELINE.md` in the same change.
 2. **Observer parity** — CLI and codegen entrypoints must bracket mod phases with `PhaseStart`/`PhaseEnd` (or documented `WorkUnit` ids).
-3. **Bounded generation** — `Generator` is incremental by default and runs with a bounded replay loop (`maxGeneratorRounds`). On each replay, host merges typed AST contributions and re-parses affected units.
+3. **Bounded generation** — `Generator` is incremental by default and runs with a bounded replay loop (`maxGeneratorRounds`). On each replay, host merges typed AST contributions into the affected units without a text parse.
 4. **Analyzer/rewrite ordering** — `Analyzer` runs on merged host+generated code; `Rewriter` applies typed replacements and is surfaced as fix-oriented behavior.
 5. **No lowering on torn trees** — lowering runs only on a consistent post-merge snapshot.
 
@@ -447,7 +476,7 @@ flowchart TB
   a[2 program.assemble]
   p[3 Parse units]
   m{Mods in graph?}
-  mh[4 Mod collect generate reparse]
+  mh[4 Mod collect generate merge]
   s[5 Semantic rules]
   e{Error diagnostics?}
   stop[Abort]

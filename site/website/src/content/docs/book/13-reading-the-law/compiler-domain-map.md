@@ -4,21 +4,21 @@ description: Build pipeline, front-end, semantic pipeline, mods, conformance, an
 tableOfContents: true
 ---
 
-[Compiler](/platform-spec/compiler/) documents the **reference compiler workspace** (phases, diagnostics parity, and mod host contracts) without redefining language semantics.
+[Compiler](/docs/standard/capabilities/taxonomy--compiler/) documents the **reference compiler workspace** (phases, diagnostics parity, and mod host contracts) without redefining language semantics.
 
-Use this domain when the question concerns the reference implementation's processing, diagnostics, or conformance evidence. For the meaning of a source program, return to [language meta](/platform-spec/language-meta/); an implementation detail is not automatically language law.
+Use this domain when the question concerns the reference implementation's processing, diagnostics, or conformance evidence. For the meaning of a source program, return to [language meta](/docs/standard/capabilities/taxonomy--language-meta/); an implementation detail is not automatically language law.
 
 ## Areas worth bookmarking
 
 | Area | Contents |
 | --- | --- |
-| [Build pipeline](/platform-spec/compiler/build-pipeline/) | Resolution → parse → mods → semantic → lower → JIT/AOT |
-| [Front-end](/platform-spec/compiler/front-end/) | Grammar, parser, AST/HIR contracts |
-| [Semantic pipeline](/platform-spec/compiler/semantic-pipeline/) | Rules, diagnostic registry |
-| [Resolution and projects](/platform-spec/compiler/resolution-and-projects/) | Graph, workspaces, cycles |
-| [Compiler mods](/platform-spec/compiler/compiler-mods/) | Mod host bridge, syntax facade, scheduling |
-| [Conformance](/platform-spec/compiler/conformance/) | `beskid_tests` policy |
-| [Implementation map](/platform-spec/compiler/implementation-map/) | Crate anchors |
+| [Build pipeline](/docs/standard/capabilities/taxonomy--compiler--build-pipeline/) | Resolution → parse → mods → semantic → lower → JIT/AOT |
+| [Front-end](/docs/standard/capabilities/taxonomy--compiler--front-end/) | Grammar, parser, AST/HIR contracts |
+| [Semantic pipeline](/docs/standard/capabilities/taxonomy--compiler--semantic-pipeline/) | Rules, diagnostic registry |
+| [Resolution and projects](/docs/standard/capabilities/taxonomy--compiler--resolution-and-projects/) | Graph, workspaces, cycles |
+| [Compiler mods](/docs/standard/capabilities/taxonomy--compiler--compiler-mods/) | Mod host bridge, syntax facade, scheduling |
+| [Conformance](/docs/standard/capabilities/taxonomy--compiler--conformance/) | `beskid_tests` policy |
+| [Implementation map](/docs/standard/capabilities/taxonomy--compiler--implementation-map/) | Crate anchors |
 
 ## Workspace crates (quick)
 
@@ -34,11 +34,11 @@ From `compiler/Cargo.toml` members most readers touch:
 
 ## Pipeline composition
 
-Rust-only host composition (IoC) is **not** Beskid mod syntax. See [Pipeline composition](/platform-spec/compiler/pipeline-composition/).
+Rust-only host composition (IoC) is **not** Beskid mod syntax. See [Pipeline composition](/docs/standard/capabilities/taxonomy--compiler/).
 
 ## How to follow a compiler question
 
-Begin at the relevant area, open its feature hub, and then follow the requirement links into code only when you need implementation evidence. The [implementation map](/platform-spec/compiler/implementation-map/) is the bridge for that last step; it is not a substitute for the feature's contract.
+Begin at the relevant area, open its feature hub, and then follow the requirement links into code only when you need implementation evidence. The [implementation map](/docs/standard/capabilities/taxonomy--compiler--implementation-map/) is the bridge for that last step; it is not a substitute for the feature's contract.
 
 ## Next
 

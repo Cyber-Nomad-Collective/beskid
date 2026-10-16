@@ -25,7 +25,7 @@ NODE
 
 INTENT="$TMP/fixture/intent.json"
 OUTPUT="$TMP/out"
-DEB=beskid-1.2.3-amd64.deb
+DEB=beskid-0.5.9-amd64.deb
 RECORD="$DEB.correction-v1.json"
 cp "$OUTPUT/$DEB" "$TMP/expected/$DEB"
 cp "$OUTPUT/$RECORD" "$TMP/expected/$RECORD"
@@ -108,7 +108,7 @@ expect_failure() {
 }
 reset_remote() { rm -rf "$TMP/remote"; mkdir -p "$TMP/remote"; : >"$TMP/gh.log"; }
 assert_no_write() { ! grep -Fq 'release upload' "$TMP/gh.log"; }
-assert_uploaded() { grep -F 'release upload cli-v1.2.3 ' "$TMP/gh.log" | grep -Fq "/$1 --repo Cyber-Nomad-Collective/beskid_compiler"; }
+assert_uploaded() { grep -F 'release upload cli-v0.5.9 ' "$TMP/gh.log" | grep -Fq "/$1 --repo Cyber-Nomad-Collective/beskid_compiler"; }
 assert_safe_transport() {
   ! grep -Eq -- '--clobber|release (create|edit|delete)|cli-(stable|nightly)|homebrew|brew' "$TMP/gh.log"
 }
@@ -169,7 +169,7 @@ chmod 600 "$OUTPUT/$DEB"
 : >"$TMP/gh.log"
 run_publisher
 assert_no_write
-grep -Fq "release download cli-v1.2.3" "$TMP/gh.log"
+grep -Fq "release download cli-v0.5.9" "$TMP/gh.log"
 
 # Either individual asset may be the only missing asset.
 reset_remote
@@ -205,18 +205,18 @@ reset_remote
 GH_UPLOAD_MODE="fail-after:$DEB" run_publisher
 cmp -s "$OUTPUT/$DEB" "$TMP/remote/$DEB"
 cmp -s "$OUTPUT/$RECORD" "$TMP/remote/$RECORD"
-[[ "$(grep -F 'release upload cli-v1.2.3 ' "$TMP/gh.log" | grep -Fc "/$DEB --repo Cyber-Nomad-Collective/beskid_compiler")" == 1 ]]
+[[ "$(grep -F 'release upload cli-v0.5.9 ' "$TMP/gh.log" | grep -Fc "/$DEB --repo Cyber-Nomad-Collective/beskid_compiler")" == 1 ]]
 reset_remote
 if GH_UPLOAD_MODE="fail-before:$RECORD" run_publisher >"$TMP/stdout" 2>"$TMP/stderr"; then exit 1; fi
 cmp -s "$OUTPUT/$DEB" "$TMP/remote/$DEB"
 [[ ! -e "$TMP/remote/$RECORD" ]]
-[[ "$(grep -F 'release upload cli-v1.2.3 ' "$TMP/gh.log" | grep -Fc "/$RECORD --repo Cyber-Nomad-Collective/beskid_compiler")" == 1 ]]
+[[ "$(grep -F 'release upload cli-v0.5.9 ' "$TMP/gh.log" | grep -Fc "/$RECORD --repo Cyber-Nomad-Collective/beskid_compiler")" == 1 ]]
 
 # Retrying a verified partial attempt downloads the exact DEB and uploads only
 # the missing record.
 : >"$TMP/gh.log"
 run_publisher
-grep -Fq "release download cli-v1.2.3 --repo Cyber-Nomad-Collective/beskid_compiler --pattern $DEB" "$TMP/gh.log"
+grep -Fq "release download cli-v0.5.9 --repo Cyber-Nomad-Collective/beskid_compiler --pattern $DEB" "$TMP/gh.log"
 [[ "$(grep -c 'release upload' "$TMP/gh.log")" == 1 ]]
 assert_uploaded "$RECORD"
 

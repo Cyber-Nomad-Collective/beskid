@@ -1,0 +1,43 @@
+# Native Serialization Mod namespace repair
+
+Date: 2026-10-06. Read-only source investigation; no build or runtime verification performed here.
+
+## Finding
+
+The repair belongs in assembly root classification and shared module identity/resolution, not a CLI flag or a special Serialization Mod bypass. `has_std_dependency` describes graph presence but is currently used as a namespace transformation for every source unit. It prefixes host `Helpers` and `Mod`, ordinary dependency modules, SDK `Beskid.Compiler.*`, and generated modules with `Std`. That contradicts source-root-relative host identity and canonical SDK imports. The retained consumer diagnostic log contains 32 errors and the materialized-topology probe explicitly shows `Std::Helpers`/`Std::Mod`; these are diagnostic evidence, not successful native execution.
+
+Sources: [path inference](../../compiler/crates/beskid_analysis/src/projects/assembly/module_index/path_inference.rs), [consumer probe](../../.build/v06-real-serialization-mod-aliased-probe.log), [topology probe](../../.build/v06-mod-materialized-entry-topology.log), [normative modules](../../openspec/specs/language-meta--program-structure--modules-and-visibility/spec.md:11), [SDK contract](../../openspec/specs/language-meta--metaprogramming--compiler-mod-sdk/spec.md:309).
+
+## Required implementation seam
+
+Introduce one explicit per-root/per-unit namespace classification issued while constructing the effective compilation roots. Carry it through original, prepared/materialized, and checked lockfile replay paths. At minimum distinguish ordinary project namespace, public standard-library namespace, and compiler SDK namespace. Classification must derive from the selected manifest/package and verified source identity where authority is needed; dependency aliases, folder spelling, `corelib_` prefixes, or matching SDK text alone must not confer privileged identity. A Corelib-origin package is not automatically a Std namespace: the compiler SDK is Corelib-origin but publishes `Beskid.Compiler.*` and `Beskid.Syntax.*`.
+
+`RootEntry` currently has only `dependency_name` and `source_root`; `ResolvedDependencyProject` and `MaterializedDependencyProject` retain declared project names but not namespace roles. `VerifiedPackageIdentity` independently retains source kind, package name/version/digest. Keep binding aliases distinct from stable package identity; Cargo likewise explicitly distinguishes dependency keys from actual package names, useful corroboration rather than authority over Beskid semantics. [Cargo official dependency renaming](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#renaming-dependencies-in-cargotoml).
+
+Sources: [effective roots and checked replay](../../compiler/crates/beskid_analysis/src/projects/assembly/roots.rs), [dependency models](../../compiler/crates/beskid_analysis/src/projects/model.rs:304), [preparation-issued package identity](../../compiler/crates/beskid_analysis/src/projects/package_identity.rs).
+
+Resolve both physical discovery and logical indexing using the same role-aware operation. `resolve_module_file` currently strips `Std.` and searches all roots without class restriction. A path-inference-only repair leaves discovery capable of selecting an ordinary `Testing/Assert.bd` for a Std request and preserves inconsistent graph/query identities. Standard external requests must select standard namespace roots; unprefixed standard shard imports remain available only to legitimate internal shard requesters. Host and ordinary dependency modules stay root-relative; SDK imports remain canonical direct imports. Explicit file-scoped module declarations must take precedence as required by normative modules rules; do not silently redefine package authority using their spelling.
+
+Sources: [physical discovery](../../compiler/crates/beskid_analysis/src/projects/assembly/discovery.rs), [module index](../../compiler/crates/beskid_analysis/src/projects/assembly/module_index/build.rs), [index resolution](../../compiler/crates/beskid_analysis/src/projects/assembly/module_index/resolution.rs), [normative explicit-module precedence](../../openspec/specs/language-meta--program-structure--modules-and-visibility/spec.md:11).
+
+Query registration must consume that same classification. Current `typed_program.rs` independently checks `dependency_name.starts_with("corelib_")` and compares `unit.origin_path` with effective/materialized roots. Replace these heuristic checks with explicit unit membership/role, including generated output ownership. Preserve the requester gate in `visible_module_units`; do not globally publish bare standard aliases. SDK internal uses of foundation modules require deliberate verified internal requester permission even while SDK modules retain their unprefixed canonical namespace.
+
+Sources: [query registration](../../compiler/crates/beskid_queries/src/typed_program.rs:175), [requester visibility gate](../../compiler/crates/beskid_queries/src/db.rs:45), [SDK dependency manifest](../../compiler/corelib/packages/compiler-sdk/corelib_compiler_sdk.bproj).
+
+Namespace access does not grant SDK execution authority. Keep native `require_sdk_package` checks for current generation, preparation-issued source proof, exact `corelib_compiler_sdk` package, and Corelib source. Keep canonical byte/tree correspondence checks, complete SDK source evidence, typed constructor selection, and callback capability closure validation. Copied SDK packages or lookalikes must still fail native adapter issuance.
+
+Sources: [native authority](../../compiler/crates/beskid_codegen/src/native_mod/authority.rs), [byte/tree correspondence](../../compiler/crates/beskid_queries/src/typed_program.rs:135), [producer](../../compiler/crates/beskid_codegen/src/native_mod/producer.rs), [callback closure](../../compiler/crates/beskid_codegen/src/native_mod/callbacks.rs), [typed constructor selection](../../compiler/crates/beskid_codegen/src/native_mod/marshaling.rs).
+
+## Necessary red/green verification
+
+1. Mixed real graph containing Std, compiler SDK, host sibling modules, and an ordinary dependency: exact expected host and SDK identities, standard public prefix, direct aliases, and private visibility boundaries. Repeat original and materialized roots, relocated checked lock replay, custom source roots, and generated owner outputs.
+2. Positive installed external `Std.Testing.Assert`; negative external `Testing.Assert`; ordinary host lookalike cannot supply a Std request. Verify internal legitimate standard/SDK imports separately. Retain the existing CLI negative native test instead of changing its expectation.
+3. Real native compiler SDK Collector/Generator descriptor production with Std present, then the actual Serialization Mod consumer through collection, generation, typechecking, executable descriptor, typed write/read round-trip, and deliberate rejection. Passing parser/fixture tests is insufficient.
+4. Source authority denial controls: copied SDK declarations, renamed dependency aliases, forged `corelib_` names, stale generation, modified canonical syntax tree, changed SDK bytes, missing constructor/callback closure. Exact stable package identity must survive valid aliasing and relocation.
+5. Relevant assembly loader/module index, query semantic import/alias/module tests, native SDK authority/factory controls, CLI native Mod and native test execution. Then installed consumer gates on all three native targets and source-bound immutable evidence; local module tests cannot substitute for them.
+
+Existing anchors: [CLI native Mod](../../compiler/crates/beskid_cli/tests/native_mod_sdk_v06.rs), [external bare import denial](../../compiler/crates/beskid_cli/tests/native_test_execution_v06.rs:85), [loader controls](../../compiler/crates/beskid_analysis/src/projects/assembly/loader/tests.rs), [native source authority](../../compiler/crates/beskid_codegen/tests/native_sdk_source_authority.rs), [native factories](../../compiler/crates/beskid_codegen/tests/native_sdk_factories.rs), [query resolution aliases](../../compiler/crates/beskid_queries/src/semantic_contract/resolution.rs:189).
+
+## Limits
+
+This report identifies an implementation contract and concrete inconsistent callers. It does not establish that all 32 consumer diagnostics share one cause, nor that namespace repair completes typed decoding/native generation. Re-run the retained real consumer after integration and diagnose any remaining errors independently. Do not remove Std dependencies, flip the global flag, add global bare aliases, or replace real SDK contracts with local lookalikes to obtain a narrower green result.

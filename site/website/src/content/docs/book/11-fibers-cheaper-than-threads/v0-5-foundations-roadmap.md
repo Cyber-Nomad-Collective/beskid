@@ -1,77 +1,40 @@
 ---
-title: "Planned v0.5 foundations"
-description: "A non-normative release plan for the execution and core-library work that must precede networking."
+title: "What shipped and what is planned"
+description: "Where Beskid concurrency stands in 0.6.0, which limits are gone, and what the planned isolate work is for."
 tableOfContents: true
 ---
 
-:::caution[Planned release work: not a shipped API reference]
-This page records the
-v0.5 Foundations delivery boundary as of the current planning revision. It does
-not define language or core-library behaviour, and it does not promise that the
-names or APIs below compile today. OpenSpec changes become authoritative only
-after their accepted deltas are applied to canonical `openspec/specs`.
+:::caution[Status page, not an API reference]
+This page describes the state of the 0.6.0 release candidate, which is in release qualification. It is informative. The [Beskid Standard](/docs/standard/) defines behavior, and planned work below has no syntax or API until an accepted change says so.
 :::
 
-## Why foundations come first
+The 0.5 line built the foundations this chapter describes: a bindable `spawn`, typed `Fiber<T>` results, generic channels, owner-routed wakeups, deadlines, and `Core.IO`. Networking was built on top of them, through TLS, HTTP/2, WebSocket, QUIC, and HTTP/3 in 0.5.3. The roadmap that used to live on this page is history now. What follows is what changed for 0.6.0 and what comes next.
 
-The v0.5 networking release is intentionally split at executable dependency
-boundaries. Portable sockets and HTTP need a scheduler that can safely accept
-external wakeups, timers, resource ownership, and typed cross-fiber values. A
-temporary detached-worker, scalar-channel, or wall-clock-timeout shortcut would
-be a second runtime design to remove later.
+## What 0.6.0 changes
 
-The release-level coordination record is
-[CYB-59](https://linear.app/cybernomad-it/issue/CYB-59/coordinate-beskid-05-networking-release).
-The Foundations conformance gate is
-[CYB-60](https://linear.app/cybernomad-it/issue/CYB-60/05-foundations-executable-fibers-ownership-deadlines-and-coreio).
-CYB-60 must have its required evidence before the networking gate begins.
+**The toy limits are gone.** The 0.5 runtime sized its scheduler and synchronization tables in source: 16 fibers, 64 channels, 32 mutexes, and similar numbers. A seventeenth fiber got `-1` from the runtime with nothing actually exhausted. In 0.6.0 every runtime table that hands out handles grows on demand, and records never move, so handles and GC roots stay valid while a table grows. The only way to run out is for the system allocator to refuse memory.
 
-## Planned dependency order
+**Two limits you can set.** Both take a decimal byte count with an optional `k`, `m`, or `g` suffix (powers of 1024):
 
-```mermaid
-flowchart TB
-  foundations["Foundations\nCYB-60\nbeskid-v0-5-foundations"]
-  networking["Networking\nbeskid-v0-5-networking"]
-  http["HTTP and release evidence\nbeskid-v0-5-http"]
-  foundations --> networking --> http
-```
-
-`beskid-v0-5-foundations` is the active proposed OpenSpec change. The networking
-and HTTP identifiers are planned follow-on change IDs. None is an accepted
-platform-spec capability until its deltas are reviewed and applied to canonical
-`openspec/specs`; this page remains informative throughout.
-
-## Foundation scope under planning
-
-| Area | Planned outcome | Why networking depends on it |
+| Variable | Default | Effect |
 | --- | --- | --- |
-| Fibers | A bindable `spawn` expression and typed `Fiber<T>` result ownership | Socket and server work needs joinable, cancellable work with typed completion. |
-| Channels | Generic payload transport that preserves GC tracing and resource ownership | Requests, completions, and buffers cannot be reduced to scalar-only messages. |
-| Scheduler | Owner-routed external wakes, wait accounting, monotonic timers, and deadlines | Reactors and DNS completion must wake the correct scheduler without blocking it. |
-| Resource scopes | Lexical `use` cleanup through an explicit disposal contract | Native-backed resources need deterministic cleanup on normal and exceptional exits. |
-| Bytes and encoding | Hardened bounds, overlap, and invalid-input handling | Network protocols start with untrusted byte streams and encoded text. |
-| Core.IO | Planned reader, writer, closer, stream, exact-read, and write-all contracts | Networking and HTTP need one portable stream vocabulary rather than ad hoc syscall paths. |
+| `BESKID_HEAP_MAX` | No cap | Caps the managed heap |
+| `BESKID_FIBER_STACK_MAX` | 8 MiB | Per-fiber stack reservation; must be a whole multiple of 64 KiB |
 
-The table is a release-planning map, not an API checklist. In particular, it
-does not establish method signatures, error variants, ownership rules, or
-compatibility guarantees.
+The runtime reads them when the process starts. A value it cannot parse or accept stops the process with a trap that names the variable, so a program never runs with a limit nobody asked for. The old `BESKID_HEAP_MAX_BYTES` is gone.
 
-## Deliberate release boundaries
+**No raw OS threads.** `Thread.Spawn` passed a null pointer where `pthread_create` expected somewhere to write, and nothing in Corelib called it. It was deleted along with `Thread.Join`. `Core.Threading.Thread.Yield` stays. Fibers are the concurrency model.
 
-v0.5 Foundations is a prerequisite, not a partial networking surface. The
-following remain outside the planned release chain: TLS, HTTP/2, HTTP/3, QUIC,
-WebSocket, client pooling, proxy stacks, multipart streaming, transparent
-compression, DNS caching, Unix-domain sockets, raw sockets, multicast
-configuration, async iterators, and channel `select`.
+## What is planned
 
-## What makes the gate credible
+In 0.6.0, fibers interleave on one scheduler. `Concurrency.ProcessorCount()` returns 1. That is fine for I/O-bound work, which is what fibers are for, and useless for spreading CPU work over cores.
 
-Before CYB-60 can unblock networking, the planned Foundations change must carry
-OpenSpec requirements and scenarios, focused compiler/runtime/corelib tests,
-and available JIT, AOT, and native-target evidence. The future networking and
-HTTP changes must validate independently; the final release evidence is owned
-by `beskid-v0-5-http`, not backfilled into Foundations.
+CPU parallelism is planned for the 0.6.1 to 0.6.5 releases, through **isolates**. The work is split into proposed OpenSpec changes, and none of them is accepted. That means no syntax, no API names, and no dates are promised here. When a change is accepted, the Standard will say what an isolate is; until then, treat any isolate example you find as a sketch.
 
-For the distinction between this planning material and enforceable behaviour,
-see [Informative vs normative](/book/12-the-normative-bible/informative-vs-normative/)
-and [How to propose a change](/book/12-the-normative-bible/how-to-propose-a-change/).
+## Where to look
+
+- [Fibers and spawn](/docs/standard/capabilities/language-meta--evaluation--fibers-and-spawn/) for the language rules.
+- [Fiber scheduler and stacks](/docs/standard/capabilities/execution--runtime--fiber-scheduler-and-stacks/) for scheduler and stack behavior.
+- [Memory and GC runtime contract](/docs/standard/capabilities/execution--runtime--memory-and-gc-runtime-contract/) for the heap cap.
+
+For the difference between a page like this and enforceable behavior, see [Informative vs normative](/book/12-the-normative-bible/informative-vs-normative/).

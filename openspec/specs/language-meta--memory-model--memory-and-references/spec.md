@@ -4,9 +4,7 @@
 ## Purpose
 
 This specification defines locals, mut bindings, heap objects, and fiber sharing rules. A concurrent GC manages the heap objects. The runtime write barriers and collector phases defer to the execution specs. The `/execution/` path is a non-normative legacy bridge.
-
 ## Requirements
-
 ### Requirement: Locals mut and assignment
 Assignment to immutable bindings MUST error (**E1214**). `mut` MUST appear as a prefix modifier before the type or after `let` to allow reassignment (`mut T name = expr`, `let mut name = expr`, or `mut T name` parameters). Legacy suffix form `T mut name` MUST be rejected by the parser. Parameters are passed by value in v0.1; `ref` and `out` parameter modifiers are not part of v0.1.
 
@@ -16,12 +14,47 @@ Assignment to immutable bindings MUST error (**E1214**). `mut` MUST appear as a 
 - **THEN** the compiler emits **E1214**
 
 ### Requirement: Arrays heap and null prohibition
-`T[]` values MUST use the fat-pointer layout (`BeskidArray`) described in execution ABI material. Element access MUST respect bounds checks in safe builds. Reference-bearing values that escape their defining frame MUST live on the GC heap. User code MUST NOT expose manual `free` or untracked pointers in v0.1. `null` MUST NOT appear as a value; optional absence MUST use `Option<T>`. Pointer stores to heap objects MUST execute write barriers when required by the active GC phase.
+`T[]` values MUST use the manifest-derived `BeskidArray` header and a precise
+immutable element descriptor carrying stride, alignment, and pointer-map data.
+Non-empty arrays MUST have real managed storage. Safe array length, get, and
+set operations SHALL lower directly through generation-bound typed ISLE facts:
+they MUST check the logical bound and address arithmetic before memory access,
+and MUST NOT call `array_get` or `array_set`. Dynamic growth MUST use the sole
+manifest-owned typed grow operation and preserve descriptor, logical length,
+initialized values, roots, and barriers.
 
-#### Scenario: Null literal rejected
+Reference-bearing values that escape their defining frame MUST live on the
+precisely traced GC heap. A managed aggregate or array under construction MUST
+remain rooted through every allocation-capable initializer and pointer store.
+Pointer stores to managed objects or arrays MUST execute the canonical write
+barrier before a safepoint when required by the active GC phase. User code MUST
+NOT expose manual `free`, untracked pointers, or `null`; optional absence MUST
+use `Option<T>`.
+
+#### Scenario: Null literal is rejected
 - **GIVEN** a program that uses a `null` literal as a value
-- **WHEN** the program is type-checked under v0.1
-- **THEN** the compiler rejects `null` and requires `Option<T>` or an explicit absent variant
+- **WHEN** the program is type-checked
+- **THEN** the compiler rejects `null` and requires `Option<T>` or an explicit
+  absent variant
+
+#### Scenario: Direct indexing checks bounds and arithmetic
+- **GIVEN** a managed `T[]` and an index expression
+- **WHEN** typed ISLE lowering emits an element load or store
+- **THEN** logical bounds and address arithmetic are checked before direct
+  memory access and no element-access runtime import is emitted
+
+#### Scenario: Aggregate pointer publication is traced
+- **GIVEN** a newly allocated managed aggregate whose pointer initializer can
+  allocate
+- **WHEN** construction stores that initializer into the aggregate
+- **THEN** owner and value remain rooted through evaluation and the edge is
+  barred before any allocation or safepoint can observe it
+
+#### Scenario: Typed growth preserves live references
+- **GIVEN** a pointer-bearing array with live initialized elements
+- **WHEN** manifest-owned growth runs under collection pressure
+- **THEN** the source and result remain rooted during copy and every initialized
+  referent remains reachable through the preserved pointer map
 
 ### Requirement: Cross-fiber sharing
 Values MUST NOT be shared across fibers by alias unless immutability is proven or synchronization uses `Channel<T>`. Capturing mutable shared state in `spawn` closures SHOULD be rejected when detectable. Closure environments MUST outlive uses tracked by the compiler’s capture analysis.
@@ -30,6 +63,22 @@ Values MUST NOT be shared across fibers by alias unless immutability is proven o
 - **GIVEN** a mutable value aliased into two fibers without proven immutability or a `Channel<T>`
 - **WHEN** sharing analysis runs
 - **THEN** the compiler rejects the sharing or diagnoses detectable mutable capture
+
+### Requirement: Dead growth of a mutable array parameter
+A growth operation is a canonical `Core.Collections.Array` call that can reallocate the array named by its first argument and that returns the grown handle. `Array.Append` is a growth operation. Each sibling with the same shape is a growth operation. Parameters pass by value, so a growth operation on a `mut T[]` parameter changes only the callee's copy of the handle. The compiler SHALL reject a function or method body with the diagnostic `DeadCollectionGrowth` when all of the following conditions are true:
+
+- The owner argument of a growth operation resolves to a `mut T[]` parameter of that body.
+- The growth call is an expression statement, so the body discards the returned handle.
+- The body does not publish the parameter handle. A read of the parameter publishes the handle when the read is in a position other than the owner argument of a growth operation or the target of an index expression. A call argument, a `return` operand, an assignment or binding source, a struct field initializer, and a capture in a nested lambda are publishing reads.
+
+The compiler MUST NOT report `DeadCollectionGrowth` when the growth call is not an expression statement, when the body contains one or more publishing reads of the parameter, or when the owner argument resolves to a local binding or an aggregate field instead of a parameter. The diagnostic is an error. Semantic analysis MUST fail closed on `DeadCollectionGrowth` before lowering, and the diagnostic MUST name the source site of the growth call.
+
+**Stable ID:** `BSP-REQ-35580A7D7B75`
+
+#### Scenario: Discarded growth of a parameter is rejected
+- **GIVEN** `unit Push(mut u8[] buffer, u8 value) { Array.Append<u8>(buffer, value); }` where `Array.Append` resolves to the canonical `Core.Collections.Array` declaration
+- **WHEN** semantic analysis completes
+- **THEN** the compiler reports `DeadCollectionGrowth` at the `Array.Append` call and does not lower the program
 
 ## Informative Source Provenance
 

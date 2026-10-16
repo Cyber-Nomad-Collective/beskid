@@ -193,7 +193,7 @@ Anchors name the modules that own each plane of native DI in the reference compi
 - `compiler/crates/beskid_codegen/src/lowering/composition/` — `launch` / `with` lowering to runtime container ABI calls (`launch_statement.rs`, `with_statement.rs`)
 - `compiler/crates/beskid_runtime/src/composition/` — `RuntimeContainer` (registration ordering, plural inject, LIFO dispose) and scope-stack management
 - `compiler/crates/beskid_runtime/src/builtins/composition.rs` — `extern "C-unwind"` ABI surface (`composition_container_create`, `composition_register`, `composition_bind_plural`, `composition_launch`, `composition_scope_enter`, `composition_scope_leave`, `composition_resolve`, `composition_resolve_plural`, `composition_shutdown`, `composition_container_drop`, `composition_scope_depth`)
-- `compiler/crates/beskid_abi/src/symbols.rs` / `compiler/crates/beskid_abi/src/builtins.rs` — stable linker symbols and `BuiltinFnSpec` entries for every `composition_*` builtin
+- `compiler/runtime_manifest.bsol` — stable linker symbols and generated ABI-v5 `BuiltinFnSpec` entries for every `composition_*` builtin
 - `compiler/crates/beskid_pipeline` — `composition.resolve` phase id (see [Flow and algorithm](./flow-and-algorithm/))
 - `compiler/corelib` — `ConsoleHost`, `WebHost`, shared configuration types
 

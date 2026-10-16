@@ -1,14 +1,14 @@
 ---
 title: "Spec leads code"
-description: Update normative platform-spec before, or together with, observable compiler and runtime changes.
+description: Update normative Standard before, or together with, observable compiler and runtime changes.
 tableOfContents: true
 ---
 
 Tests prove the **current** implementation. They do not replace missing contract text. **Spec leads code** means:
 
-> If you change what valid Beskid means or what the CLI must do, you update [Platform specification](/platform-spec/) in the same change set (or immediately before merge).
+> If you change what valid Beskid means or what the CLI must do, you update [Beskid Standard](/docs/standard/) in the same change set (or immediately before merge).
 
-Authority: [Specification authority and embedded decisions](/platform-spec/community/spec-maintenance/spec-authority-and-decisions/).
+Authority: [Specification authority and embedded decisions](/docs/standard/capabilities/community--spec-maintenance--spec-authority-and-decisions/).
 
 ## Practical workflow
 
@@ -30,7 +30,7 @@ gitGraph
 
 1. Classify the topic ([language law vs implementation](/book/12-the-normative-bible/language-law-vs-implementation/)).
 2. Extend the owning **feature hub** or article: no circular "canonical chapter is this page" stubs.
-3. Anchor crates in [implementation map](/platform-spec/compiler/implementation-map/) when touching `compiler/`.
+3. Anchor crates in [implementation map](/docs/standard/capabilities/taxonomy--compiler--implementation-map/) when touching `compiler/`.
 4. Land tests in `beskid_tests` / `beskid_e2e_tests` when behavior is platform-wide.
 
 ## Anti-patterns

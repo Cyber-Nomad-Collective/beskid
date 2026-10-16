@@ -4,22 +4,22 @@ description: Typed-link tests catch documentation drift; OpenSpec edits belong i
 tableOfContents: true
 ---
 
-Website and Book changes run through **`bun run test:docs-links`** and **`bun run build`** in `site/website`. Normative changes are validated separately from the repository root with **`openspec validate --all --strict`**.
+Website and Book changes run through **`pnpm test:docs-links`** and **`pnpm build`** in `site/website`. Normative changes are validated separately from the repository root with **`openspec validate --all --strict`**.
 
 Run the checks that match the change: link checks for Book navigation, the site build for rendered pages, and standard validation for changes to the normative corpus. A passing documentation build does not validate a changed language rule.
 
 ## Contributor loop
 
-1. Change behavior → update platform-spec if observable.
-2. Update `///` and run `beskid dev syntax doc` for packages you publish.
+1. Change behavior → update the Standard if observable.
+2. Update `///` and run `beskid doc` for packages you publish.
 3. Run verify before claiming green CI.
 
 If a rendered guide and the standard disagree, update or clarify the guide and keep the standard link visible. Do not copy a requirement into the Book merely to make the page self-contained.
 
 ## Related standard pages
 
-- [Documentation comments](/platform-spec/language-meta/surface-syntax/documentation-comments/)
-- [Specification authority and decisions](/platform-spec/community/spec-maintenance/spec-authority-and-decisions/)
+- [Documentation comments](/docs/standard/capabilities/language-meta--surface-syntax--documentation-comments/)
+- [Specification authority and decisions](/docs/standard/capabilities/community--spec-maintenance--spec-authority-and-decisions/)
 
 ## Next
 

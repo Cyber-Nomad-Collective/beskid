@@ -4,11 +4,11 @@ description: TypedProgram to CodegenInput, ISLE emission, and Cranelift IR.
 tableOfContents: true
 ---
 
-Code generation converts typed syntax facts into **machine-oriented artifacts** for AOT commands and the separate JIT test and REPL paths.
+Code generation converts typed syntax facts into **machine-oriented artifacts** for AOT commands, including `beskid test`, and the separate JIT REPL path.
 
 ## Entry
 
-The production boundary is `TypedProgram` → `CodegenInput` → ISLE emission → `CodegenArtifact`. See [Build pipeline overview](/docs/standard/compiler/build-pipeline/) and [Backends JIT/AOT](/docs/standard/compiler/build-pipeline/backends-jit-aot/).
+The production boundary is `TypedProgram` → `CodegenInput` → ISLE emission → `CodegenArtifact`. See [Build pipeline overview](/docs/standard/capabilities/taxonomy--compiler--build-pipeline/) and [Backends JIT/AOT](/docs/standard/capabilities/compiler--build-pipeline--backends-jit-aot/).
 
 ## Responsibilities
 
@@ -19,11 +19,11 @@ The production boundary is `TypedProgram` → `CodegenInput` → ISLE emission �
 
 ## Mod interaction
 
-Typed emitter/transform contracts: [Typed emitter and transforms](/docs/standard/compiler/compiler-mods/typed-emitter-and-transforms/). Lowering runs **after** merged typed AST is valid.
+Typed emitter/transform contracts: [Typed emitter and transforms](/docs/standard/capabilities/compiler--compiler-mods--typed-emitter-and-transforms/). Lowering runs **after** merged typed AST is valid.
 
 ## Fibers and builtins
 
-Spawn lowers to `fiber_spawn`; builtins align with [Builtins and symbols](/docs/standard/execution/abi-and-host/builtins-and-symbols/). Codegen must not invent alternate calling conventions.
+Spawn lowers to `fiber_spawn`; builtins align with [Builtins and symbols](/docs/standard/capabilities/execution--abi-and-host--builtins-and-symbols/). Codegen must not invent alternate calling conventions.
 
 ## Next
 

@@ -35,7 +35,7 @@ Use an initialized superrepo with the pinned `beskid_templates` gitlink. Choose 
 
 1. Inspect `.beskid/template.json` in the template package that you own.
 2. Use only `{{symbolId}}` placeholders in copied source paths and content.
-3. Run `beskid new --path ./packages/console -n Demo -o ./Demo` from `beskid_templates/` to test local-path instantiation.
+3. Run `beskid new Demo --path ./packages/console -o ./Demo` from `beskid_templates/` to test local-path instantiation.
 4. Inspect the generated template output without editing the authoring source through that output.
 5. Run `bash scripts/ci/corelib-publish.sh --dry-run` from the initialized superrepo root.
 

@@ -8,11 +8,11 @@ Preview means **read the spec before you ship**. User Beskid is not a daily `uns
 
 ## User-facing: FFI and extern
 
-Normative hub: [FFI and extern](/platform-spec/language-meta/interop/ffi-and-extern/).
+Normative hub: [FFI and extern](/docs/standard/capabilities/language-meta--interop--ffi-and-extern/).
 
-- Declare foreign surfaces with **`[Extern(...)] contract`** patterns aligned to [Interop contracts](/platform-spec/language-meta/interop/interop-contracts/).
-- Link native libraries through tooling ([Foreign library import](/platform-spec/tooling/foreign-library-import/)) and C ABI profiles ([C ABI profile](/platform-spec/language-meta/interop/c-abi-profile/)).
-- Errors cross boundaries as **envelopes**, not thrown exceptions ([Error and unwind semantics](/platform-spec/language-meta/interop/interop-contracts/error-and-unwind-semantics/)).
+- Declare foreign surfaces with **`[Extern(...)] contract`** patterns aligned to [Interop contracts](/docs/standard/capabilities/language-meta--interop--interop-contracts/).
+- Link native libraries through tooling ([Foreign library import](/docs/standard/capabilities/taxonomy--tooling--foreign-library-import/)) and C ABI profiles ([C ABI profile](/docs/standard/capabilities/language-meta--interop--c-abi-profile/)).
+- Errors cross boundaries as **envelopes**, not thrown exceptions ([Error and unwind semantics](/docs/standard/capabilities/language-meta--interop--interop-contracts/)).
 
 ```mermaid
 flowchart LR
@@ -24,13 +24,17 @@ flowchart LR
   beskid --> abi --> native
 ```
 
-## Host-facing: Rust `unsafe`
+## Host-facing: the runtime
 
-Inside `compiler/crates/beskid_abi` and the runtime sources under `compiler/runtime`, builtins use `#[unsafe(no_mangle)] pub extern "C-unwind"`; see [Builtins and symbols](/platform-spec/execution/abi-and-host/builtins-and-symbols/). That is **platform maintenance**, not a tutorial pattern for app authors.
+The runtime is Beskid source under `compiler/runtime/beskid/src/Runtime`. It exports its C entry points with `[Export(Abi:"C", Symbol:"...")]` and is compiled into the ABI-v5 runtime kit; see [Builtins and symbols](/docs/standard/capabilities/execution--abi-and-host--builtins-and-symbols/). That is **platform maintenance**, not a tutorial pattern for app authors.
 
-## JIT and dynamic loading (engine)
+## Optional libraries
 
-`beskid_engine` may expose platform-specific dynamic resolution paths marked **Proposed** in spec. Do not assume Standard behavior without reading the profile ADRs ([C ABI dynamic resolution](/platform-spec/language-meta/interop/c-abi-profile/adr/0003-dynamic-resolution-proposed/)).
+An `[Extern]` contract can be marked `Optional:true`. The program then loads even when the library or one of its symbols is missing, and a `bool Available();` method on the contract tells you whether every symbol resolved. Calling a missing symbol stops the program with the `extern_unavailable` trap instead of jumping to a null address. Windows AOT targets reject optional contracts. Details: [C ABI profile](/docs/standard/capabilities/language-meta--interop--c-abi-profile/).
+
+## Calling Rust
+
+Do not reach for the runtime's Rust ABI profile. Use [Rust Glue](/book/21-ffi-and-forbidden-friendships/rust-glue/), which generates checked C ABI adapters for plain Rust code, or write the C shim yourself.
 
 ## Practical rule
 

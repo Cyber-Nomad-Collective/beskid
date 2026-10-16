@@ -4,7 +4,7 @@ description: User-visible Beskid law, syntax, types, contracts, memory, evaluati
 tableOfContents: true
 ---
 
-[Language meta](/platform-spec/language-meta/) is **language law**: what valid programs mean, independent of which Rust crate happens to implement it today.
+[Language meta](/docs/standard/capabilities/taxonomy--language-meta/) is **language law**: what valid programs mean, independent of which Rust crate happens to implement it today.
 
 Use it to settle questions about source-level meaning before inspecting a compiler diagnostic or runtime implementation. Compiler and execution pages may explain how the rule is realized, but they do not replace this domain's language-facing contract.
 
@@ -12,14 +12,14 @@ Use it to settle questions about source-level meaning before inspecting a compil
 
 | Area | You learn |
 | --- | --- |
-| [Program structure](/platform-spec/language-meta/program-structure/) | Modules, names, imports, `extend` |
-| [Type system](/platform-spec/language-meta/type-system/) | Types, generics, conformances |
-| [Contracts and effects](/platform-spec/language-meta/contracts-and-effects/) | `contract`, `Result`, testing |
-| [Memory model](/platform-spec/language-meta/memory-model/) | Locals, `ref`, heap, GC rules |
-| [Evaluation](/platform-spec/language-meta/evaluation/) | Closures, **fibers and spawn** |
-| [Interop](/platform-spec/language-meta/interop/) | `extern`, ABI profiles |
-| [Metaprogramming](/platform-spec/language-meta/metaprogramming/) | Mod SDK surface (Beskid-side) |
-| [Conformance](/platform-spec/language-meta/conformance/) | Glossary, normative vocabulary |
+| [Program structure](/docs/standard/capabilities/taxonomy--language-meta--program-structure/) | Modules, names, imports, `extend` |
+| [Type system](/docs/standard/capabilities/taxonomy--language-meta--type-system/) | Types, generics, conformances |
+| [Contracts and effects](/docs/standard/capabilities/taxonomy--language-meta--contracts-and-effects/) | `contract`, `Result`, testing |
+| [Memory model](/docs/standard/capabilities/taxonomy--language-meta--memory-model/) | Locals, `ref`, heap, GC rules |
+| [Evaluation](/docs/standard/capabilities/taxonomy--language-meta--evaluation/) | Closures, **fibers and spawn** |
+| [Interop](/docs/standard/capabilities/taxonomy--language-meta--interop/) | `extern`, ABI profiles |
+| [Metaprogramming](/docs/standard/capabilities/taxonomy--language-meta--metaprogramming/) | Mod SDK surface (Beskid-side) |
+| [Conformance](/docs/standard/capabilities/taxonomy--language-meta--conformance/) | Glossary, normative vocabulary |
 
 ## Articles vs hubs
 
@@ -29,7 +29,7 @@ Use it to settle questions about source-level meaning before inspecting a compil
 
 ## Read claims at the right level
 
-Use an area page to choose a subject, a feature hub to understand its scope and maturity, and the linked articles or requirements for detail. If a Book example is useful but incomplete, follow its platform-spec link rather than inferring an edge case from the example.
+Use an area page to choose a subject, a feature hub to understand its scope and maturity, and the linked articles or requirements for detail. If a Book example is useful but incomplete, follow its Standard link rather than inferring an edge case from the example.
 
 ## Linking from the book
 

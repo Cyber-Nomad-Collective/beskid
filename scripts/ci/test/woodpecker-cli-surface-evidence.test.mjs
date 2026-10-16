@@ -59,8 +59,8 @@ test("receipt binds successful CLI and PTY evidence to the versioned binary and 
 
 test("receipt rejects uncovered paths, failed PTY, and falsely claimed gate provenance", () => {
   for (const mutate of [
-    e => { e.counts.uncovered = 1; e.counts.setup_skip--; e.rows.find(row => row.path === "lsp install").status = "uncovered"; },
-    e => { e.rows.find(row => row.path === "graph --tui").rendered_project = false; },
+    e => { e.counts.uncovered = 1; e.counts.setup_skip--; e.rows.find(row => row.path === "dev lsp install").status = "uncovered"; },
+    e => { e.rows.find(row => row.path === "dev project graph --tui").rendered_project = false; },
     e => { e.source_provenance.status = "verified"; },
   ]) {
     const item = fixture();

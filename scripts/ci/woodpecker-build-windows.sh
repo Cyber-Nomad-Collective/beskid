@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+# Windows release build step (.woodpecker/windows.yml, build-windows).
+#
+# The Woodpecker local agent passes inline step commands to MSYS bash as one command-line
+# argument. A long inline script there parses differently depending on its length: replaying the
+# agent's script generation on the Windows guest showed quote-free padding alone flipping this
+# step between passing and failing (Woodpecker #291, #292, #294). The step therefore runs this file.
+#
+# Environment: the Woodpecker CI_* variables, and BESKID_RELEASE_VERSION for a manual build.
+set -e
+
+# Submodule checkouts in this step must be byte-exact too, see the clone step.
+export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=core.autocrlf GIT_CONFIG_VALUE_0=false
+if git ls-files --eol scripts/ci/release-cases-v06.json | grep -q -e w/crlf -e w/mixed; then
+  echo the clone converted line endings, release evidence needs a byte-exact checkout >&2
+  exit 1
+fi
+if [ "${CI_PIPELINE_EVENT}" = tag ]; then
+  if ! bash scripts/ci/woodpecker-release-tag-guard.sh "${CI_COMMIT_TAG}" --check-only; then
+    exit 0
+  fi
+  release_version="${CI_COMMIT_TAG#v}"
+else
+  release_version="${BESKID_RELEASE_VERSION:?set BESKID_RELEASE_VERSION for a manual build}"
+fi
+# The agent is a Windows SYSTEM task. Reuse an existing Rust toolchain
+# when present; otherwise provision a minimal MSVC toolchain in an
+# agent-owned ProgramData location for future non-interactive builds.
+for cargo_bin in "C:/Users/Administrator/.cargo/bin" "C:/Users/ContainerAdministrator/.cargo/bin"; do
+  if [ -x "${cargo_bin}/cargo.exe" ]; then
+    export PATH="${cargo_bin}:${PATH}"
+    break
+  fi
+done
+if ! command -v cargo >/dev/null; then
+  export CARGO_HOME="C:/ProgramData/Woodpecker/rust/cargo"
+  export RUSTUP_HOME="C:/ProgramData/Woodpecker/rust/rustup"
+  export PATH="${CARGO_HOME}/bin:${PATH}"
+  cargo_exe="${CARGO_HOME}/bin/cargo.exe"
+  if ! [ -f "${cargo_exe}" ]; then
+    mkdir -p "${CARGO_HOME}" "${RUSTUP_HOME}"
+    curl.exe --fail --location --retry 3 --output "${CARGO_HOME}/rustup-init.exe" https://win.rustup.rs/x86_64
+    "${CARGO_HOME}/rustup-init.exe" -y --profile minimal --no-modify-path --default-toolchain stable-x86_64-pc-windows-msvc
+  fi
+  [ -f "${cargo_exe}" ] || { echo "Rust cargo executable was not installed" >&2; exit 1; }
+  export PATH="$(cygpath -u "$(dirname "${cargo_exe}")"):${PATH}"
+fi
+command -v cargo >/dev/null || { echo "Rust cargo toolchain provisioning failed on the Windows agent" >&2; exit 1; }
+vsdevcmd='C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/Tools/VsDevCmd.bat'
+[ -f "${vsdevcmd}" ] || { echo "Visual Studio Build Tools environment script is missing" >&2; exit 1; }
+vs_env="C:/ProgramData/Woodpecker/vs-env-${CI_PIPELINE_NUMBER}.cmd"
+printf '@call "%s" -no_logo -arch=x64 -host_arch=x64\r\n@set\r\n' "$(cygpath -w "${vsdevcmd}")" >"${vs_env}"
+while IFS='=' read -r name value; do
+  case "${name}" in
+    PATH|Path) export PATH="$(cygpath -p -u "${value}")" ;;
+    INCLUDE|LIB|LIBPATH|VCINSTALLDIR|VCToolsInstallDir|WindowsSdkDir|WindowsSDKVersion)
+      export "${name}=${value}"
+      ;;
+  esac
+done < <(cmd.exe //d //c "$(cygpath -w "${vs_env}")" | tr -d '\r')
+rm -f "${vs_env}"
+llvm_bin='C:/Program Files/LLVM/bin'
+[ -d "${llvm_bin}" ] || { echo "LLVM toolchain is missing from the Windows agent" >&2; exit 1; }
+export PATH="$(cygpath -u "${llvm_bin}"):${PATH}"
+for native_tool in clang.exe llvm-ml.exe link.exe lib.exe; do
+  command -v "${native_tool}" >/dev/null || {
+    echo "${native_tool} is unavailable after native toolchain setup" >&2
+    exit 1
+  }
+done
+imagemagick_dir='C:/ProgramData/Woodpecker/ImageMagick'
+imagemagick_exe="${imagemagick_dir}/magick.exe"
+[ -x "${imagemagick_exe}" ] || { echo "ImageMagick installation failed on the Windows agent" >&2; exit 1; }
+export PATH="$(cygpath -u "${imagemagick_dir}"):${PATH}"
+command -v magick.exe >/dev/null || { echo "magick.exe is unavailable after ImageMagick setup" >&2; exit 1; }
+python_dir='C:/ProgramData/Woodpecker/Python-3.13.16'
+[ -x "${python_dir}/python3.exe" ] || { echo "Python installation failed on the Windows agent" >&2; exit 1; }
+export PATH="$(cygpath -u "${python_dir}"):${PATH}"
+python3 -c 'import tomllib' || { echo "python3 is unavailable after Python setup" >&2; exit 1; }
+output="C:/woodpecker-output/beskid/${CI_PIPELINE_NUMBER}-${CI_COMMIT_SHA}/windows"
+bash scripts/ci/init-submodules.sh beskid_distrib
+bash scripts/ci/woodpecker-build-platform.sh windows "${release_version}" "${output}"
+package_output="${output}-package"
+node scripts/ci/woodpecker-package-platform.mjs windows "$(dirname "${output}")" "${package_output}"
+node -e 'const fs=require("fs"),p=process.argv[1],o=process.argv[2],r=JSON.parse(fs.readFileSync(p+"/package-result.json")); for(const a of r.artifacts) fs.copyFileSync(p+"/"+a.name,o+"/"+a.name); fs.copyFileSync(p+"/package-result.json",o+"/package-result.json")' "${package_output}" "${output}"
+export BESKID_HANDOFF_SSH_KEY="C:/ProgramData/Woodpecker/handoff/windows.sftp"
+export BESKID_HANDOFF_KNOWN_HOSTS="C:/ProgramData/Woodpecker/handoff/known_hosts"
+bash scripts/ci/woodpecker-upload-handoff.sh windows "${output}" "${CI_COMMIT_SHA}" "$(git rev-parse HEAD:compiler)" "${release_version}" "${CI_PIPELINE_NUMBER}"

@@ -1,14 +1,14 @@
 ---
 title: "Implementation map"
-description: Navigate implementation map in platform-spec and tie reading to crates.
+description: Navigate implementation map in the Standard and tie reading to crates.
 tableOfContents: true
 ---
 
-Open the [crate-to-spec anchors](/platform-spec/compiler/implementation-map/crate-to-spec-anchors/) when a requirement needs implementation evidence. The map connects standard topics to code areas without turning a crate name into a normative claim.
+Open the [crate-to-spec anchors](/docs/standard/capabilities/compiler--implementation-map--crate-to-spec-anchors/) when a requirement needs implementation evidence. The map connects standard topics to code areas without turning a crate name into a normative claim.
 
 ## From rule to repository
 
-1. Locate the relevant feature in the [platform specification](/platform-spec/).
+1. Locate the relevant feature in the [platform specification](/docs/standard/).
 2. Read its requirements and scenarios before opening implementation code.
 3. Use the anchor map to find the owning crate, tests, or generated artifacts.
 4. Return to the feature when a code path seems to imply a different rule.

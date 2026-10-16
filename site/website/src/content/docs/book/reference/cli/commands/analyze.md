@@ -1,34 +1,16 @@
 ---
 title: "beskid analyze"
-description: "Root command to run semantic analysis and print diagnostics."
+description: "Removed in 0.6.0. Use beskid check."
 ---
 
-Runs built-in semantic rules over a resolved source file (or project entrypoint) and prints diagnostics to the terminal.
-This command is available as `beskid analyze`.
-
-## Arguments
-
-| Argument | Description |
-| --- | --- |
-| `[INPUT]` | Optional path to a `.bd` file |
-| `--project` | Project directory or `App.bproj` path |
-| `--target` | Target name from the manifest |
-| `--workspace-member` | Workspace member when resolving via `Workspace.bws` |
-| `--frozen` | Require lockfile match; forbid updates |
-| `--locked` | Require an existing lockfile |
-| `--plain` | Disable animated resolve progress |
-
-## Notes
-
-- When no diagnostics are reported, the command prints a short success message.
-- Project resolution flags match other project-aware commands (`beskid doc`, `run`, `beskid build`, `beskid clif`, `beskid fetch`).
-
-## Example
+The root command `beskid analyze` was removed in version 0.6.0. Use `beskid check` instead.
 
 ```bash
-beskid analyze --project path/to/App.bproj
+beskid check --help
 ```
 
-For the executable check sequence and recovery steps, use [Build, run, and test](/docs/tooling/build-run-test/).
+`beskid check` accepts an optional `.bd` `[INPUT]`, `--project`, `--target`, `--workspace-member`, `--frozen`, `--locked`, `--offline`, and `--plain`. It checks semantics and manifest validity without linking.
+
+For the executable check sequence, use [Build, run, and test](/docs/tooling/build-run-test/).
 
 [← Back to CLI command reference](/book/reference/cli/command-reference/)

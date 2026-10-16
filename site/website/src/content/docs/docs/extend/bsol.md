@@ -41,8 +41,10 @@ This table identifies profiles. It does not reproduce their field rules.
 ## Actions
 
 1. Choose the profile that matches the document family and supported version.
-2. Run `beskid validate-bsol --profile project.v1 path/to/file.bproj` with the selected profile in place of `project.v1`.
+2. Run `beskid dev bsol validate path/to/file.bproj`.
 3. Inspect each diagnostic with its source location and validation phase.
+
+Note: a document that is not a project manifest takes `--profile` with the selected profile. A `type = Bsol` manifest rejects `--profile`.
 
 ## Expected result
 

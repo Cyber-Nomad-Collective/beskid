@@ -1,0 +1,58 @@
+## Context
+
+0.6.5 completes the isolate plan: the fluent data-parallel surface (`ParallelSeq<T>`) and the third ORCA step, pointer hand-over of `Moved` graphs. Locked inputs: rulings 6 (amended), 12 and D1, D7, D8, D9, D14 (`docs/reports/2026-10-04-v06-decisions.md`, entries of 2026-10-13). Names, diagnostic codes and terms (hand-over, foreign reference table, local reference count table, heap adoption) follow the shared vocabulary of `openspec/changes/v061-attributes-and-isolate-prerequisites/design.md`. The fluent form `values.Parallel().Where((x) => ...).Map((x) => ...).Reduce(seed, combiner)` relies on the 0.6.1 method type parameters, method `where` bounds and inference. D8 and D9 answer the former task 2.4 of this change ("who traces a handed-over mutable graph"); the design is done and this document only records it.
+
+## Grounding in the current runtime
+
+| Spec element | Current code | What changes |
+| --- | --- | --- |
+| Tracing a graph with descriptors | `Runtime/Mem/Gc/Marking.bd:148-181` (`TraceObjectFields`: array stride and element pointer map, aggregate pointer map) | the send and receive walks reuse it with a visited set and an "enter only if mutable" rule |
+| Mutable versus immutable at runtime | descriptor flags `ARRAY = 1`, `UTF8_VIEW = 2` only (`Runtime/Bootstrap/Objects.bd:59-61`) | 0.6.1 adds `TYPE_DESCRIPTOR_IMMUTABLE` (D6); `ReadOnlyArray<T>` carries it on the record and its backing array is reached only through it |
+| Shallow marking | span bitmaps `SPAN_MARK_BITS = 120`, `SPAN_SCANNED_BITS = 184` (`Marking.bd:24-25`); `DrainSpan` scans slots marked and not scanned (`:203`); large objects use the header state word (`:127-133, 232`) | the owner sets both bits (or the black state) for mutable entries with `count > 0`; no new state |
+| Reading foreign metadata | `ManagedObjectForReference(heap, value)` reads one heap's span directory (`Marking.bd:35-74`) | called with the owner's heap pointer from the region-to-owner map; span words read with the `AtomicWordLoad` |
+| Write barrier | 0.6.2 hybrid barrier `beskid_rt_v5_gc_write_barrier(slot, value)` (`v062-captures-and-move`, "Hybrid write barrier"): shades the overwritten value and the new value in the current heap while it is marking | a store of a receiver-owned child into a foreign mutable parent shades the child in the receiver's heap, which is the heap that traces through that parent; a foreign overwritten value is only stamped in the receiver's foreign table |
+| Never mark a foreign header | `GcMarkGray` writes the large-object mark word (`Marking.bd:132`) | the foreign path keeps all state in the receiver's foreign table (D9) |
+| Phase A | one mutator per heap (`Runtime/Sync/Channel.bd:52-54`) | stated as "one allocator and collector per heap, one mutator per object" in 0.6.1; the receiver mutates objects in the owner's regions but never allocates there |
+| Count tables | 0.6.3 foreign table, 0.6.4 local table (`Runtime/Mem/Gc/Foreign.bd`) | mutable entries appear; owner treatment branches on `immutable` |
+| Adoption | 0.6.3 relink and merge; 0.6.4 retention fallback | adoption in every case (D7 second clause), with mailbox drain after the map update |
+| Collections | `List<T>` is a record over `T[]` plus count with linear-style methods (`corelib/packages/foundation/src/Core/Collections/List.bd:1-30`); `Storage.AppendAt` appends in place when the array has room | 0.6.2 D3 gives `List<T>` owning receivers so two live values never share storage; `ParallelSeq` borrows the source and adopts output chunks |
+| Query operators | `corelib/packages/foundation/src/Query/Operators.bd` are pre-closure skeletons | `ParallelSeq` is a separate fused planner in `Core.Parallel`; it does not extend `Query` |
+| Bound diagnostics | `GenericBoundNotSatisfied` is **E1610** (`crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs:39`) | reused for missing combiner contracts and non-transferable elements; no new code |
+| Processor count | `HostProcessorCount()` (0.6.1 `host_processor_count` intrinsic; `BESKID_ISOLATES_MAX` defaults to it in 0.6.3) | default worker count for a terminal's scope |
+
+## Decisions
+
+### Who traces a handed-over mutable graph (D8, D9)
+ORCA (Clebsch, Franco, Drossopoulou, Yang, Wrigstad, Vitek, OOPSLA 2017, https://doi.org/10.1145/3133896, Fig. 9-11 and sec. 5; Franco et al., ESOP 2018, https://doi.org/10.1007/978-3-319-89884-1_31, invariants I1-I5), restated for Beskid in the Pony research document sec. 2.4.1:
+
+1. Send: the sender walks the graph, giving every owned object a local count entry; immutable sub-objects get an entry and are not entered; foreign objects are decremented or inflated with an INC to their owner before publication.
+2. Receive: the receiver walks the graph, creating a foreign entry per object, entering only mutable objects.
+3. Receiver's collector: stamp foreign entries; trace through foreign mutable objects (the receiver may have stored its own objects inside), stop at foreign immutable objects (the owner's job). All state in the receiver's table; atomic loads of owner metadata; never write the owner heap.
+4. Owner's collector: trace immutable entries (`markimmut`); shallow-mark mutable entries by setting mark and scanned bits (or the black header state) so the drain never scans them. The owner never reads a field another isolate may be writing (I1). This is the `sweeporcs` shallow mark: "such objects are simply marked as reachable and need not be traced any further" (Clebsch et al., ICOOOLPS 2015, sec. 6).
+5. DECs: receiver's unstamped entries become one DEC per owner.
+6. Forward: decrement or inflate-and-INC, receiver records entries; the owner's count is untouched until a DEC arrives.
+
+Why per-object protection for mutable graphs: the owner will not look inside, so a sub-object without an entry would be swept while the receiver still reaches it through the root. Why root-only protection for immutable graphs: the owner traces from the entry during `markimmut`.
+
+### Why no barriers and why the atomics
+I1 (one writer, no concurrent reader) means the only isolate that traces through a mutable object is the one that may write it; count changes happen at send and receive, never on field assignment (OOPSLA 2017 sec. 4). The incremental marking barrier of 0.6.2 is a different mechanism: it runs on field assignment while the storing isolate's own heap is marking, shades only in that isolate's own tables (mark bitmaps for its objects, foreign-table stamps for foreign ones) and never changes a count. The receiver still reads the owner's span words to find object starts; the owner's sweep may flip other bits in the same word, so those reads use the `AtomicWordLoad` (Boehm and Adve, PLDI 2008, https://doi.org/10.1145/1375581.1375591, on why plain loads are insufficient under reordering). The bit of a counted object is stable because the owner never frees it.
+
+### Adoption in every case (D7 second clause)
+With counts in place, a child's local entries can be transferred to the parent. Because holders resolve the owner through the region-to-owner map when they post (specified in 0.6.4), re-targeting is a map update plus a mailbox drain, with no owner-id forwarding. This is MaPLe's join-adopt (Raghunathan et al., ICFP 2016, https://doi.org/10.1145/2951913.2951935; Arora, Westrick, Acar, POPL 2021, https://doi.org/10.1145/3434299) made possible by the non-moving collector, the same property ORCA relies on.
+
+### ParallelSeq (ruling 12)
+Splitter and combiner over chunks (Prokopec, Bagwell, Rompf, Odersky, Euro-Par 2011, https://doi.org/10.1007/978-3-642-23397-5_14); fused per-chunk loops (Coutts, Leshchinskiy, Stewart, ICFP 2007, https://doi.org/10.1145/1291151.1291199); lazy binary splitting (Tzannes et al., PPoPP 2010, https://doi.org/10.1145/1693453.1693479) with a heartbeat-derived floor (Acar et al., PLDI 2018, https://doi.org/10.1145/3192366.3192391; Westrick et al., POPL 2024, https://doi.org/10.1145/3632880). Order preserved by default and `ReduceUnordered` as the explicit opt-out follows deterministic-by-default parallelism (Bocchino et al., POPL 2011, https://doi.org/10.1145/1926385.1926447); the determinism statement names the four nondeterministic constructs (`Port`, `ReduceUnordered`, clock or random source, I/O). Combiners as marker contracts on types follow Cilk reducers (Frigo et al., SPAA 2009, https://doi.org/10.1145/1583991.1584017) and need no compiler change; the markers are declarations, not proofs. Java streams misuse data (Khatchadourian et al., FASE 2020, https://doi.org/10.1007/978-3-030-45234-6_5) motivates both the rejected captured-mutable-local pattern and the published cost table.
+
+### The source array is borrowed, not handed over
+`.Parallel()` reads a `List<T>` or `T[]`; the terminal parks the caller, so no writer exists for the duration, and the array is rooted by the scope frame of the terminal exactly like a 0.6.3 `Shared` capture. Giving every element a count entry would cost O(n) for nothing. Output chunks are Moved results adopted at join, so `Collect` costs one concatenation (Prokopec's combiner discipline).
+
+### Honest cost table (D14)
+Moved hand-over is O(1) transfer plus O(objects) tracing at send and receive; `Shared` is O(1) plus O(roots) at receive. A `List<Node>` of a million nodes costs two walks, a `u8[]` costs one entry. Hidden costs are how users of parallel streams fail (Khatchadourian et al.).
+
+## Open issues
+
+Closed on 2026-10-13. Former issue 1 (bounds with generic arguments): `TypeBound = { Identifier ~ ":" ~ Path }` (`crates/beskid_analysis/src/beskid.pest:316`) takes a `Path` whose segments admit `GenericArguments` (`PathSegment`, line 285), `WhereClause` admits several bounds on one identifier (line 317), applied contracts carry their arguments (`semantic_contract/contracts.rs:71`, `application_from_path_with_arguments`), and 0.6.1 lets a method declare `where C: Associative<T>, C: Commutative<T>` on its own type parameter; `ReduceUnordered` keeps both bounds. Former issue 5 (method-level generics): answered by the 0.6.1 requirements "Generic methods and method type arguments" and "Method type argument inference"; the module-function fallback is dropped and the spec uses the fluent form with inferred type arguments.
+
+1. Lambda parameter `move`. 0.6.2 adds the `move` modifier to `Parameter` and `ReceiverParameter` only (requirement "move grammar productions"), not to `LambdaParameter`, so a pipeline step over Moved records is a function item with a `move` parameter (`.Stage(2_i64, Transform)` with `u8[] Transform(move u8[] buf)`), accepted by the `[Captures]` rule as an environment-free function item. Open: whether a function item whose parameter is `move T` conforms to the function type `(T) => U` of the step parameter, or whether function types need an owning-parameter form; until decided, the stage worker passes each received record as an owned expression.
+2. Receiver-first discovery (a foreign object met during marking with no entry, possible when another isolate extended a mutable foreign graph the receiver can reach) is handled by recording `count = 1` and posting an INC during the collection. ORCA avoids this case by tracing at receive; Beskid cannot, because a sibling may store into a graph the receiver also holds through a shared mutable parent only if both hold the same mutable graph, which I1 forbids. The rule is therefore defensive and should never fire; implementation should trap in debug builds when it does.
+3. Heartbeat quantum. The spec fixes the shape (time-derived floor) but not the quantum; the value is tuned by the data-parallel benchmarks of task 6.2 and recorded in the cost table documentation.

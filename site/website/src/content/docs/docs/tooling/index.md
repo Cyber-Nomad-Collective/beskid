@@ -1,6 +1,6 @@
 ---
 title: Tooling
-description: Select concise Beskid commands and their grouped developer aliases for source, build, project, and package tasks.
+description: Select Beskid root commands and `beskid dev` maintenance commands for source, build, project, and package tasks.
 pageKind: guide
 diagramPolicy: required
 audience:
@@ -16,7 +16,7 @@ verified:
   date: 2026-09-08
 ---
 
-Use concise root commands for routine work. Use `beskid dev` groups when a script or explanation benefits from an explicit domain.
+Use root commands for routine work. Use `beskid dev` for inspection, plumbing, and maintenance tasks.
 
 ## Orientation
 
@@ -24,21 +24,22 @@ Install Beskid and open a terminal in the source or project directory. Run `besk
 
 ## Choose a command
 
-1. Use `beskid analyze`, `beskid format`, or `beskid doc` for source tasks.
+1. Use `beskid check`, `beskid fmt`, or `beskid doc` for source tasks.
 2. Use `beskid build` to create an AOT artifact. Use `beskid run` to create and start a temporary AOT executable.
 3. Only `beskid build` and `beskid run` use the AOT pipeline. `beskid test` uses the current test execution engine.
-4. Use `beskid fetch`, `beskid lock`, `beskid update`, or `beskid graph` for project tasks.
-5. Use `beskid pckg` for registry tasks.
-6. Use the grouped alias when you need the domain in the command path:
+4. Use `beskid add`, `beskid remove`, or `beskid update` to change project dependencies. `beskid update` needs a package name or `--all`.
+5. Use `beskid dev project lock`, `beskid dev project fetch`, or `beskid dev project graph` for lock, materialization, and graph tasks.
+6. Use `beskid package` for registry tasks.
+7. Use `beskid dev` for inspection and maintenance tasks:
 
-   | Domain | Grouped commands |
+   | Domain | Commands |
    | --- | --- |
-   | Syntax | `beskid dev syntax parse`, `tree`, `analyze`, `doc`, `format`, `clif` |
-   | Build | `beskid dev build compile`, `test`, `corelib` |
-   | Project | `beskid dev project fetch`, `lock`, `update`, `graph` |
-   | Package | `beskid dev package registry` |
+   | Syntax | `beskid dev syntax parse`, `tree`, `clif` |
+   | Project | `beskid dev project fetch`, `lock`, `graph` |
+   | BSOL | `beskid dev bsol validate <manifest>.bproj`, `beskid dev bsol migrate` |
+   | Other | `beskid dev repl`, `mod`, `import`, `lsp`, `corelib`, `runtime-kit` |
 
-7. Add `--plain` to analysis, build, run, and test commands in logs or automation.
+8. Add `--plain` to check, build, run, and test commands in logs or automation. `beskid update` has no `--plain` option.
 
 ```mermaid
 flowchart LR
@@ -49,11 +50,11 @@ flowchart LR
   root --> P[Project]
   root --> K[Package]
   root --> H[Shell and tools]
-  S --> S1["parse, tree, analyze, doc, format, clif"]
-  B --> B1["build, run, test, repl, corelib, runtime-kit, mod"]
-  P --> P1["fetch, lock, update, graph, new, import"]
-  K --> K1["pckg"]
-  H --> H1["dev, hi, lsp, up, validate-bsol, migrate-bsol"]
+  S --> S1["check, fmt, doc, dev syntax"]
+  B --> B1["build, run, test"]
+  P --> P1["new, add, remove, update, dev project"]
+  K --> K1["package"]
+  H --> H1["dev, toolchain, doctor"]
 ```
 
 ### Diagram text
@@ -66,7 +67,7 @@ flowchart LR
 
 ## Limits
 
-The selected command help describes the input and flags for one task. The concise and grouped forms dispatch to the same command implementation where a grouped alias exists.
+The selected command help describes the input and flags for one task. The 0.6.0 CLI removed the root commands `lock`, `analyze`, `repl`, `graph`, `fetch`, and `validate-bsol`. If you run a removed command, the CLI prints the replacement.
 
 If the CLI rejects a command path, run `beskid --help`, then run `--help` on the next command group. Do not combine segments from different groups. Use the concise root command when a grouped path makes a script harder to read.
 

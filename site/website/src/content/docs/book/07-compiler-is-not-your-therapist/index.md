@@ -6,7 +6,7 @@ tableOfContents: true
 
 You have manifests, modules, and imports. Now the compiler wants to talk about **types**: the relationship where one party sets boundaries and the other pretends to listen.
 
-This chapter is the first language-syntax tour: enough to read real `.bd` files and understand why the analyzer is mad. Normative grammar lives under [language meta](/platform-spec/language-meta/); we stay informative and link out.
+This chapter is the first language-syntax tour: enough to read real `.bd` files and understand why the analyzer is mad. Normative grammar lives under [language meta](/docs/standard/capabilities/taxonomy--language-meta/); we stay informative and link out.
 
 ## What you will find here
 
@@ -25,4 +25,4 @@ This chapter is the first language-syntax tour: enough to read real `.bd` files 
 
 ## After this chapter
 
-Later tutorial tracks cover public API idioms and documentation comments (see book appendix / reference). For exhaustive rules, use [platform spec language meta](/platform-spec/language-meta/) and [semantic rules](/book/reference/analysis/semantic-rules/).
+Later tutorial tracks cover public API idioms and documentation comments (see book appendix / reference). For exhaustive rules, use [platform spec language meta](/docs/standard/capabilities/taxonomy--language-meta/) and [semantic rules](/book/reference/analysis/semantic-rules/).

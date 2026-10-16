@@ -18,9 +18,9 @@ The semantic pipeline reserves **W1610–W1625** for documentation issues: orpha
 
 ## Spec
 
-- [Diagnostic registry (doc warnings)](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/)
-- [Documentation comments](/platform-spec/language-meta/surface-syntax/documentation-comments/)
-- [api.json contract](/platform-spec/tooling/cli/api-json-contract/)
+- [Diagnostic registry (doc warnings)](/docs/standard/capabilities/compiler--semantic-pipeline--diagnostic-code-registry/)
+- [Documentation comments](/docs/standard/capabilities/language-meta--surface-syntax--documentation-comments/)
+- [api.json contract](/docs/standard/capabilities/tooling--cli--api-json-contract/)
 
 ## Next
 

@@ -53,7 +53,7 @@ The records below preserve migration history and are not normative except where 
 <SpecSection title="Implementation anchors" id="implementation-anchors">
 - `compiler/corelib/packages/foundation/src/Core/Optional.bd`
 - `compiler/corelib/packages/foundation/src/Core/Optional/Option.bd`
-- Corelib tests: `compiler/corelib/beskid_corelib/tests/corelib_tests/src/core/OptionalTests.bd`
+- Corelib tests: `compiler/corelib/beskid_corelib/tests/corelib_tests/src/core/CoreSuite.bd#OptionalTests`
 </SpecSection>
 
 <SpecSection title="Contract statement" id="contract-statement">
@@ -110,7 +110,7 @@ No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-CORE-O
 ## Verification anchors
 
 - `compiler/corelib/packages/foundation/src/Core/Optional/`
-- `OptionalTests.bd` under `beskid_corelib/tests/corelib_tests/`
+- `CoreSuite.bd#OptionalTests` under `beskid_corelib/tests/corelib_tests/`
 ``````
 
 </details>

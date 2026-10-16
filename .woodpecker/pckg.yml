@@ -25,7 +25,8 @@ steps:
         version="$${BESKID_COMPILER_RELEASE_VERSION:?set the verified compiler release version}"
         mkdir -p /woodpecker-toolchain
         node scripts/ci/prepare-pckg-toolchain.mjs "$${version}" /woodpecker-toolchain/prefix
-      - BESKID_TOOLCHAIN_PREFIX=/woodpecker-toolchain/prefix bash scripts/ci/corelib-publish.sh patch
+      # Version policy is a pipeline input: patch (default), minor, major or an exact version.
+      - BESKID_PCKG_VERSION_BUMP="$${BESKID_PCKG_VERSION_BUMP:-patch}" BESKID_TOOLCHAIN_PREFIX=/woodpecker-toolchain/prefix bash scripts/ci/corelib-publish.sh
     when:
       - event: manual
         branch: main

@@ -4,9 +4,9 @@ description: language-meta owns user-visible semantics; compiler, execution, too
 tableOfContents: true
 ---
 
-Ask: *"What does valid Beskid code mean?"* → **[Language meta](/platform-spec/language-meta/)**.
+Ask: *"What does valid Beskid code mean?"* → **[Language meta](/docs/standard/capabilities/taxonomy--language-meta/)**.
 
-Ask: *"Which crate phase does that?"* → **[Compiler](/platform-spec/compiler/)**, **[Execution](/platform-spec/execution/)**, **[Core library](/platform-spec/core-library/)**, **[Tooling](/platform-spec/tooling/)**.
+Ask: *"Which crate phase does that?"* → **[Compiler](/docs/standard/capabilities/taxonomy--compiler/)**, **[Execution](/docs/standard/capabilities/taxonomy--execution/)**, **[Core library](/docs/standard/capabilities/taxonomy--core-library/)**, **[Tooling](/docs/standard/capabilities/taxonomy--tooling/)**.
 
 ## Split
 
@@ -17,18 +17,18 @@ Ask: *"Which crate phase does that?"* → **[Compiler](/platform-spec/compiler/)
 | Runtime ABI, scheduler, GC | execution | `beskid_engine`, `beskid_abi` |
 | Standard library API | core-library | `corelib` packages in `compiler/corelib` |
 
-Implementation domains **defer** with `relatedTopics`; they do not redefine normative tables copied from language-meta ([Spec authority](/platform-spec/community/spec-maintenance/spec-authority-and-decisions/)).
+Implementation domains **defer** with `relatedTopics`; they do not redefine normative tables copied from language-meta ([Spec authority](/docs/standard/capabilities/community--spec-maintenance--spec-authority-and-decisions/)).
 
 ## Example: spawn
 
-- **Law:** [Fibers and spawn](/platform-spec/language-meta/evaluation/fibers-and-spawn/)
-- **Lowering:** [Fiber scheduler and stacks](/platform-spec/execution/runtime/fiber-scheduler-and-stacks/)
-- **API:** [Concurrency package](/platform-spec/core-library/concurrency/concurrency-package/)
+- **Law:** [Fibers and spawn](/docs/standard/capabilities/language-meta--evaluation--fibers-and-spawn/)
+- **Lowering:** [Fiber scheduler and stacks](/docs/standard/capabilities/execution--runtime--fiber-scheduler-and-stacks/)
+- **API:** [Concurrency package](/docs/standard/capabilities/core-library--concurrency--concurrency-package/)
 
-## Example: `beskid dev build test`
+## Example: `beskid test`
 
-- **Law:** [Testing](/platform-spec/language-meta/contracts-and-effects/testing/)
-- **CLI:** [Build / analyze / run contract](/platform-spec/tooling/cli/build-analyze-run-contract/)
+- **Law:** [Testing](/docs/standard/capabilities/language-meta--contracts-and-effects--testing/)
+- **CLI:** [Build / analyze / run contract](/docs/standard/capabilities/tooling--cli--build-analyze-run-contract/)
 
 ## Next
 

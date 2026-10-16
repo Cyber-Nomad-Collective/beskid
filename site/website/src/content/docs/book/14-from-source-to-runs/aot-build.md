@@ -8,14 +8,14 @@ tableOfContents: true
 
 ## Crate
 
-`beskid_aot::build` consumes `CodegenArtifact` like JIT, then drives platform link steps per [Backends JIT/AOT](/docs/standard/compiler/build-pipeline/backends-jit-aot/).
+`beskid_aot::build` consumes `CodegenArtifact` like JIT, then drives platform link steps per [Backends JIT/AOT](/docs/standard/capabilities/compiler--build-pipeline--backends-jit-aot/).
 
 ## Mod artifacts
 
 Mods are **not** interpreted Beskid scripts in the compiler process. The host loads **AOT-compiled** mod assemblies per target triple and cache key:
 
-- [AOT artifact contract](/docs/standard/compiler/compiler-mods/mod-host-bridge/aot-artifact-contract/)
-- [Mod AOT-only registration ADR](/docs/standard/compiler/compiler-mods/mod-host-bridge/adr/0003-mod-aot-only-registration/)
+- [AOT artifact contract](/docs/standard/capabilities/compiler--compiler-mods--mod-host-bridge/)
+- [Mod AOT-only registration ADR](/docs/standard/capabilities/compiler--compiler-mods--mod-host-bridge/)
 
 ```mermaid
 flowchart TB

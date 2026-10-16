@@ -35,7 +35,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 > | `interop_dispatch_ptr` | Pointer payloads |
 > | `interop_dispatch_usize` | Scalar bridge |
 > | Layout stability | Offsets are versioned with [ABI versioning](../abi-versioning-and-compatibility/) |
-> | Implementation | `beskid_runtime::interop` exports registered in `BUILTIN_SPECS` |
+> | Implementation | `beskid_runtime::interop` exports declared in `compiler/runtime_manifest.bsol` and the generated ABI-v5 tables |
 > 
 > Lowering **must** route approved tagged calls through these builtins rather than ad-hoc host calls.
 
@@ -91,7 +91,7 @@ The records below preserve migration history and are not normative except where 
 
 <SpecSection title="Implementation anchors" id="implementation-anchors">
 - Extern parsing and diagnostics in `compiler/crates/beskid_analysis/src/beskid.pest` and `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs`
-- ABI builtins definitions in `compiler/crates/beskid_abi/src/builtins.rs`
+- ABI builtin definitions in `compiler/runtime_manifest.bsol` (generated into `beskid_abi::generated::abi_v5_contract`)
 - Runtime builtin dispatch in `compiler/crates/beskid_runtime/src/builtins/mod.rs`
 - Panic/syscall bridging in `compiler/crates/beskid_runtime/src/builtins/panic_io.rs`
 </SpecSection>
@@ -171,7 +171,7 @@ Tagged interop values need runtime-known layout offsets. Per-site custom trampol
 | `interop_dispatch_ptr` | Pointer payloads |
 | `interop_dispatch_usize` | Scalar bridge |
 | Layout stability | Offsets are versioned with [ABI versioning](../abi-versioning-and-compatibility/) |
-| Implementation | `beskid_runtime::interop` exports registered in `BUILTIN_SPECS` |
+| Implementation | `beskid_runtime::interop` exports declared in `compiler/runtime_manifest.bsol` and the generated ABI-v5 tables |
 
 Lowering **must** route approved tagged calls through these builtins rather than ad-hoc host calls.
 
@@ -419,7 +419,7 @@ Dynamic resolution tests target Linux x86_64. macOS agents should skip or use li
 
 ### What is the difference between `interop_dispatch_*` and user `Extern`?
 
-User `Extern` calls native library functions directly (C ABI). `interop_dispatch_*` interprets Beskid-owned tagged values at the language/runtime boundary; both are declared via `BUILTIN_SPECS` but serve different layers.
+User `Extern` calls native library functions directly (C ABI). `interop_dispatch_*` interprets Beskid-owned tagged values at the language/runtime boundary. The generated ABI-v5 tables declare `interop_dispatch_*`. User `Extern` symbols are not in these tables. The two serve different layers.
 
 ### Can externs call Beskid builtins?
 
@@ -516,7 +516,7 @@ When the feature is **disabled**, artifacts containing externs **must** fail com
 | --- | --- |
 | `compiler/crates/beskid_analysis/src/beskid.pest` | `Extern` syntax |
 | `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs` | Extern-related diagnostics |
-| `compiler/crates/beskid_abi/src/builtins.rs` | `interop_dispatch_*` in `BUILTIN_SPECS` |
+| `compiler/runtime_manifest.bsol` | `interop_dispatch_*` entries in the generated ABI-v5 tables |
 | `compiler/crates/beskid_codegen` | `declare_validated_extern_imports`, signature validation |
 | `compiler/crates/beskid_engine` | `extern_dlopen` tests, `new_with_symbols` |
 | `compiler/crates/beskid_runtime/src/interop/` | Dispatch implementations |

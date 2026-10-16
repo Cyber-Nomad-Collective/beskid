@@ -8,7 +8,7 @@ Beskid does not resurrect C# exceptions for breakfast. Recoverable failures are 
 
 ## `Result` and friends
 
-Normative rules: [Error handling](/platform-spec/language-meta/contracts-and-effects/error-handling/).
+Normative rules: [Error handling](/docs/standard/capabilities/language-meta--contracts-and-effects--error-handling/).
 
 - Model errors as **`enum`** variants (`Ok` / `Err` or domain-specific shapes).
 - **`Option<T>`** is the optional type; there is no `optional` keyword.
@@ -29,7 +29,7 @@ flowchart LR
 
 ## FFI and envelopes
 
-At foreign boundaries, errors become **ABI envelopes**: no silent throw across the wall. See [Interop contracts](/platform-spec/language-meta/interop/interop-contracts/) and [Error and unwind semantics](/platform-spec/language-meta/interop/interop-contracts/error-and-unwind-semantics/).
+At foreign boundaries, errors become **ABI envelopes**: no silent throw across the wall. See [Interop contracts](/docs/standard/capabilities/language-meta--interop--interop-contracts/) and [Error and unwind semantics](/docs/standard/capabilities/language-meta--interop--interop-contracts/).
 
 ## What you should do in application code
 
@@ -41,7 +41,7 @@ At foreign boundaries, errors become **ABI envelopes**: no silent throw across t
 
 ## Diagnostics
 
-Type and flow mistakes surface as compiler diagnostics in the **E16xx** band (contract-related) and analysis rules tied to [semantic pipeline](/platform-spec/compiler/semantic-pipeline/).
+Type and flow mistakes surface as compiler diagnostics in the **E16xx** band (contract-related) and analysis rules tied to [semantic pipeline](/docs/standard/capabilities/taxonomy--compiler--semantic-pipeline/).
 
 ## Next
 

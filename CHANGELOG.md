@@ -7,6 +7,223 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/standard/).
 
+## [0.6.0] - Unreleased (in qualification)
+
+Not released. The candidate is in qualification on Linux x64, macOS arm64 and
+Windows x64 against `scripts/ci/release-cases-v06.json` (86 mandatory cases and
+15 provisional stdio bridge cases that fail closed). This section is the release
+summary; the itemized development log stays under [Unreleased] below and in
+`compiler/CHANGELOG.md`. Draft release notes:
+`docs/release/v0.6.0-release-notes.md`.
+
+### Language
+
+- Function values. A function type is a reference type whose value is a
+  GC-managed closure record. Calls go through function-typed parameters,
+  locals, fields (`holder.op(1)`) and call results (`Make()(1)`). A named
+  function can be used as a value; a generic one is instantiated from its type
+  arguments or the expected function type. An immutable expression-bodied
+  lambda used only as a callee is a stack closure; every other lambda is a heap
+  closure. Captures are by-value snapshots (OpenSpec `v06-function-values`).
+- Lambda parameters and bodies are typed from the position that declares the
+  function type, through one contextual typing query.
+- `for id in expr` iterates an array value, evaluated once, in index order, in
+  addition to `range(start, end)` (OpenSpec `v06-query-front-end`). It also
+  iterates any value whose nominal type declares a unique zero-parameter
+  `Next()` returning `Option<T>`, including generic iterators and loops in
+  generic items; outside generic items, any other iterable fails with E1215.
+- Every `match` form `check` admits lowers: `when` guards (guarded arms never
+  count toward exhaustiveness), literal patterns over integer, `bool`, `char`,
+  float and string scrutinees, nested generic enum payloads and matches on
+  generic record fields in specializations. E1304 names one uncovered pattern.
+  Bare-name guards (`when strict =>`) parse as guards, not lambdas.
+- Method calls resolve for every receiver spelling (`(reader).Begin()`,
+  `(this).reader.Begin()`), including contract-typed parameters and
+  `where`-bounded generic parameters and fields.
+- No struct literal at the top level of `if`, `while`, `for` and `match`
+  heads; `if a == b {}` parses.
+- New primitive types `i8`, `i16`, `u16`, `u64` and `f32`. Checked `char`/`u32`
+  conversions reject surrogates and values outside the Unicode scalar range.
+- Struct fields without `pub` are private to the source unit that declares the
+  type. Reads, projection chains and struct literals elsewhere fail with E1211
+  (OpenSpec `v06-field-visibility`).
+- A fully qualified path to a public module of any package in the dependency
+  closure resolves without `use`. Lexical names shadow it. A logical module
+  path that two packages provide fails with E1104; a private item reached by a
+  qualified path fails with E1107 (OpenSpec `v06-qualified-dependency-paths`).
+- Logical module paths are package-native: host modules have no prefix and
+  Corelib packages keep their own roots (`Core.*`, `Testing.*`,
+  `Concurrency.*`). The implicit Corelib dependency label is `Core`
+  (OpenSpec `v06-core-namespace`).
+- New diagnostics: E1233 for a lambda that captures a `mut` local or a native
+  pointer outside `spawn`; E1209 for an interpolation or concatenation operand
+  without a text form; E1212 for an omitted struct field.
+
+### Compiler
+
+- The `beskid_queries` query gate is the only semantic authority for `check`,
+  `build`, `run`, `test` and the language server. The executable front end is
+  built from the same gate; codegen lowers it through `TypedProgram`,
+  `CodegenInput` and ISLE. Programs the gate accepts no longer fail a second
+  type check at build time (OpenSpec `v06-query-front-end`).
+- A standalone `.bd` file outside a project is judged by the query gate over a
+  synthetic single-file `App` plan.
+- The entry function `Main` of an `App` or `Test` target is never reported as an
+  unused private item (W1504).
+- Build speed: parallel item emission, streamed query snapshots,
+  content-stable query reuse, linear span line/column computation, cached
+  canonical paths and per-kind and per-name syntax indexes. On the builder (dev
+  profile, wall): Serialization Mod generation tests 180 s to about 14 s,
+  `beskid check` of `compiler-sdk` 77 s to 12-15 s, Serialization Mod rebuild
+  150 s to 12-14 s, runtime kit build 52 s to about 6 s
+  (`docs/reports/2026-10-13-v06-compile-time.md`).
+
+### Corelib
+
+- Serialization library (`Core.Serialization`): format-independent data values,
+  256-bit shape identities, metadata, limits and checked decimal parsing.
+- Native BSOL package (`Core.Bsol`), written in Beskid: lexer, parser, writer,
+  schema validation, profile composition, offline import resolution, migration
+  and typed reads and writes.
+- `Core.Process` child processes: `Spawn`, `SpawnUntil`, `Run`, piped standard
+  streams, `Wait` with a deadline and `Terminate`.
+- `Core.Dynamic`, `Core.Json`, `Core.Numeric.FloatBits`,
+  `Core.String.Search`/`Transform`/`Builder`, `Core.Text.Number`,
+  `Core.Collections.Sort` and hashed collections, `Core.Path.Lexical`,
+  `Core.Time.Calendar` and `Testing.Expect`.
+- Typed serialization for `[Serialize]` types, generic ones included: the
+  compiler issues each field decoder and encoder; `Decoding.DecoderFor<T, R>`,
+  `Core.Bsol.Serialization.Read<T>` and `WriteTyped<T>`. An application without
+  field codec facts fails the build naming the field.
+- Registered Dynamic mapping (DYN-06-03/04): `Dynamic.Mapping<S, D>()` approves
+  only lossless plans; `Dynamic.Map` builds a fresh destination and rejects the
+  whole mapping on any failing field.
+- String and hash lookups in nanoseconds: literal comparisons inline,
+  single-allocation string construction, linear `String.Join`, `Repeat` and
+  `Replace`, direct hash table indexing, and no GC root registration in
+  functions that cannot collect. Builder, debug kit, 1e5 iterations: `==`
+  against a literal 5-6.6 us to 1-2 ns, `CompareOrdinal` 513 to 50 ns,
+  `StringMap` lookup 1527 to 95 ns, `I64Map` 1022 to 55 ns, interpolation 19.7
+  to 2.6 us, concatenation 14.8 to 1.2 us. Fixes a use-after-free of the left
+  operand of binary string operations. `String.Trim` trims LF and CR.
+- Saturating float-to-integer conversions, ordinal string ordering, `f32` and
+  `f64` interpolation, `i64` minimum value text and `bool` text.
+- The Corelib test workspace is consolidated into 40 suite targets.
+
+### Runtime
+
+- Every scheduler and synchronization table (fibers, run queue, pending
+  operations, channels, mutexes, wait groups, hubs, poll tasks, monitors and
+  links, external waits, composition slots) grows on demand from the system
+  allocator. Records never move, so handles stay valid. The only remaining
+  limit is the system allocator (OpenSpec `v06-runtime-limits`).
+- The managed heap has no fixed cap. `BESKID_HEAP_MAX` (bytes, optional `k`,
+  `m` or `g` suffix) installs one; `BESKID_FIBER_STACK_MAX` sets the per-fiber
+  stack reservation (default 8 MiB, a whole multiple of 64 KiB). The runtime
+  reads both at process init on every activation path.
+- Windows IOCP: a network completion that races its deadline keeps its data.
+  Cancellation waits for the kernel's completion packet instead of discarding it
+  (`docs/design/2026-10-12-iocp-deadline-race.md`). The wait is bounded (250 ms);
+  past it the operation is handed to the reactor until its packet arrives, a late
+  stream transfer fails the socket with `ConnectionAborted`, and shutdown drains for
+  at most 2 s (`openspec/changes/v06-iocp-bounded-cancel`).
+
+### Mods
+
+- Native Mods are compiled ahead of time and run in the native Mod host. The
+  artifact descriptor (`mod.descriptor.json`, schema 3) records each build tool
+  by digest and version output instead of copying it.
+- Generators contribute typed syntax through a generation-owned structural
+  arena (contracts, types, functions, impl blocks), never source strings.
+- The toolchain Corelib bundle ships prebuilt Mod executables. Other Mods are
+  built by `beskid dev mod rebuild` or by any `build`, `run` or `check` of the
+  consuming project. Mod artifacts no longer depend on their location.
+- The Serialization Mod is loaded transitively from the Serialization library
+  with its Compiler SDK and Foundation dependency closure.
+
+### Interop (Rust Glue)
+
+- Rust Glue is delivered as an in-process checked C ABI path: a Beskid consumer
+  image and one Rust owner image per manifest `glue "<library>"` block
+  (`backend = rust`, `path` to the project-relative Rust owner sources). The
+  label equals the `Library` string of the `Extern` contracts and
+  `GlueHandle` types it implements (OpenSpec `v06-rust-glue-integration`).
+- `[GlueHandle(Library: .., Nullable: ..)]` brands an opaque handle type.
+  `[RustOwner(Path: .., Fallible: ..)]` maps an `Extern` contract method, or a
+  handle type, to a Rust path under the generated `implementation` module.
+- Admitted boundary types: fixed-width integers, `f32`/`f64`, `bool`, Unicode
+  scalars, UTF-8 and byte views, arrays, unit and branded opaque handles.
+  Fallible imports surface the foreign failure.
+- Each image carries an immutable admission record. The consumer record pins
+  every Rust owner image by digest; a record from another compiler version is
+  not admitted.
+- `beskid build --backend glue-rust` builds a `Lib` target with explicit tools:
+  `--linker`, and `--rust-toolchain` or `--cargo` with `--rustc`. The
+  `glue-dotnet` backend is unavailable.
+
+### CLI and tooling
+
+- New root command surface: `new`, `check`, `build`, `run`, `test`, `fmt`,
+  `doc`, `add`, `remove`, `update`, `package`, `toolchain`, `doctor` and `dev`.
+  Compiler inspection and maintenance move under `beskid dev` (`syntax`,
+  `build`, `project`, `corelib`, `runtime-kit`, `mod`, `import`, `lsp`, `bsol`,
+  `repl`, `capabilities`). A removed command fails with its replacement.
+- `beskid add <package>[@<version>]` (or `--path`), `beskid remove` and
+  `beskid update <package> [--version]`/`--all [--dry-run]` edit dependency
+  intent and the lock as one transaction and preserve unrelated manifest text.
+- `beskid new` uses the bundled offline application template; `--list` and
+  `--template` select others. `beskid package template` manages templates.
+- `beskid doctor` reports installation problems without changing anything.
+  `beskid toolchain status|update` replaces `beskid up`.
+- Registry dependencies resolve and lock transitively; `remove` drops
+  unreachable transitive packages, differing requests for one package fail
+  naming both requesters, and change records list changed transitive pins.
+- `beskid fmt` keeps attributes on functions, methods, fields and contract
+  methods.
+- LSP: the initialization option `modHost` (`path`, `runtimePrefix`,
+  `runtimeProfile`) selects the native Mod host and runtime kit. An invalid
+  value fails `initialize`. Project preparation failures are published as a
+  `project-preparation` diagnostic.
+- VS Code extension 0.6.0: checks `beskid dev capabilities --json`, starts the language server with `beskid dev lsp`, installs it with `beskid dev lsp install`, and uses `check` instead of `analyze`.
+- The Windows MSI and setup EXE install `LICENSE.txt` and `NOTICE.txt` as part
+  of the owned toolchain prefix, so `beskid toolchain status` accepts a fresh
+  Windows install instead of reporting a changed payload inventory.
+
+### Breaking changes
+
+- Old root commands (`analyze`, `format`, `pckg`, `up`, `parse`, `tree`,
+  `clif`, `fetch`, `lock`, `graph`, `mod`, `import`, `lsp`, `runtime-kit`,
+  `corelib`, `repl`, `validate-bsol`, `migrate-bsol`) are rejected with their
+  replacement.
+- `Std.`-qualified paths no longer resolve; a Corelib dependency labeled `Std`
+  must be labeled `Core`.
+- Non-`pub` fields are inaccessible outside their declaring source unit (E1211).
+- A module path provided by two packages of the closure fails (E1104).
+- A lambda that captures a `mut` local outside `spawn` fails (E1233).
+- A struct literal at the top level of an `if`, `while`, `for` or `match` head
+  must be parenthesized.
+- `BESKID_HEAP_MAX_BYTES` is replaced by `BESKID_HEAP_MAX`.
+- The HIR-era phase ids `lower.ast`, `lower.resolve_pass1`, `lower.normalize`,
+  `lower.resolve`, `lower.type_check` and `semantic.error_handling` are no
+  longer emitted.
+- Glue is selected by `glue` manifest blocks, `[GlueHandle]` and `[RustOwner]`;
+  the 0.4 Glue attributes and Mod contracts are gone.
+
+### Removed
+
+- `Core.Threading.Thread.Spawn`, `Thread.Join`, the `Thread` handle type,
+  `ThreadError` and the `LinuxPthread`/`DarwinPthread` contracts. Fibers are
+  the concurrency model; `Thread.Yield` remains (OpenSpec
+  `v06-remove-raw-thread-spawn`).
+- The 0.4 Glue scaffold: the seven Glue Mod contracts, the `[Glue]`,
+  `[GlueImport]` and `[GlueExport]` attributes, `GlueBackendKind` and the no-op
+  `mod.glue` phase. The stdio bridge (`Core.Glue`) remains as a provisional
+  package without a 0.6 obligation.
+- The legacy `beskid_analysis` `TypeChecker`, its dependency typing policy and
+  its lowering preparation.
+- The `Std` namespace and its App-only alias layer.
+- The fixed runtime table sizes and the fixed 1 GiB heap cap.
+
 ## [Unreleased]
 
 ### Changed
@@ -14,11 +231,74 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Publish stable releases from `ci.beskid-lang.org` through the manual
   `main`-only Woodpecker `release-publish` lane. A credential-free
   `verify-release` step proves the qualified state and owner waiver; only the
-  final `publish-release` step receives `compiler_release_token`.
+  final `publish-release` step receives `compiler_release_token`. Both steps
+  collect the per-platform handoffs of candidate C pinned by
+  `BESKID_LINUX_BUILD`, `BESKID_MACOS_BUILD` and `BESKID_WINDOWS_BUILD`, and
+  the lane binds to the checked-out `main` HEAD, which has C's build identity.
   `woodpecker-release.sh` publishes inside Woodpecker only for the exact
   manual, `main`, canonical-repository, task, and checked-out-commit identity.
   The release scripts give `GH_TOKEN` only to `gh`, and new contract tests fix
   secret scoping, pinned images, and the absence of shell tracing.
+- Release CI: each platform builds in its own Woodpecker pipeline (`BESKID_TASK=build-linux`, `build-macos`, `build-windows`; `build` still starts all three), so one platform failure does not fail the others and one platform can be rebuilt alone. The `release` pipeline collects the candidate: `scripts/ci/woodpecker-fetch-handoffs.sh` selects, for the release source commit, the newest complete handoff per platform (or the pipeline pinned with `BESKID_LINUX_BUILD`, `BESKID_MACOS_BUILD`, `BESKID_WINDOWS_BUILD`) and fails closed on a missing platform, identity drift or a checksum mismatch. `scripts/ci/woodpecker-handoff.mjs` is the one handoff validator, `woodpecker-release.sh` takes `<version> <linux-build> <macos-build> <windows-build>`, and `validated-evidence.json` records each platform's pipeline number and `UPLOAD_SHA256SUMS` digest in `handoffs`. The single build pipeline number variable is removed.
+- 0.6.0 release build: `scripts/ci/build-release-artifact.sh` no longer stamps the release version into the CLI, LSP and updater manifests. It checks that they already carry it, fails with a named-manifest message when they do not, and builds every package `--locked`. The compiler carries 0.6.0 in source. The Windows workflow installs the pinned, SHA-256-verified python.org 3.13.16 embeddable package as `python3`. The release case manifest `scripts/ci/release-cases-v06.json` is frozen and its digest is pinned in `woodpecker-release-evidence.mjs`. The versioned CLI and LSP assets are built with the same qualified driver receipt as the bundle, so the bundle CLI is byte-identical to them. Release cases receive explicit Glue Rust tools (`BESKID_V06_GLUE_CARGO`, `BESKID_V06_GLUE_RUSTC`, `BESKID_V06_GLUE_LINKER`) from the toolchain sysroot and the platform linker, and the pipeline log carries bounded tails of failing builds and cases.
+- Glue spec coherence: `v06-rust-glue-integration` now defines delivered Rust Glue as the in-process checked C ABI owned path and names its acceptance evidence by file (`glue_owned.rs`, `export.rs`). The stdio bridge moved to the provisional change `v06-glue-stdio-bridge-provisional`; deferred records, callbacks, glue-driven exports, enums and vocabulary unification are recorded in `v061-glue-extensions`. The seven Glue Mod contracts, the `[Glue]`/`[GlueImport]`/`[GlueExport]` attributes and the raw pthread `Thread.Spawn`/`Join` API are deleted (`v06-remove-raw-thread-spawn`).
+- Runtime limits: every scheduler and synchronization table (fibers, run queue, pending operations, channels, mutexes, wait groups, hubs and registrations, poll tasks/monitors/links, external waits, composition slots) grows on demand from the system allocator with stable record addresses; the fixed 16/32/64/256 sizes are gone. The managed heap has no fixed 1 GiB cap; `BESKID_HEAP_MAX` (read by the runtime at process init, replacing the host-only `BESKID_HEAP_MAX_BYTES`) installs one and `BESKID_FIBER_STACK_MAX` sets the per-fiber stack reservation (OpenSpec change `v06-runtime-limits`).
+- Load the canonical Serialization Mod transitively from the Serialization library, with its Compiler SDK and Foundation dependency closure.
+
+- Disambiguate Serialization Mod selector imports from SDK Collect contracts and restore imports needed by matrix cancellation unit controls.
+
+- Rename reserved identifiers in the real Serialization Mod and require every Mod source file to parse without recovery before native callback execution.
+
+- Use the canonical Host project kind in the native Collector/Generator consumer fixture.
+
+- Match native CLI project fixtures to the canonical `Src` directory on case-sensitive hosts while preserving nested executable deadline checks.
+
+- Isolate document-service projects from checkout lockfiles and materialized state so LSP controls resolve the current bundled Corelib closure.
+
+- Traverse generation-bound indexed declarations in dynamic lookalike controls so both nominal types are checked for denied managed-erasure authority.
+
+- Require BSOL and serialization packages in the template authoring lock closure and retain portable locked/frozen replay checks after relocation.
+
+- Preserve every indented documentation line during atomic DocRun normalization, including CRLF source bounds and Markdown indentation.
+
+- Require semantic failure exit status and the actual missing-name diagnostic in the `check` e2e contract.
+
+- Exclude private `.beskid` transaction state from e2e fixture copies so dependency journeys start with fresh guarded state.
+
+- Align Fiber facade contract controls with explicit move-only handle receivers while retaining the exact service and cancellation ABI checks.
+
+- Update the managed allocator source-contract control to require both ordinary and checked traced-heap routes through the shared policy function.
+
+- Validate explicitly declared Node and native Beskid assertion provenance in 0.6 release evidence, including exact native identifier and test-body boundaries.
+
+- Resolve distribution installation-control fixtures relative to their test files so they run from either the superrepo or distribution checkout.
+
+- Isolate release packaging orchestration tests from dirty development checkouts while preserving source gitlink and distribution cleanliness guards; keep native installer qualification separate.
+
+- Project preparation now issues immutable package provenance for stable serialization identities; canonical Mod shapes distinguish records and enums with exact ordered payload declarations and generic substitutions. Qualification of package provenance tests remains pending.
+
+- Preserve managed aggregate field classification separately from native pointer ABI storage when emitting GC descriptor pointer maps.
+
+- Fix parser recovery token matching at UTF-8 boundaries and preserve token
+  lengths at nonzero offsets. Focused recovery regressions and the existing
+  recovery suite pass; native BSOL qualification remains in progress.
+
+- Define the 0.6 release scope and source reconciliation, with separate CLI,
+  serialization/BSOL and Rust Glue plans and normative release qualification
+  requirements. Record standing authorization for researched blocker remedies;
+  implementation and publication remain pending.
+- Reject historical Glue exemptions when validating 0.6 or later release
+  evidence; preserve validation of historical release packets.
+- Add source-preserving dependency intent edits and deterministic stable registry
+  version selection. Resolve proposed intent through the existing project graph
+  without writing the manifest. Paired dependency changes pass five integration
+  regressions, including absent-removal no-ops and foreign lock rejection;
+  native installed-consumer qualification remains pending.
+- Bundle the app template and validate staged updater payloads, immutable source
+  identity, runtime kits and Corelib fingerprints before activation. Native
+  installed-consumer qualification remains pending.
+- Preserve generated builtin file timestamps when their content is unchanged,
+  preventing the analysis build script from invalidating its own Cargo input.
 - Announce beskid 0.5.3 on the blog: the Corelib networking packages, typed
   CLIF blocks, optional externs, cheaper arrays and the upgrade notes.
 - Check out `beskid_vscode` in the Linux Woodpecker build so the compiler gate can

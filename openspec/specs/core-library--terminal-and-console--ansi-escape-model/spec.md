@@ -120,7 +120,7 @@ Normative **terminal escape framing** for `corelib_console`: how `Ansi.Escape`, 
 <SpecSection title="Implementation anchors" id="implementation-anchors">
 - `compiler/corelib/packages/console/src/Ansi/`
 - Informative aggregate reference: repository root `ANSI.md`
-- Golden tests: `compiler/corelib/beskid_corelib/tests/corelib_tests/src/console/AnsiEscapeTests.bd`, `AnsiSgrGoldenTests.bd`
+- Golden tests: `compiler/corelib/beskid_corelib/tests/corelib_tests/src/console/ConsoleSuite.bd#AnsiEscapeTests`, `ConsoleSuite.bd#AnsiSgrGoldenTests`
 </SpecSection>
 
 ## Decisions
@@ -167,7 +167,7 @@ Typed `Ansi.Cursor` helpers emit DEC only; raw `Csi` may still be used in tests.
 
 ## Verification anchors
 
-`AnsiEscapeTests.bd`; `ANSI.md` tables.
+`ConsoleSuite.bd#AnsiEscapeTests`; `ANSI.md` tables.
 ``````
 
 </details>
@@ -200,7 +200,7 @@ When `ShouldEmitAnsi()` is false, gated builders return empty strings.
 
 ## Verification anchors
 
-`AnsiEscapeTests.bd`; console capability integration.
+`ConsoleSuite.bd#AnsiEscapeTests`; console capability integration.
 ``````
 
 </details>
@@ -233,7 +233,7 @@ SGR builders consult capability probes before emitting RGB CSI.
 
 ## Verification anchors
 
-`AnsiSgrGoldenTests.bd`; `CapabilitiesTests.bd`.
+`ConsoleSuite.bd#AnsiSgrGoldenTests`; `ConsoleSuite.bd#CapabilitiesTests`.
 ``````
 
 </details>
@@ -266,7 +266,7 @@ OSC helpers emit BEL-terminated sequences only until a future ADR extends ST.
 
 ## Verification anchors
 
-`AnsiEscapeTests.bd`; `Ansi.Osc` sources.
+`ConsoleSuite.bd#AnsiEscapeTests`; `Ansi.Osc` sources.
 ``````
 
 </details>
@@ -330,7 +330,7 @@ Sequences present in `ANSI.md` but **without** a corelib builder or golden test 
 
 ## Verification
 
-Each **ANSI-*** row maps to `AnsiEscapeTests.bd` / `AnsiSgrGoldenTests.bd` or capability tests — [verification and traceability](./verification-and-traceability/).
+Each **ANSI-*** row maps to `ConsoleSuite.bd#AnsiEscapeTests` / `ConsoleSuite.bd#AnsiSgrGoldenTests` or capability tests — [verification and traceability](./verification-and-traceability/).
 
 ## Related topics
 
@@ -502,7 +502,7 @@ Common **private** CSI modes (final `h` / `l`):
 
 ## Verification
 
-Golden tests: `AnsiEscapeTests.bd`, `AnsiSgrGoldenTests.bd` — see [verification and traceability](./verification-and-traceability/).
+Golden tests: `ConsoleSuite.bd#AnsiEscapeTests`, `ConsoleSuite.bd#AnsiSgrGoldenTests` — see [verification and traceability](./verification-and-traceability/).
 
 ## Related topics
 
@@ -667,7 +667,7 @@ When `SgrBuilder.FgRgb` / `BgRgb` runs:
 
 ## Verification
 
-`CapabilitiesTests.bd` asserts empty gated output when ANSI disabled; golden tests use ungated `CsiSequence` for framing only.
+`ConsoleSuite.bd#CapabilitiesTests` asserts empty gated output when ANSI disabled; golden tests use ungated `CsiSequence` for framing only.
 
 ## Related topics
 
@@ -716,11 +716,11 @@ Document **verification and traceability** for the **Ansi Escape Model** feature
 
 | Test file | Asserts |
 | --- | --- |
-| `AnsiEscapeTests.bd` | CSI bold red, reset, `?1049h`, DEC save, cursor home, erase display |
-| `AnsiSgrGoldenTests.bd` | SGR chains and reset suffix |
-| `AnsiStyleChainTests.bd` | Markup attribute chain → escapes |
-| `AnsiBuildersTests.bd` | Screen scroll region framing |
-| `CapabilitiesTests.bd` | Gated vs empty output when ANSI disabled |
+| `ConsoleSuite.bd#AnsiEscapeTests` | CSI bold red, reset, `?1049h`, DEC save, cursor home, erase display |
+| `ConsoleSuite.bd#AnsiSgrGoldenTests` | SGR chains and reset suffix |
+| `ConsoleSuite.bd#AnsiStyleChainTests` | Markup attribute chain → escapes |
+| `ConsoleSuite.bd#AnsiBuildersTests` | Screen scroll region framing |
+| `ConsoleSuite.bd#CapabilitiesTests` | Gated vs empty output when ANSI disabled |
 
 Tests live under `compiler/corelib/beskid_corelib/tests/corelib_tests/src/console/` and run as part of the `corelib_tests` project.
 

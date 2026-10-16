@@ -70,7 +70,7 @@ This feature hub defines Rust-side mod-host execution: `Mod` project registratio
 Implements language-meta compiler-mod contracts (`Collector`, `Generator`, `Analyzer`, `Rewriter`, `AttributeGenerator`) for manifest-driven `Mod` orchestration.
 
 ## Implementation anchors
-- `compiler/crates/beskid_analysis/src/mod_host/` — mod discovery, registration validation, contract dispatch through `ContractInvoker`, typed merge / reparse, analyze / rewrite orchestration.
+- `compiler/crates/beskid_analysis/src/mod_host/` — mod discovery, registration validation, contract dispatch through `ContractInvoker`, typed merge, analyze / rewrite orchestration.
 - `compiler/crates/beskid_analysis/src/mod_host/invoker.rs` — **`ContractInvoker`** trait with **`StubContractInvoker`** / **`ScriptedContractInvoker`** for host bring-up and tests.
 - `compiler/crates/beskid_analysis/src/mod_host/validate.rs` — pre-`mod.collect` cross-artifact validation that short-circuits scheduling on **E1828**, **E1829**, **E1851**, **E1852**, **E1853**, **E1854**, **E1855**.
 - `compiler/crates/beskid_codegen/src/services.rs` — lowering boundaries after typed mod contributions.
@@ -539,20 +539,20 @@ flowchart TB
   collect[mod.collect target sets]
   gen[mod.generate typed AST]
   merge[Merge contributions]
-  reparse{Syntax changed?}
+  changed{Syntax changed?}
   sem[semantic.snapshot]
   analyze[mod.analyze diagnostics]
   rewrite[mod.rewrite optional]
-  load --> collect --> gen --> merge --> reparse
-  reparse -->|yes bounded rounds| collect
-  reparse -->|no| sem --> analyze --> rewrite
+  load --> collect --> gen --> merge --> changed
+  changed -->|yes bounded rounds| collect
+  changed -->|no| sem --> analyze --> rewrite
 ```
 
 ## Primary flow
 
 1. After **`parse`** (and **`macro.expand`**), **`mod.load`** registers contracts from resolved **`Mod`** projects in the dependency graph.
 2. **`mod.collect`** records generator/analyzer/rewriter target sets per mod.
-3. **`mod.generate`** emits typed AST contributions; the host merges and **re-parses** affected units when syntax changed (bounded by **`maxGeneratorRounds`**).
+3. **`mod.generate`** emits typed AST contributions; the host merges them as typed nodes, with no text parse, and replays when syntax changed (bounded by **`maxGeneratorRounds`**).
 4. Builtin **semantic rules** run on the merged program; emit **`semantic.snapshot`** before analyzers read frozen state.
 5. **`mod.analyze`** publishes diagnostics; **`mod.rewrite`** applies typed replacements when enabled.
 6. Emit **`lower.ready`** only when the merged tree is consistent for HIR lowering.
@@ -584,7 +584,7 @@ This article documents **verification and traceability** for **mod host bridge**
 | Anchor | Role |
 | --- | --- |
 | `compiler/crates/beskid_aot/src/mod_artifact.rs` | Mod AOT artifact build, cache key tuple, descriptor emission. |
-| `compiler/crates/beskid_analysis/src/mod_host/` | Reference mod host orchestration: discovery, capabilities, validation, contract dispatch, typed merge / reparse, analyze / rewrite. |
+| `compiler/crates/beskid_analysis/src/mod_host/` | Reference mod host orchestration: discovery, capabilities, validation, contract dispatch, typed merge, analyze / rewrite. |
 | `compiler/crates/beskid_analysis/src/mod_host/diagnostics.rs` | Structured **`ModHostIssue`** / **`ModHostDiagnostics`** with **E1828**, **E1829**, **E1830**, **E1831**, **E1851**, **E1852**, **E1853**, **E1854**, **E1855**. |
 | `compiler/crates/beskid_analysis/src/mod_host/validate.rs` | Pre-`mod.collect` cross-artifact validation pass. |
 | `compiler/crates/beskid_analysis/src/mod_host/invoker.rs` | **`ContractInvoker`** trait + **`StubContractInvoker`** / **`ScriptedContractInvoker`** test surfaces. |

@@ -19,6 +19,7 @@ Progress output is animated by default. Use `--plain` for line-based output.
 | `--workspace-member` | Workspace member when resolving via `Workspace.bws` |
 | `--frozen` | Require lockfile match; forbid updates |
 | `--locked` | Require an existing lockfile |
+| `--offline` | Forbid network requests; use verified cached dependency artifacts only |
 | `--entrypoint` | Entry function when applicable |
 
 ## Output and linking
@@ -30,7 +31,7 @@ Progress output is animated by default. Use `--plain` for line-based output.
 | `--target-triple` | LLVM-style triple (e.g. `x86_64-unknown-linux-gnu`) |
 | `--output` | Final artifact path (default derived next to input / target stem) |
 | `--object-output` | Optional explicit object file path |
-| `--backend` | Codegen backend (default `clif`); declared non-CLIF backends fail closed in this release |
+| `--backend` | Codegen backend: `clif` (default) or `glue-rust`. Any other value fails before resolution |
 
 ## Runtime and exports
 
@@ -38,6 +39,17 @@ Progress output is animated by default. Use `--plain` for line-based output.
 | --- | --- |
 | `--export` | Repeatable: explicit symbols to export in shared/static artifacts |
 | `--prefer-static` / `--prefer-dynamic` | Link mode preference (mutually exclusive with each other) |
+
+## Rust glue backend
+
+`--backend glue-rust` builds a library target as a shared Glue consumer plus one Rust owner image for each referenced manifest `glue` block. The other backend flags apply only to this backend and fail with `--backend clif`.
+
+| Argument | Description |
+| --- | --- |
+| `--rust-toolchain <PREFIX>` | Rust toolchain prefix. Selects `<PREFIX>/bin/cargo` and `<PREFIX>/bin/rustc`. Conflicts with `--cargo` and `--rustc` |
+| `--cargo <PATH>` | Cargo executable. Requires `--rustc` |
+| `--rustc <PATH>` | rustc executable. Requires `--cargo` |
+| `--linker <PATH>` | Linker for the Rust owner images. Required for this backend |
 
 ## Diagnostics
 

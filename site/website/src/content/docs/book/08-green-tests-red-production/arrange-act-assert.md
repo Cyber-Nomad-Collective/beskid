@@ -20,7 +20,7 @@ flowchart LR
 
 1. **Arrange**: build data, configure paths, materialize projects if the test is integration-weight.
 2. **Act**: one logical operation (parse, resolve, lower, run entrypoint).
-3. **Assert**: use corelib testing helpers (see corelib `Testing` docs) or explicit comparisons; failed assertions become test failures, not undefined behavior ([Testing spec](/platform-spec/language-meta/contracts-and-effects/testing/)).
+3. **Assert**: use corelib testing helpers (see corelib `Testing` docs) or explicit comparisons; failed assertions become test failures, not undefined behavior ([Testing spec](/docs/standard/capabilities/language-meta--contracts-and-effects--testing/)).
 
 ## Keep tests boring on purpose
 

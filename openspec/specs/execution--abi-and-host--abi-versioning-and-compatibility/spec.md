@@ -4,9 +4,7 @@
 ## Purpose
 
 Versioned ABI guarantees, symbol stability rules, and migration expectations between compiler and runtime.
-
 ## Requirements
-
 ### Requirement: Hard ABI version check before user code: Decision [D-EXEC-ABI-0001]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
 
@@ -71,27 +69,63 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
 ### Requirement: Manifest-derived ABI-v5 managed object allocation
-The canonical ABI-v5 runtime manifest SHALL declare `beskid_rt_v5_managed_object_allocate` with signature `(ptr) -> ptr`. Its request SHALL point to a `BeskidAllocationRequest` whose non-null `BeskidTypeDescriptor`, size, and alignment agree exactly; the canonical runtime MUST reject null, structurally invalid, mismatched, or unrepresentable requests before allocation. A successful call SHALL return the object-header base of one zeroed allocation, install the validated descriptor in `BeskidObjectHeader.descriptor`, initialize `BeskidObjectHeader.gc_word` to zero, and expose the object to the established descriptor and root-frame traversal model. The raw `system_allocate` intrinsic MUST remain private to canonical runtime Bootstrap source and MUST NOT become a generated-code allocation fallback.
+The canonical ABI-v5 runtime manifest SHALL declare
+`beskid_rt_v5_managed_object_allocate(pointer request) -> pointer`. Its request
+MUST reference a non-null `BeskidTypeDescriptor` whose size, alignment, flags,
+and pointer map are structurally valid and agree exactly with the request. The
+canonical runtime MUST reject null, malformed, mismatched, unowned, or
+unrepresentable requests before allocation. A successful call SHALL return one
+zeroed object-header base, install the validated descriptor, initialize the GC
+word, and expose the object only to the manifest-derived precise tracing model.
+Raw system allocation MUST remain private to canonical runtime source and MUST
+NOT become a generated-code or host fallback.
+
+Generated aggregate construction MUST establish manifest-approved roots for
+the new owner and every pointer-bearing initializer value before an
+allocation-capable operation can make them otherwise unreachable. The owner
+root MUST remain live until every field store is complete. Each pointer field
+store MUST be followed by the canonical write barrier before an allocation or
+safepoint may observe the edge; scalar stores MUST NOT call the pointer
+barrier. The construction root MUST be released exactly once on every normal
+or recoverable-failure path; a non-returning trap MUST have no continuation
+that can reuse or release the root. Ordinary managed pointer-field assignment
+MUST preserve the owner and value through the same store/barrier interval.
 
 #### Scenario: Valid managed object request
-- **GIVEN** a canonical descriptor and allocation request with matching size and power-of-two alignment
-- **WHEN** generated lowering calls `beskid_rt_v5_managed_object_allocate`
-- **THEN** the runtime returns a zeroed object-header base whose descriptor and GC word match the ABI-v5 layout
+- **GIVEN** a canonical descriptor and request with matching size, alignment,
+  flags, and pointer map
+- **WHEN** generated lowering calls managed-object allocation
+- **THEN** the runtime returns one zeroed object-header base whose descriptor
+  and GC word match the ABI-v5 layout without a raw allocator fallback
 
 #### Scenario: Invalid managed object request
-- **GIVEN** a null request or a request whose descriptor, size, alignment, or pointer map violates the ABI-v5 contract
+- **GIVEN** a null request or a request whose descriptor, size, alignment,
+  flags, or pointer map violates the ABI-v5 contract
 - **WHEN** managed allocation validates the request
-- **THEN** it returns null without allocating, initializing a header, or exposing raw system allocation to generated code
+- **THEN** it fails before allocating, initializing a header, publishing an
+  object, or leaking a root
+
+#### Scenario: Aggregate survives allocating field initializers
+- **GIVEN** a managed aggregate with pointer fields whose initializer
+  evaluation can allocate and trigger collection
+- **WHEN** generated construction allocates and initializes the aggregate
+- **THEN** the owner and live initializer values remain rooted, every pointer
+  edge is stored and barred before a safepoint, and the construction root is
+  released once after initialization
+
+#### Scenario: Pointer field replacement preserves the new referent
+- **GIVEN** a rooted managed aggregate and a pointer field assignment during an
+  active marking phase
+- **WHEN** direct ISLE field-assignment lowering stores the new value
+- **THEN** it retains owner and value through the store/barrier sequence and
+  the new referent remains reachable
 
 #### Scenario: Closure allocation shares the canonical implementation
-- **GIVEN** a closure allocation request accepted by the managed-object contract
-- **WHEN** `beskid_rt_v5_closure_environment_allocate` handles that request
-- **THEN** it delegates to the same managed-object allocation implementation and maintains no parallel validation, zeroing, or header-initialization path
-
-#### Scenario: Managed object rooting remains explicit
-- **GIVEN** a newly allocated managed object that must survive an allocation-capable operation
-- **WHEN** generated code retains the object across that operation
-- **THEN** it roots the object through manifest-approved root-frame authority before the operation rather than treating allocation alone as a root
+- **GIVEN** a closure allocation request accepted by the managed-object
+  contract
+- **WHEN** the closure allocation wrapper handles the request
+- **THEN** it delegates to the same managed-object allocation implementation
+  without parallel validation, zeroing, or header initialization
 
 ### Requirement: Manifest-derived ABI-v5 closure environment helpers
 The canonical ABI-v5 runtime manifest SHALL declare `beskid_rt_v5_closure_environment_allocate` with signature `(ptr) -> ptr`, `beskid_rt_v5_closure_capture_store` with signature `(ptr, ptr, usize, ptr) -> u8`, and `beskid_rt_v5_closure_environment_root` with signature `(ptr, usize, ptr) -> u8`. The generated ABI JSON, C header, Rust bindings, runtime-kit allowlist, and canonical Bootstrap source SHALL agree on those exact names and signatures. Lowering MUST reject any closure-environment import absent from that manifest-derived contract.
@@ -279,7 +313,7 @@ Release notes **must** document v3 migration, rebuilt archives, and removed dire
 | ID | Requirement |
 | --- | --- |
 | **ABI-001** | `RUNTIME_EXPORT_SYMBOLS` in `beskid_abi` **must** list every symbol the JIT registers and the runtime exports with `#[unsafe(no_mangle)]` under the same spelling. |
-| **ABI-002** | `BUILTIN_SPECS` **must** be the sole source of Cranelift import signatures for runtime builtins; hand-written CLIF calls **must not** invent alternate calling conventions. |
+| **ABI-002** | The ABI-v5 tables in `beskid_abi::generated::abi_v5_contract` **must** be the sole source of runtime import signatures. `beskid_abi/build.rs` generates these tables from `compiler/runtime_manifest.bsol` at build time. Every runtime import **must** use the call shape from `beskid_abi::runtime_source::canonical_corelib_service_abi_for_adapter`. Hand-written CLIF calls **must not** use a different calling convention. |
 | **ABI-003** | Hosts **should** reject execution when `beskid_runtime_abi_version()` ≠ `BESKID_RUNTIME_ABI_VERSION` compiled into the active compiler. |
 | **ABI-004** | Breaking layout or signature changes **must** increment `BESKID_RUNTIME_ABI_VERSION`; silent mismatches are forbidden. |
 | **ABI-005** | Additive symbols **may** ship without a version bump only if older generated code never imports them and older runtimes ignore unknown symbols safely. |
@@ -332,7 +366,7 @@ Define how the **compiler**, **JIT/AOT backends**, and **Beskid runtime** agree 
 | Actor | Responsibility |
 | --- | --- |
 | **`beskid_abi`** | Owns `BESKID_RUNTIME_ABI_VERSION`, `RUNTIME_EXPORT_SYMBOLS`, and builtin signature metadata consumed by codegen. |
-| **`beskid_codegen` / `beskid_engine`** | Declares imports from `BUILTIN_SPECS` and validates user `Extern` shapes before linking. |
+| **`beskid_codegen` / `beskid_engine`** | `cranelift_host::declare_referenced_builtin_imports` declares only the runtime imports that the lowered CLIF references. Each import uses the shape from `cranelift_host::runtime_import_signature`. Codegen validates user `Extern` shapes before linking. |
 | **`beskid_runtime`** | Implements `#[unsafe(no_mangle)]` exports; `beskid_runtime_abi_version()` returns the compile-time constant. |
 | **Host tooling** | JIT session and AOT link steps load the same runtime artifact the compiler was built against (or an explicitly compatible newer runtime). |
 
@@ -346,7 +380,7 @@ Define how the **compiler**, **JIT/AOT backends**, and **Beskid runtime** agree 
 The ABI version is a **`u32`** exposed as `beskid_runtime_abi_version`. The reference tree pins **`BESKID_RUNTIME_ABI_VERSION = 3`** (kernel-only export set). A bump is required when any of the following change incompatibly:
 
 - C layout of `BeskidStr`, `BeskidArray`, or interop payload offsets referenced by lowering.
-- Name, parameter count, or `AbiParamKind` / `AbiReturnKind` of a builtin in `BUILTIN_SPECS`.
+- Name, parameter count, or `AbiParamKind` / `AbiReturnKind` of a runtime import in the generated ABI-v5 tables.
 - Semantics that generated code already depends on (for example making `gc_write_barrier` a no-op when lowering assumes barriers run).
 
 Additive changes (new symbols appended to `RUNTIME_EXPORT_SYMBOLS`, new optional runtime `features`) **should not** require a version bump if existing artifacts keep working without recompilation.
@@ -369,12 +403,13 @@ Codegen and the engine read the **same** `beskid_abi` crate revision at build ti
 
 ## Platform assumptions (v0.2 baseline)
 
-Reference implementations target **64-bit pointers** and Linux x86_64 for syscall-backed builtins; other hosts may stub behavior but must preserve symbol names and Cranelift signature shapes declared in `BUILTIN_SPECS`.
+Reference implementations target **64-bit pointers** and Linux x86_64 for syscall-backed builtins; other hosts may stub behavior but must preserve symbol names and the call shapes in the generated ABI-v5 tables.
 
 ## Implementation anchors
 - `compiler/crates/beskid_abi/src/version.rs` — `BESKID_RUNTIME_ABI_VERSION` constant and version negotiation
 - `compiler/crates/beskid_abi/src/symbols.rs` — `RUNTIME_EXPORT_SYMBOLS` registry
-- `compiler/crates/beskid_abi/src/builtins.rs` — `BUILTIN_SPECS` signature catalog
+- `compiler/runtime_manifest.bsol` — runtime import manifest
+- `compiler/crates/beskid_abi/build.rs` — generates `beskid_abi::generated::abi_v5_contract` (`ABI_V5_SOFT_BUILTINS`, `ABI_V5_CORELIB_SERVICE_BINDINGS`, `ABI_V5_SOURCE_BUILTINS`)
 
 ## Related topics
 
@@ -416,10 +451,10 @@ Suppose maintainers add `fiber_debug_trace` to `RUNTIME_EXPORT_SYMBOLS` and `bes
 
 ## Breaking rename (bump required)
 
-Renaming `fiber_join` export to `fiber_join_status` without updating every `BUILTIN_SPECS` consumer breaks link compatibility. The fix set is:
+Renaming the `fiber_join` export to `fiber_join_status` without a change to `compiler/runtime_manifest.bsol` breaks link compatibility. The fix set is:
 
 1. `BESKID_RUNTIME_ABI_VERSION` += 1
-2. Synchronized `symbols.rs`, `builtins.rs`, runtime `#[unsafe(no_mangle)]` names, and docs
+2. Synchronized `compiler/runtime_manifest.bsol`, runtime `#[unsafe(no_mangle)]` names, and docs
 3. Rebuild and republish CLI, VSIX, and prebuilt runtime bundles together
 
 ## Inspecting the export list
@@ -462,7 +497,7 @@ The extension ships a platform-matched `beskid` CLI/LSP stack; that stack **must
 
 ### Are `interop_dispatch_*` symbols part of the versioned surface?
 
-Yes. They appear in `RUNTIME_EXPORT_SYMBOLS` and `BUILTIN_SPECS`. Tag/payload layout changes require an ABI bump and coordinated engine/runtime updates ([Builtins and symbols](/platform-spec/execution/abi-and-host/builtins-and-symbols/)).
+Yes. They appear in `RUNTIME_EXPORT_SYMBOLS` and in the generated ABI-v5 tables. Tag/payload layout changes require an ABI bump and coordinated engine/runtime updates ([Builtins and symbols](/platform-spec/execution/abi-and-host/builtins-and-symbols/)).
 
 ### Can JIT use a newer runtime than the compiler?
 
@@ -473,7 +508,7 @@ Only when `beskid_runtime_abi_version()` is still equal to the compiler's expect
 | Symptom | Likely cause | Fix |
 | --- | --- | --- |
 | `missing function 'alloc'` at JIT finalize | Runtime library not linked or stripped exports | Ensure `beskid_runtime` built with default features; verify `RUNTIME_EXPORT_SYMBOLS` |
-| Segfault on first builtin call | Wrong function pointer type registered | Check `BUILTIN_SPECS` vs runtime `extern "C-unwind"` signature |
+| Segfault on first builtin call | Wrong function pointer type registered | Compare `canonical_corelib_service_abi_for_adapter(symbol)` with the runtime `extern "C-unwind"` signature |
 | Works in debug CLI, fails in VSIX | Stale extension runtime | Rebuild Open VSX matrix with matching `beskid_abi` |
 | AOT binary crashes, JIT OK | Old runtime .so bundled in the distribution | Re-link AOT with current `beskid_runtime` |
 
@@ -505,7 +540,7 @@ See the [design model](./design-model/) diagram for actor boundaries.
 ## JIT session setup
 
 1. **Construct `BeskidJitModule`** (`compiler/crates/beskid_engine/src/jit_module.rs`) with an optional `extras` table for resolved user `Extern` addresses when dynamic linking is enabled.
-2. On first `compile`, call **`declare_builtin_imports`** once, wiring every name in `BUILTIN_SPECS` to the in-process `beskid_runtime` function pointer of the same symbol string.
+2. On `compile`, call **`cranelift_host::declare_referenced_builtin_imports`**. It declares only the runtime imports that the lowered CLIF references, in symbol order. Each import uses the signature from `cranelift_host::runtime_import_signature`.
 3. Declare user functions and validated extern imports from the `CodegenArtifact`, emit string literals and type descriptors, then define and finalize Cranelift bodies.
 4. Before transferring control to generated code, the host **should** call `beskid_runtime_abi_version()` and compare the result to `BESKID_RUNTIME_ABI_VERSION` embedded in the compiler's `beskid_abi` dependency (**ABI-003**).
 
@@ -517,25 +552,25 @@ See the [design model](./design-model/) diagram for actor boundaries.
 
 ## Symbol registration algorithm
 
-For each `BuiltinFnSpec` entry in `compiler/crates/beskid_abi/src/builtins.rs`:
+For each runtime import symbol that the lowered CLIF references:
 
-1. Map `symbol` to a host `extern "C-unwind"` function in `beskid_runtime::builtins`.
-2. Build a Cranelift function signature from `params: &[AbiParamKind]` and `returns: AbiReturnKind` (`Ptr`, `I64`, `Void`, `Never`, …).
-3. Store the `FuncId` in the JIT module's `func_ids` map so lowering can emit direct calls.
+1. Check the symbol with `beskid_abi::is_runtime_import_symbol`. The symbol must be a soft builtin or the direct runtime implementation of a canonical Corelib service binding.
+2. Get the call shape from `beskid_abi::runtime_source::canonical_corelib_service_abi_for_adapter(symbol)` (`Ptr`, `I64`, `Void`, `Never`, …).
+3. Declare the import with that shape. Artifact validation rejects a declaration that has a different shape.
 
 Missing symbols surface as **`JitError::MissingFunction`** at finalize time rather than as undefined behavior at runtime.
 
 ## ABI bump workflow (maintainers)
 
 1. Increment `BESKID_RUNTIME_ABI_VERSION` in `beskid_abi/src/version.rs`.
-2. Update `RUNTIME_EXPORT_SYMBOLS` and `BUILTIN_SPECS` together with runtime `#[unsafe(no_mangle)]` implementations.
+2. Update `compiler/runtime_manifest.bsol` together with the runtime `#[unsafe(no_mangle)]` implementations. `beskid_abi/build.rs` regenerates the ABI-v5 tables.
 3. Refresh platform-spec articles and `compiler/crates/beskid_tests` / `beskid_e2e_tests` fixtures that pin version or symbol lists.
 4. Publish runtime and compiler artifacts in lockstep; mixed versions are unsupported for production (**ABI-004**).
 
 ## Implementation anchors
 - `compiler/crates/beskid_abi/src/version.rs` — version constant and bump workflow
 - `compiler/crates/beskid_engine/src/jit_module.rs` — `new_with_symbols` registration and startup check
-- `compiler/crates/beskid_codegen/src/` — `declare_builtin_imports` lowers specs to Cranelift
+- `compiler/crates/beskid_codegen/src/cranelift_host.rs` — `declare_referenced_builtin_imports` and `runtime_import_signature`
 
 ## Related topics
 
@@ -562,7 +597,7 @@ Missing symbols surface as **`JitError::MissingFunction`** at finalize time rath
 | --- | --- |
 | `compiler/crates/beskid_abi/src/version.rs` | `BESKID_RUNTIME_ABI_VERSION` |
 | `compiler/crates/beskid_abi/src/symbols.rs` | `RUNTIME_EXPORT_SYMBOLS`, `SYM_*` constants |
-| `compiler/crates/beskid_abi/src/builtins.rs` | `BUILTIN_SPECS` signatures |
+| `compiler/runtime_manifest.bsol` | Runtime import manifest; `beskid_abi/build.rs` generates the ABI-v5 signature tables from it |
 | `compiler/crates/beskid_runtime/src/builtins/version.rs` | `beskid_runtime_abi_version()` export |
 | `compiler/crates/beskid_engine/src/jit_module.rs` | Builtin pointer registration for JIT |
 
@@ -579,7 +614,7 @@ Missing symbols surface as **`JitError::MissingFunction`** at finalize time rath
 | Requirement | Verification |
 | --- | --- |
 | **ABI-001** | Review `RUNTIME_EXPORT_SYMBOLS` vs `beskid_runtime` `pub use` list on every ABI-touching PR |
-| **ABI-002** | `declare_builtin_imports` uses `BUILTIN_SPECS` exclusively (`beskid_codegen`) |
+| **ABI-002** | `compiler/crates/beskid_abi/tests/runtime_import_catalog_v06.rs` regenerates the tables from `runtime_manifest.bsol` and fails on drift; it also fails if `beskid_abi/src/generated/` contains a file other than `abi_v5_contract.rs`, `mod.rs`, and `symbols.rs` |
 | **ABI-003** | Host/version gate tests in JIT and CLI startup (add when missing) |
 | **ABI-006** | Same `beskid_abi` path dependency in `beskid_engine`, `beskid_codegen`, and `beskid_runtime` workspace `Cargo.toml` |
 

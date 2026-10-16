@@ -8,9 +8,9 @@ Evaluation in Beskid is **callable-centric**: functions, methods, closures, with
 
 ## Callables and closures
 
-- Functions and methods are the default unit of work.
-- Closures capture environment; captures participate in **GC rooting** when fibers are involved.
-- See [Lambdas and closures](/platform-spec/language-meta/evaluation/lambdas-and-closures/) for capture rules.
+- Functions and methods are the default unit of work. Functions are also values: a named function or a lambda can be passed, stored, returned, and called. See [Functions and methods](/book/07-compiler-is-not-your-therapist/functions-and-methods/).
+- Closures capture by value when they are created. A lambda that is not a `spawn` operand may not capture a `mut` local (**E1233**). Captured managed values are traced by the GC through the closure environment.
+- See [Lambdas and closures](/docs/standard/capabilities/language-meta--evaluation--lambdas-and-closures/) for capture rules.
 
 ## No `async` / `await`
 
@@ -19,7 +19,7 @@ The language **rejects** reserved `async` / `await` tokens. Structured concurren
 - **`spawn`** → `Fiber<T>`
 - **`Join`** for `Result<T, FiberError>`
 - **Channels** for cross-fiber payloads
-- **WaitGroup**, **Hub** for coordination ([Concurrency package](/platform-spec/core-library/concurrency/concurrency-package/))
+- **WaitGroup**, **Hub** for coordination ([Concurrency package](/docs/standard/capabilities/core-library--concurrency--concurrency-package/))
 
 ```mermaid
 flowchart TB
@@ -38,13 +38,13 @@ flowchart TB
 
 | Crate | Role |
 | --- | --- |
-| `beskid_analysis` | Spawn typing, capture diagnostics |
-| `beskid_codegen` | `fiber_spawn`, stack maps |
-| `beskid_engine` / `beskid_abi` | Scheduler, stacks |
+| `beskid_queries` | Spawn typing, capture diagnostics |
+| `beskid_codegen` / `beskid_isle` | Spawn lowering, closure records |
+| Runtime source (`compiler/runtime/beskid`) | Scheduler, stacks |
 
 ## Area hub
 
-[Evaluation](/platform-spec/language-meta/evaluation/)
+[Evaluation](/docs/standard/capabilities/taxonomy--language-meta--evaluation/)
 
 ## Next
 

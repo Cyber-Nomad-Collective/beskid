@@ -24,7 +24,7 @@ Consumers import from `myapp.api`, not from twenty leaf modules.
 
 - You split implementation across files but want one import path for apps
 - You rename internal modules without breaking callers (re-export old names temporarily)
-- You mirror platform-spec "feature hub" style surfaces in libraries
+- You mirror the Standard "feature hub" style surfaces in libraries
 
 ## When re-exports hurt
 
@@ -41,7 +41,7 @@ flowchart LR
 
 ## Relation to project `root_namespace`
 
-`root_namespace` in `Project.proj` is metadata for package naming conventions. It does **not** replace module paths in source. Keep module declarations honest.
+`root_namespace` in the `.bproj` manifest is metadata for package naming conventions. It does **not** replace module paths in source. Keep module declarations honest.
 
 ## Next
 

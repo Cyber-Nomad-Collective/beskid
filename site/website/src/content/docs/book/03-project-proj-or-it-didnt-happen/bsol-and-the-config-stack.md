@@ -6,7 +6,7 @@ tableOfContents: true
 
 Every toolchain eventually invents a **config dialect**. Beskid's is **BSOL** (Beskid Structured Object Language). If you have touched Terraform, you already know the shape: blocks, labels, `key = value`, bracket lists. If you have touched YAML, you already know why we did not use it for manifests.
 
-This page is **informative**. Exact grammar and profile rules live in the [BSOL Standard](/docs/standard/tooling/manifests-and-lockfiles/bsol/).
+This page is **informative**. Exact grammar and profile rules live in the [BSOL Standard](/docs/standard/capabilities/tooling--manifests-and-lockfiles--bsol/).
 
 ## What BSOL is (and is not)
 
@@ -122,8 +122,8 @@ Structured blocks and schemaless blocks can coexist in one document, same as mix
 | --- | --- |
 | Writing your first manifest | [Project manifest](/book/03-project-proj-or-it-didnt-happen/project-manifest/) |
 | Workspace files | [Workspace manifest](/book/06-monorepo-as-coping-mechanism/workspace-manifest/) |
-| Normative grammar + AST | [BSOL design model](/docs/standard/tooling/manifests-and-lockfiles/bsol/design-model/) |
-| Runtime ABI manifest | [Runtime manifest profile](/docs/standard/tooling/manifests-and-lockfiles/bsol/runtime-manifest-profile/) |
+| Normative grammar + AST | [BSOL design model](/docs/standard/capabilities/tooling--manifests-and-lockfiles--bsol/) |
+| Runtime ABI manifest | [Runtime manifest profile](/docs/standard/capabilities/tooling--manifests-and-lockfiles--bsol/) |
 | Full analysis pipeline | [From source to something that runs](/book/14-from-source-to-runs/) |
 
 ## Previous

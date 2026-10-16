@@ -1,56 +1,43 @@
 ---
-title: Interop platform-spec canonical map
-description: Maintainer URL table for v0.3 FFI, Interop.Contracts, profiles, tooling, and paired execution chapters.
+title: Interop Standard map
+description: Maintainer table of the Standard capabilities that own FFI, Interop.Contracts, ABI profiles, foreign library tooling, and Rust Glue.
 ---
 
-# Interop platform-spec canonical map
+# Interop Standard map
 
-Maintainer reference: authoritative URLs for **v0.3 FFI**. Use when updating links, redirects, or CI fixtures.
+Maintainer reference: the Standard capabilities that own interop. Use it when you update links, redirects, or CI fixtures. Old `/platform-spec/language-meta/interop/...` addresses redirect to these capability pages; write new links to `/docs/standard/capabilities/...` directly.
 
-## v0.3 delivery summary
+## Language meta: Interop
 
-| Band | Standard in spec | Implementation |
-| --- | --- | --- |
-| **v0.3.0** | Interop views, link-time import, `Symbol` overrides, export + callbacks | May trail spec |
-| **v0.3.1** | `CLayout` primitive structs | Proposed |
-| **Later** | Nested FFI structs, enum ABI, foreign-thread entry | After basic FFI |
-
-**Runtime ABI** (`BESKID_RUNTIME_ABI_VERSION`) is **unchanged** by user FFI layout bands (`BESKID_USER_FFI_LAYOUT_BAND`).
-
-## Canonical feature hubs (Language meta → Interop)
-
-| Topic | URL |
+| Topic | Capability |
 | --- | --- |
-| Interop area hub | `/platform-spec/language-meta/interop/` |
-| **Interop.Contracts** | `/platform-spec/language-meta/interop/interop-contracts/` |
-| **FFI and extern** (hub + articles) | `/platform-spec/language-meta/interop/ffi-and-extern/` |
-| **Export and callbacks** | `/platform-spec/language-meta/interop/export-and-callbacks/` |
-| **C ABI profile** | `/platform-spec/language-meta/interop/c-abi-profile/` |
-| **Rust ABI profile** (runtime only) | `/platform-spec/language-meta/interop/rust-abi-profile/` |
+| Interop area hub | [taxonomy--language-meta--interop](/docs/standard/capabilities/taxonomy--language-meta--interop/) |
+| **Interop.Contracts** | [language-meta--interop--interop-contracts](/docs/standard/capabilities/language-meta--interop--interop-contracts/) |
+| **FFI and extern** | [language-meta--interop--ffi-and-extern](/docs/standard/capabilities/language-meta--interop--ffi-and-extern/) |
+| **Export and callbacks** | [language-meta--interop--export-and-callbacks](/docs/standard/capabilities/language-meta--interop--export-and-callbacks/) |
+| **C ABI profile**, including dynamic resolution | [language-meta--interop--c-abi-profile](/docs/standard/capabilities/language-meta--interop--c-abi-profile/) |
+| **Rust ABI profile** (runtime only) | [language-meta--interop--rust-abi-profile](/docs/standard/capabilities/language-meta--interop--rust-abi-profile/) |
 
 ## Tooling
 
-| Topic | URL |
+| Topic | Capability |
 | --- | --- |
-| **Foreign library import** | `/platform-spec/tooling/foreign-library-import/` |
-| **Project link libraries** | `/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/project-link-libraries/` |
+| **Foreign library import** | [taxonomy--tooling--foreign-library-import](/docs/standard/capabilities/taxonomy--tooling--foreign-library-import/) |
+| **Project link libraries**; the change `v06-rust-glue-integration` adds the `glue` owner block | [tooling--manifests-and-lockfiles--project-manifest-contract](/docs/standard/capabilities/tooling--manifests-and-lockfiles--project-manifest-contract/) |
 
-## Execution runtime chapters (implementation; pair with language-meta)
+## Execution
 
-| Topic | URL |
+| Topic | Capability |
 | --- | --- |
-| FFI lowering and Cranelift | `/execution/runtime/ffi/` |
-| Syscalls vs extern vs runtime | `/execution/runtime/syscalls-and-abi-boundary/` |
-| Legacy dlopen policy | `/execution/runtime/extern-policy-v0-1/` |
-| Dynamic resolution (platform-spec) | `/platform-spec/language-meta/interop/c-abi-profile/dynamic-resolution-profile/` |
-| Runtime ABI symbol inventory | `/execution/runtime/runtime-abi-v0-1/` |
+| Extern dispatch after a boundary is chosen | [execution--abi-and-host--extern-dispatch-and-policy](/docs/standard/capabilities/execution--abi-and-host--extern-dispatch-and-policy/) |
+| ABI versions | [execution--abi-and-host--abi-versioning-and-compatibility](/docs/standard/capabilities/execution--abi-and-host--abi-versioning-and-compatibility/) |
+
+## Rust Glue in 0.6
+
+The 0.6 Rust Glue requirements are proposed in the OpenSpec change `v06-rust-glue-integration`, which adds the capability `language-meta--interop--beskid-glue`. Until that change is applied to `openspec/specs`, the capability has no catalog page; link the change, not a guessed capability URL. The provisional stdio bridge is a separate change, `v06-glue-stdio-bridge-provisional`, with no 0.6 delivery obligation. The Book page is [Rust Glue](/book/21-ffi-and-forbidden-friendships/rust-glue/).
 
 ## Stdlib policy
 
-**WinAPI** / stdcall is **out of scope** for stdlib Standard. See [platform tier matrix](/platform-spec/language-meta/interop/c-abi-profile/platform-tier-matrix/).
+**WinAPI** / stdcall is **out of scope** for the Corelib Standard. See the [C ABI profile](/docs/standard/capabilities/language-meta--interop--c-abi-profile/).
 
-## Replacement notes
-
-- `/platform-spec/language-meta/interop/ffi-and-extern/` is a **feature hub** (directory with `index.mdx`), not a single flat page.
-- `node packages/trudoc/scripts/generate-language-meta-tree.mjs` **does not overwrite** existing area/feature pages (use `--force` only when intentionally regenerating minimal stubs).
-- User FFI layout versioning is documented under [conformance and versioning](/platform-spec/language-meta/interop/interop-contracts/conformance-and-versioning/).
+User FFI layout bands are versioned separately from the runtime ABI; see [Interop contracts](/docs/standard/capabilities/language-meta--interop--interop-contracts/).

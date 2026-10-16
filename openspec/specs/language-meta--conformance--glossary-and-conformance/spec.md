@@ -45,7 +45,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 > | --- | --- | --- |
 > | **L0 — Parse** | Accepts all programs in the v0.1 grammar without internal compiler failure | Parser + `beskid.pest` fixture suite |
 > | **L1 — Name and module** | Resolves modules, imports, and visibility per [Modules and visibility](/platform-spec/language-meta/program-structure/modules-and-visibility/) and [Name resolution](/platform-spec/language-meta/program-structure/name-resolution/) | Resolver tests; E11xx band |
-> | **L2 — Type** | Assigns types and rejects ill-typed programs per [Types](/platform-spec/language-meta/type-system/types/) and related chapters | `beskid_analysis` type tests; E12xx–E13xx |
+> | **L2 — Type** | Assigns types and rejects ill-typed programs per [Types](/platform-spec/language-meta/type-system/types/) and related chapters | `beskid_queries` query gate tests; E12xx–E13xx |
 > | **L3 — Semantic** | Enforces contracts, control flow, events, memory rules, and composition/DI where applicable | Semantic + composition tests; E14xx–E17xx |
 > | **L4 — Executable** | Lowered program behavior matches execution + core-library contracts for the chosen target triple | Runtime tests, ABI checks |
 > 

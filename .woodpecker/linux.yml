@@ -28,7 +28,8 @@ steps:
     commands:
       - apt-get update >/dev/null
       - apt-get install -y --no-install-recommends ca-certificates clang git jq lld llvm mold nodejs openssh-client pkg-config libssl-dev python3 python3-yaml ripgrep >/dev/null
-      - bash scripts/ci/init-submodules.sh beskid_distrib beskid_vscode
+      # v06-release-matrix tests bind release cases to compiler and Corelib sources.
+      - bash scripts/ci/init-submodules.sh beskid_distrib beskid_vscode compiler beskid_bsol
       - bash scripts/ci/test/run-woodpecker-tests.sh
       - |
         if [ "$${CI_PIPELINE_EVENT}" = manual ] && [ "$${BESKID_TASK}" = validate ]; then
@@ -60,5 +61,8 @@ steps:
 
 when:
   - event: [push, tag]
+  # Each platform is its own pipeline with BESKID_TASK=build-<platform>, so one platform can be rebuilt
+  # alone; BESKID_TASK=build starts all three. Woodpecker evaluates an unset variable as nil, so these
+  # equality tests are false, never an error, when BESKID_TASK is absent.
   - event: manual
-    evaluate: 'BESKID_TASK == "build" || BESKID_TASK == "validate"'
+    evaluate: 'BESKID_TASK == "build" || BESKID_TASK == "build-linux" || BESKID_TASK == "validate"'

@@ -12,7 +12,7 @@ Three roles, one merged program. Order matters; host merge is **bounded** and **
 - Host merges, **re-parses**, repeats up to `maxGeneratorRounds`.
 - Incremental by default: don't regenerate the universe per keystroke.
 
-Spec: [Typed emitter and transforms](/docs/standard/compiler/compiler-mods/typed-emitter-and-transforms/).
+Spec: [Typed emitter and transforms](/docs/standard/capabilities/compiler--compiler-mods--typed-emitter-and-transforms/).
 
 ## Analyzer
 
@@ -20,7 +20,7 @@ Spec: [Typed emitter and transforms](/docs/standard/compiler/compiler-mods/typed
 - Emits diagnostics; may register **rewrites as fixes**.
 - Must not assume generated code is "second class": it's all one program now.
 
-Spec: [Analysis, query, and diagnostics facades](/docs/standard/compiler/compiler-mods/analysis-query-diagnostics-facade/).
+Spec: [Analysis, query, and diagnostics facades](/docs/standard/capabilities/compiler--compiler-mods--analysis-query-diagnostics-facade/).
 
 ## Rewriter
 
@@ -54,7 +54,7 @@ sequenceDiagram
 
 ## Conflict policy
 
-Scheduling and determinism: [Incremental scheduling and determinism](/docs/standard/compiler/compiler-mods/incremental-scheduling-determinism/). When two mods fight over the same node, the host picks a documented winner or fails. Read the ADRs before betting production on undocumented merge luck.
+Scheduling and determinism: [Incremental scheduling and determinism](/docs/standard/capabilities/compiler--compiler-mods--incremental-scheduling-determinism/). When two mods fight over the same node, the host picks a documented winner or fails. Read the ADRs before betting production on undocumented merge luck.
 
 ## Next
 

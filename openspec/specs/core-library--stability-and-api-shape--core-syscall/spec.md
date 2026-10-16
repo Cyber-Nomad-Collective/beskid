@@ -4,9 +4,7 @@
 ## Purpose
 
 Typed descriptor syscall facade for text and binary I/O.
-
 ## Requirements
-
 ### Requirement: Typed descriptor facade for ReadWith and WriteWith
 `ReadWith` / `WriteWith` MUST route via typed `Descriptor`, not raw fd integers in stream modules (**SC-001**). `Core.Input` / `Core.Output` / `Core.Error` MUST use `Descriptor::Standard` only (**SC-004**, **IO-001**, **IO-002**).
 
@@ -46,6 +44,16 @@ A negative fd MUST return `InvalidFd` before the syscall (**SC-009**). `maxBytes
 - **GIVEN** a caller supplies a negative file descriptor
 - **WHEN** a `Core.Syscall` read or write entry is invoked
 - **THEN** the call returns `InvalidFd` without performing the underlying syscall
+
+### Requirement: ReadBytesWith returns Result<u8[], SyscallError>
+`Core.Syscall.ReadBytesWith` SHALL declare and return `Result<u8[], SyscallError>`. Its declared type, corelib implementation, runtime builtin signature, and JIT and AOT typechecking behavior MUST agree; it MUST NOT declare a scalar result type for a byte-array result.
+
+**Stable ID:** `BSP-REQ-277D7253AE0E`
+
+#### Scenario: ReadBytesWith typechecks as bytes
+- **GIVEN** a caller assigning `Core.Syscall.ReadBytesWith(...)` to `Result<u8[], SyscallError>`
+- **WHEN** the caller typechecks under JIT and AOT compilation
+- **THEN** both modes accept the assignment with the same result type
 
 ## Informative Source Provenance
 

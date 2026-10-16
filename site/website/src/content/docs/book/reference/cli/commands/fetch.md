@@ -1,29 +1,15 @@
 ---
 title: "beskid fetch"
-description: "Resolve and materialize project dependencies."
+description: "Removed in 0.6.0. Use beskid dev project fetch."
 ---
 
-Resolves the dependency graph for a project (using the same discovery flags as other project commands) and materializes dependency sources into the workspace.
-This command is available as `beskid fetch`.
-
-## Arguments
-
-| Argument | Description |
-| --- | --- |
-| `--project` | Project directory or `App.bproj` path |
-| `--target` | Target name from the manifest |
-| `--workspace-member` | Workspace member when resolving via `Workspace.bws` |
-| `--frozen` | Require lockfile match; forbid updates |
-| `--locked` | Require an existing lockfile |
-| `--plain` | Disable animated resolve progress |
-
-## Example
+The root command `beskid fetch` was removed in version 0.6.0. Use `beskid dev project fetch` instead.
 
 ```bash
-beskid fetch --project path/to/App.bproj
+beskid dev project fetch --help
 ```
 
-On success, prints a short confirmation message.
+The replacement accepts `--project`, `--target`, `--workspace-member`, `--frozen`, `--locked`, `--offline`, and `--plain`.
 
 For lockfile behavior and recovery, use [Dependencies and locks](/docs/projects/dependencies-and-locks/).
 

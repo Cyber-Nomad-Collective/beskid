@@ -1,10 +1,10 @@
 ---
-title: "beskid parse"
-description: "Root parse command; run as `beskid parse`."
+title: "beskid dev syntax parse"
+description: "Root parse command; run as `beskid dev syntax parse`."
 ---
 
 Parse one `.bd` file and print a debug representation of the parsed program.
-This is the `beskid parse` root command. A grouped discovery alias is listed on the [`beskid dev`](/book/reference/cli/commands/dev/) page.
+The command is `beskid dev syntax parse`. The root command `beskid parse` was removed in 0.6.0. See the [`beskid dev`](/book/reference/cli/commands/dev/) page.
 
 ## Arguments
 
@@ -21,7 +21,7 @@ This is the `beskid parse` root command. A grouped discovery alias is listed on 
 ## Example
 
 ```bash
-beskid parse src/Main.bd
+beskid dev syntax parse src/Main.bd
 ```
 
 For the first source checks, use [Your first program](/docs/getting-started/first-program/).

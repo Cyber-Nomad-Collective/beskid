@@ -64,7 +64,7 @@ const procedurePages = [
 		equivalentConcepts: ['stable', 'unstable', 'immutable tag', 'language server'],
 		sections: {
 			prerequisites: ['Linux AMD64', 'older Beskid installation'],
-			actions: ['export PATH="$HOME/.beskid/bin:$PATH"', 'beskid lsp install'],
+			actions: ['export PATH="$HOME/.beskid/bin:$PATH"', 'beskid dev lsp install'],
 			expectedResult: ['host-target', 'matching LSP'],
 			recovery: ['active shell profile', 'selected CLI tag'],
 		},
@@ -76,7 +76,7 @@ const procedurePages = [
 		equivalentConcepts: ['Main.bd', 'native object code', 'runtime kit', 'subprocess'],
 		sections: {
 			prerequisites: ['/docs/getting-started/install/', 'empty directory'],
-			actions: ['i32 Main()', 'beskid analyze Main.bd --plain'],
+			actions: ['i32 Main()', 'beskid check Main.bd --plain'],
 			expectedResult: ['status `0`', 'error diagnostic'],
 			recovery: ['default entrypoint `Main`', 'runtime kit'],
 		},
@@ -96,7 +96,7 @@ const procedurePages = [
 	{
 		path: 'docs/editor/vs-code.md',
 		diagram: 'VS Code project-context lifecycle',
-		diagramBranches: ['Open .bws or .bproj', 'Select .bproj project focus', 'Start CLI and LSP', 'Automatic fetch enabled?', 'Run beskid fetch once', 'Projects and Packages', 'Graph Explorer', 'Beskid status dashboard', 'Beskid LSP output'],
+		diagramBranches: ['Open .bws or .bproj', 'Select .bproj project focus', 'Start CLI and LSP', 'Automatic fetch enabled?', 'Run beskid dev project fetch once', 'Projects and Packages', 'Graph Explorer', 'Beskid status dashboard', 'Beskid LSP output'],
 		equivalentConcepts: ['.bws', '.bproj', 'project focus', 'CLI', 'language server', 'automatic fetch', 'Projects', 'Packages', 'Graph Explorer', 'status dashboard', 'Beskid LSP output'],
 		sections: {
 			prerequisites: ['installed extension', '`.bws` or `.bproj`'],
@@ -109,7 +109,7 @@ const procedurePages = [
 		path: 'docs/extend/bsol.md',
 		sections: {
 			prerequisites: ['BSOL document family', 'pinned BSOL source'],
-			actions: ['Choose the profile', 'beskid validate-bsol --profile', 'Inspect each diagnostic'],
+			actions: ['Choose the profile', 'beskid dev bsol validate', 'Inspect each diagnostic'],
 			expectedResult: ['selected profile', 'source location'],
 			recovery: ['parse diagnostic', 'schema diagnostic', 'semantic diagnostic'],
 		},
@@ -118,7 +118,7 @@ const procedurePages = [
 		path: 'docs/extend/templates.md',
 		sections: {
 			prerequisites: ['initialized superrepo', 'empty output path'],
-			actions: ['.beskid/template.json', '{{symbolId}}', 'beskid new --path ./packages/console -n Demo -o ./Demo', 'bash scripts/ci/corelib-publish.sh --dry-run'],
+			actions: ['.beskid/template.json', '{{symbolId}}', 'beskid new Demo --path ./packages/console -o ./Demo', 'bash scripts/ci/corelib-publish.sh --dry-run'],
 			expectedResult: ['template output', 'registry write'],
 			recovery: ['generated output', 'first failing artifact'],
 		},
@@ -169,7 +169,7 @@ const procedurePages = [
 		equivalentConcepts: ['PATH', 'exact host artifact', 'source span', 'runtime kit', 'language server'],
 		sections: {
 			prerequisites: ['complete output', 'beskid --version'],
-			actions: ['beskid up host-target', 'beskid analyze Main.bd --plain'],
+			actions: ['beskid doctor', 'beskid check Main.bd --plain'],
 			expectedResult: ['previously failing check', 'earlier check'],
 			recovery: ['selected release tag', 'private source code'],
 		},
@@ -189,7 +189,7 @@ const procedurePages = [
 	{
 		path: 'docs/tooling/build-run-test.md',
 		sections: {
-			prerequisites: ['beskid analyze', '`.bproj` manifest'],
+			prerequisites: ['beskid check', '`.bproj` manifest'],
 			actions: ['beskid build Main.bd --kind exe --plain', 'beskid test --project App.bproj'],
 			expectedResult: ['subprocess status', 'passed, failed, skipped, and filtered'],
 			recovery: ['target-selection error', 'runtime-kit error'],
@@ -202,7 +202,7 @@ const procedurePages = [
 		equivalentConcepts: ['immutable toolchain', 'formatting', '--frozen', 'Publish'],
 		sections: {
 			prerequisites: ['Project.lock', 'CI secret store'],
-			actions: ['beskid format Src --check', '--all-targets --frozen --plain --json'],
+			actions: ['beskid fmt Src --check', '--all-targets --frozen --plain --json'],
 			expectedResult: ['same toolchain and lockfile', 'native release artifact'],
 			recovery: ['update and review `Project.lock`', 'do not publish'],
 		},
@@ -231,17 +231,17 @@ const procedurePages = [
 	{
 		path: 'docs/projects/create.md',
 		sections: {
-			prerequisites: ['installed `console` template', 'empty output directory'],
-			actions: ['beskid new console -n MyApp -o ./MyApp --no-interactive', 'beskid analyze --project "$project_manifest" --target "$target_name" --plain'],
+			prerequisites: ['bundled application template', 'project name'],
+			actions: ['beskid new MyApp --no-interactive', 'beskid check --project "$project_manifest" --target "$target_name" --plain'],
 			expectedResult: ['Created template output at', 'exactly one `.bproj`'],
-			recovery: ['beskid new list', '--force'],
+			recovery: ['beskid package template list', '--force'],
 		},
 	},
 	{
 		path: 'docs/projects/workspaces.md',
 		sections: {
 			prerequisites: ['two project directories', 'one `.bproj`'],
-			actions: ['member "app"', 'beskid analyze ./app/Src/Main.bd --project ./Workspace.bws'],
+			actions: ['member "app"', 'beskid check ./app/Src/Main.bd --project ./Workspace.bws'],
 			expectedResult: ['deepest matching member', 'no input path'],
 			recovery: ['multiple `.bws`', '--workspace-member'],
 		},
@@ -250,9 +250,9 @@ const procedurePages = [
 		path: 'docs/projects/dependencies-and-locks.md',
 		sections: {
 			prerequisites: ['Project.lock', 'registry access'],
-			actions: ['source = "path"', 'source = "registry"', 'beskid fetch --project ./App.bproj --locked --plain', 'beskid fetch --project ./App.bproj --frozen --plain'],
+			actions: ['source = "path"', 'source = "registry"', 'beskid dev project fetch --project ./App.bproj --locked --plain', 'beskid dev project fetch --project ./App.bproj --frozen --plain'],
 			expectedResult: ['obj/beskid/deps/src/<materialized-id>', '`.generated`'],
-			recovery: ['beskid lock --project ./App.bproj --plain', 'does not materialize Git dependencies', 'implementation limitation under reconciliation'],
+			recovery: ['beskid dev project lock --project ./App.bproj --plain', 'does not materialize Git dependencies', 'implementation limitation under reconciliation'],
 		},
 	},
 	{
@@ -271,7 +271,7 @@ const procedurePages = [
 		path: 'docs/packages/publish.md',
 		sections: {
 			prerequisites: ['BESKID_PCKG_API_KEY', 'publisher permission'],
-			actions: ['POST /api/packages', 'beskid pckg pack --package Acme.Math', 'unzip -p', 'beskid pckg upload Acme.Math'],
+			actions: ['POST /api/packages', 'beskid package pack --package Acme.Math', 'unzip -p', 'beskid package publish Acme.Math'],
 			expectedResult: ['.beskid/docs/api.json', 'Published Acme.Math@1.0.0'],
 			recovery: ['package already exists', 'package version is immutable'],
 		},
@@ -280,17 +280,17 @@ const procedurePages = [
 		path: 'docs/packages/consume.md',
 		sections: {
 			prerequisites: ['package name', 'requested version'],
-			actions: ['beskid pckg details Acme.Math', 'beskid pckg download Acme.Math --version 1.0.0', 'beskid fetch --project ./App.bproj --locked --plain'],
+			actions: ['beskid package info Acme.Math', 'beskid add Acme.Math@1.0.0', 'beskid dev project fetch --project ./App.bproj --locked --plain'],
 			expectedResult: ['resolved_version', 'obj/beskid/deps/src/<materialized-id>'],
-			recovery: ['beskid pckg versions Acme.Math', 'yanked', 'stop the workflow'],
+			recovery: ['beskid package info Acme.Math', 'yanked', 'stop the workflow'],
 		},
 	},
 	{
 		path: 'docs/packages/credentials-and-recovery.md',
 		sections: {
 			prerequisites: ['secret manager', 'publish scope'],
-			actions: ['beskid pckg configure', 'beskid pckg whoami', 'beskid pckg yank Acme.Math --version 1.0.0', 'beskid pckg unyank Acme.Math --version 1.0.0'],
-			expectedResult: ['authenticated=true', 'version yanked'],
+			actions: ['beskid package login --key', 'beskid package logout', 'The CLI has no yank command'],
+			expectedResult: ['saves the key', 'removes it'],
 			recovery: ['revoke', 'rotate'],
 		},
 	},
@@ -460,7 +460,7 @@ function containsPckgSubcommand(commandText, subcommand) {
 	const valueOption = '--(?:base-url|bearer-token|api-key|timeout-secs|config-file)(?:=\\S+|\\s+\\S+)';
 	const flagOption = '(?:--verbose|-v)';
 	return new RegExp(
-		`(?:^|\\n)\\s*(?:\\$|PS>|>)?\\s*beskid\\s+pckg\\s+(?:(?:${valueOption}|${flagOption})\\s+)*${escapeRegExp(subcommand)}\\b`,
+		`(?:^|\\n)\\s*(?:\\$|PS>|>)?\\s*beskid\\s+package\\s+(?:(?:${valueOption}|${flagOption})\\s+)*${escapeRegExp(subcommand)}\\b`,
 	).test(commandText);
 }
 
@@ -818,7 +818,7 @@ test('daily VS Code workflow uses verified project, view, settings, and recovery
 		assert.match(actions, new RegExp(surface));
 	}
 	assert.match(actions, /beskid\.toolchain\.autoFetchDependencies/);
-	assert.match(actions, /runs `beskid fetch` once|run `beskid fetch` once/i);
+	assert.match(actions, /runs `beskid dev project fetch` once|run `beskid dev project fetch` once/i);
 	assert.match(actions, /beskid\.project\.autoSelectFromEditor/);
 	assert.doesNotMatch(workflow.body, /beskid\.graph\.defaultKind/);
 	assert.match(actions, /Beskid: Configure Package Registry API Key/);
@@ -887,7 +887,7 @@ test('BSOL and template tasks keep validation and publication boundaries explici
 	assert.equal(templates.data.verified.revision, '33fce0b840d4de318c804f7fc7396a0a93bb165a');
 	assert.match(templates.body, /\.beskid\/template\.json/);
 	assert.ok(templates.body.includes('{{symbolId}}'));
-	assert.ok(templates.body.includes('beskid new --path ./packages/console -n Demo -o ./Demo'));
+	assert.ok(templates.body.includes('beskid new Demo --path ./packages/console -o ./Demo'));
 	assert.ok(templates.body.includes('bash scripts/ci/corelib-publish.sh --dry-run'));
 	assert.match(templates.body, /does not write|no registry write/i);
 });
@@ -1057,7 +1057,7 @@ test('tooling distinguishes AOT commands from the test execution engine', async 
 
 test('CI uses the case-sensitive manifest source root', async () => {
 	const ci = await loadPage(procedurePages.find((page) => page.path === 'docs/tooling/ci.md'));
-	assert.ok(ci.body.includes('beskid format Src --check'));
+	assert.ok(ci.body.includes('beskid fmt Src --check'));
 	assert.match(ci.body, /manifest declares a different source root/i);
 });
 
@@ -1070,7 +1070,7 @@ test('editor guidance uses pinned extension provenance', async () => {
 test('editor recovery follows the selected CLI and LSP release pair', async () => {
 	const editor = await loadPage(procedurePages.find((page) => page.path.endsWith('/editor.md')));
 	const recovery = section(editor.body, 'Recovery');
-	assert.ok(recovery.includes('beskid lsp install --release-tag <selected-lsp-tag>'));
+	assert.ok(recovery.includes('beskid dev lsp install --release-tag <selected-lsp-tag>'));
 	assert.match(recovery, /tag that corresponds to the selected CLI (?:channel|immutable version)/i);
 	assert.doesNotMatch(recovery, /--release-tag\s+lsp-stable\b/, 'editor recovery must not force the stable LSP channel');
 });
@@ -1083,24 +1083,24 @@ test('active procedures use current project, entrypoint, and AOT terminology', a
 	}
 });
 
-test('package procedures use real pckg commands and one grouped-alias explanation', async () => {
+test('package procedures use real package commands', async () => {
 	const packagePages = await Promise.all(procedurePages.filter((page) => page.path.startsWith('docs/packages/')).map(loadPage));
 	const combined = packagePages.map((page) => page.body).join('\n');
-	assert.ok(combined.includes('beskid pckg'));
-	assert.equal(combined.match(/beskid dev package registry/g)?.length, 1, 'the grouped package alias must be explained once');
+	assert.ok(combined.includes('beskid package'));
+	assert.doesNotMatch(combined, /beskid\s+pckg\b|beskid dev package registry/, 'removed pckg root and grouped alias must not appear');
 	for (const page of packagePages) {
 		const commands = [...page.body.matchAll(/```(?:bash|sh|shell)\n([\s\S]*?)\n```/g)].map((match) => match[1]).join('\n');
-		for (const command of ['login', 'dry-run', 'publish']) {
-			assert.equal(containsPckgSubcommand(commands, command), false, `${page.path} must not teach nonexistent beskid pckg ${command}`);
+		for (const command of ['upload', 'configure', 'details', 'versions', 'download', 'yank', 'unyank', 'whoami', 'list', 'dry-run']) {
+			assert.equal(containsPckgSubcommand(commands, command), false, `${page.path} must not teach nonexistent beskid package ${command}`);
 		}
 	}
 });
 
-test('pckg command validation catches prompts and intervening global flags', () => {
+test('package command validation catches prompts and intervening global flags', () => {
 	for (const [sample, subcommand] of [
-		['$ beskid pckg login', 'login'],
-		['PS> beskid pckg --verbose publish', 'publish'],
-		['> beskid pckg --base-url https://registry.example dry-run', 'dry-run'],
+		['$ beskid package whoami', 'whoami'],
+		['PS> beskid package --verbose yank', 'yank'],
+		['> beskid package --base-url https://registry.example dry-run', 'dry-run'],
 	]) {
 		assert.equal(containsPckgSubcommand(sample, subcommand), true, `must detect ${sample}`);
 	}
@@ -1124,7 +1124,7 @@ test('registry procedures expose version fallback and require lock inspection', 
 
 test('workspace guidance distinguishes source-path and no-input selection and explains target defaults', async () => {
 	const workspace = await loadPage(procedurePages.find((page) => page.path === 'docs/projects/workspaces.md'));
-	assert.ok(workspace.body.includes('beskid analyze ./app/Src/Main.bd --project ./Workspace.bws'));
+	assert.ok(workspace.body.includes('beskid check ./app/Src/Main.bd --project ./Workspace.bws'));
 	assert.match(workspace.body, /source path[\s\S]*deepest matching member/i);
 	assert.match(workspace.body, /no input path[\s\S]*defaultTestMember[\s\S]*first declared member/i);
 	assert.ok(workspace.body.includes('App, then Test, then Lib'));

@@ -8,27 +8,32 @@ Language keywords define **`spawn`** and typing rules. **Standard library** type
 
 ## Package
 
-Normative hub: [Concurrency package](/platform-spec/core-library/concurrency/concurrency-package/).
+Normative hub: [Concurrency package](/docs/standard/capabilities/core-library--concurrency--concurrency-package/).
 
 Expected surfaces (names per spec):
 
-- **`Fiber<T>`**: spawn handle, `OnCancelled`, join/cancel operations
+- **`Fiber<T>`**: spawn handle with `Join`, `Detach`, and `Cancel`
 - **`Channel<T>`**: cross-fiber messaging
-- **WaitGroup**, **Hub**: structured coordination
+- **`Mutex`**, **`WaitGroup`**, **`Hub<T>`**: coordination
+- **`Concurrency.Yield()`**: cooperative reschedule of the current fiber
 
-Corelib lives in the **`corelib`** package identity (`compiler/corelib` / `beskid_corelib` workspace), not a random Rust crate beside the compiler.
+Corelib lives in the **`corelib`** package identity (the `compiler/corelib` workspace), not a random Rust crate beside the compiler.
+
+## One core at a time, for now
+
+In 0.6.0 fibers interleave on one scheduler; they do not run in parallel. `Concurrency.ProcessorCount()` returns 1, and `SetProcessorCount` does nothing. Use fibers for I/O-bound concurrency. CPU parallelism through isolates is planned for the 0.6.1 to 0.6.5 releases. Nothing about its syntax or API is settled yet, so do not design around a guess.
 
 ## Split of responsibility
 
 | Layer | Owns |
 | --- | --- |
-| [Language meta: Fibers and spawn](/platform-spec/language-meta/evaluation/fibers-and-spawn/) | `spawn` syntax, diagnostics, capture rules |
-| [Execution: Fiber scheduler](/platform-spec/execution/runtime/fiber-scheduler-and-stacks/) | Stacks, scheduler, shutdown join |
-| [Core library: Concurrency package](/platform-spec/core-library/concurrency/concurrency-package/) | User-facing structs and methods |
+| [Language meta: Fibers and spawn](/docs/standard/capabilities/language-meta--evaluation--fibers-and-spawn/) | `spawn` syntax, diagnostics, capture rules |
+| [Execution: Fiber scheduler](/docs/standard/capabilities/execution--runtime--fiber-scheduler-and-stacks/) | Stacks, scheduler, shutdown join |
+| [Core library: Concurrency package](/docs/standard/capabilities/core-library--concurrency--concurrency-package/) | User-facing structs and methods |
 
 ## Workspace crates (implementation)
 
-Lowering and runtime tie to `beskid_codegen`, `beskid_engine`, `beskid_abi`, and `abfall` for GC while fibers run; see [Crate-to-spec anchors](/platform-spec/compiler/implementation-map/crate-to-spec-anchors/).
+Lowering goes through `beskid_codegen` and `beskid_isle`; the scheduler, channels, and synchronization are Beskid runtime source under `compiler/runtime/beskid/src/Runtime`, linked as part of the ABI-v5 runtime kit. See [Crate-to-spec anchors](/docs/standard/capabilities/compiler--implementation-map--crate-to-spec-anchors/).
 
 ## Next chapter
 

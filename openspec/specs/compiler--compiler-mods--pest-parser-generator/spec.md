@@ -137,7 +137,7 @@ Project-local `.pest` files compiled by **GrammarGenerator** parse **text DSLs o
 | --- | --- |
 | **`Beskid.Compiler.Collect.GrammarGenerator`** | Mod contract: registers `.pest` roots via `Collector`; emits combinator modules on fingerprint miss |
 | **`Core.Text.Pest`** | Beskid library: parse Pest grammar text, lower to combinator AST, emit `Core.Text.Parser` call sites |
-| **`corelib_pest_gen`** | Reference `type = Mod` package (`PestCollector`, `PestGen`); emits `CodeContribution` outputs materialized to `.generated/{modulePath}/{fileName}.g.bd` |
+| **`corelib_pest_gen`** | Reference `type = Mod` package (`PestCollector`, `PestGen`); emits typed structural contributions materialized to `.generated/{modulePath}/{fileName}.g.bd` |
 | **`grammar { }` block** | Consumer `.bproj` declares Pest roots and output module paths (camelCase keys; see [project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)) |
 | **`mod.descriptor.json`** | Adds `generatedModules` entries with output paths |
 

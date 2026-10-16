@@ -16,6 +16,7 @@ This command is available as `beskid doc`.
 | `--workspace-member` | Workspace member when resolving via `Workspace.bws` |
 | `--frozen` | Require lockfile match; forbid updates |
 | `--locked` | Require an existing lockfile |
+| `--offline` | Forbid network requests; use verified cached dependency artifacts only |
 | `--out` | Output directory (default `doc-out`); receives `api.json` and `index.md` |
 
 ## Output
@@ -33,7 +34,7 @@ Each item includes location, visibility, `kind`, names, graph ids, and compiler-
 - **`docMarkdown`** (optional): rendered Markdown for hovers and human-facing docs (same template the LSP uses for rich text).
 - **`doc`** (optional, object): structured fields: `summaryMarkdown`, `returnsMarkdown`, `arguments`, `enumVariants`, `typeParameters`. Derived from the same parse tree as `docMarkdown`.
 
-See the [api.json contract](/docs/standard/tooling/cli/api-json-contract/design-model/) in the platform specification for normative field definitions.
+See the [api.json contract](/docs/standard/capabilities/tooling--cli--api-json-contract/) in the platform specification for normative field definitions.
 
 Older consumers that only understand schema version `2` should treat unknown `schemaVersion` values as unsupported and fall back to Markdown-only fields when present.
 
@@ -43,7 +44,7 @@ Human-oriented index page generated alongside `api.json` for browsing in reposit
 
 ## Layout in projects
 
-When run as part of packaging, artifacts are written under **`<sourceRoot>/.beskid/docs/`** (for example `.beskid/docs/api.json`). The `beskid pckg pack` command copies those paths into the archive and records a `documentation` pointer in the embedded `package.json` so registries can open `api.json` without path heuristics.
+When run as part of packaging, artifacts are written under **`<sourceRoot>/.beskid/docs/`** (for example `.beskid/docs/api.json`). The `beskid package pack` command copies those paths into the archive and records a `documentation` pointer in the embedded `package.json` so registries can open `api.json` without path heuristics.
 
 ## Example
 

@@ -4,9 +4,7 @@
 ## Purpose
 
 Registry contract for semantic diagnostic code ownership and synchronization with compiler sources.
-
 ## Requirements
-
 ### Requirement: Feature hub authority: Decision [D-COMP-SEM-0001]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
 
@@ -40,14 +38,45 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 
 > Code-to-meaning mapping is normative in `SemanticIssueKind::code()` and `diagnostic_kinds.rs`, synchronized with trudoc verify scripts—not LSP presentation layers.
 
-**Stable ID:** `BSP-REQ-072159A73908`  
-**Legacy source:** `site/spec-content/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/adr/0003-codes-owned-in-analysis/content.md`  
-**Source SHA-256:** `9fae97e060b40dbd98e9baab68cf2cb1750678234b351c383f784313fd206180`
+E1230 identifies a scoped-cleanup rejection. E1231 identifies a dead
+collection-growth violation. Both codes are user-facing semantic diagnostics
+and SHALL identify the offending source site.
+
+The inclusive range **E2101–E2199** is reserved for internal compiler
+errors: a legality fact or an ISLE lowering rule/fact that is still
+unavailable after the reachability-scoped semantic legality gate
+(`compiler--build-pipeline--stage-ordering`, "Reachability-scoped legality
+gate precedes specialization") has passed for the items being lowered.
+E2101–E2199 codes SHALL NOT be assigned to an ordinary user-facing semantic
+rule; an internal-error code SHALL carry the unavailable query or missing
+rule name and its generation-bound site, and SHALL NOT be presented with a
+user-facing diagnostic label. Ordinary semantic rules must not allocate
+inside this band. E2101 identifies an unavailable semantic fact after the
+gate has passed. E2102 identifies a missing ISLE lowering rule or fact after
+the gate has passed. E2103–E2199 remain reserved.
+
+**Stable ID:** `BSP-REQ-072159A73908`
 
 #### Scenario: Conformance exercises Decision
 - **GIVEN** an implementation claims conformance with this capability
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
+
+#### Scenario: Scoped cleanup and dead growth have user-facing codes
+- **GIVEN** a legality-checked item contains a scoped-cleanup rejection or a
+  dead collection-growth violation
+- **WHEN** the reachability-scoped legality gate evaluates the item
+- **THEN** the compiler SHALL report E1230 or E1231 at the offending source
+  site
+
+#### Scenario: Internal-error codes identify the missing boundary
+- **GIVEN** the reachability-scoped semantic legality gate has passed for
+  every item a lowering request judges
+- **WHEN** a legality fact or ISLE rule for one of those items' nodes is
+  still `unavailable` (a genuine compiler-port gap, not a user error)
+- **THEN** the compiler SHALL report E2101 for an unavailable semantic fact
+  or E2102 for a missing ISLE rule or fact, carrying the query or rule name
+  and the site
 
 ## Informative Source Provenance
 
@@ -302,7 +331,7 @@ Bsol project-shape validation emits these codes from `beskid_analysis::projects`
 | --- | --- |
 | **E1886** | `type = Bsol` project declares a `target` block (forbidden — schema packages are not compile roots). |
 | **E1887** | `type = Bsol` project has no nested `schemas { export ... }` block. |
-| **E1888** | A `beskid build` targets a `Bsol` project (use `beskid validate-bsol` instead). |
+| **E1888** | A `beskid build` targets a `Bsol` project (use `beskid dev bsol validate <manifest>.bproj` instead). |
 
 ## Language macro expansion (**E1901–E1999**)
 

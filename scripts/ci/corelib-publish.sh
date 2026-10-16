@@ -8,23 +8,26 @@
 # Run from the superrepo root. Assumes compiler (+ corelib), beskid_bsol, and
 # beskid_templates submodules are initialised.
 #
-# Usage: corelib-publish.sh [version-bump] [--dry-run]
-#   version-bump  patch | minor | major (default: patch)
+# Usage: corelib-publish.sh [--dry-run]
 #   --dry-run     build and validate every artifact without registry access
-# Env: BESKID_PCKG_API_KEY (required unless --dry-run)
+# Env: BESKID_PCKG_VERSION_BUMP (pipeline input: patch | minor | major | an exact
+#        MAJOR.MINOR.PATCH version; default patch)
+#      BESKID_PCKG_API_KEY (required unless --dry-run)
 #      BESKID_PCKG_BASE_URL (default https://pckg.beskid-lang.org)
 #      BESKID_TOOLCHAIN_PREFIX (required extracted, verified release bundle)
 set -euo pipefail
 
-VERSION_BUMP="patch"
+VERSION_BUMP="${BESKID_PCKG_VERSION_BUMP:-patch}"
 DRY_RUN=0
 for argument in "$@"; do
   case "$argument" in
-    patch|minor|major) VERSION_BUMP="$argument" ;;
     --dry-run) DRY_RUN=1 ;;
-    *) echo "usage: corelib-publish.sh [patch|minor|major] [--dry-run]" >&2; exit 1 ;;
+    *) echo "usage: corelib-publish.sh [--dry-run] (set BESKID_PCKG_VERSION_BUMP for the version policy)" >&2; exit 1 ;;
   esac
 done
+[[ "$VERSION_BUMP" =~ ^(patch|minor|major|[0-9]+\.[0-9]+\.[0-9]+)$ ]] || {
+  echo 'BESKID_PCKG_VERSION_BUMP must be patch, minor, major, or an exact MAJOR.MINOR.PATCH version' >&2; exit 1;
+}
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 export RUST_MIN_STACK="${RUST_MIN_STACK:-67108864}"

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Corelib gate: workspace/manifest quality checks (corelibQuality) + the
-# beskid_cli corelib test suite (corelibTest).
+# beskid_cli dev corelib test suite (corelibTest).
 #
 # Runs directly on a native CI worker and surfaces full per-test output.
 #
@@ -448,6 +448,28 @@ corelib_report_step "build beskid_cli (release)" \
 
 CLI="${COMPILER_ROOT}/target/release/beskid_cli"
 export BESKID_CLI_BIN="${CLI}"
+
+# Release-case suites of the matrix read the inputs the release-case producer
+# binds (scripts/ci/release-cases-v06.json): the BSOL suites read the pinned
+# beskid_bsol conformance corpus, and ProcessSuite spawns the process fixture
+# built from this compiler commit. Without them those targets fail closed.
+corelib_provision_release_case_inputs() {
+  local bsol="${ROOT}/beskid_bsol"
+  if [[ ! -d "${bsol}/conformance/cases" || ! -d "${bsol}/schemas" ]]; then
+    echo "missing BSOL conformance corpus under ${bsol}; initialize the beskid_bsol submodule" >&2
+    return 1
+  fi
+  corelib_run_bounded_phase "build release-case process fixture" "${CORELIB_FIXTURE_BUILD_TIMEOUT:-900}" \
+    cargo build -p beskid_tests_interop --bin beskid_release_fixture --release || return
+  local fixture="${COMPILER_ROOT}/target/release/beskid_release_fixture"
+  if [[ ! -x "${fixture}" ]]; then
+    echo "release-case process fixture was not built at ${fixture}" >&2
+    return 1
+  fi
+  export BESKID_BSOL_CORPUS="${bsol}/conformance"
+  export BESKID_V06_RELEASE_FIXTURE="${fixture}"
+}
+corelib_report_step "provision release-case inputs" corelib_provision_release_case_inputs
 corelib_materialize_release_bundle() {
   local source="${BESKID_CORELIB_SOURCE:?release Corelib source is required}"
   local installed="${BESKID_CORELIB_ROOT:?release Corelib root is required}"
@@ -456,7 +478,7 @@ corelib_materialize_release_bundle() {
     return 1
   }
   corelib_run_bounded_phase "materialize pinned Corelib bundle" "${CORELIB_MATERIALIZE_TIMEOUT:-120}" \
-    "$CLI" corelib --output "$installed"
+    "$CLI" dev corelib --output "$installed"
   node "$ROOT/scripts/ci/verify-release-corelib-bundle.mjs" --verify "$source" "$installed"
 }
 if [[ "${BESKID_RELEASE_MANAGED_CORELIB:-0}" == 1 ]]; then

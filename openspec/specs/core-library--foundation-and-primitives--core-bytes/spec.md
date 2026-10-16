@@ -4,9 +4,7 @@
 ## Purpose
 
 Byte buffer primitives over u8[] and runtime array builtins.
-
 ## Requirements
-
 ### Requirement: u8 array canonical buffer: Decision [D-CORE-PRIM-0010]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
 
@@ -20,6 +18,47 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **GIVEN** an implementation claims conformance with this capability
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
+
+### Requirement: Bytes copy is overlap-safe and bounds-checked
+`Core.Bytes.Copy` SHALL behave as overlap-safe `memmove` for a source and destination that alias. It MUST permit zero-length copies without changing either buffer, MUST reject a source or destination range outside its buffer, and MUST preserve all bytes that the specified copy range defines.
+
+**Stable ID:** `BSP-REQ-8E1AF054C89D`
+
+#### Scenario: Overlapping copy moves backward safely
+- **GIVEN** one byte buffer and a copy from range `[0, 4)` to range `[1, 5)`
+- **WHEN** `Core.Bytes.Copy` completes
+- **THEN** the destination contains the original four source bytes in order
+
+### Requirement: Bytes cursors preserve checked position and capacity
+`Core.Bytes` SHALL publish the following cursor declarations:
+
+```beskid
+pub enum BytesError {
+    OutOfBounds(),
+    InvalidRange(),
+}
+
+pub contract ByteReader {
+    Core.Results.Result<i64, BytesError> Position();
+    Core.Results.Result<i64, BytesError> Capacity();
+    Core.Results.Result<u8[], BytesError> Read(i64 count);
+}
+
+pub contract ByteWriter {
+    Core.Results.Result<i64, BytesError> Position();
+    Core.Results.Result<i64, BytesError> Capacity();
+    Core.Results.Result<unit, BytesError> Write(u8[] source, i64 offset, i64 count);
+}
+```
+
+Byte readers and writers MUST expose checked position and capacity semantics. A read or write past the configured bounds MUST return `BytesError::OutOfBounds` without advancing position; a zero-length operation MUST return `Result::Ok` without advancing position; readers and writers MUST expose their resulting position after every successful transfer.
+
+**Stable ID:** `BSP-REQ-391C7C5A5DD6`
+
+#### Scenario: Reader overrun is rejected
+- **GIVEN** a reader positioned at the final byte of a one-byte buffer
+- **WHEN** it requests two bytes
+- **THEN** it returns a typed bounds error and leaves position unchanged
 
 ## Informative Source Provenance
 
@@ -117,7 +156,7 @@ No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-CORE-P
 ## Implementation anchors
 
 - `compiler/corelib/packages/foundation/src/Core/Bytes/`
-- `compiler/corelib/beskid_corelib/tests/corelib_tests/src/core/BytesTests.bd`
+- `compiler/corelib/beskid_corelib/tests/corelib_tests/src/core/CoreSuite.bd#BytesTests`
 ``````
 
 </details>
@@ -174,12 +213,12 @@ flowchart TB
 ``````markdown
 | Requirement | Test anchor |
 | --- | --- |
-| **BYTES-001**, **BYTES-007** | `BytesTests.bd` — `bytes_new_has_length` |
-| **BYTES-003** | `BytesTests.bd` — `bytes_from_str_builtin_smoke` |
+| **BYTES-001**, **BYTES-007** | `CoreSuite.bd#BytesTests` — `bytes_new_has_length` |
+| **BYTES-003** | `CoreSuite.bd#BytesTests` — `bytes_from_str_builtin_smoke` |
 | **BYTES-002** | Runtime trap on OOB `__bytes_get` / `__bytes_set` (integration) |
-| **BYTES-005** | `EncodingUtf8Tests.bd` — `utf8_from_str_builtin_round_trip` |
+| **BYTES-005** | `CoreSuite.bd#EncodingUtf8Tests` — `utf8_from_str_builtin_round_trip` |
 
-Harness: `compiler/corelib/beskid_corelib/tests/corelib_tests/src/core/BytesTests.bd`
+Harness: `compiler/corelib/beskid_corelib/tests/corelib_tests/src/core/CoreSuite.bd#BytesTests`
 ``````
 
 </details>

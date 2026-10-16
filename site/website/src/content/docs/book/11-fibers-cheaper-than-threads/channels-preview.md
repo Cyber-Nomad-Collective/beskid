@@ -8,9 +8,10 @@ If two fibers need to talk, they use a **channel**. They do not share a mutable 
 
 ## Model
 
-- **`Channel<T>`** carries typed messages between fibers.
-- **Send** / **Receive** operations block cooperatively (scheduler-aware).
-- Errors and cancellation surface through **`Result`** on join/receive paths per [Concurrency package](/platform-spec/core-library/concurrency/concurrency-package/).
+- **`Channel<T>`** carries typed messages between fibers. `Channel.Create<T>()` makes an unbounded channel; `CreateWithOptions` takes `ChannelOptions` (`Bounded(n)`, `SingleReader()`, `SingleWriter()`).
+- **`Send`** / **`Receive`** block cooperatively (scheduler-aware) and return `Result` with a `ChannelError`. **`TrySend`** / **`TryReceive`** never block. **`Close`** ends the channel.
+- An unbounded channel has no fixed entry limit, and the runtime has no fixed channel count: its tables grow until the system allocator refuses memory.
+- The full API is specified in the [Concurrency package](/docs/standard/capabilities/core-library--concurrency--concurrency-package/).
 
 ```mermaid
 sequenceDiagram
@@ -29,15 +30,15 @@ sequenceDiagram
 
 ## ADR-backed choices
 
-Cross-fiber events use channels, not ad-hoc flags. See [ADR: cross-fiber events use channels](/platform-spec/language-meta/evaluation/fibers-and-spawn/adr/0004-cross-fiber-events-use-channels/).
+Cross-fiber events use channels, not ad-hoc flags. See [ADR: cross-fiber events use channels](/docs/standard/capabilities/language-meta--evaluation--fibers-and-spawn/).
 
-## Mutex and WaitGroup
+## Mutex, WaitGroup, and Hub
 
-**Mutex** and **WaitGroup** coordinate invariants; they are **not** a substitute for channel payload transfer. If you are passing data, use a channel; if you are guarding a critical section, use the primitives the spec names.
+**Mutex** (`Lock` returns a `MutexGuard`, `Unlock` takes it back) and **WaitGroup** (`Add`, `Done`, `Wait`) coordinate invariants; they are **not** a substitute for channel payload transfer. **`Hub<T>`** multiplexes several channels behind one `WaitReceive`. If you are passing data, use a channel; if you are guarding a critical section, use the primitives the spec names.
 
 ## Memory interaction
 
-Shared **heap** objects still follow [Memory and references](/platform-spec/language-meta/memory-model/memory-and-references/); channels are how you avoid data races without pretending Beskid is C++.
+Shared **heap** objects still follow [Memory and references](/docs/standard/capabilities/language-meta--memory-model--memory-and-references/); channels are how you avoid data races without pretending Beskid is C++.
 
 ## Next
 

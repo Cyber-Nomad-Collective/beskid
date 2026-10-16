@@ -33,8 +33,8 @@ Workspace/
 │   ├── App.bproj
 │   └── Src/
 │       └── Main.bd
-└── Std/
-    ├── Std.bproj
+└── Shared/
+    ├── Shared.bproj
     └── Src/
         └── IO.bd
 ```
@@ -52,16 +52,16 @@ target "App" {
   entry = "Main.bd"
 }
 
-dependency "Std" {
+dependency "Shared" {
   source = "path"
-  path   = "../Std"
+  path   = "../Shared"
 }
 ```
 
-**Std.bproj** (under `Std/`)
+**Shared.bproj** (under `Shared/`)
 ```text
-Std {
-  name    = "Std"
+Shared {
+  name    = "Shared"
   version = "0.1.0"
   root    = "Src"
 }

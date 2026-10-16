@@ -38,12 +38,12 @@ CLI commands that need a resolved entrypoint accept optional `--project`, `--tar
 
 ## Language services use the same graph
 
-The LSP does not get a parallel universe. Editor diagnostics, go-to-definition, and analysis share the manifest model with `beskid analyze` / `beskid build`. When the editor disagrees with the CLI, suspect **different roots or versions**, not "LSP magic."
+The LSP does not get a parallel universe. Editor diagnostics, go-to-definition, and analysis share the manifest model with `beskid check` / `beskid build`. When the editor disagrees with the CLI, suspect **different roots or versions**, not "LSP magic."
 
 ## Normative contracts
 
-- [Project manifest contract](/docs/standard/tooling/manifests-and-lockfiles/project-manifest-contract/)
-- [Workspace and lock contracts](/docs/standard/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/)
+- [Project manifest contract](/docs/standard/capabilities/tooling--manifests-and-lockfiles--project-manifest-contract/)
+- [Workspace and lock contracts](/docs/standard/capabilities/tooling--manifests-and-lockfiles--workspace-and-lock-contracts/)
 
 ## Next
 

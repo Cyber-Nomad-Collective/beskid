@@ -3,28 +3,30 @@
 
 ## Purpose
 
-How semantic rule stages relate to lower-spine type checking in the reference compiler.
+How staged semantic rules relate to the query gate, which is the sole typing authority of the reference compiler.
 
 ## Requirements
 
 ### Requirement: Single lower-spine type check
-Expression and declaration type checking SHALL run exactly once on the lower spine as pipeline phase id `lower.type_check` (`LOWER_TYPE_CHECK`). The reference compiler MUST NOT run a second full body-typing pass under `semantic.type_check`; that phase id is not authoritative for typed HIR or for `E12xx` type diagnostics.
+Expression and declaration typing SHALL be judged exactly once, by the generation-bound query layer (`beskid_queries`), over registered syntax keyed by `AstNodeKey`. The reference compiler MUST NOT run a second body-typing pass. The `semantic.type_check` phase id carries structural rules only and is not authoritative for `E12xx` type diagnostics. The retired phase id `lower.type_check` SHALL NOT be emitted; the lowering boundary consists of the phase ids `lower.ready` and `lower` (`LOWER_READY` and `LOWER` in `compiler/crates/beskid_pipeline/src/phases.rs`).
 
-#### Scenario: Type check observed once as lower.type_check
+#### Scenario: Typing is not observed as a lower-spine phase
 - **GIVEN** a program that requires expression and declaration typing
 - **WHEN** the reference compiler runs the production semantic and lower pipeline
-- **THEN** full body typing runs under `lower.type_check` and not as a second full pass under `semantic.type_check`
+- **THEN** the pipeline observer records `lower.ready` before `lower`
+- **AND** no `lower.type_check` phase is recorded and no second full typing pass runs under `semantic.type_check`
 
 ### Requirement: Lower type-check three-pass spine
-Within `lower.type_check`, the reference compiler MUST run `index_program` first, then a three-pass spine: surface (`UnitTypeSurface` merge for entry), check (`TypeChecker::check_entry` with constraint solving writing `node_types`), and lowering prep (`LoweringPrep` with `call_kinds` and `cast_intents` keyed by `HirNodeId`). `TypeResult` assembly MUST follow those three passes.
+The legacy `beskid_analysis` `TypeChecker` is retired. Its three-pass spine (surface, check, lowering prep), the `TypeResult` product and its `node_types`, `call_kinds` and `cast_intents` tables keyed by `HirNodeId` MUST NOT run on any path. The query gate (`semantic_diagnostics_for_roots` in `compiler/crates/beskid_queries/src/entry.rs`) SHALL judge every item of every own unit of the project, whether or not an entry reaches it, over one `TypedProgram` built for the whole assembly by `build_typed_program`. Code generation SHALL consume facts of that same query layer.
 
-#### Scenario: Index before surface check prep
-- **GIVEN** a compilation unit entering `lower.type_check`
-- **WHEN** the phase executes
-- **THEN** `index_program` completes before the surface, check, and lowering-prep passes assemble `TypeResult`
+#### Scenario: Unreached library item is judged
+- **GIVEN** an entry-less library whose own unit declares an item with a type error that no other item calls
+- **WHEN** `beskid check` runs
+- **THEN** the query gate reports the type error for that item
+- **AND** no `TypeResult` is assembled
 
 ### Requirement: Structural semantic rules without duplicate typing
-Staged semantic rules MAY emit diagnostics that mention types when the check is structural and does not require a completed `TypeResult`, but MUST NOT duplicate full expression typing already performed at `lower.type_check`. CLI analyze, LSP, and `prepare_compilation_diagnostics` MUST surface type errors via the lower spine (or `LowerResolveTypeError::Type` via `emit_type_error`), and consumers MUST treat stable `E12xx` codes as the conformance surface.
+Staged semantic rules (`SemanticPipelineRule`) MAY emit diagnostics that mention types when the check is structural and needs no typing fact, but MUST NOT perform expression typing. CLI `check` and `analyze`, the language server, and `prepare_compilation_diagnostics` in `beskid_queries` MUST surface type errors from the query gate, and consumers MUST treat stable `E12xx` codes as the conformance surface.
 
 #### Scenario: Structural immutability without second type pass
 - **GIVEN** staged semantic rule `E1214` immutable-assignment checking

@@ -8,20 +8,22 @@ Application code is yours. **Corelib** is the shared floor: collections, contrac
 
 ## Identity
 
-Package identity is **`corelib`** (legacy `standard_library` paths may still be accepted by tooling). Sources live in the compiler **`corelib`** submodule / `beskid_corelib/` tree with `beskid_corelib/Project.proj` at the separated workspace root (`BESKID_CORELIB_ROOT`).
+Package identity is **`corelib`**. Sources live in the compiler **`corelib`** submodule: a workspace with a `.bws` manifest, the aggregate project `beskid_corelib/corelib.bproj`, library packages under `packages/`, and compiler Mods under `mods/`. `BESKID_CORELIB_ROOT` points the CLI at an explicit Corelib workspace.
+
+Your project gets Corelib as an implicit dependency with the label **`Core`**. The label is not a module path. Corelib modules keep their package roots, so you write `use Core.Output;` or `use Concurrency.Channel;`, never a `Std.` prefix. Your own modules have no prefix at all.
 
 Beskid standard library implementation stays **Beskid source**, not a side Rust crate pretending to be std.
 
 ## Tooling materialization
 
-CLI ensures bundled corelib is available on launch; override with `BESKID_CORELIB_SOURCE` when hacking std. [`beskid dev build corelib`](/book/reference/cli/commands/corelib/) materializes embedded templates for offline/bootstrap scenarios.
+Commands that compile (`check`, `build`, `run`, `test`, `doc`) first make sure the bundled Corelib is installed and current. [`beskid dev corelib`](/book/reference/cli/commands/corelib/) copies the embedded workspace to disk when you want to read or patch it. `BESKID_CORELIB_SOURCE` matters only when you build the compiler itself: it selects the workspace that gets embedded.
 
 ## Layout mental model
 
 Corelib splits into **interlinked workspace packages**, not one monolithic `IO.bd` dumping ground:
 
 - Primitive types and contracts in the foundation package under `Core` (including `Option<T>`)
-- Runtime syscall-backed I/O under runtime packages; higher console work in dedicated packages (see platform [core library](/platform-spec/core-library/) domain)
+- Runtime syscall-backed I/O under runtime packages; higher console work in dedicated packages (see the [core library](/docs/standard/capabilities/taxonomy--core-library/) domain)
 
 ```mermaid
 flowchart TD
@@ -43,8 +45,8 @@ Compiler `doc` emission can place `api.json` and markdown under `.beskid/docs/`.
 
 ## Standard reference (informative)
 
-- [Core library domain](/platform-spec/core-library/)
-- [Types: Option](/platform-spec/language-meta/type-system/types/)
+- [Core library domain](/docs/standard/capabilities/taxonomy--core-library/)
+- [Types: Option](/docs/standard/capabilities/language-meta--type-system--types/)
 
 ## Next chapter
 

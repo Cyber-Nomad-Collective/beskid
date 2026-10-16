@@ -4,7 +4,7 @@ description: Names that survive grep, review, and api.json without folklore.
 tableOfContents: true
 ---
 
-Naming is not aesthetics: it is an API contract. Platform-spec [Code style and naming](/platform-spec/language-meta/program-structure/code-style-and-naming/) is the normative baseline; this section is how you apply it without bike-shedding for three days.
+Naming is not aesthetics: it is an API contract. Platform-spec [Code style and naming](/docs/standard/capabilities/language-meta--program-structure--code-style-and-naming/) is the normative baseline; this section is how you apply it without bike-shedding for three days.
 
 ## Case profiles (quick)
 
@@ -16,7 +16,7 @@ Naming is not aesthetics: it is an API contract. Platform-spec [Code style and n
 | Tests | **snake_case** | `hub_register_accepts_channel` |
 | Macros | **lowerCamelCase** | `identity` |
 
-Full rules: [Code style and naming](/platform-spec/language-meta/program-structure/code-style-and-naming/).
+Full rules: [Code style and naming](/docs/standard/capabilities/language-meta--program-structure--code-style-and-naming/).
 
 ## Review-friendly habits
 
@@ -27,5 +27,5 @@ Full rules: [Code style and naming](/platform-spec/language-meta/program-structu
 
 ## Spec
 
-- [Code style and naming](/platform-spec/language-meta/program-structure/code-style-and-naming/)
-- [Name resolution](/platform-spec/language-meta/program-structure/name-resolution/)
+- [Code style and naming](/docs/standard/capabilities/language-meta--program-structure--code-style-and-naming/)
+- [Name resolution](/docs/standard/capabilities/language-meta--program-structure--name-resolution/)

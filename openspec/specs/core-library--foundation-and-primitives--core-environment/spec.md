@@ -10,7 +10,7 @@ Provides environment-variable access and mutation with typed permission and key 
 ### Requirement: Environment access and enumeration: Decision [D-CORE-PRIM-0150]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
 
-> `Get(string key)` SHALL read through the `__env_get` builtin and return `Option<string>`, while `All()` MUST return the complete environment as `Map<string,string>`. Missing keys SHALL be represented by `None`, not a panic.
+> `Get(string name)` SHALL read through the `__env_get` builtin and return `Result<string, EnvironmentError>`: an empty name SHALL yield `InvalidName(name)` and a missing or empty variable SHALL yield `NotFound(name)`. `TryGet(string name)` SHALL return `Option<string>` and SHALL represent an empty name or a missing variable by `None`. `Has(string name)` SHALL return whether `TryGet` holds a value. Missing variables SHALL NOT panic.
 
 **Stable ID:** `BSP-REQ-4E91B7C2A6D0F835`
 
@@ -22,7 +22,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 ### Requirement: Environment mutation and errors: Decision [D-CORE-PRIM-0151]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
 
-> `Set` and `Unset` MUST delegate to `__env_set` and `__env_unset` respectively and return `Result<Unit, EnvironmentError>`. `EnvironmentError` SHALL include `KeyNotFound(string)`, `PermissionDenied(string)`, and `InvalidKey(string)` variants; mutation failures MUST NOT be silently ignored.
+> `Set(string name, string value)` MUST delegate to `__env_set` and return `Result<bool, EnvironmentError>`: `Ok(true)` on success, `InvalidName(name)` for an empty name, and `UnsupportedMutation(name, 0)` when `__env_set` reports a failure (0.6.0 does not forward a host reason code). `Core.Environment` SHALL NOT expose an `Unset` operation. `EnvironmentError` SHALL have exactly the variants `InvalidName(string name)`, `NotFound(string name)` and `UnsupportedMutation(string name, i64 hostReason)`; mutation failures MUST NOT be silently ignored.
 
 **Stable ID:** `BSP-REQ-A83F1D6C0E9274B5`
 

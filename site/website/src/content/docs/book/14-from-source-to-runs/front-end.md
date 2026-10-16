@@ -8,25 +8,25 @@ The front-end turns text into a structured program representation, or gives you 
 
 ## Spec areas
 
-- [Grammar and parser contract](/docs/standard/compiler/front-end/grammar-and-parser-contract/)
-- [Parser and AST contracts](/docs/standard/compiler/front-end/parser-and-ast-contracts/)
-- [Typed syntax and code-generation input](/docs/standard/compiler/build-pipeline/)
+- [Grammar and parser contract](/docs/standard/capabilities/compiler--front-end--grammar-and-parser-contract/)
+- [Parser and AST contracts](/docs/standard/capabilities/compiler--front-end--parser-and-ast-contracts/)
+- [Typed syntax and code-generation input](/docs/standard/capabilities/taxonomy--compiler--build-pipeline/)
 
 ## Crates and modules
 
 | Piece | Location |
 | --- | --- |
 | Lex/parse | `beskid_analysis::syntax`, `beskid_analysis::parser` |
-| SyntaxMirror / facade | Tied to [Syntax domain model generation](/docs/standard/compiler/compiler-mods/syntax-domain-model-generation/), [Beskid compiler syntax facade](/docs/standard/compiler/compiler-mods/beskid-compiler-syntax-facade/) |
+| SyntaxMirror / facade | Tied to [Syntax domain model generation](/docs/standard/capabilities/compiler--compiler-mods--syntax-domain-model-generation/), [Beskid compiler syntax facade](/docs/standard/capabilities/compiler--compiler-mods--beskid-compiler-syntax-facade/) |
 
 ## Program assembly
 
 Before parse, **effective roots** come from manifests and workspace resolution:
 
-- [Program assembly](/docs/standard/compiler/build-pipeline/program-assembly/)
-- [Workspace resolution](/docs/standard/compiler/resolution-and-projects/workspace-resolution-contract/)
+- [Program assembly](/docs/standard/capabilities/compiler--build-pipeline--program-assembly/)
+- [Workspace resolution](/docs/standard/capabilities/compiler--resolution-and-projects--workspace-resolution-contract/)
 
-## `beskid parse`
+## `beskid dev syntax parse`
 
 Exercises front-end slices without full codegen: useful for grammar work, insufficient for shipping.
 

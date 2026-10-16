@@ -358,7 +358,7 @@ Corelib compile tests and ABI contract tests cross-check tag and status parity. 
 ## Contracts
 
 - **No opt-out** — Host manifests **must not** disable corelib; parser rejects forbidden keys.
-- **Single aggregate identity** — Implicit attachment targets `beskid_corelib` / package name **`corelib`**, not arbitrary forks, unless explicitly overridden by a declared `Std` path dependency in advanced layouts.
+- **Single aggregate identity** — Implicit attachment targets `beskid_corelib` / package name **`corelib`**, not arbitrary forks, unless explicitly overridden by a declared `Core` path dependency that points at another Corelib aggregate checkout. The `Core` label is reserved for the Corelib aggregate.
 - **Transitive closure** — Host compilations **must** see the full corelib workspace member packages required by the aggregate manifest.
 - **Mod projects** — `Mod` packages do not receive implicit host injection rules; they compile as mod carriers, not application hosts.
 - **Template output** — Instantiated host projects from templates follow host rules (implicit corelib).
@@ -367,8 +367,8 @@ Corelib compile tests and ABI contract tests cross-check tag and status parity. 
 
 | Case | Behavior |
 | --- | --- |
-| Explicit `Std` dependency | Used instead of fallback path when `path` provided |
-| `beskid_corelib` building itself | `is_std_project` / manifest path checks avoid self-cycle |
+| Explicit `Core` dependency | Used instead of fallback path when `path` provided; the target must be the Corelib aggregate |
+| `beskid_corelib` building itself | Installed-aggregate manifest path checks avoid self-cycle |
 | Shard under `packages/runtime` | No implicit back-link to aggregate |
 | Missing `BESKID_CORELIB_ROOT` | Repo discovery or bundled CLI corelib materialization |
 | Legacy `standard_library` paths | Tooling may accept aliases; canonical identity remains **`corelib`** |
@@ -401,13 +401,13 @@ Host projects (`Host`, including template output) **always** receive an implicit
 flowchart TB
   Host[Host .bproj]
   Resolver[resolve_dependencies]
-  Std[Implicit Std / corelib path]
+  Core[Implicit Core / corelib path]
   Graph[Project DAG]
   Plan[CompilePlan]
   Sem[Semantic + lowering]
   Host --> Resolver
-  Resolver --> Std
-  Std --> Graph
+  Resolver --> Core
+  Core --> Graph
   Graph --> Plan --> Sem
 ```
 
@@ -415,7 +415,7 @@ flowchart TB
 | --- | --- |
 | `BESKID_CORELIB_ROOT` | Points at workspace or install root containing `beskid_corelib/corelib.bproj` |
 | Repo discovery | Walk ancestors for `compiler/corelib/beskid_corelib` |
-| Explicit `Std` / `corelib` path dep | Honored when declared; path fallback uses `default_corelib_dependency_path()` |
+| Explicit `Core` / `corelib` path dep | Honored when declared; path fallback uses `default_corelib_dependency_path()` |
 | Corelib workspace shards | `compiler/corelib/packages/*` **must not** get implicit back-edge (cycle guard) |
 
 The aggregate **`corelib`** node is **dependency-only** (`type = Aggregate`): it groups shard path dependencies and **must not** contribute a prelude or implicit module seed list to assembly.
@@ -455,13 +455,13 @@ After the graph attaches corelib nodes, semantic resolution treats corelib types
 ``````markdown
 ## Superrepo host app (implicit corelib)
 
-A minimal `Project.proj` with only app dependencies still resolves standard prelude types (including Option types), strings, and fibers because `resolve_dependencies` attaches `beskid_corelib` without an explicit `Std` block.
+A minimal `Project.proj` with only app dependencies still resolves standard prelude types (including Option types), strings, and fibers because `resolve_dependencies` attaches `beskid_corelib` without an explicit `Core` block.
 
 ## Explicit corelib path override
 
 ```text
 dependency {
-  name = Std
+  name = Core
   source = path
   path = "../../compiler/corelib/beskid_corelib"
 }
@@ -507,13 +507,13 @@ Fails structural validation in `reject_corelib_opt_out_keys`.
 
 No. Host projects always load corelib. Isolate benchmarks in `Mod` or non-host tooling paths that do not claim to be full language hosts.
 
-## `Std` not found despite submodule checkout
+## `Core` not found despite submodule checkout
 
 Initialize `compiler/corelib` submodule and set `BESKID_CORELIB_ROOT` to the directory containing `beskid_corelib/Project.proj`.
 
 ## Duplicate corelib in graph
 
-Usually caused by both implicit injection and an explicit `Std` path to a different tree. Align paths to one aggregate root.
+Usually caused by both implicit injection and an explicit `Core` path to a different tree. Align paths to one aggregate root.
 
 ## LSP missing prelude types
 
@@ -547,16 +547,16 @@ sequenceDiagram
   participant Core as beskid_corelib
   CLI->>Ctx: resolve Project.proj
   Ctx->>Res: walk consumer dependencies
-  alt host without explicit Std
+  alt host without explicit Core
     Res->>Core: attach_path_dependency (implicit)
   end
-  Res-->>Ctx: DAG + has_std flag
+  Res-->>Ctx: DAG + has_core flag
   Ctx->>Ctx: CompilePlan for host target
 ```
 
 1. Load consumer `ProjectManifest`.
 2. For each declared dependency, attach path or registry materialization per **[Workspace and lock contracts](/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/)**.
-3. If consumer is a host project, not a corelib shard, and lacks `Std`, call `default_corelib_dependency_path()` and attach as path dependency.
+3. If consumer is a host project, not a corelib shard, and lacks `Core`, call `default_corelib_dependency_path()` and attach as path dependency.
 4. Recurse into corelib aggregate and its workspace package shards (`foundation`, `runtime`, `console`, `compiler-sdk`).
 5. Build `CompilePlan`; semantic pipeline resolves symbols across all assemblies.
 

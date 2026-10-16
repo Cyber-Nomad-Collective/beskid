@@ -1,0 +1,223 @@
+{
+  "schema_version": 1,
+  "slice": "host",
+  "cases": {
+    "CLI06-01": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/cli_journeys_v06.rs",
+      "required_test_ids": [
+        "cli06_01_root_help_shows_add_example_and_new_add_run_sequence",
+        "cli06_01_add_help_explains_effects_project_targeting_and_recovery"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "CLI06-02": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/cli_journeys_v06.rs",
+      "required_test_ids": [
+        "cli06_02_new_offline_bundled_app_builds_checks_runs",
+        "cli06_02_new_template_override_binds_name_and_output",
+        "cli06_02_new_nonempty_output_rejected_byte_for_byte",
+        "cli06_02_new_offline_local_template_resolves_without_network",
+        "cli06_02_new_offline_installed_template_checks_bytes_before_output"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        { "kind": "cargo_test", "crate": "beskid_cli", "test_ids": ["v06_template_install_rejects_symlink_payload_and_cycle_before_cache_writes"] }
+      ]
+    },
+    "CLI06-03": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/cli_journeys_v06.rs",
+      "required_test_ids": [
+        "cli06_03_inventory_matches_canonical_grammar",
+        "cli06_03_run_reserves_stdout_for_program_output_and_propagates_exit_status",
+        "cli06_03_removed_root_spellings_exit_2_and_name_canonical_replacement"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "CLI06-04": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/cli_journeys_v06.rs",
+      "required_test_ids": [
+        "cli06_04_help_new_list_doctor_without_corelib_or_network_make_no_provisioning_writes",
+        "cli06_04_update_dry_run_json_stdout_has_only_schema_version_1_records",
+        "cli06_04_run_json_exits_2_before_executing",
+        "cli06_04_doctor_reports_missing_kit_without_installing_or_touching_credentials",
+        "cli06_04_redirected_build_and_test_complete_without_cursor_controls"
+      ],
+      "input": null,
+      "fixture": null
+    },
+    "CLI06-05": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/cli_journeys_v06.rs",
+      "required_test_ids": [
+        "cli06_05_dev_capabilities_json_lists_version_canonical_commands_and_schemas",
+        "cli06_05_help_inventory_matches_capability_inventory"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        { "kind": "repository_gate", "path": "scripts/ci/vscode-gate.sh" }
+      ]
+    },
+    "CLI06-06": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/cli_journeys_v06.rs",
+      "required_test_ids": [
+        "cli06_06_create_add_use_check_build_run_outside_checkout",
+        "cli06_06_path_dependency_workflow_outside_checkout"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        { "kind": "observer_attested_record", "validator": "scripts/ci/release-user-observation.mjs", "state_field": "user_observation" }
+      ]
+    },
+    "DEP06-01": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/dependency_journeys_v06.rs",
+      "required_test_ids": [
+        "dep06_01_add_preserves_crlf_unicode_comments_outside_edited_span",
+        "dep06_01_repeated_add_is_noop_and_conflicting_source_fails_without_rewrite",
+        "dep06_01_git_and_range_selectors_return_usage_guidance",
+        "dep06_01_workspace_ambiguity_lists_sorted_candidates_and_writes_nothing",
+        "dep06_01_explicit_member_with_spaced_relative_path_changes_only_that_member",
+        "dep06_01_path_report_keeps_source_coordinates_without_manufacturing_a_version"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        { "kind": "cargo_test", "crate": "beskid_analysis", "test_ids": ["dep06_preserves_bsol_bytes_and_crlf_when_adding", "dep06_remove_preserves_surrounding_comments_and_shared_intent", "dep06_path_intent_remains_relative_and_conflicts_fail", "dep06_ambiguous_project_requires_explicit_selection", "dep06_workspace_selection_does_not_pick_first_member", "dep06_path_report_describes_actual_added_and_removed_coordinate"] }
+      ]
+    },
+    "DEP06-02": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/dependency_journeys_v06.rs",
+      "required_test_ids": [
+        "dep06_02_exact_request_fails_without_substitution_and_pair_unchanged",
+        "dep06_02_malformed_response_and_503_fail_without_warning_success",
+        "dep06_02_bare_add_selects_greatest_stable_independent_of_response_order"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        { "kind": "cargo_test", "crate": "beskid_analysis", "test_ids": ["dep06_registry_bare_add_records_highest_stable_exact_intent_and_repeated_add_is_noop", "dep06_registry_unavailable_malformed_and_yanked_selection_fail_before_project_writes"] }
+      ]
+    },
+    "DEP06-03": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/dependency_journeys_v06.rs",
+      "required_test_ids": [
+        "dep06_03_update_without_scope_exits_2",
+        "dep06_03_selected_and_all_refresh_preserve_exact_intent_and_unrelated_pins",
+        "dep06_03_update_version_changes_only_selected_intent_and_reachable_closure",
+        "dep06_03_removing_one_direct_keeps_shared_transitive_locked",
+        "dep06_03_update_dry_run_reports_effects_and_changes_no_bytes"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        { "kind": "cargo_test", "crate": "beskid_analysis", "test_ids": ["dep06_registry_selected_refresh_preserves_unselected_pin", "dep06_update_changes_only_selected_version_bytes"] }
+      ]
+    },
+    "DEP06-04": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/dependency_journeys_v06.rs",
+      "required_test_ids": [
+        "dep06_04_build_locked_fetches_exact_pin_without_lock_write",
+        "dep06_04_build_offline_warm_succeeds_cold_and_tampered_fail_with_zero_requests",
+        "dep06_04_build_frozen_rejects_missing_or_stale_lock_without_requests",
+        "dep06_04_doc_offline_fails_before_network_or_output"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        { "kind": "cargo_test", "crate": "beskid_cli", "test_ids": ["v06_offline_cold_registry_fails_before_everyday_command_preparation_without_http", "v06_frozen_direct_add_cold_registry_fails_without_http_or_intent_writes"] },
+        { "kind": "cargo_test", "crate": "beskid_analysis", "test_ids": ["dep06_ordinary_prepare_offline_cold_cache_is_read_only_and_never_contacts_registry", "dep06_ordinary_prepare_offline_requires_the_exact_lock_even_with_a_warm_verified_cache", "dep06_ordinary_prepare_offline_locked_rejects_missing_lock_even_with_verified_cache"] }
+      ]
+    },
+    "DEP06-05": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/dependency_journeys_v06.rs",
+      "required_test_ids": [
+        "dep06_05_registry_failure_during_add_leaves_original_pair",
+        "dep06_05_interrupted_pair_is_recovered_by_next_installed_command_before_reads",
+        "dep06_05_concurrent_manifest_edit_fails_commit_without_overwrite"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        { "kind": "cargo_test", "crate": "beskid_analysis", "test_ids": ["dep06_pair_success_and_missing_lock_state", "dep06_pair_rejects_concurrent_manifest_and_lock_bytes", "dep06_pair_restores_every_replacement_and_durability_failure", "dep06_pair_guard_excludes_a_second_commit", "dep06_pair_recovers_process_death_after_first_replace", "dep06_recovery_preserves_external_bytes_after_interruption", "dep06_pair_rejects_symlink_destinations", "dep06_directory_sync_failure_after_visible_write_restores_pair", "dep06_corrupt_journal_fails_closed_without_changing_files", "dep06_journal_directory_and_files_are_private", "dep06_public_pair_preserves_existing_file_permissions", "dep06_rollback_preserves_existing_permissions", "dep06_new_lock_uses_ordinary_file_creation_permissions"] }
+      ]
+    },
+    "SER-04": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/serialization_host_v06.rs",
+      "required_test_ids": [
+        "ser04_installed_build_rejects_generator_code_string_output_before_lowering",
+        "ser04_installed_build_rejects_forged_semantic_handle_before_lowering",
+        "ser02_installed_check_rejects_pointer_field_at_declaration_span"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        { "kind": "cargo_test", "crate": "beskid_analysis", "test_ids": ["structural_materialization_rejects_foreign_owner_generation_and_kind", "closed_structural_arena_rejects_existing_and_new_handles"] }
+      ]
+    },
+    "MOD-06-01": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/serialization_host_v06.rs",
+      "required_test_ids": [
+        "mod06_01_installed_build_fails_on_tampered_mod_descriptor_without_stub",
+        "mod06_01_installed_run_executes_real_generator_and_lowers_contribution"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        { "kind": "cargo_test", "crate": "beskid_analysis", "test_ids": ["v06_missing_native_collector_cannot_return_stub_success", "v06_missing_native_analyzer_cannot_return_stub_success", "v06_missing_native_rewriter_cannot_return_stub_success", "v06_missing_native_generator_is_already_fail_closed"] }
+      ]
+    },
+    "MOD-06-02": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/serialization_host_v06.rs",
+      "required_test_ids": [
+        "mod06_02_installed_build_of_instantiated_generic_helpers_fails_before_lowering_when_facts_are_missing"
+      ],
+      "input": null,
+      "fixture": null,
+      "related_evidence": [
+        { "kind": "cargo_test", "crate": "beskid_analysis", "test_ids": ["static_function_and_generic_record_materialize_without_source", "structural_arena_enforces_aggregate_node_budget", "structural_arena_aggregate_boundary_is_atomic_and_preserves_published_handles", "structural_arena_concurrent_insertions_share_one_aggregate_budget", "structural_arena_enforces_limits_before_publishing_handle"] }
+      ]
+    },
+    "BSOL-06-01": {
+      "execution": "installed_host_harness",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/bsol_host_v06.rs",
+      "required_test_ids": [
+        "bsol06_01_installed_corelib_bsol_declares_no_extern_to_rust_bsol",
+        "bsol06_01_rust_and_native_agree_on_corpus_syntax_and_diagnostics"
+      ],
+      "input": { "id": "bsol-corpus", "source_root": "beskid_bsol", "include": ["conformance", "schemas"], "corpus": "conformance" },
+      "fixture": null
+    }
+  }
+}

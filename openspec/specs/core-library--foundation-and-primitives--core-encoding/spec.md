@@ -4,9 +4,7 @@
 ## Purpose
 
 Encoding contracts and Utf8, Hex, Base64 implementations.
-
 ## Requirements
-
 ### Requirement: Encoding contract v1: Decision [D-CORE-PRIM-0020]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
 
@@ -20,6 +18,26 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **GIVEN** an implementation claims conformance with this capability
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
+
+### Requirement: Strict UTF-8 rejects non-scalar encodings
+`Core.Encoding.Utf8.DecodeFromBytes` SHALL accept only shortest-form UTF-8 sequences encoding Unicode scalar values. It MUST return `EncodingError::InvalidSequence` for overlong encodings, surrogate code points, code points greater than `U+10FFFF`, invalid continuation bytes, and truncated sequences; it MUST NOT replace invalid input or panic. `Core.Encoding.DecodeHttpAscii(u8[] input) -> Core.Results.Result<string, EncodingError>` MUST reject every byte greater than `0x7F` and MUST return the corresponding ASCII string only for accepted input.
+
+**Stable ID:** `BSP-REQ-6B3A72539DE6`
+
+#### Scenario: Overlong UTF-8 is rejected
+- **GIVEN** the two-byte overlong representation of an ASCII code point
+- **WHEN** `Utf8.DecodeFromBytes` is invoked
+- **THEN** it returns `EncodingError::InvalidSequence`
+
+### Requirement: Hex and Base64 reject malformed encodings
+Hex decoding SHALL reject odd-length input and non-hex characters. Base64 decoding SHALL use the RFC 4648 standard alphabet and SHALL reject invalid alphabet bytes, non-final padding, more than two padding bytes, invalid unused bits, and lengths not valid after padding rules; both decoders MUST return `EncodingError` rather than producing partial or lossy output.
+
+**Stable ID:** `BSP-REQ-C1442592D817`
+
+#### Scenario: Invalid Base64 unused bits are rejected
+- **GIVEN** a Base64 input with valid alphabet characters but non-zero unused bits in its final quantum
+- **WHEN** `Base64.DecodeFromBytes` is invoked
+- **THEN** it returns `EncodingError`
 
 ## Informative Source Provenance
 
@@ -152,11 +170,11 @@ Utf8 uses `__bytes_from_str` / `__str_from_bytes_utf8` at the runtime boundary. 
 ``````markdown
 | Requirement | Test anchor |
 | --- | --- |
-| **ENC-001**, **ENC-UTF8-001** | `EncodingUtf8Tests.bd` (source fixture; enable target when direct `__bytes_*` JIT resolves) |
-| **ENC-HEX-001**, **ENC-B64-001** | `Core.Encoding.Hex` / `Base64` modules + `EncodingUtf8Tests.bd` hex round-trip |
+| **ENC-001**, **ENC-UTF8-001** | `CoreSuite.bd#EncodingUtf8Tests` (source fixture; enable target when direct `__bytes_*` JIT resolves) |
+| **ENC-HEX-001**, **ENC-B64-001** | `Core.Encoding.Hex` / `Base64` modules + `CoreSuite.bd#EncodingUtf8Tests` hex round-trip |
 | **ENC-005** | `System.FS` `ReadAllText` / `WriteAllText` UTF-8 paths |
 
-Harness: `compiler/corelib/beskid_corelib/tests/corelib_tests/src/core/EncodingUtf8Tests.bd`
+Harness: `compiler/corelib/beskid_corelib/tests/corelib_tests/src/core/CoreSuite.bd#EncodingUtf8Tests`
 ``````
 
 </details>

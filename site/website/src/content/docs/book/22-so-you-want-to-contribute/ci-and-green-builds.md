@@ -11,4 +11,4 @@ Superrepo changes often need commits in **`compiler`**, **`pckg`**, or **`beskid
 
 ## Website CI
 
-`site/website` prebuild tests typed embeds and catalog-backed platform-spec aliases before Astro renders the Book. Root CI separately runs `openspec validate --all --strict`; neither build may substitute for the other.
+`site/website` prebuild tests typed embeds and catalog-backed legacy Standard aliases before Astro renders the Book. Root CI separately runs `openspec validate --all --strict`; neither build may substitute for the other.

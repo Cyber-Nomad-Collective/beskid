@@ -511,3 +511,8 @@ podman-build-secret-*
 .gitnexus/
 .firecrawl/
 .actrc
+# Isolated local release builds and disposable installed-consumer prefixes.
+/.build/
+
+# Release notes are tracked documentation.
+!docs/release/

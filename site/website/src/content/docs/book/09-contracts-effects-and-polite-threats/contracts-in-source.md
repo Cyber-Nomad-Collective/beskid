@@ -20,7 +20,7 @@ type Logger : Disposable
 }
 ```
 
-Normative detail: [Contracts](/platform-spec/language-meta/contracts-and-effects/contracts/).
+Normative detail: [Contracts](/docs/standard/capabilities/language-meta--contracts-and-effects--contracts/).
 
 ## Conformance lists
 
@@ -87,7 +87,7 @@ classDiagram
 | Surface | Purpose |
 | --- | --- |
 | `contract Foo { ... }` in user code | Type conformance, static dispatch |
-| `Beskid.Compiler.*` mod contracts | Compile-time plugins ([Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/)) |
+| `Beskid.Compiler.*` mod contracts | Compile-time plugins ([Compiler Mod SDK](/docs/standard/capabilities/language-meta--metaprogramming--compiler-mod-sdk/)) |
 
 ## Contracts vs classes
 
