@@ -28,6 +28,7 @@ steps:
       # name a platform's own handoff source when it differs from C in non-build root paths only. When a
       # build was repackaged with BESKID_REPACKAGE_SUPERSEDES, the newest packaging of its supersede
       # chain (`<build>-<source>@<packaging>`) is selected; a pin still names the build pipeline.
+      - bash scripts/ci/woodpecker-full-history.sh
       - |
         version="$(node scripts/ci/release-version.mjs "$${BESKID_RELEASE_VERSION:?set stable version}" --stable-only)"
         resolved="$(node scripts/ci/release-user-observation.mjs --platform-sources . "$${version}" "$${CI_COMMIT_SHA}" "$${BESKID_RELEASE_CANDIDATE:-}" "$${BESKID_LINUX_SOURCE:-}" "$${BESKID_MACOS_SOURCE:-}" "$${BESKID_WINDOWS_SOURCE:-}")"
@@ -53,6 +54,7 @@ steps:
       - apt-get update >/dev/null
       - apt-get install -y --no-install-recommends ca-certificates git jq openssh-client >/dev/null
       - test -n "$${BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_JSON:-}" || { echo 'set BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_JSON' >&2; exit 1; }
+      - bash scripts/ci/woodpecker-full-history.sh
       - |
         : "$${BESKID_LINUX_BUILD:?pin the Linux build}" "$${BESKID_MACOS_BUILD:?pin the macOS build}" "$${BESKID_WINDOWS_BUILD:?pin the Windows build}"
         version="$(node scripts/ci/release-version.mjs "$${BESKID_RELEASE_VERSION:?set stable version}" --stable-only)"
@@ -81,6 +83,7 @@ steps:
     commands:
       - apt-get update >/dev/null
       - apt-get install -y --no-install-recommends ca-certificates gh git jq openssh-client >/dev/null
+      - env -u GH_TOKEN bash scripts/ci/woodpecker-full-history.sh
       - |
         : "$${BESKID_LINUX_BUILD:?pin the Linux build}" "$${BESKID_MACOS_BUILD:?pin the macOS build}" "$${BESKID_WINDOWS_BUILD:?pin the Windows build}"
         version="$(env -u GH_TOKEN node scripts/ci/release-version.mjs "$${BESKID_RELEASE_VERSION:?set stable version}" --stable-only)"

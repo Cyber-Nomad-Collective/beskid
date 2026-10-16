@@ -119,6 +119,7 @@ grep -Fq 'BESKID_TASK == "release-publish"' "${workflow_dir}/release.yml"
 test "$(grep -c 'from_secret' "${workflow_dir}/release.yml")" -eq 1
 grep -Fq 'from_secret: compiler_release_token' "${workflow_dir}/release.yml"
 python3 "${ROOT}/scripts/ci/test/woodpecker-secret-scope.test.py"
+python3 "${ROOT}/scripts/ci/test/woodpecker-full-history.test.py"
 
 # Marketplace releases consume reviewed native evidence on the trusted manual
 # Woodpecker host. Only the final publish step receives the existing secret.
