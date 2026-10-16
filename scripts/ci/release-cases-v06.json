@@ -8,7 +8,7 @@
             "end": 4354,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "20734d97ff6858585f316cc4e02b2f407efae63a5b0bbd455296d4bd1d3f239a"
+              "sha256": "c7cc04308dca4f02c5974be04d0d83495a74ee1f0ffeccdcdcbf6a8e698da59d"
             },
             "start": 4329,
             "test_id": "bytes_new_has_length"
@@ -18,7 +18,7 @@
             "end": 4516,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "20734d97ff6858585f316cc4e02b2f407efae63a5b0bbd455296d4bd1d3f239a"
+              "sha256": "c7cc04308dca4f02c5974be04d0d83495a74ee1f0ffeccdcdcbf6a8e698da59d"
             },
             "start": 4474,
             "test_id": "bytes_from_string_matches_utf8_length"
@@ -28,79 +28,79 @@
             "end": 4717,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "20734d97ff6858585f316cc4e02b2f407efae63a5b0bbd455296d4bd1d3f239a"
+              "sha256": "c7cc04308dca4f02c5974be04d0d83495a74ee1f0ffeccdcdcbf6a8e698da59d"
             },
             "start": 4691,
             "test_id": "bytes_fill_sets_range"
           },
           {
             "declaration": "test bytes_subslice_copies_window",
-            "end": 4941,
+            "end": 4932,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "20734d97ff6858585f316cc4e02b2f407efae63a5b0bbd455296d4bd1d3f239a"
+              "sha256": "c7cc04308dca4f02c5974be04d0d83495a74ee1f0ffeccdcdcbf6a8e698da59d"
             },
-            "start": 4908,
+            "start": 4899,
             "test_id": "bytes_subslice_copies_window"
           },
           {
             "declaration": "test bytes_compare_lexicographic",
-            "end": 5197,
+            "end": 5188,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "20734d97ff6858585f316cc4e02b2f407efae63a5b0bbd455296d4bd1d3f239a"
+              "sha256": "c7cc04308dca4f02c5974be04d0d83495a74ee1f0ffeccdcdcbf6a8e698da59d"
             },
-            "start": 5165,
+            "start": 5156,
             "test_id": "bytes_compare_lexicographic"
           },
           {
             "declaration": "test bytes_copy_range",
-            "end": 5387,
+            "end": 5378,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "20734d97ff6858585f316cc4e02b2f407efae63a5b0bbd455296d4bd1d3f239a"
+              "sha256": "c7cc04308dca4f02c5974be04d0d83495a74ee1f0ffeccdcdcbf6a8e698da59d"
             },
-            "start": 5366,
+            "start": 5357,
             "test_id": "bytes_copy_range"
           },
           {
             "declaration": "test bytes_new_one_mebibyte_is_one_zeroed_allocation",
-            "end": 5809,
+            "end": 5800,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "20734d97ff6858585f316cc4e02b2f407efae63a5b0bbd455296d4bd1d3f239a"
+              "sha256": "c7cc04308dca4f02c5974be04d0d83495a74ee1f0ffeccdcdcbf6a8e698da59d"
             },
-            "start": 5757,
+            "start": 5748,
             "test_id": "bytes_new_one_mebibyte_is_one_zeroed_allocation"
           },
           {
             "declaration": "test bytes_new_non_positive_length_is_empty",
-            "end": 6399,
+            "end": 6390,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "20734d97ff6858585f316cc4e02b2f407efae63a5b0bbd455296d4bd1d3f239a"
+              "sha256": "c7cc04308dca4f02c5974be04d0d83495a74ee1f0ffeccdcdcbf6a8e698da59d"
             },
-            "start": 6356,
+            "start": 6347,
             "test_id": "bytes_new_non_positive_length_is_empty"
           },
           {
             "declaration": "test bytes_four_mebibyte_live_buffer_survives_churn",
-            "end": 6668,
+            "end": 6659,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "20734d97ff6858585f316cc4e02b2f407efae63a5b0bbd455296d4bd1d3f239a"
+              "sha256": "c7cc04308dca4f02c5974be04d0d83495a74ee1f0ffeccdcdcbf6a8e698da59d"
             },
-            "start": 6617,
+            "start": 6608,
             "test_id": "bytes_four_mebibyte_live_buffer_survives_churn"
           },
           {
             "declaration": "test bytes_three_live_64k_buffers_with_garbage_do_not_exhaust_heap",
-            "end": 7540,
+            "end": 7531,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "20734d97ff6858585f316cc4e02b2f407efae63a5b0bbd455296d4bd1d3f239a"
+              "sha256": "c7cc04308dca4f02c5974be04d0d83495a74ee1f0ffeccdcdcbf6a8e698da59d"
             },
-            "start": 7474,
+            "start": 7465,
             "test_id": "bytes_three_live_64k_buffers_with_garbage_do_not_exhaust_heap"
           }
         ],
@@ -124,7 +124,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-core-CoreSuite.bd",
-          "sha256": "20734d97ff6858585f316cc4e02b2f407efae63a5b0bbd455296d4bd1d3f239a"
+          "sha256": "c7cc04308dca4f02c5974be04d0d83495a74ee1f0ffeccdcdcbf6a8e698da59d"
         },
         "input": null,
         "log": "case-foundations.core_bytes.json",
@@ -158,92 +158,92 @@
         "assertion_provenance": [
           {
             "declaration": "test utf8_is_valid_ascii",
-            "end": 8391,
+            "end": 8382,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "20734d97ff6858585f316cc4e02b2f407efae63a5b0bbd455296d4bd1d3f239a"
+              "sha256": "c7cc04308dca4f02c5974be04d0d83495a74ee1f0ffeccdcdcbf6a8e698da59d"
             },
-            "start": 8367,
+            "start": 8358,
             "test_id": "utf8_is_valid_ascii"
           },
           {
             "declaration": "test utf8_is_valid_two_byte",
-            "end": 8543,
+            "end": 8534,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "20734d97ff6858585f316cc4e02b2f407efae63a5b0bbd455296d4bd1d3f239a"
+              "sha256": "c7cc04308dca4f02c5974be04d0d83495a74ee1f0ffeccdcdcbf6a8e698da59d"
             },
-            "start": 8516,
+            "start": 8507,
             "test_id": "utf8_is_valid_two_byte"
           },
           {
             "declaration": "test utf8_is_invalid_solo_continuation",
-            "end": 8754,
+            "end": 8745,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "20734d97ff6858585f316cc4e02b2f407efae63a5b0bbd455296d4bd1d3f239a"
+              "sha256": "c7cc04308dca4f02c5974be04d0d83495a74ee1f0ffeccdcdcbf6a8e698da59d"
             },
-            "start": 8716,
+            "start": 8707,
             "test_id": "utf8_is_invalid_solo_continuation"
           },
           {
             "declaration": "test utf8_decode_from_bytes_roundtrip",
-            "end": 8938,
+            "end": 8929,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "20734d97ff6858585f316cc4e02b2f407efae63a5b0bbd455296d4bd1d3f239a"
+              "sha256": "c7cc04308dca4f02c5974be04d0d83495a74ee1f0ffeccdcdcbf6a8e698da59d"
             },
-            "start": 8901,
+            "start": 8892,
             "test_id": "utf8_decode_from_bytes_roundtrip"
           },
           {
             "declaration": "test utf8_encode_to_bytes_roundtrip",
-            "end": 9335,
+            "end": 9326,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "20734d97ff6858585f316cc4e02b2f407efae63a5b0bbd455296d4bd1d3f239a"
+              "sha256": "c7cc04308dca4f02c5974be04d0d83495a74ee1f0ffeccdcdcbf6a8e698da59d"
             },
-            "start": 9300,
+            "start": 9291,
             "test_id": "utf8_encode_to_bytes_roundtrip"
           },
           {
             "declaration": "test hex_encode_bytes_roundtrip",
-            "end": 9663,
+            "end": 9654,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "20734d97ff6858585f316cc4e02b2f407efae63a5b0bbd455296d4bd1d3f239a"
+              "sha256": "c7cc04308dca4f02c5974be04d0d83495a74ee1f0ffeccdcdcbf6a8e698da59d"
             },
-            "start": 9632,
+            "start": 9623,
             "test_id": "hex_encode_bytes_roundtrip"
           },
           {
             "declaration": "test hex_decode_odd_length_rejected",
-            "end": 10449,
+            "end": 10440,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "20734d97ff6858585f316cc4e02b2f407efae63a5b0bbd455296d4bd1d3f239a"
+              "sha256": "c7cc04308dca4f02c5974be04d0d83495a74ee1f0ffeccdcdcbf6a8e698da59d"
             },
-            "start": 10414,
+            "start": 10405,
             "test_id": "hex_decode_odd_length_rejected"
           },
           {
             "declaration": "test base64_encode_bytes_roundtrip",
-            "end": 10753,
+            "end": 10744,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "20734d97ff6858585f316cc4e02b2f407efae63a5b0bbd455296d4bd1d3f239a"
+              "sha256": "c7cc04308dca4f02c5974be04d0d83495a74ee1f0ffeccdcdcbf6a8e698da59d"
             },
-            "start": 10719,
+            "start": 10710,
             "test_id": "base64_encode_bytes_roundtrip"
           },
           {
             "declaration": "test base64_decode_invalid_length_rejected",
-            "end": 11479,
+            "end": 11470,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "20734d97ff6858585f316cc4e02b2f407efae63a5b0bbd455296d4bd1d3f239a"
+              "sha256": "c7cc04308dca4f02c5974be04d0d83495a74ee1f0ffeccdcdcbf6a8e698da59d"
             },
-            "start": 11437,
+            "start": 11428,
             "test_id": "base64_decode_invalid_length_rejected"
           }
         ],
@@ -267,7 +267,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-core-CoreSuite.bd",
-          "sha256": "20734d97ff6858585f316cc4e02b2f407efae63a5b0bbd455296d4bd1d3f239a"
+          "sha256": "c7cc04308dca4f02c5974be04d0d83495a74ee1f0ffeccdcdcbf6a8e698da59d"
         },
         "input": null,
         "log": "case-foundations.encoding_utf8.json",
@@ -2813,62 +2813,62 @@
         "assertion_provenance": [
           {
             "declaration": "test serialization_generated_full_shape_record_roundtrips_through_bsol",
-            "end": 7908,
+            "end": 7930,
             "source": {
               "path": "source-serialization-GeneratedTests.bd",
-              "sha256": "f6474a67220d026b0681a8d03e995473e7553ca4461165821a049b294e6fda4a"
+              "sha256": "312a807ce8511685599f68a3190cf20a05ba75de7056d5b3d20224628ec87cf0"
             },
-            "start": 7838,
+            "start": 7860,
             "test_id": "serialization_generated_full_shape_record_roundtrips_through_bsol"
           },
           {
             "declaration": "test serialization_generated_nested_generic_record_decodes_at_top_level",
-            "end": 8128,
+            "end": 8150,
             "source": {
               "path": "source-serialization-GeneratedTests.bd",
-              "sha256": "f6474a67220d026b0681a8d03e995473e7553ca4461165821a049b294e6fda4a"
+              "sha256": "312a807ce8511685599f68a3190cf20a05ba75de7056d5b3d20224628ec87cf0"
             },
-            "start": 8057,
+            "start": 8079,
             "test_id": "serialization_generated_nested_generic_record_decodes_at_top_level"
           },
           {
             "declaration": "test serialization_generated_scalar_and_container_applications_decode_through_one_correspondence",
-            "end": 9331,
+            "end": 9353,
             "source": {
               "path": "source-serialization-GeneratedTests.bd",
-              "sha256": "f6474a67220d026b0681a8d03e995473e7553ca4461165821a049b294e6fda4a"
+              "sha256": "312a807ce8511685599f68a3190cf20a05ba75de7056d5b3d20224628ec87cf0"
             },
-            "start": 9235,
+            "start": 9257,
             "test_id": "serialization_generated_scalar_and_container_applications_decode_through_one_correspondence"
           },
           {
             "declaration": "test serialization_generated_variant_identity_and_field_order_survive_typed_decode",
-            "end": 14197,
+            "end": 14219,
             "source": {
               "path": "source-serialization-GeneratedTests.bd",
-              "sha256": "f6474a67220d026b0681a8d03e995473e7553ca4461165821a049b294e6fda4a"
+              "sha256": "312a807ce8511685599f68a3190cf20a05ba75de7056d5b3d20224628ec87cf0"
             },
-            "start": 14115,
+            "start": 14137,
             "test_id": "serialization_generated_variant_identity_and_field_order_survive_typed_decode"
           },
           {
             "declaration": "test serialization_generated_word_uses_declared_width_and_range_checks",
-            "end": 16841,
+            "end": 16863,
             "source": {
               "path": "source-serialization-GeneratedTests.bd",
-              "sha256": "f6474a67220d026b0681a8d03e995473e7553ca4461165821a049b294e6fda4a"
+              "sha256": "312a807ce8511685599f68a3190cf20a05ba75de7056d5b3d20224628ec87cf0"
             },
-            "start": 16771,
+            "start": 16793,
             "test_id": "serialization_generated_word_uses_declared_width_and_range_checks"
           },
           {
             "declaration": "test serialization_generated_decoder_rejects_trailing_input_without_publishing",
-            "end": 17668,
+            "end": 17690,
             "source": {
               "path": "source-serialization-GeneratedTests.bd",
-              "sha256": "f6474a67220d026b0681a8d03e995473e7553ca4461165821a049b294e6fda4a"
+              "sha256": "312a807ce8511685599f68a3190cf20a05ba75de7056d5b3d20224628ec87cf0"
             },
-            "start": 17590,
+            "start": 17612,
             "test_id": "serialization_generated_decoder_rejects_trailing_input_without_publishing"
           }
         ],
@@ -2892,7 +2892,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-serialization-GeneratedTests.bd",
-          "sha256": "f6474a67220d026b0681a8d03e995473e7553ca4461165821a049b294e6fda4a"
+          "sha256": "312a807ce8511685599f68a3190cf20a05ba75de7056d5b3d20224628ec87cf0"
         },
         "input": null,
         "log": "case-SER-01.json",
@@ -2922,42 +2922,42 @@
         "assertion_provenance": [
           {
             "declaration": "test serialization_eligibility_rejects_ineligible_declared_types_with_field_spans",
-            "end": 7724,
+            "end": 7772,
             "source": {
               "path": "source-serialization-ModEligibilityTests.bd",
-              "sha256": "66e0bcd53256fa2c04f9857e0569d1acbeb5c76b7bb657fd172e388acfff4882"
+              "sha256": "9109b05bb34b2386f85bb1e1a7893c81a304f0382f238432cc9ec9ae3d69250d"
             },
-            "start": 7643,
+            "start": 7691,
             "test_id": "serialization_eligibility_rejects_ineligible_declared_types_with_field_spans"
           },
           {
             "declaration": "test serialization_closure_rejects_non_string_map_keys",
-            "end": 14494,
+            "end": 14542,
             "source": {
               "path": "source-serialization-ModEligibilityTests.bd",
-              "sha256": "66e0bcd53256fa2c04f9857e0569d1acbeb5c76b7bb657fd172e388acfff4882"
+              "sha256": "9109b05bb34b2386f85bb1e1a7893c81a304f0382f238432cc9ec9ae3d69250d"
             },
-            "start": 14440,
+            "start": 14488,
             "test_id": "serialization_closure_rejects_non_string_map_keys"
           },
           {
             "declaration": "test serialization_closure_rejects_nested_opaque_references_and_resources",
-            "end": 15427,
+            "end": 15475,
             "source": {
               "path": "source-serialization-ModEligibilityTests.bd",
-              "sha256": "66e0bcd53256fa2c04f9857e0569d1acbeb5c76b7bb657fd172e388acfff4882"
+              "sha256": "9109b05bb34b2386f85bb1e1a7893c81a304f0382f238432cc9ec9ae3d69250d"
             },
-            "start": 15354,
+            "start": 15402,
             "test_id": "serialization_closure_rejects_nested_opaque_references_and_resources"
           },
           {
             "declaration": "test serialization_closure_rejects_host_gated_resources",
-            "end": 25775,
+            "end": 25823,
             "source": {
               "path": "source-serialization-ModEligibilityTests.bd",
-              "sha256": "66e0bcd53256fa2c04f9857e0569d1acbeb5c76b7bb657fd172e388acfff4882"
+              "sha256": "9109b05bb34b2386f85bb1e1a7893c81a304f0382f238432cc9ec9ae3d69250d"
             },
-            "start": 25720,
+            "start": 25768,
             "test_id": "serialization_closure_rejects_host_gated_resources"
           }
         ],
@@ -2981,7 +2981,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-serialization-ModEligibilityTests.bd",
-          "sha256": "66e0bcd53256fa2c04f9857e0569d1acbeb5c76b7bb657fd172e388acfff4882"
+          "sha256": "9109b05bb34b2386f85bb1e1a7893c81a304f0382f238432cc9ec9ae3d69250d"
         },
         "input": null,
         "log": "case-SER-02.json",
@@ -3009,42 +3009,42 @@
         "assertion_provenance": [
           {
             "declaration": "test serialization_generated_record_uses_one_descriptor_and_decoder_for_bsol_and_json",
-            "end": 30458,
+            "end": 30611,
             "source": {
               "path": "source-serialization-GeneratedTests.bd",
-              "sha256": "f6474a67220d026b0681a8d03e995473e7553ca4461165821a049b294e6fda4a"
+              "sha256": "312a807ce8511685599f68a3190cf20a05ba75de7056d5b3d20224628ec87cf0"
             },
-            "start": 30373,
+            "start": 30526,
             "test_id": "serialization_generated_record_uses_one_descriptor_and_decoder_for_bsol_and_json"
           },
           {
             "declaration": "test serialization_generated_f32_and_f64_bits_survive_both_formats_without_coercion",
-            "end": 32412,
+            "end": 32565,
             "source": {
               "path": "source-serialization-GeneratedTests.bd",
-              "sha256": "f6474a67220d026b0681a8d03e995473e7553ca4461165821a049b294e6fda4a"
+              "sha256": "312a807ce8511685599f68a3190cf20a05ba75de7056d5b3d20224628ec87cf0"
             },
-            "start": 32329,
+            "start": 32482,
             "test_id": "serialization_generated_f32_and_f64_bits_survive_both_formats_without_coercion"
           },
           {
             "declaration": "test serialization_generated_enum_decodes_through_the_json_test_format",
-            "end": 34055,
+            "end": 34208,
             "source": {
               "path": "source-serialization-GeneratedTests.bd",
-              "sha256": "f6474a67220d026b0681a8d03e995473e7553ca4461165821a049b294e6fda4a"
+              "sha256": "312a807ce8511685599f68a3190cf20a05ba75de7056d5b3d20224628ec87cf0"
             },
-            "start": 33985,
+            "start": 34138,
             "test_id": "serialization_generated_enum_decodes_through_the_json_test_format"
           },
           {
             "declaration": "test serialization_generated_json_reader_rejects_a_different_width",
-            "end": 34674,
+            "end": 34827,
             "source": {
               "path": "source-serialization-GeneratedTests.bd",
-              "sha256": "f6474a67220d026b0681a8d03e995473e7553ca4461165821a049b294e6fda4a"
+              "sha256": "312a807ce8511685599f68a3190cf20a05ba75de7056d5b3d20224628ec87cf0"
             },
-            "start": 34608,
+            "start": 34761,
             "test_id": "serialization_generated_json_reader_rejects_a_different_width"
           }
         ],
@@ -3068,7 +3068,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-serialization-GeneratedTests.bd",
-          "sha256": "f6474a67220d026b0681a8d03e995473e7553ca4461165821a049b294e6fda4a"
+          "sha256": "312a807ce8511685599f68a3190cf20a05ba75de7056d5b3d20224628ec87cf0"
         },
         "input": null,
         "log": "case-SER-03.json",
@@ -3096,32 +3096,32 @@
         "assertion_provenance": [
           {
             "declaration": "fn ser04_installed_build_rejects_generator_code_string_output_before_lowering(",
-            "end": 10040,
+            "end": 10165,
             "source": {
               "path": "source-tests-serialization_host_v06.rs",
-              "sha256": "796e0d4fce72c52869f95b602e7e3b78863b499e9890622011d9fe5bd1aa51bc"
+              "sha256": "25cfe99a1d72974ea6419b93cf70c1bdcb8674f46392e3a5b20bfa172085f1ee"
             },
-            "start": 9962,
+            "start": 10087,
             "test_id": "ser04_installed_build_rejects_generator_code_string_output_before_lowering"
           },
           {
             "declaration": "fn ser04_installed_build_rejects_forged_semantic_handle_before_lowering(",
-            "end": 11456,
+            "end": 11581,
             "source": {
               "path": "source-tests-serialization_host_v06.rs",
-              "sha256": "796e0d4fce72c52869f95b602e7e3b78863b499e9890622011d9fe5bd1aa51bc"
+              "sha256": "25cfe99a1d72974ea6419b93cf70c1bdcb8674f46392e3a5b20bfa172085f1ee"
             },
-            "start": 11384,
+            "start": 11509,
             "test_id": "ser04_installed_build_rejects_forged_semantic_handle_before_lowering"
           },
           {
             "declaration": "fn ser02_installed_check_rejects_pointer_field_at_declaration_span(",
-            "end": 12761,
+            "end": 12886,
             "source": {
               "path": "source-tests-serialization_host_v06.rs",
-              "sha256": "796e0d4fce72c52869f95b602e7e3b78863b499e9890622011d9fe5bd1aa51bc"
+              "sha256": "25cfe99a1d72974ea6419b93cf70c1bdcb8674f46392e3a5b20bfa172085f1ee"
             },
-            "start": 12694,
+            "start": 12819,
             "test_id": "ser02_installed_check_rejects_pointer_field_at_declaration_span"
           }
         ],
@@ -3143,7 +3143,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-tests-serialization_host_v06.rs",
-          "sha256": "796e0d4fce72c52869f95b602e7e3b78863b499e9890622011d9fe5bd1aa51bc"
+          "sha256": "25cfe99a1d72974ea6419b93cf70c1bdcb8674f46392e3a5b20bfa172085f1ee"
         },
         "input": null,
         "log": "case-SER-04.json",
@@ -3178,42 +3178,42 @@
         "assertion_provenance": [
           {
             "declaration": "test serialization_each_configured_limit_succeeds_and_plus_one_returns_limit_exceeded_without_partial_output",
-            "end": 32870,
+            "end": 32880,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "69db18f21d364298592800a484bdc03e8ed31def1a06ed9d631c4faacd1ad7e9"
+              "sha256": "6f0986a5135f13897a8fbd8c62e1a0a1758dedec6784208f9d516da862875a52"
             },
-            "start": 32762,
+            "start": 32772,
             "test_id": "serialization_each_configured_limit_succeeds_and_plus_one_returns_limit_exceeded_without_partial_output"
           },
           {
             "declaration": "test serialization_cycle_rejects_and_acyclic_alias_copies_by_value",
-            "end": 37342,
+            "end": 37352,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "69db18f21d364298592800a484bdc03e8ed31def1a06ed9d631c4faacd1ad7e9"
+              "sha256": "6f0986a5135f13897a8fbd8c62e1a0a1758dedec6784208f9d516da862875a52"
             },
-            "start": 37276,
+            "start": 37286,
             "test_id": "serialization_cycle_rejects_and_acyclic_alias_copies_by_value"
           },
           {
             "declaration": "test serialization_record_missing_required_duplicate_and_unknown_fields_reject_and_optional_fields_may_be_absent",
-            "end": 40291,
+            "end": 40301,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "69db18f21d364298592800a484bdc03e8ed31def1a06ed9d631c4faacd1ad7e9"
+              "sha256": "6f0986a5135f13897a8fbd8c62e1a0a1758dedec6784208f9d516da862875a52"
             },
-            "start": 40179,
+            "start": 40189,
             "test_id": "serialization_record_missing_required_duplicate_and_unknown_fields_reject_and_optional_fields_may_be_absent"
           },
           {
             "declaration": "test serialization_precision_unicode_scalars_and_invalid_surrogates_roundtrip_or_reject",
-            "end": 42558,
+            "end": 42568,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "69db18f21d364298592800a484bdc03e8ed31def1a06ed9d631c4faacd1ad7e9"
+              "sha256": "6f0986a5135f13897a8fbd8c62e1a0a1758dedec6784208f9d516da862875a52"
             },
-            "start": 42471,
+            "start": 42481,
             "test_id": "serialization_precision_unicode_scalars_and_invalid_surrogates_roundtrip_or_reject"
           },
           {
@@ -3221,7 +3221,7 @@
             "end": 23681,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "69db18f21d364298592800a484bdc03e8ed31def1a06ed9d631c4faacd1ad7e9"
+              "sha256": "6f0986a5135f13897a8fbd8c62e1a0a1758dedec6784208f9d516da862875a52"
             },
             "start": 23620,
             "test_id": "serialization_failure_publication_has_no_mutable_payload"
@@ -3231,7 +3231,7 @@
             "end": 24942,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "69db18f21d364298592800a484bdc03e8ed31def1a06ed9d631c4faacd1ad7e9"
+              "sha256": "6f0986a5135f13897a8fbd8c62e1a0a1758dedec6784208f9d516da862875a52"
             },
             "start": 24874,
             "test_id": "wire_encoder_prepares_fallible_work_before_nonallocating_commit"
@@ -3259,7 +3259,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-bsol-SerializationWireTests.bd",
-          "sha256": "69db18f21d364298592800a484bdc03e8ed31def1a06ed9d631c4faacd1ad7e9"
+          "sha256": "6f0986a5135f13897a8fbd8c62e1a0a1758dedec6784208f9d516da862875a52"
         },
         "input": {
           "corpus": "conformance",
@@ -3397,22 +3397,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn mod06_01_installed_build_fails_on_tampered_mod_descriptor_without_stub(",
-            "end": 17847,
+            "end": 17972,
             "source": {
               "path": "source-tests-serialization_host_v06.rs",
-              "sha256": "796e0d4fce72c52869f95b602e7e3b78863b499e9890622011d9fe5bd1aa51bc"
+              "sha256": "25cfe99a1d72974ea6419b93cf70c1bdcb8674f46392e3a5b20bfa172085f1ee"
             },
-            "start": 17773,
+            "start": 17898,
             "test_id": "mod06_01_installed_build_fails_on_tampered_mod_descriptor_without_stub"
           },
           {
             "declaration": "fn mod06_01_installed_run_executes_real_generator_and_lowers_contribution(",
-            "end": 17101,
+            "end": 17226,
             "source": {
               "path": "source-tests-serialization_host_v06.rs",
-              "sha256": "796e0d4fce72c52869f95b602e7e3b78863b499e9890622011d9fe5bd1aa51bc"
+              "sha256": "25cfe99a1d72974ea6419b93cf70c1bdcb8674f46392e3a5b20bfa172085f1ee"
             },
-            "start": 17027,
+            "start": 17152,
             "test_id": "mod06_01_installed_run_executes_real_generator_and_lowers_contribution"
           }
         ],
@@ -3434,7 +3434,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-tests-serialization_host_v06.rs",
-          "sha256": "796e0d4fce72c52869f95b602e7e3b78863b499e9890622011d9fe5bd1aa51bc"
+          "sha256": "25cfe99a1d72974ea6419b93cf70c1bdcb8674f46392e3a5b20bfa172085f1ee"
         },
         "input": null,
         "log": "case-MOD-06-01.json",
@@ -3470,12 +3470,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn mod06_02_installed_build_of_instantiated_generic_helpers_fails_before_lowering_when_facts_are_missing(",
-            "end": 20624,
+            "end": 20749,
             "source": {
               "path": "source-tests-serialization_host_v06.rs",
-              "sha256": "796e0d4fce72c52869f95b602e7e3b78863b499e9890622011d9fe5bd1aa51bc"
+              "sha256": "25cfe99a1d72974ea6419b93cf70c1bdcb8674f46392e3a5b20bfa172085f1ee"
             },
-            "start": 20519,
+            "start": 20644,
             "test_id": "mod06_02_installed_build_of_instantiated_generic_helpers_fails_before_lowering_when_facts_are_missing"
           }
         ],
@@ -3497,7 +3497,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-tests-serialization_host_v06.rs",
-          "sha256": "796e0d4fce72c52869f95b602e7e3b78863b499e9890622011d9fe5bd1aa51bc"
+          "sha256": "25cfe99a1d72974ea6419b93cf70c1bdcb8674f46392e3a5b20bfa172085f1ee"
         },
         "input": null,
         "log": "case-MOD-06-02.json",
@@ -5154,7 +5154,7 @@
             "end": 3125,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "69db18f21d364298592800a484bdc03e8ed31def1a06ed9d631c4faacd1ad7e9"
+              "sha256": "6f0986a5135f13897a8fbd8c62e1a0a1758dedec6784208f9d516da862875a52"
             },
             "start": 3076,
             "test_id": "bsol_serialization_wire_exact_unsigned_width"
@@ -5164,7 +5164,7 @@
             "end": 3883,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "69db18f21d364298592800a484bdc03e8ed31def1a06ed9d631c4faacd1ad7e9"
+              "sha256": "6f0986a5135f13897a8fbd8c62e1a0a1758dedec6784208f9d516da862875a52"
             },
             "start": 3825,
             "test_id": "bsol_serialization_wire_float_preserves_negative_zero"
@@ -5174,7 +5174,7 @@
             "end": 4358,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "69db18f21d364298592800a484bdc03e8ed31def1a06ed9d631c4faacd1ad7e9"
+              "sha256": "6f0986a5135f13897a8fbd8c62e1a0a1758dedec6784208f9d516da862875a52"
             },
             "start": 4306,
             "test_id": "bsol_serialization_wire_strict_canonical_base64"
@@ -5184,7 +5184,7 @@
             "end": 5104,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "69db18f21d364298592800a484bdc03e8ed31def1a06ed9d631c4faacd1ad7e9"
+              "sha256": "6f0986a5135f13897a8fbd8c62e1a0a1758dedec6784208f9d516da862875a52"
             },
             "start": 5047,
             "test_id": "bsol_serialization_wire_optional_cardinality_and_tag"
@@ -5194,7 +5194,7 @@
             "end": 6021,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "69db18f21d364298592800a484bdc03e8ed31def1a06ed9d631c4faacd1ad7e9"
+              "sha256": "6f0986a5135f13897a8fbd8c62e1a0a1758dedec6784208f9d516da862875a52"
             },
             "start": 5946,
             "test_id": "bsol_serialization_wire_rejects_unknown_duplicate_and_malformed_fields"
@@ -5204,7 +5204,7 @@
             "end": 7732,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "69db18f21d364298592800a484bdc03e8ed31def1a06ed9d631c4faacd1ad7e9"
+              "sha256": "6f0986a5135f13897a8fbd8c62e1a0a1758dedec6784208f9d516da862875a52"
             },
             "start": 7675,
             "test_id": "bsol_serialization_wire_char_scalar_and_depth_policy"
@@ -5214,7 +5214,7 @@
             "end": 8346,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "69db18f21d364298592800a484bdc03e8ed31def1a06ed9d631c4faacd1ad7e9"
+              "sha256": "6f0986a5135f13897a8fbd8c62e1a0a1758dedec6784208f9d516da862875a52"
             },
             "start": 8287,
             "test_id": "bsol_serialization_wire_array_list_shapes_are_distinct"
@@ -5224,7 +5224,7 @@
             "end": 10392,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "69db18f21d364298592800a484bdc03e8ed31def1a06ed9d631c4faacd1ad7e9"
+              "sha256": "6f0986a5135f13897a8fbd8c62e1a0a1758dedec6784208f9d516da862875a52"
             },
             "start": 10322,
             "test_id": "bsol_serialization_wire_record_declared_order_and_required_fields"
@@ -5234,7 +5234,7 @@
             "end": 11683,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "69db18f21d364298592800a484bdc03e8ed31def1a06ed9d631c4faacd1ad7e9"
+              "sha256": "6f0986a5135f13897a8fbd8c62e1a0a1758dedec6784208f9d516da862875a52"
             },
             "start": 11614,
             "test_id": "bsol_serialization_wire_map_ordinal_keys_and_duplicate_rejection"
@@ -5244,7 +5244,7 @@
             "end": 12706,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "69db18f21d364298592800a484bdc03e8ed31def1a06ed9d631c4faacd1ad7e9"
+              "sha256": "6f0986a5135f13897a8fbd8c62e1a0a1758dedec6784208f9d516da862875a52"
             },
             "start": 12639,
             "test_id": "bsol_serialization_wire_variant_exact_discriminant_and_payload"
@@ -5254,7 +5254,7 @@
             "end": 14331,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "69db18f21d364298592800a484bdc03e8ed31def1a06ed9d631c4faacd1ad7e9"
+              "sha256": "6f0986a5135f13897a8fbd8c62e1a0a1758dedec6784208f9d516da862875a52"
             },
             "start": 14261,
             "test_id": "bsol_serialization_stream_encoder_validates_shape_and_transaction"
@@ -5264,7 +5264,7 @@
             "end": 16300,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "69db18f21d364298592800a484bdc03e8ed31def1a06ed9d631c4faacd1ad7e9"
+              "sha256": "6f0986a5135f13897a8fbd8c62e1a0a1758dedec6784208f9d516da862875a52"
             },
             "start": 16242,
             "test_id": "bsol_serialization_stream_encoder_checks_nested_arity"
@@ -5274,7 +5274,7 @@
             "end": 18810,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "69db18f21d364298592800a484bdc03e8ed31def1a06ed9d631c4faacd1ad7e9"
+              "sha256": "6f0986a5135f13897a8fbd8c62e1a0a1758dedec6784208f9d516da862875a52"
             },
             "start": 18737,
             "test_id": "bsol_serialization_shared_generic_encoder_decoder_constructs_fresh_t"
@@ -5284,7 +5284,7 @@
             "end": 20138,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "69db18f21d364298592800a484bdc03e8ed31def1a06ed9d631c4faacd1ad7e9"
+              "sha256": "6f0986a5135f13897a8fbd8c62e1a0a1758dedec6784208f9d516da862875a52"
             },
             "start": 20070,
             "test_id": "bsol_serialization_shared_tagged_corpus_uses_same_native_policy"
@@ -5294,39 +5294,39 @@
             "end": 21460,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "69db18f21d364298592800a484bdc03e8ed31def1a06ed9d631c4faacd1ad7e9"
+              "sha256": "6f0986a5135f13897a8fbd8c62e1a0a1758dedec6784208f9d516da862875a52"
             },
             "start": 21391,
             "test_id": "bsol_serialization_active_path_rejects_cycle_not_shared_siblings"
           },
           {
             "declaration": "test bsol_explicit_typed_binding_reads_exact_integer_after_validation",
-            "end": 29730,
+            "end": 29740,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "69db18f21d364298592800a484bdc03e8ed31def1a06ed9d631c4faacd1ad7e9"
+              "sha256": "6f0986a5135f13897a8fbd8c62e1a0a1758dedec6784208f9d516da862875a52"
             },
-            "start": 29661,
+            "start": 29671,
             "test_id": "bsol_explicit_typed_binding_reads_exact_integer_after_validation"
           },
           {
             "declaration": "test bsol_explicit_typed_binding_write_roundtrip_is_profile_checked",
-            "end": 30188,
+            "end": 30198,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "69db18f21d364298592800a484bdc03e8ed31def1a06ed9d631c4faacd1ad7e9"
+              "sha256": "6f0986a5135f13897a8fbd8c62e1a0a1758dedec6784208f9d516da862875a52"
             },
-            "start": 30121,
+            "start": 30131,
             "test_id": "bsol_explicit_typed_binding_write_roundtrip_is_profile_checked"
           },
           {
             "declaration": "test bsol_typed_binding_missing_duplicate_and_wrong_kind_reject",
-            "end": 30907,
+            "end": 30917,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "69db18f21d364298592800a484bdc03e8ed31def1a06ed9d631c4faacd1ad7e9"
+              "sha256": "6f0986a5135f13897a8fbd8c62e1a0a1758dedec6784208f9d516da862875a52"
             },
-            "start": 30844,
+            "start": 30854,
             "test_id": "bsol_typed_binding_missing_duplicate_and_wrong_kind_reject"
           }
         ],
@@ -5352,7 +5352,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-bsol-SerializationWireTests.bd",
-          "sha256": "69db18f21d364298592800a484bdc03e8ed31def1a06ed9d631c4faacd1ad7e9"
+          "sha256": "6f0986a5135f13897a8fbd8c62e1a0a1758dedec6784208f9d516da862875a52"
         },
         "input": {
           "corpus": "conformance",
@@ -5547,12 +5547,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations(",
-            "end": 103457,
+            "end": 104048,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 103380,
+            "start": 103971,
             "test_id": "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
           }
         ],
@@ -5574,7 +5574,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
         },
         "input": null,
         "log": "case-R4-BIND-01.json",
@@ -5607,12 +5607,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations(",
-            "end": 103457,
+            "end": 104048,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 103380,
+            "start": 103971,
             "test_id": "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
           }
         ],
@@ -5634,7 +5634,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
         },
         "input": null,
         "log": "case-R4-BIND-02.json",
@@ -5667,22 +5667,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_published_images_fail_closed_on_substitution(",
-            "end": 75266,
+            "end": 75857,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 75205,
+            "start": 75796,
             "test_id": "v06_glue_cli_published_images_fail_closed_on_substitution"
           },
           {
             "declaration": "fn v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations(",
-            "end": 103457,
+            "end": 104048,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 103380,
+            "start": 103971,
             "test_id": "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
           }
         ],
@@ -5704,7 +5704,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
         },
         "input": null,
         "log": "case-R4-BIND-03.json",
@@ -5743,12 +5743,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_rejects_closed_boundary_metadata_violations(",
-            "end": 109618,
+            "end": 110209,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 109558,
+            "start": 110149,
             "test_id": "v06_glue_cli_rejects_closed_boundary_metadata_violations"
           }
         ],
@@ -5770,7 +5770,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
         },
         "input": null,
         "log": "case-R4-BIND-04.json",
@@ -5809,32 +5809,32 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 73541,
+            "end": 74132,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 73498,
+            "start": 74089,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 99780,
+            "end": 100371,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 99730,
+            "start": 100321,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           },
           {
             "declaration": "fn v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations(",
-            "end": 103457,
+            "end": 104048,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 103380,
+            "start": 103971,
             "test_id": "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
           }
         ],
@@ -5856,7 +5856,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
         },
         "input": null,
         "log": "case-R4-ABI-01.json",
@@ -5890,22 +5890,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 73541,
+            "end": 74132,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 73498,
+            "start": 74089,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 99780,
+            "end": 100371,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 99730,
+            "start": 100321,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -5927,7 +5927,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
         },
         "input": null,
         "log": "case-R4-ABI-02.json",
@@ -6058,22 +6058,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 73541,
+            "end": 74132,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 73498,
+            "start": 74089,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 99780,
+            "end": 100371,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 99730,
+            "start": 100321,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -6095,7 +6095,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
         },
         "input": null,
         "log": "case-R4-ABI-03.json",
@@ -6226,22 +6226,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 73541,
+            "end": 74132,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 73498,
+            "start": 74089,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 99780,
+            "end": 100371,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 99730,
+            "start": 100321,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -6263,7 +6263,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
         },
         "input": null,
         "log": "case-R4-ABI-04.json",
@@ -6346,22 +6346,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 73541,
+            "end": 74132,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 73498,
+            "start": 74089,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 99780,
+            "end": 100371,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 99730,
+            "start": 100321,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -6383,7 +6383,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
         },
         "input": null,
         "log": "case-R4-ABI-05.json",
@@ -6449,22 +6449,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 73541,
+            "end": 74132,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 73498,
+            "start": 74089,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 99780,
+            "end": 100371,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 99730,
+            "start": 100321,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -6486,7 +6486,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
         },
         "input": null,
         "log": "case-R4-ABI-06.json",
@@ -6552,22 +6552,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 73541,
+            "end": 74132,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 73498,
+            "start": 74089,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 99780,
+            "end": 100371,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 99730,
+            "start": 100321,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -6589,7 +6589,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
         },
         "input": null,
         "log": "case-R4-ABI-07.json",
@@ -6660,22 +6660,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 73541,
+            "end": 74132,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 73498,
+            "start": 74089,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 99780,
+            "end": 100371,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 99730,
+            "start": 100321,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -6697,7 +6697,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
         },
         "input": null,
         "log": "case-R4-ABI-08.json",
@@ -6756,22 +6756,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 73541,
+            "end": 74132,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 73498,
+            "start": 74089,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 99780,
+            "end": 100371,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 99730,
+            "start": 100321,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -6793,7 +6793,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
         },
         "input": null,
         "log": "case-R4-ABI-09.json",
@@ -6852,42 +6852,42 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 73541,
+            "end": 74132,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 73498,
+            "start": 74089,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_published_borrow_survives_release(",
-            "end": 100493,
+            "end": 101084,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 100443,
+            "start": 101034,
             "test_id": "v06_glue_cli_published_borrow_survives_release"
           },
           {
             "declaration": "fn v06_glue_cli_published_images_fail_closed_on_substitution(",
-            "end": 75266,
+            "end": 75857,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 75205,
+            "start": 75796,
             "test_id": "v06_glue_cli_published_images_fail_closed_on_substitution"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 99780,
+            "end": 100371,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 99730,
+            "start": 100321,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -6909,7 +6909,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
         },
         "input": null,
         "log": "case-R4-ABI-10.json",
@@ -6996,32 +6996,32 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 73541,
+            "end": 74132,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 73498,
+            "start": 74089,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 99780,
+            "end": 100371,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 99730,
+            "start": 100321,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           },
           {
             "declaration": "fn v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations(",
-            "end": 103457,
+            "end": 104048,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 103380,
+            "start": 103971,
             "test_id": "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
           }
         ],
@@ -7043,7 +7043,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
         },
         "input": null,
         "log": "case-R4-ABI-11.json",
@@ -7110,12 +7110,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 73541,
+            "end": 74132,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 73498,
+            "start": 74089,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           }
         ],
@@ -7137,7 +7137,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
         },
         "input": null,
         "log": "case-R4-ABI-12.json",
@@ -7176,12 +7176,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 99780,
+            "end": 100371,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 99730,
+            "start": 100321,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -7203,7 +7203,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
         },
         "input": null,
         "log": "case-R4-CALL-01.json",
@@ -7226,12 +7226,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 99780,
+            "end": 100371,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 99730,
+            "start": 100321,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -7253,7 +7253,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
         },
         "input": null,
         "log": "case-R4-CALL-02.json",
@@ -7276,12 +7276,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 73541,
+            "end": 74132,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 73498,
+            "start": 74089,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           }
         ],
@@ -7303,7 +7303,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
         },
         "input": null,
         "log": "case-R4-CALL-03.json",
@@ -7335,22 +7335,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 73541,
+            "end": 74132,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 73498,
+            "start": 74089,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_owner_abort_is_a_terminal_process_failure(",
-            "end": 101392,
+            "end": 101983,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 101334,
+            "start": 101925,
             "test_id": "v06_glue_cli_owner_abort_is_a_terminal_process_failure"
           }
         ],
@@ -7372,7 +7372,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
         },
         "input": null,
         "log": "case-R4-CALL-04.json",
@@ -7417,12 +7417,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_equivalent_projects_issue_identical_packets(",
-            "end": 108167,
+            "end": 108758,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 108107,
+            "start": 108698,
             "test_id": "v06_glue_cli_equivalent_projects_issue_identical_packets"
           }
         ],
@@ -7444,7 +7444,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
         },
         "input": null,
         "log": "case-R4-GEN-01.json",
@@ -7467,12 +7467,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations(",
-            "end": 103457,
+            "end": 104048,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 103380,
+            "start": 103971,
             "test_id": "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
           }
         ],
@@ -7494,7 +7494,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
         },
         "input": null,
         "log": "case-R4-GEN-02.json",
@@ -7517,32 +7517,32 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations(",
-            "end": 103457,
+            "end": 104048,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 103380,
+            "start": 103971,
             "test_id": "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
           },
           {
             "declaration": "fn v06_glue_cli_published_images_fail_closed_on_substitution(",
-            "end": 75266,
+            "end": 75857,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 75205,
+            "start": 75796,
             "test_id": "v06_glue_cli_published_images_fail_closed_on_substitution"
           },
           {
             "declaration": "fn v06_glue_cli_rebuild_replaces_and_failed_rebuild_preserves(",
-            "end": 80074,
+            "end": 80665,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 80012,
+            "start": 80603,
             "test_id": "v06_glue_cli_rebuild_replaces_and_failed_rebuild_preserves"
           }
         ],
@@ -7564,7 +7564,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
         },
         "input": null,
         "log": "case-R4-GEN-03.json",
@@ -7589,12 +7589,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_tool_selection_names_the_required_form(",
-            "end": 110951,
+            "end": 111542,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 110896,
+            "start": 111487,
             "test_id": "v06_glue_cli_tool_selection_names_the_required_form"
           }
         ],
@@ -7616,7 +7616,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
         },
         "input": null,
         "log": "case-R4-TOOL-01.json",
@@ -7651,12 +7651,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_rustc_without_the_target_library_is_rejected_before_build(",
-            "end": 118467,
+            "end": 119058,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 118393,
+            "start": 118984,
             "test_id": "v06_glue_cli_rustc_without_the_target_library_is_rejected_before_build"
           }
         ],
@@ -7678,7 +7678,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
         },
         "input": null,
         "log": "case-R4-TOOL-02.json",
@@ -7701,12 +7701,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_unusable_tools_fail_before_publication(",
-            "end": 112691,
+            "end": 113282,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 112636,
+            "start": 113227,
             "test_id": "v06_glue_cli_unusable_tools_fail_before_publication"
           }
         ],
@@ -7728,7 +7728,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
         },
         "input": null,
         "log": "case-R4-TOOL-03.json",
@@ -7751,12 +7751,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_hanging_tool_probe_is_terminated(",
-            "end": 119588,
+            "end": 120179,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 119539,
+            "start": 120130,
             "test_id": "v06_glue_cli_hanging_tool_probe_is_terminated"
           }
         ],
@@ -7779,7 +7779,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
         },
         "input": null,
         "log": "case-R4-TOOL-04.json",
@@ -7802,22 +7802,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_ignores_inherited_rust_environment(",
-            "end": 78265,
+            "end": 78856,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 78214,
+            "start": 78805,
             "test_id": "v06_glue_cli_ignores_inherited_rust_environment"
           },
           {
             "declaration": "fn v06_glue_cli_rejects_ancestor_cargo_config(",
-            "end": 79028,
+            "end": 79619,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 78982,
+            "start": 79573,
             "test_id": "v06_glue_cli_rejects_ancestor_cargo_config"
           }
         ],
@@ -7839,7 +7839,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
         },
         "input": null,
         "log": "case-R4-TOOL-05.json",
@@ -7863,12 +7863,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_published_images_fail_closed_on_substitution(",
-            "end": 75266,
+            "end": 75857,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 75205,
+            "start": 75796,
             "test_id": "v06_glue_cli_published_images_fail_closed_on_substitution"
           }
         ],
@@ -7890,7 +7890,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
         },
         "input": null,
         "log": "case-R4-TOOL-06.json",
@@ -7913,12 +7913,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_rebuild_replaces_and_failed_rebuild_preserves(",
-            "end": 80074,
+            "end": 80665,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 80012,
+            "start": 80603,
             "test_id": "v06_glue_cli_rebuild_replaces_and_failed_rebuild_preserves"
           }
         ],
@@ -7940,7 +7940,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
         },
         "input": null,
         "log": "case-R4-TOOL-07.json",
@@ -7963,12 +7963,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_private_prefix_driver_admission_fails_closed(",
-            "end": 115773,
+            "end": 116364,
             "source": {
               "path": "source-interop-glue_owned.rs",
-              "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+              "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
             },
-            "start": 115712,
+            "start": 116303,
             "test_id": "v06_glue_cli_private_prefix_driver_admission_fails_closed"
           }
         ],
@@ -7990,7 +7990,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-interop-glue_owned.rs",
-          "sha256": "fdcd8aaacc8bb97f1c79b88c51342fd872b68233ba41ab1b3ce80f284c4fa643"
+          "sha256": "64f660fa4cf1aa3dfdc245c1db3388a75fa999bda10ab84cbc47a46d3e691968"
         },
         "input": null,
         "log": "case-R4-TOOL-08.json",
@@ -8036,12 +8036,12 @@
         "assertion_provenance": [
           {
             "declaration": "test process_spawn_passes_unicode_space_quote_and_shell_metacharacter_argv_exactly",
-            "end": 3298,
+            "end": 3312,
             "source": {
               "path": "source-process-ProcessSuite.bd",
-              "sha256": "f9b0126581051b0ac66954fd45bebae4e1649018e4f489d12e7639d5a4707de6"
+              "sha256": "13ead2425fe2cdb4830541eb44728909e5ba2c9ddcafae470988ecfaa86958e6"
             },
-            "start": 3216,
+            "start": 3230,
             "test_id": "process_spawn_passes_unicode_space_quote_and_shell_metacharacter_argv_exactly"
           }
         ],
@@ -8067,7 +8067,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-process-ProcessSuite.bd",
-          "sha256": "f9b0126581051b0ac66954fd45bebae4e1649018e4f489d12e7639d5a4707de6"
+          "sha256": "13ead2425fe2cdb4830541eb44728909e5ba2c9ddcafae470988ecfaa86958e6"
         },
         "input": null,
         "log": "case-R4-PROC-01.json",
@@ -8099,12 +8099,12 @@
         "assertion_provenance": [
           {
             "declaration": "test process_binary_stdin_stdout_roundtrip_with_partial_transfers_preserves_order",
-            "end": 4397,
+            "end": 4416,
             "source": {
               "path": "source-process-ProcessSuite.bd",
-              "sha256": "f9b0126581051b0ac66954fd45bebae4e1649018e4f489d12e7639d5a4707de6"
+              "sha256": "13ead2425fe2cdb4830541eb44728909e5ba2c9ddcafae470988ecfaa86958e6"
             },
-            "start": 4316,
+            "start": 4335,
             "test_id": "process_binary_stdin_stdout_roundtrip_with_partial_transfers_preserves_order"
           }
         ],
@@ -8130,7 +8130,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-process-ProcessSuite.bd",
-          "sha256": "f9b0126581051b0ac66954fd45bebae4e1649018e4f489d12e7639d5a4707de6"
+          "sha256": "13ead2425fe2cdb4830541eb44728909e5ba2c9ddcafae470988ecfaa86958e6"
         },
         "input": null,
         "log": "case-R4-PROC-02.json",
@@ -8162,12 +8162,12 @@
         "assertion_provenance": [
           {
             "declaration": "test process_stderr_flood_is_drained_concurrently_without_deadlock",
-            "end": 7998,
+            "end": 8017,
             "source": {
               "path": "source-process-ProcessSuite.bd",
-              "sha256": "f9b0126581051b0ac66954fd45bebae4e1649018e4f489d12e7639d5a4707de6"
+              "sha256": "13ead2425fe2cdb4830541eb44728909e5ba2c9ddcafae470988ecfaa86958e6"
             },
-            "start": 7932,
+            "start": 7951,
             "test_id": "process_stderr_flood_is_drained_concurrently_without_deadlock"
           }
         ],
@@ -8193,7 +8193,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-process-ProcessSuite.bd",
-          "sha256": "f9b0126581051b0ac66954fd45bebae4e1649018e4f489d12e7639d5a4707de6"
+          "sha256": "13ead2425fe2cdb4830541eb44728909e5ba2c9ddcafae470988ecfaa86958e6"
         },
         "input": null,
         "log": "case-R4-PROC-03.json",
@@ -8225,22 +8225,22 @@
         "assertion_provenance": [
           {
             "declaration": "test process_wait_returns_exit_code_and_run_reports_typed_exit_and_missing_executable",
-            "end": 8735,
+            "end": 8754,
             "source": {
               "path": "source-process-ProcessSuite.bd",
-              "sha256": "f9b0126581051b0ac66954fd45bebae4e1649018e4f489d12e7639d5a4707de6"
+              "sha256": "13ead2425fe2cdb4830541eb44728909e5ba2c9ddcafae470988ecfaa86958e6"
             },
-            "start": 8650,
+            "start": 8669,
             "test_id": "process_wait_returns_exit_code_and_run_reports_typed_exit_and_missing_executable"
           },
           {
             "declaration": "test process_wait_deadline_expiry_is_timed_out_and_close_reaps",
-            "end": 10084,
+            "end": 10103,
             "source": {
               "path": "source-process-ProcessSuite.bd",
-              "sha256": "f9b0126581051b0ac66954fd45bebae4e1649018e4f489d12e7639d5a4707de6"
+              "sha256": "13ead2425fe2cdb4830541eb44728909e5ba2c9ddcafae470988ecfaa86958e6"
             },
-            "start": 10022,
+            "start": 10041,
             "test_id": "process_wait_deadline_expiry_is_timed_out_and_close_reaps"
           }
         ],
@@ -8266,7 +8266,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-process-ProcessSuite.bd",
-          "sha256": "f9b0126581051b0ac66954fd45bebae4e1649018e4f489d12e7639d5a4707de6"
+          "sha256": "13ead2425fe2cdb4830541eb44728909e5ba2c9ddcafae470988ecfaa86958e6"
         },
         "input": null,
         "log": "case-R4-PROC-04.json",
@@ -8299,12 +8299,12 @@
         "assertion_provenance": [
           {
             "declaration": "test process_terminate_and_close_reap_the_child_tree_within_five_seconds",
-            "end": 10732,
+            "end": 10751,
             "source": {
               "path": "source-process-ProcessSuite.bd",
-              "sha256": "f9b0126581051b0ac66954fd45bebae4e1649018e4f489d12e7639d5a4707de6"
+              "sha256": "13ead2425fe2cdb4830541eb44728909e5ba2c9ddcafae470988ecfaa86958e6"
             },
-            "start": 10660,
+            "start": 10679,
             "test_id": "process_terminate_and_close_reap_the_child_tree_within_five_seconds"
           }
         ],
@@ -8330,7 +8330,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-process-ProcessSuite.bd",
-          "sha256": "f9b0126581051b0ac66954fd45bebae4e1649018e4f489d12e7639d5a4707de6"
+          "sha256": "13ead2425fe2cdb4830541eb44728909e5ba2c9ddcafae470988ecfaa86958e6"
         },
         "input": null,
         "log": "case-R4-PROC-05.json",
@@ -8362,22 +8362,22 @@
         "assertion_provenance": [
           {
             "declaration": "test process_close_is_idempotent_through_aliases",
-            "end": 11815,
+            "end": 11834,
             "source": {
               "path": "source-process-ProcessSuite.bd",
-              "sha256": "f9b0126581051b0ac66954fd45bebae4e1649018e4f489d12e7639d5a4707de6"
+              "sha256": "13ead2425fe2cdb4830541eb44728909e5ba2c9ddcafae470988ecfaa86958e6"
             },
-            "start": 11767,
+            "start": 11786,
             "test_id": "process_close_is_idempotent_through_aliases"
           },
           {
             "declaration": "test process_failed_spawn_setup_leaves_no_child_and_later_spawns_succeed",
-            "end": 12561,
+            "end": 12580,
             "source": {
               "path": "source-process-ProcessSuite.bd",
-              "sha256": "f9b0126581051b0ac66954fd45bebae4e1649018e4f489d12e7639d5a4707de6"
+              "sha256": "13ead2425fe2cdb4830541eb44728909e5ba2c9ddcafae470988ecfaa86958e6"
             },
-            "start": 12489,
+            "start": 12508,
             "test_id": "process_failed_spawn_setup_leaves_no_child_and_later_spawns_succeed"
           }
         ],
@@ -8403,7 +8403,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-process-ProcessSuite.bd",
-          "sha256": "f9b0126581051b0ac66954fd45bebae4e1649018e4f489d12e7639d5a4707de6"
+          "sha256": "13ead2425fe2cdb4830541eb44728909e5ba2c9ddcafae470988ecfaa86958e6"
         },
         "input": null,
         "log": "case-R4-PROC-06.json",

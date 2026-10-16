@@ -28,7 +28,7 @@ dependencies = [
 
 [[package]]
 name = "beskid-zed-extension"
-version = "0.6.0"
+version = "0.6.6"
 dependencies = [
  "zed_extension_api",
 ]
