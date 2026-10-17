@@ -12,6 +12,11 @@ import {
 	useSearch,
 } from "@tanstack/react-router";
 import { ApiReference } from "#/components/docs/api-reference";
+import {
+	DocsContentSkeleton,
+	DocsPackageSkeleton,
+	DocumentBodySkeleton,
+} from "#/components/loading-skeletons";
 import { Markdown } from "#/components/markdown";
 import { pckgApi } from "#/lib/api";
 import { itemSelector } from "#/lib/api-docs";
@@ -88,12 +93,7 @@ function PackageDocumentationPage() {
 			search: { ...search, version: selectedVersion, ...next },
 		});
 
-	if (details.isPending)
-		return (
-			<p className="mx-auto max-w-7xl px-5 py-10 text-muted-foreground">
-				Loading package documentation…
-			</p>
-		);
+	if (details.isPending) return <DocsPackageSkeleton />;
 	if (details.isError) throw details.error;
 	const presentation = packageKindPresentation({
 		kind: details.data.package.packageKind,
@@ -221,9 +221,7 @@ function PackageDocumentationPage() {
 				))}
 			</div>
 
-			{structured.isPending && (
-				<p className="text-sm text-muted-foreground">Loading documentation…</p>
-			)}
+			{structured.isPending && <DocsContentSkeleton />}
 			{structured.isError && (
 				<p role="alert" className="text-sm text-destructive">
 					Could not load the documentation for this release. Please try again.
@@ -292,10 +290,12 @@ function PackageDocumentationPage() {
 					<div className="min-w-0 rounded-md border border-border p-6">
 						{guide.data ? (
 							<Markdown source={guide.data} />
-						) : (
+						) : guide.isError ? (
 							<p className="text-sm text-muted-foreground">
-								{guide.isError ? "This guide could not be loaded." : "Loading guide…"}
+								This guide could not be loaded.
 							</p>
+						) : (
+							<DocumentBodySkeleton label="Loading guide" />
 						)}
 					</div>
 				</div>
