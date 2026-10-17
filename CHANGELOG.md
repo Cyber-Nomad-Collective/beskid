@@ -93,6 +93,17 @@ Draft release notes: `docs/release/v0.6.6-release-notes.md`.
   `scripts/ci/release-case-bindings/features-v066.json`; the new manifest digest
   is pinned (task 6.7).
 
+### Fixed
+
+- The macOS native runtime kit builds again. The runtime's write-barrier word
+  `beskid_rt_v5_gc_barrier_active`, the first `export_data` symbol, was a bare
+  C tentative definition, which Apple clang emits as a Mach-O common symbol
+  (`N_UNDF | N_EXT` with a non-zero value), so the provenance check read it as
+  an import and failed with `E4002` ("defined symbol table is missing"). The
+  word now has an explicit zero initializer on every platform, and the symbol
+  inventory classifies a common symbol as a definition on Mach-O as it already
+  did on ELF and COFF.
+
 ### Breaking changes
 
 - Corelib collection mutators consume `this`; code that kept using a list
