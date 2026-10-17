@@ -486,7 +486,7 @@ function packArtifacts(cliBin, stage, corelibPackages, templatePackages, plans, 
     writePackBaseline(source, plan.latest, plannedDependencies);
     const artifact = join(artifactsDir, `${meta.registryName}-${plan.version}.bpk`);
     const args = [
-      "pckg", "pack",
+      "package", "pack",
       "--package", meta.registryName,
       "--source", source,
       "--output", artifact,
@@ -588,7 +588,7 @@ async function createPackage(baseUrl, token, meta) {
 function publishArtifact(cliBin, baseUrl, token, meta) {
   execFileSync(
     cliBin,
-    ["pckg", "upload", meta.registryName, "--artifact", meta.artifact],
+    ["package", "publish", meta.registryName, "--artifact", meta.artifact],
     {
       env: {
         ...process.env,
