@@ -47,6 +47,15 @@ fi
 handoff_root="${test_root%/}/woodpecker-handoff"
 [[ -n "$test_root" ]] || handoff_root=/woodpecker-handoff
 
+# woodpecker-cli --var splits values on commas, so a JSON waiver cannot pass through it intact.
+# A waiver may instead arrive as base64:<standard base64 of the JSON record>.
+if [[ "${BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_JSON:-}" == base64:* ]]; then
+  decoded="$(printf '%s' "${BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_JSON#base64:}" | base64 -d 2>/dev/null)" || {
+    echo 'BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_JSON is not valid base64' >&2; exit 1
+  }
+  export BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_JSON="$decoded"
+fi
+
 case "$mode" in
   prepare) publish=0; [[ -z "$release_token" ]] || { echo 'release preparation must not receive GH_TOKEN' >&2; exit 1; } ;;
   verify)
