@@ -1,10 +1,10 @@
 ---
 title: "beskid 0.6.0: One Front End, Function Values and Rust Glue"
 description: "beskid 0.6.0 retires the second type checker, makes functions values, lets a for loop walk your own iterators, calls Rust in process through a checked C ABI, removes the runtime's fixed table sizes and makes compiles and string operations several times faster."
-date: 2026-10-13
-blogStatus: in-progress
+date: 2026-10-16
+blogStatus: released
 release: v0.6.0
-draft: true
+draft: false
 cover:
   src: "/blog-covers/v0-6-0-release.jpg"
   alt: "Railroad crews and officials of the Central Pacific and Union Pacific gather around two locomotives touching pilots at Promontory Summit, Utah, on 10 May 1869, where the two lines met."
@@ -12,9 +12,6 @@ cover:
   sourceLabel: "Andrew J. Russell, Public domain"
 ---
 
-<!-- DRAFT. Update `date` to the publication date, set `blogStatus: released` and `draft: false` only after the release evidence below exists. -->
-
-<!-- VERIFY: three-platform release evidence (Linux x64, macOS arm64, Windows x64; 86 mandatory cases each) is not complete. Ship this lead sentence only when it is. -->
 **beskid 0.6.0 is out for Linux, macOS and Windows.** The 0.5 line was about talking to other machines. 0.6 is about the compiler agreeing with itself, and about talking to other languages on the same machine.
 
 Until now a program went through two type checkers on its way to a binary: the query layer, and an older checker that ran again before code generation. Most of the time they agreed. When they did not, a program that passed analysis failed at build time with an error the first checker had never heard of. 0.6.0 deletes the older one. Everything else in this release was built on that.
@@ -182,8 +179,7 @@ beskid run --project Hello -- first second
 
 Registry dependencies resolve transitively: adding a package also locks the packages it depends on, and removing it drops the ones nothing else needs. Two different versions of one package in the closure fail and name both requesters. The `--json` change records list every transitive package whose locked version changed.
 
-<!-- VERIFY: VS Code extension 0.6.0 published (beskid_vscode package.json is 0.6.0; release tag and Marketplace listing not confirmed) -->
-The VS Code extension 0.6.0 uses the new command surface and installs the language server through `beskid dev lsp install`.
+The VS Code extension source in the repository is updated for the new command surface and installs the language server through `beskid dev lsp install`. It is not published with 0.6.0: the Marketplace and Open VSX publication is a follow-up, because the publish scripts accept 0.5.x versions only.
 
 ## Before you upgrade
 
@@ -209,7 +205,6 @@ Parallel execution arrives in one release, 0.6.6, built in steps that each depen
 
 ## Install or upgrade
 
-<!-- VERIFY: cli-v0.6.0 release assets, Homebrew formula 0.6.0, and the packaging notes (Windows installer waiver, unsigned DMG) must exist and match before publication. -->
 On macOS, use the Homebrew tap:
 
 ```sh
@@ -220,3 +215,7 @@ brew upgrade cyber-nomad-collective/beskid/beskid
 On Windows, download the [0.6.0 setup executable](https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/download/cli-v0.6.0/beskid-0.6.0-windows-amd64.exe). On Linux, download the [AMD64 DEB](https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/download/cli-v0.6.0/beskid-0.6.0-amd64.deb). The [versioned release](https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/tag/cli-v0.6.0) also has the Windows MSI and the macOS DMG, and the [native bundles](https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/tag/v0.6.0) carry a complete installed prefix.
 
 `beskid --version` should print `0.6.0`. `beskid doctor` checks the installation without changing it. The [install guide](/docs/getting-started/install/) covers the platform compilers and linkers that native builds need. Rust Glue builds also need a Rust toolchain that you pass in explicitly.
+
+Packaging notes: the Windows setup is published under an owner-approved waiver for its formal installer test. Silent install, run, toolchain status, `beskid doctor` and uninstall checks passed on the build VM for both the MSI and the setup executable. The macOS DMG is unsigned and not notarized, so Homebrew remains the recommended macOS route.
+
+One quality check was not done: the CLI06-06 user observation of the new command surface did not take place. It is a published, non-blocking quality target.

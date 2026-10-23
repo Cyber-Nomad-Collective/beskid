@@ -47,6 +47,22 @@ fi
 handoff_root="${test_root%/}/woodpecker-handoff"
 [[ -n "$test_root" ]] || handoff_root=/woodpecker-handoff
 
+# Plugin steps receive pipeline variables only as PLUGIN_* settings. The 0.6.0 publisher image's
+# dispatcher reads release_version but does not export it, so the publish lane takes it from the
+# setting. The dispatcher fix ships with the next publisher image.
+if [[ "$mode" == publish && -z "${BESKID_RELEASE_VERSION:-}" && -n "${PLUGIN_RELEASE_VERSION:-}" ]]; then
+  export BESKID_RELEASE_VERSION="$PLUGIN_RELEASE_VERSION"
+fi
+
+# woodpecker-cli --var splits values on commas, so a JSON waiver cannot pass through it intact.
+# A waiver may instead arrive as base64:<standard base64 of the JSON record>.
+if [[ "${BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_JSON:-}" == base64:* ]]; then
+  decoded="$(printf '%s' "${BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_JSON#base64:}" | base64 -d 2>/dev/null)" || {
+    echo 'BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_JSON is not valid base64' >&2; exit 1
+  }
+  export BESKID_WINDOWS_INSTALLER_OWNER_WAIVER_JSON="$decoded"
+fi
+
 case "$mode" in
   prepare) publish=0; [[ -z "$release_token" ]] || { echo 'release preparation must not receive GH_TOKEN' >&2; exit 1; } ;;
   verify)

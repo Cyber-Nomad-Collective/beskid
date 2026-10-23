@@ -24,7 +24,7 @@ assert_contains "${RUNNER}" 'Authorization: `Bearer ${token}`' \
   "publication uses the canonical bearer-key transport"
 assert_contains "${RUNNER_READY}" 'new URL("api/packages", baseUrl)' \
   "registry readiness checks the publicly routed package API before mutation"
-assert_contains "${RUNNER}" '["pckg", "upload", meta.registryName, "--artifact", meta.artifact]' \
+assert_contains "${RUNNER}" '["package", "publish", meta.registryName, "--artifact", meta.artifact]' \
   "publication delegates artifact upload to the canonical compiler client"
 assert_contains "${RUNNER}" 'source: "registry"' \
   "publication plans exact registry dependencies for the canonical compiler packer"

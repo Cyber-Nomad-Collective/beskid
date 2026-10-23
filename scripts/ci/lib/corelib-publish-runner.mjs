@@ -215,7 +215,10 @@ export function corelibInventory(workspaceRoot) {
       projectType: projectField(manifestText, "type") ?? "Lib",
       // Facade-only and aggregate/dependency-heavy packages are packable, but
       // the source doc command cannot yet normalize every non-root source path.
-      hasApiDocs: ["foundation", "concurrency", "runtime"].includes(memberId),
+      // corelib_foundation ships without api.json in 0.6.0: the 0.6.0 `beskid doc` cannot place the
+      // Mod-generated unit .generated/Core/Text/Regex/Generated.g.bd under src/ and fails. The doc fix
+      // ships in 0.6.6; foundation's API reference is republished then.
+      hasApiDocs: ["concurrency", "runtime"].includes(memberId),
       category,
       memberId,
       registryName,
@@ -483,7 +486,7 @@ function packArtifacts(cliBin, stage, corelibPackages, templatePackages, plans, 
     writePackBaseline(source, plan.latest, plannedDependencies);
     const artifact = join(artifactsDir, `${meta.registryName}-${plan.version}.bpk`);
     const args = [
-      "pckg", "pack",
+      "package", "pack",
       "--package", meta.registryName,
       "--source", source,
       "--output", artifact,
@@ -585,7 +588,7 @@ async function createPackage(baseUrl, token, meta) {
 function publishArtifact(cliBin, baseUrl, token, meta) {
   execFileSync(
     cliBin,
-    ["pckg", "upload", meta.registryName, "--artifact", meta.artifact],
+    ["package", "publish", meta.registryName, "--artifact", meta.artifact],
     {
       env: {
         ...process.env,
