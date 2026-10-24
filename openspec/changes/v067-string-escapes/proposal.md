@@ -5,7 +5,8 @@ A string literal supports only `\"`, `\\` and `\${`. Programs cannot write a new
 ## What Changes
 
 - String literals accept `\n`, `\t`, `\r`, `\0` and `\u{...}`.
-- Any other escape remains an error.
+- Any other escape is an error: E0109 for an unknown escape, E0110 for an invalid `\u{...}` value.
+- The compound assignment operators `*=`, `/=` and `%=` join `+=` and `-=`.
 
 ## Capabilities
 

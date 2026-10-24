@@ -5,6 +5,6 @@
 
 ## 2. Implementation (slice own)
 
-- [ ] 2.1 `xs[i]` borrow return is E1241 with help.
+- [x] 2.1 (withdrawn) borrowed element return; superseded by `v067-move-at-isolate-boundary`.
 - [ ] 2.2 `[Export]` resolves by declaration identity.
 - [ ] 2.3 `[ScopeBorrowed]` escape is enforced.

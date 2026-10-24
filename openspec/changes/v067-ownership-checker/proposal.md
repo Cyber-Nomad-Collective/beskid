@@ -1,12 +1,13 @@
 ## Why
 
-Three gaps remain in the ownership checker of 0.6.6. A function can return a borrowed element `xs[i]` of a Moved class. An `[Export]` entry can match a function by simple name. A `[ScopeBorrowed]` value can escape, because only corelib review prevents it. Each gap lets a program keep a reference after the owner released the value. Evidence: wayfinder ticket 13 of the 0.6.7 map (owner accepted 2026-10-24).
+Two gaps remain in the checker of 0.6.6. An `[Export]` entry can match a function by simple name. A `[ScopeBorrowed]` value can escape, because only corelib review prevents it. Each gap lets a program keep a reference after its scope ended. Evidence: wayfinder ticket 13 (owner accepted 2026-10-24).
+
+The third gap of ticket 13, returning a borrowed element `xs[i]` of a Moved class, is withdrawn. The owner ruling of 2026-10-24 (`v067-move-at-isolate-boundary`) removes owning and borrowed names from ordinary code, so an ordinary return of `xs[i]` is no longer an error. A borrowed element at an isolate crossing is covered by that change.
 
 ## What Changes
 
-- Returning a borrowed element of a Moved class is an error (E1241), and the diagnostic suggests taking the value out or cloning it.
 - `[Export]` entries resolve by the identity of the declaration. Name matching is removed.
-- The checker enforces `[ScopeBorrowed]`: no store into a field, no return, no capture by an escaping closure.
+- The checker enforces `[ScopeBorrowed]`: the value stays in the scope that uses it.
 
 ## Capabilities
 
@@ -15,8 +16,8 @@ Three gaps remain in the ownership checker of 0.6.6. A function can return a bor
 
 ## Impact
 
-`beskid_queries` ownership and affine checks, export entry resolution. Target release: 0.6.7. Builds on `v062-captures-and-move` and `v065-parallel-sequences`.
+`beskid_queries` ownership checks, export entry resolution. Target release: 0.6.7. Builds on `v065-parallel-sequences` and `v067-move-at-isolate-boundary`.
 
 ## Compatibility, Migration and Reversion
 
-No users exist. Programs that return a borrowed element, or that rely on name matching for `[Export]`, stop compiling. There is no compatibility path.
+No users exist. Programs that rely on name matching for `[Export]`, or that let a `[ScopeBorrowed]` value escape, stop compiling. There is no compatibility path.

@@ -4,9 +4,9 @@ Programs in the beskid-lings course hit four runtime problems. `Process.Run` doe
 
 ## What Changes
 
-- `Process.Run` searches `PATH` and returns `Ok(output)` whenever the child started. The caller checks `exitCode`. `ProcessError` gets `Message()`.
-- `Channel.Receive` in `Main` parks the fiber until a value or a close arrives.
-- The receive error type gets `Unexpected(code)`.
+- `Process.Run` searches `PATH` and returns `Ok(output)` whenever the child started. The caller checks `exitCode`. `Process.Message(error)` returns the error text.
+- Blocking operations in `Main`, including `Channel.Receive`, park the fiber.
+- `ChannelError`, `HubError` and `MutexError` get `Unexpected(code)`.
 - When `Main` returns, the process ends, even if detached fibers wait in I/O.
 
 ## Capabilities
@@ -20,4 +20,4 @@ Corelib `Process` and `Concurrency` packages, runtime scheduler and fibers. Targ
 
 ## Compatibility, Migration and Reversion
 
-No users exist. Code that matched `ProcessError::ExitCode` must check `exitCode` instead. There is no compatibility path.
+No users exist. Code that matched an exit-code error must check `exitCode` instead. There is no compatibility path.

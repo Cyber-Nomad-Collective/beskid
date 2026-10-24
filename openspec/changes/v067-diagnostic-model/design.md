@@ -6,7 +6,7 @@ A diagnostic has: code, severity, message, primary span, labelled related locati
 
 ## Editor shape (ticket 03)
 
-The compiler emits one diagnostic per cause, anchored where the fix goes. For repeated assignments to an immutable binding, the anchor is the declaration. Other places are related locations with short labels. The editor never receives ASCII snippets, arrows, grammar rule names, repeated paths or `Help:` lines. Help is the preferred quick fix. Parse errors anchor on the token found, with the start of the construct as a related location, and say what was being parsed.
+The compiler emits one diagnostic per cause, anchored where the fix goes. For repeated assignments to an immutable binding, the anchor is the declaration. Other places are related locations with short labels. The editor never receives ASCII snippets, arrows, grammar rule names or repeated paths. Help (owner amendment, "B plus C") is one `Help:` second line of the message and is never a separate entry. A related place in the same buffer also gets a Hint marker. A fix is attached to the diagnostic and becomes a quick fix. Parse errors anchor on the token found, with the start of the construct as a related location, and say what was being parsed.
 
 ## Documentation link
 
@@ -22,4 +22,4 @@ The compiler maps spans in materialized sources (for example generated Corelib o
 
 ## JSON
 
-`--error-format=json` writes one JSON object per diagnostic per line to standard output (JSON Lines). The schema is stable inside the 0.6 line; fields are only added.
+`--error-format=json` writes one JSON object per diagnostic per line to standard error, in the rustc-like schema of `docs/diagnostics-json.md` in the compiler. The schema version is `1`; fields are only added inside the 0.6 line.
