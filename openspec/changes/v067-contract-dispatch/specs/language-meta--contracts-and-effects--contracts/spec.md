@@ -4,8 +4,8 @@
 A contract name SHALL be usable as a value type. A value of contract type SHALL hold any value whose type conforms to the contract: a `type`, an `enum`, or a primitive type or `string` with an `impl` block for the contract. Contract values SHALL be allowed as locals, including `mut` locals, as fields, as array and `List` elements, as parameters, as return values, and as the elements of `inject Contract[]`. A contract that embeds other contracts SHALL be convertible to each embedded contract type.
 
 #### Scenario: Several implementations in a list
-- **GIVEN** `contract Shape { f64 Area(); }`, `type Square : Shape` and `type Circle : Shape`
-- **WHEN** `List<Shape> shapes` receives a `Square` and a `Circle` and the code sums `shape.Area()` over the list
+- **GIVEN** `contract Shape { f64 Area(); }`, `type Square : Shape { f64 side; ... }` and `type Circle : Shape { f64 radius; ... }`
+- **WHEN** `List<Shape> shapes` receives `Square { side: 2.0 }` and `Circle { radius: 1.0 }` and the code sums `shape.Area()` over the list
 - **THEN** each call runs the implementation of the held value
 
 #### Scenario: Primitive as a contract value
@@ -25,6 +25,6 @@ A concrete value SHALL convert to a contract type where a contract type is expec
 A call through a contract value SHALL dispatch at run time to the implementation of the held value, with the held value as receiver. Default parameter values SHALL come from the contract. A call through a generic bound `T: C` SHALL keep static dispatch for each specialization.
 
 #### Scenario: Dispatch follows the held value
-- **GIVEN** `Shape s = new Square(2); s = new Circle(1);` where `s` is a `mut` local
+- **GIVEN** `Shape s = Square { side: 2.0 }; s = Circle { radius: 1.0 };` where `s` is a `mut` local
 - **WHEN** `s.Area()` runs after each assignment
 - **THEN** the first call runs `Square.Area` and the second runs `Circle.Area`
