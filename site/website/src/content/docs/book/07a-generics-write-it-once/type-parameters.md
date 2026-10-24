@@ -39,13 +39,13 @@ i32 Main()
 
 ## Generic types
 
-A `type` declares its parameters after its name. The fields come first, separated by commas, and the methods follow.
+A `type` declares its parameters after its name. The fields come first, each ending with a semicolon, and the methods follow.
 
 ```beskid
 pub type Pair<A, B>
 {
-    A first,
-    B second,
+    A first;
+    B second;
 
     pub A First()
     {

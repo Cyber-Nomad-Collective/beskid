@@ -55,7 +55,7 @@ contract Channel
 
 type Pipe : Channel
 {
-    i64 last,
+    i64 last;
 
     pub i64 Read()
     {

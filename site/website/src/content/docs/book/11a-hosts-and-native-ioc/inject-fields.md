@@ -9,8 +9,8 @@ A registered type states what it needs with **`inject`** on a field. The compile
 ```text
 type Mailer
 {
-    inject Clock clock,
-    inject Logger logger,
+    inject Clock clock;
+    inject Logger logger;
 
     pub unit Send(string to)
     {
@@ -20,7 +20,7 @@ type Mailer
 }
 ```
 
-Fields are separated by commas, like every other `type` field. An injected field reads like any other field (`this.clock`), so a type whose dependencies come from the container looks the same to its own methods as a type whose fields were set by hand.
+Each field ends with a semicolon, like every other `type` field. An injected field reads like any other field (`this.clock`), so a type whose dependencies come from the container looks the same to its own methods as a type whose fields were set by hand.
 
 ## Field injection only
 
@@ -57,7 +57,7 @@ type MemoryStorage : Storage
 
 type Sinks
 {
-    inject Storage[] storages,
+    inject Storage[] storages;
 
     pub i64 Count()
     {
@@ -142,8 +142,8 @@ type ConsoleLogger : Logger
 
 type Mailer
 {
-    inject Clock clock,
-    inject Logger logger,
+    inject Clock clock;
+    inject Logger logger;
 
     pub unit Send(string to)
     {

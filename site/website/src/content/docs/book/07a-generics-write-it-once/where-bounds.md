@@ -18,7 +18,7 @@ contract Named
 
 type Dog : Named
 {
-    string name,
+    string name;
 
     pub string Name()
     {

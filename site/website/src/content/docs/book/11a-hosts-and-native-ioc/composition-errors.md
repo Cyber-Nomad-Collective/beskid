@@ -38,7 +38,7 @@ type Clock
 
 type Report
 {
-    inject Clock clock
+    inject Clock clock;
 }
 
 host AppHost()

@@ -8,6 +8,8 @@ Control flow is how programs admit they have **choices**. Beskid expects you to 
 
 ## `if`
 
+Loops, `if` and assignment are taught with examples in [Assignment and loops](/book/03a-the-everyday-language/assignment-and-loops/).
+
 Standard conditional binding: exact grammar in [lexical and syntax](/docs/standard/capabilities/language-meta--surface-syntax--lexical-and-syntax/). Do not use `if` to simulate nullable checks; narrow `Option<T>` with `match`.
 
 ## `match`

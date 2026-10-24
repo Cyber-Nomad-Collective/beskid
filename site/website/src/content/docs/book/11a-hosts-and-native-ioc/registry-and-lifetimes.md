@@ -55,7 +55,7 @@ type FixedClock : Clock
 
 type Report
 {
-    inject Clock clock,
+    inject Clock clock;
 
     pub unit Print()
     {

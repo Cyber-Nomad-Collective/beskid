@@ -1,0 +1,65 @@
+---
+title: "The everyday language: values, operators, loops and types"
+description: Literals and primitive types, strings and interpolation, operators, assignment, loops, structs, enums, arrays and functions, in the syntax you will write every day.
+tableOfContents: true
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+<Aside type="caution">
+This chapter is **informative**. Enforceable rules live in the [Beskid Standard](/docs/standard/), especially [Lexical and syntax](/docs/standard/capabilities/language-meta--surface-syntax--lexical-and-syntax/) and [Types](/docs/standard/capabilities/language-meta--type-system--types/).
+</Aside>
+
+You have a toolchain ([chapter 01](/book/01-it-works-on-my-machine/)), an editor ([chapter 02](/book/02-path-not-found-tooling-anyway/)) and a project that builds ([chapter 03](/book/03-project-proj-or-it-didnt-happen/)). Now you need something to put in `Main.bd`. This chapter is that something: the part of the language that nearly every program uses, written out once, with examples that you can paste into a project and run.
+
+It is a tour, not a specification. Where a rule has edges, the page names the diagnostic and links to the Standard. Chapter [07](/book/07-compiler-is-not-your-therapist/) comes back to types, `Option` and diagnostics once you have written enough code to have opinions.
+
+## A first program
+
+```beskid
+use Core.Output;
+
+i32 Main()
+{
+    mut i64 total = 0;
+    i64[] numbers = [1, 2, 3];
+    for n in numbers
+    {
+        total += n;
+    }
+    Output.WriteLine("total: ${total}");
+    return 0;
+}
+```
+
+The return type comes first (`i32 Main()`), a local is declared with its type (`mut i64 total`), `mut` allows it to change, an array literal uses square brackets, and `${...}` puts a value into a string. `Main` returns the exit code of the process.
+
+## What you will find here
+
+| Section | Topic |
+| --- | --- |
+| [Values and literals](/book/03a-the-everyday-language/values-and-literals/) | Primitive types, number, character and string literals, escapes, interpolation, `let` and `mut`. |
+| [Operators](/book/03a-the-everyday-language/operators/) | Arithmetic, comparison, equality, logic, bits, the conditional `? :`, precedence. |
+| [Assignment and loops](/book/03a-the-everyday-language/assignment-and-loops/) | `=`, `+=` and friends, `if`, `while`, `for`, `break`, `continue`. |
+| [Types, structs and enums](/book/03a-the-everyday-language/types-structs-and-enums/) | `type` with fields and methods, struct literals, `enum`, `match`, arrays, `const`. |
+| [Functions and programs](/book/03a-the-everyday-language/functions-and-main/) | Declarations, `unit`, `return`, `Main`, comments. |
+
+## By the end of this chapter
+
+- Pick the right primitive type and write its literal, including strings with escapes and interpolation.
+- Read an expression with several operators and know what binds first.
+- Change a value with `=` or `+=`, and know why the compiler asks for `mut`.
+- Write `if`, `while` and `for` in the house style.
+- Declare a struct, build one with a literal, and branch on an enum with `match`.
+
+## Previous
+
+[03. Project.proj or it didn't happen](/book/03-project-proj-or-it-didnt-happen/)
+
+## Start here
+
+[Values and literals](/book/03a-the-everyday-language/values-and-literals/)
+
+## Next chapter
+
+[04. Where does this file even go?](/book/04-where-does-this-file-go/)

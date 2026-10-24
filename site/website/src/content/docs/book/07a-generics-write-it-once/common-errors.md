@@ -23,8 +23,8 @@ On a type:
 ```beskid
 pub type Pair<A, B>
 {
-    A first,
-    B second,
+    A first;
+    B second;
 }
 
 unit Demo(Pair pair)
@@ -44,8 +44,8 @@ missing type arguments for generic type
 ```beskid
 pub type Pair<A, B>
 {
-    A first,
-    B second,
+    A first;
+    B second;
 }
 
 unit Demo(Pair<i64> pair)

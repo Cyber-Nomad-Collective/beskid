@@ -140,8 +140,8 @@ use Core.Optional.Option;
 
 pub type Ring<T>
 {
-    T[] items,
-    i64 count,
+    T[] items;
+    i64 count;
 
     pub i64 Count()
     {

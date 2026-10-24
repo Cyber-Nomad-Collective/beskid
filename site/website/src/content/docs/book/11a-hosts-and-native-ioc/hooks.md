@@ -53,7 +53,7 @@ type Logger
 
 type Greeting
 {
-    inject Logger logger,
+    inject Logger logger;
 
     pub unit Say(string name)
     {
