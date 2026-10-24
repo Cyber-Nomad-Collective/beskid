@@ -63,10 +63,9 @@ commands, and a filter makes the pipeline fail at compile time with "only
 allowed to be used by plugins". The tracked-workflow test below is what
 confines them to that one step.
 
-The publication secrets `compiler_release_token`, `pckg_release_publisher_key`
-and `open_vsx_token` have the image filter
+The publication secrets `compiler_release_token` and `open_vsx_token` have the image filter
 `cr.beskid-lang.org/beskid/release-publisher`. The steps that bind them
-(`release.yml:publish-release`, `pckg.yml:publish-corelib-and-templates` and
+(`release.yml:publish-release` and
 `editor.yml:publish-editor-release`) are plugin steps on that image. They have
 no `commands`, `entrypoint` or `environment`. The image is built from
 `ci/plugins/release-publisher` by the manual `BESKID_TASK=publisher-image` task
@@ -88,8 +87,12 @@ commands.
 The tracked workflows add a second layer. `woodpecker-secret-scope.test.py`
 fails the Linux validation when a step binds a secret without a pinned image,
 outside a manual `main` pipeline, or expands a credential in its command text.
-It also fixes `compiler_release_token` to exactly two steps:
-`release.yml:publish-release` and `pckg.yml:publish-corelib-and-templates`.
+It also fixes `compiler_release_token` to exactly one step:
+`release.yml:publish-release`.
+
+Corelib and template packages are not published by a pipeline. The owner runs
+`scripts/release/publish-corelib.sh` on the Mac with a publisher key file; no
+Woodpecker secret holds the pckg publisher key.
 
 `compiler_release_token` is the GitHub credential with `contents: write` on
 `beskid_compiler` and write access to `beskid_homebrew`. The release scripts

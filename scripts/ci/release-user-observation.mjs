@@ -62,7 +62,7 @@ export const NON_BUILD_PATHS = [
   // Website content (site/website, site/auth, site/learn): built into site images, never into a compiler,
   // Corelib or installer artifact.
   /^site\//,
-  /^\.woodpecker\/release\.yml$/, /^\.woodpecker\/pckg\.yml$/,
+  /^\.woodpecker\/release\.yml$/,
   /^scripts\/ci\/test\//,
   // Gate and check scripts: they write gate reports, never artifacts.
   /^scripts\/ci\/compiler-rust-gate\.sh$/, /^scripts\/ci\/woodpecker-release-gates\.sh$/,
@@ -72,7 +72,7 @@ export const NON_BUILD_PATHS = [
   /^scripts\/ci\/build-release-state\.sh$/, /^scripts\/ci\/render-compiler-release-notes\.sh$/,
   /^scripts\/ci\/publish-release-stream\.sh$/, /^scripts\/ci\/publish-homebrew-formula\.sh$/,
   // Corelib registry publisher: runs after a release, from the published bundle.
-  /^scripts\/ci\/corelib-publish\.sh$/, /^scripts\/ci\/lib\/corelib-publish-runner\.mjs$/,
+  /^scripts\/release\//,
 ];
 // Root paths a repackaging root may change relative to the build source it packages, in addition to
 // NON_BUILD_PATHS: the native packaging scripts and the distribution submodule. A repackaged handoff

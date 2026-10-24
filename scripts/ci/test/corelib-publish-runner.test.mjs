@@ -1,10 +1,10 @@
-// Corelib publish set derivation and version policy of scripts/ci/lib/corelib-publish-runner.mjs.
+// Corelib publish set derivation and version policy of scripts/release/lib/corelib-publish-runner.mjs.
 import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import { EXCLUDED_CORELIB_MEMBERS, corelibInventory, nextVersion, parseVersionPolicy } from "../lib/corelib-publish-runner.mjs";
+import { EXCLUDED_CORELIB_MEMBERS, corelibInventory, nextVersion, parseVersionPolicy } from "../../release/lib/corelib-publish-runner.mjs";
 
 function member(id, path, pkg, category = "Library") {
   return `member "${id}" {\n  path = "${path}"\n  package = "${pkg}"\n  description = "${id} package"\n  category = "${category}"\n  tags = ["corelib"]\n}\n`;

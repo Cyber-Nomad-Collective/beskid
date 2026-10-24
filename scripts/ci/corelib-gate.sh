@@ -259,7 +259,7 @@ if [[ "$ws_name" != "corelib" ]]; then
 fi
 
 # WORKSPACE_MEMBERS (registryName, memberId, sourceRel) — must match
-# scripts/ci/lib/corelib-publish-runner.mjs.
+# scripts/release/lib/corelib-publish-runner.mjs.
 WORKSPACE_MEMBERS=(
   "corelib corelib beskid_corelib"
   "corelib_foundation foundation packages/foundation"

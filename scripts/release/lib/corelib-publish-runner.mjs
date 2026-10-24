@@ -2,14 +2,20 @@
 /**
  * Pack and publish the production corelib closure plus first-party templates.
  *
- * The corelib publish set is derived from the members of CoreLib.bws minus the
- * explicit EXCLUDED_CORELIB_MEMBERS list, so a new workspace member is published
- * without a change here. The version policy is BESKID_PCKG_VERSION_BUMP:
- * patch (default), minor, major or an exact MAJOR.MINOR.PATCH version.
+ * Run by scripts/release/publish-corelib.sh from the Mac; no pipeline lane
+ * holds the registry key. The corelib publish set is derived from the members
+ * of CoreLib.bws minus the explicit EXCLUDED_CORELIB_MEMBERS list. The version
+ * policy is BESKID_PCKG_VERSION_BUMP: patch (default), minor, major or an exact
+ * MAJOR.MINOR.PATCH version.
  *
- * Every artifact is built and validated before the first registry mutation.
- * Set BESKID_PUBLISH_DRY_RUN=1 to exercise the complete local pack path without
- * a publisher key or any network access.
+ * Before the first registry write the runner checks, in this order: tags are
+ * unique per package; the key's subject (asked of the registry) owns every
+ * existing package; every planned version is newer than the published one (or
+ * equals it, which marks the package as already published); every artifact
+ * packs and validates, API docs included. A package already published at its
+ * planned version is skipped, so an interrupted run resumes from registry state.
+ *
+ * Set BESKID_PUBLISH_DRY_RUN=1 to run all checks and packs without any write.
  */
 import { execFileSync } from "node:child_process";
 import {
@@ -26,7 +32,7 @@ import {
 import { basename, join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { tmpdir } from "node:os";
-import { runTemplateQualityGate } from "./template-quality-gate.mjs";
+import { runTemplateQualityGate } from "../../ci/lib/template-quality-gate.mjs";
 
 const CORELIB_REPOSITORY_BASE =
   "https://github.com/Cyber-Nomad-Collective/beskid_compiler/tree/main/corelib";
@@ -213,12 +219,9 @@ export function corelibInventory(workspaceRoot) {
     return {
       kind: "library",
       projectType: projectField(manifestText, "type") ?? "Lib",
-      // Facade-only and aggregate/dependency-heavy packages are packable, but
-      // the source doc command cannot yet normalize every non-root source path.
-      // corelib_foundation ships without api.json in 0.6.0: the 0.6.0 `beskid doc` cannot place the
-      // Mod-generated unit .generated/Core/Text/Regex/Generated.g.bd under src/ and fails. The doc fix
-      // ships in 0.6.6; foundation's API reference is republished then.
-      hasApiDocs: ["concurrency", "runtime"].includes(memberId),
+      // Every library ships its API reference (hasApiDocs). `beskid doc` places generated and
+      // dependency units since 0.6.7, so no package is exempt.
+      hasApiDocs: true,
       category,
       memberId,
       registryName,
@@ -462,7 +465,7 @@ function validateArtifact(artifact, meta, expectedVersion) {
   }
 }
 
-function packArtifacts(cliBin, stage, corelibPackages, templatePackages, plans, bump) {
+function packArtifacts(cliBin, stage, corelibPackages, templatePackages, plans) {
   const artifactsDir = join(stage, "artifacts");
   const versionStateDir = join(stage, "version-state");
   mkdirSync(artifactsDir, { recursive: true });
@@ -475,6 +478,10 @@ function packArtifacts(cliBin, stage, corelibPackages, templatePackages, plans, 
   for (const meta of all) {
     const plan = plans.get(meta.registryName);
     const source = join(meta.workspace, meta.sourceRel);
+    if (plan.published) {
+      console.log(`[resume] ${meta.registryName}@${plan.version} is already published; not packed`);
+      continue;
+    }
     if (meta.kind === "library") {
       generateCorelibDocsForPackage(cliBin, meta.workspace, meta);
     }
@@ -493,7 +500,7 @@ function packArtifacts(cliBin, stage, corelibPackages, templatePackages, plans, 
       "--version-state-file", join(versionStateDir, `${meta.registryName}.json`),
       "--skip-docs",
     ];
-    if (bump !== "patch") args.push("--version", plan.version);
+    args.push("--version", plan.version);
     execFileSync(cliBin, args, { cwd: meta.workspace, env: process.env, stdio: "inherit" });
     const plannedMeta = { ...meta, plannedDependencies };
     validateArtifact(artifact, plannedMeta, plan.version);
@@ -502,6 +509,7 @@ function packArtifacts(cliBin, stage, corelibPackages, templatePackages, plans, 
   }
   return packed;
 }
+
 
 function normalizedBaseUrl(raw) {
   const url = new URL(raw.endsWith("/") ? raw : `${raw}/`);
@@ -526,10 +534,10 @@ function authHeaders(token) {
 
 async function responseText(response) {
   const body = await response.text();
-  return body.length > 2_000 ? `${body.slice(0, 2_000)}…` : body;
+  return body.length > 2_000 ? `${body.slice(0, 2_000)}...` : body;
 }
 
-async function assertRegistryReady(baseUrl) {
+export async function assertRegistryReady(baseUrl) {
   // The public pckg origin proxies /api/* to the registry, not /health/*.
   // Exercise the same route that publication uses before any mutation.
   const response = await fetch(new URL("api/packages", baseUrl), { headers: { Accept: "application/json" } });
@@ -538,22 +546,99 @@ async function assertRegistryReady(baseUrl) {
   if (!Array.isArray(JSON.parse(body))) throw new Error("pckg readiness returned an invalid package list");
 }
 
-async function existingPackagePlan(baseUrl, token, meta, bump) {
-  const response = await fetch(
-    new URL(`api/packages/${encodeURIComponent(meta.registryName)}/versions`, baseUrl),
-    { headers: authHeaders(token) },
-  );
-  if (response.status === 404) {
-    return { existed: false, latest: null, version: nextVersion(null, bump) };
+// Check 1: tags are unique within each package. A duplicate is an authoring error in the
+// workspace metadata; the publisher reports it and never rewrites the tag list.
+export function assertUniqueTags(packages) {
+  const problems = [];
+  for (const meta of packages) {
+    const seen = new Set();
+    const duplicates = new Set();
+    for (const tag of meta.tags) {
+      const key = tag.trim().toLowerCase();
+      if (seen.has(key)) duplicates.add(tag);
+      seen.add(key);
+    }
+    if (duplicates.size) problems.push(`${meta.registryName}: duplicate tag ${[...duplicates].map((t) => `"${t}"`).join(", ")}`);
   }
+  if (problems.length) throw new Error(`duplicate package tags:\n  ${problems.join("\n  ")}`);
+}
+
+// Check 2: ask the registry who the key belongs to. /api/auth/session answers for a bearer key.
+export async function keySubject(baseUrl, token) {
+  const response = await fetch(new URL("api/auth/session", baseUrl), { headers: authHeaders(token) });
   const body = await responseText(response);
+  if (response.status === 401) throw new Error("the registry rejected the publisher key (HTTP 401)");
   if (!response.ok) {
-    throw new Error(`Cannot read ${meta.registryName} versions (HTTP ${response.status}): ${body}`);
+    throw new Error(`the registry cannot name the owner of the key (HTTP ${response.status}); refusing to publish: ${body}`);
   }
+  let subject;
+  try {
+    subject = JSON.parse(body).subject;
+  } catch {
+    throw new Error("the registry returned an unreadable key identity; refusing to publish");
+  }
+  if (typeof subject !== "string" || !subject.trim()) {
+    throw new Error("the registry returned no subject for the key; refusing to publish");
+  }
+  return subject;
+}
+
+async function packageOwner(baseUrl, token, name) {
+  const response = await fetch(new URL(`api/packages/${encodeURIComponent(name)}`, baseUrl), { headers: authHeaders(token) });
+  if (response.status === 404) return null;
+  const body = await responseText(response);
+  if (!response.ok) throw new Error(`Cannot read package ${name} (HTTP ${response.status}): ${body}`);
+  const owner = JSON.parse(body)?.package?.ownerUserId;
+  if (typeof owner !== "string" || !owner) throw new Error(`${name}: the registry returned no package owner`);
+  return owner;
+}
+
+async function registryVersions(baseUrl, token, name) {
+  const response = await fetch(new URL(`api/packages/${encodeURIComponent(name)}/versions`, baseUrl), { headers: authHeaders(token) });
+  if (response.status === 404) return null;
+  const body = await responseText(response);
+  if (!response.ok) throw new Error(`Cannot read ${name} versions (HTTP ${response.status}): ${body}`);
   const rows = JSON.parse(body);
-  if (!Array.isArray(rows)) throw new Error(`${meta.registryName}: versions response must be an array`);
-  const latest = latestVersion(rows, meta.registryName);
-  return { existed: true, latest, version: nextVersion(latest, bump) };
+  if (!Array.isArray(rows)) throw new Error(`${name}: versions response must be an array`);
+  return latestVersion(rows, name);
+}
+
+// Decide the version of one package from the policy (or a pinned exact version) and the
+// published latest. An exact version equal to the latest means: already published, skip.
+export function planVersion(latest, policy) {
+  if (/^\d/.test(policy)) {
+    const exact = parseSemver(policy, "planned version");
+    if (latest) {
+      const order = compareSemver(exact, parseSemver(latest, "registry version"));
+      if (order === 0) return { version: exact.raw, published: true };
+      if (order < 0) throw new Error(`planned version ${exact.raw} is not newer than the published ${latest}`);
+    }
+    return { version: exact.raw, published: false };
+  }
+  return { version: nextVersion(latest, policy), published: false };
+}
+
+// Checks 2 and 3 against the registry: ownership and versions, with no write.
+export async function planPublication({ baseUrl, token, packages, policy, pinned = new Map() }) {
+  const subject = await keySubject(baseUrl, token);
+  const plans = new Map();
+  const problems = [];
+  for (const meta of packages) {
+    const owner = await packageOwner(baseUrl, token, meta.registryName);
+    if (owner !== null && owner !== subject) {
+      problems.push(`${meta.registryName}: owned by ${owner}, but the key belongs to ${subject}`);
+      continue;
+    }
+    const latest = await registryVersions(baseUrl, token, meta.registryName);
+    try {
+      const plan = planVersion(latest, pinned.get(meta.registryName) ?? policy);
+      plans.set(meta.registryName, { existed: owner !== null, latest, ...plan });
+    } catch (error) {
+      problems.push(`${meta.registryName}: ${error.message}`);
+    }
+  }
+  if (problems.length) throw new Error(`publication checks failed:\n  ${problems.join("\n  ")}`);
+  return { subject, plans };
 }
 
 function defaultIconUrl(baseUrl) {
@@ -601,31 +686,63 @@ function publishArtifact(cliBin, baseUrl, token, meta) {
   console.log(`PCKG_PUBLISHED_VERSION=${meta.registryName}@${meta.version}`);
 }
 
+// The plan file pins relative-bump versions across an interrupted run, so a resume does not
+// bump a second time. It records the policy it was made for and is removed on success.
+function readPlanFile(path, policy) {
+  if (!path || !existsSync(path)) return new Map();
+  const saved = JSON.parse(readFileSync(path, "utf8"));
+  if (saved.policy !== policy) {
+    throw new Error(`${path} was written for version policy ${saved.policy}, not ${policy}; remove it to start a new run`);
+  }
+  return new Map(Object.entries(saved.versions));
+}
+
+function writePlanFile(path, policy, plans) {
+  if (!path) return;
+  mkdirSync(join(path, ".."), { recursive: true });
+  writeFileSync(path, JSON.stringify({ policy, versions: Object.fromEntries([...plans].map(([name, plan]) => [name, plan.version])) }, null, 2));
+}
+
 async function main() {
   const dryRun = enabled("BESKID_PUBLISH_DRY_RUN");
   const bump = parseVersionPolicy(process.env.BESKID_PCKG_VERSION_BUMP);
-  const token = dryRun ? null : requirePublisherToken();
-  const baseUrl = dryRun
-    ? null
-    : normalizedBaseUrl((process.env.BESKID_PCKG_BASE_URL ?? "https://pckg.beskid-lang.org").trim());
+  const rawToken = (process.env.BESKID_PCKG_API_KEY ?? "").trim();
+  if (!dryRun || rawToken) requirePublisherToken();
+  const token = rawToken || null;
+  const baseUrl = token
+    ? normalizedBaseUrl((process.env.BESKID_PCKG_BASE_URL ?? "https://pckg.beskid-lang.org").trim())
+    : null;
+  const planFile = (process.env.BESKID_PUBLISH_PLAN_FILE ?? "").trim();
   const cliBin = requireEnv("BESKID_CLI_BIN");
   const corelibRoot = resolveCorelibRoot();
   const templatesRoot = resolveTemplatesRoot();
   const corelibPackages = corelibInventory(corelibRoot);
   const templatePackages = templateInventory(templatesRoot);
-  process.stdout.write(runTemplateQualityGate(cliBin, templatesRoot, corelibRoot));
   const allPackages = [...corelibPackages, ...templatePackages];
+  assertUniqueTags(allPackages);
+  process.stdout.write(runTemplateQualityGate(cliBin, templatesRoot, corelibRoot));
 
-  const plans = new Map();
-  if (dryRun) {
-    for (const meta of allPackages) {
-      plans.set(meta.registryName, { existed: false, latest: null, version: nextVersion(null, bump) });
-    }
-  } else {
+  let plans = new Map();
+  if (token) {
     await assertRegistryReady(baseUrl);
+    const planned = await planPublication({
+      baseUrl,
+      token,
+      packages: allPackages,
+      policy: bump,
+      pinned: readPlanFile(planFile, bump),
+    });
+    plans = planned.plans;
+    console.log(`[check] key belongs to ${planned.subject}; ownership, tags and versions ok`);
+    if (!dryRun) writePlanFile(planFile, bump, plans);
+  } else {
     for (const meta of allPackages) {
-      plans.set(meta.registryName, await existingPackagePlan(baseUrl, token, meta, bump));
+      plans.set(meta.registryName, { existed: false, latest: null, ...planVersion(null, bump) });
     }
+  }
+  for (const meta of allPackages) {
+    const plan = plans.get(meta.registryName);
+    console.log(`[plan] ${meta.registryName} ${plan.latest ?? "(new)"} -> ${plan.version}${plan.published ? " (already published)" : ""}`);
   }
 
   const stage = mkdtempSync(join(tmpdir(), "beskid-package-publish-"));
@@ -633,7 +750,8 @@ async function main() {
     copyWorkspace(corelibRoot, join(stage, "corelib"));
     copyWorkspace(templatesRoot, join(stage, "templates"));
     removeBuildOutputs(join(stage, "corelib"));
-    const packed = packArtifacts(cliBin, stage, corelibPackages, templatePackages, plans, bump);
+    // Every artifact packs and validates (API docs included) before the first write.
+    const packed = packArtifacts(cliBin, stage, corelibPackages, templatePackages, plans);
     if (dryRun) {
       console.log(`CORELIB_PACKAGES_VALIDATED=${corelibPackages.map((meta) => meta.registryName).join(",")}`);
       console.log(`TEMPLATE_PACKAGES_VALIDATED=${templatePackages.map((meta) => meta.registryName).join(",")}`);
@@ -642,6 +760,7 @@ async function main() {
     }
     for (const meta of packed) await createPackage(baseUrl, token, meta);
     for (const meta of packed) publishArtifact(cliBin, baseUrl, token, meta);
+    if (planFile) rmSync(planFile, { force: true });
     console.log(`Published ${packed.length} package(s) to ${baseUrl.href}`);
   } finally {
     if (!enabled("CI_KEEP_ARTIFACT")) rmSync(stage, { recursive: true, force: true });

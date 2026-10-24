@@ -11,8 +11,10 @@
 # PLUGIN_ACTION selects the lane and must equal PLUGIN_TASK (the BESKID_TASK of
 # the pipeline):
 #   release-publish  stable compiler release   (secret: gh_token)
-#   pckg-publish     corelib and templates      (secrets: gh_token, pckg_api_key)
 #   editor-publish   Open VSX editor release    (secret: ovsx_pat)
+#
+# Corelib and template packages are published by hand from the Mac with
+# scripts/release/publish-corelib.sh; no pipeline lane holds the registry key.
 #
 # Credential handling: never enable xtrace here and never print the environment.
 # Each secret is read once, removed from the exported environment, and handed
@@ -22,7 +24,6 @@ set -euo pipefail
 set +x
 
 gh_token="${PLUGIN_GH_TOKEN:-}"
-pckg_api_key="${PLUGIN_PCKG_API_KEY:-}"
 ovsx_pat="${PLUGIN_OVSX_PAT:-}"
 unset PLUGIN_GH_TOKEN PLUGIN_PCKG_API_KEY PLUGIN_OVSX_PAT GH_TOKEN GITHUB_TOKEN BESKID_PCKG_API_KEY OVSX_PAT OVSX_TOKEN
 
@@ -40,7 +41,7 @@ sha='^[0-9a-f]{7,40}$'
 semver='^[0-9]+\.[0-9]+\.[0-9]+$'
 build='^[1-9][0-9]*$'
 
-action="$(setting action '^(release-publish|pckg-publish|editor-publish)$')"
+action="$(setting action '^(release-publish|editor-publish)$')"
 required action "$action"
 task="$(setting task '^[a-z0-9-]+$')"
 [[ "$task" == "$action" ]] || fail "action $action does not match the pipeline task"
@@ -77,19 +78,6 @@ case "$action" in
     # The lane fetches full history, collects and re-validates the pinned handoffs without the token,
     # and hands it only to woodpecker-release.sh.
     GH_TOKEN="$gh_token" bash scripts/ci/woodpecker-release-lane.sh publish
-    ;;
-
-  pckg-publish)
-    required gh_token "$gh_token"
-    required pckg_api_key "$pckg_api_key"
-    compiler_version="$(setting compiler_release_version "$semver")"; required compiler_release_version "$compiler_version"
-    bump="$(setting version_bump '^(patch|minor|major|[0-9]+\.[0-9]+\.[0-9]+)$' patch)"
-
-    bash scripts/ci/init-submodules.sh compiler beskid_bsol beskid_templates beskid_distrib
-    mkdir -p "$toolchain_root"
-    GH_TOKEN="$gh_token" node scripts/ci/prepare-pckg-toolchain.mjs "$compiler_version" "$toolchain_root/prefix"
-    BESKID_PCKG_API_KEY="$pckg_api_key" BESKID_PCKG_VERSION_BUMP="$bump" BESKID_TOOLCHAIN_PREFIX="$toolchain_root/prefix" \
-      bash scripts/ci/corelib-publish.sh
     ;;
 
   editor-publish)
