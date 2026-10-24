@@ -10,7 +10,9 @@ helpers that do not receive an owned collection value. A fluent wrapper, when
 present, MUST delegate to the same owning method and MUST NOT introduce
 storage, growth, error, or compatibility semantics.
 
-Every collection method that changes the collection (`List.Push`, `List.Pop`, `List.Set`, `List.Remove`, `Stack.Push`, `Stack.Pop`, `Queue.Enqueue`, `Queue.Dequeue`, `Set.Add`, `Set.Remove`, `Map.Insert`, `Map.Remove`, `PriorityQueue.Push`, `PriorityQueue.Pop`, `I64Map.Insert`, `I64Map.Remove`, `StringMap.Insert`, `StringMap.Remove`, and `HashTable.Insert`) SHALL change the receiver in place. It SHALL be declared with a `mut this` receiver and SHALL return `unit` or a value that is not the collection, so `items.Push("milk");` needs no rebinding and no `move`. No collection method SHALL be declared `move this`. Read-only methods (`Count`, `IsEmpty`, `Get`, `TryGet`, `First`, `Last`, `IndexOf`, `Contains`, `Peek`, iteration) SHALL keep a borrowed receiver. Assigning a `List<T>` to a binding, or passing it to a parameter, SHALL give the new binding its own storage; an implementation MAY delay the copy until the first write. Growth of one `List<T>` SHALL NOT write into storage that another `List<T>` sees, and a write through one `List<T>` SHALL NOT be visible through another. `Storage.AppendAt<T>` SHALL keep its in-place growth. `Array.Append<T>`, `Array.Set<T>` and the other `Array` functions SHALL take a borrowed array and SHALL NOT be declared `move`. Corelib, the Book and the surface tests SHALL be migrated in the same change; no compatibility overloads SHALL remain.
+Every collection method that changes the collection (`List.Push`, `List.Pop`, `List.Set`, `List.Insert`, `List.Remove`, `List.RemoveAt`, `List.Clear`, `Stack.Push`, `Stack.Pop`, `Queue.Enqueue`, `Queue.Dequeue`, `Set.Add`, `Set.Remove`, `Map.Insert`, `Map.Remove`, `Map.Clear`, `PriorityQueue.Push`, `PriorityQueue.Pop`, `I64Map.Insert`, `I64Map.Remove`, `StringMap.Insert`, `StringMap.Remove`, `HashTable.Insert`, `HashTable.Remove`) SHALL change the receiver in place. It SHALL be declared with a `mut this` receiver (or a `mut` parameter for the free functions), and it SHALL NOT return the collection, so `items.Push("milk");` needs no rebinding and no `move`. No collection method SHALL be declared `move this`. A `mut this` method MAY be called on a binding that is not `mut`. The results SHALL be: `Push`, `Enqueue`, `Clear` and `Map.Insert` return `unit`; `Pop` and `Dequeue` return `Option<T>`; `List.Remove`, `Set.Add` (false when the element is present), `Set.Remove`, `Map.Remove` and the `Remove` forms of `I64Map`, `StringMap` and `HashTable` return `bool`; `List.Set` and `List.Insert` return `Result<unit, CollectionError>`; `List.RemoveAt` returns `Result<T, CollectionError>` with the removed element. Read-only methods (`Count`, `IsEmpty`, `Get`, `TryGet`, `First`, `Last`, `IndexOf`, `Contains`, `Peek`, iteration) and derivation methods (`Reverse`, `Slice`, `Concat`, `ToArray`, `Union`) SHALL keep a borrowed receiver and SHALL keep their results.
+
+A type marked `[CopyOnAssign]` (an attribute of `Core.Attributes` for type definitions) SHALL declare a method `T Copy()` with a borrowed receiver and no parameters that returns the type. Only `List<T>` among the collections SHALL be `[CopyOnAssign]`. Stack, Queue, Set, Map and the other collections SHALL keep reference semantics: a second binding sees mutations. A read of a place of a `[CopyOnAssign]` type (a local, a parameter, `this`, a field or an array element) SHALL give the new holder its own value, as if `Copy` were called, when the read is: the value of a `let`; the value of an assignment; an argument for a parameter that is not `mut`; a field, element or payload of a construction; a returned value, unless the place is a `let` local or a parameter that is not `mut`. A read SHALL NOT copy when it is: a method receiver; an argument for a `mut` parameter, because a `mut` parameter shares the value with the caller and changes it in place; the operand of `move`; the place of `exchange`; an operator operand, a condition or a match scrutinee. Observably, no write through one `List<T>` SHALL be visible through another, except through a `mut` parameter, and growth of one `List<T>` SHALL NOT write into storage that another `List<T>` sees. An implementation MAY share storage and copy it at the first mutation through any name; the slice coll implements `Copy` eagerly. `Storage.AppendAt<T>` SHALL keep its in-place growth. `Array.Append<T>`, `Array.Set<T>` and the other `Array` functions SHALL take a borrowed array and SHALL NOT be declared `move`. Corelib, the Book and the surface tests SHALL be migrated in the same change; no compatibility overloads SHALL remain.
 
 #### Scenario: Legacy collection namespace is rejected
 - **GIVEN** source that imports `Collections.List` after the 0.4 migration
@@ -36,10 +38,25 @@ Every collection method that changes the collection (`List.Push`, `List.Pop`, `L
 - **WHEN** the code runs
 - **THEN** `a.Count()` is 1 and `b.Count()` is 2
 
-#### Scenario: Passing a list gives the callee its own storage
+#### Scenario: Passing a list gives the callee its own value
 - **GIVEN** `unit Grow(List<i64> l) { l.Push(9); }` and `List<i64> a = List.Empty<i64>(); Grow(a);`
 - **WHEN** the code runs
 - **THEN** `a.Count()` is 0
+
+#### Scenario: A mut parameter shares with the caller
+- **GIVEN** `unit Grow(mut List<i64> l) { l.Push(9); }` and `List<i64> a = List.Empty<i64>(); Grow(a);`
+- **WHEN** the code runs
+- **THEN** `a.Count()` is 1
+
+#### Scenario: Other collections share
+- **GIVEN** `Stack<i64> a = Stack.Empty<i64>(); Stack<i64> b = a; b.Push(1);`
+- **WHEN** the code runs
+- **THEN** `a.Count()` is 1
+
+#### Scenario: Mutator results
+- **GIVEN** an empty `List<i64> l`
+- **WHEN** `l.Pop()` and `l.Remove(3)` run
+- **THEN** `Pop` returns `Option::None` and `Remove` returns `false`
 
 #### Scenario: Growth does not write into shared storage
 - **GIVEN** a list `a` with capacity for one more element and `b` assigned from `a`

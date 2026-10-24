@@ -23,7 +23,7 @@ The hand-over by pointer of 0.6.5 stays. The `iso` precondition is established a
 
 ## Collections
 
-`List<T>` and the other Corelib collections mutate in place: `items.Push("milk");`. A method that formerly returned the updated collection through `move this` becomes a `mut this` method that returns `unit`, or returns a value that is not the collection. Assigning a `List` or passing it to a parameter gives the new binding its own storage. The implementation MAY delay the copy until the first write, but no write through one `List` SHALL be visible through another. Growth of one `List` SHALL NOT write into storage that another `List` sees. This removes the sharing bug of 0.6.0 without a use-after-move rule.
+`List<T>` and the other Corelib collections mutate in place: `items.Push("milk");`. A method that formerly returned the updated collection through `move this` becomes a `mut this` method that returns `unit`, or returns a value that is not the collection. Only `List` copies, through the attribute `[CopyOnAssign]` and a `Copy()` method; other collections share. Reads of a `List` place give the new holder its own value, except as a method receiver or as an argument for a `mut` parameter, which shares with the caller. The owner ruled that copies are copy-on-write; the implementation (slice coll) copies eagerly in `Copy`, which is observably the same. No write through one `List` is visible through another except through a `mut` parameter. Growth of one `List` SHALL NOT write into storage that another `List` sees. This removes the sharing bug of 0.6.0 without a use-after-move rule.
 
 ## Not changed
 
@@ -31,4 +31,3 @@ The hand-over by pointer of 0.6.5 stays. The `iso` precondition is established a
 
 ## Open items
 
-- Passing a `List` to a `mut` parameter: shared storage (mutation visible to the caller) or a copy. The coll slice decides and records it.
