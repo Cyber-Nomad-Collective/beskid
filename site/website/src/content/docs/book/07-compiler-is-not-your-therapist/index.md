@@ -25,4 +25,4 @@ This chapter is the first language-syntax tour: enough to read real `.bd` files 
 
 ## After this chapter
 
-Later tutorial tracks cover public API idioms and documentation comments (see book appendix / reference). For exhaustive rules, use [platform spec language meta](/docs/standard/capabilities/taxonomy--language-meta/) and [semantic rules](/book/reference/analysis/semantic-rules/).
+Generics have a chapter of their own: [07a. Generics: write it once, argue about it once](/book/07a-generics-write-it-once/). Later tutorial tracks cover public API idioms and documentation comments (see book appendix / reference). For exhaustive rules, use [platform spec language meta](/docs/standard/capabilities/taxonomy--language-meta/) and [semantic rules](/book/reference/analysis/semantic-rules/).
