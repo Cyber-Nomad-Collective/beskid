@@ -16,11 +16,11 @@ chmod +x "$fixture/bin/timeout"
 PATH="$fixture/bin:$PATH" BESKID_TIMEOUT_CAPTURE="$fixture/default.log" \
   bash "$fixture/scripts/ci/compiler-rust-gate.sh" runtime
 grep -Fxq -- '--kill-after=60s 600 bash scripts/stage-native-runtime-kit.sh' "$fixture/default.log"
-grep -Fxq -- '--kill-after=60s 10800 cargo test --workspace --exclude beskid_e2e_tests -- --test-threads=1 --skip interop::glue_owned::' "$fixture/default.log"
+grep -Fxq -- '--kill-after=60s 10800 cargo test --workspace --exclude beskid_e2e_tests --exclude beskid_tests_release -- --test-threads=1 --skip interop::glue_owned::' "$fixture/default.log"
 
 PATH="$fixture/bin:$PATH" BESKID_TIMEOUT_CAPTURE="$fixture/override.log" BESKID_TEST_TIMEOUT=75 \
   bash "$fixture/scripts/ci/compiler-rust-gate.sh" runtime
-grep -Fxq -- '--kill-after=60s 75 cargo test --workspace --exclude beskid_e2e_tests -- --test-threads=1 --skip interop::glue_owned::' "$fixture/override.log"
+grep -Fxq -- '--kill-after=60s 75 cargo test --workspace --exclude beskid_e2e_tests --exclude beskid_tests_release -- --test-threads=1 --skip interop::glue_owned::' "$fixture/override.log"
 
 # The lint phase is clippy alone: no source-text search for retired identifiers (the #325 false
 # positive matched TypeContext inside ExpectedTypeContext).

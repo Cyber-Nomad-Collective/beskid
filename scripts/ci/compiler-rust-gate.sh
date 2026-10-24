@@ -62,20 +62,20 @@ run_runtime_phase() {
   run_bounded_phase "Native ABI-v5 runtime-kit staging and verification" "${BESKID_RUNTIME_KIT_TIMEOUT:-600}" \
     bash scripts/stage-native-runtime-kit.sh
 
-  # The Rust Glue owner harness (beskid_tests_interop interop::glue_owned) needs a qualified
-  # installation prefix and never skips by itself; the release cases run it against the
-  # installed prefix, so the source-tree workspace run leaves it out.
+  # The installed-prefix harnesses (the beskid_tests_release crate and beskid_tests_interop
+  # interop::glue_owned) need a qualified installation prefix and refuse developer overrides;
+  # the release cases run them against the installed prefix, so this source-tree run leaves them out.
   # Tests run serially. Leave room for the measured full suite while retaining
   # a hard cap for a deadlocked lowering test.
   local test_timeout="${BESKID_TEST_TIMEOUT:-10800}"
   if [[ "${test_timeout}" == "0" ]]; then
-    cargo test --workspace --exclude beskid_e2e_tests -- --test-threads=1 --skip interop::glue_owned::
+    cargo test --workspace --exclude beskid_e2e_tests --exclude beskid_tests_release -- --test-threads=1 --skip interop::glue_owned::
     return
   fi
 
   set +e
   timeout --kill-after=60s "${test_timeout}" \
-    cargo test --workspace --exclude beskid_e2e_tests -- --test-threads=1 --skip interop::glue_owned::
+    cargo test --workspace --exclude beskid_e2e_tests --exclude beskid_tests_release -- --test-threads=1 --skip interop::glue_owned::
   local status=$?
   set -e
   if [[ "${status}" -eq 124 ]]; then
