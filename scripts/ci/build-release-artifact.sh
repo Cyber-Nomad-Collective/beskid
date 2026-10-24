@@ -53,22 +53,33 @@ cleanup_release_stage() {
 }
 trap cleanup_release_stage EXIT
 
-for cargo_toml in crates/beskid_cli/Cargo.toml crates/beskid_lsp/Cargo.toml crates/beskid_up/Cargo.toml; do
-  manifest_version="$(awk '
-    /^\[/ { in_package = ($0 == "[package]"); next }
-    in_package && /^version[[:space:]]*=/ {
-      value = $0
-      sub(/^[^=]*=[[:space:]]*"/, "", value)
-      sub(/".*$/, "", value)
-      print value
-      exit
-    }
-  ' "${cargo_toml}" | tr -d '\r')"
-  if [[ "${manifest_version}" != "${RELEASE_VERSION}" ]]; then
-    echo "release version ${RELEASE_VERSION} does not match compiler/${cargo_toml} version '${manifest_version}'; commit the version bump and Cargo.lock to the compiler before building this release" >&2
+# A Mac preview build (scripts/dev/preview.sh, BESKID_PREVIEW_BUILD=1) labels the
+# bundle 0.6.7-preview.N while the manifests still carry the last release version.
+# Pipelines never preview; the label must be a preview label and nothing else.
+if [[ "${BESKID_PREVIEW_BUILD:-}" == 1 ]]; then
+  [[ "${CI_SYSTEM_NAME:-}" != woodpecker ]] || { echo "preview builds are forbidden in Woodpecker" >&2; exit 1; }
+  [[ "$RELEASE_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+-preview\.[1-9][0-9]*$ ]] || {
+    echo "a preview build needs a MAJOR.MINOR.PATCH-preview.N label, got $RELEASE_VERSION" >&2
     exit 1
-  fi
-done
+  }
+else
+  for cargo_toml in crates/beskid_cli/Cargo.toml crates/beskid_lsp/Cargo.toml crates/beskid_up/Cargo.toml; do
+    manifest_version="$(awk '
+      /^\[/ { in_package = ($0 == "[package]"); next }
+      in_package && /^version[[:space:]]*=/ {
+        value = $0
+        sub(/^[^=]*=[[:space:]]*"/, "", value)
+        sub(/".*$/, "", value)
+        print value
+        exit
+      }
+    ' "${cargo_toml}" | tr -d '\r')"
+    if [[ "${manifest_version}" != "${RELEASE_VERSION}" ]]; then
+      echo "release version ${RELEASE_VERSION} does not match compiler/${cargo_toml} version '${manifest_version}'; commit the version bump and Cargo.lock to the compiler before building this release" >&2
+      exit 1
+    fi
+  done
+fi
 
 # Every package builds with the qualified native tool driver receipt, so the
 # versioned CLI and LSP assets are byte-identical to the bundle binaries and the
