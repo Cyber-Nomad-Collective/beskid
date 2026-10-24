@@ -14,17 +14,58 @@ A contract name SHALL be usable as a value type. A value of contract type SHALL 
 - **THEN** no diagnostic is reported and the result is the text of `3`
 
 ### Requirement: Conversion to a contract type
-A concrete value SHALL convert to a contract type where a contract type is expected, if its type conforms to the contract. The positions SHALL be an assignment, an initializer, an argument, a return value, a field or element store and an injection. The conversion SHALL select the implementation at compile time and SHALL keep the held value. A value whose type does not conform SHALL be reported with the ordinary type-mismatch diagnostic naming the contract. A contract value SHALL NOT convert back to a concrete type implicitly.
+A contract value SHALL be a value whose static type is a contract `C` or an applied contract `C<A...>`. It SHALL hold one implementing value of a type `T` with `T : C`, together with the implementation of `C` of `T`. A value of type `T` SHALL convert to `C` wherever `C` is expected exactly when `T : C` is proven. The positions SHALL be: a typed `let`; an assignment to a contract-typed local, field or element; an argument of a contract-typed parameter, or of a generic parameter bound to `C`; a `return` from a callable that returns `C`; and a struct field, array element or enum payload of a construction, including every element of an array literal whose element type is a contract. The conversion SHALL select the implementation at compile time and SHALL keep the held value. A value that is already a contract value of `C` SHALL pass through unchanged. A contract value of `D` SHALL convert to every contract `C` that `D` embeds. A value of a copy-on-assign type SHALL be copied before it is converted. A primitive SHALL be held by value: a later change of the source variable SHALL NOT reach the held value. Forwarded expected types, such as the branches of a conditional expression, match arms, block results and lambda bodies, SHALL NOT be conversion positions. A value whose type does not conform SHALL be reported with the ordinary type-mismatch diagnostic **E1206** naming the contract. A contract value SHALL NOT convert back to a concrete type implicitly.
 
 #### Scenario: Value that does not conform
 - **GIVEN** `Shape s = 3;` where `i64` has no `impl` for `Shape`
 - **WHEN** the code is checked
-- **THEN** the compiler SHALL report the type-mismatch diagnostic that names `Shape`
+- **THEN** the compiler SHALL report **E1206** that names `Shape`
+
+#### Scenario: Upcast to an embedded contract
+- **GIVEN** `contract Reader { ... }`, `contract Stream : Reader { ... }` and a `Stream s`
+- **WHEN** `Reader r = s;` is checked
+- **THEN** no diagnostic is reported and `r` holds the same implementing value
+
+#### Scenario: Conditional branches are not conversion positions
+- **GIVEN** `Greeter g = c ? Hello {} : Bye {};` where the branch types differ
+- **WHEN** the code is checked
+- **THEN** the compiler SHALL report **E1206**, and `Greeter g = c ? Hello {} : Hello {};` SHALL be accepted
+
+#### Scenario: Primitive held by value
+- **GIVEN** `mut i64 n = 1; Formatting f = n; n = 2;`
+- **WHEN** `f.Format()` runs
+- **THEN** the result is `"1"`
 
 ### Requirement: Runtime dispatch through a contract value
-A call through a contract value SHALL dispatch at run time to the implementation of the held value, with the held value as receiver. Default parameter values SHALL come from the contract. A call through a generic bound `T: C` SHALL keep static dispatch for each specialization.
+A call through a contract value SHALL dispatch at run time to the implementation of the held value, with the held value as receiver. Default parameter values SHALL come from the contract. The compiler MAY call the implementation directly when it proves the implementing type statically; the observable behavior SHALL be the same. A contract type SHALL be a valid generic argument (`List<Greeter>`, `Greeter[]`). A bound `where T: C` SHALL be satisfied by `T = C`, and calls through such a `T` SHALL dispatch at run time. A call through a generic bound for a concrete `T` SHALL keep static dispatch for each specialization.
 
 #### Scenario: Dispatch follows the held value
 - **GIVEN** `Shape s = Square { side: 2.0 }; s = Circle { radius: 1.0 };` where `s` is a `mut` local
 - **WHEN** `s.Area()` runs after each assignment
 - **THEN** the first call runs `Square.Area` and the second runs `Circle.Area`
+
+### Requirement: Equality of contract values
+The operators `==` and `!=` on two contract values SHALL compare the identity of the held values. Two contract values SHALL be equal exactly when they hold the same implementing value: the same object for a `type` and for `string`, and an equal value of the same primitive type for a primitive. Ordering and arithmetic operators SHALL NOT be defined on contract values and SHALL be reported as an invalid binary operation.
+
+#### Scenario: Same object
+- **GIVEN** `Greeter a = h; Greeter b = a;` where `h` is a `Hello` object
+- **WHEN** `a == b` is evaluated
+- **THEN** the result is `true`
+
+#### Scenario: Boxed primitives
+- **GIVEN** `Formatting a = 3_i64; Formatting b = 3_i64;`
+- **WHEN** `a == b` is evaluated
+- **THEN** the result is `true`
+
+#### Scenario: Ordering
+- **GIVEN** two contract values `a` and `b`
+- **WHEN** `a < b` is checked
+- **THEN** the compiler SHALL report an invalid binary operation
+
+### Requirement: Contract values have no serialization shape
+A contract value SHALL have no serialization shape, no field codec and no dynamic packing. An attempt to serialize or pack one SHALL be an error that names "contract value".
+
+#### Scenario: Serialize a contract value
+- **GIVEN** a `[Serialize]` type with a field of contract type
+- **WHEN** the type is checked
+- **THEN** the compiler SHALL report an error that names "contract value"
