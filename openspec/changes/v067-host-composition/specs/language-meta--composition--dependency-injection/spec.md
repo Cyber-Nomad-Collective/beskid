@@ -19,7 +19,7 @@ The runtime SHALL run host hooks in this order. At `launch`, the global-scope `i
 - **THEN** the compiler SHALL report **E1717**
 
 ### Requirement: Registration shape rules
-A registered service SHALL have only `inject` fields, because the container creates it without a constructor. The compiler SHALL report **E1718** when a contract is registered as itself, with a fix. The compiler SHALL report **E1719** when a registered type is one that the container cannot create: a type with a value field, a generic type, or an enum. The compiler SHALL report **E1720** when a registration names a contract that the type does not conform to. The compiler SHALL report **E1721** when a `with` statement does not follow a `launch` in the same function body. Statement level and nested `if`, `while`, `for` and `with` positions SHALL be accepted; other positions, such as match arms, lambdas and methods, SHALL be **E1721**. The checks for E1719 SHALL cover types of the analysed unit; imported types need not be checked.
+A registered service SHALL have only `inject` fields, because the container creates it without a constructor. The compiler SHALL report **E1718** when a contract is registered as itself, with a fix. The compiler SHALL report **E1719** when a registered type is one that the container cannot create: a type with a value field, a generic type, or an enum. The compiler SHALL report **E1720** when a registration names a contract that the type does not conform to. The compiler SHALL report **E1721** when a `with` statement does not follow a `launch` in the same function body. Statement level and nested `if`, `while`, `for` and `with` positions SHALL be accepted; other positions, such as match arms, lambdas and methods, SHALL be **E1721**. The checks SHALL cover every registration of the host chain, including registrations of base hosts in other units. An error in another unit SHALL be reported at the position in that unit.
 
 #### Scenario: Type with a value field
 - **GIVEN** `registry { single Greeter; }` where `Greeter` has the field `string name;`
@@ -58,12 +58,27 @@ A base host named in `host Name : Base` SHALL be found in any unit of the assemb
 - **THEN** the registrations of `ConsoleHost` are part of the container of `App`
 
 ### Requirement: Launch and with arguments
-The arguments of `launch` SHALL be type-checked against the parameters of the host, and the arguments of `with` against the parameters of the scope, with **E1708** for a mismatch. The host parameters SHALL be visible in the hooks of that host, and the scope parameters SHALL be visible in the hooks of that scope.
+The arguments of `launch` SHALL be checked against the parameters of the host, and the arguments of `with` against the parameters of the scope. A wrong argument type SHALL be the ordinary type-mismatch error at the argument. A wrong argument count SHALL be **E1722** for `launch` and **E1708** for `with`. Only the launched host SHALL declare parameters. Parameters on a base host, or on a scope of a base host, SHALL be **E1723**. A launched host from another unit SHALL NOT take `launch` arguments; passing them SHALL be **E1722**. The host parameters SHALL be visible in the `startup` hook and in the global `init` and `dispose` hooks of that host. The scope parameters SHALL be visible only in the hooks of that scope.
 
 #### Scenario: Argument type mismatch
 - **GIVEN** `host App(string name)` and `launch App(3)`
 - **WHEN** the program is checked
-- **THEN** the compiler SHALL report **E1708** at the argument
+- **THEN** the compiler SHALL report the type-mismatch error at `3`
+
+#### Scenario: Argument count
+- **GIVEN** `host App(string name)` and `launch App()`
+- **WHEN** the program is checked
+- **THEN** the compiler SHALL report **E1722**
+
+#### Scenario: With argument count
+- **GIVEN** `scope Request(i64 id)` and `with Request { }`
+- **WHEN** the program is checked
+- **THEN** the compiler SHALL report **E1708**
+
+#### Scenario: Parameters on a base host
+- **GIVEN** a base host `host Base(string name)` that another host extends and launches
+- **WHEN** the program is checked
+- **THEN** the compiler SHALL report **E1723** at the parameter list of `Base`
 
 #### Scenario: Parameter visible in a hook
 - **GIVEN** `host App(string name)` with a `startup` hook that reads `name`

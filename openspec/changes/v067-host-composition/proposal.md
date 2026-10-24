@@ -6,9 +6,9 @@ Host hooks (`startup`, `init`, `dispose`) never ran in 0.6.6. Composition mistak
 
 - Hook order is specified and implemented: `startup` after `launch`, scope `init` after `with` enters, `dispose` on every exit, global `dispose` before shutdown.
 - E1705 (singular `inject` with several registrations) offers the fix `inject T[]`. E1713 names the contract. New codes E1717–E1721.
-- Base hosts may come from any unit of the assembly. Keys compare by their last path segment.
+- Base hosts may come from any unit of the assembly. Keys compare by full declaration identity.
 - Corelib ships `Console.Hosting.ConsoleHost` with `CommandLine`.
-- `launch` and `with` arguments are type-checked against host and scope parameters, and are visible in hooks.
+- `launch` and `with` arguments are checked against host and scope parameters (type mismatch at the argument, count errors E1722 and E1708), and the parameters are visible in hooks. Parameters on a base host are E1723.
 
 ## Capabilities
 

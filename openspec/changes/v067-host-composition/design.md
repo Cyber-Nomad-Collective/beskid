@@ -18,4 +18,4 @@ The delta for `console-hosting` is a new capability and cannot carry a Purpose h
 
 ## Open gap
 
-The requirement "Launch and with arguments" is in scope for 0.6.7 by owner ruling. Slice host is implementing it; task 2.3 stays open until the slice reports. Service keys compare by full declaration identity, and slice host is changing the implementation from last-segment matching.
+The requirement "Launch and with arguments" is in scope for 0.6.7 by owner ruling. Slice host implemented it. Service keys compare by full declaration identity, and slice host is changing the implementation from last-segment matching.
