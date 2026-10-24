@@ -23,7 +23,7 @@
 ## ADDED Requirements
 
 ### Requirement: Move applies at isolate crossings
-A crossing SHALL be one of: the captures of a closure that is the body of `Scope.Spawn` or of a `Parallel.Scope` task; the value argument of `Port<T>.Send` and of a runtime builtin that moves a value across a runtime instance; a pipeline stage hand-over; the source, closure or combiner of a `.Parallel()` step. `move x` SHALL be accepted only as an operand of a crossing, where `x` is a local or parameter of Moved class, and it SHALL consume `x`. Outside a crossing the compiler SHALL NOT classify names as owning or borrowed and SHALL NOT report use after move. Assignment, `let y = x`, field and element stores, returns and ordinary calls SHALL NOT consume a value. `move` written outside a crossing, and `move` applied to a name of Shared, Copied or Never class, SHALL be **E1239** at the expression; the help for the first case SHALL say "remove `move`; it applies only when a value crosses to another isolate". A crossing operand of Moved class that is written without `move` SHALL be **E1242** with the help "write `move <name>`". A crossing operand that is a place read such as `xs[i]` or `x.f`, and not an owned expression or a local, SHALL be **E1241** with the help to copy the value first.
+A crossing operand SHALL be one of: the value argument of the corelib `Port<T>.Send` or of the runtime builtin `__port_send`; a binding declared outside a closure that is the argument of a `[Captures]`-bounded parameter, or initializes a `[Captures]`-bounded field, or is the body of `__isolate_spawn`, and that the closure reads with `move`. The `[Captures]`-bounded parameters of `Scope.Spawn`, of `Parallel.Scope` tasks and of the `.Parallel()` steps SHALL make those captures crossings through this definition. A fiber `spawn` SHALL NOT be a crossing. `move x` SHALL consume `x` only as a crossing operand. `move` written anywhere else SHALL be **E1239** with the help "remove `move`; it applies only when a value crosses to another isolate". `move` applied to a Shared, Copied or Never value, and the `move` modifier on a parameter of such a type, SHALL be **E1239** with the help "remove `move`: Shared and Copied values pass without it". A crossing operand of Moved class that is written without `move` SHALL be **E1242** with the help "write `move <name>`". Outside a crossing the compiler SHALL NOT classify names as owning or borrowed and SHALL NOT report use after move. Assignment, `let y = x`, field and element stores, returns and ordinary calls SHALL NOT consume a value. A read of a binding after the crossing that consumed it, on a path the crossing reaches, SHALL be **E1234** with the label "moved here" at the crossing. A place read of Moved class that is handed to a crossing without `move` (`xs[i]`, `x.f`) SHALL be **E1241** with the help to copy the value first or to take it out. Fiber handle linearity (a double `Join` is **E1234**) SHALL stay unchanged.
 
 #### Scenario: Ordinary alias is accepted
 - **GIVEN** `unit Main() { u8[] a = Array.Empty<u8>(); u8[] b = a; Array.Append<u8>(a, 1); Array.Append<u8>(b, 2); }`
@@ -59,12 +59,12 @@ Consumption SHALL be tracked per binding only for crossing operands. A consumpti
 - **THEN** no diagnostic is reported
 
 #### Scenario: Use after a conditional send
-- **GIVEN** `unit Main(Port<u8[]> out, u8[] data, bool keep) { if keep { out.Send(move data); } i64 n = Array.Len<u8>(data); }`
+- **GIVEN** `unit Main(Port<u8[]> out, move u8[] data, bool keep) { if keep { out.Send(move data); } i64 n = Array.Len<u8>(data); }`
 - **WHEN** the item is checked
 - **THEN** the compiler SHALL report **E1234** at `data` in the `Len` call
 
 #### Scenario: Send in a loop
-- **GIVEN** `unit Main(Port<u8[]> out, u8[] data, i64 rounds) { mut i64 i = 0; while i < rounds { out.Send(move data); i = i + 1; } }`
+- **GIVEN** `unit Main(Port<u8[]> out, move u8[] data, i64 rounds) { mut i64 i = 0; while i < rounds { out.Send(move data); i = i + 1; } }`
 - **WHEN** the item is checked
 - **THEN** the compiler SHALL report **E1240** at `move data`
 
@@ -87,12 +87,12 @@ Consumption SHALL be tracked per binding only for crossing operands. A consumpti
 - **THEN** no diagnostic is reported, the result is `[1]` and `s.buffer` is `[2]`
 
 ### Requirement: ORCA preconditions at crossings
-Two static guarantees SHALL hold for hand-over by pointer. First, deep persistent immutability: a value of Shared class is never written after construction. Second, external uniqueness at the crossing: the operand of a crossing SHALL be an owned expression, or a local that the compiler can show is the only name for the value in the callable; after the crossing no name reachable from the sending isolate SHALL refer to the handed-over graph. When the compiler cannot show uniqueness, it SHALL report an error at the operand with the help to copy the value first, and SHALL NOT hand over the value by pointer. Internal aliases and cycles inside the handed-over graph are permitted. Aliases inside one isolate that never cross are permitted.
+Two static guarantees SHALL hold for hand-over by pointer. First, deep persistent immutability: a value of Shared class is never written after construction. Second, external uniqueness at the crossing: a crossing operand `move x` SHALL be **E1241**, with the help to copy the value first, unless `x` is a `move` parameter or a local initialized from an owned expression (a call result, a literal, a struct, array or enum literal, or an element or member of one), and no expression in the callable makes `x` the value of a `let`, of an assignment or of a literal element, or reads `x` inside a closure that is not `[Captures]`-bounded, and the latest assignment to `x` on the crossing's path (if any) assigned an owned expression. Passing `x` as an argument of an ordinary call SHALL NOT give it another name. Internal aliases and cycles inside the handed-over graph are permitted. Aliases inside one isolate that never cross are permitted.
 
 #### Scenario: Aliased value at a crossing
 - **GIVEN** `unit Main(Port<u8[]> out) { u8[] a = Array.Empty<u8>(); u8[] b = a; out.Send(move a); }`
 - **WHEN** the item is checked
-- **THEN** the compiler SHALL report an error at `move a` with the help to copy the value first
+- **THEN** the compiler SHALL report **E1241** at `move a` with the help to copy the value first
 
 #### Scenario: Unique local
 - **GIVEN** `unit Main(Port<u8[]> out) { u8[] a = Array.Zeroed<u8>(8_i64); out.Send(move a); }`

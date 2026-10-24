@@ -4,11 +4,12 @@ Owner ruling, 2026-10-24: "i did not want the move semantics in beskid" and "B i
 
 ## Crossing
 
-A crossing is the place where a value leaves the isolate that owns it:
+A crossing operand is (as implemented by slice own):
 
-1. the captures of a closure given to `Scope.Spawn` (`s.Spawn(...)`) or to `Parallel.Scope`;
-2. the value argument of `Port<T>.Send` and of the runtime builtins that move a value across a runtime instance (`__port_send`), including pipeline stage hand-over;
-3. the closures, combiners and source of a `.Parallel()` step.
+1. the value argument of `Port<T>.Send` and of the builtin `__port_send`;
+2. a binding declared outside a closure that is the argument of a `[Captures]`-bounded parameter, or initializes a `[Captures]`-bounded field, or is the body of `__isolate_spawn`, where the closure reads the binding with `move`.
+
+`Scope.Spawn` and `Parallel.Scope` tasks and the `.Parallel()` steps are crossings through item 2, because their parameters carry `[Captures]` bounds. They are not separate cases. A fiber `spawn` is not a crossing, because the fiber stays in the isolate.
 
 Only at a crossing does `move` have a meaning. The operand of `move` at a crossing is consumed. A later read of that name in the same callable is **E1234**. A crossing that loops without revival is **E1240**. A crossing operand that is not written with `move` is **E1242**. These codes keep their numbers and are reported only for crossing operands.
 
@@ -18,7 +19,7 @@ Outside a crossing the compiler does not classify names as owning or borrowed. A
 
 ## Zero-copy hand-over
 
-The hand-over by pointer of 0.6.5 stays. The `iso` precondition (external uniqueness) is now established at the crossing. The operand SHALL be an owned expression, or a local that the compiler can show has no other name for the same value in the callable. Otherwise the compiler reports an error and the help says to copy the value first. The conservative rule fails closed. The exact analysis is a slice decision recorded in `v067-own-progress.md`.
+The hand-over by pointer of 0.6.5 stays. The `iso` precondition is established at the crossing by a conservative rule: the operand is a `move` parameter or a local first set from an owned expression, and no other name is made for it in the callable. The exact text is in the requirement "ORCA preconditions at crossings". Otherwise the compiler reports E1241 with the help to copy the value first.
 
 ## Collections
 
@@ -31,4 +32,3 @@ The hand-over by pointer of 0.6.5 stays. The `iso` precondition (external unique
 ## Open items
 
 - Passing a `List` to a `mut` parameter: shared storage (mutation visible to the caller) or a copy. The coll slice decides and records it.
-- The exact aliasing analysis at a crossing (see "Zero-copy hand-over").
