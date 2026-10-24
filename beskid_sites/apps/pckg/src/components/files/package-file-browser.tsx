@@ -6,6 +6,7 @@ import {
 } from "@cyber-nomad-collective/beskid-ui-react";
 import { useMemo } from "react";
 import { CodeView } from "#/components/code-view";
+import { DocumentBodySkeleton } from "#/components/loading-skeletons";
 import { Markdown } from "#/components/markdown";
 import { buildFileTree, formatBytes } from "#/lib/file-tree";
 import { isMarkdownPath, languageForPath } from "#/lib/languages";
@@ -99,7 +100,7 @@ export function PackageFileBrowser({
 
 function FileBody({ path, state }: { path: string; state: FileQueryState }) {
 	if (state.status === "idle" || state.status === "loading") {
-		return <p className="p-6 text-sm text-muted-foreground">Loading file…</p>;
+		return <DocumentBodySkeleton label="Loading file" />;
 	}
 	if (state.status === "error") {
 		return <p className="p-6 text-sm text-destructive">{state.message}</p>;

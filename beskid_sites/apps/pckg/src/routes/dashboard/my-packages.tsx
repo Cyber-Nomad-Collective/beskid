@@ -1,6 +1,7 @@
 import { buttonVariants } from "@cyber-nomad-collective/beskid-ui-react";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { MyPackagesSkeleton } from "#/components/loading-skeletons";
 import { PackageList } from "#/components/package-list";
 import { pckgApi } from "#/lib/api";
 
@@ -14,8 +15,7 @@ function MyPackagesPage() {
 		queryFn: () => pckgApi.listPackages({ owner: "me" }),
 	});
 
-	if (packages.isPending)
-		return <p className="text-muted-foreground">Loading your packages…</p>;
+	if (packages.isPending) return <MyPackagesSkeleton />;
 	if (packages.isError) throw packages.error;
 
 	return (

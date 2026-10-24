@@ -23,6 +23,7 @@ import {
 	useMemo,
 	useRef,
 	useState,
+	useSyncExternalStore,
 } from "react";
 
 /**
@@ -79,6 +80,30 @@ const DEFAULT_DEBOUNCE_MS = 150;
 function isMac(): boolean {
 	if (typeof navigator === "undefined") return false;
 	return /Mac|iPhone|iPad|iPod/.test(navigator.platform || navigator.userAgent);
+}
+
+const SERVER_SHORTCUT = "Ctrl";
+
+function subscribeNever(): () => void {
+	return () => {};
+}
+
+function clientShortcut(): string {
+	return isMac() ? "⌘" : SERVER_SHORTCUT;
+}
+
+function serverShortcut(): string {
+	return SERVER_SHORTCUT;
+}
+
+/**
+ * Platform modifier glyph for the shortcut hint. Server render and hydration
+ * always use the fixed server value, because Node also exposes `navigator`
+ * and its platform differs from the browser's; React then re-renders with
+ * the client value after hydration, so the text never mismatches.
+ */
+function useShortcutModifier(): string {
+	return useSyncExternalStore(subscribeNever, clientShortcut, serverShortcut);
 }
 
 function readRecent(storageKey: string, maxRecent: number): RecentEntry[] {
@@ -254,7 +279,7 @@ export function GlobalSearch({
 		[storageKey, maxRecent, go],
 	);
 
-	const shortcut = isMac() ? "⌘" : "Ctrl";
+	const shortcut = useShortcutModifier();
 
 	return (
 		<>
