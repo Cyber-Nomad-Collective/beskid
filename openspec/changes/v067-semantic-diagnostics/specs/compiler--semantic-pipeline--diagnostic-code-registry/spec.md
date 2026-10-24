@@ -28,3 +28,11 @@ The code **W2101** SHALL identify an unused private item and SHALL replace **W15
 - **GIVEN** a private function `Helper` that no item uses
 - **WHEN** the file is analyzed
 - **THEN** the compiler SHALL report **W2101** with the message "`Helper` is never used"
+
+### Requirement: Serialize help for a Serializable bound
+When a generic bound `Serializable` is violated by a type `T` (**E1610**), the help SHALL say "add `[Serialize]` to type `T` so the compiler derives its `Serializable` conformance". When the declaration of `T` is in the analysed source, the diagnostic SHALL carry a machine-applicable fix that inserts the attribute `[Serialize]` on its own line above the declaration of `T`.
+
+#### Scenario: Missing Serialize attribute
+- **GIVEN** `type Point { i64 x; }` without `[Serialize]` and a call that requires `Point: Serializable`
+- **WHEN** the call is checked
+- **THEN** the compiler SHALL report **E1610** with the help "add `[Serialize]` to type `Point` so the compiler derives its `Serializable` conformance" and a machine-applicable fix that inserts `[Serialize]` above `type Point`
