@@ -24,7 +24,7 @@ A string literal SHALL accept these escape sequences: `\"` (quotation mark), `\\
 - **THEN** the parser SHALL report **E0109** and name the sequence `\q`
 
 ### Requirement: Compound assignment operators
-The assignment operators SHALL be `=`, `+=`, `-=`, `*=`, `/=` and `%=`. For an arithmetic operator `op`, `a op= b` SHALL mean `a = a op b`, with the place `a` evaluated once. The operands SHALL follow the typing rules of the arithmetic operator. The target SHALL be a `mut` binding or a field or element place; assignment to an immutable binding SHALL remain **E1214**.
+The assignment operators SHALL be `=`, `+=`, `-=`, `*=`, `/=` and `%=`. For an arithmetic operator `op`, `a op= b` SHALL mean `a = a op b`, with the place `a` evaluated once. The operands SHALL follow the typing rules of the arithmetic operator. In 0.6.7 the target SHALL be a mutable local binding; field and element targets are not yet supported. Assignment to an immutable binding SHALL be **E1214**. For `string`, `+=` SHALL concatenate.
 
 #### Scenario: Multiply and assign
 - **GIVEN** `mut i64 x = 3; x *= 4;`
