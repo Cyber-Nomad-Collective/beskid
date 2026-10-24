@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Reject local source inputs that are absent from the pinned Git tree.
-# Generated obj/target and .beskid/cache trees may survive a previous build.
+# Generated obj/target and .beskid/cache trees may survive a previous build, and
+# test runs write Project.lock files beside their fixture projects.
 set -euo pipefail
 [[ "$#" == 2 ]] || { echo 'usage: release-source-inventory.sh <repo> <root|compiler|corelib|bsol>' >&2; exit 2; }
 repo="$1"
@@ -14,6 +15,7 @@ source_path() {
   local path="$1"
   case "$path" in
     obj/*|*/obj/*|target/*|*/target/*|.beskid/cache/*|*/.beskid/cache/*) return 1 ;;
+    */tests/*/Project.lock) return 1 ;;
   esac
   case "$profile:$path" in
     root:scripts/ci/*|root:.woodpecker/*|root:Cargo.toml|root:Cargo.lock) return 0 ;;
