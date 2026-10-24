@@ -6,7 +6,7 @@ Helpers such as `Assert.Equal` need an optional message, and callers should not 
 
 - A parameter may declare `= <constant>`. Optional parameters follow required ones. Calls fill omitted trailing arguments at the call site.
 - Caller-information parameters are ordinary optional parameters with an attribute.
-- Defaults apply to top-level functions, methods and contract methods. A contract declares the defaults of its methods.
+- Defaults apply to top-level functions, methods, contract methods, inline-module functions and host, scope and hook parameters. A contract declares the defaults of its methods.
 - Diagnostics E1251–E1256 and the arity wording "expected 2–3 arguments, got 1".
 
 ## Capabilities

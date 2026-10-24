@@ -1,6 +1,6 @@
 # Design: primitive conformance (0.6.7)
 
-A bound `T: C` is satisfied by a primitive `P` when one conforming `impl P : C` exists in the compilation. Dispatch is static: one specialization per primitive, with the value as receiver, passed by value. Method-call syntax on a primitive value outside a bound (`3.Format()`) and contract-typed parameters that receive primitive arguments are not part of 0.6.7.
+A bound `T: C` is satisfied by a primitive `P` when one conforming `impl P : C` exists in the compilation. Dispatch is static: one specialization per primitive, with the value as receiver, passed by value. Direct calls on a primitive value with a conforming implementation (`n.Format()`, `3.Format()`) are in 0.6.7 with static dispatch. Contract-typed parameters that receive primitive arguments are not part of 0.6.7.
 
 ## Archive notes
 
