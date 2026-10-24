@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/standard/).
 
+## [Unreleased]
+
+### Changed
+
+- The Corelib gate builds and tests the network packages. Its quality check
+  covers the `network`, `uri`, `codec`, `connect`, `crypto`, `x509`,
+  `tls`, `http`, `http2`, `quic`, `http3`, `websocket` and `web` members,
+  and a new step runs every target of their test projects on loopback inside
+  the build container. Benchmarks (tag `bench`) are compiled but not run;
+  the OpenSSL 3 provider tests (tag `native-crypto`) run on Linux and are
+  excluded on other hosts. A separate step requires each
+  `packages/network/tests/compile-fail` target to be rejected with its
+  diagnostic. Interop suites stay manual.
+- The release source inventory also skips a `Project.lock` written directly
+  in a `tests` directory.
+
+### Fixed
+
+- The Corelib gate's `libcrypto.so.3` check reads the whole `ldconfig -p`
+  listing before matching, so `pipefail` no longer turns an early `grep -q`
+  exit (SIGPIPE) into a false "missing" failure.
+
 ## [0.6.6] - 2026-10-16
 
 Not released until the three-platform build of the 0.6.6 candidate passes and

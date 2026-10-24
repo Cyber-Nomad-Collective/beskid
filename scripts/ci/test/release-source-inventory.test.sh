@@ -49,4 +49,13 @@ if bash "$script" "$tmp" compiler >"$tmp/lock.out" 2>&1; then
   echo 'untracked compiler lock outside tests was accepted' >&2; exit 1
 fi
 grep -Fq 'runtime/beskid/Project.lock' "$tmp/lock.out"
+rm "$tmp/runtime/beskid/Project.lock"
+mkdir -p "$tmp/packages/tls/tests"
+printf 'lock\n' >"$tmp/packages/tls/tests/Project.lock"
+bash "$script" "$tmp" corelib
+printf 'lock\n' >"$tmp/packages/tls/Project.lock"
+if bash "$script" "$tmp" corelib >"$tmp/package-lock.out" 2>&1; then
+  echo 'untracked package lock outside tests was accepted' >&2; exit 1
+fi
+grep -Fq 'packages/tls/Project.lock' "$tmp/package-lock.out"
 echo 'release source inventory tests OK'
