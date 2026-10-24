@@ -36,7 +36,7 @@ i32 Main()
 }
 ```
 
-A `List` is a value. Assigning it to another name, or passing it to a parameter that is not `mut`, gives the new name its own copy of the elements, so two names never share storage. A `mut List<T>` parameter shares the caller's list, which is how a helper function grows one:
+A `List` is a value. Assigning it to another name, or passing it to a parameter that is not `mut`, gives the new name its own list, so a change through one name is never visible through the other. The copy is **copy-on-write**: the two names share the storage until the first mutation through either of them, and that mutation takes its own copy first. A `mut List<T>` parameter shares the caller's list outright, which is how a helper function grows one:
 
 ```beskid
 use Core.Collections.List;
@@ -91,7 +91,17 @@ unit Show(List<string> items, i64 index)
 }
 ```
 
-`Pop` on a `List`, `Stack` or `PriorityQueue`, and `Dequeue` on a `Queue`, return an `Option` of the removed element.
+What the mutating methods return:
+
+| Method | Returns |
+| --- | --- |
+| `List.Push`, `Stack.Push`, `Queue.Enqueue`, `Map.Insert` | `unit` |
+| `List.Pop`, `Stack.Pop`, `Queue.Dequeue`, `PriorityQueue.Pop` | `Option<T>` of the removed element |
+| `List.Remove`, `Set.Add`, `Set.Remove`, `Map.Remove` | `bool`: whether the collection changed |
+| `List.Set`, `List.Insert` | `Result<unit, CollectionError>` |
+| `List.RemoveAt` | `Result<T, CollectionError>` holding the removed element |
+
+Only `List` copies on assignment. `Stack`, `Queue`, `Set` and `Map` keep reference semantics, so a second name sees the changes.
 
 ## Maps and sets
 

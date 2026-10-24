@@ -40,7 +40,7 @@ unit Main()
 }
 ```
 
-Collections mutate in place (`items.Push(x);`), and a `List` is copied when you assign it or pass it to a parameter that is not `mut`, so two `List` names never share storage. See [Generic collections](/book/07a-generics-write-it-once/generic-collections/).
+Collections mutate in place (`items.Push(x);`), and a `List` is copied on assignment, and when you pass it to a parameter that is not `mut`, so a change through one name never shows through another. The copy is copy-on-write: the names share storage until the first mutation through either. `Stack`, `Queue`, `Set` and `Map` do not copy. See [Generic collections](/book/07a-generics-write-it-once/generic-collections/).
 
 ## Move applies where a value crosses an isolate
 

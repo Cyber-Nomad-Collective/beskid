@@ -24,6 +24,8 @@ i32 Main()
 }
 ```
 
+Assignment of a `List` gives the new name its own list (copy-on-write, so it costs nothing until one of the names changes); see [Generic collections](/book/07a-generics-write-it-once/generic-collections/).
+
 The five compound operators are `+=`, `-=`, `*=`, `/=` and `%=`. There is no `++` or `--`; the parser rejects them with a message that suggests `+= 1` (E0105).
 
 An assignment to a local that is not `mut` is E1214. A field is assigned through its owner (`this.count += 1;`), and the method must take `mut this` for the change to be allowed on the receiver.
