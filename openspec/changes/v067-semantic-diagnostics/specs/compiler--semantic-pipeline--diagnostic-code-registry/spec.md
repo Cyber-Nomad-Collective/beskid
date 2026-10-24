@@ -36,3 +36,21 @@ When a generic bound `Serializable` is violated by a type `T` (**E1610**), the h
 - **GIVEN** `type Point { i64 x; }` without `[Serialize]` and a call that requires `Point: Serializable`
 - **WHEN** the call is checked
 - **THEN** the compiler SHALL report **E1610** with the help "add `[Serialize]` to type `Point` so the compiler derives its `Serializable` conformance" and a machine-applicable fix that inserts `[Serialize]` above `type Point`
+
+### Requirement: Discarded array growth W1240
+The code **W1240** SHALL identify an `Array.Append` call used as a statement on an array that the caller does not own, so that the result is discarded and the array is not changed. The message SHALL have the form "the result of `Array.Append` is discarded; `xs` is not changed" and SHALL be reported at the call. The help and the fix SHALL depend on the kind of the argument. For a parameter that is not `mut`, the fix SHALL declare the parameter `mut` (machine-applicable). For a pattern binding or a lambda parameter, the fix SHALL assign the result to the name (machine-applicable). For a `for` variable, a call result or an element, the fix SHALL use the result in a new local, `T[] grown = Array.Append(...)` when the element type is known (applicability `MaybeIncorrect`). Only `Array.Append` is covered, because the other growth operations either work in place or return a flag.
+
+#### Scenario: Non-mut parameter
+- **GIVEN** `unit Add(i64[] xs) { Array.Append<i64>(xs, 1); }`
+- **WHEN** the function is checked
+- **THEN** the compiler SHALL report **W1240** at the call with a machine-applicable fix that declares `mut i64[] xs`
+
+#### Scenario: Pattern binding
+- **GIVEN** a pattern binding `xs` and the statement `Array.Append<i64>(xs, 1);`
+- **WHEN** the code is checked
+- **THEN** the compiler SHALL report **W1240** with a fix that assigns the result to `xs`
+
+#### Scenario: Owned array
+- **GIVEN** `mut i64[] xs = Array.Empty<i64>(); Array.Append<i64>(xs, 1);`
+- **WHEN** the code is checked
+- **THEN** no diagnostic is reported
