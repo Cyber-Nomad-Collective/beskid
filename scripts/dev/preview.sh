@@ -88,6 +88,13 @@ PLAN
 fi
 
 command -v python3 >/dev/null || die 'python3 is required'
+# The compiler pins its toolchain in rust-toolchain.toml and links Mac targets with rust-lld,
+# which only rustup toolchains ship. Put the rustup proxies first so a Homebrew `cargo` earlier
+# on PATH does not build with the wrong toolchain and fail to find rust-lld.
+if [[ -x "${CARGO_HOME:-$HOME/.cargo}/bin/rustup" ]]; then
+  export PATH="${CARGO_HOME:-$HOME/.cargo}/bin:$PATH"
+fi
+command -v rustup >/dev/null || die 'rustup is required (the compiler pins its toolchain and links with rust-lld)'
 BUILDER="${BESKID_PREVIEW_BUILDER:-$ROOT/scripts/ci/build-release-artifact.sh}"
 [[ -f "$BUILDER" ]] || die "builder $BUILDER not found"
 [[ -d "$ROOT/compiler" ]] || die "$ROOT/compiler is missing; initialize the compiler submodule"
