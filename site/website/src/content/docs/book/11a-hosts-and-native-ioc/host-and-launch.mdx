@@ -170,9 +170,40 @@ host AppHost() : BaseHost
 
 `AppHost` inherits `BaseHost`'s registry and replaces the binding for the contract `Logger`. The rules for the merge are in [Registry and lifetimes](/book/11a-hosts-and-native-ioc/registry-and-lifetimes/). A base that names itself, directly or through a chain, is E1715.
 
-<Aside type="note">
-The Standard talks about base hosts that live in Corelib, such as `ConsoleHost`. Corelib 0.6.7 does not ship one yet, so a base is a host that you or a library you depend on declare. Do not write `: ConsoleHost` and expect it to resolve.
-</Aside>
+A base host can live in another unit of the assembly: a library of yours, or Corelib.
+
+## `ConsoleHost`
+
+Corelib ships a base host for console programs, `ConsoleHost`, in the module `Console.Hosting` (package `corelib_console`). An application writes `use Console.Hosting;` so that the unit is part of the assembly, and extends the host by name. `ConsoleHost` registers a global `single` named `CommandLine`, which gives the program its arguments and its exit status:
+
+| Member | Meaning |
+| --- | --- |
+| `All()` | All arguments, the program name first |
+| `Arguments()` | The arguments after the program name |
+| `Count()` | How many arguments follow the program name |
+| `Exit(code)` | End the program now with that exit status |
+
+```beskid
+use Console.Hosting;
+use Core.Output;
+
+host AppHost() : ConsoleHost
+{
+    startup(Hosting.CommandLine commandLine)
+    {
+        i64 count = commandLine.Count();
+        Output.WriteLine("arguments: ${count}");
+    }
+}
+
+i32 Main()
+{
+    launch AppHost();
+    return 0;
+}
+```
+
+`ConsoleHost` has no run loop. After `startup`, the program continues with the statement after `launch`, so a console program is an ordinary `Main` that has been given a command line. The app extends the base host and declares its own services and scopes beside it.
 
 ## Hosts do not belong in Mods
 

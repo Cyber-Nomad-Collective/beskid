@@ -26,6 +26,11 @@ Composition errors are reported **at compile time**, in the `composition.resolve
 | E1714 | `invalid scope inject qualifier Q` | `global::` or `parent::` where it cannot apply | Remove the qualifier or fix the target |
 | E1715 | `host inheritance cycle detected at H` | A host extends itself through a chain | Break the chain |
 | E1716 | `duplicate scope name S in merged host scope tree` | Two scopes with one name after merging a host chain | Rename one |
+| E1717 | `startup` cannot be declared inside a named scope | `startup` written in a `scope` | Move it to the host body, or use `init` |
+| E1718 | A contract cannot be created; register an implementation (message names the contract) | `single Greeter;` where `Greeter` is a contract | `single PoliteGreeter for Greeter;` |
+| E1719 | The type cannot be registered because it has a value field, is generic, or is an enum | The container cannot create the type | Keep state in an injected service, register a non-generic `type` |
+| E1720 | The type does not conform to the contract | `single Impl for Contract;` where `Impl` lacks `: Contract` | Declare `type Impl : Contract`, or register a conforming type |
+| E1721 | `with S` must follow `launch` in the same function | `with` in another function, lambda or method | Move the `with` into the function that launches, after `launch` |
 
 ## Three you will actually meet
 
@@ -108,6 +113,43 @@ composition requires exactly one `launch` host entry point
 ```
 
 An application that declares a host has to launch one. This is the host version of forgetting to call `main`, and the compiler catches it for you.
+
+### E1718, the contract that cannot be built
+
+```beskid
+contract Greeter
+{
+    string Greet();
+}
+
+type PoliteGreeter : Greeter
+{
+    pub string Greet()
+    {
+        return "good day";
+    }
+}
+
+host AppHost()
+{
+    registry
+    {
+        single Greeter;
+    }
+}
+
+i32 Main()
+{
+    launch AppHost();
+    return 0;
+}
+```
+
+```text
+`Greeter` is a contract and cannot be created; register an implementation
+```
+
+The help names the conforming types it found. Register one under the contract: `single PoliteGreeter for Greeter;`.
 
 ## Parse errors on the way
 

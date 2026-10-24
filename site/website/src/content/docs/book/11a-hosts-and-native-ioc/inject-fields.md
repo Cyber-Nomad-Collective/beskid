@@ -102,7 +102,7 @@ An unqualified `inject` starts at the innermost active scope and walks outward t
 
 Use `global::` when a scope registers its own `Logger` but a particular service must keep using the shared one. A qualifier that makes no sense where it is written is E1714.
 
-The same qualifiers are allowed in the parameters of `init`, `dispose` and `startup` (see [Hooks](/book/11a-hosts-and-native-ioc/hooks/)).
+Hook parameters are resolved by the same rules (see [Hooks](/book/11a-hosts-and-native-ioc/hooks/)).
 
 ## Who gets injected
 

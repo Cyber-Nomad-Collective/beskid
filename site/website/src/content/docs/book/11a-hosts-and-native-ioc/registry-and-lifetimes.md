@@ -33,6 +33,10 @@ At the host level, registrations live inside a `registry { ... }` block. Inside 
 
 The **key** is what a consumer asks for. `single ConsoleLogger for Logger;` offers a `ConsoleLogger` to anyone who asks for a `Logger`. `single Clock;` offers a `Clock` to anyone who asks for a `Clock`.
 
+## What can be registered
+
+The container creates a service without a constructor and fills only its `inject` fields. So a registered type may have `inject` fields and methods, and no value fields (E1719), must not be generic or an enum (E1719), must not be a contract (E1718), and must conform to the contract of a `for` line (E1720). See [Composition errors](/book/11a-hosts-and-native-ioc/composition-errors/).
+
 ## Programming to the contract
 
 Binding implementations to contracts is what makes a registry useful. Consumers name the contract, and the host chooses the implementation:

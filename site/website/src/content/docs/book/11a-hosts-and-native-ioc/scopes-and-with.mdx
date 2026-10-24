@@ -99,7 +99,7 @@ handling b-2
 close
 ```
 
-The order is fixed: enter the scope, run `init`, run the block, run `dispose`, leave the scope. The arguments of `with` must match the parameters of the scope. A `with` that names an unknown scope, or passes the wrong arguments, is E1708.
+The order is fixed: enter the scope, run `init`, run the block, run `dispose`, leave the scope. `dispose` runs on every way out of the block, including `return`, `break` and `continue`. The arguments of `with` must match the parameters of the scope. A `with` that names an unknown scope, or passes the wrong arguments, is E1708. A `with` must also follow a `launch` in the **same function**, in the `launch` block or a block inside it; one anywhere else (another function, a lambda, a method, a `match` arm) is E1721.
 
 <Aside type="note">
 In this release you write `with` yourself. The Standard describes web-style hosts that enter a scope for every request automatically as later work.

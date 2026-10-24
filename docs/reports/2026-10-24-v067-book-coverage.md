@@ -91,7 +91,7 @@ Counted from the table by the strongest depth named in the "Teaches it" column.
 2. **Type fields end with `;`.** The 0.6.7 ruling changes `type Point { i32 x, i32 y }` to `type Point { i32 x; i32 y; }`; `beskid.pest` at parse `ac14b891` still has comma-separated fields. All new and rewritten examples use `;` and will not parse until the grammar slice lands the change.
 3. **Brace style.** Chapters 07 to 11 and the Corelib examples use K&R braces. The 0.6.7 style is Allman with parenthesised conditions. The Book reformat (slice fmt, wave 3) will move them; the new chapters already follow it.
 4. **`RangeExpression`.** The rule is defined and mapped in `rule_words.rs`, but no production in `beskid.pest` references it, so `for i in range(0, n)` is not a `RangeExpression` today. Decide whether it is dead or intended before the Book teaches loops.
-5. **`ConsoleHost`.** The Standard and its examples use `: ConsoleHost`, which Corelib 0.6.7 does not ship; the parse tests that use it only check `E1701` and `E1711`. Chapter 11a says so.
+5. **`ConsoleHost`.** Now shipped in `Console.Hosting` (host slice); chapter 11a teaches `host App() : ConsoleHost`. The Standard should record cross-unit base hosts.
 6. **Fixtures use the old `if cond {` style.** `crates/beskid_e2e_tests/fixtures/*` omit parentheses. They are valid, since the parentheses form a grouped expression, but the Book style is the parenthesised one.
 7. **Hooks.** `startup`, `init` and `dispose` bodies are validated by composition analysis and the codegen plan; the e2e fixture for composition (`composition_app`) launches a host with an empty registry only. Run the 11a examples at integration before treating hook execution as verified.
 

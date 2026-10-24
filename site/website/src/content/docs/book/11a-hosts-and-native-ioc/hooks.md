@@ -16,7 +16,7 @@ A hook is written like a function without a name or a return type: the keyword, 
 
 ## Parameters are requests
 
-The parameters of a hook are injected. Each one names a service, and the compiler resolves it exactly as it resolves an `inject` field, with the same rules for arrays and for `global::` and `parent::`:
+The parameters of a hook are injected. Each one names a service, and the compiler resolves it exactly as it resolves an `inject` field, including the array form. The compiler turns the hook into an ordinary function with a registered argument type, so a parameter that nobody provides is reported at the parameter (E1704, or E1705 when two registrations match):
 
 ```text
 startup(Configuration configuration, Storage[] storages)
@@ -26,18 +26,18 @@ startup(Configuration configuration, Storage[] storages)
 
 scope Request(string id)
 {
-    init(global::Configuration configuration, Session session)
+    init(Configuration configuration, Session session)
     {
         session.Open(configuration, id);
     }
 }
 ```
 
-The parameters of the *scope* (`id`) are in scope inside its hooks as ordinary variables, as the host's launch inputs are in `startup`. A hook parameter that cannot be resolved is E1704, at the parameter.
+The parameters of the *scope* (`id`) are meant to be in scope inside its hooks as ordinary variables, as the host's launch inputs are in `startup`. The semantic layer is still being completed for these two: in this release a hook body is guaranteed to see its injected parameters, and the examples that read a host or scope parameter (`name`, `id`) show the intended form.
 
 ## `startup`
 
-`startup` is where the application begins. It runs once, after the compiler's plan has built the global container and every `single` has its instance. A host without one is valid, as in the `AppHost` that only registers a service. When a host extends a base, the base's `startup` and the extending host's are both part of the chain.
+`startup` is where the application begins. It runs once, after the compiler's plan has built the global container and every `single` has its instance. A host without one is valid, as in the `AppHost` that only registers a service. When a host extends a base, the base's `startup` and the extending host's are both part of the chain, and the base runs first. A `startup` written inside a named scope is E1717, because it would run once per launch from a place that exists once per activation: move it to the host body, or use `init`.
 
 ```beskid
 use Core.Output;
@@ -106,6 +106,20 @@ sequenceDiagram
 **Text equivalent:** `with` pushes the scope frame and runs `init`. The block body then runs. When the block ends, `dispose` runs, and the scope frame is popped. `dispose` also runs when the block is left by unwinding.
 
 With nested scopes, `dispose` runs from the innermost scope outwards, the reverse of the order in which the scopes were entered. Services within one scope are released in reverse order of creation.
+
+## The order, end to end
+
+For a launched host with a base, a scope and a `with`, the hooks run in this order:
+
+1. `launch` builds the global container.
+2. Global `init` hooks run, base host first.
+3. `startup` hooks run, base host first.
+4. The program continues after `launch`.
+5. `with Scope(...)` enters the scope, then the scope's `init` runs, then the block.
+6. The scope's `dispose` runs on **every** way out of the block: reaching its end, `return`, `break` or `continue`.
+7. When the launch lifetime ends, global `dispose` hooks run, launched host first (the reverse of the chain), before the container shuts down.
+
+`init` and `startup` run base-first so that a derived host can rely on what its base set up. `dispose` runs derived-first for the same reason in reverse.
 
 ## `dispose` is not `Disposable`
 
