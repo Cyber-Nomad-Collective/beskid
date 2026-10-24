@@ -9,9 +9,9 @@ Corelib SHALL provide `Console.Hosting.ConsoleHost`, a host that an application 
 - **THEN** the container supplies the `CommandLine` of the process
 
 ### Requirement: CommandLine service
-`CommandLine` SHALL provide `All()` (all arguments), `Arguments()` (the arguments after the program name), `Count()` and `Exit(i32)`. `Exit` SHALL end the process with the given code after the dispose hooks have run.
+`CommandLine` SHALL provide `All()` (all arguments, the program name first), `Arguments()` (the arguments after the program name), `Count()` (the number of arguments after the program name, 0 when there are none) and `Exit(i32)`. `Exit` SHALL end the program at once with the given code as exit status. It SHALL NOT run `dispose` hooks, because it calls `Process.Exit`.
 
 #### Scenario: Count the arguments
 - **GIVEN** the program started as `app one two`
 - **WHEN** `commandLine.Count()` is called
-- **THEN** the result equals the number of arguments of `All()`
+- **THEN** the result is 2, and `All()` has three entries with the program name first

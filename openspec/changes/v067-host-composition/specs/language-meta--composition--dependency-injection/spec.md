@@ -32,12 +32,17 @@ A registered service SHALL have only `inject` fields, because the container crea
 - **THEN** the compiler SHALL report **E1721**
 
 ### Requirement: Registrations of one key and overrides
-Several registrations of one key inside one host SHALL all be kept as multiple implementations. A later host in the chain SHALL override a key of a base host. A singular `inject` that matches several registrations SHALL be **E1705**, with a fix that replaces `T name` by `T[] names` (applicability `MaybeIncorrect`). The diagnostic **E1713** SHALL name the contract key (for example `Clock`) and SHALL list the base registration as a related location. Registration keys and inject requests SHALL compare by the last segment of their path.
+Several registrations of one key inside one host SHALL all be kept as multiple implementations. A later host in the chain SHALL override a key of a base host. A singular `inject` that matches several registrations SHALL be **E1705**, with a fix that replaces `T name` by `T[] names` (applicability `MaybeIncorrect`). The diagnostic **E1713** SHALL name the contract key (for example `Clock`) and SHALL list the base registration as a related location. Registration keys and inject requests SHALL compare by full declaration identity, not by the last segment of a path. Two types with the same simple name in different modules SHALL be different keys.
 
 #### Scenario: Two registrations, singular inject
 - **GIVEN** a host with two registrations of `Greeter` and a service with `inject Greeter greeter;`
 - **WHEN** the host is checked
 - **THEN** the compiler SHALL report **E1705** with a fix to `inject Greeter[] greeters;`
+
+#### Scenario: Same simple name in two modules
+- **GIVEN** `A.Clock` and `B.Clock` and a registration of `A.Clock`
+- **WHEN** a service declares `inject B.Clock clock;`
+- **THEN** the compiler SHALL report **E1704** because `B.Clock` is not registered
 
 #### Scenario: Lifetime override mismatch
 - **GIVEN** a host that overrides the `single` registration of `Clock` with a scoped one

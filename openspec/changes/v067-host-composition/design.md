@@ -12,6 +12,10 @@ Launch runs global `init`, then `startup`. `with` runs scope `init` after the sc
 
 The container creates a registered service without a constructor, so a registered service may have only `inject` fields. The check covers types of the analysed unit; imported types are not checked.
 
+## Archive notes
+
+The delta for `console-hosting` is a new capability and cannot carry a Purpose header. At archive time the capability spec SHALL get this Purpose, because `validate-standard` fails on a TBD Purpose: "This specification defines the built-in console host base of Corelib. Programs inherit it to read the command line without writing registrations."
+
 ## Open gap
 
-Slice host reports that `launch` and `with` arguments are not yet typed by the semantic layer and that hook bodies see only injected parameters. The requirement "Launch and with arguments" states the target behavior of the owner ruling. The implementation gap is recorded as an open task.
+The requirement "Launch and with arguments" is in scope for 0.6.7 by owner ruling. Slice host is implementing it; task 2.3 stays open until the slice reports. Service keys compare by full declaration identity, and slice host is changing the implementation from last-segment matching.
