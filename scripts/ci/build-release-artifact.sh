@@ -111,10 +111,12 @@ qualify_native_tool_driver() {
 rustup target add "$TARGET" >/dev/null 2>&1 || true
 case "$PACKAGE" in
   beskid_cli|beskid_lsp|beskid_bundle)
-    # One build for all three binaries: the CLI, LSP and bundle runs of this
-    # script then share every artifact instead of resolving features per package.
+    # The CLI, LSP and bundle runs of this script share every artifact. The language
+    # server builds under its own profile (release-lsp: release with panic = "unwind")
+    # so the server can isolate a panic per request; the CLI stays abort-built.
     qualify_native_tool_driver
-    cargo build --locked -p beskid_cli -p beskid_lsp -p beskid_up --release --target "$TARGET"
+    cargo build --locked -p beskid_cli -p beskid_up --release --target "$TARGET"
+    cargo build --locked -p beskid_lsp --profile release-lsp --target "$TARGET"
     ;;
   beskid_release_harness)
     # 0.6 release case harnesses: libtest executables of the reviewed harness crates and the process
@@ -159,7 +161,9 @@ if [[ "$PACKAGE" == "beskid_bundle" ]]; then
   for binary_mapping in beskid_cli:beskid beskid_lsp:beskid_lsp beskid-up:beskid-up beskid_native_tool_driver:beskid_native_tool_driver; do
     built_name="${binary_mapping%%:*}"
     installed_name="${binary_mapping#*:}"
-    built_binary="target/${TARGET}/release/${built_name}${binary_extension}"
+    profile_dir=release
+    [[ "$built_name" != beskid_lsp ]] || profile_dir=release-lsp
+    built_binary="target/${TARGET}/${profile_dir}/${built_name}${binary_extension}"
     [[ -f "$built_binary" ]] || { echo "Missing built bundle artifact: $built_binary" >&2; exit 1; }
     cp -f "$built_binary" "${bundle_dir}/bin/${installed_name}${binary_extension}"
   done
@@ -259,7 +263,9 @@ if [[ "$PACKAGE" == "beskid_bundle" ]]; then
 fi
 
 # Resolve the built binary path (Windows targets get .exe).
-BIN_BASE="target/${TARGET}/release/${BINARY}${binary_extension}"
+BIN_PROFILE_DIR=release
+[[ "$PACKAGE" != beskid_lsp ]] || BIN_PROFILE_DIR=release-lsp
+BIN_BASE="target/${TARGET}/${BIN_PROFILE_DIR}/${BINARY}${binary_extension}"
 [[ -f "$BIN_BASE" ]] || { echo "Missing built artifact: $BIN_BASE" >&2; exit 1; }
 
 cp -f "$BIN_BASE" "${ROOT}/${ASSET_NAME}"

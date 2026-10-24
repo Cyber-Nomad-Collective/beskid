@@ -71,9 +71,15 @@ if [[ " $* " == *" --message-format=json "* ]]; then
   printf '{"reason":"build-finished","success":true}\n'
   exit 0
 fi
-for binary in beskid_cli beskid_lsp beskid-up; do
+profile_dir=release
+[[ " $* " != *" --profile release-lsp "* ]] || profile_dir=release-lsp
+# The language server builds only under release-lsp, the CLI and updater only under release.
+if [[ "${profile_dir}" == release-lsp ]]; then binaries=(beskid_lsp); else binaries=(beskid_cli beskid-up); fi
+[[ " $* " != *" -p beskid_lsp "* || "${profile_dir}" == release-lsp ]] || { echo 'beskid_lsp must build with --profile release-lsp' >&2; exit 1; }
+mkdir -p "target/${target}/${profile_dir}"
+for binary in "${binaries[@]}"; do
   if [[ "${binary}" == beskid_cli ]]; then
-    cat >"target/${target}/release/${binary}${extension}" <<'CLI'
+    cat >"target/${target}/${profile_dir}/${binary}${extension}" <<'CLI'
 #!/usr/bin/env bash
 set -euo pipefail
 if [[ "${1:-}" == dev && "${2:-}" == runtime-kit && "${3:-}" == build-native-host ]]; then
@@ -113,9 +119,9 @@ if [[ -n "${OMIT_CORELIB_MOD:-}" ]]; then rm -rf "${BESKID_CORELIB_ROOT}/mods"; 
 printf '%064d\n' 0 >"${BESKID_CORELIB_ROOT}/.beskid-bundle.sha256"
 CLI
   else
-    printf '#!/usr/bin/env bash\nexit 0\n' >"target/${target}/release/${binary}${extension}"
+    printf '#!/usr/bin/env bash\n# built under %s\nexit 0\n' "${profile_dir}" >"target/${target}/${profile_dir}/${binary}${extension}"
   fi
-  chmod +x "target/${target}/release/${binary}${extension}"
+  chmod +x "target/${target}/${profile_dir}/${binary}${extension}"
 done
 SH
 cat >"${tmp}/bin/rustup" <<'SH'
@@ -149,6 +155,8 @@ assert_bundle() {
   for binary in beskid beskid_lsp beskid-up; do
     test -x "${extracted}/bin/${binary}${extension}"
   done
+  grep -Fq '# built under release-lsp' "${extracted}/bin/beskid_lsp${extension}"
+  grep -Fq '# built under release' "${extracted}/bin/beskid-up${extension}"
   test -f "${extracted}/lib/beskid-runtime/abi-5/${target}/release/abi.json"
   test -f "${extracted}/lib/beskid-runtime/abi-5/${target}/debug/abi.json"
   test -f "${extracted}/beskid_corelib/.beskid-bundle.sha256"
