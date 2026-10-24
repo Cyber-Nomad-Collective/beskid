@@ -37,9 +37,9 @@ A contract value SHALL be a value whose static type is a contract `C` or an appl
 - **THEN** no diagnostic is reported
 
 #### Scenario: Lambda body
-- **GIVEN** `Func<Greeter> make = () => Hello {};`
+- **GIVEN** the lambda `() => Hello {}` where the expected function type returns `Greeter`
 - **WHEN** the code is checked
-- **THEN** no diagnostic is reported and a call of `make` returns a contract value that holds a `Hello`
+- **THEN** no diagnostic is reported and a call of the lambda returns a contract value that holds a `Hello`
 
 #### Scenario: Conditional without an expected contract
 - **GIVEN** `let g = c ? Hello {} : Bye {};`
