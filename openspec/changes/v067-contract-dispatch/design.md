@@ -6,6 +6,6 @@ Representation. A contract value is a managed box that holds the receiver word a
 
 Transfer class. A contract type is Moved. The move and uniqueness rules of `v067-move-at-isolate-boundary` apply to a contract value that crosses.
 
-Rulings that differ from the first slice wording (owner, being implemented by slice dyn): `==` and `!=` compare identity of the held value (primitives by value), and a contract value converts to any contract it embeds. The slice wording at `852f267b` refuses both; they are follow-ups of the slice.
+Rulings that differ from the first slice wording (owner, being implemented by slice dyn): `==` and `!=` compare identity of the held value (primitives by value), a contract value converts to any contract it embeds, and with an expected contract type the branches of a conditional, match arm results and block results are conversion sites (C#-like target typing). The slice wording at `852f267b` refuses the first two and does not treat forwarded contexts as sites; they are follow-ups of the slice.
 
 Known gaps for integration: tests for per-scope binding of a singular inject and for `inject Greeter[]`; generic contracts (`Reader<E>`) are implemented but untested.
