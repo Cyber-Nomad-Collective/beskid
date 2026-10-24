@@ -81,6 +81,93 @@ corelib_run_test_matrix() {
     --target-timeout "${CORELIB_TARGET_TIMEOUT:-600}" </dev/null
 }
 
+# Network package test projects (paths relative to the Corelib workspace root).
+# Every Test and Lib target of each project is built and run. Loopback targets
+# bind 127.0.0.1 (and ::1 when the host offers it) inside the build container,
+# which has its own loopback interface. Tests tagged `bench` are throughput
+# measurements that print numbers, assert little and run for minutes; they are
+# compiled with their target but excluded from execution with --exclude-tag.
+# Interop suites (tls/tests/interop, http2/interop, websocket/tests/interop,
+# web/interop) are separate projects that need curl, OpenSSL or Node peers; they
+# are not part of any project below and run only by hand. The compile-fail
+# project packages/network/tests/compile-fail is checked separately: each of its
+# targets must be rejected with the stated diagnostic.
+NETWORK_TEST_PROJECTS=(
+  "packages/uri/tests"
+  "packages/codec/tests"
+  "packages/crypto/tests"
+  "packages/x509/tests"
+  "packages/connect/tests"
+  "packages/tls/tests"
+  "packages/quic/tests"
+  "packages/http2/tests"
+  "packages/http3/tests"
+  "packages/websocket/tests"
+  "packages/web/tests"
+)
+
+corelib_run_network_test_matrix() {
+  local rel dir manifest failed=0
+  local excludes=(--exclude-tag bench)
+  # Four crypto Provider tests (tag native-crypto) exercise the OpenSSL 3
+  # provider. The Linux build image ships libcrypto.so.3, so Linux must run
+  # them and fails closed without it; other hosts have no libcrypto.so.3 and
+  # exclude them explicitly.
+  if [[ "$(uname -s)" == Linux ]]; then
+    if ! { ldconfig -p 2>/dev/null | grep -Fq 'libcrypto.so.3'; }; then
+      echo "::error::libcrypto.so.3 is missing; the native-crypto Provider tests require OpenSSL 3 on Linux" >&2
+      return 1
+    fi
+  else
+    echo "excluding native-crypto tests: libcrypto.so.3 is a Linux-only provider"
+    excludes+=(--exclude-tag native-crypto)
+  fi
+  for rel in "${NETWORK_TEST_PROJECTS[@]}"; do
+    dir="${CORELIB_ROOT}/${rel}"
+    if ! manifest="$(discover_project_manifest "${dir}")"; then
+      return 1
+    fi
+    if ! (cd "${dir}" && corelib_run_bounded_phase "run network tests: ${rel}" \
+      "${CORELIB_NETWORK_PROJECT_TIMEOUT:-1800}" \
+      "$CLI" test --project "${manifest}" --all-targets --plain "${excludes[@]}" \
+      --target-timeout "${CORELIB_TARGET_TIMEOUT:-600}" </dev/null); then
+      echo "::error::network test project failed: ${rel}" >&2
+      failed=1
+    fi
+  done
+  return "${failed}"
+}
+
+# Compile-fail targets of packages/network/tests/compile-fail: "target|diagnostic".
+NETWORK_COMPILE_FAIL_PROJECT="packages/network/tests/compile-fail"
+NETWORK_COMPILE_FAIL_TARGETS=(
+  "RawHandle|inaccessible struct field \`handle\`"
+  "RawDeadline|expected Core::Optional::Option::Option<Core::Time::Deadline::Deadline>, got i64"
+  "UdpIsNotStream|type mismatch: expected Stream"
+)
+
+corelib_check_network_compile_fail() {
+  local dir="${CORELIB_ROOT}/${NETWORK_COMPILE_FAIL_PROJECT}" manifest entry target expected output failed=0
+  if ! manifest="$(discover_project_manifest "${dir}")"; then
+    return 1
+  fi
+  for entry in "${NETWORK_COMPILE_FAIL_TARGETS[@]}"; do
+    target="${entry%%|*}"
+    expected="${entry#*|}"
+    if output="$(cd "${dir}" && "$CLI" test --project "${manifest}" --target "${target}" --plain </dev/null 2>&1)"; then
+      echo "::error::compile-fail target ${target} compiled and passed; it must be rejected" >&2
+      failed=1
+    elif [[ "${output}" != *"${expected}"* ]]; then
+      printf '%s\n' "${output}" | tail -n 20 >&2
+      echo "::error::compile-fail target ${target} was not rejected with: ${expected}" >&2
+      failed=1
+    else
+      echo "compile-fail OK: ${target} rejected with: ${expected}"
+    fi
+  done
+  return "${failed}"
+}
+
 corelib_sanitize_diagnostic_tail() {
   local log="$1"
   tail -n 40 "${log}" 2>/dev/null | sed -E \
@@ -267,6 +354,19 @@ WORKSPACE_MEMBERS=(
   "corelib_compiler_sdk compiler_sdk packages/compiler-sdk"
   "corelib_console console packages/console"
   "corelib_concurrency concurrency packages/concurrency"
+  "corelib_network network packages/network"
+  "corelib_uri uri packages/uri"
+  "corelib_codec codec packages/codec"
+  "corelib_connect connect packages/connect"
+  "corelib_crypto crypto packages/crypto"
+  "corelib_x509 x509 packages/x509"
+  "corelib_tls tls packages/tls"
+  "corelib_http http packages/http"
+  "corelib_http2 http2 packages/http2"
+  "corelib_quic quic packages/quic"
+  "corelib_http3 http3 packages/http3"
+  "corelib_websocket websocket packages/websocket"
+  "corelib_web web packages/web"
 )
 
 for entry in "${WORKSPACE_MEMBERS[@]}"; do
@@ -491,3 +591,5 @@ corelib_report_step "stage native runtime kit" \
   bash scripts/stage-native-runtime-kit.sh
 cd "${TESTS_DIR}"
 corelib_report_step "run Corelib tests" corelib_run_test_matrix
+corelib_report_step "run network package tests" corelib_run_network_test_matrix
+corelib_report_step "check network compile-fail fixtures" corelib_check_network_compile_fail

@@ -92,6 +92,20 @@ Draft release notes: `docs/release/v0.6.6-release-notes.md`.
   `BESKID_GC_STRESS=alloc:64,verify` smoke (`GCS066-01`). Fragment
   `scripts/ci/release-case-bindings/features-v066.json`; the new manifest digest
   is pinned (task 6.7).
+- The Corelib gate builds and tests the network packages. Its quality check
+  covers the `network`, `uri`, `codec`, `connect`, `crypto`, `x509`,
+  `tls`, `http`, `http2`, `quic`, `http3`, `websocket` and `web` members,
+  and a new step runs every target of their test projects on loopback inside
+  the build container. Benchmarks (tag `bench`) are compiled but not run;
+  the OpenSSL 3 provider tests (tag `native-crypto`) run on Linux and are
+  excluded on hosts without `libcrypto.so.3`. A separate step requires each
+  `packages/network/tests/compile-fail` target to be rejected with its stated
+  diagnostic. Interop suites stay manual.
+- Network package tests follow the 0.6.6 ownership rules: arrays stored into
+  a field are handed over with `move` or copied, so the tls `Loopback` and
+  http3 `H3ExchangeTests` and `H3QuicLoopback` targets compile again.
+- The release source inventory also skips a `Project.lock` written directly
+  in a `tests` directory.
 
 ### Fixed
 

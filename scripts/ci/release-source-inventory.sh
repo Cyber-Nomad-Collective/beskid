@@ -15,7 +15,7 @@ source_path() {
   local path="$1"
   case "$path" in
     obj/*|*/obj/*|target/*|*/target/*|.beskid/cache/*|*/.beskid/cache/*) return 1 ;;
-    */tests/*/Project.lock) return 1 ;;
+    */tests/Project.lock|*/tests/*/Project.lock) return 1 ;;
   esac
   case "$profile:$path" in
     root:scripts/ci/*|root:.woodpecker/*|root:Cargo.toml|root:Cargo.lock) return 0 ;;

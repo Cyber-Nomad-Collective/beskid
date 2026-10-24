@@ -56,6 +56,58 @@ member "concurrency" {
   path = "packages/concurrency"
   package = "corelib_concurrency"
 }
+member "network" {
+  path = "packages/network"
+  package = "corelib_network"
+}
+member "uri" {
+  path = "packages/uri"
+  package = "corelib_uri"
+}
+member "codec" {
+  path = "packages/codec"
+  package = "corelib_codec"
+}
+member "connect" {
+  path = "packages/connect"
+  package = "corelib_connect"
+}
+member "crypto" {
+  path = "packages/crypto"
+  package = "corelib_crypto"
+}
+member "x509" {
+  path = "packages/x509"
+  package = "corelib_x509"
+}
+member "tls" {
+  path = "packages/tls"
+  package = "corelib_tls"
+}
+member "http" {
+  path = "packages/http"
+  package = "corelib_http"
+}
+member "http2" {
+  path = "packages/http2"
+  package = "corelib_http2"
+}
+member "quic" {
+  path = "packages/quic"
+  package = "corelib_quic"
+}
+member "http3" {
+  path = "packages/http3"
+  package = "corelib_http3"
+}
+member "websocket" {
+  path = "packages/websocket"
+  package = "corelib_websocket"
+}
+member "web" {
+  path = "packages/web"
+  package = "corelib_web"
+}
 member "corelib_tests" {
   path = "beskid_corelib/tests/corelib_tests"
   package = "corelib_tests"
@@ -67,11 +119,30 @@ EOF
     "packages/runtime corelib_runtime" \
     "packages/compiler-sdk corelib_compiler_sdk" \
     "packages/console corelib_console" \
-    "packages/concurrency corelib_concurrency"; do
+    "packages/concurrency corelib_concurrency" \
+    "packages/network corelib_network" \
+    "packages/uri corelib_uri" \
+    "packages/codec corelib_codec" \
+    "packages/connect corelib_connect" \
+    "packages/crypto corelib_crypto" \
+    "packages/x509 corelib_x509" \
+    "packages/tls corelib_tls" \
+    "packages/http corelib_http" \
+    "packages/http2 corelib_http2" \
+    "packages/quic corelib_quic" \
+    "packages/http3 corelib_http3" \
+    "packages/websocket corelib_websocket" \
+    "packages/web corelib_web"; do
     read -r path name <<<"${item}"
     mkdir -p "${fixture}/compiler/corelib/${path}"
     printf 'name = "%s"\n' "${name}" > "${fixture}/compiler/corelib/${path}/fixture.bproj"
     : > "${fixture}/compiler/corelib/${path}/README.md"
+  done
+  for path in packages/uri/tests packages/codec/tests packages/crypto/tests packages/x509/tests \
+    packages/network/tests/compile-fail packages/connect/tests packages/tls/tests packages/quic/tests \
+    packages/http2/tests packages/http3/tests packages/websocket/tests packages/web/tests; do
+    mkdir -p "${fixture}/compiler/corelib/${path}"
+    printf 'name = "fixture_tests"\n' > "${fixture}/compiler/corelib/${path}/fixture_tests.bproj"
   done
   printf 'name = "corelib"\ntype = "Aggregate"\nversion = "0.4.0"\n' \
     > "${fixture}/compiler/corelib/beskid_corelib/fixture.bproj"
@@ -121,6 +192,9 @@ if [[ "${1:-}" == dev && "${2:-}" == corelib ]]; then
   cp -R "$BESKID_CORELIB_SOURCE/packages" "$BESKID_CORELIB_ROOT/packages"
   cp -R "$BESKID_CORELIB_SOURCE/beskid_corelib" "$BESKID_CORELIB_ROOT/beskid_corelib"
   rm "$BESKID_CORELIB_ROOT/packages/foundation/Project.lock"
+  # The bundle omits nested test projects that are not workspace members.
+  find "$BESKID_CORELIB_ROOT/packages" -mindepth 2 -name fixture_tests.bproj -print0 |
+    while IFS= read -r -d '' manifest; do rm -rf "$(dirname "$manifest")"; done
   cp "$BESKID_CORELIB_SOURCE/CoreLib.bws" "$BESKID_CORELIB_ROOT/CoreLib.bws"
   node "$BESKID_TEST_VERIFY_SCRIPT" --fingerprint "$BESKID_CORELIB_ROOT" > "$BESKID_CORELIB_ROOT/.beskid-bundle.sha256"
   if [[ "${BESKID_TEST_TAMPER_MATERIALIZED:-0}" == 1 ]]; then
@@ -135,6 +209,16 @@ if IFS= read -r unexpected; then
   printf 'unexpected inherited stdin: %s\n' "$unexpected" >&2
   exit 64
 fi
+if [[ -n "${BESKID_TEST_CLI_LOG:-}" ]]; then
+  printf '%s|%s\n' "$PWD" "$*" >> "${BESKID_TEST_CLI_LOG}"
+fi
+case " $* " in
+  *" --target RawHandle "*) echo 'inaccessible struct field `handle`' >&2; exit 1 ;;
+  *" --target RawDeadline "*) echo 'type mismatch: expected Core::Optional::Option::Option<Core::Time::Deadline::Deadline>, got i64' >&2; exit 1 ;;
+  *" --target UdpIsNotStream "*)
+    [[ "${BESKID_TEST_COMPILE_FAIL_ACCEPTS:-0}" == 1 ]] && exit 0
+    echo 'type mismatch: expected Stream, got UdpSocket' >&2; exit 1 ;;
+esac
 exit 0
 CLI
 chmod +x target/release/beskid_cli
@@ -148,6 +232,7 @@ EOF
 PASS_FIXTURE="${TMP}/pass"
 make_fixture "${PASS_FIXTURE}" pass
 CORELIB_REPORT_DIR="${PASS_FIXTURE}/report" PATH="${PASS_FIXTURE}/bin:${PATH}" \
+  BESKID_TEST_CLI_LOG="${PASS_FIXTURE}/cli.log" \
   bash "${PASS_FIXTURE}/scripts/ci/corelib-gate.sh" <<<"interactive input must not reach Corelib tests"
 PASS_REPORT="${PASS_FIXTURE}/report/corelib-build-report.md"
 assert_file_exists "${PASS_REPORT}" "success produces the Corelib Markdown report"
@@ -160,6 +245,27 @@ assert_contains "${PASS_MD}" "| build beskid_cli (release) | PASS |" "report rec
 assert_contains "${PASS_MD}" "| stage native runtime kit | PASS |" "report records runtime staging outcome"
 assert_contains "${PASS_MD}" "| run Corelib tests | PASS |" "report records test command outcome"
 assert_contains "${PASS_MD}" "| provision release-case inputs | PASS |" "report records release-case input provisioning"
+assert_contains "${PASS_MD}" "| run network package tests | PASS |" "report records the network package test step"
+assert_contains "${PASS_MD}" "| check network compile-fail fixtures | PASS |" "report records the compile-fail fixture step"
+PASS_CLI_LOG="$(cat "${PASS_FIXTURE}/cli.log")"
+for project in uri codec crypto x509 connect tls quic http2 http3 websocket web; do
+  dir="packages/${project}/tests"
+  assert_contains "${PASS_CLI_LOG}" "/compiler/corelib/${dir}|test --project fixture_tests.bproj --all-targets --plain --exclude-tag bench" \
+    "network test project ${dir} runs every target and excludes bench tests"
+done
+for target in RawHandle RawDeadline UdpIsNotStream; do
+  assert_contains "${PASS_CLI_LOG}" "/compiler/corelib/packages/network/tests/compile-fail|test --project fixture_tests.bproj --target ${target} --plain" \
+    "compile-fail target ${target} is checked on its own"
+done
+
+ACCEPTS_FIXTURE="${TMP}/compile-fail-accepts"
+make_fixture "${ACCEPTS_FIXTURE}" pass
+if CORELIB_REPORT_DIR="${ACCEPTS_FIXTURE}/report" PATH="${ACCEPTS_FIXTURE}/bin:${PATH}" BESKID_TEST_COMPILE_FAIL_ACCEPTS=1 \
+  bash "${ACCEPTS_FIXTURE}/scripts/ci/corelib-gate.sh" >"${ACCEPTS_FIXTURE}/stdout" 2>"${ACCEPTS_FIXTURE}/stderr"; then
+  fail "a compile-fail fixture that compiles must fail the Corelib gate"
+fi
+assert_contains "$(cat "${ACCEPTS_FIXTURE}/report/corelib-build-report.md")" \
+  "| check network compile-fail fixtures | FAIL" "an accepted compile-fail fixture fails its reported stage"
 
 NO_CORPUS_FIXTURE="${TMP}/no-corpus"
 make_fixture "${NO_CORPUS_FIXTURE}" pass
