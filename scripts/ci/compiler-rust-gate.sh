@@ -84,6 +84,13 @@ run_runtime_phase() {
   return "${status}"
 }
 
+run_proof_selftest_phase() {
+  # The stability-proof harness scripts (ICE sweep, onboarding check) have Python unit tests that
+  # otherwise run only by hand; a broken harness would silently pass the proof gate.
+  run_bounded_phase "Proof harness self-test" "${BESKID_PROOF_SELFTEST_TIMEOUT:-300}" \
+    python3 -I scripts/proof/test-proof-common.py
+}
+
 run_runtime_kit_phase() {
   # Keep the platform lane focused on runtime-kit staging and verification.
   export BESKID_RUNTIME_PREFIX="${BESKID_RUNTIME_PREFIX:-${CARGO_TARGET_DIR:-${ROOT}/compiler/target}/native-runtime-kit}"
@@ -95,13 +102,18 @@ run_runtime_kit_phase() {
 case "${gate_phase}" in
   all)
     run_lint_phase
+    run_proof_selftest_phase
     run_runtime_phase
     ;;
   lint)
     run_lint_phase
     ;;
   runtime)
+    run_proof_selftest_phase
     run_runtime_phase
+    ;;
+  proof-selftest)
+    run_proof_selftest_phase
     ;;
   runtime-kit)
     run_runtime_kit_phase
