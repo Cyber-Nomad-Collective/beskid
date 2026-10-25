@@ -5,7 +5,8 @@
 # labels them 0.6.7-preview.N, installs the bundle side by side under
 # ~/.beskid/toolchains/beskid-<label>-<target>, repoints the ~/.local/bin wrappers
 # and the two VS Code user settings (beskid.cli.path, beskid.lsp.server.path) after
-# a backup, installs the extension, keeps the last three previews, and reports the
+# a backup, installs the extension (a copy of the .vsix stays in ~/.beskid/previews),
+# keeps the last three previews, and reports the
 # version, the compiler commits since the previous preview and the reload hint.
 #
 # Usage: preview.sh [--base-version X.Y.Z] [--skip-extension] [--dry-run]
@@ -149,6 +150,9 @@ if [[ "$SKIP_EXTENSION" == 0 ]]; then
     BESKID_VSCODE_SKIP_PREBUILD=1 bunx @vscode/vsce package "$LABEL" --no-git-tag-version --no-update-package-json --out "$vsix"
   )
   [[ -f "$vsix" ]] || die 'vsce did not produce the extension package'
+  # Keep a copy outside the stage, which is deleted on exit, so a Linux repack can reuse it.
+  mkdir -p "$HOME_DIR/.beskid/previews"
+  cp -f "$vsix" "$HOME_DIR/.beskid/previews/"
 fi
 
 # 3. Everything built: install side by side, then switch over.
