@@ -26,6 +26,8 @@ services:
       WOODPECKER_GITHUB_SECRET: ${WOODPECKER_GITHUB_SECRET:?set WOODPECKER_GITHUB_SECRET}
       WOODPECKER_AGENT_SECRET: ${WOODPECKER_AGENT_SECRET:?set WOODPECKER_AGENT_SECRET}
       WOODPECKER_GRPC_SECRET: ${WOODPECKER_GRPC_SECRET:?set WOODPECKER_GRPC_SECRET}
+      # Accept agent keepalive pings every 10 s; the grpc-go default (5 min) answers with GOAWAY.
+      WOODPECKER_KEEPALIVE_MIN_TIME: 10s
     expose:
       - "8000"
       - "9000"
@@ -53,6 +55,9 @@ services:
       WOODPECKER_AGENT_SECRET: ${WOODPECKER_AGENT_SECRET:?set WOODPECKER_AGENT_SECRET}
       WOODPECKER_BACKEND: docker
       WOODPECKER_MAX_WORKFLOWS: "1"
+      # A short network drop must not kill a long build: no retry deadline, and a 30 s keepalive.
+      WOODPECKER_RETRY_TIMEOUT: "0"
+      WOODPECKER_KEEPALIVE_TIME: 30s
       # The worker shares a host with production; bound each build container.
       WOODPECKER_BACKEND_DOCKER_LIMIT_MEM: "3221225472"
       WOODPECKER_BACKEND_DOCKER_LIMIT_CPU_QUOTA: "200000"

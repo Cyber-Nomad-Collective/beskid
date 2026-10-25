@@ -43,6 +43,20 @@ The macOS worker needs the official arm64 agent, Git, Node, jq,
 tar, Rust 1.98.1, Xcode tools, and Homebrew LLVM; it writes under
 `~/Library/Application Support/Woodpecker/beskid-output`.
 
+Every agent, including the macOS and Windows workers, sets
+`WOODPECKER_RETRY_TIMEOUT=0` and `WOODPECKER_KEEPALIVE_TIME=30s`. The server sets
+`WOODPECKER_KEEPALIVE_MIN_TIME=10s`. Without them the first gRPC stall of two
+minutes cancels a running build, and the server would answer the agent
+keepalive with GOAWAY. A drop of more than about one minute still requeues the
+task, because the server lease is fixed.
+
+These settings are versioned here, in `deploy/woodpecker/compose.yml` for the server and the
+Linux agent. Committing them changes nothing on a running host: the owner must redeploy that
+compose file, and set the two agent variables by hand on the macOS and Windows workers, which
+are configured on those hosts. Apply the server `WOODPECKER_KEEPALIVE_MIN_TIME` first and
+restart the agents afterwards; an agent that pings every 30 s against a server still on the
+five-minute default is answered with GOAWAY (`too_many_pings`).
+
 Keep agent handoff keys in host-managed files. Keep publisher credentials out of
 tracked files and ordinary pipeline variables. Open VSX binds the existing
 `open_vsx_token` only in its final publish step; Microsoft Marketplace binds
