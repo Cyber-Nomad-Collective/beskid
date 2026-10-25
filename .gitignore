@@ -74,6 +74,7 @@ mono_crash.*
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
+!/scripts/release/
 
 [Dd]ebug/x64/
 [Dd]ebugPublic/x64/
