@@ -66,6 +66,43 @@ run bash "$SCRIPT" --bundle "$tmp/bundle" --key "$tmp/key"
 assert_eq 1 "$code" "a bundle without the CLI and kits is rejected"
 assert_contains "$out" "bundle omitted regular" "the missing bundle file is named"
 
+# The mode check works with GNU and BSD stat (shims stand in for the one this host lacks).
+shim_run() { # style mode
+  local dir="$tmp/stat-$1-$2"; mkdir -p "$dir"
+  case "$1" in
+    gnu) cat >"$dir/stat" <<SH
+#!/usr/bin/env bash
+if [[ "\$1" == -c ]]; then echo "$2"; exit 0; fi
+# GNU \`stat -f\` is file-system status and reads \`%Lp\` as a file name.
+echo "stat: cannot read file system information for '%Lp'" >&2; echo "garbage"; exit 1
+SH
+    ;;
+    bsd) cat >"$dir/stat" <<SH
+#!/usr/bin/env bash
+if [[ "\$1" == -c ]]; then echo "stat: illegal option -- c" >&2; exit 1; fi
+echo "$2"
+SH
+    ;;
+    junk) cat >"$dir/stat" <<SH
+#!/usr/bin/env bash
+echo "not-a-mode"
+SH
+    ;;
+  esac
+  chmod +x "$dir/stat"
+  run env PATH="$dir:$PATH" bash "$SCRIPT" --bundle "$tmp/bundle" --key "$tmp/key"
+}
+shim_run gnu 600
+assert_contains "$out" "bundle omitted regular" "GNU stat: a mode-600 key is accepted"
+shim_run bsd 600
+assert_contains "$out" "bundle omitted regular" "BSD stat: a mode-600 key is accepted"
+shim_run gnu 644
+assert_contains "$out" "must not be readable by group or others" "GNU stat: a mode-644 key is rejected"
+shim_run bsd 640
+assert_contains "$out" "must not be readable by group or others" "BSD stat: a mode-640 key is rejected"
+shim_run junk 600
+assert_contains "$out" "cannot read the mode of key file" "an unreadable mode fails closed instead of failing in arithmetic"
+
 # An exported key in the caller's environment is never used.
 BESKID_PCKG_API_KEY="$good_key" run bash "$SCRIPT" --bundle "$tmp/bundle" --dry-run
 assert_eq 1 "$code" "a dry run still validates the bundle"

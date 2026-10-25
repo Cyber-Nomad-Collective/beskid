@@ -188,6 +188,10 @@ fi
 cat > target/release/beskid_cli <<'CLI'
 #!/usr/bin/env bash
 set -euo pipefail
+diag() {
+  echo 'plain progress noise that is not JSON' >&2
+  printf '{"$message_type":"diagnostic","schema":1,"message":"%s","code":{"code":"%s","explanation":null,"url":null},"level":"error","origin":null,"spans":[],"children":[],"tags":[],"rendered":null}\n' "$2" "$1" >&2
+}
 if [[ "${1:-}" == dev && "${2:-}" == corelib ]]; then
   cp -R "$BESKID_CORELIB_SOURCE/packages" "$BESKID_CORELIB_ROOT/packages"
   cp -R "$BESKID_CORELIB_SOURCE/beskid_corelib" "$BESKID_CORELIB_ROOT/beskid_corelib"
@@ -213,11 +217,12 @@ if [[ -n "${BESKID_TEST_CLI_LOG:-}" ]]; then
   printf '%s|%s\n' "$PWD" "$*" >> "${BESKID_TEST_CLI_LOG}"
 fi
 case " $* " in
-  *" --target RawHandle "*) echo 'inaccessible struct field `handle`' >&2; exit 1 ;;
-  *" --target RawDeadline "*) echo 'type mismatch: expected Core::Optional::Option::Option<Core::Time::Deadline::Deadline>, got i64' >&2; exit 1 ;;
+  *" --target RawHandle "*) diag E1211 'a reworded message about field handle'; exit 1 ;;
+  *" --target RawDeadline "*) diag E1205 'wording is free'; exit 1 ;;
   *" --target UdpIsNotStream "*)
     [[ "${BESKID_TEST_COMPILE_FAIL_ACCEPTS:-0}" == 1 ]] && exit 0
-    echo 'type mismatch: expected Stream, got UdpSocket' >&2; exit 1 ;;
+    [[ "${BESKID_TEST_COMPILE_FAIL_WRONG_CODE:-0}" == 1 ]] && { diag E1101 'type mismatch: expected Stream'; exit 1; }
+    diag E1206 'something else'; exit 1 ;;
 esac
 exit 0
 CLI
@@ -266,6 +271,20 @@ if CORELIB_REPORT_DIR="${ACCEPTS_FIXTURE}/report" PATH="${ACCEPTS_FIXTURE}/bin:$
 fi
 assert_contains "$(cat "${ACCEPTS_FIXTURE}/report/corelib-build-report.md")" \
   "| check network compile-fail fixtures | FAIL" "an accepted compile-fail fixture fails its reported stage"
+
+for target in RawHandle RawDeadline UdpIsNotStream; do
+  assert_contains "${PASS_CLI_LOG}" "--target ${target} --plain --error-format=json" \
+    "compile-fail target ${target} reads diagnostic codes from --error-format=json"
+done
+
+WRONG_CODE_FIXTURE="${TMP}/compile-fail-wrong-code"
+make_fixture "${WRONG_CODE_FIXTURE}" pass
+if CORELIB_REPORT_DIR="${WRONG_CODE_FIXTURE}/report" PATH="${WRONG_CODE_FIXTURE}/bin:${PATH}" BESKID_TEST_COMPILE_FAIL_WRONG_CODE=1 \
+  bash "${WRONG_CODE_FIXTURE}/scripts/ci/corelib-gate.sh" >"${WRONG_CODE_FIXTURE}/stdout" 2>"${WRONG_CODE_FIXTURE}/stderr"; then
+  fail "a compile-fail fixture rejected with the wrong code must fail the Corelib gate, even if its message matches the old text"
+fi
+assert_contains "$(cat "${WRONG_CODE_FIXTURE}/stdout")" "was not rejected with a diagnostic coded E1205,E1206" \
+  "the wrong-code failure names the expected codes"
 
 NO_CORPUS_FIXTURE="${TMP}/no-corpus"
 make_fixture "${NO_CORPUS_FIXTURE}" pass

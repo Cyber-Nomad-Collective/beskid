@@ -142,31 +142,51 @@ corelib_run_network_test_matrix() {
   return "${failed}"
 }
 
-# Compile-fail targets of packages/network/tests/compile-fail: "target|diagnostic".
+# Compile-fail targets of packages/network/tests/compile-fail: "target|CODE[,CODE...]". A target
+# is accepted when the compiler rejects it with at least one of the listed diagnostic codes
+# (read from `--error-format=json`), never by matching message wording.
+#   RawHandle       E1211  inaccessible field `handle`
+#   RawDeadline     E1205 / E1206  raw integer where Option<Deadline> is required
+#   UdpIsNotStream  E1205 / E1206  UdpSocket passed where Stream is required
 NETWORK_COMPILE_FAIL_PROJECT="packages/network/tests/compile-fail"
 NETWORK_COMPILE_FAIL_TARGETS=(
-  "RawHandle|inaccessible struct field \`handle\`"
-  "RawDeadline|expected Core::Optional::Option::Option<Core::Time::Deadline::Deadline>, got i64"
-  "UdpIsNotStream|type mismatch: expected Stream"
+  "RawHandle|E1211"
+  "RawDeadline|E1205,E1206"
+  "UdpIsNotStream|E1205,E1206"
 )
 
+# Diagnostic codes in `--error-format=json` output (one JSON object per stderr line), one per line.
+corelib_diagnostic_codes() {
+  jq -Rr 'fromjson? | select(type == "object" and .["$message_type"] == "diagnostic") | .code.code? // empty' <<<"$1"
+}
+
 corelib_check_network_compile_fail() {
-  local dir="${CORELIB_ROOT}/${NETWORK_COMPILE_FAIL_PROJECT}" manifest entry target expected output failed=0
+  local dir="${CORELIB_ROOT}/${NETWORK_COMPILE_FAIL_PROJECT}" manifest entry target expected output codes code wanted matched failed=0
   if ! manifest="$(discover_project_manifest "${dir}")"; then
     return 1
   fi
+  command -v jq >/dev/null 2>&1 || { echo "::error::jq is required to read compile-fail diagnostic codes" >&2; return 1; }
   for entry in "${NETWORK_COMPILE_FAIL_TARGETS[@]}"; do
     target="${entry%%|*}"
     expected="${entry#*|}"
-    if output="$(cd "${dir}" && "$CLI" test --project "${manifest}" --target "${target}" --plain </dev/null 2>&1)"; then
+    if output="$(cd "${dir}" && "$CLI" test --project "${manifest}" --target "${target}" --plain --error-format=json </dev/null 2>&1)"; then
       echo "::error::compile-fail target ${target} compiled and passed; it must be rejected" >&2
       failed=1
-    elif [[ "${output}" != *"${expected}"* ]]; then
+      continue
+    fi
+    codes="$(corelib_diagnostic_codes "${output}")"
+    matched=""
+    for wanted in ${expected//,/ }; do
+      while IFS= read -r code; do
+        [[ "${code}" == "${wanted}" ]] && matched="${wanted}"
+      done <<<"${codes}"
+    done
+    if [[ -z "${matched}" ]]; then
       printf '%s\n' "${output}" | tail -n 20 >&2
-      echo "::error::compile-fail target ${target} was not rejected with: ${expected}" >&2
+      echo "::error::compile-fail target ${target} was not rejected with a diagnostic coded ${expected} (saw: $(tr '\n' ' ' <<<"${codes}"))" >&2
       failed=1
     else
-      echo "compile-fail OK: ${target} rejected with: ${expected}"
+      echo "compile-fail OK: ${target} rejected with ${matched}"
     fi
   done
   return "${failed}"
