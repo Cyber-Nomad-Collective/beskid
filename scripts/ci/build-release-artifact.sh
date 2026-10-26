@@ -9,8 +9,9 @@
 #
 # Checks that the CLI, LSP, and updater crates already carry the resolved
 # release version, builds the requested package(s) in release mode against the
-# checked-in Cargo.lock, and copies the binary or archive to <asset-name> in the
-# caller's cwd.
+# checked-in Cargo.lock with BESKID_RELEASE_VERSION set to that version (so all
+# three binaries report it), verifies each binary's `--version`, and copies the
+# binary or archive to <asset-name> in the caller's cwd.
 #
 # Usage: build-release-artifact.sh <package> <binary> <target> <asset-name> <release-version>
 #   package         beskid_cli | beskid_lsp | beskid_bundle | beskid_release_harness
@@ -54,7 +55,8 @@ cleanup_release_stage() {
 trap cleanup_release_stage EXIT
 
 # A Mac preview build (scripts/dev/preview.sh, BESKID_PREVIEW_BUILD=1) labels the
-# bundle 0.6.7-preview.N while the manifests still carry the last release version.
+# bundle 0.6.7-preview.N while the manifests still carry the last release version;
+# BESKID_RELEASE_VERSION below stamps that label into all three binaries.
 # Pipelines never preview; the label must be a preview label and nothing else.
 if [[ "${BESKID_PREVIEW_BUILD:-}" == 1 ]]; then
   [[ "${CI_SYSTEM_NAME:-}" != woodpecker ]] || { echo "preview builds are forbidden in Woodpecker" >&2; exit 1; }
@@ -80,6 +82,26 @@ else
     fi
   done
 fi
+
+# One version source: every Cargo build below reads BESKID_RELEASE_VERSION at
+# compile time, and `beskid`, `beskid_lsp` and `beskid-up` print it from
+# `--version`. A stable release equals the manifest version checked above; a
+# preview build stamps its label over the manifest version of all three.
+export BESKID_RELEASE_VERSION="${RELEASE_VERSION}"
+
+# Fail closed when a built binary does not report the release version exactly as
+# the installer (compiler/scripts/install-local-toolchain-bundle.sh) checks it.
+require_release_version() {
+  local binary="$1" name="$2" reported
+  reported="$("${binary}" --version 2>&1)" || {
+    echo "${binary} --version failed: ${reported}" >&2
+    exit 1
+  }
+  [[ "${reported}" == "${name} ${RELEASE_VERSION}" ]] || {
+    echo "${binary} reports '${reported}', expected '${name} ${RELEASE_VERSION}'" >&2
+    exit 1
+  }
+}
 
 # Every package builds with the qualified native tool driver receipt, so the
 # versioned CLI and LSP assets are byte-identical to the bundle binaries and the
@@ -171,6 +193,9 @@ if [[ "$PACKAGE" == "beskid_bundle" ]]; then
     "${bundle_dir}/bin/beskid_lsp${binary_extension}" \
     "${bundle_dir}/bin/beskid-up${binary_extension}" \
     "${bundle_dir}/bin/beskid_native_tool_driver${binary_extension}"
+  require_release_version "${bundle_dir}/bin/beskid${binary_extension}" beskid
+  require_release_version "${bundle_dir}/bin/beskid_lsp${binary_extension}" beskid_lsp
+  require_release_version "${bundle_dir}/bin/beskid-up${binary_extension}" beskid-up
   for profile in debug release; do
     [[ -f "${runtime_prefix}/lib/beskid-runtime/abi-5/${TARGET}/${profile}/abi.json" ]] || {
       echo "Native runtime kit omitted ${TARGET}/${profile}/abi.json" >&2
@@ -268,5 +293,9 @@ BIN_PROFILE_DIR=release
 BIN_BASE="target/${TARGET}/${BIN_PROFILE_DIR}/${BINARY}${binary_extension}"
 [[ -f "$BIN_BASE" ]] || { echo "Missing built artifact: $BIN_BASE" >&2; exit 1; }
 
+case "$BINARY" in
+  beskid_cli) require_release_version "$BIN_BASE" beskid ;;
+  beskid_lsp) require_release_version "$BIN_BASE" beskid_lsp ;;
+esac
 cp -f "$BIN_BASE" "${ROOT}/${ASSET_NAME}"
 echo "built ${ASSET_NAME} (${PACKAGE} ${RELEASE_VERSION} for ${TARGET})"

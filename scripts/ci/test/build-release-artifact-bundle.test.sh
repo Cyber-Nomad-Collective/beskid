@@ -77,10 +77,16 @@ profile_dir=release
 if [[ "${profile_dir}" == release-lsp ]]; then binaries=(beskid_lsp); else binaries=(beskid_cli beskid-up); fi
 [[ " $* " != *" -p beskid_lsp "* || "${profile_dir}" == release-lsp ]] || { echo 'beskid_lsp must build with --profile release-lsp' >&2; exit 1; }
 mkdir -p "target/${target}/${profile_dir}"
+# Like the real crates, each binary reports BESKID_RELEASE_VERSION from the build environment;
+# UNSTAMPED_LSP builds a language server that ignores it.
+stamp="${BESKID_RELEASE_VERSION:-}"
 for binary in "${binaries[@]}"; do
+  name="${binary}"; [[ "${binary}" != beskid_cli ]] || name=beskid
+  reported="${stamp}"; [[ -z "${UNSTAMPED_LSP:-}" || "${binary}" != beskid_lsp ]] || reported=0.0.1
   if [[ "${binary}" == beskid_cli ]]; then
-    cat >"target/${target}/${profile_dir}/${binary}${extension}" <<'CLI'
-#!/usr/bin/env bash
+    printf '#!/usr/bin/env bash\n[[ "${1:-}" != --version ]] || { echo "%s %s"; exit 0; }\n' "${name}" "${reported}" \
+      >"target/${target}/${profile_dir}/${binary}${extension}"
+    cat >>"target/${target}/${profile_dir}/${binary}${extension}" <<'CLI'
 set -euo pipefail
 if [[ "${1:-}" == dev && "${2:-}" == runtime-kit && "${3:-}" == build-native-host ]]; then
   target="$(basename "$(dirname "$(dirname "$0")")")"
@@ -119,7 +125,8 @@ if [[ -n "${OMIT_CORELIB_MOD:-}" ]]; then rm -rf "${BESKID_CORELIB_ROOT}/mods"; 
 printf '%064d\n' 0 >"${BESKID_CORELIB_ROOT}/.beskid-bundle.sha256"
 CLI
   else
-    printf '#!/usr/bin/env bash\n# built under %s\nexit 0\n' "${profile_dir}" >"target/${target}/${profile_dir}/${binary}${extension}"
+    printf '#!/usr/bin/env bash\n# built under %s\n[[ "${1:-}" != --version ]] || echo "%s %s"\nexit 0\n' \
+      "${profile_dir}" "${name}" "${reported}" >"target/${target}/${profile_dir}/${binary}${extension}"
   fi
   chmod +x "target/${target}/${profile_dir}/${binary}${extension}"
 done
@@ -202,6 +209,18 @@ if FAIL_MOD_BUILD=1 PATH="${tmp}/bin:${PATH}" bash "${tmp}/root/scripts/ci/build
   exit 1
 fi
 test ! -e "${tmp}/root/beskid-1.2.3-failed-mod.tar.gz"
+
+# Every bundle binary reports the release version exactly; one that does not fails the build.
+for binary in beskid beskid_lsp beskid-up; do
+  [[ "$("${tmp}/extracted-x86_64-unknown-linux-gnu/bin/${binary}" --version)" == "${binary} 1.2.3" ]]
+done
+if UNSTAMPED_LSP=1 PATH="${tmp}/bin:${PATH}" bash "${tmp}/root/scripts/ci/build-release-artifact.sh" \
+  beskid_bundle ignored x86_64-unknown-linux-gnu beskid-1.2.3-unstamped.tar.gz 1.2.3 2>"${tmp}/unstamped.err"; then
+  echo 'a bundle whose language server does not report the release version must be rejected' >&2
+  exit 1
+fi
+grep -Fq "reports 'beskid_lsp 0.0.1', expected 'beskid_lsp 1.2.3'" "${tmp}/unstamped.err"
+test ! -e "${tmp}/root/beskid-1.2.3-unstamped.tar.gz"
 
 # The build verifies the release version; it never edits manifests or the lock file.
 for manifest in beskid_cli beskid_lsp beskid_up; do

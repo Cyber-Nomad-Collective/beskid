@@ -25,7 +25,11 @@ package="$1" target="$3" asset="$4" label="$5"
 [[ "$package" == beskid_bundle && "${BESKID_PREVIEW_BUILD:-}" == 1 ]] || { echo "bad builder call" >&2; exit 1; }
 d="$(mktemp -d)/beskid-$label-$target"
 mkdir -p "$d/bin"
-printf '#!/bin/sh\necho beskid %s\n' "$label" >"$d/bin/beskid"; cp "$d/bin/beskid" "$d/bin/beskid_lsp"
+# Each binary reports the release version the builder stamps (UNSTAMPED_UP: the updater does not).
+for binary in beskid beskid_lsp beskid-up; do
+  version="$label"; [[ -z "${UNSTAMPED_UP:-}" || "$binary" != beskid-up ]] || version=0.6.6
+  printf '#!/bin/sh\necho %s %s\n' "$binary" "$version" >"$d/bin/$binary"
+done
 chmod 755 "$d/bin/"*
 printf '%s\n' "$label" >"$d/release-version.txt"
 tar -C "$(dirname "$d")" -czf "$asset" "$(basename "$d")"
@@ -112,10 +116,18 @@ assert_eq 1 "$code" "a failing build fails the run"
 assert_eq "$before" "$(ls "$tmp/home/.beskid/toolchains" | tr '\n' ' ')" "a failing build installs nothing"
 assert_eq "$wrapper_before" "$(< "$tmp/home/.local/bin/beskid")" "a failing build leaves the wrapper alone"
 
+# A bundle whose binaries do not all report the preview label installs nothing.
+before="$(ls "$tmp/home/.beskid/toolchains" | tr '\n' ' ')"
+UNSTAMPED_UP=1 run bash "$P" --skip-extension
+assert_eq 1 "$code" "an unstamped updater fails the run"
+assert_contains "$out" "bin/beskid-up reports 'beskid-up 0.6.6'" "the unstamped binary is named"
+assert_eq "$before" "$(ls "$tmp/home/.beskid/toolchains" | tr '\n' ' ')" "an unstamped bundle installs nothing"
+
 # The release builder accepts a preview label only behind the preview switch.
 BUILDER="$(cat "$ROOT/scripts/ci/build-release-artifact.sh")"
 assert_contains "$BUILDER" 'BESKID_PREVIEW_BUILD:-}" == 1' "the release builder has the preview switch"
 assert_contains "$BUILDER" 'preview builds are forbidden in Woodpecker' "pipelines can never preview"
 assert_contains "$BUILDER" 'preview\.[1-9][0-9]*$' "the preview label shape is enforced"
+assert_contains "$BUILDER" 'export BESKID_RELEASE_VERSION="${RELEASE_VERSION}"' "one version source stamps every binary"
 
 finish_tests

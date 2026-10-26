@@ -116,7 +116,8 @@ asset=".preview-bundle-$LABEL.tar.gz"
 echo "==> building the $LABEL bundle for $TARGET"
 (
   cd "$ROOT"
-  MACOSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET:-11.0}" BESKID_PREVIEW_BUILD=1 BESKID_PREVIEW_LABEL="$LABEL" \
+  # The label is the builder's release version: it stamps beskid, beskid_lsp and beskid-up alike.
+  MACOSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET:-11.0}" BESKID_PREVIEW_BUILD=1 \
     bash "$BUILDER" beskid_bundle ignored "$TARGET" "$asset" "$LABEL"
 )
 [[ -f "$ROOT/$asset" ]] || die "the builder did not produce $asset"
@@ -128,10 +129,15 @@ bundle_dirs=("$stage"/bundle/beskid-*)
 shopt -u nullglob
 (( ${#bundle_dirs[@]} == 1 )) || die 'the bundle must contain exactly one beskid-* directory'
 bundle_dir="${bundle_dirs[0]}"
-for required in bin/beskid bin/beskid_lsp release-version.txt; do
+for required in bin/beskid bin/beskid_lsp bin/beskid-up release-version.txt; do
   [[ -f "$bundle_dir/$required" ]] || die "the bundle omitted $required"
 done
 [[ "$(< "$bundle_dir/release-version.txt")" == "$LABEL" ]] || die 'the bundle is not labelled with the preview version'
+# The installer accepts a bundle only when every binary reports its version exactly.
+for binary in beskid beskid_lsp beskid-up; do
+  reported="$("$bundle_dir/bin/$binary" --version 2>&1 || true)"
+  [[ "$reported" == "$binary $LABEL" ]] || die "bin/$binary reports '$reported', expected '$binary $LABEL'"
+done
 
 # 2. The extension, bundling the preview language server.
 vsix=""
