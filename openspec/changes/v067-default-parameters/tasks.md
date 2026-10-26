@@ -2,5 +2,5 @@
 - [x] 1.1 Write the deltas.
 ## 2. Implementation
 - [x] 2.1 Top-level functions, caller information, E1251–E1256 (slice defaults).
-- [ ] 2.2 Methods, contract methods, inline-module functions and host, scope and hook parameters (slice defaults, in progress; align with its progress file when it reports).
+- [x] 2.2 Methods, contract methods with E1612, inline modules, hosts and scopes (slice defaults, `6115779d`).
 - [ ] 2.3 Register E1251–E1256 in the compiler registry and regenerate SDK files (integration).

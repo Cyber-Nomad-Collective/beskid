@@ -93,10 +93,10 @@ Registering the same implementation for the same key twice in one host and scope
 - **WHEN** the host is checked
 - **THEN** the compiler SHALL report **E1724** at the second line with the first line as a related location
 
-### Requirement: Scoped registrations in 0.6.7
-In 0.6.7 a `scoped` registration SHALL be created once per launch and not once per `with` activation. Creation per activation is a known limitation of 0.6.7 and SHALL be specified for a later release.
+### Requirement: Scoped registrations per activation
+A `scoped` registration SHALL be created once for each activation of its scope. Repeated `with` blocks of one scope SHALL be independent activations with separate instance sets.
 
 #### Scenario: Two activations of one scope
 - **GIVEN** a scope `Request` with a `scoped` service and two `with Request` blocks
 - **WHEN** both blocks run in one launch
-- **THEN** both blocks see the same instance of the service
+- **THEN** each block sees its own instance of the service
