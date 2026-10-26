@@ -7,6 +7,7 @@ The 0.6.7 stability proof built every Corelib package with `beskid build` in its
 - A library output contains only the items that it can execute. An item of the library's own units that reaches a compiler SDK host callback or `Core.Args` is not in the output, unless it is an `[Export]` item. An `[Export]` item that reaches one still fails the build.
 - An event declared without a capacity has the default capacity 16.
 - In a method of the type that declares an event, the bare name raises the event: `Changed(value);` is the same as `this.Changed(value);`.
+- An event's handlers live in the object that declares the event and are traced through it. A handler is no external GC root, so a program that exits with a subscribed handler exits cleanly (it trapped with `runtime_internal_corruption`), and an unreachable owner takes its handlers with it.
 
 ## Capabilities
 
@@ -14,10 +15,11 @@ The 0.6.7 stability proof built every Corelib package with `beskid build` in its
 - `core-library--foundation-and-primitives--core-args`.
 - `compiler--build-pipeline--backends-jit-aot`.
 - `language-meta--evaluation--events`.
+- `execution--runtime--memory-and-gc-runtime-contract`.
 
 ## Impact
 
-Library emission in `beskid_codegen` (`lower_prepared_syntax_library`), event facts in `beskid_queries` (default capacity, bare raise in the legality gate), the Corelib gate (`scripts/ci/corelib-package-builds.sh` builds every Corelib package). Target release: 0.6.7.
+Library emission in `beskid_codegen` (`lower_prepared_syntax_library`), event facts in `beskid_queries` (default capacity, inline event state, bare raise in the legality gate), the runtime event operations (`Runtime/PubSub/Events.bd`), the Corelib gate (`scripts/ci/corelib-package-builds.sh` builds every Corelib package). Target release: 0.6.7.
 
 ## Compatibility, Migration and Reversion
 

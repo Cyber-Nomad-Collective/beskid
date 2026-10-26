@@ -25,3 +25,18 @@ Raising or subscribing MUST target an in-scope event member on a value or `this`
 - **GIVEN** `type DataSource { string name; event Changed(); pub unit Update() { Changed(); } }` and a subscribed handler
 - **WHEN** `Update` runs
 - **THEN** the compiler reports no diagnostic and the handler runs once
+
+## ADDED Requirements
+
+### Requirement: Event handlers belong to the owning object
+The state of an event SHALL be part of the object that declares the event: the handler count and one handler word for each unit of capacity. The collector SHALL trace subscribed handlers through the owning object. A subscribed handler SHALL NOT be an external GC root. When the owning object becomes unreachable, its handlers and their captures SHALL become unreachable with it. A program that exits while handlers are still subscribed SHALL exit with the status that its entry returns; the runtime SHALL NOT report `runtime_internal_corruption` for those handlers.
+
+#### Scenario: Exit with a subscribed handler
+- **GIVEN** a program that subscribes a handler to an event and returns 0 from `Main` without unsubscribing it
+- **WHEN** the program runs
+- **THEN** the handler runs when the event is raised and the process exits with status 0
+
+#### Scenario: Owner collected while subscribed
+- **GIVEN** an object with a subscribed handler that captures a local, and no other reference to the object
+- **WHEN** a collection runs
+- **THEN** the collector reclaims the object and its handler, and the program continues and exits cleanly
