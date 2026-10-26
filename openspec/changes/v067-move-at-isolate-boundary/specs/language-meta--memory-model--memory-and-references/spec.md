@@ -87,7 +87,7 @@ Consumption SHALL be tracked per binding only for crossing operands. A consumpti
 - **THEN** no diagnostic is reported, the result is `[1]` and `s.buffer` is `[2]`
 
 ### Requirement: ORCA preconditions at crossings
-Two static guarantees SHALL hold for hand-over by pointer. First, deep persistent immutability: a value of Shared class is never written after construction. Second, external uniqueness at the crossing: a crossing operand `move x` SHALL be **E1241**, with the help to copy the value first, unless `x` is a `move` parameter or a local initialized from an owned expression (a call result, a literal, a struct, array or enum literal, or an element or member of one), and no expression in the callable makes `x` the value of a `let`, of an assignment or of a literal element, or reads `x` inside a closure that is not `[Captures]`-bounded, and the latest assignment to `x` on the crossing's path (if any) assigned an owned expression. An argument of a `move` or `mut` parameter, an argument of a `spawn` target and the value of `exchange` SHALL give the binding another name, because the callee may keep the value; such a binding SHALL NOT cross unless it is copied first (**E1241**, help "copy first"). An argument of a plain parameter SHALL NOT give the binding another name, because a plain parameter cannot be kept (see "Plain parameters cannot be kept"). A value passed to a generic parameter of type `T` SHALL count as possibly aliased: it SHALL be fresh or copied before it crosses (owner ruling). Internal aliases and cycles inside the handed-over graph are permitted. Aliases inside one isolate that never cross are permitted.
+Two static guarantees SHALL hold for hand-over by pointer. First, deep persistent immutability: a value of Shared class is never written after construction. Second, external uniqueness at the crossing: a crossing operand `move x` SHALL be **E1241**, with the help to copy the value first, unless `x` is a `move` parameter or a local initialized from an owned expression (a call result, a literal, a struct, array or enum literal, or an element or member of one), and no expression in the callable makes `x` the value of a `let`, of an assignment or of a literal element, or reads `x` inside a closure that is not `[Captures]`-bounded, and the latest assignment to `x` on the crossing's path (if any) assigned an owned expression. An argument of a `move` or `mut` parameter, an argument of a `spawn` target and the value of `exchange` SHALL give the binding another name, because the callee may keep the value; such a binding SHALL NOT cross unless it is copied first (**E1241**, help "copy first"). An argument of a plain parameter SHALL NOT give the binding another name, because a plain parameter cannot be kept (see "Plain parameters cannot be kept"). A binding passed as an argument whose parameter type is a type parameter, of the function or of its declaring type, SHALL count as aliased: a later crossing of the binding SHALL be **E1241** with the help "copy it first" (owner ruling). Internal aliases and cycles inside the handed-over graph are permitted. Aliases inside one isolate that never cross are permitted.
 
 #### Scenario: Aliased value at a crossing
 - **GIVEN** `unit Main(Port<u8[]> out) { u8[] a = Array.Empty<u8>(); u8[] b = a; out.Send(move a); }`
@@ -100,12 +100,27 @@ Two static guarantees SHALL hold for hand-over by pointer. First, deep persisten
 - **THEN** no diagnostic is reported and the value is handed over by pointer
 
 ### Requirement: Plain parameters cannot be kept
-A parameter with no modifier (neither `mut`, `move` nor `bulk`) of Moved class that is not `[CopyOnAssign]` SHALL NOT be kept by the callee. Keeping SHALL mean: storing the parameter into a field or element; using it as a field of a struct literal, an element of an array literal or a payload of an enum constructor (except into a corelib `[ScopeBorrowed]` view); returning it; or passing it as an argument the callee keeps (a `move` parameter, a `spawn` target call, the value of `exchange`). A local initialized or assigned from such a parameter SHALL be judged in the same way. A violation SHALL be **E1241** at the use with a machine-applicable fix that inserts `move` before the parameter. A `mut` parameter SHALL be exempt, so the idiom `AppendCrlf(mut u8[] data) { ...; return data; }` stays valid; the caller treats a `mut` argument as kept. A `List<T>` is `[CopyOnAssign]` and is therefore copied wherever it is kept. Generated native SDK constructors SHALL be exempt, because native Mods hand their arguments over.
+A parameter with no modifier (neither `mut`, `move` nor `bulk`) of Moved class that is not `[CopyOnAssign]` SHALL NOT be kept by the callee. Keeping SHALL mean: storing the parameter into a field or element; using it as a field of a struct literal, an element of an array literal or a payload of an enum constructor (except into a corelib `[ScopeBorrowed]` view); returning it; or passing it as an argument the callee keeps (a `move` parameter, a `spawn` target call, the value of `exchange`). A local initialized or assigned from such a parameter SHALL be judged in the same way. The receiver `this` of a method without `move this` (a plain or `mut this` receiver) SHALL follow the same keep rule; the fix SHALL insert `move` only for an explicit plain `this`. A plain parameter that a lambda captures SHALL NOT be kept by an escaping lambda: a lambda escapes when it is returned, stored, put into an element, a payload or a field without a `[Captures]` bound, spawned, or reached through a local that holds it. Such a capture SHALL be **E1241**. A violation SHALL be **E1241** at the use with a machine-applicable fix that inserts `move` before the parameter. A `mut` parameter SHALL be exempt, so the idiom `AppendCrlf(mut u8[] data) { ...; return data; }` stays valid; the caller treats a `mut` argument as kept. A `List<T>` is `[CopyOnAssign]` and is therefore copied wherever it is kept. Generated native SDK constructors SHALL be exempt, because native Mods hand their arguments over.
 
 #### Scenario: Stored plain parameter
 - **GIVEN** `unit Keep(u8[] data, Archive a) { a.blocks = data; }`
 - **WHEN** the function is checked
 - **THEN** the compiler SHALL report **E1241** at `data` with a fix that declares the parameter `move u8[] data`
+
+#### Scenario: Receiver stored
+- **GIVEN** `[Isolated] pub type Stage { u8[] buffer, pub unit Keep(Archive a) { a.owner = this; } }` with a receiver that is not `move this`
+- **WHEN** the method is checked
+- **THEN** the compiler SHALL report **E1241** at `this`
+
+#### Scenario: Escaping lambda captures a plain parameter
+- **GIVEN** `() => u8[] Reader(u8[] data) { return () => data; }`
+- **WHEN** the function is checked
+- **THEN** the compiler SHALL report **E1241** at the capture of `data`
+
+#### Scenario: Type parameter argument aliases
+- **GIVEN** `items.Push(b); out.Send(move b);` where `Push` takes a parameter of type `T`
+- **WHEN** the function is checked
+- **THEN** the compiler SHALL report **E1241** at `move b` with the help "copy it first"
 
 #### Scenario: Mut parameter is exempt
 - **GIVEN** `u8[] AppendCrlf(mut u8[] data) { Array.Append<u8>(data, 13_u8); return data; }`
@@ -116,3 +131,16 @@ A parameter with no modifier (neither `mut`, `move` nor `bulk`) of Moved class t
 - **GIVEN** `Archive.Store(move data);` followed by `out.Send(move data)` of the same binding
 - **WHEN** the function is checked
 - **THEN** the compiler SHALL report **E1241** with the help to copy the value first
+
+### Requirement: Nested copy-on-assign values at a crossing
+A crossing operand whose type holds a `[CopyOnAssign]` value below the top level (in a field, an array element, an enum payload, or as the element type of a top-level `List`, such as `List<List<T>>`) SHALL be **E1241** with the help "copy it first", because the holder of the inner value may be reachable from other names of the sender. A top-level `List<T>` whose elements hold no `[CopyOnAssign]` value SHALL cross detached from its sharers. A generic operand of type `T` SHALL be judged where `T` is concrete.
+
+#### Scenario: List of lists
+- **GIVEN** `out.Send(move rows)` where `rows` is a `List<List<i64>>`
+- **WHEN** the function is checked
+- **THEN** the compiler SHALL report **E1241** with the help "copy it first"
+
+#### Scenario: Flat list
+- **GIVEN** `out.Send(move values)` where `values` is a `List<i64>` that is a unique local
+- **WHEN** the function is checked
+- **THEN** no diagnostic is reported and the list crosses detached
