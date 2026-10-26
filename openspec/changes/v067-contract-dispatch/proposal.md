@@ -8,7 +8,7 @@ A contract bounds a type parameter, but a value cannot have a contract type. Cod
 - A concrete value converts to a contract type where a contract type is expected. Calls through a contract value dispatch at run time.
 - Contract values may be locals (including `mut`), fields, array and `List` elements, parameters, return values and `inject Contract[]` elements.
 - A singular `inject` of a contract may bind a different implementation per scope.
-- Crossing rules apply to the value a contract value holds.
+- Crossing rules apply to the value a contract value holds; the transfer class comes from the embedded markers.
 - The exclusion "contract-typed parameters that receive primitives stay out of 0.6.7" is removed from `v067-primitive-conformance`.
 
 ## Capabilities

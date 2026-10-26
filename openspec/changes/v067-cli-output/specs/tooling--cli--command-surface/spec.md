@@ -30,3 +30,11 @@ When the reader of standard output or standard error closes the pipe (EPIPE), th
 - **GIVEN** a command with long output
 - **WHEN** the user runs `beskid tree | head -n 1`
 - **THEN** the command ends without a signal and prints no error
+
+### Requirement: No persisted query cache in the CLI
+A one-shot CLI command SHALL NOT load or save a snapshot of the query database between runs. Long-running tools, such as the language server, keep their caches in memory only for the life of the process. Diagnostics SHALL NOT depend on a snapshot.
+
+#### Scenario: Repeated check
+- **GIVEN** two runs of `beskid check` on one project
+- **WHEN** the second run starts
+- **THEN** it does not read a query snapshot written by the first run, and no snapshot file is written

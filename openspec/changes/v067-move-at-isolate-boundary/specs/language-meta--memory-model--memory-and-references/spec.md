@@ -74,7 +74,7 @@ Consumption SHALL be tracked per binding only for crossing operands. A consumpti
 - **THEN** no diagnostic is reported
 
 ### Requirement: Taking a field out at a crossing
-`move x.f` SHALL be accepted only as a crossing operand. The field's type SHALL have a canonical empty value: `Option<T>` (left as `Option::None`), `T[]` (left as the empty array) or `List<T>` (left as the empty list). The expression SHALL yield the field value and SHALL store the canonical empty value into the field in the same evaluation step. `move x.f` on a field of any other type SHALL be **E1243** with the help "use `exchange(x.f, v)`". The builtin `exchange(place, value)` SHALL store `value` into `place` and return the previous value; it SHALL NOT require `move`.
+`move x.f` SHALL be accepted only as a crossing operand. The field's type SHALL have a canonical empty value: `Option<T>` (left as `Option::None`) or `T[]` (left as the empty array). A `List<T>` has no canonical empty value, so `move x.items` of a `List<T>` field SHALL be **E1243** with the help "use `exchange(<place>, <value>)`". The expression SHALL yield the field value and SHALL store the canonical empty value into the field in the same evaluation step. `move x.f` on a field of any other type SHALL be **E1243** with the help "use `exchange(x.f, v)`". The builtin `exchange(place, value)` SHALL store `value` into `place` and return the previous value; it SHALL NOT require `move`.
 
 #### Scenario: Send a field
 - **GIVEN** `unit Flush(Port<u8[]> out, Stage s) { out.Send(move s.buffer); }` where `buffer` is a `u8[]` field
@@ -87,7 +87,7 @@ Consumption SHALL be tracked per binding only for crossing operands. A consumpti
 - **THEN** no diagnostic is reported, the result is `[1]` and `s.buffer` is `[2]`
 
 ### Requirement: ORCA preconditions at crossings
-Two static guarantees SHALL hold for hand-over by pointer. First, deep persistent immutability: a value of Shared class is never written after construction. Second, external uniqueness at the crossing: a crossing operand `move x` SHALL be **E1241**, with the help to copy the value first, unless `x` is a `move` parameter or a local initialized from an owned expression (a call result, a literal, a struct, array or enum literal, or an element or member of one), and no expression in the callable makes `x` the value of a `let`, of an assignment or of a literal element, or reads `x` inside a closure that is not `[Captures]`-bounded, and the latest assignment to `x` on the crossing's path (if any) assigned an owned expression. Passing `x` as an argument of an ordinary call SHALL NOT give it another name. Internal aliases and cycles inside the handed-over graph are permitted. Aliases inside one isolate that never cross are permitted.
+Two static guarantees SHALL hold for hand-over by pointer. First, deep persistent immutability: a value of Shared class is never written after construction. Second, external uniqueness at the crossing: a crossing operand `move x` SHALL be **E1241**, with the help to copy the value first, unless `x` is a `move` parameter or a local initialized from an owned expression (a call result, a literal, a struct, array or enum literal, or an element or member of one), and no expression in the callable makes `x` the value of a `let`, of an assignment or of a literal element, or reads `x` inside a closure that is not `[Captures]`-bounded, and the latest assignment to `x` on the crossing's path (if any) assigned an owned expression. An argument of a `move` or `mut` parameter, an argument of a `spawn` target and the value of `exchange` SHALL give the binding another name, because the callee may keep the value; such a binding SHALL NOT cross unless it is copied first (**E1241**, help "copy first"). An argument of a plain parameter SHALL NOT give the binding another name, because a plain parameter cannot be kept (see "Plain parameters cannot be kept"). A value passed to a generic parameter of type `T` SHALL count as possibly aliased: it SHALL be fresh or copied before it crosses (owner ruling). Internal aliases and cycles inside the handed-over graph are permitted. Aliases inside one isolate that never cross are permitted.
 
 #### Scenario: Aliased value at a crossing
 - **GIVEN** `unit Main(Port<u8[]> out) { u8[] a = Array.Empty<u8>(); u8[] b = a; out.Send(move a); }`
@@ -98,3 +98,21 @@ Two static guarantees SHALL hold for hand-over by pointer. First, deep persisten
 - **GIVEN** `unit Main(Port<u8[]> out) { u8[] a = Array.Zeroed<u8>(8_i64); out.Send(move a); }`
 - **WHEN** the item is checked
 - **THEN** no diagnostic is reported and the value is handed over by pointer
+
+### Requirement: Plain parameters cannot be kept
+A parameter with no modifier (neither `mut`, `move` nor `bulk`) of Moved class that is not `[CopyOnAssign]` SHALL NOT be kept by the callee. Keeping SHALL mean: storing the parameter into a field or element; using it as a field of a struct literal, an element of an array literal or a payload of an enum constructor (except into a corelib `[ScopeBorrowed]` view); returning it; or passing it as an argument the callee keeps (a `move` parameter, a `spawn` target call, the value of `exchange`). A local initialized or assigned from such a parameter SHALL be judged in the same way. A violation SHALL be **E1241** at the use with a machine-applicable fix that inserts `move` before the parameter. A `mut` parameter SHALL be exempt, so the idiom `AppendCrlf(mut u8[] data) { ...; return data; }` stays valid; the caller treats a `mut` argument as kept. A `List<T>` is `[CopyOnAssign]` and is therefore copied wherever it is kept. Generated native SDK constructors SHALL be exempt, because native Mods hand their arguments over.
+
+#### Scenario: Stored plain parameter
+- **GIVEN** `unit Keep(u8[] data, Archive a) { a.blocks = data; }`
+- **WHEN** the function is checked
+- **THEN** the compiler SHALL report **E1241** at `data` with a fix that declares the parameter `move u8[] data`
+
+#### Scenario: Mut parameter is exempt
+- **GIVEN** `u8[] AppendCrlf(mut u8[] data) { Array.Append<u8>(data, 13_u8); return data; }`
+- **WHEN** the function is checked
+- **THEN** no diagnostic is reported
+
+#### Scenario: Argument of a move parameter
+- **GIVEN** `Archive.Store(move data);` followed by `out.Send(move data)` of the same binding
+- **WHEN** the function is checked
+- **THEN** the compiler SHALL report **E1241** with the help to copy the value first

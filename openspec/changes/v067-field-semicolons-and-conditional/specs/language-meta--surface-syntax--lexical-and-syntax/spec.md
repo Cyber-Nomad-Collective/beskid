@@ -32,3 +32,11 @@ The grammar SHALL contain the conditional expression `cond ? a : b`. It SHALL bi
 - **GIVEN** `let v = Parse(text)?;`
 - **WHEN** the statement is parsed
 - **THEN** the `?` is the propagation suffix and not a conditional
+
+### Requirement: Statement-level match needs no semicolon
+An expression statement that starts with `match` SHALL NOT need a terminating `;`. A `;` after it SHALL stay valid. The formatter SHALL keep the written form and SHALL NOT add or remove the `;`.
+
+#### Scenario: Match without semicolon
+- **GIVEN** `match k { 0 => Log("zero"), _ => Log("other") }` as a statement
+- **WHEN** the statement is parsed
+- **THEN** no diagnostic is reported

@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: Host hook order
-The runtime SHALL run host hooks in this order. At `launch`, the global-scope `init` hooks SHALL run first, and then the `startup` hooks, after the container has started. When a `with` block enters a named scope, the `init` hooks of that scope SHALL run after the scope is entered. When a `with` block exits by any path, including normal end, `return`, `break` and `continue`, the `dispose` hooks of that scope SHALL run before the scope is left; they SHALL run only for an activation whose `init` completed. When the launch lifetime ends, the global `dispose` hooks SHALL run before the container shuts down. In a host chain, `init` and `startup` hooks SHALL run base host first, and `dispose` hooks SHALL run the launched host first. A `startup` hook declared inside a named scope SHALL be **E1717**.
+The runtime SHALL run host hooks in this order. At `launch`, the global-scope `init` hooks SHALL run first, and then the `startup` hooks, after the container has started. When a `with` block enters a named scope, the `init` hooks of that scope SHALL run after the scope is entered. When a `with` block exits by any path, including normal end, `return`, `break` and `continue`, the `dispose` hooks of that scope SHALL run before the scope is left; they SHALL run only for an activation whose `init` completed. When the launch lifetime ends, the global `dispose` hooks SHALL run before the container shuts down. In a host chain, `init` and `startup` hooks SHALL run base host first, and `dispose` hooks SHALL run the launched host first and the base host last. Within one host, `dispose` hooks SHALL run in the reverse of their declaration order. A `startup` hook declared inside a named scope SHALL be **E1717**.
 
 #### Scenario: Order at launch
 - **GIVEN** a host with a global `init`, a `startup` and a global `dispose`
@@ -84,3 +84,19 @@ The arguments of `launch` SHALL be checked against the parameters of the host, a
 - **GIVEN** `host App(string name)` with a `startup` hook that reads `name`
 - **WHEN** the program is checked and run with `launch App("Ada")`
 - **THEN** the hook reads `"Ada"`
+
+### Requirement: Duplicate registration
+Registering the same implementation for the same key twice in one host and scope SHALL be **E1724** at the second registration, with the first registration as a related location.
+
+#### Scenario: Same registration twice
+- **GIVEN** a host that contains `single Hello for Greeter;` twice
+- **WHEN** the host is checked
+- **THEN** the compiler SHALL report **E1724** at the second line with the first line as a related location
+
+### Requirement: Scoped registrations in 0.6.7
+In 0.6.7 a `scoped` registration SHALL be created once per launch and not once per `with` activation. Creation per activation is a known limitation of 0.6.7 and SHALL be specified for a later release.
+
+#### Scenario: Two activations of one scope
+- **GIVEN** a scope `Request` with a `scoped` service and two `with Request` blocks
+- **WHEN** both blocks run in one launch
+- **THEN** both blocks see the same instance of the service
