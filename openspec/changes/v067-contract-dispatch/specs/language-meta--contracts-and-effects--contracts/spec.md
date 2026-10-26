@@ -60,7 +60,7 @@ A call through a contract value SHALL dispatch at run time to the implementation
 - **THEN** the first call runs `Square.Area` and the second runs `Circle.Area`
 
 ### Requirement: Equality of contract values
-The operators `==` and `!=` SHALL be defined only between two contract values, of any contracts. Two contract values SHALL be equal exactly when they hold values of the same implementing type and the held values are identical: the same object for a `type` and for `string`, and an equal value for a primitive (floats compare by IEEE equality). A comparison between a contract value and a concrete operand SHALL be an invalid binary operation, because operators do not box. Ordering and arithmetic operators SHALL NOT be defined on contract values and SHALL be reported as an invalid binary operation.
+The operators `==` and `!=` SHALL be defined only between two contract values, of any contracts. Two contract values SHALL be equal exactly when they hold values of the same implementing type and the held values are identical: the same object for a `type` and for `string`, and an equal value for a primitive (floats compare by IEEE equality). A comparison between a contract value and a concrete operand SHALL be **E1209**, the invalid binary operation, because operators do not box. Ordering and arithmetic operators SHALL NOT be defined on contract values and SHALL be **E1209**.
 
 #### Scenario: Same object
 - **GIVEN** `Greeter a = h; Greeter b = a;` where `h` is a `Hello` object
@@ -75,12 +75,12 @@ The operators `==` and `!=` SHALL be defined only between two contract values, o
 #### Scenario: Contract against a concrete operand
 - **GIVEN** a contract value `a` and an `i64` value `n`
 - **WHEN** `a == n` is checked
-- **THEN** the compiler SHALL report an invalid binary operation
+- **THEN** the compiler SHALL report **E1209**
 
 #### Scenario: Ordering
 - **GIVEN** two contract values `a` and `b`
 - **WHEN** `a < b` is checked
-- **THEN** the compiler SHALL report an invalid binary operation
+- **THEN** the compiler SHALL report **E1209**
 
 ### Requirement: Contract values have no serialization shape
 A contract value SHALL have no serialization shape, no field codec and no dynamic packing. An attempt to serialize or pack one SHALL be an error that names "contract value".
