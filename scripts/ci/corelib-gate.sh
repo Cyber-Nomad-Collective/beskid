@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Corelib gate: workspace/manifest quality checks (corelibQuality) + the
-# beskid_cli dev corelib test suite (corelibTest).
+# Corelib gate: workspace/manifest quality checks (corelibQuality), a standalone
+# `beskid build` of every Corelib package, and the beskid_cli dev corelib test
+# suite (corelibTest).
 #
 # Runs directly on a native CI worker and surfaces full per-test output.
 #
@@ -613,6 +614,11 @@ export BESKID_RUNTIME_KIT_PROFILE=release
 corelib_report_step "stage native runtime kit" \
   corelib_run_bounded_phase "stage native runtime kit" "${CORELIB_RUNTIME_KIT_TIMEOUT:-900}" \
   bash scripts/stage-native-runtime-kit.sh
+# Every Corelib package must build standalone (`beskid build` in its directory of a sealed
+# Corelib copy), as a user does; the test matrix builds the packages only through the workspace.
+corelib_report_step "build Corelib packages standalone" \
+  corelib_run_bounded_phase "build Corelib packages standalone" "${CORELIB_PACKAGE_BUILDS_TIMEOUT:-3600}" \
+  bash "${ROOT}/scripts/ci/corelib-package-builds.sh" "${CLI}"
 cd "${TESTS_DIR}"
 corelib_report_step "run Corelib tests" corelib_run_test_matrix
 corelib_report_step "run network package tests" corelib_run_network_test_matrix

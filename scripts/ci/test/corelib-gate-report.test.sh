@@ -25,6 +25,7 @@ make_fixture() {
   mkdir -p "${fixture}/scripts/ci" "${fixture}/compiler/corelib/beskid_corelib/tests/corelib_tests" \
     "${fixture}/bin"
   cp "${ROOT}/scripts/ci/corelib-gate.sh" "${fixture}/scripts/ci/corelib-gate.sh"
+  cp "${ROOT}/scripts/ci/corelib-package-builds.sh" "${fixture}/scripts/ci/corelib-package-builds.sh"
   cp "${ROOT}/scripts/ci/verify-release-corelib-bundle.mjs" "${fixture}/scripts/ci/verify-release-corelib-bundle.mjs"
   chmod +x "${fixture}/scripts/ci/corelib-gate.sh"
 
@@ -192,7 +193,14 @@ diag() {
   echo 'plain progress noise that is not JSON' >&2
   printf '{"$message_type":"diagnostic","schema":1,"message":"%s","code":{"code":"%s","explanation":null,"url":null},"level":"error","origin":null,"spans":[],"children":[],"tags":[],"rendered":null}\n' "$2" "$1" >&2
 }
+if [[ "${1:-}" == build && "${2:-}" == --plain ]]; then
+  [[ -n "${BESKID_TEST_CLI_LOG:-}" ]] && printf 'build|%s\n' "$(basename "$PWD")" >> "${BESKID_TEST_CLI_LOG}"
+  exit 0
+fi
 if [[ "${1:-}" == dev && "${2:-}" == corelib ]]; then
+  # The CLI's own Corelib: the fixture's (the standalone package-build step runs in compiler/).
+  BESKID_CORELIB_SOURCE="${BESKID_CORELIB_SOURCE:-$PWD/corelib}"
+  mkdir -p "$BESKID_CORELIB_ROOT"
   cp -R "$BESKID_CORELIB_SOURCE/packages" "$BESKID_CORELIB_ROOT/packages"
   cp -R "$BESKID_CORELIB_SOURCE/beskid_corelib" "$BESKID_CORELIB_ROOT/beskid_corelib"
   rm "$BESKID_CORELIB_ROOT/packages/foundation/Project.lock"
@@ -200,7 +208,8 @@ if [[ "${1:-}" == dev && "${2:-}" == corelib ]]; then
   find "$BESKID_CORELIB_ROOT/packages" -mindepth 2 -name fixture_tests.bproj -print0 |
     while IFS= read -r -d '' manifest; do rm -rf "$(dirname "$manifest")"; done
   cp "$BESKID_CORELIB_SOURCE/CoreLib.bws" "$BESKID_CORELIB_ROOT/CoreLib.bws"
-  node "$BESKID_TEST_VERIFY_SCRIPT" --fingerprint "$BESKID_CORELIB_ROOT" > "$BESKID_CORELIB_ROOT/.beskid-bundle.sha256"
+  [[ -z "${BESKID_TEST_VERIFY_SCRIPT:-}" ]] ||
+    node "$BESKID_TEST_VERIFY_SCRIPT" --fingerprint "$BESKID_CORELIB_ROOT" > "$BESKID_CORELIB_ROOT/.beskid-bundle.sha256"
   if [[ "${BESKID_TEST_TAMPER_MATERIALIZED:-0}" == 1 ]]; then
     printf 'tampered\n' >> "$BESKID_CORELIB_ROOT/CoreLib.bws"
   fi
@@ -249,10 +258,12 @@ assert_contains "${PASS_MD}" "| quality checks | PASS |" "report records quality
 assert_contains "${PASS_MD}" "| build beskid_cli (release) | PASS |" "report records build command outcome"
 assert_contains "${PASS_MD}" "| stage native runtime kit | PASS |" "report records runtime staging outcome"
 assert_contains "${PASS_MD}" "| run Corelib tests | PASS |" "report records test command outcome"
+assert_contains "${PASS_MD}" "| build Corelib packages standalone | PASS |" "report records the standalone package builds"
 assert_contains "${PASS_MD}" "| provision release-case inputs | PASS |" "report records release-case input provisioning"
 assert_contains "${PASS_MD}" "| run network package tests | PASS |" "report records the network package test step"
 assert_contains "${PASS_MD}" "| check network compile-fail fixtures | PASS |" "report records the compile-fail fixture step"
 PASS_CLI_LOG="$(cat "${PASS_FIXTURE}/cli.log")"
+assert_contains "${PASS_CLI_LOG}" "build|foundation" "every Corelib package is built standalone"
 for project in uri codec crypto x509 connect tls quic http2 http3 websocket web; do
   dir="packages/${project}/tests"
   assert_contains "${PASS_CLI_LOG}" "/compiler/corelib/${dir}|test --project fixture_tests.bproj --all-targets --plain --exclude-tag bench" \
