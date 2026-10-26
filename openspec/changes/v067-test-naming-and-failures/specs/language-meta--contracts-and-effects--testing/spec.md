@@ -17,3 +17,16 @@ A failed assertion in `Testing.Assert` SHALL end the test as a test failure. It 
 - **GIVEN** one failed assertion and one crashed test
 - **WHEN** the run ends
 - **THEN** the summary counts two failures
+
+### Requirement: A project without tests passes
+`beskid test` without `--target` on a project whose manifest has no `Test` or `Lib` target (for example a project with only an `App` target) SHALL run no tests, SHALL print "No tests found." and SHALL exit with status 0, as it does for a `Lib` target that declares no `test` item. With `--json` the command SHALL write one `result` record with status `success` and a summary with zero tests. `beskid test --target <name>` where `<name>` is not a `Test` or `Lib` target of the manifest SHALL fail with a message that names the target.
+
+#### Scenario: App-only project
+- **GIVEN** a project whose manifest declares only `target "app" { kind = App; entry = "Main.bd"; }`
+- **WHEN** `beskid test --project <project>` runs
+- **THEN** the command prints "No tests found." and exits with status 0
+
+#### Scenario: Selected target that is not a test target
+- **GIVEN** the same project
+- **WHEN** `beskid test --project <project> --target app` runs
+- **THEN** the command fails with "target `app` is not a Test or Lib target"

@@ -8,3 +8,6 @@
 - [ ] 2.3 W2101 and tags.
 - [ ] 2.4 Source mapping and dedupe.
 - [ ] 2.5 `--error-format=json`.
+
+## Close wave
+- [x] Mod activation errors keep their code and authored file (`beskid check`, all targets and `--all-members`).

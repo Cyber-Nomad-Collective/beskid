@@ -6,3 +6,6 @@
 - [x] 2.1 Restrict the affine analysis to crossings (slice own).
 - [ ] 2.2 Mutating collection methods and copy on assignment (slice coll).
 - [ ] 2.3 Remove ordinary-code `move` from Corelib, Book and fixtures.
+
+## Close wave
+- [x] A plain parameter sent as a crossing operand is E1241 with the RB5 wording, help and `move` fix.
