@@ -616,8 +616,10 @@ corelib_report_step "stage native runtime kit" \
   bash scripts/stage-native-runtime-kit.sh
 # Every Corelib package must build standalone (`beskid build` in its directory of a sealed
 # Corelib copy), as a user does; the test matrix builds the packages only through the workspace.
+# The builds use the profile of the staged runtime kit.
 corelib_report_step "build Corelib packages standalone" \
   corelib_run_bounded_phase "build Corelib packages standalone" "${CORELIB_PACKAGE_BUILDS_TIMEOUT:-3600}" \
+  env CORELIB_PACKAGE_BUILD_PROFILE="${BESKID_RUNTIME_KIT_PROFILE}" \
   bash "${ROOT}/scripts/ci/corelib-package-builds.sh" "${CLI}"
 cd "${TESTS_DIR}"
 corelib_report_step "run Corelib tests" corelib_run_test_matrix

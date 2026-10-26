@@ -24,7 +24,7 @@ if [[ "$1 $2" == "dev corelib" ]]; then
   printf 'schema {\n  name = "schema"\n  type = Bsol\n}\n' >"$out/packages/schema/schema.bproj"
   exit 0
 fi
-[[ "$1" == build && "$2" == --plain ]] || exit 9
+[[ "$1" == build && "$2" == --plain && "${3:-}" == "${EXPECT_PROFILE_FLAG:-}" ]] || exit 9
 [[ "$BESKID_CORELIB_ROOT" == "$(cd ../.. && pwd)" ]] || { echo "wrong Corelib root" >&2; exit 8; }
 package="$(basename "$PWD")"
 echo "built $package" >>"$BESKID_CORELIB_ROOT/../built.txt"
@@ -50,6 +50,11 @@ assert_eq 1 "$code" "a failing package fails the gate"
 assert_contains "$out" "FAIL beta (exit 1)" "the failing package is named"
 assert_contains "$out" "internal compiler error" "its log tail is shown"
 assert_contains "$out" "1/2 passed" "the summary counts the failure"
+
+CORELIB_PACKAGE_BUILD_PROFILE=release EXPECT_PROFILE_FLAG=--release run bash "$GATE" "$tmp/beskid" "$tmp/release"
+assert_eq 0 "$code" "a release kit builds the packages with --release"
+CORELIB_PACKAGE_BUILD_PROFILE=fast run bash "$GATE" "$tmp/beskid" "$tmp/badprofile"
+assert_eq 2 "$code" "an unknown build profile is a usage error"
 
 mkdir -p "$tmp/used"; touch "$tmp/used/stale"
 run bash "$GATE" "$tmp/beskid" "$tmp/used"

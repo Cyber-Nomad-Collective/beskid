@@ -9,6 +9,8 @@
 #   beskid-cli  the CLI under test (its embedded Corelib is materialized)
 #   work-dir    empty or absent directory for the Corelib copy (default: a temporary one)
 # Environment: BESKID_RUNTIME_PREFIX (runtime kit for linked library outputs),
+#   CORELIB_PACKAGE_BUILD_PROFILE (debug, the default of `beskid build`, or release: the kit
+#   profile the prefix holds),
 #   CORELIB_PACKAGE_BUILD_JOBS (parallel builds, default 4),
 #   CORELIB_PACKAGE_BUILD_TIMEOUT (seconds per package, default 900).
 set -euo pipefail
@@ -49,6 +51,12 @@ for directory in "$corelib"/packages/*/; do
 done
 (( ${#packages[@]} > 0 )) || { echo "corelib-package-builds: no Corelib packages found" >&2; exit 1; }
 
+case "${CORELIB_PACKAGE_BUILD_PROFILE:-debug}" in
+  debug) export PROFILE_FLAG="" ;;
+  release) export PROFILE_FLAG="--release" ;;
+  *) echo "corelib-package-builds: CORELIB_PACKAGE_BUILD_PROFILE must be debug or release" >&2; exit 2 ;;
+esac
+
 timeout_cmd=()
 if command -v timeout >/dev/null 2>&1; then
   timeout_cmd=(timeout --kill-after=30s "${CORELIB_PACKAGE_BUILD_TIMEOUT:-900}")
@@ -57,8 +65,8 @@ export CLI corelib logs
 export TIMEOUT_CMD="${timeout_cmd[*]}"
 build_one() {
   local package="$1" rc=0
-  # shellcheck disable=SC2086 # TIMEOUT_CMD is a word list on purpose.
-  (cd "$corelib/packages/$package" && BESKID_CORELIB_ROOT="$corelib" $TIMEOUT_CMD "$CLI" build --plain) \
+  # shellcheck disable=SC2086 # TIMEOUT_CMD and PROFILE_FLAG are word lists on purpose.
+  (cd "$corelib/packages/$package" && BESKID_CORELIB_ROOT="$corelib" $TIMEOUT_CMD "$CLI" build --plain $PROFILE_FLAG) \
     >"$logs/$package.log" 2>&1 || rc=$?
   printf '%s %s\n' "$package" "$rc"
 }
