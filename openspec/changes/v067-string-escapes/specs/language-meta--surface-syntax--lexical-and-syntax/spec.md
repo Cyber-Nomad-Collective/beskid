@@ -50,3 +50,29 @@ The assignment operators SHALL be `=`, `+=`, `-=`, `*=`, `/=` and `%=`. For an a
 - **GIVEN** the literal `'ab'`
 - **WHEN** the literal is parsed
 - **THEN** the parser SHALL report **E0114**
+
+### Requirement: Word literal suffix
+The integer literal suffix `_word` SHALL be part of the lexical grammar beside the other numeric suffixes. A literal with the suffix `_word` SHALL have type `word`, and the literal typing rules, including the fit check **T0905**, SHALL apply to it as to any suffix. A default parameter value MAY use it.
+
+#### Scenario: Word literal
+- **GIVEN** `let n = 4096_word;`
+- **WHEN** the code is checked
+- **THEN** `n` has type `word`
+
+#### Scenario: Word suffix against another context
+- **GIVEN** `u8 x = 1_word;`
+- **WHEN** the code is checked
+- **THEN** the compiler SHALL report **E1206**
+
+### Requirement: Documentation run attachment
+A `///` documentation run SHALL be attached to the item that follows it directly. A documentation run that a blank line separates from its item SHALL NOT parse. A file header SHALL use `//` comments, not `///`.
+
+#### Scenario: Detached documentation run
+- **GIVEN** a `///` run followed by a blank line and then an item
+- **WHEN** the file is parsed
+- **THEN** the parser SHALL report a parse error at the run
+
+#### Scenario: File header
+- **GIVEN** a `//` comment run followed by a blank line and then an item
+- **WHEN** the file is parsed
+- **THEN** no diagnostic is reported

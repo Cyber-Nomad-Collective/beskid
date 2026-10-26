@@ -6,6 +6,7 @@ A string literal supports only `\"`, `\\` and `\${`. Programs cannot write a new
 
 - String literals accept `\n`, `\t`, `\r`, `\0` and `\u{...}`.
 - Any other escape is an error: E0109 for an unknown escape, E0110 for an invalid `\u{...}` value.
+- The integer literal suffix `_word`, and the rule that a `///` run must be attached to its item.
 - The compound assignment operators `*=`, `/=` and `%=` join `+=` and `-=`.
 
 ## Capabilities
