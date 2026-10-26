@@ -1851,7 +1851,7 @@
             "end": 3288,
             "source": {
               "path": "source-tests-cli_journeys_v06.rs",
-              "sha256": "cbbef671299d95d708bf69f7f4aca3c82564464ba0f557d813eae1226da7f194"
+              "sha256": "56fb3589d51ec9adad15a6bdcb9f8d6758e4c1e68cf538df0ff38283fc31cd21"
             },
             "start": 3223,
             "test_id": "cli06_01_root_help_shows_add_example_and_new_add_run_sequence"
@@ -1861,7 +1861,7 @@
             "end": 4470,
             "source": {
               "path": "source-tests-cli_journeys_v06.rs",
-              "sha256": "cbbef671299d95d708bf69f7f4aca3c82564464ba0f557d813eae1226da7f194"
+              "sha256": "56fb3589d51ec9adad15a6bdcb9f8d6758e4c1e68cf538df0ff38283fc31cd21"
             },
             "start": 4401,
             "test_id": "cli06_01_add_help_explains_effects_project_targeting_and_recovery"
@@ -1885,7 +1885,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-tests-cli_journeys_v06.rs",
-          "sha256": "cbbef671299d95d708bf69f7f4aca3c82564464ba0f557d813eae1226da7f194"
+          "sha256": "56fb3589d51ec9adad15a6bdcb9f8d6758e4c1e68cf538df0ff38283fc31cd21"
         },
         "input": null,
         "log": "case-CLI06-01.json",
@@ -1912,7 +1912,7 @@
             "end": 5417,
             "source": {
               "path": "source-tests-cli_journeys_v06.rs",
-              "sha256": "cbbef671299d95d708bf69f7f4aca3c82564464ba0f557d813eae1226da7f194"
+              "sha256": "56fb3589d51ec9adad15a6bdcb9f8d6758e4c1e68cf538df0ff38283fc31cd21"
             },
             "start": 5362,
             "test_id": "cli06_02_new_offline_bundled_app_builds_checks_runs"
@@ -1922,7 +1922,7 @@
             "end": 6701,
             "source": {
               "path": "source-tests-cli_journeys_v06.rs",
-              "sha256": "cbbef671299d95d708bf69f7f4aca3c82564464ba0f557d813eae1226da7f194"
+              "sha256": "56fb3589d51ec9adad15a6bdcb9f8d6758e4c1e68cf538df0ff38283fc31cd21"
             },
             "start": 6645,
             "test_id": "cli06_02_new_template_override_binds_name_and_output"
@@ -1932,7 +1932,7 @@
             "end": 7880,
             "source": {
               "path": "source-tests-cli_journeys_v06.rs",
-              "sha256": "cbbef671299d95d708bf69f7f4aca3c82564464ba0f557d813eae1226da7f194"
+              "sha256": "56fb3589d51ec9adad15a6bdcb9f8d6758e4c1e68cf538df0ff38283fc31cd21"
             },
             "start": 7825,
             "test_id": "cli06_02_new_nonempty_output_rejected_byte_for_byte"
@@ -1942,7 +1942,7 @@
             "end": 8829,
             "source": {
               "path": "source-tests-cli_journeys_v06.rs",
-              "sha256": "cbbef671299d95d708bf69f7f4aca3c82564464ba0f557d813eae1226da7f194"
+              "sha256": "56fb3589d51ec9adad15a6bdcb9f8d6758e4c1e68cf538df0ff38283fc31cd21"
             },
             "start": 8765,
             "test_id": "cli06_02_new_offline_local_template_resolves_without_network"
@@ -1952,7 +1952,7 @@
             "end": 9565,
             "source": {
               "path": "source-tests-cli_journeys_v06.rs",
-              "sha256": "cbbef671299d95d708bf69f7f4aca3c82564464ba0f557d813eae1226da7f194"
+              "sha256": "56fb3589d51ec9adad15a6bdcb9f8d6758e4c1e68cf538df0ff38283fc31cd21"
             },
             "start": 9495,
             "test_id": "cli06_02_new_offline_installed_template_checks_bytes_before_output"
@@ -1976,7 +1976,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-tests-cli_journeys_v06.rs",
-          "sha256": "cbbef671299d95d708bf69f7f4aca3c82564464ba0f557d813eae1226da7f194"
+          "sha256": "56fb3589d51ec9adad15a6bdcb9f8d6758e4c1e68cf538df0ff38283fc31cd21"
         },
         "input": null,
         "log": "case-CLI06-02.json",
@@ -2012,32 +2012,32 @@
         "assertion_provenance": [
           {
             "declaration": "fn cli06_03_inventory_matches_canonical_grammar(",
-            "end": 11432,
+            "end": 11532,
             "source": {
               "path": "source-tests-cli_journeys_v06.rs",
-              "sha256": "cbbef671299d95d708bf69f7f4aca3c82564464ba0f557d813eae1226da7f194"
+              "sha256": "56fb3589d51ec9adad15a6bdcb9f8d6758e4c1e68cf538df0ff38283fc31cd21"
             },
-            "start": 11384,
+            "start": 11484,
             "test_id": "cli06_03_inventory_matches_canonical_grammar"
           },
           {
             "declaration": "fn cli06_03_run_reserves_stdout_for_program_output_and_propagates_exit_status(",
-            "end": 13873,
+            "end": 13973,
             "source": {
               "path": "source-tests-cli_journeys_v06.rs",
-              "sha256": "cbbef671299d95d708bf69f7f4aca3c82564464ba0f557d813eae1226da7f194"
+              "sha256": "56fb3589d51ec9adad15a6bdcb9f8d6758e4c1e68cf538df0ff38283fc31cd21"
             },
-            "start": 13795,
+            "start": 13895,
             "test_id": "cli06_03_run_reserves_stdout_for_program_output_and_propagates_exit_status"
           },
           {
             "declaration": "fn cli06_03_removed_root_spellings_exit_2_and_name_canonical_replacement(",
-            "end": 15663,
+            "end": 15763,
             "source": {
               "path": "source-tests-cli_journeys_v06.rs",
-              "sha256": "cbbef671299d95d708bf69f7f4aca3c82564464ba0f557d813eae1226da7f194"
+              "sha256": "56fb3589d51ec9adad15a6bdcb9f8d6758e4c1e68cf538df0ff38283fc31cd21"
             },
-            "start": 15590,
+            "start": 15690,
             "test_id": "cli06_03_removed_root_spellings_exit_2_and_name_canonical_replacement"
           }
         ],
@@ -2059,7 +2059,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-tests-cli_journeys_v06.rs",
-          "sha256": "cbbef671299d95d708bf69f7f4aca3c82564464ba0f557d813eae1226da7f194"
+          "sha256": "56fb3589d51ec9adad15a6bdcb9f8d6758e4c1e68cf538df0ff38283fc31cd21"
         },
         "input": null,
         "log": "case-CLI06-03.json",
@@ -2084,52 +2084,52 @@
         "assertion_provenance": [
           {
             "declaration": "fn cli06_04_help_new_list_doctor_without_corelib_or_network_make_no_provisioning_writes(",
-            "end": 16724,
+            "end": 16824,
             "source": {
               "path": "source-tests-cli_journeys_v06.rs",
-              "sha256": "cbbef671299d95d708bf69f7f4aca3c82564464ba0f557d813eae1226da7f194"
+              "sha256": "56fb3589d51ec9adad15a6bdcb9f8d6758e4c1e68cf538df0ff38283fc31cd21"
             },
-            "start": 16636,
+            "start": 16736,
             "test_id": "cli06_04_help_new_list_doctor_without_corelib_or_network_make_no_provisioning_writes"
           },
           {
             "declaration": "fn cli06_04_update_dry_run_json_stdout_has_only_schema_version_1_records(",
-            "end": 17392,
+            "end": 17492,
             "source": {
               "path": "source-tests-cli_journeys_v06.rs",
-              "sha256": "cbbef671299d95d708bf69f7f4aca3c82564464ba0f557d813eae1226da7f194"
+              "sha256": "56fb3589d51ec9adad15a6bdcb9f8d6758e4c1e68cf538df0ff38283fc31cd21"
             },
-            "start": 17319,
+            "start": 17419,
             "test_id": "cli06_04_update_dry_run_json_stdout_has_only_schema_version_1_records"
           },
           {
             "declaration": "fn cli06_04_run_json_exits_2_before_executing(",
-            "end": 18955,
+            "end": 19055,
             "source": {
               "path": "source-tests-cli_journeys_v06.rs",
-              "sha256": "cbbef671299d95d708bf69f7f4aca3c82564464ba0f557d813eae1226da7f194"
+              "sha256": "56fb3589d51ec9adad15a6bdcb9f8d6758e4c1e68cf538df0ff38283fc31cd21"
             },
-            "start": 18909,
+            "start": 19009,
             "test_id": "cli06_04_run_json_exits_2_before_executing"
           },
           {
             "declaration": "fn cli06_04_doctor_reports_missing_kit_without_installing_or_touching_credentials(",
-            "end": 20005,
+            "end": 20105,
             "source": {
               "path": "source-tests-cli_journeys_v06.rs",
-              "sha256": "cbbef671299d95d708bf69f7f4aca3c82564464ba0f557d813eae1226da7f194"
+              "sha256": "56fb3589d51ec9adad15a6bdcb9f8d6758e4c1e68cf538df0ff38283fc31cd21"
             },
-            "start": 19923,
+            "start": 20023,
             "test_id": "cli06_04_doctor_reports_missing_kit_without_installing_or_touching_credentials"
           },
           {
             "declaration": "fn cli06_04_redirected_build_and_test_complete_without_cursor_controls(",
-            "end": 21135,
+            "end": 21235,
             "source": {
               "path": "source-tests-cli_journeys_v06.rs",
-              "sha256": "cbbef671299d95d708bf69f7f4aca3c82564464ba0f557d813eae1226da7f194"
+              "sha256": "56fb3589d51ec9adad15a6bdcb9f8d6758e4c1e68cf538df0ff38283fc31cd21"
             },
-            "start": 21064,
+            "start": 21164,
             "test_id": "cli06_04_redirected_build_and_test_complete_without_cursor_controls"
           }
         ],
@@ -2151,7 +2151,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-tests-cli_journeys_v06.rs",
-          "sha256": "cbbef671299d95d708bf69f7f4aca3c82564464ba0f557d813eae1226da7f194"
+          "sha256": "56fb3589d51ec9adad15a6bdcb9f8d6758e4c1e68cf538df0ff38283fc31cd21"
         },
         "input": null,
         "log": "case-CLI06-04.json",
@@ -2178,22 +2178,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn cli06_05_dev_capabilities_json_lists_version_canonical_commands_and_schemas(",
-            "end": 30563,
+            "end": 30663,
             "source": {
               "path": "source-tests-cli_journeys_v06.rs",
-              "sha256": "cbbef671299d95d708bf69f7f4aca3c82564464ba0f557d813eae1226da7f194"
+              "sha256": "56fb3589d51ec9adad15a6bdcb9f8d6758e4c1e68cf538df0ff38283fc31cd21"
             },
-            "start": 30484,
+            "start": 30584,
             "test_id": "cli06_05_dev_capabilities_json_lists_version_canonical_commands_and_schemas"
           },
           {
             "declaration": "fn cli06_05_help_inventory_matches_capability_inventory(",
-            "end": 31839,
+            "end": 31939,
             "source": {
               "path": "source-tests-cli_journeys_v06.rs",
-              "sha256": "cbbef671299d95d708bf69f7f4aca3c82564464ba0f557d813eae1226da7f194"
+              "sha256": "56fb3589d51ec9adad15a6bdcb9f8d6758e4c1e68cf538df0ff38283fc31cd21"
             },
-            "start": 31783,
+            "start": 31883,
             "test_id": "cli06_05_help_inventory_matches_capability_inventory"
           }
         ],
@@ -2215,7 +2215,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-tests-cli_journeys_v06.rs",
-          "sha256": "cbbef671299d95d708bf69f7f4aca3c82564464ba0f557d813eae1226da7f194"
+          "sha256": "56fb3589d51ec9adad15a6bdcb9f8d6758e4c1e68cf538df0ff38283fc31cd21"
         },
         "input": null,
         "log": "case-CLI06-05.json",
@@ -2245,22 +2245,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn cli06_06_create_add_use_check_build_run_outside_checkout(",
-            "end": 33160,
+            "end": 33260,
             "source": {
               "path": "source-tests-cli_journeys_v06.rs",
-              "sha256": "cbbef671299d95d708bf69f7f4aca3c82564464ba0f557d813eae1226da7f194"
+              "sha256": "56fb3589d51ec9adad15a6bdcb9f8d6758e4c1e68cf538df0ff38283fc31cd21"
             },
-            "start": 33100,
+            "start": 33200,
             "test_id": "cli06_06_create_add_use_check_build_run_outside_checkout"
           },
           {
             "declaration": "fn cli06_06_path_dependency_workflow_outside_checkout(",
-            "end": 34839,
+            "end": 34939,
             "source": {
               "path": "source-tests-cli_journeys_v06.rs",
-              "sha256": "cbbef671299d95d708bf69f7f4aca3c82564464ba0f557d813eae1226da7f194"
+              "sha256": "56fb3589d51ec9adad15a6bdcb9f8d6758e4c1e68cf538df0ff38283fc31cd21"
             },
-            "start": 34785,
+            "start": 34885,
             "test_id": "cli06_06_path_dependency_workflow_outside_checkout"
           }
         ],
@@ -2282,7 +2282,7 @@
         "harness_language": "rust",
         "harness_source": {
           "path": "source-tests-cli_journeys_v06.rs",
-          "sha256": "cbbef671299d95d708bf69f7f4aca3c82564464ba0f557d813eae1226da7f194"
+          "sha256": "56fb3589d51ec9adad15a6bdcb9f8d6758e4c1e68cf538df0ff38283fc31cd21"
         },
         "input": null,
         "log": "case-CLI06-06.json",
@@ -5684,46 +5684,6 @@
             },
             "start": 105977,
             "test_id": "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
-          },
-          {
-            "declaration": "fn v06_glue_owned_denies_missing_import_row(",
-            "end": 57426,
-            "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
-            },
-            "start": 57382,
-            "test_id": "v06_glue_owned_denies_missing_import_row"
-          },
-          {
-            "declaration": "fn v06_glue_owned_denies_consumer_without_owner_domain(",
-            "end": 58631,
-            "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
-            },
-            "start": 58576,
-            "test_id": "v06_glue_owned_denies_consumer_without_owner_domain"
-          },
-          {
-            "declaration": "fn v06_glue_owned_denies_duplicate_owner_library(",
-            "end": 59467,
-            "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
-            },
-            "start": 59418,
-            "test_id": "v06_glue_owned_denies_duplicate_owner_library"
-          },
-          {
-            "declaration": "fn v06_glue_owned_rejects_foreign_owner_brand(",
-            "end": 60342,
-            "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
-            },
-            "start": 60296,
-            "test_id": "v06_glue_owned_rejects_foreign_owner_brand"
           }
         ],
         "command": {
@@ -5753,6 +5713,10 @@
             "crate": "beskid_tests_interop",
             "kind": "cargo_test",
             "test_ids": [
+              "v06_glue_owned_denies_missing_import_row",
+              "v06_glue_owned_rejects_foreign_owner_brand",
+              "v06_glue_owned_denies_consumer_without_owner_domain",
+              "v06_glue_owned_denies_duplicate_owner_library",
               "export_metadata_populates_codegen_artifact",
               "export_table_from_artifact_matches_codegen_exports",
               "export_on_non_pub_function_fails_codegen"
@@ -5761,11 +5725,7 @@
         ],
         "required_test_ids": [
           "v06_glue_cli_published_images_fail_closed_on_substitution",
-          "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations",
-          "v06_glue_owned_denies_missing_import_row",
-          "v06_glue_owned_denies_consumer_without_owner_domain",
-          "v06_glue_owned_denies_duplicate_owner_library",
-          "v06_glue_owned_rejects_foreign_owner_brand"
+          "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
         ],
         "reviewed_source_binding": true,
         "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
@@ -5876,16 +5836,6 @@
             },
             "start": 105977,
             "test_id": "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
-          },
-          {
-            "declaration": "fn v06_glue_owned_roundtrip_all_representations(",
-            "end": 52708,
-            "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
-            },
-            "start": 52660,
-            "test_id": "v06_glue_owned_roundtrip_all_representations"
           }
         ],
         "command": {
@@ -5910,11 +5860,19 @@
         },
         "input": null,
         "log": "case-R4-ABI-01.json",
+        "related_evidence": [
+          {
+            "crate": "beskid_tests_interop",
+            "kind": "cargo_test",
+            "test_ids": [
+              "v06_glue_owned_roundtrip_all_representations"
+            ]
+          }
+        ],
         "required_test_ids": [
           "v06_glue_cli_builds_owned_fixture_alone",
           "v06_glue_cli_manual_and_generated_routes_agree",
-          "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations",
-          "v06_glue_owned_roundtrip_all_representations"
+          "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
         ],
         "reviewed_source_binding": true,
         "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
@@ -6931,16 +6889,6 @@
             },
             "start": 102297,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
-          },
-          {
-            "declaration": "fn v06_glue_owned_opaque_borrow_survives_release(",
-            "end": 53595,
-            "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
-            },
-            "start": 53546,
-            "test_id": "v06_glue_owned_opaque_borrow_survives_release"
           }
         ],
         "command": {
@@ -7019,6 +6967,7 @@
             "kind": "cargo_test",
             "test_ids": [
               "v06_glue_owned_roundtrip_all_representations",
+              "v06_glue_owned_opaque_borrow_survives_release",
               "v06_glue_owned_rejects_foreign_owner_brand",
               "v06_glue_owned_denies_consumer_without_owner_domain",
               "v06_glue_owned_denies_duplicate_owner_library"
@@ -7029,8 +6978,7 @@
           "v06_glue_cli_builds_owned_fixture_alone",
           "v06_glue_cli_published_borrow_survives_release",
           "v06_glue_cli_published_images_fail_closed_on_substitution",
-          "v06_glue_cli_manual_and_generated_routes_agree",
-          "v06_glue_owned_opaque_borrow_survives_release"
+          "v06_glue_cli_manual_and_generated_routes_agree"
         ],
         "reviewed_source_binding": true,
         "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
@@ -8022,46 +7970,6 @@
             },
             "start": 118461,
             "test_id": "v06_glue_cli_private_prefix_driver_admission_fails_closed"
-          },
-          {
-            "declaration": "fn v06_glue_driver_admitted_only_from_private_prefix(",
-            "end": 26487,
-            "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
-            },
-            "start": 26434,
-            "test_id": "v06_glue_driver_admitted_only_from_private_prefix"
-          },
-          {
-            "declaration": "fn v06_glue_driver_denied_when_sibling_tampered(",
-            "end": 27446,
-            "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
-            },
-            "start": 27398,
-            "test_id": "v06_glue_driver_denied_when_sibling_tampered"
-          },
-          {
-            "declaration": "fn v06_glue_driver_denied_when_sibling_missing(",
-            "end": 27908,
-            "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
-            },
-            "start": 27861,
-            "test_id": "v06_glue_driver_denied_when_sibling_missing"
-          },
-          {
-            "declaration": "fn v06_glue_owned_rust_owner_fails_closed_outside_prefix(",
-            "end": 61091,
-            "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
-            },
-            "start": 61034,
-            "test_id": "v06_glue_owned_rust_owner_fails_closed_outside_prefix"
           }
         ],
         "command": {
@@ -8092,7 +8000,11 @@
             "kind": "cargo_test",
             "test_ids": [
               "v06_glue_driver_denied_from_build_tree",
-              "v06_glue_driver_denied_when_sibling_escapes_prefix"
+              "v06_glue_driver_admitted_only_from_private_prefix",
+              "v06_glue_driver_denied_when_sibling_tampered",
+              "v06_glue_driver_denied_when_sibling_missing",
+              "v06_glue_driver_denied_when_sibling_escapes_prefix",
+              "v06_glue_owned_rust_owner_fails_closed_outside_prefix"
             ]
           },
           {
@@ -8106,11 +8018,7 @@
           }
         ],
         "required_test_ids": [
-          "v06_glue_cli_private_prefix_driver_admission_fails_closed",
-          "v06_glue_driver_admitted_only_from_private_prefix",
-          "v06_glue_driver_denied_when_sibling_tampered",
-          "v06_glue_driver_denied_when_sibling_missing",
-          "v06_glue_owned_rust_owner_fails_closed_outside_prefix"
+          "v06_glue_cli_private_prefix_driver_admission_fails_closed"
         ],
         "reviewed_source_binding": true,
         "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
@@ -9127,26 +9035,6 @@
             },
             "start": 11767,
             "test_id": "glue_cli_extensions_records_enums_callbacks_roundtrip"
-          },
-          {
-            "declaration": "fn glue_extensions_owned_roundtrip(",
-            "end": 10985,
-            "source": {
-              "path": "source-glue_owned-extensions.rs",
-              "sha256": "a6939f0e356e3ffbedfe7201140b8e30e528c6bfa7f3435e5d5680d01747ce64"
-            },
-            "start": 10950,
-            "test_id": "glue_extensions_owned_roundtrip"
-          },
-          {
-            "declaration": "fn glue_extensions_manual_c_abi(",
-            "end": 1913,
-            "source": {
-              "path": "source-glue_owned-extensions.rs",
-              "sha256": "a6939f0e356e3ffbedfe7201140b8e30e528c6bfa7f3435e5d5680d01747ce64"
-            },
-            "start": 1881,
-            "test_id": "glue_extensions_manual_c_abi"
           }
         ],
         "command": {
@@ -9171,10 +9059,18 @@
         },
         "input": null,
         "log": "case-GLUE066-01.json",
+        "related_evidence": [
+          {
+            "crate": "beskid_tests_interop",
+            "kind": "cargo_test",
+            "test_ids": [
+              "glue_extensions_manual_c_abi",
+              "glue_extensions_owned_roundtrip"
+            ]
+          }
+        ],
         "required_test_ids": [
-          "glue_cli_extensions_records_enums_callbacks_roundtrip",
-          "glue_extensions_owned_roundtrip",
-          "glue_extensions_manual_c_abi"
+          "glue_cli_extensions_records_enums_callbacks_roundtrip"
         ],
         "reviewed_source_binding": true,
         "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned/extensions.rs"

@@ -110,12 +110,20 @@
       "harness": "beskid_tests_interop",
       "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned/extensions.rs",
       "required_test_ids": [
-        "glue_cli_extensions_records_enums_callbacks_roundtrip",
-        "glue_extensions_owned_roundtrip",
-        "glue_extensions_manual_c_abi"
+        "glue_cli_extensions_records_enums_callbacks_roundtrip"
       ],
       "input": null,
-      "fixture": null
+      "fixture": null,
+      "related_evidence": [
+        {
+          "kind": "cargo_test",
+          "crate": "beskid_tests_interop",
+          "test_ids": [
+            "glue_extensions_manual_c_abi",
+            "glue_extensions_owned_roundtrip"
+          ]
+        }
+      ]
     },
     "GCS066-01": {
       "execution": "installed_host_harness",

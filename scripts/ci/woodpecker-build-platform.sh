@@ -230,6 +230,44 @@ if [[ "${schema2}" == 1 ]]; then
   case_arguments=("${platform}" "${version}" "${output_dir}" "${bundle_root}" --harness-dir "${harness_dir}")
   [[ -z "${release_cases_manifest}" ]] || case_arguments+=(--manifest "${release_cases_manifest}")
   node "${release_cases_runner}" "${case_arguments[@]}"
+  # The Glue tests that rerun themselves inside a private copy of the qualified installation run
+  # the harness, not the installed CLI, so they cannot carry the installed-invocation proof a
+  # frozen case requires; the source-tree gate skips them because they need the installation.
+  # Run them here against the candidate prefix and fail unless every one of them executed.
+  glue_private_prefix_tests=(
+    interop::glue_owned::v06_glue_driver_admitted_only_from_private_prefix
+    interop::glue_owned::v06_glue_driver_denied_when_sibling_tampered
+    interop::glue_owned::v06_glue_driver_denied_when_sibling_missing
+    interop::glue_owned::v06_glue_owned_roundtrip_all_representations
+    interop::glue_owned::v06_glue_owned_opaque_borrow_survives_release
+    interop::glue_owned::v06_glue_owned_denies_missing_import_row
+    interop::glue_owned::v06_glue_owned_denies_consumer_without_owner_domain
+    interop::glue_owned::v06_glue_owned_denies_duplicate_owner_library
+    interop::glue_owned::v06_glue_owned_rejects_foreign_owner_brand
+    interop::glue_owned::v06_glue_owned_rust_owner_fails_closed_outside_prefix
+    interop::glue_owned::v06_native_test_object_compiles_shared_helper_once_and_links_distinct_entries
+    interop::glue_owned::extensions::glue_extensions_owned_roundtrip
+    interop::glue_owned::extensions::glue_extensions_manual_c_abi
+  )
+  [[ "${platform}" == windows ]] || glue_private_prefix_tests+=(interop::glue_owned::v06_glue_driver_denied_when_sibling_escapes_prefix)
+  glue_harness="${harness_dir}/harness-beskid_tests_interop"
+  [[ "${platform}" != windows ]] || glue_harness+=.exe
+  glue_home="$(mktemp -d)"
+  mkdir -p "${glue_home}/user-home" "${glue_home}/toolchain-home" "${glue_home}/config"
+  glue_status=0
+  (cd "${glue_home}" && HOME="${glue_home}/user-home" USERPROFILE="${glue_home}/user-home" \
+    BESKID_HOME="${glue_home}/toolchain-home" BESKID_CONFIG_DIR="${glue_home}/config" OTEL_SDK_DISABLED=true \
+    BESKID_V06_QUALIFIED_PREFIX="${bundle_root}" \
+    "${glue_harness}" --exact "${glue_private_prefix_tests[@]}" --test-threads=1) \
+    >"${logs_dir}/glue-private-prefix.log" 2>&1 || glue_status=$?
+  rm -rf "${glue_home}"
+  glue_passed="$(awk '/^test result:/ { total += $4 } END { print total + 0 }' "${logs_dir}/glue-private-prefix.log")"
+  if [[ "${glue_status}" -ne 0 || "${glue_passed}" != "${#glue_private_prefix_tests[@]}" ]]; then
+    tail -n 80 "${logs_dir}/glue-private-prefix.log" >&2
+    echo "private-prefix Glue tests: exit ${glue_status}, ${glue_passed} of ${#glue_private_prefix_tests[@]} passed" >&2
+    exit 1
+  fi
+  echo "private-prefix Glue tests: ${glue_passed} passed"
 else
   node "${feature_evidence_runner}" \
     "${platform}" "${version}" "${output_dir}" "${bundle_root}"

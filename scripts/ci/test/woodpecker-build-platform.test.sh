@@ -216,6 +216,14 @@ set -euo pipefail
 [[ "$1" == beskid_release_harness ]] || exit 9
 mkdir -p "$4"
 printf 'fake harness\n' >"$4/harness-beskid_tests_release"
+cat >"$4/harness-beskid_tests_interop" <<'HARNESS'
+#!/usr/bin/env bash
+printf '%s\n' "$*" >"${FAKE_GLUE_LOG}"
+[[ "${BESKID_V06_QUALIFIED_PREFIX:-}" == */beskid-* ]] || exit 7
+ran=0; for argument in "$@"; do [[ "${argument}" == interop::* ]] && ran=$((ran + 1)); done
+printf 'test result: ok. %s passed; 0 failed; 0 ignored; 0 measured; 0 filtered out\n' "$((ran - ${FAKE_GLUE_SKIP:-0}))"
+HARNESS
+chmod +x "$4/harness-beskid_tests_interop"
 printf 'harness %s %s %s\n' "$3" "$4" "$5" >"${FAKE_HARNESS_LOG}"
 EOF
 chmod +x "${TMP}/harness-builder.sh"
@@ -232,7 +240,7 @@ writeFileSync(join(output, "feature-evidence-v2.json"), `${JSON.stringify({ sche
 writeFileSync(join(output, "release-cases-v06.json"), readFileSync(manifest));
 EOF
 printf '{"state":"fixture"}\n' >"${TMP}/fixture-manifest.json"
-FAKE_INIT_LOG="${TMP}/init-v06.log" FAKE_HARNESS_LOG="${TMP}/harness-v06.log" \
+FAKE_INIT_LOG="${TMP}/init-v06.log" FAKE_HARNESS_LOG="${TMP}/harness-v06.log" FAKE_GLUE_LOG="${TMP}/glue-v06.log" \
   WOODPECKER_INIT_SUBMODULES_SCRIPT="${TMP}/init-submodules.sh" \
   WOODPECKER_RELEASE_PLATFORM_SCRIPT="${TMP}/build-release-platform.sh" \
   WOODPECKER_FEATURE_EVIDENCE_SCRIPT="${TMP}/feature-evidence.mjs" \
@@ -254,6 +262,24 @@ test "$(cd "${v06}" && find . -mindepth 1 -maxdepth 1 ! -name SHA256SUMS -type f
 test "$(cd "${v06}" && find . -mindepth 1 -maxdepth 1 ! -type f | wc -l | tr -d ' ')" = 0
 test "$(jq -r .runtime_kit_sha256 "${v06}/woodpecker-build-result.json")" = "$(shasum -a 256 "${v06}/runtime-kit.json" | awk '{print $1}')"
 test -d "${v06}-logs/release-harness"
+# The private-prefix Glue tests run against the candidate prefix, each by its exact name.
+grep -q -- '^--exact interop::glue_owned::' "${TMP}/glue-v06.log"
+grep -q 'interop::glue_owned::v06_glue_owned_roundtrip_all_representations' "${TMP}/glue-v06.log"
+grep -q 'interop::glue_owned::v06_glue_driver_denied_when_sibling_escapes_prefix' "${TMP}/glue-v06.log"
+grep -q 'private-prefix Glue tests: 14 passed' "${TMP}/v06.log"
+# A run in which any of them did not execute fails the platform build.
+if FAKE_INIT_LOG="${TMP}/init-v06b.log" FAKE_HARNESS_LOG="${TMP}/harness-v06b.log" FAKE_GLUE_LOG="${TMP}/glue-v06b.log" FAKE_GLUE_SKIP=1 \
+  WOODPECKER_INIT_SUBMODULES_SCRIPT="${TMP}/init-submodules.sh" \
+  WOODPECKER_RELEASE_PLATFORM_SCRIPT="${TMP}/build-release-platform.sh" \
+  WOODPECKER_FEATURE_EVIDENCE_SCRIPT="${TMP}/feature-evidence.mjs" \
+  WOODPECKER_RELEASE_HARNESS_BUILDER="${TMP}/harness-builder.sh" \
+  WOODPECKER_RELEASE_CASES_SCRIPT="${TMP}/release-cases.mjs" \
+  WOODPECKER_RELEASE_CASES_MANIFEST="${TMP}/fixture-manifest.json" \
+  bash "${SCRIPT}" macos 0.6.0 "${TMP}/output-v06-skip" >"${TMP}/v06-skip.log" 2>&1; then
+  echo 'platform build accepted a private-prefix Glue run that skipped a test' >&2
+  exit 1
+fi
+grep -q 'private-prefix Glue tests: exit 0, 13 of 14 passed' "${TMP}/v06-skip.log"
 
 if CI_PIPELINE_NUMBER=42 CI_COMMIT_SHA="$(git -C "${ROOT}" rev-parse HEAD)" \
   WOODPECKER_RELEASE_CASES_MANIFEST="${TMP}/fixture-manifest.json" \
