@@ -8,16 +8,16 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/parallel/ParallelSuite.bd",
       "required_test_ids": [
-        "isolate_handles_compare_by_id",
-        "task_body_reports_its_isolate",
-        "scope_joins_every_task_before_returning",
-        "unit_task_joins_without_a_value",
-        "early_error_return_still_joins",
-        "failures_are_reported_in_spawn_order",
-        "failure_cancels_siblings",
-        "nested_scopes_complete",
-        "serial_scope_runs_every_body_on_the_caller",
-        "frozen_array_is_shared_with_a_task"
+        "IsolateHandlesCompareById",
+        "TaskBodyReportsItsIsolate",
+        "ScopeJoinsEveryTaskBeforeReturning",
+        "UnitTaskJoinsWithoutAValue",
+        "EarlyErrorReturnStillJoins",
+        "FailuresAreReportedInSpawnOrder",
+        "FailureCancelsSiblings",
+        "NestedScopesComplete",
+        "SerialScopeRunsEveryBodyOnTheCaller",
+        "FrozenArrayIsSharedWithATask"
       ],
       "input": null,
       "fixture": null
@@ -38,13 +38,13 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/parallel/ParallelSuite.bd",
       "required_test_ids": [
-        "bounded_producer_and_consumer",
-        "try_receive_on_an_empty_open_port_would_block",
-        "closed_port_drains_then_reports_closed",
-        "port_handle_crosses_a_port",
-        "two_workers_share_one_inbox",
-        "three_stage_pipeline_keeps_input_order",
-        "stage_failure_cancels_the_pipeline"
+        "BoundedProducerAndConsumer",
+        "TryReceiveOnAnEmptyOpenPortWouldBlock",
+        "ClosedPortDrainsThenReportsClosed",
+        "PortHandleCrossesAPort",
+        "TwoWorkersShareOneInbox",
+        "ThreeStagePipelineKeepsInputOrder",
+        "StageFailureCancelsThePipeline"
       ],
       "input": null,
       "fixture": null
@@ -65,12 +65,12 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/parallel/ParallelSuite.bd",
       "required_test_ids": [
-        "where_and_map_fuse_into_a_reduction",
-        "source_stays_usable_and_count_matches",
-        "collect_preserves_input_order",
-        "ordered_reduce_preserves_association_order",
-        "user_combiner_with_both_markers",
-        "shipped_combiners"
+        "WhereAndMapFuseIntoAReduction",
+        "SourceStaysUsableAndCountMatches",
+        "CollectPreservesInputOrder",
+        "OrderedReducePreservesAssociationOrder",
+        "UserCombinerWithBothMarkers",
+        "ShippedCombiners"
       ],
       "input": null,
       "fixture": null
@@ -110,20 +110,12 @@
       "harness": "beskid_tests_interop",
       "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned/extensions.rs",
       "required_test_ids": [
-        "v066_glue_cli_extensions_records_enums_callbacks_roundtrip"
+        "glue_cli_extensions_records_enums_callbacks_roundtrip",
+        "glue_extensions_owned_roundtrip",
+        "glue_extensions_manual_c_abi"
       ],
       "input": null,
-      "fixture": null,
-      "related_evidence": [
-        {
-          "kind": "cargo_test",
-          "crate": "beskid_tests_interop",
-          "test_ids": [
-            "v061_glue_extensions_manual_c_abi",
-            "v061_glue_extensions_owned_roundtrip"
-          ]
-        }
-      ]
+      "fixture": null
     },
     "GCS066-01": {
       "execution": "installed_host_harness",

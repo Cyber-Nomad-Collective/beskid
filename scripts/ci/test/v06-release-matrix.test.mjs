@@ -502,7 +502,7 @@ function nativeDeclarationFixture(transform = bytes => bytes) {
   // Real source declaration, synthetic execution receipt: reader coverage only.
   const value = fixture();
   const source = transform(readFileSync(new URL("compiler/corelib/beskid_corelib/tests/corelib_tests/src/bsol/SerializationWireTests.bd", repo)));
-  const test_id = "bsol_serialization_wire_exact_unsigned_width";
+  const test_id = "BsolSerializationWireExactUnsignedWidth";
   const declaration = `test ${test_id}`;
   const start = source.indexOf(Buffer.from(declaration));
   assert(start >= 0);
@@ -536,6 +536,6 @@ test("assertion declaration language is mandatory and cannot be relabeled", () =
 });
 test("native declaration cannot bind a prefix of another test identifier", () => {
   const value = nativeDeclarationFixture(bytes => Buffer.from(bytes.toString().replace(
-    "test bsol_serialization_wire_exact_unsigned_width", "test bsol_serialization_wire_exact_unsigned_width_extra")));
+    "test BsolSerializationWireExactUnsignedWidth", "test BsolSerializationWireExactUnsignedWidth_extra")));
   reject(value, /declaration/);
 });

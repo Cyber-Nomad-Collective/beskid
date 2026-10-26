@@ -48,7 +48,11 @@
       "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_published_images_fail_closed_on_substitution",
-        "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
+        "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations",
+        "v06_glue_owned_denies_missing_import_row",
+        "v06_glue_owned_denies_consumer_without_owner_domain",
+        "v06_glue_owned_denies_duplicate_owner_library",
+        "v06_glue_owned_rejects_foreign_owner_brand"
       ],
       "input": null,
       "fixture": null,
@@ -57,10 +61,6 @@
           "kind": "cargo_test",
           "crate": "beskid_tests_interop",
           "test_ids": [
-            "v06_glue_owned_denies_missing_import_row",
-            "v06_glue_owned_rejects_foreign_owner_brand",
-            "v06_glue_owned_denies_consumer_without_owner_domain",
-            "v06_glue_owned_denies_duplicate_owner_library",
             "export_metadata_populates_codegen_artifact",
             "export_table_from_artifact_matches_codegen_exports",
             "export_on_non_pub_function_fails_codegen"
@@ -101,19 +101,11 @@
       "required_test_ids": [
         "v06_glue_cli_builds_owned_fixture_alone",
         "v06_glue_cli_manual_and_generated_routes_agree",
-        "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
+        "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations",
+        "v06_glue_owned_roundtrip_all_representations"
       ],
       "input": null,
-      "fixture": null,
-      "related_evidence": [
-        {
-          "kind": "cargo_test",
-          "crate": "beskid_tests_interop",
-          "test_ids": [
-            "v06_glue_owned_roundtrip_all_representations"
-          ]
-        }
-      ]
+      "fixture": null
     },
     "R4-ABI-02": {
       "execution": "installed_host_harness",
@@ -685,7 +677,8 @@
         "v06_glue_cli_builds_owned_fixture_alone",
         "v06_glue_cli_published_borrow_survives_release",
         "v06_glue_cli_published_images_fail_closed_on_substitution",
-        "v06_glue_cli_manual_and_generated_routes_agree"
+        "v06_glue_cli_manual_and_generated_routes_agree",
+        "v06_glue_owned_opaque_borrow_survives_release"
       ],
       "input": null,
       "fixture": null,
@@ -695,7 +688,6 @@
           "crate": "beskid_tests_interop",
           "test_ids": [
             "v06_glue_owned_roundtrip_all_representations",
-            "v06_glue_owned_opaque_borrow_survives_release",
             "v06_glue_owned_rejects_foreign_owner_brand",
             "v06_glue_owned_denies_consumer_without_owner_domain",
             "v06_glue_owned_denies_duplicate_owner_library"
@@ -1022,7 +1014,11 @@
       "harness": "beskid_tests_interop",
       "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
       "required_test_ids": [
-        "v06_glue_cli_private_prefix_driver_admission_fails_closed"
+        "v06_glue_cli_private_prefix_driver_admission_fails_closed",
+        "v06_glue_driver_admitted_only_from_private_prefix",
+        "v06_glue_driver_denied_when_sibling_tampered",
+        "v06_glue_driver_denied_when_sibling_missing",
+        "v06_glue_owned_rust_owner_fails_closed_outside_prefix"
       ],
       "input": null,
       "fixture": null,
@@ -1032,11 +1028,7 @@
           "crate": "beskid_tests_interop",
           "test_ids": [
             "v06_glue_driver_denied_from_build_tree",
-            "v06_glue_driver_admitted_only_from_private_prefix",
-            "v06_glue_driver_denied_when_sibling_tampered",
-            "v06_glue_driver_denied_when_sibling_missing",
-            "v06_glue_driver_denied_when_sibling_escapes_prefix",
-            "v06_glue_owned_rust_owner_fails_closed_outside_prefix"
+            "v06_glue_driver_denied_when_sibling_escapes_prefix"
           ]
         },
         {
