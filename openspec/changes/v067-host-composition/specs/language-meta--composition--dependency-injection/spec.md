@@ -93,10 +93,28 @@ Registering the same implementation for the same key twice in one host and scope
 - **WHEN** the host is checked
 - **THEN** the compiler SHALL report **E1724** at the second line with the first line as a related location
 
-### Requirement: Scoped registrations per activation
-A `scoped` registration SHALL be created once for each activation of its scope. Repeated `with` blocks of one scope SHALL be independent activations with separate instance sets.
+### Requirement: Lifetimes per activation
+A `single` registration declared inside a scope SHALL have one instance per activation of that scope. A host-level `single` SHALL have one instance per container. A `scoped` registration SHALL have one instance per activation of its scope. Each `with` SHALL create fresh `scoped` instances and fresh scope-declared `single` instances before the `init` hooks of the scope run, in dependency order, and SHALL release them after the `dispose` hooks have run. A nested `with` SHALL get its own set. Repeated `with` blocks of one scope SHALL be independent activations with separate instance sets.
 
 #### Scenario: Two activations of one scope
 - **GIVEN** a scope `Request` with a `scoped` service and two `with Request` blocks
 - **WHEN** both blocks run in one launch
 - **THEN** each block sees its own instance of the service
+
+#### Scenario: Scope-declared single
+- **GIVEN** a `single` declared inside the scope `Request` and a host-level `single`
+- **WHEN** two `with Request` blocks run
+- **THEN** each block sees its own instance of the scope-declared `single`, and both see the same host-level instance
+
+### Requirement: Captive dependency
+A host-level `single` that injects a per-activation service SHALL be **E1725** at the inject site. The rule SHALL hold when the injection reaches the per-activation service directly or through a `transient`. The related location SHALL be the registration of the per-activation service.
+
+#### Scenario: Single injects scoped
+- **GIVEN** a host-level `single Cache` with `inject Session session;` where `Session` is `scoped` in `Request`
+- **WHEN** the host is checked
+- **THEN** the compiler SHALL report **E1725** at `inject Session session;`
+
+#### Scenario: Single injects scoped through a transient
+- **GIVEN** a host-level `single Cache` that injects a `transient Helper` that injects the `scoped Session`
+- **WHEN** the host is checked
+- **THEN** the compiler SHALL report **E1725**
