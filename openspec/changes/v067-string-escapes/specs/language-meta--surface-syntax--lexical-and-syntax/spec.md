@@ -65,12 +65,12 @@ The integer literal suffix `_word` SHALL be part of the lexical grammar beside t
 - **THEN** the compiler SHALL report **E1206**
 
 ### Requirement: Documentation run attachment
-A `///` documentation run SHALL be attached to the item that follows it directly. A documentation run that a blank line separates from its item SHALL NOT parse. A file header SHALL use `//` comments, not `///`.
+A `///` documentation run SHALL be attached to the item that follows it directly. A documentation run that a blank line separates from its item SHALL NOT parse; the parser SHALL report **E0117** "documentation comment is not attached to an item" at the run, with the fixes "remove the blank line" and "turn it into `//` comments". A file header SHALL use `//` comments, not `///`.
 
 #### Scenario: Detached documentation run
 - **GIVEN** a `///` run followed by a blank line and then an item
 - **WHEN** the file is parsed
-- **THEN** the parser SHALL report a parse error at the run
+- **THEN** the parser SHALL report **E0117** at the run
 
 #### Scenario: File header
 - **GIVEN** a `//` comment run followed by a blank line and then an item
