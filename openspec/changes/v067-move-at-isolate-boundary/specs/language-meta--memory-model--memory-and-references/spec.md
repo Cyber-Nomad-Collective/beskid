@@ -108,12 +108,12 @@ A parameter with no modifier (neither `mut`, `move` nor `bulk`) of Moved class t
 - **THEN** the compiler SHALL report **E1241** at `data` with a fix that declares the parameter `move u8[] data`
 
 #### Scenario: Receiver stored
-- **GIVEN** `[Isolated] pub type Stage { u8[] buffer, pub unit Keep(Archive a) { a.owner = this; } }` with a receiver that is not `move this`
+- **GIVEN** a method `Keep(Archive a) { a.owner = this; }` of a type `Stage` whose receiver is not `move this`
 - **WHEN** the method is checked
 - **THEN** the compiler SHALL report **E1241** at `this`
 
 #### Scenario: Escaping lambda captures a plain parameter
-- **GIVEN** `() => u8[] Reader(u8[] data) { return () => data; }`
+- **GIVEN** a function `Reader(u8[] data)` that returns the lambda `() => data`
 - **WHEN** the function is checked
 - **THEN** the compiler SHALL report **E1241** at the capture of `data`
 
