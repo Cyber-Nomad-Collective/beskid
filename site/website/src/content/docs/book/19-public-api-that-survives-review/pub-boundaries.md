@@ -19,6 +19,7 @@ This combines a C#-like focus on explicit public surface with Rust-like module t
 ```beskid
 // net/mod.bd
 mod http;
+
 pub use http.Client;
 ```
 

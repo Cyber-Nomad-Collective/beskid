@@ -64,7 +64,7 @@ i32 Main()
 {
     List<string> items = List.Of<string>("milk", "bread");
 
-    match items.TryGet(5)
+    match (items.TryGet(5))
     {
         Option::Some(item) => Output.WriteLine("found ${item}"),
         Option::None => Output.WriteLine("nothing at index 5"),
@@ -82,7 +82,7 @@ use Core.Results;
 
 unit Show(List<string> items, i64 index)
 {
-    match items.Get(index)
+    match (items.Get(index))
     {
         Result::Ok(item) => Output.WriteLine(item),
         Result::Error(reason) => Output.WriteLine("cannot read: ${reason}"),
@@ -177,7 +177,11 @@ pub type Ring<T>
 
 pub Ring<T> NewRing<T>()
 {
-    return Ring<T> { items: Array.Empty<T>(), count: 0 };
+    return Ring<T>
+    {
+        items: Array.Empty<T>(),
+        count: 0,
+    };
 }
 ```
 

@@ -23,15 +23,18 @@ Public APIs often use **contracts** (interfaces) with documented effects: see [c
 A function type is written `(parameter types) => result`. A value of that type can be passed, stored in a field, returned, and called:
 
 ```beskid
-i64 Apply(i64 v, (i64) => i64 f) {
+i64 Apply(i64 v, (i64) => i64 f)
+{
     return f(v);
 }
 
-i64 Double(i64 x) {
+i64 Double(i64 x)
+{
     return x * 2;
 }
 
-i64 Main() {
+i64 Main()
+{
     i64 offset = 10;
     i64 a = Apply(4, Double);
     i64 b = Apply(5, x => x + offset);
@@ -56,7 +59,8 @@ The normative rules are in [Lambdas and closures](/docs/standard/capabilities/la
 ## Example sketch (illustrative)
 
 ```beskid
-string Greet(string name) {
+string Greet(string name)
+{
     return "hello " + name;
 }
 ```

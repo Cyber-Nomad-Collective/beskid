@@ -15,11 +15,13 @@ Mark items `pub` when other modules may depend on them. Keep helpers private unl
 The rule applies to struct fields. A field without `pub` can be read and set only in the source file that declares its type, and that includes the type's inline methods. Anywhere else, reading it, reaching through it in a chain like `a.b.c`, or naming it in a struct literal fails with **E1211** (inaccessible struct field).
 
 ```beskid
-pub type Account {
-    pub string owner,
-    i64 balance,
+pub type Account
+{
+    pub string owner;
+    i64 balance;
 
-    pub i64 Balance() {
+    pub i64 Balance()
+    {
         return this.balance;
     }
 }

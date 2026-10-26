@@ -50,9 +50,9 @@ Ownership matters in one place: when a value leaves for another isolate. A **cro
 use Core.Parallel.Port;
 use Core.Results;
 
-unit Hand(Port<u8[]> output, u8[] block)
+unit Hand(Port<u8[]> output, move u8[] block)
 {
-    match output.Send(move block)
+    match (output.Send(move block))
     {
         Result::Ok(_) => { },
         Result::Error(_) => { },
@@ -61,13 +61,14 @@ unit Hand(Port<u8[]> output, u8[] block)
 }
 ```
 
-Reading `block` after the `Send` is E1234 ("moved here" on the `move`). The related rules, all from the `v067-move-at-isolate-boundary` change:
+`block` is a `move` parameter: the caller hands the array over, so `Hand` owns it and may send it on. A plain parameter is only lent by its caller, which still owns the value; sending it is E1241, and the help offers both repairs: copy it, or declare the parameter `move`. Reading `block` after the `Send` is E1234 ("moved here" on the `move`). The related rules, all from the `v067-move-at-isolate-boundary` change:
 
 | Mistake | Code | Help |
 | --- | --- | --- |
 | `move x` outside a crossing | E1239 | remove `move`; it applies only when a value crosses to another isolate |
 | A crossing operand that needs `move` and has none | E1242 | write `move <name>` |
 | A crossing operand that is a place read such as `xs[i]` or `x.f` | E1241 | copy the value first |
+| A plain parameter that is sent, stored or returned | E1241 | copy it, or declare the parameter `move` |
 | A `move` in a loop with no reassignment before the next round | E1240 | reassign the binding before the next iteration |
 | `move x.f` on a field with no canonical empty value | E1243 | use `exchange(x.f, v)` |
 

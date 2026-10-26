@@ -113,9 +113,7 @@ contract Named
     string Name();
 }
 
-type Cat
-{
-}
+type Cat { }
 
 string Greet<T>(T value) where T: Named
 {
@@ -124,7 +122,7 @@ string Greet<T>(T value) where T: Named
 
 unit Demo()
 {
-    Greet(Cat {});
+    Greet(Cat { });
     return;
 }
 ```

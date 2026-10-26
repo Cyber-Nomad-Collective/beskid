@@ -10,15 +10,20 @@ Language-level syntax is normative in the [Testing](/docs/standard/capabilities/
 ## Authoring tests
 
 ```beskid
-test ParseFast {
-    meta {
+test ParseFast
+{
+    meta
+    {
         tags = "fast,parser";
         group = "analysis.parser";
     }
-    skip {
+
+    skip
+    {
         condition = false;
         reason = "set true to disable temporarily";
     }
+
     return;
 }
 ```

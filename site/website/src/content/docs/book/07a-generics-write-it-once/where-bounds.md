@@ -39,7 +39,10 @@ use Core.Output;
 
 i32 Main()
 {
-    Dog dog = Dog { name: "Burek" };
+    Dog dog = Dog
+    {
+        name: "Burek",
+    };
     Output.WriteLine(Greet(dog));
     return 0;
 }

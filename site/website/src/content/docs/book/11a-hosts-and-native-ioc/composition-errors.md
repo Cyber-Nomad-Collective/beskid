@@ -37,9 +37,7 @@ Composition errors are reported **at compile time**, in the `composition.resolve
 ### E1704, the missing service
 
 ```beskid
-type Clock
-{
-}
+type Clock { }
 
 type Report
 {
@@ -90,9 +88,7 @@ If both should exist, ask for `inject Storage[] storages`. If one should win, re
 ### E1701, the host nobody started
 
 ```beskid
-type Logger
-{
-}
+type Logger { }
 
 host AppHost()
 {

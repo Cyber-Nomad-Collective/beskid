@@ -21,7 +21,11 @@ pub type Point
 
     pub Point Moved(i32 dx, i32 dy)
     {
-        return Point { x: this.x + dx, y: this.y + dy };
+        return Point
+        {
+            x: this.x + dx,
+            y: this.y + dy,
+        };
     }
 }
 ```
@@ -49,7 +53,11 @@ use Core.Output;
 
 i32 Main()
 {
-    Point start = Point { x: 1, y: 2 };
+    Point start = Point
+    {
+        x: 1,
+        y: 2,
+    };
     Point end = start.Moved(10, 20);
     Output.WriteLine("${end.x},${end.y} sum ${end.Sum()}");
     return 0;
@@ -87,7 +95,7 @@ pub enum Shape
 
 i64 Area(Shape shape)
 {
-    return match shape
+    return match (shape)
     {
         Shape::Dot => 0,
         Shape::Circle(radius) => 3 * radius * radius,

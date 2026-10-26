@@ -59,7 +59,11 @@ pub type Pair<A, B>
 
     pub Pair<B, A> Swap()
     {
-        return Pair<B, A> { first: this.second, second: this.first };
+        return Pair<B, A>
+        {
+            first: this.second,
+            second: this.first,
+        };
     }
 }
 ```
@@ -73,7 +77,11 @@ use Core.Output;
 
 i32 Main()
 {
-    Pair<string, i64> entry = Pair<string, i64> { first: "milk", second: 3 };
+    Pair<string, i64> entry = Pair<string, i64>
+    {
+        first: "milk",
+        second: 3,
+    };
     Pair<i64, string> flipped = entry.Swap();
     Output.WriteLine("${entry.First()} ${flipped.First()}");
     return 0;
@@ -95,7 +103,7 @@ pub enum Either<L, R>
 
 string Describe(Either<string, i64> value)
 {
-    return match value
+    return match (value)
     {
         Either::Left(text) => text,
         Either::Right(number) => "number ${number}",
