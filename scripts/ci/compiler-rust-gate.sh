@@ -36,13 +36,15 @@ run_bounded_phase() {
 
 run_lint_phase() {
   # Clippy is report-only for the release gate: it logs findings with a count and does not fail.
-  # `--no-deps` keeps the report scoped to workspace crates.
+  # `--no-deps` keeps the report scoped to workspace crates. Findings stay warnings (no
+  # `-D warnings`) and `--keep-going` continues past a crate that fails, so one crate's findings
+  # never stop clippy from linting the crates that depend on it.
   rustup component add clippy >/dev/null 2>&1 || true
   local report status findings
   report="$(mktemp "${TMPDIR:-/tmp}/beskid-clippy.XXXXXX")"
   set +e
   run_bounded_phase "Clippy (report-only)" "${BESKID_CLIPPY_TIMEOUT:-600}" \
-    cargo clippy --workspace --all-targets --no-deps -- -D warnings 2>&1 | tee "${report}"
+    cargo clippy --workspace --all-targets --no-deps --keep-going 2>&1 | tee "${report}"
   status="${PIPESTATUS[0]}"
   set -e
   # One finding per diagnostic header; summary lines ("generated N warnings", "could not compile",

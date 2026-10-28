@@ -50,7 +50,7 @@ SH
 chmod +x "$fixture/bin/rustup"
 PATH="$fixture/bin:$PATH" BESKID_TIMEOUT_CAPTURE="$fixture/lint.log" \
   bash "$fixture/scripts/ci/compiler-rust-gate.sh" lint
-grep -Fxq -- '--kill-after=60s 600 cargo clippy --workspace --all-targets --no-deps -- -D warnings' "$fixture/lint.log"
+grep -Fxq -- '--kill-after=60s 600 cargo clippy --workspace --all-targets --no-deps --keep-going' "$fixture/lint.log"
 
 # Clippy is lint, non-blocking for release: findings are counted and logged, the gate passes.
 cat >"$fixture/bin/timeout" <<'SH'
