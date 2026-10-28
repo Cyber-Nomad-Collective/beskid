@@ -65,6 +65,9 @@ run_runtime_phase() {
   # The installed-prefix harnesses (the beskid_tests_release crate and beskid_tests_interop
   # interop::glue_owned) need a qualified installation prefix and refuse developer overrides;
   # the release cases run them against the installed prefix, so this source-tree run leaves them out.
+  # The one glue_owned test that needs no prefix (the driver is denied from the build tree) runs
+  # here by its exact name, and the gate fails unless exactly that one test ran and passed.
+  run_build_tree_driver_denial
   # Tests run serially. Leave room for the measured full suite while retaining
   # a hard cap for a deadlocked lowering test.
   local test_timeout="${BESKID_TEST_TIMEOUT:-10800}"
@@ -81,6 +84,23 @@ run_runtime_phase() {
   if [[ "${status}" -eq 124 ]]; then
     echo "::error::Workspace tests exceeded ${test_timeout}s hard cap; a test is hung or looping. Failing fast instead of burning the job timeout." >&2
   fi
+  return "${status}"
+}
+
+run_build_tree_driver_denial() {
+  local report status
+  report="$(mktemp "${TMPDIR:-/tmp}/beskid-driver-denial.XXXXXX")"
+  set +e
+  run_bounded_phase "Glue driver denial from the build tree" "${BESKID_DRIVER_DENIAL_TIMEOUT:-1800}" \
+    cargo test -p beskid_tests_interop --lib -- --exact interop::glue_owned::v06_glue_driver_denied_from_build_tree \
+    2>&1 | tee "${report}"
+  status="${PIPESTATUS[0]}"
+  set -e
+  if [[ "${status}" -eq 0 ]] && ! grep -Eq '^test result: ok\. 1 passed; 0 failed' "${report}"; then
+    echo "::error::the build-tree Glue driver denial test did not run exactly once" >&2
+    status=1
+  fi
+  rm -f "${report}"
   return "${status}"
 }
 
