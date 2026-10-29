@@ -78,7 +78,7 @@ The command **must**:
 
 ## Security
 
-Imported libraries **must** be subject to **`BESKID_EXTERN_ALLOW` / `BESKID_EXTERN_DENY`** at link/run drivers when those variables are set.
+The command only writes link metadata. A required extern whose library is not recorded fails with E4050 at AOT link time.
 
 ## Verification anchors
 

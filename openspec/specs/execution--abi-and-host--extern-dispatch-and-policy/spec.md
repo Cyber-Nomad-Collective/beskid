@@ -126,20 +126,20 @@ No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-EXEC-A
 ``````markdown
 ## Context
 
-Early engine prototypes resolved `Extern(Library:…)` via `dlopen`/`dlsym`. That complicates reproducible AOT artifacts and blurs security review of loaded code.
+Early engine prototypes resolved `Extern(Library:…)` via `dlopen`/`dlsym` behind a feature flag. That complicates reproducible AOT artifacts and blurs security review of loaded code. The flag is retired.
 
 ## Decision
 
 | Track | Status |
 | --- | --- |
 | **Link-time** | **Standard** for v0.3 — addresses fixed before execution via [C ABI profile](/platform-spec/language-meta/interop/c-abi-profile/link-time-linking/) |
-| **Dynamic `extern_dlopen`** | **Proposed** / legacy — engine feature only; not required for reference CLI |
+| **JIT symbol resolution** | The engine resolves each required extern symbol when it compiles the artifact; no feature flag, no allow and deny list |
 | Validation | High-level Beskid types in extern signatures **must** be rejected before codegen |
 | Syscalls | User externs **must not** embed OS syscall sequences — see [Panic, IO, and syscalls](/platform-spec/execution/runtime/panic-io-and-syscalls/) |
 
 ## Consequences
 
-New platform work documents link-time flows first. Dynamic resolution stays gated behind `extern_dlopen` in `beskid_engine`.
+New platform work documents link-time flows first. The engine feature `extern_dlopen` is retired.
 
 ## Verification anchors
 
@@ -239,10 +239,10 @@ Codegen and link hosts emit an explicit init hook. Conformance tests assert hand
 
 | ID | Requirement |
 | --- | --- |
-| **EXT-001** | If dynamic extern resolution is disabled, compilation **must** fail when the artifact references extern symbols, listing each unresolved import. |
+| **EXT-001** | A required extern that does not resolve **must** fail compilation with the symbol name; the engine **must not** bind a zero or stub address. |
 | **EXT-002** | Engine-validated extern signatures **must** use only approved scalar Cranelift kinds; all other types **must** be rejected. |
-| **EXT-003** | Dynamic loading on Linux **must** use `RTLD_LOCAL \| RTLD_NOW`; error paths **must** surface `dlerror()` text. |
-| **EXT-004** | `(library, symbol)` resolution **must** be cached for process lifetime without double `dlopen` of the same library path. |
+| **EXT-003** | When the engine loads a declared library, it **must** use `RTLD_LOCAL \| RTLD_NOW`; error paths **must** surface `dlerror()` text. |
+| **EXT-004** | Retired: the engine keeps no resolution cache. |
 | **EXT-005** | `interop_dispatch_*` builtins **must** follow layouts documented in `beskid_runtime` `interop_layout.rs` for the active ABI version. |
 | **EXT-006** | User-facing docs **must not** expose internal `__interop_*` mangling; stable names are `interop_dispatch_*` only. |
 
@@ -250,20 +250,19 @@ Codegen and link hosts emit an explicit init hook. Conformance tests assert hand
 
 | Case | Behavior |
 | --- | --- |
-| Missing shared library | Compile/link failure with library path in diagnostic when dynamic path enabled |
+| Missing shared library | Compile failure with the library name in the diagnostic |
 | Missing symbol | `dlsym` failure with symbol + library name |
-| Extern in artifact, feature off | Fail fast (**EXT-001**); no silent stub addresses |
-| Mixed link-time + dynamic in one workspace | Each artifact follows its manifest/link profile; engine caches are per-process |
-| Non-Linux host with `extern_dlopen` | Unsupported; compilation or tests **should** skip with explicit platform guard |
+| Extern that does not resolve | Fail fast (**EXT-001**); no silent stub addresses |
+| Host without JIT extern resolution | Compilation of an artifact with a required extern fails with the list of symbols |
 
 ## SHOULD guidance
 
-- New packages **should** use link-time [C ABI profile](/platform-spec/language-meta/interop/c-abi-profile/) rather than `extern_dlopen`.
+- New packages **should** use link-time [C ABI profile](/platform-spec/language-meta/interop/c-abi-profile/).
 - Panic from foreign code **should** be treated as process-fatal; Beskid does not translate C aborts into `Option`.
 
 ## Implementation anchors
-- `compiler/crates/beskid_analysis/src/` — extern validation diagnostics and feature gating
-- `compiler/crates/beskid_engine/src/` — optional `extern_dlopen` path
+- `compiler/crates/beskid_analysis/src/` — extern validation diagnostics
+- `compiler/crates/beskid_engine/src/engine.rs` — JIT extern resolution
 - `compiler/crates/beskid_runtime/src/interop/` — runtime panic policy for foreign code
 
 ## Related topics
@@ -295,7 +294,7 @@ Separate **who declares** foreign calls, **who validates** signatures, and **who
 | --- | --- |
 | **Front-end / analysis** | Parses `Extern` contracts, emits diagnostics for disallowed types (`compiler/crates/beskid_analysis`). |
 | **Codegen** | Lowers approved calls to Cranelift `call` targets—either runtime builtins or imported extern symbols. |
-| **Engine (`beskid_engine`)** | Optional `extern_dlopen` path: `dlopen` / `dlsym` with caches (legacy v0.1; **Proposed** for new work—prefer link-time [C ABI profile](/platform-spec/language-meta/interop/c-abi-profile/link-time-linking/)). |
+| **Engine (`beskid_engine`)** | JIT extern resolution: `dlsym` over loaded symbols, then `dlopen` / `dlsym` in the declared library; no caches, no feature flag (prefer link-time [C ABI profile](/platform-spec/language-meta/interop/c-abi-profile/link-time-linking/)). |
 | **Runtime builtins** | `interop_dispatch_unit`, `interop_dispatch_ptr`, `interop_dispatch_usize` bridge language/runtime interop layouts (`beskid_runtime::interop`). |
 
 ## Dispatch layers
@@ -305,7 +304,7 @@ flowchart TB
   src[Beskid Extern contract]
   ty[Type + ABI validation]
   link[Link-time symbol]
-  dyn[Optional dlopen path]
+  dyn[JIT symbol resolution]
   rt[Runtime interop_dispatch_*]
   src --> ty
   ty --> link
@@ -315,7 +314,7 @@ flowchart TB
 
 **Link-time (Standard v0.3):** User libraries resolve when producing AOT/JIT artifacts; addresses are fixed before execution.
 
-**Dynamic (legacy):** Engine loads `Library` + `Symbol` strings from `Extern(Abi:"C", Library:"…")` metadata when `extern_dlopen` is enabled.
+**JIT resolution:** The engine resolves `Library` + `Symbol` strings from `Extern(Abi:"C", Library:"…")` metadata when it compiles the artifact.
 
 **Runtime dispatch:** Compiler-generated thunks call `interop_dispatch_*` for tagged interop values; layout offsets are stable per ABI version ([ABI versioning](/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/)).
 
@@ -349,9 +348,9 @@ flowchart TB
 <summary>Migrated source text</summary>
 
 ``````markdown
-## C extern contract (dynamic profile)
+## C extern contract
 
-Legacy engine-assisted linking declares prototypes on a contract:
+A contract declares prototypes:
 
 ```beskid
 [Extern(Abi:"C", Library:"libc.so.6")]
@@ -360,15 +359,15 @@ pub contract LibC {
 }
 ```
 
-With `extern_dlopen` enabled on Linux x86_64, the engine resolves `getpid` once and registers the address for JIT imports. With the feature disabled, compilation fails unless the symbol is satisfied by link-time layout instead.
+On Linux, the engine resolves `getpid` from the loaded process when it compiles the artifact and registers the address for JIT imports.
 
 ## Link-time preferred shape
 
 New work **should** attach libraries through the platform [link-time linking](/platform-spec/language-meta/interop/c-abi-profile/link-time-linking/) profile so AOT and production JIT bundles do not depend on `dlopen` at first run.
 
-## Failure scenario (feature off)
+## Failure scenario (unresolved symbol)
 
-A module references `LibC.getpid()` but the workspace builds `beskid_engine` without `extern_dlopen`. Expected outcome: diagnostic listing `getpid` / `libc.so.6` rather than a link to address `0`.
+A module references a symbol that no loaded library and not the declared library defines. Expected outcome: a `dlsym` diagnostic that names the symbol rather than a link to address `0`.
 
 ## Interop dispatch (conceptual)
 
@@ -382,11 +381,9 @@ Exact variant tables live in [Interop.Contracts](/platform-spec/language-meta/in
 
 ## Test commands (maintainers)
 
-Legacy harness references:
+Harness references:
 
-- `cargo test -p beskid_engine extern_resolution_only_compiles_with_feature --features extern_dlopen`
-- `cargo test -p beskid_engine extern_real_call_getpid --features extern_dlopen`
-- `cargo test -p beskid_engine extern_resolution_fails_without_feature`
+- `cargo test -p beskid_engine --test extern_tests`
 
 ## Related topics
 
@@ -409,13 +406,13 @@ Legacy harness references:
 ``````markdown
 ## FAQ
 
-### Should new packages use `extern_dlopen`?
+### Should new packages rely on JIT symbol resolution?
 
-No for production **Standard** flows—use [link-time linking](/platform-spec/language-meta/interop/c-abi-profile/link-time-linking/). `extern_dlopen` remains documented for legacy engine tests and **Proposed** dynamic profiles.
+No for production **Standard** flows—use [link-time linking](/platform-spec/language-meta/interop/c-abi-profile/link-time-linking/).
 
 ### Why do externs fail on one macOS host?
 
-Dynamic resolution tests target Linux x86_64. macOS agents should skip or use link-time externs; `dlopen` policy is not portable in the legacy feature.
+The extern tests target Linux. macOS agents should skip them or use link-time externs.
 
 ### What is the difference between `interop_dispatch_*` and user `Extern`?
 
@@ -429,7 +426,7 @@ No. Extern targets must be foreign symbols; calling `alloc` or `panic` through `
 
 | Symptom | Check |
 | --- | --- |
-| "extern present but feature disabled" | Enable `extern_dlopen` on engine **or** switch to link-time profile |
+| `dlopen` or `dlsym` failure at compile time | Check the library name and the symbol; or switch to link-time profile |
 | Invalid signature at JIT | Parameter uses Beskid struct/string type—fix contract to scalars/pointers |
 | `dlsym` undefined symbol | Typo in symbol string; verify with `nm -D` on the `.so` |
 | Dispatch returns garbage | ABI/layout drift—compare `interop_layout.rs` with [ABI versioning](/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/) |
@@ -459,26 +456,17 @@ Step-by-step flow from source `Extern` to executable call target. Actor diagram:
 
 ## Compile-time validation
 
-1. Parser records `Extern` ABI string (typically `"C"`) and optional `Library` for dynamic profiles.
+1. Parser records `Extern` ABI string (typically `"C"`) and optional `Library`.
 2. Semantic analysis rejects Beskid-only types in extern parameter/return positions.
 3. `declare_validated_extern_imports` (`beskid_codegen`) maps each extern to a Cranelift signature; invalid shapes become `ExternDeclarationError::InvalidSignature`.
 
-## JIT link without dynamic externs
+## JIT extern resolution
 
-1. `BeskidJitModule::new()` registers runtime builtins only.
-2. `declare_validated_extern_imports` declares extern imports; addresses **must** be supplied by the linker or pre-resolved `extras` table before execution.
-3. `remap_testcase_externals` rewrites CLIF external names to registered `FuncId`s during define.
+1. `declare_validated_extern_imports` declares extern imports.
+2. For each required `(library, symbol)` in the artifact, the engine calls `dlsym` over the loaded symbols. When the symbol is absent, it calls `dlopen(RTLD_LOCAL | RTLD_NOW)` on the declared library and `dlsym` in it. Failures include `dlerror()` text in diagnostics.
+3. `BeskidJitModule::new_with_symbols` passes `(name, *const u8)` pairs into the JIT builder so Cranelift imports bind to resolved addresses.
 
-## Optional dynamic resolution (`extern_dlopen`)
-
-When the engine feature is enabled on Linux x86_64:
-
-1. For each distinct `(library, symbol)` in the artifact, `dlopen(RTLD_LOCAL | RTLD_NOW)` once per process.
-2. `dlsym` resolves the symbol; failures include `dlerror()` text in diagnostics.
-3. Process-lifetime caches deduplicate libraries and symbols across compilation units.
-4. `BeskidJitModule::new_with_symbols` passes `(name, *const u8)` pairs into the JIT builder so Cranelift imports bind to resolved addresses.
-
-When the feature is **disabled**, artifacts containing externs **must** fail compilation with an explicit list of unresolved symbols (**EXT-001**).
+An extern that does not resolve **must** fail compilation (**EXT-001**).
 
 ## Runtime interop dispatch path
 
@@ -518,7 +506,7 @@ When the feature is **disabled**, artifacts containing externs **must** fail com
 | `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs` | Extern-related diagnostics |
 | `compiler/runtime_manifest.bsol` | `interop_dispatch_*` entries in the generated ABI-v5 tables |
 | `compiler/crates/beskid_codegen` | `declare_validated_extern_imports`, signature validation |
-| `compiler/crates/beskid_engine` | `extern_dlopen` tests, `new_with_symbols` |
+| `compiler/crates/beskid_engine` | `extern_tests.rs`, `new_with_symbols` |
 | `compiler/crates/beskid_runtime/src/interop/` | Dispatch implementations |
 | `compiler/crates/beskid_runtime/src/interop_layout.rs` | Tag/payload offsets |
 
@@ -526,9 +514,7 @@ When the feature is **disabled**, artifacts containing externs **must** fail com
 
 | Test (engine) | Asserts |
 | --- | --- |
-| `extern_resolution_only_compiles_with_feature` | Resolution succeeds when feature on |
-| `extern_real_call_getpid` | Live call returns plausible PID |
-| `extern_resolution_fails_without_feature` | **EXT-001** style failure |
+| `extern_call_resolves_from_process_symbols` | Live call returns plausible PID |
 | `extern_missing_symbol_errors` | `dlsym` diagnostic quality |
 | `extern_missing_library_errors` | `dlopen` diagnostic quality |
 
@@ -536,9 +522,9 @@ When the feature is **disabled**, artifacts containing externs **must** fail com
 
 | ID | Evidence |
 | --- | --- |
-| **EXT-001** | `extern_resolution_fails_without_feature` |
+| **EXT-001** | `extern_missing_symbol_errors` |
 | **EXT-002** | `ExternDeclarationError::InvalidSignature` unit paths in codegen |
-| **EXT-003–004** | Engine cache tests + code review of `dlopen` flags |
+| **EXT-003** | Code review of `dlopen` flags |
 | **EXT-005** | `interop_layout.rs` + runtime dispatch tests |
 
 ## Related topics

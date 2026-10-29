@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "6aeab483c364a6b972a9ba120bae183516d4b74085cceb20ed4f0eb1c19defef",
+  "revision": "d7338f617a9216c6ee3d95e752d766d9bc48d4dc4832252092914e72bff20f68",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -59553,7 +59553,7 @@
       "decision": null,
       "title": "Backends (JIT and AOT)",
       "status": "Standard",
-      "sourceHash": "701998b6a97f4ad3c3ae6dcfe68054c6088b6049527a4a079a47a415ffe4e4b7"
+      "sourceHash": "55a20db8ac01ef168c36eb525ace858ab329b6deec51a19a21f57f0d4bd74f2a"
     },
     {
       "id": "BSP-CAP-385EB951CF77",
@@ -61203,7 +61203,7 @@
       "decision": null,
       "title": "ABI versioning and compatibility",
       "status": "Standard",
-      "sourceHash": "2ef8b79ec72cfd90f2889da90109cc282edd8cdd54fe01cac7a471fc20f079ea"
+      "sourceHash": "eae9f93132a9dda1f870d88738d1fc02511126b7332eb7401823e5f004e232e4"
     },
     {
       "id": "BSP-CAP-A171547ADF54",
@@ -61247,7 +61247,7 @@
       "decision": null,
       "title": "Extern dispatch and policy",
       "status": "Standard",
-      "sourceHash": "2512574015935574a4da47f901d6bb51988ecc0fdefcabd77b7f6ef0130fca28"
+      "sourceHash": "e08e6c5d78c00ca6a3701aa3b8206d1902d0437bd6e923716376ffb820de83ac"
     },
     {
       "id": "BSP-CAP-97C444BA51D6",
@@ -61357,7 +61357,7 @@
       "decision": null,
       "title": "Runtime feature flags",
       "status": "Standard",
-      "sourceHash": "2b0db527ab9550b89e0488de1f4dd342e2688d6a241de5adafb2ba5d11cfa5d2"
+      "sourceHash": "c950bd81af48067b468d12a9553c996a7972f8180b47b1865ac4a38a94279947"
     },
     {
       "id": "BSP-CAP-3380C7E3C94B",
@@ -61577,7 +61577,7 @@
       "decision": null,
       "title": "C ABI profile",
       "status": "Standard",
-      "sourceHash": "dc7f896fcbb70c28227cf80c358317ab60d869332cb215edc4087c41a769e600"
+      "sourceHash": "48bd352946670e2ea669b7382e3671154256ef1a105d4fa4d56672328bb1883c"
     },
     {
       "id": "BSP-CAP-D9DF6656F2E5",
@@ -61621,7 +61621,7 @@
       "decision": null,
       "title": "FFI and extern",
       "status": "Standard",
-      "sourceHash": "25ded7b43defd53451b9bd0534b8e5be0cefddd7c15820477a08cf898e47c4e0"
+      "sourceHash": "216eeada51cf0bf835ca4210429df6479d0e15134754488a8fdbffdcc567d15f"
     },
     {
       "id": "BSP-CAP-983AAC55EE48",
@@ -62171,7 +62171,7 @@
       "decision": null,
       "title": "beskid import lib command",
       "status": "Standard",
-      "sourceHash": "2259dc086030005e89d57b6bc141e6351e6b384bfeb0fa3788b2ff98b8f77183"
+      "sourceHash": "fd18450503d7221282ca34962942b1e4c215bffd0d4ec56804de57404d3a983c"
     },
     {
       "id": "BSP-CAP-62C3D7F308C1",

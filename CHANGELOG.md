@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- OpenSpec change `v067-retire-extern-dlopen`: the `extern_dlopen` engine feature and the
+  `BESKID_EXTERN_ALLOW` and `BESKID_EXTERN_DENY` lists are retired from the specification; the
+  specification states how JIT and AOT extern resolution fail closed.
 - OpenSpec change `v067-lock-format-fail-closed`: a `Project.lock` that is not
   in format 3 fails with E3025 (delete it and write a new lock); the lock
   migration and E3024 are retired.

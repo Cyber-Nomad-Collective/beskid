@@ -162,7 +162,7 @@ Conformance and doc tests **must** pin feature set when asserting array behavior
 | **RFF-003** | Tests that require `arrays_backing` **must** enable the feature on `beskid_runtime` dependency. |
 | **RFF-004** | `metrics` exports **must** be absent from baseline `RUNTIME_EXPORT_SYMBOLS` when built without `metrics`. |
 | **RFF-005** | Compiler lowering **must not** assume element backing exists unless workspace policy enables `arrays_backing`. |
-| **RFF-006** | `extern_dlopen` **must** remain off by default on `beskid_engine` for production toolchains. |
+| **RFF-006** | Retired: `beskid_engine` has no extern feature flag. |
 | **RFF-007** | Phase B GC **must** be opt-in for v0.3; the runtime **must** boot in Phase A unless `BESKID_RUNTIME_PHASE_B=1` or `set_runtime_phase(RuntimePhase::PhaseB)` flips it. |
 | **RFF-008** | Optional preemption **must** stay disabled by default; enabling it via `BESKID_RUNTIME_PREEMPT=1` or `set_preemption_enabled(true)` **must not** change observable semantics of fiber-only programs beyond inserting yield points. |
 
@@ -228,7 +228,6 @@ Document **optional runtime capabilities** selected at **build time** via Cargo 
 | **`arrays_backing`** | `array_new` allocates element storage; without it, header-only arrays (`ptr = null`) |
 | **`metrics`** | Extra `rt_metrics_*` exports for heap/alloc/event counters |
 | **`sched`** | Scheduler internals/experimental hooks (build-time; not user-facing) |
-| **`extern_dlopen`** (engine, not runtime) | Dynamic extern resolution — see [Extern dispatch](/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/) |
 
 ## Alignment model
 
@@ -248,7 +247,6 @@ Shipped artifacts **must** document enabled features. Mixing a compiler test bui
 ## Implementation anchors
 - `compiler/crates/beskid_runtime/Cargo.toml` — `[features]` definitions (`arrays_backing`, `metrics`)
 - `compiler/crates/beskid_runtime/src/builtins/arrays.rs` — `arrays_backing` gated array builtins
-- `compiler/crates/beskid_engine/Cargo.toml` — `extern_dlopen` engine feature
 
 ## Related topics
 
@@ -291,13 +289,6 @@ cargo build -p beskid_runtime --features metrics
 
 Generated code that does not call `rt_metrics_*` still links because baseline JIT does not import optional symbols.
 
-## Engine dynamic extern (related)
-
-```bash
-cargo test -p beskid_engine extern_real_call_getpid --features extern_dlopen
-```
-
-This does not change runtime features; it documents cross-crate flag vocabulary for execution maintainers.
 
 ## Release matrix documentation (prose)
 
@@ -332,10 +323,6 @@ No when behavior is backward compatible (**RFF-001**). Adding new optional symbo
 
 Default builds omit `arrays_backing`. Enable the feature for tests that touch elements.
 
-### Where is `extern_dlopen` documented?
-
-Under [Extern dispatch and policy](/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/) — it is an **engine** feature, not a runtime Cargo feature.
-
 ### Can users toggle features at run time?
 
 No. Selection is compile-time for the linked `beskid_runtime` artifact. CLI flags choose execution **mode**, not `arrays_backing`.
@@ -346,7 +333,7 @@ No. Selection is compile-time for the linked `beskid_runtime` artifact. CLI flag
 | --- | --- |
 | Array element segfault | Build runtime with `arrays_backing` or stop dereferencing `ptr` |
 | Missing `rt_metrics_*` at link | Enable `metrics` on runtime **and** ensure codegen emits calls |
-| Extern works locally, fails in a distributed artifact | Its runtime lacks `extern_dlopen` — use link-time externs |
+| Extern works locally, fails in a distributed artifact | Link the library at AOT link time (`project.link`) |
 | VSIX vs local CLI array difference | Compare release matrices for runtime features |
 
 ## Related topics
@@ -391,12 +378,6 @@ How optional features propagate from Cargo to runtime behavior. Build alignment 
 2. JIT **must** only declare imports if codegen emits calls—baseline programs ignore them.
 3. Hosts read counters for profiling dashboards; not part of user Beskid language.
 
-## Engine `extern_dlopen` (related)
-
-1. Separate from runtime crate: enable on `beskid_engine` for dynamic extern tests.
-2. Does not alter `beskid_runtime_abi_version`.
-3. Failure modes documented under [Extern dispatch](/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/).
-
 ## Release verification flow
 
 1. Read the release manifest for enabled features.
@@ -405,7 +386,6 @@ How optional features propagate from Cargo to runtime behavior. Build alignment 
 
 ## Implementation anchors
 - `compiler/crates/beskid_runtime/src/builtins/arrays.rs` — `arrays_backing` enabled array construction
-- `compiler/crates/beskid_engine/src/` — `extern_dlopen` dynamic extern resolution
 - `compiler/crates/beskid_tests/src/runtime/` — feature-gated integration test fixtures
 
 ## Related topics
@@ -434,7 +414,6 @@ How optional features propagate from Cargo to runtime behavior. Build alignment 
 | `compiler/crates/beskid_runtime/Cargo.toml` | `[features]` table |
 | `compiler/crates/beskid_runtime/src/builtins/arrays.rs` | `#[cfg(feature = "arrays_backing")]` |
 | `compiler/crates/beskid_runtime/src/builtins/mod.rs` | `metrics` module gate |
-| `compiler/crates/beskid_engine/Cargo.toml` | `extern_dlopen` feature |
 | `compiler/crates/beskid_cli/src/commands/doc.rs` | Execution modes referencing runtime |
 
 ## Tests
@@ -442,7 +421,7 @@ How optional features propagate from Cargo to runtime behavior. Build alignment 
 | Suite | Notes |
 | --- | --- |
 | `beskid_tests/src/runtime/jit.rs` | Default runtime feature set |
-| Engine `extern_*` tests | Require `extern_dlopen` |
+| Engine `extern_*` tests | Run in the default build on Linux |
 | Future: explicit `arrays_backing` fixture | Assert `ptr != null` when enabled |
 
 ## Traceability
@@ -451,7 +430,7 @@ How optional features propagate from Cargo to runtime behavior. Build alignment 
 | --- | --- |
 | **RFF-001** | ABI version constant unchanged in feature-only PRs |
 | **RFF-003** | Artifact manifests list `arrays_backing` where needed |
-| **RFF-006** | Default engine feature set off in distribution profile |
+| **RFF-006** | Retired |
 
 ## Implementation anchors
 - `compiler/crates/beskid_runtime/Cargo.toml` — default feature set verification

@@ -117,7 +117,7 @@ Lowering uses **Cranelift**; foreign libraries need only expose C ABI entrypoint
 - Collection: `compiler/crates/beskid_codegen/src/lowering/lowerable.rs`
 - Contract calls: `compiler/crates/beskid_codegen/src/lowering/expressions/call_expression.rs`
 - Signature validation: `compiler/crates/beskid_codegen/src/cranelift_host.rs`
-- Legacy dynamic resolution: `compiler/crates/beskid_engine/src/engine.rs` (`extern_dlopen`, Proposed)
+- JIT extern resolution: `compiler/crates/beskid_engine/src/engine.rs` (`resolve_process_extern_symbols`)
 - Stable view layouts (embedding): `compiler/crates/beskid_abi/src/types.rs`
 </SpecSection>
 
@@ -190,7 +190,7 @@ v0.3 **Standard** tier-1 conformance **must** use **link-time** library binding 
 
 ## Consequences
 
-Engine may retain Proposed `extern_dlopen` paths separately from Standard claims.
+The engine feature `extern_dlopen` is retired.
 
 ## Verification anchors
 
@@ -224,7 +224,7 @@ Documentation and conformance matrices must not require dlopen for Standard tier
 
 ## Verification anchors
 
-`compiler/crates/beskid_engine/src/engine.rs` (`extern_dlopen`, Proposed).
+`compiler/crates/beskid_engine/src/engine.rs`.
 ``````
 
 </details>
@@ -353,28 +353,19 @@ The platform **will** specify nested FFI structs, fixed-size array fields, and e
 <summary>Migrated source text</summary>
 
 ``````markdown
-> **Status: Proposed** — This profile is **not** required for v0.3 **Standard** conformance. It documents the reference engine’s optional **`extern_dlopen`** path for migration and tooling experiments.
+> **Status: Retired** — The engine feature `extern_dlopen`, its caches and the variables `BESKID_EXTERN_ALLOW` and `BESKID_EXTERN_DENY` are removed. This page remains only as history.
 
 ## Behavior (reference)
 
-When enabled on supported hosts (historically Linux x86_64):
-
-- Libraries load via **`dlopen(RTLD_LOCAL | RTLD_NOW)`**.
-- Symbols resolve via **`dlsym`** with process-lifetime caches.
-- **`BESKID_EXTERN_ALLOW`** / **`BESKID_EXTERN_DENY`** apply as in `/execution/runtime/extern-policy-v0-1/`.
-
-Implementation anchors: `compiler/crates/beskid_engine/src/engine.rs` (`extern_dlopen` feature).
+The JIT backend resolves a required extern symbol when it compiles the artifact: first among the loaded symbols, then in the declared library (`dlopen` with `RTLD_NOW | RTLD_LOCAL`). A failure is a compile error. See `execution--abi-and-host--extern-dispatch-and-policy`.
 
 ## Relationship to v0.3 Standard
 
-Production builds **should** use **[link-time linking](./link-time-linking/)**. Dynamic resolution remains available for:
-
-- Local development without a full link driver.
-- Tests gated by `--features extern_dlopen`.
+Production builds **should** use **[link-time linking](./link-time-linking/)**.
 
 ## Deprecation direction
 
-New platform-spec and CLI work **must** target link-time binding. Dynamic resolution **must not** be documented as the default in execution/runtime FFI chapters after v0.3.
+New platform-spec and CLI work **must** target link-time binding.
 ``````
 
 </details>
@@ -511,11 +502,11 @@ Link symbols use the method **`Symbol`** override when present; otherwise the Be
 
 ## Security
 
-Link drivers **may** enforce **`BESKID_EXTERN_ALLOW`** / **`BESKID_EXTERN_DENY`** against resolved `(library, symbol)` pairs before producing a runnable artifact.
+The AOT link step fails with E4050 when a required extern names a library that is not linked. No environment variable changes this check.
 
 ## JIT note
 
-Reference JIT paths that relied on runtime **`dlopen`** are **not** the Standard story in v0.3. See **[dynamic resolution profile](./dynamic-resolution-profile/)** for the non-Standard appendix.
+JIT extern resolution at compile time is not the Standard story in v0.3; link-time binding is.
 
 ## AOT parity
 
