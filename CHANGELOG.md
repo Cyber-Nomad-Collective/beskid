@@ -11,6 +11,11 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- OpenSpec change `v067-default-target-selection`: without `--target`,
+  `beskid build` and `beskid run` never select a Test target (`run` selects the
+  App target, `build` the App target or else the Lib target); `beskid test` runs
+  every Test target in manifest order with a combined summary, or else the Lib
+  target; two candidates of one kind fail with an error that names them.
 - OpenSpec change `v067-retire-extern-dlopen`: the `extern_dlopen` engine feature and the
   `BESKID_EXTERN_ALLOW` and `BESKID_EXTERN_DENY` lists are retired from the specification; the
   specification states how JIT and AOT extern resolution fail closed.
