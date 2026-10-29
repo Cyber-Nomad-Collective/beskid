@@ -391,7 +391,7 @@ The language-agnostic boundary vocabulary in `beskid_abi::interop`: type-shape c
 The codegen backend selected with `beskid build --backend`. `clif` is the
 default Cranelift path. `glue-rust` builds a `Lib` target as a shared Glue
 consumer plus one Rust owner image per referenced `glue` block, and requires
-explicit Rust tools. `glue-dotnet` is parsed but unavailable in 0.6.
+explicit Rust tools. No other backend exists.
 
 ## Glue owner block
 

@@ -333,6 +333,10 @@ summary; the itemized development log stays under [Unreleased] below and in
 
 ### Changed
 
+- The Book lockfile reference names E3025: a `Project.lock` whose first line
+  is not `# Project.lock v3` has an unsupported format, and the user deletes
+  it and writes a new lock. The stale E3024 row is removed, and the glossary
+  no longer names a `glue-dotnet` backend.
 - Publish stable releases from `ci.beskid-lang.org` through the manual
   `main`-only Woodpecker `release-publish` lane. A credential-free
   `verify-release` step proves the qualified state and owner waiver; only the
