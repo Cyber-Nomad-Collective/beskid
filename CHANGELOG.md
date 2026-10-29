@@ -333,6 +333,11 @@ summary; the itemized development log stays under [Unreleased] below and in
 
 ### Changed
 
+- The Book targets page and the `build`, `run` and `test` references state the
+  default target rule: without `--target`, `build` and `run` never use a Test
+  target (`run` uses the App target, `build` the App target or else the Lib
+  target), and `test` runs every Test target with a `Total:` line, or else the
+  Lib target; two candidates of one kind are an error.
 - The Book lockfile reference names E3025: a `Project.lock` whose first line
   is not `# Project.lock v3` has an unsupported format, and the user deletes
   it and writes a new lock. The stale E3024 row is removed, and the glossary
