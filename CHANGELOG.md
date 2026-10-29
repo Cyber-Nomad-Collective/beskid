@@ -14,6 +14,10 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - OpenSpec change `v067-lock-format-fail-closed`: a `Project.lock` that is not
   in format 3 fails with E3025 (delete it and write a new lock); the lock
   migration and E3024 are retired.
+- OpenSpec change `v067-x86-64-baseline`: every x86_64 target builds for the
+  x86-64-v2 CPU level in AOT, JIT and tests; aarch64-apple-darwin builds for
+  Armv8.0-A; a Cranelift runtime helper call is E4004. The Docs install pages
+  state the CPU requirement.
 
 ## [0.6.6] - 2026-10-16
 
