@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/standard/).
 
+## [Unreleased]
+
+### Changed
+
+- OpenSpec change `v067-lock-format-fail-closed`: a `Project.lock` that is not
+  in format 3 fails with E3025 (delete it and write a new lock); the lock
+  migration and E3024 are retired.
+
 ## [0.6.6] - 2026-10-16
 
 Not released until the three-platform build of the 0.6.6 candidate passes and
