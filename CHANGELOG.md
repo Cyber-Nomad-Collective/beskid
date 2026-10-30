@@ -16,7 +16,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   "Array length changes never reach another handle", shrink scenarios, owner-
   aware `RemoveLast` in the typed-array-growth requirement); a field lent beside
   an array of holders (`Holder[]`) is marked, which closes the former residual
-  boundary.
+  boundary. W1240 ("Discarded array growth", `v067-semantic-diagnostics`) also
+  covers a discarded `Array.RemoveLast` on an array that is not an owner.
 - Change `v067-array-growth-aliasing`: growing one array handle never changes
   what another handle to the same array sees (new memory-model requirement
   "Array growth never reaches another handle"); the typed growth operation

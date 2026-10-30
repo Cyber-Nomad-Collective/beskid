@@ -38,7 +38,7 @@ When a generic bound `Serializable` is violated by a type `T` (**E1610**), the h
 - **THEN** the compiler SHALL report **E1610** with the help "add `[Serialize]` to type `Point` so the compiler derives its `Serializable` conformance" and a machine-applicable fix that inserts `[Serialize]` above `type Point`
 
 ### Requirement: Discarded array growth W1240
-The code **W1240** SHALL identify an `Array.Append` call used as a statement on an array that the caller does not own, so that the result is discarded and the array is not changed. The message SHALL have the form "the result of `Array.Append` is discarded; `xs` is not changed" and SHALL be reported at the call. The help and the fix SHALL depend on the kind of the argument. For a parameter that is not `mut`, the fix SHALL declare the parameter `mut` (machine-applicable). For a pattern binding or a lambda parameter, the fix SHALL assign the result to the name (machine-applicable). For a `for` variable, a call result or an element, the fix SHALL use the result in a new local, `T[] grown = Array.Append(...)` when the element type is known (applicability `MaybeIncorrect`). Only `Array.Append` is covered, because the other growth operations either work in place or return a flag.
+The code **W1240** SHALL identify an `Array.Append` or `Array.RemoveLast` call used as a statement on an array that the caller does not own (a parameter that is not `mut` or `move`, a loop or pattern variable, a lambda parameter, a call result, an element), so that the result is discarded and the array is not changed: the call works on a copy. The message SHALL have the form "the result of `Array.Append` is discarded; the call works on a copy, so `xs` is not changed" (with `Array.RemoveLast` for a shrink) and SHALL be reported at the call. The help SHALL suggest using the result or passing an owner, and the help and the fix SHALL depend on the kind of the argument. For a parameter that is not `mut`, the fix SHALL declare the parameter `mut` (machine-applicable). For a pattern binding or a lambda parameter, the fix SHALL assign the result to the name (machine-applicable). For a `for` variable, a call result or an element, the fix SHALL use the result in a new local, `T[] grown = Array.Append(...)` or `T[] shortened = Array.RemoveLast(...)` when the element type is known (applicability `MaybeIncorrect`). A call whose first argument is an owner (a `let` local, a `mut` or `move` parameter, a field), and a call whose result is used, SHALL NOT be reported. `Array.TryAppend` is not covered, because it returns a flag.
 
 #### Scenario: Non-mut parameter
 - **GIVEN** `unit Add(i64[] xs) { Array.Append<i64>(xs, 1); }`
@@ -49,6 +49,11 @@ The code **W1240** SHALL identify an `Array.Append` call used as a statement on 
 - **GIVEN** a pattern binding `xs` and the statement `Array.Append<i64>(xs, 1);`
 - **WHEN** the code is checked
 - **THEN** the compiler SHALL report **W1240** with a fix that assigns the result to `xs`
+
+#### Scenario: Discarded shrink of a parameter or an element
+- **GIVEN** `unit Trim(i64[] xs, i64[][] rows) { Array.RemoveLast<i64>(xs); Array.RemoveLast<i64>(rows[0]); }`
+- **WHEN** the function is checked
+- **THEN** the compiler SHALL report **W1240** at both calls, and the fix for the element SHALL bind `i64[] shortened = Array.RemoveLast<i64>(rows[0]);`
 
 #### Scenario: Owned array
 - **GIVEN** `mut i64[] xs = Array.Empty<i64>(); Array.Append<i64>(xs, 1);`

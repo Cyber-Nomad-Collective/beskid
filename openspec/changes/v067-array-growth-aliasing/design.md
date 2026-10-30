@@ -22,6 +22,8 @@ Rejected: always copy on growth unless a static proof shows the handle is unique
 
 The copy can allocate, so `RemoveLast` is no longer accepted in a non-allocating publication or rollback body. The bsol `WireEncoder.Abort` no longer shortens its arrays: it sets `used` to 0, and the next `Begin` replaces the bytes and the frames.
 
+A statement `Array.RemoveLast(x)` or `Array.Append(x, v)` whose `x` is not an owner changes nothing visible to `x`: the call works on a copy and the result is discarded. The existing warning **W1240** (`v067-semantic-diagnostics`, "Discarded array growth W1240") covers both operations; its help suggests using the result or passing an owner.
+
 Rejected: a new header over the same storage for the shrinking handle. The header is inline in the array object, so a new header is a new object; with a copy the old storage stays exactly as other handles see it. Rejected: shrink in place and copy on the next growth. The other handle reads the shorter length at once.
 
 ## Lent field reached through an array element
