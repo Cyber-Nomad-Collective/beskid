@@ -6,7 +6,7 @@
 
 ## Selection
 
-`resolve_entry_item(db, roots, selection, accepts)` walks each root in order. An item matches when its kind is accepted, its declared name equals the last segment, and its qualified name equals the selection. The first root with a match decides. Zero matches in every root is `Missing`; two matches in one root is `Ambiguous`. Codegen maps both to a build error, so a test is never run by a silent first pick. The semantic gate rejects two tests of one name in one module, so `Ambiguous` is reachable only when the gate is bypassed.
+`resolve_entry_item(db, roots, selection, accepts)` walks each root in order. An item matches when its kind is accepted, its declared name equals the last segment, and its qualified name equals the selection. The first root with a match decides. Zero matches in every root is `Missing`; two matches in one root is `Ambiguous`. Codegen maps both to a build error, so a test is never run by a silent first pick. The resolver rejects two tests of one name in one module before lowering, so `Ambiguous` is a defensive fail-closed path.
 
 ## Duplicate rule
 
