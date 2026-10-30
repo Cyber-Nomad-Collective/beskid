@@ -5,102 +5,102 @@
         "assertion_provenance": [
           {
             "declaration": "test BytesNewHasLength",
-            "end": 4257,
+            "end": 4021,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "88b0c7b703f4b7ea5f2ec39c045231c2a11f0f68f49a69ef0ad38e2e4b24fa05"
+              "sha256": "383a14762c09246709c4f9e961e5143f9c8a71156ecd4fa1fae596c4990b6f59"
             },
-            "start": 4235,
+            "start": 3999,
             "test_id": "BytesNewHasLength"
           },
           {
             "declaration": "test BytesFromStringMatchesUtf8Length",
-            "end": 4414,
+            "end": 4178,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "88b0c7b703f4b7ea5f2ec39c045231c2a11f0f68f49a69ef0ad38e2e4b24fa05"
+              "sha256": "383a14762c09246709c4f9e961e5143f9c8a71156ecd4fa1fae596c4990b6f59"
             },
-            "start": 4377,
+            "start": 4141,
             "test_id": "BytesFromStringMatchesUtf8Length"
           },
           {
             "declaration": "test BytesFillSetsRange",
-            "end": 4612,
+            "end": 4376,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "88b0c7b703f4b7ea5f2ec39c045231c2a11f0f68f49a69ef0ad38e2e4b24fa05"
+              "sha256": "383a14762c09246709c4f9e961e5143f9c8a71156ecd4fa1fae596c4990b6f59"
             },
-            "start": 4589,
+            "start": 4353,
             "test_id": "BytesFillSetsRange"
           },
           {
             "declaration": "test BytesSubsliceCopiesWindow",
-            "end": 4824,
+            "end": 4588,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "88b0c7b703f4b7ea5f2ec39c045231c2a11f0f68f49a69ef0ad38e2e4b24fa05"
+              "sha256": "383a14762c09246709c4f9e961e5143f9c8a71156ecd4fa1fae596c4990b6f59"
             },
-            "start": 4794,
+            "start": 4558,
             "test_id": "BytesSubsliceCopiesWindow"
           },
           {
             "declaration": "test BytesCompareLexicographic",
-            "end": 5078,
+            "end": 4842,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "88b0c7b703f4b7ea5f2ec39c045231c2a11f0f68f49a69ef0ad38e2e4b24fa05"
+              "sha256": "383a14762c09246709c4f9e961e5143f9c8a71156ecd4fa1fae596c4990b6f59"
             },
-            "start": 5048,
+            "start": 4812,
             "test_id": "BytesCompareLexicographic"
           },
           {
             "declaration": "test BytesCopyRange",
-            "end": 5266,
+            "end": 5030,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "88b0c7b703f4b7ea5f2ec39c045231c2a11f0f68f49a69ef0ad38e2e4b24fa05"
+              "sha256": "383a14762c09246709c4f9e961e5143f9c8a71156ecd4fa1fae596c4990b6f59"
             },
-            "start": 5247,
+            "start": 5011,
             "test_id": "BytesCopyRange"
           },
           {
             "declaration": "test BytesNewOneMebibyteIsOneZeroedAllocation",
-            "end": 5681,
+            "end": 5352,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "88b0c7b703f4b7ea5f2ec39c045231c2a11f0f68f49a69ef0ad38e2e4b24fa05"
+              "sha256": "383a14762c09246709c4f9e961e5143f9c8a71156ecd4fa1fae596c4990b6f59"
             },
-            "start": 5636,
+            "start": 5307,
             "test_id": "BytesNewOneMebibyteIsOneZeroedAllocation"
           },
           {
             "declaration": "test BytesNewNonPositiveLengthIsEmpty",
-            "end": 6265,
+            "end": 5777,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "88b0c7b703f4b7ea5f2ec39c045231c2a11f0f68f49a69ef0ad38e2e4b24fa05"
+              "sha256": "383a14762c09246709c4f9e961e5143f9c8a71156ecd4fa1fae596c4990b6f59"
             },
-            "start": 6228,
+            "start": 5740,
             "test_id": "BytesNewNonPositiveLengthIsEmpty"
           },
           {
             "declaration": "test BytesFourMebibyteLiveBufferSurvivesChurn",
-            "end": 6528,
+            "end": 6040,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "88b0c7b703f4b7ea5f2ec39c045231c2a11f0f68f49a69ef0ad38e2e4b24fa05"
+              "sha256": "383a14762c09246709c4f9e961e5143f9c8a71156ecd4fa1fae596c4990b6f59"
             },
-            "start": 6483,
+            "start": 5995,
             "test_id": "BytesFourMebibyteLiveBufferSurvivesChurn"
           },
           {
             "declaration": "test BytesThreeLive64kBuffersWithGarbageDoNotExhaustHeap",
-            "end": 7408,
+            "end": 6920,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "88b0c7b703f4b7ea5f2ec39c045231c2a11f0f68f49a69ef0ad38e2e4b24fa05"
+              "sha256": "383a14762c09246709c4f9e961e5143f9c8a71156ecd4fa1fae596c4990b6f59"
             },
-            "start": 7352,
+            "start": 6864,
             "test_id": "BytesThreeLive64kBuffersWithGarbageDoNotExhaustHeap"
           }
         ],
@@ -124,7 +124,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-core-CoreSuite.bd",
-          "sha256": "88b0c7b703f4b7ea5f2ec39c045231c2a11f0f68f49a69ef0ad38e2e4b24fa05"
+          "sha256": "383a14762c09246709c4f9e961e5143f9c8a71156ecd4fa1fae596c4990b6f59"
         },
         "input": null,
         "log": "case-foundations.core_bytes.json",
@@ -158,92 +158,92 @@
         "assertion_provenance": [
           {
             "declaration": "test Utf8IsValidAscii",
-            "end": 8292,
+            "end": 7755,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "88b0c7b703f4b7ea5f2ec39c045231c2a11f0f68f49a69ef0ad38e2e4b24fa05"
+              "sha256": "383a14762c09246709c4f9e961e5143f9c8a71156ecd4fa1fae596c4990b6f59"
             },
-            "start": 8271,
+            "start": 7734,
             "test_id": "Utf8IsValidAscii"
           },
           {
             "declaration": "test Utf8IsValidTwoByte",
-            "end": 8440,
+            "end": 7903,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "88b0c7b703f4b7ea5f2ec39c045231c2a11f0f68f49a69ef0ad38e2e4b24fa05"
+              "sha256": "383a14762c09246709c4f9e961e5143f9c8a71156ecd4fa1fae596c4990b6f59"
             },
-            "start": 8417,
+            "start": 7880,
             "test_id": "Utf8IsValidTwoByte"
           },
           {
             "declaration": "test Utf8IsInvalidSoloContinuation",
-            "end": 8647,
+            "end": 8110,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "88b0c7b703f4b7ea5f2ec39c045231c2a11f0f68f49a69ef0ad38e2e4b24fa05"
+              "sha256": "383a14762c09246709c4f9e961e5143f9c8a71156ecd4fa1fae596c4990b6f59"
             },
-            "start": 8613,
+            "start": 8076,
             "test_id": "Utf8IsInvalidSoloContinuation"
           },
           {
             "declaration": "test Utf8DecodeFromBytesRoundtrip",
-            "end": 8827,
+            "end": 8290,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "88b0c7b703f4b7ea5f2ec39c045231c2a11f0f68f49a69ef0ad38e2e4b24fa05"
+              "sha256": "383a14762c09246709c4f9e961e5143f9c8a71156ecd4fa1fae596c4990b6f59"
             },
-            "start": 8794,
+            "start": 8257,
             "test_id": "Utf8DecodeFromBytesRoundtrip"
           },
           {
             "declaration": "test Utf8EncodeToBytesRoundtrip",
-            "end": 9246,
+            "end": 8709,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "88b0c7b703f4b7ea5f2ec39c045231c2a11f0f68f49a69ef0ad38e2e4b24fa05"
+              "sha256": "383a14762c09246709c4f9e961e5143f9c8a71156ecd4fa1fae596c4990b6f59"
             },
-            "start": 9215,
+            "start": 8678,
             "test_id": "Utf8EncodeToBytesRoundtrip"
           },
           {
             "declaration": "test HexEncodeBytesRoundtrip",
-            "end": 9597,
+            "end": 9060,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "88b0c7b703f4b7ea5f2ec39c045231c2a11f0f68f49a69ef0ad38e2e4b24fa05"
+              "sha256": "383a14762c09246709c4f9e961e5143f9c8a71156ecd4fa1fae596c4990b6f59"
             },
-            "start": 9569,
+            "start": 9032,
             "test_id": "HexEncodeBytesRoundtrip"
           },
           {
             "declaration": "test HexDecodeOddLengthRejected",
-            "end": 10435,
+            "end": 9898,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "88b0c7b703f4b7ea5f2ec39c045231c2a11f0f68f49a69ef0ad38e2e4b24fa05"
+              "sha256": "383a14762c09246709c4f9e961e5143f9c8a71156ecd4fa1fae596c4990b6f59"
             },
-            "start": 10404,
+            "start": 9867,
             "test_id": "HexDecodeOddLengthRejected"
           },
           {
             "declaration": "test Base64EncodeBytesRoundtrip",
-            "end": 10736,
+            "end": 10199,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "88b0c7b703f4b7ea5f2ec39c045231c2a11f0f68f49a69ef0ad38e2e4b24fa05"
+              "sha256": "383a14762c09246709c4f9e961e5143f9c8a71156ecd4fa1fae596c4990b6f59"
             },
-            "start": 10705,
+            "start": 10168,
             "test_id": "Base64EncodeBytesRoundtrip"
           },
           {
             "declaration": "test Base64DecodeInvalidLengthRejected",
-            "end": 11514,
+            "end": 10977,
             "source": {
               "path": "source-core-CoreSuite.bd",
-              "sha256": "88b0c7b703f4b7ea5f2ec39c045231c2a11f0f68f49a69ef0ad38e2e4b24fa05"
+              "sha256": "383a14762c09246709c4f9e961e5143f9c8a71156ecd4fa1fae596c4990b6f59"
             },
-            "start": 11476,
+            "start": 10939,
             "test_id": "Base64DecodeInvalidLengthRejected"
           }
         ],
@@ -267,7 +267,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-core-CoreSuite.bd",
-          "sha256": "88b0c7b703f4b7ea5f2ec39c045231c2a11f0f68f49a69ef0ad38e2e4b24fa05"
+          "sha256": "383a14762c09246709c4f9e961e5143f9c8a71156ecd4fa1fae596c4990b6f59"
         },
         "input": null,
         "log": "case-foundations.encoding_utf8.json",
@@ -299,163 +299,153 @@
       "binding": {
         "assertion_provenance": [
           {
-            "declaration": "test TimeDateStructSmoke",
-            "end": 11726,
-            "source": {
-              "path": "source-system-SystemSuite.bd",
-              "sha256": "35a18a3eddd9891698e1d00792bf745ebceac3fc00f64ab00b8ed4a73f023d5a"
-            },
-            "start": 11702,
-            "test_id": "TimeDateStructSmoke"
-          },
-          {
             "declaration": "test TimeIsLeapYearDivisibleBy4",
-            "end": 11974,
+            "end": 10850,
             "source": {
               "path": "source-system-SystemSuite.bd",
-              "sha256": "35a18a3eddd9891698e1d00792bf745ebceac3fc00f64ab00b8ed4a73f023d5a"
+              "sha256": "a8561b23e405ff0f80a8972d7251def6363b8d74821231983cbc9855439e267f"
             },
-            "start": 11943,
+            "start": 10819,
             "test_id": "TimeIsLeapYearDivisibleBy4"
           },
           {
             "declaration": "test TimeIsLeapYearDivisibleBy400",
-            "end": 12130,
+            "end": 11006,
             "source": {
               "path": "source-system-SystemSuite.bd",
-              "sha256": "35a18a3eddd9891698e1d00792bf745ebceac3fc00f64ab00b8ed4a73f023d5a"
+              "sha256": "a8561b23e405ff0f80a8972d7251def6363b8d74821231983cbc9855439e267f"
             },
-            "start": 12097,
+            "start": 10973,
             "test_id": "TimeIsLeapYearDivisibleBy400"
           },
           {
             "declaration": "test TimeDaysInMonthFebruaryLeap",
-            "end": 12224,
+            "end": 11100,
             "source": {
               "path": "source-system-SystemSuite.bd",
-              "sha256": "35a18a3eddd9891698e1d00792bf745ebceac3fc00f64ab00b8ed4a73f023d5a"
+              "sha256": "a8561b23e405ff0f80a8972d7251def6363b8d74821231983cbc9855439e267f"
             },
-            "start": 12192,
+            "start": 11068,
             "test_id": "TimeDaysInMonthFebruaryLeap"
           },
           {
             "declaration": "test TimeDaysInMonthFebruaryNonLeap",
-            "end": 12338,
+            "end": 11214,
             "source": {
               "path": "source-system-SystemSuite.bd",
-              "sha256": "35a18a3eddd9891698e1d00792bf745ebceac3fc00f64ab00b8ed4a73f023d5a"
+              "sha256": "a8561b23e405ff0f80a8972d7251def6363b8d74821231983cbc9855439e267f"
             },
-            "start": 12303,
+            "start": 11179,
             "test_id": "TimeDaysInMonthFebruaryNonLeap"
           },
           {
             "declaration": "test TimeDaysInMonthStandard",
-            "end": 12445,
+            "end": 11321,
             "source": {
               "path": "source-system-SystemSuite.bd",
-              "sha256": "35a18a3eddd9891698e1d00792bf745ebceac3fc00f64ab00b8ed4a73f023d5a"
+              "sha256": "a8561b23e405ff0f80a8972d7251def6363b8d74821231983cbc9855439e267f"
             },
-            "start": 12417,
+            "start": 11293,
             "test_id": "TimeDaysInMonthStandard"
           },
           {
             "declaration": "test TimeNowUtcReturnsInstant",
-            "end": 12606,
+            "end": 11482,
             "source": {
               "path": "source-system-SystemSuite.bd",
-              "sha256": "35a18a3eddd9891698e1d00792bf745ebceac3fc00f64ab00b8ed4a73f023d5a"
+              "sha256": "a8561b23e405ff0f80a8972d7251def6363b8d74821231983cbc9855439e267f"
             },
-            "start": 12577,
+            "start": 11453,
             "test_id": "TimeNowUtcReturnsInstant"
           },
           {
             "declaration": "test TimeMonotonicNowReturnsInstant",
-            "end": 12741,
+            "end": 11617,
             "source": {
               "path": "source-system-SystemSuite.bd",
-              "sha256": "35a18a3eddd9891698e1d00792bf745ebceac3fc00f64ab00b8ed4a73f023d5a"
+              "sha256": "a8561b23e405ff0f80a8972d7251def6363b8d74821231983cbc9855439e267f"
             },
-            "start": 12706,
+            "start": 11582,
             "test_id": "TimeMonotonicNowReturnsInstant"
           },
           {
             "declaration": "test TimeFromMilliseconds",
-            "end": 12942,
+            "end": 11818,
             "source": {
               "path": "source-system-SystemSuite.bd",
-              "sha256": "35a18a3eddd9891698e1d00792bf745ebceac3fc00f64ab00b8ed4a73f023d5a"
+              "sha256": "a8561b23e405ff0f80a8972d7251def6363b8d74821231983cbc9855439e267f"
             },
-            "start": 12917,
+            "start": 11793,
             "test_id": "TimeFromMilliseconds"
           },
           {
             "declaration": "test TimeFromSeconds",
-            "end": 13091,
+            "end": 11967,
             "source": {
               "path": "source-system-SystemSuite.bd",
-              "sha256": "35a18a3eddd9891698e1d00792bf745ebceac3fc00f64ab00b8ed4a73f023d5a"
+              "sha256": "a8561b23e405ff0f80a8972d7251def6363b8d74821231983cbc9855439e267f"
             },
-            "start": 13071,
+            "start": 11947,
             "test_id": "TimeFromSeconds"
           },
           {
             "declaration": "test TimeSubtractInstants",
-            "end": 13239,
+            "end": 12115,
             "source": {
               "path": "source-system-SystemSuite.bd",
-              "sha256": "35a18a3eddd9891698e1d00792bf745ebceac3fc00f64ab00b8ed4a73f023d5a"
+              "sha256": "a8561b23e405ff0f80a8972d7251def6363b8d74821231983cbc9855439e267f"
             },
-            "start": 13214,
+            "start": 12090,
             "test_id": "TimeSubtractInstants"
           },
           {
             "declaration": "test TimeSleepRejectsNegativeDurationWithClosedError",
-            "end": 13584,
+            "end": 12460,
             "source": {
               "path": "source-system-SystemSuite.bd",
-              "sha256": "35a18a3eddd9891698e1d00792bf745ebceac3fc00f64ab00b8ed4a73f023d5a"
+              "sha256": "a8561b23e405ff0f80a8972d7251def6363b8d74821231983cbc9855439e267f"
             },
-            "start": 13532,
+            "start": 12408,
             "test_id": "TimeSleepRejectsNegativeDurationWithClosedError"
           },
           {
             "declaration": "test TimeDeadlineAfterAcceptsZeroDuration",
-            "end": 14122,
+            "end": 12998,
             "source": {
               "path": "source-system-SystemSuite.bd",
-              "sha256": "35a18a3eddd9891698e1d00792bf745ebceac3fc00f64ab00b8ed4a73f023d5a"
+              "sha256": "a8561b23e405ff0f80a8972d7251def6363b8d74821231983cbc9855439e267f"
             },
-            "start": 14081,
+            "start": 12957,
             "test_id": "TimeDeadlineAfterAcceptsZeroDuration"
           },
           {
             "declaration": "test TimeDeadlineAfterRejectsNegativeDuration",
-            "end": 14469,
+            "end": 13345,
             "source": {
               "path": "source-system-SystemSuite.bd",
-              "sha256": "35a18a3eddd9891698e1d00792bf745ebceac3fc00f64ab00b8ed4a73f023d5a"
+              "sha256": "a8561b23e405ff0f80a8972d7251def6363b8d74821231983cbc9855439e267f"
             },
-            "start": 14424,
+            "start": 13300,
             "test_id": "TimeDeadlineAfterRejectsNegativeDuration"
           },
           {
             "declaration": "test TimeDeadlineAfterRejectsMonotonicOverflow",
-            "end": 14864,
+            "end": 13740,
             "source": {
               "path": "source-system-SystemSuite.bd",
-              "sha256": "35a18a3eddd9891698e1d00792bf745ebceac3fc00f64ab00b8ed4a73f023d5a"
+              "sha256": "a8561b23e405ff0f80a8972d7251def6363b8d74821231983cbc9855439e267f"
             },
-            "start": 14818,
+            "start": 13694,
             "test_id": "TimeDeadlineAfterRejectsMonotonicOverflow"
           },
           {
             "declaration": "test TimeFormatDateIsoFormatsMinimumI64Year",
-            "end": 15284,
+            "end": 14160,
             "source": {
               "path": "source-system-SystemSuite.bd",
-              "sha256": "35a18a3eddd9891698e1d00792bf745ebceac3fc00f64ab00b8ed4a73f023d5a"
+              "sha256": "a8561b23e405ff0f80a8972d7251def6363b8d74821231983cbc9855439e267f"
             },
-            "start": 15241,
+            "start": 14117,
             "test_id": "TimeFormatDateIsoFormatsMinimumI64Year"
           }
         ],
@@ -479,13 +469,12 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-system-SystemSuite.bd",
-          "sha256": "35a18a3eddd9891698e1d00792bf745ebceac3fc00f64ab00b8ed4a73f023d5a"
+          "sha256": "a8561b23e405ff0f80a8972d7251def6363b8d74821231983cbc9855439e267f"
         },
         "input": null,
         "log": "case-foundations.time.json",
         "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
         "required_test_ids": [
-          "TimeDateStructSmoke",
           "TimeIsLeapYearDivisibleBy4",
           "TimeIsLeapYearDivisibleBy400",
           "TimeDaysInMonthFebruaryLeap",
@@ -519,33 +508,33 @@
         "assertion_provenance": [
           {
             "declaration": "test SpawnedFiberJoinReturnsItsValue",
-            "end": 11294,
+            "end": 13228,
             "source": {
               "path": "source-concurrency-ConcurrencySuite.bd",
-              "sha256": "4ce9b5165ea7b441b7f3cc061d18e26ad64589755cd5e371d249f673423a466d"
+              "sha256": "0df3097b60f39e274828c8cdabac099b2f52a495ab59112d97681f76d65a2681"
             },
-            "start": 11258,
+            "start": 13192,
             "test_id": "SpawnedFiberJoinReturnsItsValue"
           },
           {
             "declaration": "test RepeatedCancelThenJoinIsSafe",
-            "end": 11672,
+            "end": 13606,
             "source": {
               "path": "source-concurrency-ConcurrencySuite.bd",
-              "sha256": "4ce9b5165ea7b441b7f3cc061d18e26ad64589755cd5e371d249f673423a466d"
+              "sha256": "0df3097b60f39e274828c8cdabac099b2f52a495ab59112d97681f76d65a2681"
             },
-            "start": 11639,
+            "start": 13573,
             "test_id": "RepeatedCancelThenJoinIsSafe"
           },
           {
-            "declaration": "test DetachRelinquishesTheJoinObligation",
-            "end": 12232,
+            "declaration": "test DetachedFiberStillRuns",
+            "end": 14376,
             "source": {
               "path": "source-concurrency-ConcurrencySuite.bd",
-              "sha256": "4ce9b5165ea7b441b7f3cc061d18e26ad64589755cd5e371d249f673423a466d"
+              "sha256": "0df3097b60f39e274828c8cdabac099b2f52a495ab59112d97681f76d65a2681"
             },
-            "start": 12192,
-            "test_id": "DetachRelinquishesTheJoinObligation"
+            "start": 14349,
+            "test_id": "DetachedFiberStillRuns"
           }
         ],
         "command": {
@@ -568,7 +557,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-concurrency-ConcurrencySuite.bd",
-          "sha256": "4ce9b5165ea7b441b7f3cc061d18e26ad64589755cd5e371d249f673423a466d"
+          "sha256": "0df3097b60f39e274828c8cdabac099b2f52a495ab59112d97681f76d65a2681"
         },
         "input": null,
         "log": "case-foundations.fibers.json",
@@ -576,7 +565,7 @@
         "required_test_ids": [
           "SpawnedFiberJoinReturnsItsValue",
           "RepeatedCancelThenJoinIsSafe",
-          "DetachRelinquishesTheJoinObligation"
+          "DetachedFiberStillRuns"
         ],
         "reviewed_source_binding": true,
         "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/concurrency/ConcurrencySuite.bd",
@@ -594,73 +583,73 @@
       "binding": {
         "assertion_provenance": [
           {
-            "declaration": "test ChannelCreateReturnsHandle",
-            "end": 3839,
+            "declaration": "test ChannelCreateReturnsDistinctHandles",
+            "end": 3792,
             "source": {
               "path": "source-concurrency-ConcurrencySuite.bd",
-              "sha256": "4ce9b5165ea7b441b7f3cc061d18e26ad64589755cd5e371d249f673423a466d"
+              "sha256": "0df3097b60f39e274828c8cdabac099b2f52a495ab59112d97681f76d65a2681"
             },
-            "start": 3808,
-            "test_id": "ChannelCreateReturnsHandle"
+            "start": 3752,
+            "test_id": "ChannelCreateReturnsDistinctHandles"
           },
           {
-            "declaration": "test ChannelSendReturnsResult",
-            "end": 3995,
+            "declaration": "test ChannelSendOnAnOpenChannelIsOk",
+            "end": 4050,
             "source": {
               "path": "source-concurrency-ConcurrencySuite.bd",
-              "sha256": "4ce9b5165ea7b441b7f3cc061d18e26ad64589755cd5e371d249f673423a466d"
+              "sha256": "0df3097b60f39e274828c8cdabac099b2f52a495ab59112d97681f76d65a2681"
             },
-            "start": 3966,
-            "test_id": "ChannelSendReturnsResult"
+            "start": 4015,
+            "test_id": "ChannelSendOnAnOpenChannelIsOk"
           },
           {
-            "declaration": "test ChannelReceiveReturnsResult",
-            "end": 4277,
+            "declaration": "test ChannelReceiveReturnsTheSentValuesInOrder",
+            "end": 4332,
             "source": {
               "path": "source-concurrency-ConcurrencySuite.bd",
-              "sha256": "4ce9b5165ea7b441b7f3cc061d18e26ad64589755cd5e371d249f673423a466d"
+              "sha256": "0df3097b60f39e274828c8cdabac099b2f52a495ab59112d97681f76d65a2681"
             },
-            "start": 4245,
-            "test_id": "ChannelReceiveReturnsResult"
+            "start": 4286,
+            "test_id": "ChannelReceiveReturnsTheSentValuesInOrder"
           },
           {
             "declaration": "test ChannelTrySendReturnsTryResult",
-            "end": 4702,
+            "end": 4965,
             "source": {
               "path": "source-concurrency-ConcurrencySuite.bd",
-              "sha256": "4ce9b5165ea7b441b7f3cc061d18e26ad64589755cd5e371d249f673423a466d"
+              "sha256": "0df3097b60f39e274828c8cdabac099b2f52a495ab59112d97681f76d65a2681"
             },
-            "start": 4667,
+            "start": 4930,
             "test_id": "ChannelTrySendReturnsTryResult"
           },
           {
             "declaration": "test ChannelTryReceiveDistinguishesEmptyAndClaimedValues",
-            "end": 5122,
+            "end": 5385,
             "source": {
               "path": "source-concurrency-ConcurrencySuite.bd",
-              "sha256": "4ce9b5165ea7b441b7f3cc061d18e26ad64589755cd5e371d249f673423a466d"
+              "sha256": "0df3097b60f39e274828c8cdabac099b2f52a495ab59112d97681f76d65a2681"
             },
-            "start": 5066,
+            "start": 5329,
             "test_id": "ChannelTryReceiveDistinguishesEmptyAndClaimedValues"
           },
           {
-            "declaration": "test ChannelCloseIsIdempotent",
-            "end": 6388,
+            "declaration": "test ChannelCloseIsIdempotentAndRejectsLaterSends",
+            "end": 6671,
             "source": {
               "path": "source-concurrency-ConcurrencySuite.bd",
-              "sha256": "4ce9b5165ea7b441b7f3cc061d18e26ad64589755cd5e371d249f673423a466d"
+              "sha256": "0df3097b60f39e274828c8cdabac099b2f52a495ab59112d97681f76d65a2681"
             },
-            "start": 6359,
-            "test_id": "ChannelCloseIsIdempotent"
+            "start": 6622,
+            "test_id": "ChannelCloseIsIdempotentAndRejectsLaterSends"
           },
           {
             "declaration": "test ChannelCloseDrainsCommittedValue",
-            "end": 6560,
+            "end": 7770,
             "source": {
               "path": "source-concurrency-ConcurrencySuite.bd",
-              "sha256": "4ce9b5165ea7b441b7f3cc061d18e26ad64589755cd5e371d249f673423a466d"
+              "sha256": "0df3097b60f39e274828c8cdabac099b2f52a495ab59112d97681f76d65a2681"
             },
-            "start": 6523,
+            "start": 7733,
             "test_id": "ChannelCloseDrainsCommittedValue"
           }
         ],
@@ -684,18 +673,18 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-concurrency-ConcurrencySuite.bd",
-          "sha256": "4ce9b5165ea7b441b7f3cc061d18e26ad64589755cd5e371d249f673423a466d"
+          "sha256": "0df3097b60f39e274828c8cdabac099b2f52a495ab59112d97681f76d65a2681"
         },
         "input": null,
         "log": "case-foundations.channels.json",
         "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
         "required_test_ids": [
-          "ChannelCreateReturnsHandle",
-          "ChannelSendReturnsResult",
-          "ChannelReceiveReturnsResult",
+          "ChannelCreateReturnsDistinctHandles",
+          "ChannelSendOnAnOpenChannelIsOk",
+          "ChannelReceiveReturnsTheSentValuesInOrder",
           "ChannelTrySendReturnsTryResult",
           "ChannelTryReceiveDistinguishesEmptyAndClaimedValues",
-          "ChannelCloseIsIdempotent",
+          "ChannelCloseIsIdempotentAndRejectsLaterSends",
           "ChannelCloseDrainsCommittedValue"
         ],
         "reviewed_source_binding": true,
@@ -715,52 +704,52 @@
         "assertion_provenance": [
           {
             "declaration": "test NetworkIpv4AndIpv6ValuesKeepBoundedPorts",
-            "end": 846,
+            "end": 764,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 801,
+            "start": 719,
             "test_id": "NetworkIpv4AndIpv6ValuesKeepBoundedPorts"
           },
           {
             "declaration": "test NetworkDatagramKeepsSourceAndTruncation",
-            "end": 1570,
+            "end": 1488,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 1526,
+            "start": 1444,
             "test_id": "NetworkDatagramKeepsSourceAndTruncation"
           },
           {
             "declaration": "test NetworkCleanupConversionIsExplicitAndPortable",
-            "end": 2123,
+            "end": 2041,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 2073,
+            "start": 1991,
             "test_id": "NetworkCleanupConversionIsExplicitAndPortable"
           },
           {
             "declaration": "test NetworkErrorUnionHasNoNativePayload",
-            "end": 3609,
+            "end": 3527,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 3569,
+            "start": 3487,
             "test_id": "NetworkErrorUnionHasNoNativePayload"
           },
           {
             "declaration": "test NetworkPortsRejectOutOfRangeNumbers",
-            "end": 3955,
+            "end": 3873,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 3915,
+            "start": 3833,
             "test_id": "NetworkPortsRejectOutOfRangeNumbers"
           }
         ],
@@ -784,7 +773,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-network-NetworkSuite.bd",
-          "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+          "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
         },
         "input": null,
         "log": "case-network.types.json",
@@ -813,42 +802,42 @@
         "assertion_provenance": [
           {
             "declaration": "test NetworkDnsIpv4FilterPreservesTypedAddresses",
-            "end": 5661,
+            "end": 5535,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 5613,
+            "start": 5487,
             "test_id": "NetworkDnsIpv4FilterPreservesTypedAddresses"
           },
           {
             "declaration": "test NetworkDnsPortZeroIsRejectedBeforeResolving",
-            "end": 5899,
+            "end": 5773,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 5851,
+            "start": 5725,
             "test_id": "NetworkDnsPortZeroIsRejectedBeforeResolving"
           },
           {
             "declaration": "test NetworkDnsRepeatedCallsReturnIndependentlyOwnedResults",
-            "end": 7065,
+            "end": 6939,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 7006,
+            "start": 6880,
             "test_id": "NetworkDnsRepeatedCallsReturnIndependentlyOwnedResults"
           },
           {
             "declaration": "test NetworkDnsExpiredTypedDeadlineTimesOutBeforeSubmission",
-            "end": 7982,
+            "end": 7856,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 7923,
+            "start": 7797,
             "test_id": "NetworkDnsExpiredTypedDeadlineTimesOutBeforeSubmission"
           }
         ],
@@ -872,7 +861,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-network-NetworkSuite.bd",
-          "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+          "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
         },
         "input": null,
         "log": "case-network.dns.json",
@@ -900,122 +889,122 @@
         "assertion_provenance": [
           {
             "declaration": "test NetworkTcpReusesStreamTransferEofAndIdempotentClose",
-            "end": 10900,
+            "end": 10730,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 10844,
+            "start": 10674,
             "test_id": "NetworkTcpReusesStreamTransferEofAndIdempotentClose"
           },
           {
             "declaration": "test NetworkTcpInvalidBacklogHasTypedError",
-            "end": 11142,
+            "end": 10972,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 11100,
+            "start": 10930,
             "test_id": "NetworkTcpInvalidBacklogHasTypedError"
           },
           {
             "declaration": "test NetworkTcpSecondReadReportsBusyCause",
-            "end": 14653,
+            "end": 14483,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 14612,
+            "start": 14442,
             "test_id": "NetworkTcpSecondReadReportsBusyCause"
           },
           {
             "declaration": "test NetworkTcpTypedReadDeadlineTimesOutAndRecovers",
-            "end": 17572,
+            "end": 17402,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 17521,
+            "start": 17351,
             "test_id": "NetworkTcpTypedReadDeadlineTimesOutAndRecovers"
           },
           {
             "declaration": "test NetworkTcpPendingTypedReadDeadlineClearPreservesReadiness",
-            "end": 21650,
+            "end": 21480,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 21588,
+            "start": 21418,
             "test_id": "NetworkTcpPendingTypedReadDeadlineClearPreservesReadiness"
           },
           {
             "declaration": "test NetworkTcpPendingReadExpiredPolicyReportsTimedOut",
-            "end": 25026,
+            "end": 24856,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 24972,
+            "start": 24802,
             "test_id": "NetworkTcpPendingReadExpiredPolicyReportsTimedOut"
           },
           {
             "declaration": "test NetworkTcpPendingReadCloseReportsClosedWithArmedDeadline",
-            "end": 27578,
+            "end": 27408,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 27517,
+            "start": 27347,
             "test_id": "NetworkTcpPendingReadCloseReportsClosedWithArmedDeadline"
           },
           {
             "declaration": "test NetworkTcpPendingReadinessReportsByteWithArmedDeadline",
-            "end": 30171,
+            "end": 30001,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 30112,
+            "start": 29942,
             "test_id": "NetworkTcpPendingReadinessReportsByteWithArmedDeadline"
           },
           {
             "declaration": "test NetworkTcpPhysicalReadinessCloseDeadlineHasOneTypedWinner",
-            "end": 35948,
+            "end": 35778,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 35886,
+            "start": 35716,
             "test_id": "NetworkTcpPhysicalReadinessCloseDeadlineHasOneTypedWinner"
           },
           {
             "declaration": "test NetworkTcpPeerResetIsNotEof",
-            "end": 38346,
+            "end": 38176,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 38314,
+            "start": 38144,
             "test_id": "NetworkTcpPeerResetIsNotEof"
           },
           {
             "declaration": "test NetworkTcpTypedAcceptDeadlineTimesOutAndRecovers",
-            "end": 40146,
+            "end": 39976,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 40093,
+            "start": 39923,
             "test_id": "NetworkTcpTypedAcceptDeadlineTimesOutAndRecovers"
           },
           {
             "declaration": "test NetworkTcpExpiredConnectHasOneOutcomeAndClosesOwnedStream",
-            "end": 41802,
+            "end": 41632,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 41740,
+            "start": 41570,
             "test_id": "NetworkTcpExpiredConnectHasOneOutcomeAndClosesOwnedStream"
           }
         ],
@@ -1039,7 +1028,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-network-NetworkSuite.bd",
-          "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+          "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
         },
         "input": null,
         "log": "case-network.tcp.json",
@@ -1075,72 +1064,72 @@
         "assertion_provenance": [
           {
             "declaration": "test NetworkUdpSameDirectionBusyAndOppositeDirectionSendReceive",
-            "end": 44835,
+            "end": 44621,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 44772,
+            "start": 44558,
             "test_id": "NetworkUdpSameDirectionBusyAndOppositeDirectionSendReceive"
           },
           {
             "declaration": "test NetworkUdpPreservesDatagramsSourcesAndTruncation",
-            "end": 46640,
+            "end": 46426,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 46587,
+            "start": 46373,
             "test_id": "NetworkUdpPreservesDatagramsSourcesAndTruncation"
           },
           {
             "declaration": "test NetworkUdpConnectedOperationsAndClosedError",
-            "end": 47969,
+            "end": 47755,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 47921,
+            "start": 47707,
             "test_id": "NetworkUdpConnectedOperationsAndClosedError"
           },
           {
             "declaration": "test NetworkClosedResourceCannotReachAReusedSlot",
-            "end": 48979,
+            "end": 48765,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 48931,
+            "start": 48717,
             "test_id": "NetworkClosedResourceCannotReachAReusedSlot"
           },
           {
             "declaration": "test NetworkUdpExhaustionIsTyped",
-            "end": 50871,
+            "end": 50657,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 50839,
+            "start": 50625,
             "test_id": "NetworkUdpExhaustionIsTyped"
           },
           {
             "declaration": "test NetworkUdpExpiredReceiveDeadlineTimesOutAndSocketRecovers",
-            "end": 53227,
+            "end": 53013,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 53165,
+            "start": 52951,
             "test_id": "NetworkUdpExpiredReceiveDeadlineTimesOutAndSocketRecovers"
           },
           {
             "declaration": "test NetworkUdpExpiredSendKeepsUnsentPayloadAndSocket",
-            "end": 55594,
+            "end": 55380,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 55541,
+            "start": 55327,
             "test_id": "NetworkUdpExpiredSendKeepsUnsentPayloadAndSocket"
           }
         ],
@@ -1164,7 +1153,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-network-NetworkSuite.bd",
-          "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+          "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
         },
         "input": null,
         "log": "case-network.udp.json",
@@ -1195,12 +1184,12 @@
         "assertion_provenance": [
           {
             "declaration": "test NetworkTcpDisposableUsesFoundationCleanupConversion",
-            "end": 56092,
+            "end": 55832,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 56036,
+            "start": 55776,
             "test_id": "NetworkTcpDisposableUsesFoundationCleanupConversion"
           }
         ],
@@ -1224,7 +1213,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-network-NetworkSuite.bd",
-          "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+          "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
         },
         "input": null,
         "log": "case-network.scope.json",
@@ -1249,12 +1238,12 @@
         "assertion_provenance": [
           {
             "declaration": "test NetworkShutdownIsIdempotentAndRepeatedCyclesDoNotLeakSlots",
-            "end": 58677,
+            "end": 58365,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 58614,
+            "start": 58302,
             "test_id": "NetworkShutdownIsIdempotentAndRepeatedCyclesDoNotLeakSlots"
           }
         ],
@@ -1278,7 +1267,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-network-NetworkSuite.bd",
-          "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+          "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
         },
         "input": null,
         "log": "case-network.shutdown.json",
@@ -1303,22 +1292,22 @@
         "assertion_provenance": [
           {
             "declaration": "test NetworkTcpStreamAfterDisposeFailsClosedAndDisposeIsIdempotent",
-            "end": 61789,
+            "end": 61426,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 61723,
+            "start": 61360,
             "test_id": "NetworkTcpStreamAfterDisposeFailsClosedAndDisposeIsIdempotent"
           },
           {
             "declaration": "test NetworkTcpFreshStreamWorksAfterAPriorDispose",
-            "end": 64061,
+            "end": 63698,
             "source": {
               "path": "source-network-NetworkSuite.bd",
-              "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+              "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
             },
-            "start": 64012,
+            "start": 63649,
             "test_id": "NetworkTcpFreshStreamWorksAfterAPriorDispose"
           }
         ],
@@ -1342,7 +1331,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-network-NetworkSuite.bd",
-          "sha256": "669a15097746e946facbf7003b5b9f95286d5dbfb1265a416d0cdeb87afd8c22"
+          "sha256": "eae890cffb46948f94937f3d7f3632bbde18a608038d948b534ec31134daf087"
         },
         "input": null,
         "log": "case-network.disposable.json",
@@ -2813,62 +2802,62 @@
         "assertion_provenance": [
           {
             "declaration": "test SerializationGeneratedFullShapeRecordRoundtripsThroughBsol",
-            "end": 8167,
+            "end": 8149,
             "source": {
               "path": "source-serialization-GeneratedTests.bd",
-              "sha256": "c3ad4bec76b5a266ee166f75194810e123f8248a620a233770abd17319ffc0e8"
+              "sha256": "2b12d9185ee5920a55e15eb862d8ba653eaca9245320e098cccfaf5988929a12"
             },
-            "start": 8104,
+            "start": 8086,
             "test_id": "SerializationGeneratedFullShapeRecordRoundtripsThroughBsol"
           },
           {
             "declaration": "test SerializationGeneratedNestedGenericRecordDecodesAtTopLevel",
-            "end": 8379,
+            "end": 8361,
             "source": {
               "path": "source-serialization-GeneratedTests.bd",
-              "sha256": "c3ad4bec76b5a266ee166f75194810e123f8248a620a233770abd17319ffc0e8"
+              "sha256": "2b12d9185ee5920a55e15eb862d8ba653eaca9245320e098cccfaf5988929a12"
             },
-            "start": 8316,
+            "start": 8298,
             "test_id": "SerializationGeneratedNestedGenericRecordDecodesAtTopLevel"
           },
           {
-            "declaration": "test SerializationGeneratedScalarAndContainerApplicationsDecodeThroughOneCorrespondence",
-            "end": 9730,
+            "declaration": "test SerializationGeneratedScalarsAndContainersDecode",
+            "end": 9751,
             "source": {
               "path": "source-serialization-GeneratedTests.bd",
-              "sha256": "c3ad4bec76b5a266ee166f75194810e123f8248a620a233770abd17319ffc0e8"
+              "sha256": "2b12d9185ee5920a55e15eb862d8ba653eaca9245320e098cccfaf5988929a12"
             },
-            "start": 9643,
-            "test_id": "SerializationGeneratedScalarAndContainerApplicationsDecodeThroughOneCorrespondence"
+            "start": 9698,
+            "test_id": "SerializationGeneratedScalarsAndContainersDecode"
           },
           {
             "declaration": "test SerializationGeneratedVariantIdentityAndFieldOrderSurviveTypedDecode",
-            "end": 14760,
+            "end": 14781,
             "source": {
               "path": "source-serialization-GeneratedTests.bd",
-              "sha256": "c3ad4bec76b5a266ee166f75194810e123f8248a620a233770abd17319ffc0e8"
+              "sha256": "2b12d9185ee5920a55e15eb862d8ba653eaca9245320e098cccfaf5988929a12"
             },
-            "start": 14687,
+            "start": 14708,
             "test_id": "SerializationGeneratedVariantIdentityAndFieldOrderSurviveTypedDecode"
           },
           {
             "declaration": "test SerializationGeneratedWordUsesDeclaredWidthAndRangeChecks",
-            "end": 17482,
+            "end": 17503,
             "source": {
               "path": "source-serialization-GeneratedTests.bd",
-              "sha256": "c3ad4bec76b5a266ee166f75194810e123f8248a620a233770abd17319ffc0e8"
+              "sha256": "2b12d9185ee5920a55e15eb862d8ba653eaca9245320e098cccfaf5988929a12"
             },
-            "start": 17420,
+            "start": 17441,
             "test_id": "SerializationGeneratedWordUsesDeclaredWidthAndRangeChecks"
           },
           {
             "declaration": "test SerializationGeneratedDecoderRejectsTrailingInputWithoutPublishing",
-            "end": 18302,
+            "end": 18323,
             "source": {
               "path": "source-serialization-GeneratedTests.bd",
-              "sha256": "c3ad4bec76b5a266ee166f75194810e123f8248a620a233770abd17319ffc0e8"
+              "sha256": "2b12d9185ee5920a55e15eb862d8ba653eaca9245320e098cccfaf5988929a12"
             },
-            "start": 18231,
+            "start": 18252,
             "test_id": "SerializationGeneratedDecoderRejectsTrailingInputWithoutPublishing"
           }
         ],
@@ -2892,7 +2881,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-serialization-GeneratedTests.bd",
-          "sha256": "c3ad4bec76b5a266ee166f75194810e123f8248a620a233770abd17319ffc0e8"
+          "sha256": "2b12d9185ee5920a55e15eb862d8ba653eaca9245320e098cccfaf5988929a12"
         },
         "input": null,
         "log": "case-SER-01.json",
@@ -2900,7 +2889,7 @@
         "required_test_ids": [
           "SerializationGeneratedFullShapeRecordRoundtripsThroughBsol",
           "SerializationGeneratedNestedGenericRecordDecodesAtTopLevel",
-          "SerializationGeneratedScalarAndContainerApplicationsDecodeThroughOneCorrespondence",
+          "SerializationGeneratedScalarsAndContainersDecode",
           "SerializationGeneratedVariantIdentityAndFieldOrderSurviveTypedDecode",
           "SerializationGeneratedWordUsesDeclaredWidthAndRangeChecks",
           "SerializationGeneratedDecoderRejectsTrailingInputWithoutPublishing"
@@ -2922,42 +2911,42 @@
         "assertion_provenance": [
           {
             "declaration": "test SerializationEligibilityRejectsIneligibleDeclaredTypesWithFieldSpans",
-            "end": 8509,
+            "end": 8483,
             "source": {
               "path": "source-serialization-ModEligibilityTests.bd",
-              "sha256": "8ef95f60d9068f31e15d5619ec646fb303a579768cc71c98805863596fd1e9cc"
+              "sha256": "f3df0bc2f7046fdd579eec54779b2d01910121a3ce642a17f094d7991d146221"
             },
-            "start": 8436,
+            "start": 8410,
             "test_id": "SerializationEligibilityRejectsIneligibleDeclaredTypesWithFieldSpans"
           },
           {
             "declaration": "test SerializationClosureRejectsNonStringMapKeys",
-            "end": 15586,
+            "end": 15560,
             "source": {
               "path": "source-serialization-ModEligibilityTests.bd",
-              "sha256": "8ef95f60d9068f31e15d5619ec646fb303a579768cc71c98805863596fd1e9cc"
+              "sha256": "f3df0bc2f7046fdd579eec54779b2d01910121a3ce642a17f094d7991d146221"
             },
-            "start": 15538,
+            "start": 15512,
             "test_id": "SerializationClosureRejectsNonStringMapKeys"
           },
           {
             "declaration": "test SerializationClosureRejectsNestedOpaqueReferencesAndResources",
-            "end": 16538,
+            "end": 16512,
             "source": {
               "path": "source-serialization-ModEligibilityTests.bd",
-              "sha256": "8ef95f60d9068f31e15d5619ec646fb303a579768cc71c98805863596fd1e9cc"
+              "sha256": "f3df0bc2f7046fdd579eec54779b2d01910121a3ce642a17f094d7991d146221"
             },
-            "start": 16472,
+            "start": 16446,
             "test_id": "SerializationClosureRejectsNestedOpaqueReferencesAndResources"
           },
           {
             "declaration": "test SerializationClosureRejectsHostGatedResources",
-            "end": 26926,
+            "end": 26900,
             "source": {
               "path": "source-serialization-ModEligibilityTests.bd",
-              "sha256": "8ef95f60d9068f31e15d5619ec646fb303a579768cc71c98805863596fd1e9cc"
+              "sha256": "f3df0bc2f7046fdd579eec54779b2d01910121a3ce642a17f094d7991d146221"
             },
-            "start": 26876,
+            "start": 26850,
             "test_id": "SerializationClosureRejectsHostGatedResources"
           }
         ],
@@ -2981,7 +2970,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-serialization-ModEligibilityTests.bd",
-          "sha256": "8ef95f60d9068f31e15d5619ec646fb303a579768cc71c98805863596fd1e9cc"
+          "sha256": "f3df0bc2f7046fdd579eec54779b2d01910121a3ce642a17f094d7991d146221"
         },
         "input": null,
         "log": "case-SER-02.json",
@@ -3009,42 +2998,42 @@
         "assertion_provenance": [
           {
             "declaration": "test SerializationGeneratedRecordUsesOneDescriptorAndDecoderForBsolAndJson",
-            "end": 32305,
+            "end": 32326,
             "source": {
               "path": "source-serialization-GeneratedTests.bd",
-              "sha256": "c3ad4bec76b5a266ee166f75194810e123f8248a620a233770abd17319ffc0e8"
+              "sha256": "2b12d9185ee5920a55e15eb862d8ba653eaca9245320e098cccfaf5988929a12"
             },
-            "start": 32231,
+            "start": 32252,
             "test_id": "SerializationGeneratedRecordUsesOneDescriptorAndDecoderForBsolAndJson"
           },
           {
             "declaration": "test SerializationGeneratedF32AndF64BitsSurviveBothFormatsWithoutCoercion",
-            "end": 34362,
+            "end": 34383,
             "source": {
               "path": "source-serialization-GeneratedTests.bd",
-              "sha256": "c3ad4bec76b5a266ee166f75194810e123f8248a620a233770abd17319ffc0e8"
+              "sha256": "2b12d9185ee5920a55e15eb862d8ba653eaca9245320e098cccfaf5988929a12"
             },
-            "start": 34289,
+            "start": 34310,
             "test_id": "SerializationGeneratedF32AndF64BitsSurviveBothFormatsWithoutCoercion"
           },
           {
             "declaration": "test SerializationGeneratedEnumDecodesThroughTheJsonTestFormat",
-            "end": 36083,
+            "end": 36104,
             "source": {
               "path": "source-serialization-GeneratedTests.bd",
-              "sha256": "c3ad4bec76b5a266ee166f75194810e123f8248a620a233770abd17319ffc0e8"
+              "sha256": "2b12d9185ee5920a55e15eb862d8ba653eaca9245320e098cccfaf5988929a12"
             },
-            "start": 36021,
+            "start": 36042,
             "test_id": "SerializationGeneratedEnumDecodesThroughTheJsonTestFormat"
           },
           {
             "declaration": "test SerializationGeneratedJsonReaderRejectsADifferentWidth",
-            "end": 36699,
+            "end": 36720,
             "source": {
               "path": "source-serialization-GeneratedTests.bd",
-              "sha256": "c3ad4bec76b5a266ee166f75194810e123f8248a620a233770abd17319ffc0e8"
+              "sha256": "2b12d9185ee5920a55e15eb862d8ba653eaca9245320e098cccfaf5988929a12"
             },
-            "start": 36640,
+            "start": 36661,
             "test_id": "SerializationGeneratedJsonReaderRejectsADifferentWidth"
           }
         ],
@@ -3068,7 +3057,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-serialization-GeneratedTests.bd",
-          "sha256": "c3ad4bec76b5a266ee166f75194810e123f8248a620a233770abd17319ffc0e8"
+          "sha256": "2b12d9185ee5920a55e15eb862d8ba653eaca9245320e098cccfaf5988929a12"
         },
         "input": null,
         "log": "case-SER-03.json",
@@ -3177,63 +3166,63 @@
       "binding": {
         "assertion_provenance": [
           {
-            "declaration": "test SerializationEachConfiguredLimitSucceedsAndPlusOneReturnsLimitExceededWithoutPartialOutput",
-            "end": 33694,
+            "declaration": "test SerializationEachLimitIsInclusive",
+            "end": 33602,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "f4c024be65abcb586448f88ba3257895751b2da67fc00a28ccc693591d1223fd"
+              "sha256": "6879581c10c1eedf1549d985b37f6a15f252c4f2a58d418ba010e7b4f22c38ad"
             },
-            "start": 33599,
-            "test_id": "SerializationEachConfiguredLimitSucceedsAndPlusOneReturnsLimitExceededWithoutPartialOutput"
+            "start": 33564,
+            "test_id": "SerializationEachLimitIsInclusive"
           },
           {
             "declaration": "test SerializationCycleRejectsAndAcyclicAliasCopiesByValue",
-            "end": 38256,
+            "end": 38164,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "f4c024be65abcb586448f88ba3257895751b2da67fc00a28ccc693591d1223fd"
+              "sha256": "6879581c10c1eedf1549d985b37f6a15f252c4f2a58d418ba010e7b4f22c38ad"
             },
-            "start": 38198,
+            "start": 38106,
             "test_id": "SerializationCycleRejectsAndAcyclicAliasCopiesByValue"
           },
           {
-            "declaration": "test SerializationRecordMissingRequiredDuplicateAndUnknownFieldsRejectAndOptionalFieldsMayBeAbsent",
-            "end": 41299,
+            "declaration": "test SerializationRecordFieldPresenceRules",
+            "end": 41247,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "f4c024be65abcb586448f88ba3257895751b2da67fc00a28ccc693591d1223fd"
+              "sha256": "6879581c10c1eedf1549d985b37f6a15f252c4f2a58d418ba010e7b4f22c38ad"
             },
-            "start": 41201,
-            "test_id": "SerializationRecordMissingRequiredDuplicateAndUnknownFieldsRejectAndOptionalFieldsMayBeAbsent"
+            "start": 41205,
+            "test_id": "SerializationRecordFieldPresenceRules"
           },
           {
-            "declaration": "test SerializationPrecisionUnicodeScalarsAndInvalidSurrogatesRoundtripOrReject",
-            "end": 43673,
+            "declaration": "test SerializationPrecisionAndUnicodeScalars",
+            "end": 43672,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "f4c024be65abcb586448f88ba3257895751b2da67fc00a28ccc693591d1223fd"
+              "sha256": "6879581c10c1eedf1549d985b37f6a15f252c4f2a58d418ba010e7b4f22c38ad"
             },
-            "start": 43595,
-            "test_id": "SerializationPrecisionUnicodeScalarsAndInvalidSurrogatesRoundtripOrReject"
+            "start": 43628,
+            "test_id": "SerializationPrecisionAndUnicodeScalars"
           },
           {
             "declaration": "test SerializationFailurePublicationHasNoMutablePayload",
-            "end": 24152,
+            "end": 24103,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "f4c024be65abcb586448f88ba3257895751b2da67fc00a28ccc693591d1223fd"
+              "sha256": "6879581c10c1eedf1549d985b37f6a15f252c4f2a58d418ba010e7b4f22c38ad"
             },
-            "start": 24097,
+            "start": 24048,
             "test_id": "SerializationFailurePublicationHasNoMutablePayload"
           },
           {
             "declaration": "test WireEncoderPreparesFallibleWorkBeforeNonallocatingCommit",
-            "end": 25406,
+            "end": 25357,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "f4c024be65abcb586448f88ba3257895751b2da67fc00a28ccc693591d1223fd"
+              "sha256": "6879581c10c1eedf1549d985b37f6a15f252c4f2a58d418ba010e7b4f22c38ad"
             },
-            "start": 25345,
+            "start": 25296,
             "test_id": "WireEncoderPreparesFallibleWorkBeforeNonallocatingCommit"
           }
         ],
@@ -3259,7 +3248,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-bsol-SerializationWireTests.bd",
-          "sha256": "f4c024be65abcb586448f88ba3257895751b2da67fc00a28ccc693591d1223fd"
+          "sha256": "6879581c10c1eedf1549d985b37f6a15f252c4f2a58d418ba010e7b4f22c38ad"
         },
         "input": {
           "corpus": "conformance",
@@ -3275,10 +3264,10 @@
         "log": "case-SER-05.json",
         "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
         "required_test_ids": [
-          "SerializationEachConfiguredLimitSucceedsAndPlusOneReturnsLimitExceededWithoutPartialOutput",
+          "SerializationEachLimitIsInclusive",
           "SerializationCycleRejectsAndAcyclicAliasCopiesByValue",
-          "SerializationRecordMissingRequiredDuplicateAndUnknownFieldsRejectAndOptionalFieldsMayBeAbsent",
-          "SerializationPrecisionUnicodeScalarsAndInvalidSurrogatesRoundtripOrReject",
+          "SerializationRecordFieldPresenceRules",
+          "SerializationPrecisionAndUnicodeScalars",
           "SerializationFailurePublicationHasNoMutablePayload",
           "WireEncoderPreparesFallibleWorkBeforeNonallocatingCommit"
         ],
@@ -3299,52 +3288,52 @@
         "assertion_provenance": [
           {
             "declaration": "test SerializationRegistrationConflictIsAtomicAndOwned",
-            "end": 11791,
+            "end": 11592,
             "source": {
               "path": "source-serialization-SerializationSuite.bd",
-              "sha256": "b6f096d3894c5425f969cbd159767ca98e26b646369b26d5711e0c277b009ad8"
+              "sha256": "bfd0747676da71e8a6e9ad70d90ccc6a424ed6382d1f2765471059a96986b3cf"
             },
-            "start": 11737,
+            "start": 11538,
             "test_id": "SerializationRegistrationConflictIsAtomicAndOwned"
           },
           {
             "declaration": "test SerializationSignatureSha256Exact",
-            "end": 11532,
+            "end": 11333,
             "source": {
               "path": "source-serialization-SerializationSuite.bd",
-              "sha256": "b6f096d3894c5425f969cbd159767ca98e26b646369b26d5711e0c277b009ad8"
+              "sha256": "bfd0747676da71e8a6e9ad70d90ccc6a424ed6382d1f2765471059a96986b3cf"
             },
-            "start": 11494,
+            "start": 11295,
             "test_id": "SerializationSignatureSha256Exact"
           },
           {
             "declaration": "test SerializationShapeIdPreservesCompleteDigestAndRejectsNoncanonicalText",
-            "end": 7649,
+            "end": 7505,
             "source": {
               "path": "source-serialization-SerializationSuite.bd",
-              "sha256": "b6f096d3894c5425f969cbd159767ca98e26b646369b26d5711e0c277b009ad8"
+              "sha256": "bfd0747676da71e8a6e9ad70d90ccc6a424ed6382d1f2765471059a96986b3cf"
             },
-            "start": 7575,
+            "start": 7431,
             "test_id": "SerializationShapeIdPreservesCompleteDigestAndRejectsNoncanonicalText"
           },
           {
             "declaration": "test SerializationGraphMissingEdgeKeepsExistingTable",
-            "end": 13107,
+            "end": 12908,
             "source": {
               "path": "source-serialization-SerializationSuite.bd",
-              "sha256": "b6f096d3894c5425f969cbd159767ca98e26b646369b26d5711e0c277b009ad8"
+              "sha256": "bfd0747676da71e8a6e9ad70d90ccc6a424ed6382d1f2765471059a96986b3cf"
             },
-            "start": 13055,
+            "start": 12856,
             "test_id": "SerializationGraphMissingEdgeKeepsExistingTable"
           },
           {
             "declaration": "test SerializationGraphAdmitsCompleteRecursiveClosure",
-            "end": 14230,
+            "end": 14031,
             "source": {
               "path": "source-serialization-SerializationSuite.bd",
-              "sha256": "b6f096d3894c5425f969cbd159767ca98e26b646369b26d5711e0c277b009ad8"
+              "sha256": "bfd0747676da71e8a6e9ad70d90ccc6a424ed6382d1f2765471059a96986b3cf"
             },
-            "start": 14177,
+            "start": 13978,
             "test_id": "SerializationGraphAdmitsCompleteRecursiveClosure"
           }
         ],
@@ -3368,7 +3357,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-serialization-SerializationSuite.bd",
-          "sha256": "b6f096d3894c5425f969cbd159767ca98e26b646369b26d5711e0c277b009ad8"
+          "sha256": "bfd0747676da71e8a6e9ad70d90ccc6a424ed6382d1f2765471059a96986b3cf"
         },
         "input": null,
         "log": "case-SER-06.json",
@@ -3533,22 +3522,22 @@
         "assertion_provenance": [
           {
             "declaration": "test DynamicZeroShapeAndMappingTokensRejectWithoutPublishing",
-            "end": 1708,
+            "end": 1711,
             "source": {
               "path": "source-dynamic-DynamicSuite.bd",
-              "sha256": "50cb12cc6d87f4bc88808f3c7774811668ca60f5aed08d75346bb49b45e58e64"
+              "sha256": "946fbcdf769dea60fb8ec61e4db4746de082dd2104f7b6f020017f7074c9eaa6"
             },
-            "start": 1648,
+            "start": 1651,
             "test_id": "DynamicZeroShapeAndMappingTokensRejectWithoutPublishing"
           },
           {
             "declaration": "test DynamicUnregisteredTokensFailClosedForCreateCastAndMap",
-            "end": 2664,
+            "end": 2667,
             "source": {
               "path": "source-dynamic-DynamicSuite.bd",
-              "sha256": "50cb12cc6d87f4bc88808f3c7774811668ca60f5aed08d75346bb49b45e58e64"
+              "sha256": "946fbcdf769dea60fb8ec61e4db4746de082dd2104f7b6f020017f7074c9eaa6"
             },
-            "start": 2605,
+            "start": 2608,
             "test_id": "DynamicUnregisteredTokensFailClosedForCreateCastAndMap"
           }
         ],
@@ -3572,7 +3561,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-dynamic-DynamicSuite.bd",
-          "sha256": "50cb12cc6d87f4bc88808f3c7774811668ca60f5aed08d75346bb49b45e58e64"
+          "sha256": "946fbcdf769dea60fb8ec61e4db4746de082dd2104f7b6f020017f7074c9eaa6"
         },
         "input": null,
         "log": "case-DYN-06-01.json",
@@ -3598,12 +3587,12 @@
         "assertion_provenance": [
           {
             "declaration": "test DynamicCastToWrongRegisteredShapeRejectsAndExactShapeSucceeds",
-            "end": 3255,
+            "end": 3258,
             "source": {
               "path": "source-dynamic-DynamicSuite.bd",
-              "sha256": "50cb12cc6d87f4bc88808f3c7774811668ca60f5aed08d75346bb49b45e58e64"
+              "sha256": "946fbcdf769dea60fb8ec61e4db4746de082dd2104f7b6f020017f7074c9eaa6"
             },
-            "start": 3189,
+            "start": 3192,
             "test_id": "DynamicCastToWrongRegisteredShapeRejectsAndExactShapeSucceeds"
           }
         ],
@@ -3627,7 +3616,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-dynamic-DynamicSuite.bd",
-          "sha256": "50cb12cc6d87f4bc88808f3c7774811668ca60f5aed08d75346bb49b45e58e64"
+          "sha256": "946fbcdf769dea60fb8ec61e4db4746de082dd2104f7b6f020017f7074c9eaa6"
         },
         "input": null,
         "log": "case-DYN-06-02.json",
@@ -3652,32 +3641,32 @@
         "assertion_provenance": [
           {
             "declaration": "test DynamicMappingFreshNestedDestinationIsIsolatedFromSource",
-            "end": 8048,
+            "end": 8054,
             "source": {
               "path": "source-dynamic-DynamicMappingSuite.bd",
-              "sha256": "bf849e1b67934c0fe5ec43565fedb782f0f90403b842b8122d6021b5cb9deaf2"
+              "sha256": "275ccfb137184fa59b4e80f831d12684a7d0d8831576a159f66a18920418b211"
             },
-            "start": 7987,
+            "start": 7993,
             "test_id": "DynamicMappingFreshNestedDestinationIsIsolatedFromSource"
           },
           {
             "declaration": "test DynamicMappingIdentityPlanCopiesInsteadOfAliasing",
-            "end": 9828,
+            "end": 9823,
             "source": {
               "path": "source-dynamic-DynamicMappingSuite.bd",
-              "sha256": "bf849e1b67934c0fe5ec43565fedb782f0f90403b842b8122d6021b5cb9deaf2"
+              "sha256": "275ccfb137184fa59b4e80f831d12684a7d0d8831576a159f66a18920418b211"
             },
-            "start": 9774,
+            "start": 9769,
             "test_id": "DynamicMappingIdentityPlanCopiesInsteadOfAliasing"
           },
           {
             "declaration": "test DynamicMappingRuntimeKnownSourceShapeSelectsTheRegisteredMapping",
-            "end": 10641,
+            "end": 10625,
             "source": {
               "path": "source-dynamic-DynamicMappingSuite.bd",
-              "sha256": "bf849e1b67934c0fe5ec43565fedb782f0f90403b842b8122d6021b5cb9deaf2"
+              "sha256": "275ccfb137184fa59b4e80f831d12684a7d0d8831576a159f66a18920418b211"
             },
-            "start": 10572,
+            "start": 10556,
             "test_id": "DynamicMappingRuntimeKnownSourceShapeSelectsTheRegisteredMapping"
           }
         ],
@@ -3701,7 +3690,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-dynamic-DynamicMappingSuite.bd",
-          "sha256": "bf849e1b67934c0fe5ec43565fedb782f0f90403b842b8122d6021b5cb9deaf2"
+          "sha256": "275ccfb137184fa59b4e80f831d12684a7d0d8831576a159f66a18920418b211"
         },
         "input": null,
         "log": "case-DYN-06-03.json",
@@ -3728,22 +3717,22 @@
         "assertion_provenance": [
           {
             "declaration": "test DynamicMappingNumericNarrowingIsRejectedWithoutDestination",
-            "end": 14086,
+            "end": 14059,
             "source": {
               "path": "source-dynamic-DynamicMappingSuite.bd",
-              "sha256": "bf849e1b67934c0fe5ec43565fedb782f0f90403b842b8122d6021b5cb9deaf2"
+              "sha256": "275ccfb137184fa59b4e80f831d12684a7d0d8831576a159f66a18920418b211"
             },
-            "start": 14023,
+            "start": 13996,
             "test_id": "DynamicMappingNumericNarrowingIsRejectedWithoutDestination"
           },
           {
             "declaration": "test DynamicMappingLateNestedFailureRejectsTheWholePlan",
-            "end": 15538,
+            "end": 15500,
             "source": {
               "path": "source-dynamic-DynamicMappingSuite.bd",
-              "sha256": "bf849e1b67934c0fe5ec43565fedb782f0f90403b842b8122d6021b5cb9deaf2"
+              "sha256": "275ccfb137184fa59b4e80f831d12684a7d0d8831576a159f66a18920418b211"
             },
-            "start": 15483,
+            "start": 15445,
             "test_id": "DynamicMappingLateNestedFailureRejectsTheWholePlan"
           }
         ],
@@ -3767,7 +3756,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-dynamic-DynamicMappingSuite.bd",
-          "sha256": "bf849e1b67934c0fe5ec43565fedb782f0f90403b842b8122d6021b5cb9deaf2"
+          "sha256": "275ccfb137184fa59b4e80f831d12684a7d0d8831576a159f66a18920418b211"
         },
         "input": null,
         "log": "case-DYN-06-04.json",
@@ -3793,23 +3782,23 @@
         "assertion_provenance": [
           {
             "declaration": "test DynamicCellOnlyRootKeepsNestedPayloadAcrossForcedCollection",
-            "end": 5393,
+            "end": 5396,
             "source": {
               "path": "source-dynamic-DynamicSuite.bd",
-              "sha256": "50cb12cc6d87f4bc88808f3c7774811668ca60f5aed08d75346bb49b45e58e64"
+              "sha256": "946fbcdf769dea60fb8ec61e4db4746de082dd2104f7b6f020017f7074c9eaa6"
             },
-            "start": 5329,
+            "start": 5332,
             "test_id": "DynamicCellOnlyRootKeepsNestedPayloadAcrossForcedCollection"
           },
           {
-            "declaration": "test DynamicGenericInstantiationsKeepDistinctIdentitiesThroughRepeatedCreationAndCollection",
-            "end": 6330,
+            "declaration": "test DynamicGenericInstantiationsKeepDistinctIdentities",
+            "end": 6368,
             "source": {
               "path": "source-dynamic-DynamicSuite.bd",
-              "sha256": "50cb12cc6d87f4bc88808f3c7774811668ca60f5aed08d75346bb49b45e58e64"
+              "sha256": "946fbcdf769dea60fb8ec61e4db4746de082dd2104f7b6f020017f7074c9eaa6"
             },
-            "start": 6239,
-            "test_id": "DynamicGenericInstantiationsKeepDistinctIdentitiesThroughRepeatedCreationAndCollection"
+            "start": 6313,
+            "test_id": "DynamicGenericInstantiationsKeepDistinctIdentities"
           }
         ],
         "command": {
@@ -3832,14 +3821,14 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-dynamic-DynamicSuite.bd",
-          "sha256": "50cb12cc6d87f4bc88808f3c7774811668ca60f5aed08d75346bb49b45e58e64"
+          "sha256": "946fbcdf769dea60fb8ec61e4db4746de082dd2104f7b6f020017f7074c9eaa6"
         },
         "input": null,
         "log": "case-DYN-06-05.json",
         "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
         "required_test_ids": [
           "DynamicCellOnlyRootKeepsNestedPayloadAcrossForcedCollection",
-          "DynamicGenericInstantiationsKeepDistinctIdentitiesThroughRepeatedCreationAndCollection"
+          "DynamicGenericInstantiationsKeepDistinctIdentities"
         ],
         "reviewed_source_binding": true,
         "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/dynamic/DynamicSuite.bd",
@@ -3930,63 +3919,63 @@
         "assertion_provenance": [
           {
             "declaration": "test BsolOrderedBlocksAssignmentsAndByteSpans",
-            "end": 950,
+            "end": 870,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 905,
+            "start": 825,
             "test_id": "BsolOrderedBlocksAssignmentsAndByteSpans"
           },
           {
             "declaration": "test BsolAttributesReferencesEmptyMapInlineBlocksAndNumbers",
-            "end": 9846,
+            "end": 9766,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 9787,
+            "start": 9707,
             "test_id": "BsolAttributesReferencesEmptyMapInlineBlocksAndNumbers"
           },
           {
             "declaration": "test BsolAggregateNodesIncludeCommentEntries",
-            "end": 14229,
+            "end": 14149,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 14185,
+            "start": 14105,
             "test_id": "BsolAggregateNodesIncludeCommentEntries"
           },
           {
             "declaration": "test BsolWriterOutputMayExceedOriginalInputCap",
-            "end": 14646,
+            "end": 14566,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 14600,
+            "start": 14520,
             "test_id": "BsolWriterOutputMayExceedOriginalInputCap"
           },
           {
             "declaration": "test BsolSharedCorpusValuesAndRuntimeManifest",
-            "end": 16617,
+            "end": 16493,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 16572,
+            "start": 16448,
             "test_id": "BsolSharedCorpusValuesAndRuntimeManifest"
           },
           {
-            "declaration": "test BsolParseWriteParsePreservesKindsLabelsAttributesAndReferencesAcrossWhitespaceAndComments",
-            "end": 45681,
+            "declaration": "test BsolParseWriteParseRoundTrips",
+            "end": 45385,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 45587,
-            "test_id": "BsolParseWriteParsePreservesKindsLabelsAttributesAndReferencesAcrossWhitespaceAndComments"
+            "start": 45351,
+            "test_id": "BsolParseWriteParseRoundTrips"
           }
         ],
         "command": {
@@ -4011,7 +4000,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-bsol-BsolSuite.bd",
-          "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+          "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
         },
         "input": {
           "corpus": "conformance",
@@ -4032,7 +4021,7 @@
           "BsolAggregateNodesIncludeCommentEntries",
           "BsolWriterOutputMayExceedOriginalInputCap",
           "BsolSharedCorpusValuesAndRuntimeManifest",
-          "BsolParseWriteParsePreservesKindsLabelsAttributesAndReferencesAcrossWhitespaceAndComments"
+          "BsolParseWriteParseRoundTrips"
         ],
         "reviewed_source_binding": true,
         "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/bsol/BsolSuite.bd",
@@ -4051,92 +4040,92 @@
         "assertion_provenance": [
           {
             "declaration": "test BsolNativeProfileV1AndV2DeclaredRuleLoad",
-            "end": 5629,
+            "end": 5585,
             "source": {
               "path": "source-bsol-SchemaTests.bd",
-              "sha256": "d0afc84f2e9f6774488f5fefc72fd37265cd76327c478e4aa578a83babdb702d"
+              "sha256": "a5f0e7963bf02f3a1fd34b5910ee0fdfa1c046e0c955ef5f02c037461b2dadec"
             },
-            "start": 5584,
+            "start": 5540,
             "test_id": "BsolNativeProfileV1AndV2DeclaredRuleLoad"
           },
           {
             "declaration": "test BsolNativeSchemaValidPrimitivesReturnCheckedDocument",
-            "end": 6521,
+            "end": 6477,
             "source": {
               "path": "source-bsol-SchemaTests.bd",
-              "sha256": "d0afc84f2e9f6774488f5fefc72fd37265cd76327c478e4aa578a83babdb702d"
+              "sha256": "a5f0e7963bf02f3a1fd34b5910ee0fdfa1c046e0c955ef5f02c037461b2dadec"
             },
-            "start": 6464,
+            "start": 6420,
             "test_id": "BsolNativeSchemaValidPrimitivesReturnCheckedDocument"
           },
           {
             "declaration": "test BsolNativeSchemaMissingRequiredField",
-            "end": 6881,
+            "end": 6837,
             "source": {
               "path": "source-bsol-SchemaTests.bd",
-              "sha256": "d0afc84f2e9f6774488f5fefc72fd37265cd76327c478e4aa578a83babdb702d"
+              "sha256": "a5f0e7963bf02f3a1fd34b5910ee0fdfa1c046e0c955ef5f02c037461b2dadec"
             },
-            "start": 6840,
+            "start": 6796,
             "test_id": "BsolNativeSchemaMissingRequiredField"
           },
           {
             "declaration": "test BsolNativeSchemaDuplicateFieldKeepsBothSpans",
-            "end": 7007,
+            "end": 6963,
             "source": {
               "path": "source-bsol-SchemaTests.bd",
-              "sha256": "d0afc84f2e9f6774488f5fefc72fd37265cd76327c478e4aa578a83babdb702d"
+              "sha256": "a5f0e7963bf02f3a1fd34b5910ee0fdfa1c046e0c955ef5f02c037461b2dadec"
             },
-            "start": 6958,
+            "start": 6914,
             "test_id": "BsolNativeSchemaDuplicateFieldKeepsBothSpans"
           },
           {
             "declaration": "test BsolNativeSchemaUnknownFieldRejectsWithoutExtras",
-            "end": 7164,
+            "end": 7120,
             "source": {
               "path": "source-bsol-SchemaTests.bd",
-              "sha256": "d0afc84f2e9f6774488f5fefc72fd37265cd76327c478e4aa578a83babdb702d"
+              "sha256": "a5f0e7963bf02f3a1fd34b5910ee0fdfa1c046e0c955ef5f02c037461b2dadec"
             },
-            "start": 7111,
+            "start": 7067,
             "test_id": "BsolNativeSchemaUnknownFieldRejectsWithoutExtras"
           },
           {
             "declaration": "test BsolNativeSchemaWrongPrimitiveKindAndIntegerRange",
-            "end": 7323,
+            "end": 7279,
             "source": {
               "path": "source-bsol-SchemaTests.bd",
-              "sha256": "d0afc84f2e9f6774488f5fefc72fd37265cd76327c478e4aa578a83babdb702d"
+              "sha256": "a5f0e7963bf02f3a1fd34b5910ee0fdfa1c046e0c955ef5f02c037461b2dadec"
             },
-            "start": 7269,
+            "start": 7225,
             "test_id": "BsolNativeSchemaWrongPrimitiveKindAndIntegerRange"
           },
           {
             "declaration": "test BsolNativeSchemaInvalidProfileFailsAtProfileBoundary",
-            "end": 7743,
+            "end": 7699,
             "source": {
               "path": "source-bsol-SchemaTests.bd",
-              "sha256": "d0afc84f2e9f6774488f5fefc72fd37265cd76327c478e4aa578a83babdb702d"
+              "sha256": "a5f0e7963bf02f3a1fd34b5910ee0fdfa1c046e0c955ef5f02c037461b2dadec"
             },
-            "start": 7686,
+            "start": 7642,
             "test_id": "BsolNativeSchemaInvalidProfileFailsAtProfileBoundary"
           },
           {
             "declaration": "test BsolAllFourteenCanonicalProfilesParseAndCompose",
-            "end": 10460,
+            "end": 10364,
             "source": {
               "path": "source-bsol-SchemaTests.bd",
-              "sha256": "d0afc84f2e9f6774488f5fefc72fd37265cd76327c478e4aa578a83babdb702d"
+              "sha256": "a5f0e7963bf02f3a1fd34b5910ee0fdfa1c046e0c955ef5f02c037461b2dadec"
             },
-            "start": 10408,
+            "start": 10312,
             "test_id": "BsolAllFourteenCanonicalProfilesParseAndCompose"
           },
           {
             "declaration": "test BsolAllFourteenBuiltinProfilesValidateRealDocuments",
-            "end": 15271,
+            "end": 15175,
             "source": {
               "path": "source-bsol-SchemaTests.bd",
-              "sha256": "d0afc84f2e9f6774488f5fefc72fd37265cd76327c478e4aa578a83babdb702d"
+              "sha256": "a5f0e7963bf02f3a1fd34b5910ee0fdfa1c046e0c955ef5f02c037461b2dadec"
             },
-            "start": 15215,
+            "start": 15119,
             "test_id": "BsolAllFourteenBuiltinProfilesValidateRealDocuments"
           }
         ],
@@ -4162,7 +4151,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-bsol-SchemaTests.bd",
-          "sha256": "d0afc84f2e9f6774488f5fefc72fd37265cd76327c478e4aa578a83babdb702d"
+          "sha256": "a5f0e7963bf02f3a1fd34b5910ee0fdfa1c046e0c955ef5f02c037461b2dadec"
         },
         "input": {
           "corpus": "conformance",
@@ -4205,342 +4194,342 @@
         "assertion_provenance": [
           {
             "declaration": "test BsolSchemaCompoundTypesHaveCheckedStructuralArena",
-            "end": 3032,
+            "end": 2916,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 2978,
+            "start": 2862,
             "test_id": "BsolSchemaCompoundTypesHaveCheckedStructuralArena"
           },
           {
             "declaration": "test BsolSchemaValidUnionMapInlineReferenceAndLocalAttributes",
-            "end": 4378,
+            "end": 4262,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 4317,
+            "start": 4201,
             "test_id": "BsolSchemaValidUnionMapInlineReferenceAndLocalAttributes"
           },
           {
             "declaration": "test BsolSchemaUnionListAndMapValuesCheckEachElement",
-            "end": 4864,
+            "end": 4748,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 4812,
+            "start": 4696,
             "test_id": "BsolSchemaUnionListAndMapValuesCheckEachElement"
           },
           {
             "declaration": "test BsolSchemaInlineFieldsAndReferenceQualifierAreChecked",
-            "end": 5064,
+            "end": 4948,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 5006,
+            "start": 4890,
             "test_id": "BsolSchemaInlineFieldsAndReferenceQualifierAreChecked"
           },
           {
             "declaration": "test BsolSchemaBlockAndFieldAttributeAllowlistsAreLocal",
-            "end": 5267,
+            "end": 5151,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 5212,
+            "start": 5096,
             "test_id": "BsolSchemaBlockAndFieldAttributeAllowlistsAreLocal"
           },
           {
             "declaration": "test BsolSchemaUnknownUnionAlternativeRejectsProfile",
-            "end": 5476,
+            "end": 5360,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 5424,
+            "start": 5308,
             "test_id": "BsolSchemaUnknownUnionAlternativeRejectsProfile"
           },
           {
             "declaration": "test BsolSchemaAbsentAttributeAllowlistsRejectUnlistedAttributes",
-            "end": 6229,
+            "end": 6113,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 6165,
+            "start": 6049,
             "test_id": "BsolSchemaAbsentAttributeAllowlistsRejectUnlistedAttributes"
           },
           {
             "declaration": "test BsolSchemaMissingOnlyDefaultsRemainTyped",
-            "end": 10327,
+            "end": 10158,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 10282,
+            "start": 10113,
             "test_id": "BsolSchemaMissingOnlyDefaultsRemainTyped"
           },
           {
             "declaration": "test BsolSchemaSuppliedValuesOverrideDefaultsAtNumericBoundary",
-            "end": 10824,
+            "end": 10655,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 10762,
+            "start": 10593,
             "test_id": "BsolSchemaSuppliedValuesOverrideDefaultsAtNumericBoundary"
           },
           {
             "declaration": "test BsolSchemaNumericLimitsRejectOutsideBoundaries",
-            "end": 11294,
+            "end": 11125,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 11243,
+            "start": 11074,
             "test_id": "BsolSchemaNumericLimitsRejectOutsideBoundaries"
           },
           {
             "declaration": "test BsolSchemaActualInlineMapConditionalConstraints",
-            "end": 11478,
+            "end": 11309,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 11426,
+            "start": 11257,
             "test_id": "BsolSchemaActualInlineMapConditionalConstraints"
           },
           {
             "declaration": "test BsolSchemaVariantsRequirePayloadAndKnownDiscriminant",
-            "end": 11662,
+            "end": 11493,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 11605,
+            "start": 11436,
             "test_id": "BsolSchemaVariantsRequirePayloadAndKnownDiscriminant"
           },
           {
             "declaration": "test BsolSchemaInvalidTypedDefaultRejectsProfile",
-            "end": 11864,
+            "end": 11695,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 11816,
+            "start": 11647,
             "test_id": "BsolSchemaInvalidTypedDefaultRejectsProfile"
           },
           {
             "declaration": "test BsolPatternSharedAcceptedGrammar",
-            "end": 16542,
+            "end": 16323,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 16505,
+            "start": 16286,
             "test_id": "BsolPatternSharedAcceptedGrammar"
           },
           {
             "declaration": "test BsolPatternSharedNonemptyStartzeroRejections",
-            "end": 17202,
+            "end": 16983,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 17153,
+            "start": 16934,
             "test_id": "BsolPatternSharedNonemptyStartzeroRejections"
           },
           {
             "declaration": "test BsolPatternSharedInvalidUnsupportedGrammar",
-            "end": 17458,
+            "end": 17239,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 17411,
+            "start": 17192,
             "test_id": "BsolPatternSharedInvalidUnsupportedGrammar"
           },
           {
             "declaration": "test BsolPatternSharedSubjectExactLimit",
-            "end": 17853,
+            "end": 17634,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 17814,
+            "start": 17595,
             "test_id": "BsolPatternSharedSubjectExactLimit"
           },
           {
             "declaration": "test BsolPatternSharedSubjectOverLimit",
-            "end": 17962,
+            "end": 17743,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 17924,
+            "start": 17705,
             "test_id": "BsolPatternSharedSubjectOverLimit"
           },
           {
             "declaration": "test BsolPatternSharedNestedDefaultWorkLimit",
-            "end": 18096,
+            "end": 17877,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 18052,
+            "start": 17833,
             "test_id": "BsolPatternSharedNestedDefaultWorkLimit"
           },
           {
             "declaration": "test BsolPatternSharedUnicodeScalarGrammar",
-            "end": 18224,
+            "end": 18005,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 18182,
+            "start": 17963,
             "test_id": "BsolPatternSharedUnicodeScalarGrammar"
           },
           {
             "declaration": "test BsolPatternCallerWorkAndDepthLimits",
-            "end": 18690,
+            "end": 18471,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 18650,
+            "start": 18431,
             "test_id": "BsolPatternCallerWorkAndDepthLimits"
           },
           {
             "declaration": "test BsolPatternUnicodeSubjectLimitCountsBytes",
-            "end": 19104,
+            "end": 18885,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 19058,
+            "start": 18839,
             "test_id": "BsolPatternUnicodeSubjectLimitCountsBytes"
           },
           {
             "declaration": "test BsolPatternUnicodeFailureHasExactUtf8AssignmentSpan",
-            "end": 19492,
+            "end": 19273,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 19436,
+            "start": 19217,
             "test_id": "BsolPatternUnicodeFailureHasExactUtf8AssignmentSpan"
           },
           {
             "declaration": "test BsolPatternCallerBudgetIsSharedThroughInlineAndDefaults",
-            "end": 22176,
+            "end": 21957,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 22116,
+            "start": 21897,
             "test_id": "BsolPatternCallerBudgetIsSharedThroughInlineAndDefaults"
           },
           {
             "declaration": "test BsolPatternInvalidCallerLimitsRejectChecked",
-            "end": 23415,
+            "end": 23196,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 23367,
+            "start": 23148,
             "test_id": "BsolPatternInvalidCallerLimitsRejectChecked"
           },
           {
             "declaration": "test BsolPatternClassWorkCountsInspectedRangesAndInitialAccept",
-            "end": 23684,
+            "end": 23465,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 23622,
+            "start": 23403,
             "test_id": "BsolPatternClassWorkCountsInspectedRangesAndInitialAccept"
           },
           {
             "declaration": "test BsolSchemaIdenticalDiamondComposesOnce",
-            "end": 28165,
+            "end": 27892,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 28122,
+            "start": 27849,
             "test_id": "BsolSchemaIdenticalDiamondComposesOnce"
           },
           {
             "declaration": "test BsolSchemaCompositionCycleAndUnknownBaseReject",
-            "end": 29136,
+            "end": 28863,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 29085,
+            "start": 28812,
             "test_id": "BsolSchemaCompositionCycleAndUnknownBaseReject"
           },
           {
             "declaration": "test BsolSchemaIncompatibleOverlayRetainsBothDefinitions",
-            "end": 29356,
+            "end": 29083,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 29300,
+            "start": 29027,
             "test_id": "BsolSchemaIncompatibleOverlayRetainsBothDefinitions"
           },
           {
             "declaration": "test BsolSchemaOverlayRefinesButCannotLoosenConstraints",
-            "end": 31123,
+            "end": 30850,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 31068,
+            "start": 30795,
             "test_id": "BsolSchemaOverlayRefinesButCannotLoosenConstraints"
           },
           {
             "declaration": "test BsolNativeCompositionValuesCanNarrowButNeverWiden",
-            "end": 35616,
+            "end": 35343,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 35562,
+            "start": 35289,
             "test_id": "BsolNativeCompositionValuesCanNarrowButNeverWiden"
           },
           {
             "declaration": "test BsolNativeCompositionIncompatibleNestedSameNameRejects",
-            "end": 36102,
+            "end": 35829,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 36043,
+            "start": 35770,
             "test_id": "BsolNativeCompositionIncompatibleNestedSameNameRejects"
           },
           {
             "declaration": "test BsolNativeCompositionIdenticalNestedDefinitionsCoalesce",
-            "end": 36247,
+            "end": 35974,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 36187,
+            "start": 35914,
             "test_id": "BsolNativeCompositionIdenticalNestedDefinitionsCoalesce"
           },
           {
             "declaration": "test BsolNativeCompositionAggregateSearchWorkIsBounded",
-            "end": 36651,
+            "end": 36378,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 36597,
+            "start": 36324,
             "test_id": "BsolNativeCompositionAggregateSearchWorkIsBounded"
           }
         ],
@@ -4566,7 +4555,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-bsol-SchemaRulesSuite.bd",
-          "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+          "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
         },
         "input": {
           "corpus": "conformance",
@@ -4634,182 +4623,182 @@
         "assertion_provenance": [
           {
             "declaration": "test BsolImportPathCannotEscapeControlledRootLexically",
-            "end": 17107,
+            "end": 16929,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 17053,
+            "start": 16875,
             "test_id": "BsolImportPathCannotEscapeControlledRootLexically"
           },
           {
             "declaration": "test BsolImportGitRevisionMustBeImmutable",
-            "end": 17710,
+            "end": 17532,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 17669,
+            "start": 17491,
             "test_id": "BsolImportGitRevisionMustBeImmutable"
           },
           {
             "declaration": "test BsolImportRequestsRejectBeforeHostResolution",
-            "end": 18089,
+            "end": 17911,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 18040,
+            "start": 17862,
             "test_id": "BsolImportRequestsRejectBeforeHostResolution"
           },
           {
             "declaration": "test BsolPackageShorthandPreservesExactLockedRequest",
-            "end": 18770,
+            "end": 18592,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 18718,
+            "start": 18540,
             "test_id": "BsolPackageShorthandPreservesExactLockedRequest"
           },
           {
             "declaration": "test BsolImportDeclarationRetainsAliasProfileAndSourceSpan",
-            "end": 19634,
+            "end": 19456,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 19576,
+            "start": 19398,
             "test_id": "BsolImportDeclarationRetainsAliasProfileAndSourceSpan"
           },
           {
             "declaration": "test BsolImportDeclarationRejectsDuplicateAndInapplicableProperties",
-            "end": 20565,
+            "end": 20387,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 20498,
+            "start": 20320,
             "test_id": "BsolImportDeclarationRejectsDuplicateAndInapplicableProperties"
           },
           {
             "declaration": "test BsolImportContentDigestIsCheckedBeforeAdmission",
-            "end": 21451,
+            "end": 21273,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 21399,
+            "start": 21221,
             "test_id": "BsolImportContentDigestIsCheckedBeforeAdmission"
           },
           {
             "declaration": "test BsolTypedWriteReownsProfileBeforeInvokingBinding",
-            "end": 25617,
+            "end": 25395,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 25564,
+            "start": 25342,
             "test_id": "BsolTypedWriteReownsProfileBeforeInvokingBinding"
           },
           {
             "declaration": "test BsolImportedAliasComposesDefaultsAndRevalidatesOwnedClosure",
-            "end": 27768,
+            "end": 27546,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 27704,
+            "start": 27482,
             "test_id": "BsolImportedAliasComposesDefaultsAndRevalidatesOwnedClosure"
           },
           {
             "declaration": "test BsolImportedPrivateKeysDoNotShadowQuotedLocalRuleNames",
-            "end": 29862,
+            "end": 29640,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 29803,
+            "start": 29581,
             "test_id": "BsolImportedPrivateKeysDoNotShadowQuotedLocalRuleNames"
           },
           {
             "declaration": "test BsolImportedReferenceAliasesShareOneOwnedTarget",
-            "end": 31333,
+            "end": 31111,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 31281,
+            "start": 31059,
             "test_id": "BsolImportedReferenceAliasesShareOneOwnedTarget"
           },
           {
             "declaration": "test BsolImportedQualifierParserRejectsEmptySegments",
-            "end": 33700,
+            "end": 33478,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 33648,
+            "start": 33426,
             "test_id": "BsolImportedQualifierParserRejectsEmptySegments"
           },
           {
             "declaration": "test BsolImportGraphDiamondDeduplicatesOwnedSourceAndKeepsNamespaces",
-            "end": 34208,
+            "end": 33986,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 34140,
+            "start": 33918,
             "test_id": "BsolImportGraphDiamondDeduplicatesOwnedSourceAndKeepsNamespaces"
           },
           {
             "declaration": "test BsolImportGraphCyclesAndMissingCacheNeverPublishPartialGraph",
-            "end": 35415,
+            "end": 35193,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 35350,
+            "start": 35128,
             "test_id": "BsolImportGraphCyclesAndMissingCacheNeverPublishPartialGraph"
           },
           {
             "declaration": "test BsolImportGraphLimitsCoverTheWholeClosure",
-            "end": 36560,
+            "end": 36338,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 36514,
+            "start": 36292,
             "test_id": "BsolImportGraphLimitsCoverTheWholeClosure"
           },
           {
             "declaration": "test BsolImportGraphPreservesSupportedSchemaVersionInOwnedCache",
-            "end": 37502,
+            "end": 37280,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 37439,
+            "start": 37217,
             "test_id": "BsolImportGraphPreservesSupportedSchemaVersionInOwnedCache"
           },
           {
             "declaration": "test BsolSchemaImportMissingMaterializedCacheIsSourceSpanned",
-            "end": 41410,
+            "end": 41139,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 41350,
+            "start": 41079,
             "test_id": "BsolSchemaImportMissingMaterializedCacheIsSourceSpanned"
           },
           {
             "declaration": "test BsolSchemaImportSourceDigestMismatchRejects",
-            "end": 41528,
+            "end": 41257,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 41480,
+            "start": 41209,
             "test_id": "BsolSchemaImportSourceDigestMismatchRejects"
           }
         ],
@@ -4835,7 +4824,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-bsol-BsolSuite.bd",
-          "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+          "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
         },
         "input": {
           "corpus": "conformance",
@@ -4887,62 +4876,62 @@
         "assertion_provenance": [
           {
             "declaration": "test BsolSchemaReferenceResolvesToDocumentOwnedIndex",
-            "end": 29582,
+            "end": 29309,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 29530,
+            "start": 29257,
             "test_id": "BsolSchemaReferenceResolvesToDocumentOwnedIndex"
           },
           {
             "declaration": "test BsolSchemaSyntaxReferenceCyclesDoNotExpandOwnedValues",
-            "end": 30476,
+            "end": 30203,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 30418,
+            "start": 30145,
             "test_id": "BsolSchemaSyntaxReferenceCyclesDoNotExpandOwnedValues"
           },
           {
             "declaration": "test BsolSchemaReferenceMissingDuplicateAndAmbiguityReject",
-            "end": 30821,
+            "end": 30548,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 30763,
+            "start": 30490,
             "test_id": "BsolSchemaReferenceMissingDuplicateAndAmbiguityReject"
           },
           {
             "declaration": "test BsolSchemaReferencesTraverseListsMapsAndInlineBlocks",
-            "end": 31736,
+            "end": 31463,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 31679,
+            "start": 31406,
             "test_id": "BsolSchemaReferencesTraverseListsMapsAndInlineBlocks"
           },
           {
             "declaration": "test BsolSchemaDefaultReferenceRetainsCheckedFieldOwner",
-            "end": 32821,
+            "end": 32548,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 32766,
+            "start": 32493,
             "test_id": "BsolSchemaDefaultReferenceRetainsCheckedFieldOwner"
           },
           {
             "declaration": "test BsolSchemaReferenceKindAndRuleAliasShareCanonicalTarget",
-            "end": 34735,
+            "end": 34462,
             "source": {
               "path": "source-bsol-SchemaRulesSuite.bd",
-              "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+              "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
             },
-            "start": 34675,
+            "start": 34402,
             "test_id": "BsolSchemaReferenceKindAndRuleAliasShareCanonicalTarget"
           }
         ],
@@ -4968,7 +4957,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-bsol-SchemaRulesSuite.bd",
-          "sha256": "67109a9c6acacd6867ae92fceacb85cfe4a48cf9fb5f1c304405ff1dc3fc93e4"
+          "sha256": "d5715034286d22346d91deb1359bd653d3c93fa9655f7876835d35d701ad85b7"
         },
         "input": {
           "corpus": "conformance",
@@ -5151,182 +5140,182 @@
         "assertion_provenance": [
           {
             "declaration": "test BsolSerializationWireExactUnsignedWidth",
-            "end": 3246,
+            "end": 3197,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "f4c024be65abcb586448f88ba3257895751b2da67fc00a28ccc693591d1223fd"
+              "sha256": "6879581c10c1eedf1549d985b37f6a15f252c4f2a58d418ba010e7b4f22c38ad"
             },
-            "start": 3202,
+            "start": 3153,
             "test_id": "BsolSerializationWireExactUnsignedWidth"
           },
           {
             "declaration": "test BsolSerializationWireFloatPreservesNegativeZero",
-            "end": 4000,
+            "end": 3951,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "f4c024be65abcb586448f88ba3257895751b2da67fc00a28ccc693591d1223fd"
+              "sha256": "6879581c10c1eedf1549d985b37f6a15f252c4f2a58d418ba010e7b4f22c38ad"
             },
-            "start": 3948,
+            "start": 3899,
             "test_id": "BsolSerializationWireFloatPreservesNegativeZero"
           },
           {
             "declaration": "test BsolSerializationWireStrictCanonicalBase64",
-            "end": 4472,
+            "end": 4423,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "f4c024be65abcb586448f88ba3257895751b2da67fc00a28ccc693591d1223fd"
+              "sha256": "6879581c10c1eedf1549d985b37f6a15f252c4f2a58d418ba010e7b4f22c38ad"
             },
-            "start": 4425,
+            "start": 4376,
             "test_id": "BsolSerializationWireStrictCanonicalBase64"
           },
           {
             "declaration": "test BsolSerializationWireOptionalCardinalityAndTag",
-            "end": 5214,
+            "end": 5165,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "f4c024be65abcb586448f88ba3257895751b2da67fc00a28ccc693591d1223fd"
+              "sha256": "6879581c10c1eedf1549d985b37f6a15f252c4f2a58d418ba010e7b4f22c38ad"
             },
-            "start": 5163,
+            "start": 5114,
             "test_id": "BsolSerializationWireOptionalCardinalityAndTag"
           },
           {
             "declaration": "test BsolSerializationWireRejectsUnknownDuplicateAndMalformedFields",
-            "end": 6125,
+            "end": 6076,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "f4c024be65abcb586448f88ba3257895751b2da67fc00a28ccc693591d1223fd"
+              "sha256": "6879581c10c1eedf1549d985b37f6a15f252c4f2a58d418ba010e7b4f22c38ad"
             },
-            "start": 6058,
+            "start": 6009,
             "test_id": "BsolSerializationWireRejectsUnknownDuplicateAndMalformedFields"
           },
           {
             "declaration": "test BsolSerializationWireCharScalarAndDepthPolicy",
-            "end": 7832,
+            "end": 7783,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "f4c024be65abcb586448f88ba3257895751b2da67fc00a28ccc693591d1223fd"
+              "sha256": "6879581c10c1eedf1549d985b37f6a15f252c4f2a58d418ba010e7b4f22c38ad"
             },
-            "start": 7782,
+            "start": 7733,
             "test_id": "BsolSerializationWireCharScalarAndDepthPolicy"
           },
           {
             "declaration": "test BsolSerializationWireArrayListShapesAreDistinct",
-            "end": 8441,
+            "end": 8392,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "f4c024be65abcb586448f88ba3257895751b2da67fc00a28ccc693591d1223fd"
+              "sha256": "6879581c10c1eedf1549d985b37f6a15f252c4f2a58d418ba010e7b4f22c38ad"
             },
-            "start": 8389,
+            "start": 8340,
             "test_id": "BsolSerializationWireArrayListShapesAreDistinct"
           },
           {
             "declaration": "test BsolSerializationWireRecordDeclaredOrderAndRequiredFields",
-            "end": 10483,
+            "end": 10434,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "f4c024be65abcb586448f88ba3257895751b2da67fc00a28ccc693591d1223fd"
+              "sha256": "6879581c10c1eedf1549d985b37f6a15f252c4f2a58d418ba010e7b4f22c38ad"
             },
-            "start": 10421,
+            "start": 10372,
             "test_id": "BsolSerializationWireRecordDeclaredOrderAndRequiredFields"
           },
           {
             "declaration": "test BsolSerializationWireMapOrdinalKeysAndDuplicateRejection",
-            "end": 11768,
+            "end": 11719,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "f4c024be65abcb586448f88ba3257895751b2da67fc00a28ccc693591d1223fd"
+              "sha256": "6879581c10c1eedf1549d985b37f6a15f252c4f2a58d418ba010e7b4f22c38ad"
             },
-            "start": 11707,
+            "start": 11658,
             "test_id": "BsolSerializationWireMapOrdinalKeysAndDuplicateRejection"
           },
           {
             "declaration": "test BsolSerializationWireVariantExactDiscriminantAndPayload",
-            "end": 12786,
+            "end": 12737,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "f4c024be65abcb586448f88ba3257895751b2da67fc00a28ccc693591d1223fd"
+              "sha256": "6879581c10c1eedf1549d985b37f6a15f252c4f2a58d418ba010e7b4f22c38ad"
             },
-            "start": 12726,
+            "start": 12677,
             "test_id": "BsolSerializationWireVariantExactDiscriminantAndPayload"
           },
           {
             "declaration": "test BsolSerializationStreamEncoderValidatesShapeAndTransaction",
-            "end": 14406,
+            "end": 14357,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "f4c024be65abcb586448f88ba3257895751b2da67fc00a28ccc693591d1223fd"
+              "sha256": "6879581c10c1eedf1549d985b37f6a15f252c4f2a58d418ba010e7b4f22c38ad"
             },
-            "start": 14343,
+            "start": 14294,
             "test_id": "BsolSerializationStreamEncoderValidatesShapeAndTransaction"
           },
           {
             "declaration": "test BsolSerializationStreamEncoderChecksNestedArity",
-            "end": 16416,
+            "end": 16367,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "f4c024be65abcb586448f88ba3257895751b2da67fc00a28ccc693591d1223fd"
+              "sha256": "6879581c10c1eedf1549d985b37f6a15f252c4f2a58d418ba010e7b4f22c38ad"
             },
-            "start": 16364,
+            "start": 16315,
             "test_id": "BsolSerializationStreamEncoderChecksNestedArity"
           },
           {
             "declaration": "test BsolSerializationSharedGenericEncoderDecoderConstructsFreshT",
-            "end": 19157,
+            "end": 19108,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "f4c024be65abcb586448f88ba3257895751b2da67fc00a28ccc693591d1223fd"
+              "sha256": "6879581c10c1eedf1549d985b37f6a15f252c4f2a58d418ba010e7b4f22c38ad"
             },
-            "start": 19092,
+            "start": 19043,
             "test_id": "BsolSerializationSharedGenericEncoderDecoderConstructsFreshT"
           },
           {
             "declaration": "test BsolSerializationSharedTaggedCorpusUsesSameNativePolicy",
-            "end": 20563,
+            "end": 20514,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "f4c024be65abcb586448f88ba3257895751b2da67fc00a28ccc693591d1223fd"
+              "sha256": "6879581c10c1eedf1549d985b37f6a15f252c4f2a58d418ba010e7b4f22c38ad"
             },
-            "start": 20503,
+            "start": 20454,
             "test_id": "BsolSerializationSharedTaggedCorpusUsesSameNativePolicy"
           },
           {
             "declaration": "test BsolSerializationActivePathRejectsCycleNotSharedSiblings",
-            "end": 21876,
+            "end": 21827,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "f4c024be65abcb586448f88ba3257895751b2da67fc00a28ccc693591d1223fd"
+              "sha256": "6879581c10c1eedf1549d985b37f6a15f252c4f2a58d418ba010e7b4f22c38ad"
             },
-            "start": 21815,
+            "start": 21766,
             "test_id": "BsolSerializationActivePathRejectsCycleNotSharedSiblings"
           },
           {
             "declaration": "test BsolExplicitTypedBindingReadsExactIntegerAfterValidation",
-            "end": 30511,
+            "end": 30413,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "f4c024be65abcb586448f88ba3257895751b2da67fc00a28ccc693591d1223fd"
+              "sha256": "6879581c10c1eedf1549d985b37f6a15f252c4f2a58d418ba010e7b4f22c38ad"
             },
-            "start": 30450,
+            "start": 30352,
             "test_id": "BsolExplicitTypedBindingReadsExactIntegerAfterValidation"
           },
           {
             "declaration": "test BsolExplicitTypedBindingWriteRoundtripIsProfileChecked",
-            "end": 30963,
+            "end": 30865,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "f4c024be65abcb586448f88ba3257895751b2da67fc00a28ccc693591d1223fd"
+              "sha256": "6879581c10c1eedf1549d985b37f6a15f252c4f2a58d418ba010e7b4f22c38ad"
             },
-            "start": 30904,
+            "start": 30806,
             "test_id": "BsolExplicitTypedBindingWriteRoundtripIsProfileChecked"
           },
           {
             "declaration": "test BsolTypedBindingMissingDuplicateAndWrongKindReject",
-            "end": 31678,
+            "end": 31580,
             "source": {
               "path": "source-bsol-SerializationWireTests.bd",
-              "sha256": "f4c024be65abcb586448f88ba3257895751b2da67fc00a28ccc693591d1223fd"
+              "sha256": "6879581c10c1eedf1549d985b37f6a15f252c4f2a58d418ba010e7b4f22c38ad"
             },
-            "start": 31623,
+            "start": 31525,
             "test_id": "BsolTypedBindingMissingDuplicateAndWrongKindReject"
           }
         ],
@@ -5352,7 +5341,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-bsol-SerializationWireTests.bd",
-          "sha256": "f4c024be65abcb586448f88ba3257895751b2da67fc00a28ccc693591d1223fd"
+          "sha256": "6879581c10c1eedf1549d985b37f6a15f252c4f2a58d418ba010e7b4f22c38ad"
         },
         "input": {
           "corpus": "conformance",
@@ -5404,82 +5393,82 @@
         "assertion_provenance": [
           {
             "declaration": "test BsolStrictEscapedUnicodeAndInvalidSurrogates",
-            "end": 4156,
+            "end": 4076,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 4107,
+            "start": 4027,
             "test_id": "BsolStrictEscapedUnicodeAndInvalidSurrogates"
           },
           {
             "declaration": "test BsolLimitsFailBeforeUnboundedWork",
-            "end": 11168,
+            "end": 11088,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 11130,
+            "start": 11050,
             "test_id": "BsolLimitsFailBeforeUnboundedWork"
           },
           {
             "declaration": "test BsolNormativeLimitsDefaultsAreExplicit",
-            "end": 12541,
+            "end": 12461,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 12498,
+            "start": 12418,
             "test_id": "BsolNormativeLimitsDefaultsAreExplicit"
           },
           {
             "declaration": "test BsolScalarLimitUsesDecodedUtf8Bytes",
-            "end": 13227,
+            "end": 13147,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 13187,
+            "start": 13107,
             "test_id": "BsolScalarLimitUsesDecodedUtf8Bytes"
           },
           {
             "declaration": "test BsolOutputLimitIsIndependentOfInputLimit",
-            "end": 13797,
+            "end": 13717,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 13752,
+            "start": 13672,
             "test_id": "BsolOutputLimitIsIndependentOfInputLimit"
           },
           {
-            "declaration": "test BsolLexicalMatrixRejectsBracketAttributesInvalidEscapesLeadingZeroAndNonfinite",
-            "end": 50964,
+            "declaration": "test BsolLexicalMatrixRejectsInvalidTokens",
+            "end": 50719,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 50881,
-            "test_id": "BsolLexicalMatrixRejectsBracketAttributesInvalidEscapesLeadingZeroAndNonfinite"
+            "start": 50677,
+            "test_id": "BsolLexicalMatrixRejectsInvalidTokens"
           },
           {
             "declaration": "test BsolEachConfiguredLimitBoundaryAdmitsAndPlusOneRejectsAtomically",
-            "end": 55159,
+            "end": 54914,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 55090,
+            "start": 54845,
             "test_id": "BsolEachConfiguredLimitBoundaryAdmitsAndPlusOneRejectsAtomically"
           },
           {
             "declaration": "test BsolFloatOutputIsShortestRoundtripAndKeepsNegativeZeroAtBothWidths",
-            "end": 61349,
+            "end": 61104,
             "source": {
               "path": "source-bsol-BsolSuite.bd",
-              "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+              "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
             },
-            "start": 61278,
+            "start": 61033,
             "test_id": "BsolFloatOutputIsShortestRoundtripAndKeepsNegativeZeroAtBothWidths"
           }
         ],
@@ -5505,7 +5494,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-bsol-BsolSuite.bd",
-          "sha256": "a59cf816fe720587640e323ffcd6758a775d623256460475f3cf91f8161a1894"
+          "sha256": "be1520fa65526ed19ba69803c39563c0522fe4a592a6d6eb47a0a891194916cf"
         },
         "input": {
           "corpus": "conformance",
@@ -5526,7 +5515,7 @@
           "BsolNormativeLimitsDefaultsAreExplicit",
           "BsolScalarLimitUsesDecodedUtf8Bytes",
           "BsolOutputLimitIsIndependentOfInputLimit",
-          "BsolLexicalMatrixRejectsBracketAttributesInvalidEscapesLeadingZeroAndNonfinite",
+          "BsolLexicalMatrixRejectsInvalidTokens",
           "BsolEachConfiguredLimitBoundaryAdmitsAndPlusOneRejectsAtomically",
           "BsolFloatOutputIsShortestRoundtripAndKeepsNegativeZeroAtBothWidths"
         ],
@@ -8036,12 +8025,12 @@
         "assertion_provenance": [
           {
             "declaration": "test ProcessSpawnPassesUnicodeSpaceQuoteAndShellMetacharacterArgvExactly",
-            "end": 3470,
+            "end": 3391,
             "source": {
               "path": "source-process-ProcessSuite.bd",
-              "sha256": "e2331ee29b9f26935bd8d00c0b3dbe5a171ada05f36a4fe42c920e1ad26e63b1"
+              "sha256": "45bb581d67a5292aa9ed852dbd1d686068459209c44b665d710b7eb0ea4145d8"
             },
-            "start": 3398,
+            "start": 3319,
             "test_id": "ProcessSpawnPassesUnicodeSpaceQuoteAndShellMetacharacterArgvExactly"
           }
         ],
@@ -8067,7 +8056,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-process-ProcessSuite.bd",
-          "sha256": "e2331ee29b9f26935bd8d00c0b3dbe5a171ada05f36a4fe42c920e1ad26e63b1"
+          "sha256": "45bb581d67a5292aa9ed852dbd1d686068459209c44b665d710b7eb0ea4145d8"
         },
         "input": null,
         "log": "case-R4-PROC-01.json",
@@ -8099,12 +8088,12 @@
         "assertion_provenance": [
           {
             "declaration": "test ProcessBinaryStdinStdoutRoundtripWithPartialTransfersPreservesOrder",
-            "end": 4598,
+            "end": 4519,
             "source": {
               "path": "source-process-ProcessSuite.bd",
-              "sha256": "e2331ee29b9f26935bd8d00c0b3dbe5a171ada05f36a4fe42c920e1ad26e63b1"
+              "sha256": "45bb581d67a5292aa9ed852dbd1d686068459209c44b665d710b7eb0ea4145d8"
             },
-            "start": 4526,
+            "start": 4447,
             "test_id": "ProcessBinaryStdinStdoutRoundtripWithPartialTransfersPreservesOrder"
           }
         ],
@@ -8130,7 +8119,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-process-ProcessSuite.bd",
-          "sha256": "e2331ee29b9f26935bd8d00c0b3dbe5a171ada05f36a4fe42c920e1ad26e63b1"
+          "sha256": "45bb581d67a5292aa9ed852dbd1d686068459209c44b665d710b7eb0ea4145d8"
         },
         "input": null,
         "log": "case-R4-PROC-02.json",
@@ -8162,12 +8151,12 @@
         "assertion_provenance": [
           {
             "declaration": "test ProcessStderrFloodIsDrainedConcurrentlyWithoutDeadlock",
-            "end": 8748,
+            "end": 8509,
             "source": {
               "path": "source-process-ProcessSuite.bd",
-              "sha256": "e2331ee29b9f26935bd8d00c0b3dbe5a171ada05f36a4fe42c920e1ad26e63b1"
+              "sha256": "45bb581d67a5292aa9ed852dbd1d686068459209c44b665d710b7eb0ea4145d8"
             },
-            "start": 8689,
+            "start": 8450,
             "test_id": "ProcessStderrFloodIsDrainedConcurrentlyWithoutDeadlock"
           }
         ],
@@ -8193,7 +8182,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-process-ProcessSuite.bd",
-          "sha256": "e2331ee29b9f26935bd8d00c0b3dbe5a171ada05f36a4fe42c920e1ad26e63b1"
+          "sha256": "45bb581d67a5292aa9ed852dbd1d686068459209c44b665d710b7eb0ea4145d8"
         },
         "input": null,
         "log": "case-R4-PROC-03.json",
@@ -8225,22 +8214,22 @@
         "assertion_provenance": [
           {
             "declaration": "test ProcessWaitReturnsExitCodeAndRunReportsTypedExitAndMissingExecutable",
-            "end": 9479,
+            "end": 9092,
             "source": {
               "path": "source-process-ProcessSuite.bd",
-              "sha256": "e2331ee29b9f26935bd8d00c0b3dbe5a171ada05f36a4fe42c920e1ad26e63b1"
+              "sha256": "45bb581d67a5292aa9ed852dbd1d686068459209c44b665d710b7eb0ea4145d8"
             },
-            "start": 9406,
+            "start": 9019,
             "test_id": "ProcessWaitReturnsExitCodeAndRunReportsTypedExitAndMissingExecutable"
           },
           {
             "declaration": "test ProcessWaitDeadlineExpiryIsTimedOutAndCloseReaps",
-            "end": 10736,
+            "end": 10349,
             "source": {
               "path": "source-process-ProcessSuite.bd",
-              "sha256": "e2331ee29b9f26935bd8d00c0b3dbe5a171ada05f36a4fe42c920e1ad26e63b1"
+              "sha256": "45bb581d67a5292aa9ed852dbd1d686068459209c44b665d710b7eb0ea4145d8"
             },
-            "start": 10683,
+            "start": 10296,
             "test_id": "ProcessWaitDeadlineExpiryIsTimedOutAndCloseReaps"
           }
         ],
@@ -8266,7 +8255,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-process-ProcessSuite.bd",
-          "sha256": "e2331ee29b9f26935bd8d00c0b3dbe5a171ada05f36a4fe42c920e1ad26e63b1"
+          "sha256": "45bb581d67a5292aa9ed852dbd1d686068459209c44b665d710b7eb0ea4145d8"
         },
         "input": null,
         "log": "case-R4-PROC-04.json",
@@ -8298,14 +8287,14 @@
       "binding": {
         "assertion_provenance": [
           {
-            "declaration": "test ProcessTerminateAndCloseReapTheChildTreeWithinFiveSeconds",
-            "end": 11380,
+            "declaration": "test ProcessTerminateAndCloseReapTheChildTree",
+            "end": 10826,
             "source": {
               "path": "source-process-ProcessSuite.bd",
-              "sha256": "e2331ee29b9f26935bd8d00c0b3dbe5a171ada05f36a4fe42c920e1ad26e63b1"
+              "sha256": "45bb581d67a5292aa9ed852dbd1d686068459209c44b665d710b7eb0ea4145d8"
             },
-            "start": 11318,
-            "test_id": "ProcessTerminateAndCloseReapTheChildTreeWithinFiveSeconds"
+            "start": 10781,
+            "test_id": "ProcessTerminateAndCloseReapTheChildTree"
           }
         ],
         "command": {
@@ -8330,7 +8319,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-process-ProcessSuite.bd",
-          "sha256": "e2331ee29b9f26935bd8d00c0b3dbe5a171ada05f36a4fe42c920e1ad26e63b1"
+          "sha256": "45bb581d67a5292aa9ed852dbd1d686068459209c44b665d710b7eb0ea4145d8"
         },
         "input": null,
         "log": "case-R4-PROC-05.json",
@@ -8338,12 +8327,12 @@
           {
             "kind": "process",
             "obligation": "cancel_terminate_reap",
-            "test_id": "ProcessTerminateAndCloseReapTheChildTreeWithinFiveSeconds"
+            "test_id": "ProcessTerminateAndCloseReapTheChildTree"
           }
         ],
         "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
         "required_test_ids": [
-          "ProcessTerminateAndCloseReapTheChildTreeWithinFiveSeconds"
+          "ProcessTerminateAndCloseReapTheChildTree"
         ],
         "reviewed_source_binding": true,
         "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/process/ProcessSuite.bd",
@@ -8362,22 +8351,22 @@
         "assertion_provenance": [
           {
             "declaration": "test ProcessCloseIsIdempotentThroughAliases",
-            "end": 12464,
+            "end": 11644,
             "source": {
               "path": "source-process-ProcessSuite.bd",
-              "sha256": "e2331ee29b9f26935bd8d00c0b3dbe5a171ada05f36a4fe42c920e1ad26e63b1"
+              "sha256": "45bb581d67a5292aa9ed852dbd1d686068459209c44b665d710b7eb0ea4145d8"
             },
-            "start": 12421,
+            "start": 11601,
             "test_id": "ProcessCloseIsIdempotentThroughAliases"
           },
           {
             "declaration": "test ProcessFailedSpawnSetupLeavesNoChildAndLaterSpawnsSucceed",
-            "end": 13200,
+            "end": 12380,
             "source": {
               "path": "source-process-ProcessSuite.bd",
-              "sha256": "e2331ee29b9f26935bd8d00c0b3dbe5a171ada05f36a4fe42c920e1ad26e63b1"
+              "sha256": "45bb581d67a5292aa9ed852dbd1d686068459209c44b665d710b7eb0ea4145d8"
             },
-            "start": 13138,
+            "start": 12318,
             "test_id": "ProcessFailedSpawnSetupLeavesNoChildAndLaterSpawnsSucceed"
           }
         ],
@@ -8403,7 +8392,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-process-ProcessSuite.bd",
-          "sha256": "e2331ee29b9f26935bd8d00c0b3dbe5a171ada05f36a4fe42c920e1ad26e63b1"
+          "sha256": "45bb581d67a5292aa9ed852dbd1d686068459209c44b665d710b7eb0ea4145d8"
         },
         "input": null,
         "log": "case-R4-PROC-06.json",
@@ -8436,102 +8425,102 @@
         "assertion_provenance": [
           {
             "declaration": "test IsolateHandlesCompareById",
-            "end": 1845,
+            "end": 1815,
             "source": {
               "path": "source-parallel-ParallelSuite.bd",
-              "sha256": "bb23b5a30159de045cb2fd96970b41a4e4d11a6e3f4a8f571b6994907288039c"
+              "sha256": "01ba8e1715750f28ac862da10cd771c4b550731b4c4afa6c07d7080fb62ec84a"
             },
-            "start": 1815,
+            "start": 1785,
             "test_id": "IsolateHandlesCompareById"
           },
           {
             "declaration": "test TaskBodyReportsItsIsolate",
-            "end": 2104,
+            "end": 2074,
             "source": {
               "path": "source-parallel-ParallelSuite.bd",
-              "sha256": "bb23b5a30159de045cb2fd96970b41a4e4d11a6e3f4a8f571b6994907288039c"
+              "sha256": "01ba8e1715750f28ac862da10cd771c4b550731b4c4afa6c07d7080fb62ec84a"
             },
-            "start": 2074,
+            "start": 2044,
             "test_id": "TaskBodyReportsItsIsolate"
           },
           {
             "declaration": "test ScopeJoinsEveryTaskBeforeReturning",
-            "end": 2661,
+            "end": 2624,
             "source": {
               "path": "source-parallel-ParallelSuite.bd",
-              "sha256": "bb23b5a30159de045cb2fd96970b41a4e4d11a6e3f4a8f571b6994907288039c"
+              "sha256": "01ba8e1715750f28ac862da10cd771c4b550731b4c4afa6c07d7080fb62ec84a"
             },
-            "start": 2622,
+            "start": 2585,
             "test_id": "ScopeJoinsEveryTaskBeforeReturning"
           },
           {
             "declaration": "test UnitTaskJoinsWithoutAValue",
-            "end": 3164,
+            "end": 3127,
             "source": {
               "path": "source-parallel-ParallelSuite.bd",
-              "sha256": "bb23b5a30159de045cb2fd96970b41a4e4d11a6e3f4a8f571b6994907288039c"
+              "sha256": "01ba8e1715750f28ac862da10cd771c4b550731b4c4afa6c07d7080fb62ec84a"
             },
-            "start": 3133,
+            "start": 3096,
             "test_id": "UnitTaskJoinsWithoutAValue"
           },
           {
             "declaration": "test EarlyErrorReturnStillJoins",
-            "end": 3649,
+            "end": 3612,
             "source": {
               "path": "source-parallel-ParallelSuite.bd",
-              "sha256": "bb23b5a30159de045cb2fd96970b41a4e4d11a6e3f4a8f571b6994907288039c"
+              "sha256": "01ba8e1715750f28ac862da10cd771c4b550731b4c4afa6c07d7080fb62ec84a"
             },
-            "start": 3618,
+            "start": 3581,
             "test_id": "EarlyErrorReturnStillJoins"
           },
           {
             "declaration": "test FailuresAreReportedInSpawnOrder",
-            "end": 6982,
+            "end": 6938,
             "source": {
               "path": "source-parallel-ParallelSuite.bd",
-              "sha256": "bb23b5a30159de045cb2fd96970b41a4e4d11a6e3f4a8f571b6994907288039c"
+              "sha256": "01ba8e1715750f28ac862da10cd771c4b550731b4c4afa6c07d7080fb62ec84a"
             },
-            "start": 6946,
+            "start": 6902,
             "test_id": "FailuresAreReportedInSpawnOrder"
           },
           {
             "declaration": "test FailureCancelsSiblings",
-            "end": 8654,
+            "end": 8610,
             "source": {
               "path": "source-parallel-ParallelSuite.bd",
-              "sha256": "bb23b5a30159de045cb2fd96970b41a4e4d11a6e3f4a8f571b6994907288039c"
+              "sha256": "01ba8e1715750f28ac862da10cd771c4b550731b4c4afa6c07d7080fb62ec84a"
             },
-            "start": 8627,
+            "start": 8583,
             "test_id": "FailureCancelsSiblings"
           },
           {
             "declaration": "test NestedScopesComplete",
-            "end": 10997,
+            "end": 10946,
             "source": {
               "path": "source-parallel-ParallelSuite.bd",
-              "sha256": "bb23b5a30159de045cb2fd96970b41a4e4d11a6e3f4a8f571b6994907288039c"
+              "sha256": "01ba8e1715750f28ac862da10cd771c4b550731b4c4afa6c07d7080fb62ec84a"
             },
-            "start": 10972,
+            "start": 10921,
             "test_id": "NestedScopesComplete"
           },
           {
             "declaration": "test SerialScopeRunsEveryBodyOnTheCaller",
-            "end": 11408,
+            "end": 11357,
             "source": {
               "path": "source-parallel-ParallelSuite.bd",
-              "sha256": "bb23b5a30159de045cb2fd96970b41a4e4d11a6e3f4a8f571b6994907288039c"
+              "sha256": "01ba8e1715750f28ac862da10cd771c4b550731b4c4afa6c07d7080fb62ec84a"
             },
-            "start": 11368,
+            "start": 11317,
             "test_id": "SerialScopeRunsEveryBodyOnTheCaller"
           },
           {
             "declaration": "test FrozenArrayIsSharedWithATask",
-            "end": 12502,
+            "end": 12444,
             "source": {
               "path": "source-parallel-ParallelSuite.bd",
-              "sha256": "bb23b5a30159de045cb2fd96970b41a4e4d11a6e3f4a8f571b6994907288039c"
+              "sha256": "01ba8e1715750f28ac862da10cd771c4b550731b4c4afa6c07d7080fb62ec84a"
             },
-            "start": 12469,
+            "start": 12411,
             "test_id": "FrozenArrayIsSharedWithATask"
           }
         ],
@@ -8555,7 +8544,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-parallel-ParallelSuite.bd",
-          "sha256": "bb23b5a30159de045cb2fd96970b41a4e4d11a6e3f4a8f571b6994907288039c"
+          "sha256": "01ba8e1715750f28ac862da10cd771c4b550731b4c4afa6c07d7080fb62ec84a"
         },
         "input": null,
         "log": "case-PAR066-01.json",
@@ -8639,72 +8628,72 @@
         "assertion_provenance": [
           {
             "declaration": "test BoundedProducerAndConsumer",
-            "end": 13172,
+            "end": 13107,
             "source": {
               "path": "source-parallel-ParallelSuite.bd",
-              "sha256": "bb23b5a30159de045cb2fd96970b41a4e4d11a6e3f4a8f571b6994907288039c"
+              "sha256": "01ba8e1715750f28ac862da10cd771c4b550731b4c4afa6c07d7080fb62ec84a"
             },
-            "start": 13141,
+            "start": 13076,
             "test_id": "BoundedProducerAndConsumer"
           },
           {
             "declaration": "test TryReceiveOnAnEmptyOpenPortWouldBlock",
-            "end": 14111,
+            "end": 14046,
             "source": {
               "path": "source-parallel-ParallelSuite.bd",
-              "sha256": "bb23b5a30159de045cb2fd96970b41a4e4d11a6e3f4a8f571b6994907288039c"
+              "sha256": "01ba8e1715750f28ac862da10cd771c4b550731b4c4afa6c07d7080fb62ec84a"
             },
-            "start": 14069,
+            "start": 14004,
             "test_id": "TryReceiveOnAnEmptyOpenPortWouldBlock"
           },
           {
             "declaration": "test ClosedPortDrainsThenReportsClosed",
-            "end": 14637,
+            "end": 14572,
             "source": {
               "path": "source-parallel-ParallelSuite.bd",
-              "sha256": "bb23b5a30159de045cb2fd96970b41a4e4d11a6e3f4a8f571b6994907288039c"
+              "sha256": "01ba8e1715750f28ac862da10cd771c4b550731b4c4afa6c07d7080fb62ec84a"
             },
-            "start": 14599,
+            "start": 14534,
             "test_id": "ClosedPortDrainsThenReportsClosed"
           },
           {
             "declaration": "test PortHandleCrossesAPort",
-            "end": 15568,
+            "end": 15503,
             "source": {
               "path": "source-parallel-ParallelSuite.bd",
-              "sha256": "bb23b5a30159de045cb2fd96970b41a4e4d11a6e3f4a8f571b6994907288039c"
+              "sha256": "01ba8e1715750f28ac862da10cd771c4b550731b4c4afa6c07d7080fb62ec84a"
             },
-            "start": 15541,
+            "start": 15476,
             "test_id": "PortHandleCrossesAPort"
           },
           {
             "declaration": "test TwoWorkersShareOneInbox",
-            "end": 19810,
+            "end": 19765,
             "source": {
               "path": "source-parallel-ParallelSuite.bd",
-              "sha256": "bb23b5a30159de045cb2fd96970b41a4e4d11a6e3f4a8f571b6994907288039c"
+              "sha256": "01ba8e1715750f28ac862da10cd771c4b550731b4c4afa6c07d7080fb62ec84a"
             },
-            "start": 19782,
+            "start": 19737,
             "test_id": "TwoWorkersShareOneInbox"
           },
           {
             "declaration": "test ThreeStagePipelineKeepsInputOrder",
-            "end": 22007,
+            "end": 21955,
             "source": {
               "path": "source-parallel-ParallelSuite.bd",
-              "sha256": "bb23b5a30159de045cb2fd96970b41a4e4d11a6e3f4a8f571b6994907288039c"
+              "sha256": "01ba8e1715750f28ac862da10cd771c4b550731b4c4afa6c07d7080fb62ec84a"
             },
-            "start": 21969,
+            "start": 21917,
             "test_id": "ThreeStagePipelineKeepsInputOrder"
           },
           {
             "declaration": "test StageFailureCancelsThePipeline",
-            "end": 23387,
+            "end": 23335,
             "source": {
               "path": "source-parallel-ParallelSuite.bd",
-              "sha256": "bb23b5a30159de045cb2fd96970b41a4e4d11a6e3f4a8f571b6994907288039c"
+              "sha256": "01ba8e1715750f28ac862da10cd771c4b550731b4c4afa6c07d7080fb62ec84a"
             },
-            "start": 23352,
+            "start": 23300,
             "test_id": "StageFailureCancelsThePipeline"
           }
         ],
@@ -8728,7 +8717,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-parallel-ParallelSuite.bd",
-          "sha256": "bb23b5a30159de045cb2fd96970b41a4e4d11a6e3f4a8f571b6994907288039c"
+          "sha256": "01ba8e1715750f28ac862da10cd771c4b550731b4c4afa6c07d7080fb62ec84a"
         },
         "input": null,
         "log": "case-PORT066-01.json",
@@ -8809,62 +8798,62 @@
         "assertion_provenance": [
           {
             "declaration": "test WhereAndMapFuseIntoAReduction",
-            "end": 24845,
+            "end": 24786,
             "source": {
               "path": "source-parallel-ParallelSuite.bd",
-              "sha256": "bb23b5a30159de045cb2fd96970b41a4e4d11a6e3f4a8f571b6994907288039c"
+              "sha256": "01ba8e1715750f28ac862da10cd771c4b550731b4c4afa6c07d7080fb62ec84a"
             },
-            "start": 24811,
+            "start": 24752,
             "test_id": "WhereAndMapFuseIntoAReduction"
           },
           {
             "declaration": "test SourceStaysUsableAndCountMatches",
-            "end": 25229,
+            "end": 25170,
             "source": {
               "path": "source-parallel-ParallelSuite.bd",
-              "sha256": "bb23b5a30159de045cb2fd96970b41a4e4d11a6e3f4a8f571b6994907288039c"
+              "sha256": "01ba8e1715750f28ac862da10cd771c4b550731b4c4afa6c07d7080fb62ec84a"
             },
-            "start": 25192,
+            "start": 25133,
             "test_id": "SourceStaysUsableAndCountMatches"
           },
           {
             "declaration": "test CollectPreservesInputOrder",
-            "end": 25530,
+            "end": 25471,
             "source": {
               "path": "source-parallel-ParallelSuite.bd",
-              "sha256": "bb23b5a30159de045cb2fd96970b41a4e4d11a6e3f4a8f571b6994907288039c"
+              "sha256": "01ba8e1715750f28ac862da10cd771c4b550731b4c4afa6c07d7080fb62ec84a"
             },
-            "start": 25499,
+            "start": 25440,
             "test_id": "CollectPreservesInputOrder"
           },
           {
             "declaration": "test OrderedReducePreservesAssociationOrder",
-            "end": 26716,
+            "end": 26657,
             "source": {
               "path": "source-parallel-ParallelSuite.bd",
-              "sha256": "bb23b5a30159de045cb2fd96970b41a4e4d11a6e3f4a8f571b6994907288039c"
+              "sha256": "01ba8e1715750f28ac862da10cd771c4b550731b4c4afa6c07d7080fb62ec84a"
             },
-            "start": 26673,
+            "start": 26614,
             "test_id": "OrderedReducePreservesAssociationOrder"
           },
           {
             "declaration": "test UserCombinerWithBothMarkers",
-            "end": 27837,
+            "end": 27778,
             "source": {
               "path": "source-parallel-ParallelSuite.bd",
-              "sha256": "bb23b5a30159de045cb2fd96970b41a4e4d11a6e3f4a8f571b6994907288039c"
+              "sha256": "01ba8e1715750f28ac862da10cd771c4b550731b4c4afa6c07d7080fb62ec84a"
             },
-            "start": 27805,
+            "start": 27746,
             "test_id": "UserCombinerWithBothMarkers"
           },
           {
             "declaration": "test ShippedCombiners",
-            "end": 29222,
+            "end": 29163,
             "source": {
               "path": "source-parallel-ParallelSuite.bd",
-              "sha256": "bb23b5a30159de045cb2fd96970b41a4e4d11a6e3f4a8f571b6994907288039c"
+              "sha256": "01ba8e1715750f28ac862da10cd771c4b550731b4c4afa6c07d7080fb62ec84a"
             },
-            "start": 29201,
+            "start": 29142,
             "test_id": "ShippedCombiners"
           }
         ],
@@ -8888,7 +8877,7 @@
         "harness_language": "beskid",
         "harness_source": {
           "path": "source-parallel-ParallelSuite.bd",
-          "sha256": "bb23b5a30159de045cb2fd96970b41a4e4d11a6e3f4a8f571b6994907288039c"
+          "sha256": "01ba8e1715750f28ac862da10cd771c4b550731b4c4afa6c07d7080fb62ec84a"
         },
         "input": null,
         "log": "case-PSEQ066-01.json",

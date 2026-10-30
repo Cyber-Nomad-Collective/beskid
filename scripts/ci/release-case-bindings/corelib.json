@@ -13,7 +13,7 @@
         "BsolAggregateNodesIncludeCommentEntries",
         "BsolWriterOutputMayExceedOriginalInputCap",
         "BsolSharedCorpusValuesAndRuntimeManifest",
-        "BsolParseWriteParsePreservesKindsLabelsAttributesAndReferencesAcrossWhitespaceAndComments"
+        "BsolParseWriteParseRoundTrips"
       ],
       "input": {
         "id": "bsol-corpus",
@@ -238,7 +238,7 @@
         "BsolNormativeLimitsDefaultsAreExplicit",
         "BsolScalarLimitUsesDecodedUtf8Bytes",
         "BsolOutputLimitIsIndependentOfInputLimit",
-        "BsolLexicalMatrixRejectsBracketAttributesInvalidEscapesLeadingZeroAndNonfinite",
+        "BsolLexicalMatrixRejectsInvalidTokens",
         "BsolEachConfiguredLimitBoundaryAdmitsAndPlusOneRejectsAtomically",
         "BsolFloatOutputIsShortestRoundtripAndKeepsNegativeZeroAtBothWidths"
       ],
@@ -308,7 +308,7 @@
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/dynamic/DynamicSuite.bd",
       "required_test_ids": [
         "DynamicCellOnlyRootKeepsNestedPayloadAcrossForcedCollection",
-        "DynamicGenericInstantiationsKeepDistinctIdentitiesThroughRepeatedCreationAndCollection"
+        "DynamicGenericInstantiationsKeepDistinctIdentities"
       ],
       "input": null,
       "fixture": null
@@ -392,7 +392,7 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/process/ProcessSuite.bd",
       "required_test_ids": [
-        "ProcessTerminateAndCloseReapTheChildTreeWithinFiveSeconds"
+        "ProcessTerminateAndCloseReapTheChildTree"
       ],
       "input": null,
       "fixture": "beskid_release_fixture",
@@ -400,7 +400,7 @@
         {
           "kind": "process",
           "obligation": "cancel_terminate_reap",
-          "test_id": "ProcessTerminateAndCloseReapTheChildTreeWithinFiveSeconds"
+          "test_id": "ProcessTerminateAndCloseReapTheChildTree"
         }
       ]
     },
@@ -431,7 +431,7 @@
       "required_test_ids": [
         "SerializationGeneratedFullShapeRecordRoundtripsThroughBsol",
         "SerializationGeneratedNestedGenericRecordDecodesAtTopLevel",
-        "SerializationGeneratedScalarAndContainerApplicationsDecodeThroughOneCorrespondence",
+        "SerializationGeneratedScalarsAndContainersDecode",
         "SerializationGeneratedVariantIdentityAndFieldOrderSurviveTypedDecode",
         "SerializationGeneratedWordUsesDeclaredWidthAndRangeChecks",
         "SerializationGeneratedDecoderRejectsTrailingInputWithoutPublishing"
@@ -473,10 +473,10 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/bsol/SerializationWireTests.bd",
       "required_test_ids": [
-        "SerializationEachConfiguredLimitSucceedsAndPlusOneReturnsLimitExceededWithoutPartialOutput",
+        "SerializationEachLimitIsInclusive",
         "SerializationCycleRejectsAndAcyclicAliasCopiesByValue",
-        "SerializationRecordMissingRequiredDuplicateAndUnknownFieldsRejectAndOptionalFieldsMayBeAbsent",
-        "SerializationPrecisionUnicodeScalarsAndInvalidSurrogatesRoundtripOrReject",
+        "SerializationRecordFieldPresenceRules",
+        "SerializationPrecisionAndUnicodeScalars",
         "SerializationFailurePublicationHasNoMutablePayload",
         "WireEncoderPreparesFallibleWorkBeforeNonallocatingCommit"
       ],

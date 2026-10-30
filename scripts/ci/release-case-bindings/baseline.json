@@ -47,7 +47,6 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/system/SystemSuite.bd",
       "required_test_ids": [
-        "TimeDateStructSmoke",
         "TimeIsLeapYearDivisibleBy4",
         "TimeIsLeapYearDivisibleBy400",
         "TimeDaysInMonthFebruaryLeap",
@@ -75,7 +74,7 @@
       "required_test_ids": [
         "SpawnedFiberJoinReturnsItsValue",
         "RepeatedCancelThenJoinIsSafe",
-        "DetachRelinquishesTheJoinObligation"
+        "DetachedFiberStillRuns"
       ],
       "input": null,
       "fixture": null
@@ -86,12 +85,12 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/concurrency/ConcurrencySuite.bd",
       "required_test_ids": [
-        "ChannelCreateReturnsHandle",
-        "ChannelSendReturnsResult",
-        "ChannelReceiveReturnsResult",
+        "ChannelCreateReturnsDistinctHandles",
+        "ChannelSendOnAnOpenChannelIsOk",
+        "ChannelReceiveReturnsTheSentValuesInOrder",
         "ChannelTrySendReturnsTryResult",
         "ChannelTryReceiveDistinguishesEmptyAndClaimedValues",
-        "ChannelCloseIsIdempotent",
+        "ChannelCloseIsIdempotentAndRejectsLaterSends",
         "ChannelCloseDrainsCommittedValue"
       ],
       "input": null,
