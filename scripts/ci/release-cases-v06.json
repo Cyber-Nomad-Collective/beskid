@@ -1865,7 +1865,7 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
@@ -1956,7 +1956,7 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
@@ -2039,7 +2039,7 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
@@ -2131,7 +2131,7 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
@@ -2195,7 +2195,7 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
@@ -2262,7 +2262,7 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
@@ -2370,7 +2370,7 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
@@ -2459,7 +2459,7 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
@@ -2561,7 +2561,7 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
@@ -2655,7 +2655,7 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
@@ -2747,7 +2747,7 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
@@ -3123,7 +3123,7 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
@@ -3414,7 +3414,7 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
@@ -3477,7 +3477,7 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
@@ -3876,7 +3876,7 @@
           ],
           "env": {
             "BESKID_BSOL_CORPUS": "{input_root}/conformance",
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
@@ -5536,12 +5536,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations(",
-            "end": 106054,
+            "end": 105864,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 105977,
+            "start": 105787,
             "test_id": "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
           }
         ],
@@ -5554,16 +5554,16 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
         "fixture": null,
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
-          "path": "source-interop-glue_owned.rs",
-          "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+          "path": "source-tests-glue_owned.rs",
+          "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
         },
         "input": null,
         "log": "case-R4-BIND-01.json",
@@ -5581,7 +5581,7 @@
           "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs"
       },
       "execution": "installed_host_harness",
       "id": "R4-BIND-01",
@@ -5596,12 +5596,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations(",
-            "end": 106054,
+            "end": 105864,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 105977,
+            "start": 105787,
             "test_id": "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
           }
         ],
@@ -5614,16 +5614,16 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
         "fixture": null,
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
-          "path": "source-interop-glue_owned.rs",
-          "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+          "path": "source-tests-glue_owned.rs",
+          "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
         },
         "input": null,
         "log": "case-R4-BIND-02.json",
@@ -5641,7 +5641,7 @@
           "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs"
       },
       "execution": "installed_host_harness",
       "id": "R4-BIND-02",
@@ -5656,22 +5656,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_published_images_fail_closed_on_substitution(",
-            "end": 77371,
+            "end": 77193,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 77310,
+            "start": 77132,
             "test_id": "v06_glue_cli_published_images_fail_closed_on_substitution"
           },
           {
             "declaration": "fn v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations(",
-            "end": 106054,
+            "end": 105864,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 105977,
+            "start": 105787,
             "test_id": "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
           }
         ],
@@ -5684,22 +5684,22 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
         "fixture": null,
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
-          "path": "source-interop-glue_owned.rs",
-          "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+          "path": "source-tests-glue_owned.rs",
+          "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
         },
         "input": null,
         "log": "case-R4-BIND-03.json",
         "related_evidence": [
           {
-            "crate": "beskid_tests_interop",
+            "crate": "beskid_tests_release",
             "kind": "cargo_test",
             "test_ids": [
               "v06_glue_owned_denies_missing_import_row",
@@ -5717,7 +5717,7 @@
           "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs"
       },
       "execution": "installed_host_harness",
       "id": "R4-BIND-03",
@@ -5732,12 +5732,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_rejects_closed_boundary_metadata_violations(",
-            "end": 112231,
+            "end": 112041,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 112171,
+            "start": 111981,
             "test_id": "v06_glue_cli_rejects_closed_boundary_metadata_violations"
           }
         ],
@@ -5750,16 +5750,16 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
         "fixture": null,
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
-          "path": "source-interop-glue_owned.rs",
-          "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+          "path": "source-tests-glue_owned.rs",
+          "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
         },
         "input": null,
         "log": "case-R4-BIND-04.json",
@@ -5783,7 +5783,7 @@
           "v06_glue_cli_rejects_closed_boundary_metadata_violations"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs"
       },
       "execution": "installed_host_harness",
       "id": "R4-BIND-04",
@@ -5798,32 +5798,32 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 75588,
+            "end": 75410,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 75545,
+            "start": 75367,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 102347,
+            "end": 102157,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 102297,
+            "start": 102107,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           },
           {
             "declaration": "fn v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations(",
-            "end": 106054,
+            "end": 105864,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 105977,
+            "start": 105787,
             "test_id": "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
           }
         ],
@@ -5836,22 +5836,22 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
         "fixture": null,
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
-          "path": "source-interop-glue_owned.rs",
-          "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+          "path": "source-tests-glue_owned.rs",
+          "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
         },
         "input": null,
         "log": "case-R4-ABI-01.json",
         "related_evidence": [
           {
-            "crate": "beskid_tests_interop",
+            "crate": "beskid_tests_release",
             "kind": "cargo_test",
             "test_ids": [
               "v06_glue_owned_roundtrip_all_representations"
@@ -5864,7 +5864,7 @@
           "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs"
       },
       "execution": "installed_host_harness",
       "id": "R4-ABI-01",
@@ -5879,22 +5879,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 75588,
+            "end": 75410,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 75545,
+            "start": 75367,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 102347,
+            "end": 102157,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 102297,
+            "start": 102107,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -5907,16 +5907,16 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
         "fixture": null,
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
-          "path": "source-interop-glue_owned.rs",
-          "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+          "path": "source-tests-glue_owned.rs",
+          "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
         },
         "input": null,
         "log": "case-R4-ABI-02.json",
@@ -6020,7 +6020,7 @@
         ],
         "related_evidence": [
           {
-            "crate": "beskid_tests_interop",
+            "crate": "beskid_tests_release",
             "kind": "cargo_test",
             "test_ids": [
               "v06_glue_owned_roundtrip_all_representations"
@@ -6032,7 +6032,7 @@
           "v06_glue_cli_manual_and_generated_routes_agree"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs"
       },
       "execution": "installed_host_harness",
       "id": "R4-ABI-02",
@@ -6047,22 +6047,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 75588,
+            "end": 75410,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 75545,
+            "start": 75367,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 102347,
+            "end": 102157,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 102297,
+            "start": 102107,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -6075,16 +6075,16 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
         "fixture": null,
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
-          "path": "source-interop-glue_owned.rs",
-          "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+          "path": "source-tests-glue_owned.rs",
+          "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
         },
         "input": null,
         "log": "case-R4-ABI-03.json",
@@ -6188,7 +6188,7 @@
         ],
         "related_evidence": [
           {
-            "crate": "beskid_tests_interop",
+            "crate": "beskid_tests_release",
             "kind": "cargo_test",
             "test_ids": [
               "v06_glue_owned_roundtrip_all_representations"
@@ -6200,7 +6200,7 @@
           "v06_glue_cli_manual_and_generated_routes_agree"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs"
       },
       "execution": "installed_host_harness",
       "id": "R4-ABI-03",
@@ -6215,22 +6215,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 75588,
+            "end": 75410,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 75545,
+            "start": 75367,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 102347,
+            "end": 102157,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 102297,
+            "start": 102107,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -6243,16 +6243,16 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
         "fixture": null,
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
-          "path": "source-interop-glue_owned.rs",
-          "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+          "path": "source-tests-glue_owned.rs",
+          "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
         },
         "input": null,
         "log": "case-R4-ABI-04.json",
@@ -6308,7 +6308,7 @@
         ],
         "related_evidence": [
           {
-            "crate": "beskid_tests_interop",
+            "crate": "beskid_tests_release",
             "kind": "cargo_test",
             "test_ids": [
               "v06_glue_owned_roundtrip_all_representations"
@@ -6320,7 +6320,7 @@
           "v06_glue_cli_manual_and_generated_routes_agree"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs"
       },
       "execution": "installed_host_harness",
       "id": "R4-ABI-04",
@@ -6335,22 +6335,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 75588,
+            "end": 75410,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 75545,
+            "start": 75367,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 102347,
+            "end": 102157,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 102297,
+            "start": 102107,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -6363,16 +6363,16 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
         "fixture": null,
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
-          "path": "source-interop-glue_owned.rs",
-          "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+          "path": "source-tests-glue_owned.rs",
+          "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
         },
         "input": null,
         "log": "case-R4-ABI-05.json",
@@ -6411,7 +6411,7 @@
         ],
         "related_evidence": [
           {
-            "crate": "beskid_tests_interop",
+            "crate": "beskid_tests_release",
             "kind": "cargo_test",
             "test_ids": [
               "v06_glue_owned_roundtrip_all_representations"
@@ -6423,7 +6423,7 @@
           "v06_glue_cli_manual_and_generated_routes_agree"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs"
       },
       "execution": "installed_host_harness",
       "id": "R4-ABI-05",
@@ -6438,22 +6438,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 75588,
+            "end": 75410,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 75545,
+            "start": 75367,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 102347,
+            "end": 102157,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 102297,
+            "start": 102107,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -6466,16 +6466,16 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
         "fixture": null,
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
-          "path": "source-interop-glue_owned.rs",
-          "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+          "path": "source-tests-glue_owned.rs",
+          "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
         },
         "input": null,
         "log": "case-R4-ABI-06.json",
@@ -6514,7 +6514,7 @@
         ],
         "related_evidence": [
           {
-            "crate": "beskid_tests_interop",
+            "crate": "beskid_tests_release",
             "kind": "cargo_test",
             "test_ids": [
               "v06_glue_owned_roundtrip_all_representations"
@@ -6526,7 +6526,7 @@
           "v06_glue_cli_manual_and_generated_routes_agree"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs"
       },
       "execution": "installed_host_harness",
       "id": "R4-ABI-06",
@@ -6541,22 +6541,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 75588,
+            "end": 75410,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 75545,
+            "start": 75367,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 102347,
+            "end": 102157,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 102297,
+            "start": 102107,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -6569,16 +6569,16 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
         "fixture": null,
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
-          "path": "source-interop-glue_owned.rs",
-          "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+          "path": "source-tests-glue_owned.rs",
+          "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
         },
         "input": null,
         "log": "case-R4-ABI-07.json",
@@ -6622,7 +6622,7 @@
         ],
         "related_evidence": [
           {
-            "crate": "beskid_tests_interop",
+            "crate": "beskid_tests_release",
             "kind": "cargo_test",
             "test_ids": [
               "v06_glue_owned_roundtrip_all_representations"
@@ -6634,7 +6634,7 @@
           "v06_glue_cli_manual_and_generated_routes_agree"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs"
       },
       "execution": "installed_host_harness",
       "id": "R4-ABI-07",
@@ -6649,22 +6649,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 75588,
+            "end": 75410,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 75545,
+            "start": 75367,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 102347,
+            "end": 102157,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 102297,
+            "start": 102107,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -6677,16 +6677,16 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
         "fixture": null,
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
-          "path": "source-interop-glue_owned.rs",
-          "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+          "path": "source-tests-glue_owned.rs",
+          "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
         },
         "input": null,
         "log": "case-R4-ABI-08.json",
@@ -6718,7 +6718,7 @@
         ],
         "related_evidence": [
           {
-            "crate": "beskid_tests_interop",
+            "crate": "beskid_tests_release",
             "kind": "cargo_test",
             "test_ids": [
               "v06_glue_owned_roundtrip_all_representations"
@@ -6730,7 +6730,7 @@
           "v06_glue_cli_manual_and_generated_routes_agree"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs"
       },
       "execution": "installed_host_harness",
       "id": "R4-ABI-08",
@@ -6745,22 +6745,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 75588,
+            "end": 75410,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 75545,
+            "start": 75367,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 102347,
+            "end": 102157,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 102297,
+            "start": 102107,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -6773,16 +6773,16 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
         "fixture": null,
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
-          "path": "source-interop-glue_owned.rs",
-          "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+          "path": "source-tests-glue_owned.rs",
+          "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
         },
         "input": null,
         "log": "case-R4-ABI-09.json",
@@ -6814,7 +6814,7 @@
         ],
         "related_evidence": [
           {
-            "crate": "beskid_tests_interop",
+            "crate": "beskid_tests_release",
             "kind": "cargo_test",
             "test_ids": [
               "v06_glue_owned_roundtrip_all_representations"
@@ -6826,7 +6826,7 @@
           "v06_glue_cli_manual_and_generated_routes_agree"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs"
       },
       "execution": "installed_host_harness",
       "id": "R4-ABI-09",
@@ -6841,42 +6841,42 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 75588,
+            "end": 75410,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 75545,
+            "start": 75367,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_published_borrow_survives_release(",
-            "end": 103060,
+            "end": 102870,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 103010,
+            "start": 102820,
             "test_id": "v06_glue_cli_published_borrow_survives_release"
           },
           {
             "declaration": "fn v06_glue_cli_published_images_fail_closed_on_substitution(",
-            "end": 77371,
+            "end": 77193,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 77310,
+            "start": 77132,
             "test_id": "v06_glue_cli_published_images_fail_closed_on_substitution"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 102347,
+            "end": 102157,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 102297,
+            "start": 102107,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -6889,16 +6889,16 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
         "fixture": null,
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
-          "path": "source-interop-glue_owned.rs",
-          "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+          "path": "source-tests-glue_owned.rs",
+          "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
         },
         "input": null,
         "log": "case-R4-ABI-10.json",
@@ -6952,7 +6952,7 @@
         ],
         "related_evidence": [
           {
-            "crate": "beskid_tests_interop",
+            "crate": "beskid_tests_release",
             "kind": "cargo_test",
             "test_ids": [
               "v06_glue_owned_roundtrip_all_representations",
@@ -6970,7 +6970,7 @@
           "v06_glue_cli_manual_and_generated_routes_agree"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs"
       },
       "execution": "installed_host_harness",
       "id": "R4-ABI-10",
@@ -6985,32 +6985,32 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 75588,
+            "end": 75410,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 75545,
+            "start": 75367,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 102347,
+            "end": 102157,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 102297,
+            "start": 102107,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           },
           {
             "declaration": "fn v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations(",
-            "end": 106054,
+            "end": 105864,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 105977,
+            "start": 105787,
             "test_id": "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
           }
         ],
@@ -7023,16 +7023,16 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
         "fixture": null,
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
-          "path": "source-interop-glue_owned.rs",
-          "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+          "path": "source-tests-glue_owned.rs",
+          "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
         },
         "input": null,
         "log": "case-R4-ABI-11.json",
@@ -7071,7 +7071,7 @@
         ],
         "related_evidence": [
           {
-            "crate": "beskid_tests_interop",
+            "crate": "beskid_tests_release",
             "kind": "cargo_test",
             "test_ids": [
               "v06_glue_owned_roundtrip_all_representations"
@@ -7084,7 +7084,7 @@
           "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs"
       },
       "execution": "installed_host_harness",
       "id": "R4-ABI-11",
@@ -7099,12 +7099,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 75588,
+            "end": 75410,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 75545,
+            "start": 75367,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           }
         ],
@@ -7117,16 +7117,16 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
         "fixture": null,
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
-          "path": "source-interop-glue_owned.rs",
-          "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+          "path": "source-tests-glue_owned.rs",
+          "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
         },
         "input": null,
         "log": "case-R4-ABI-12.json",
@@ -7139,7 +7139,7 @@
         ],
         "related_evidence": [
           {
-            "crate": "beskid_tests_interop",
+            "crate": "beskid_tests_release",
             "kind": "cargo_test",
             "test_ids": [
               "v06_glue_owned_roundtrip_all_representations"
@@ -7150,7 +7150,7 @@
           "v06_glue_cli_builds_owned_fixture_alone"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs"
       },
       "execution": "installed_host_harness",
       "id": "R4-ABI-12",
@@ -7165,12 +7165,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 102347,
+            "end": 102157,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 102297,
+            "start": 102107,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -7183,16 +7183,16 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
         "fixture": null,
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
-          "path": "source-interop-glue_owned.rs",
-          "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+          "path": "source-tests-glue_owned.rs",
+          "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
         },
         "input": null,
         "log": "case-R4-CALL-01.json",
@@ -7200,7 +7200,7 @@
           "v06_glue_cli_manual_and_generated_routes_agree"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs"
       },
       "execution": "installed_host_harness",
       "id": "R4-CALL-01",
@@ -7215,12 +7215,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_manual_and_generated_routes_agree(",
-            "end": 102347,
+            "end": 102157,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 102297,
+            "start": 102107,
             "test_id": "v06_glue_cli_manual_and_generated_routes_agree"
           }
         ],
@@ -7233,16 +7233,16 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
         "fixture": null,
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
-          "path": "source-interop-glue_owned.rs",
-          "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+          "path": "source-tests-glue_owned.rs",
+          "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
         },
         "input": null,
         "log": "case-R4-CALL-02.json",
@@ -7250,7 +7250,7 @@
           "v06_glue_cli_manual_and_generated_routes_agree"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs"
       },
       "execution": "installed_host_harness",
       "id": "R4-CALL-02",
@@ -7265,12 +7265,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 75588,
+            "end": 75410,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 75545,
+            "start": 75367,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           }
         ],
@@ -7283,22 +7283,22 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
         "fixture": null,
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
-          "path": "source-interop-glue_owned.rs",
-          "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+          "path": "source-tests-glue_owned.rs",
+          "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
         },
         "input": null,
         "log": "case-R4-CALL-03.json",
         "related_evidence": [
           {
-            "crate": "beskid_tests_interop",
+            "crate": "beskid_tests_release",
             "kind": "cargo_test",
             "test_ids": [
               "v06_glue_owned_roundtrip_all_representations"
@@ -7309,7 +7309,7 @@
           "v06_glue_cli_builds_owned_fixture_alone"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs"
       },
       "execution": "installed_host_harness",
       "id": "R4-CALL-03",
@@ -7324,22 +7324,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_builds_owned_fixture_alone(",
-            "end": 75588,
+            "end": 75410,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 75545,
+            "start": 75367,
             "test_id": "v06_glue_cli_builds_owned_fixture_alone"
           },
           {
             "declaration": "fn v06_glue_cli_owner_abort_is_a_terminal_process_failure(",
-            "end": 103959,
+            "end": 103769,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 103901,
+            "start": 103711,
             "test_id": "v06_glue_cli_owner_abort_is_a_terminal_process_failure"
           }
         ],
@@ -7352,16 +7352,16 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
         "fixture": null,
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
-          "path": "source-interop-glue_owned.rs",
-          "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+          "path": "source-tests-glue_owned.rs",
+          "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
         },
         "input": null,
         "log": "case-R4-CALL-04.json",
@@ -7379,7 +7379,7 @@
         ],
         "related_evidence": [
           {
-            "crate": "beskid_tests_interop",
+            "crate": "beskid_tests_release",
             "kind": "cargo_test",
             "test_ids": [
               "v06_glue_owned_roundtrip_all_representations"
@@ -7391,7 +7391,7 @@
           "v06_glue_cli_owner_abort_is_a_terminal_process_failure"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs"
       },
       "execution": "installed_host_harness",
       "id": "R4-CALL-04",
@@ -7406,12 +7406,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_equivalent_projects_issue_identical_packets(",
-            "end": 110764,
+            "end": 110574,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 110704,
+            "start": 110514,
             "test_id": "v06_glue_cli_equivalent_projects_issue_identical_packets"
           }
         ],
@@ -7424,16 +7424,16 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
         "fixture": null,
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
-          "path": "source-interop-glue_owned.rs",
-          "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+          "path": "source-tests-glue_owned.rs",
+          "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
         },
         "input": null,
         "log": "case-R4-GEN-01.json",
@@ -7441,7 +7441,7 @@
           "v06_glue_cli_equivalent_projects_issue_identical_packets"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs"
       },
       "execution": "installed_host_harness",
       "id": "R4-GEN-01",
@@ -7456,12 +7456,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations(",
-            "end": 106054,
+            "end": 105864,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 105977,
+            "start": 105787,
             "test_id": "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
           }
         ],
@@ -7474,16 +7474,16 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
         "fixture": null,
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
-          "path": "source-interop-glue_owned.rs",
-          "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+          "path": "source-tests-glue_owned.rs",
+          "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
         },
         "input": null,
         "log": "case-R4-GEN-02.json",
@@ -7491,7 +7491,7 @@
           "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs"
       },
       "execution": "installed_host_harness",
       "id": "R4-GEN-02",
@@ -7506,32 +7506,32 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations(",
-            "end": 106054,
+            "end": 105864,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 105977,
+            "start": 105787,
             "test_id": "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
           },
           {
             "declaration": "fn v06_glue_cli_published_images_fail_closed_on_substitution(",
-            "end": 77371,
+            "end": 77193,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 77310,
+            "start": 77132,
             "test_id": "v06_glue_cli_published_images_fail_closed_on_substitution"
           },
           {
             "declaration": "fn v06_glue_cli_rebuild_replaces_and_failed_rebuild_preserves(",
-            "end": 82198,
+            "end": 82020,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 82136,
+            "start": 81958,
             "test_id": "v06_glue_cli_rebuild_replaces_and_failed_rebuild_preserves"
           }
         ],
@@ -7544,16 +7544,16 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
         "fixture": null,
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
-          "path": "source-interop-glue_owned.rs",
-          "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+          "path": "source-tests-glue_owned.rs",
+          "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
         },
         "input": null,
         "log": "case-R4-GEN-03.json",
@@ -7563,7 +7563,7 @@
           "v06_glue_cli_rebuild_replaces_and_failed_rebuild_preserves"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs"
       },
       "execution": "installed_host_harness",
       "id": "R4-GEN-03",
@@ -7578,12 +7578,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_tool_selection_names_the_required_form(",
-            "end": 113654,
+            "end": 113464,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 113599,
+            "start": 113409,
             "test_id": "v06_glue_cli_tool_selection_names_the_required_form"
           }
         ],
@@ -7596,16 +7596,16 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
         "fixture": null,
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
-          "path": "source-interop-glue_owned.rs",
-          "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+          "path": "source-tests-glue_owned.rs",
+          "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
         },
         "input": null,
         "log": "case-R4-TOOL-01.json",
@@ -7625,7 +7625,7 @@
           "v06_glue_cli_tool_selection_names_the_required_form"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs"
       },
       "execution": "installed_host_harness",
       "id": "R4-TOOL-01",
@@ -7640,12 +7640,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_rustc_without_the_target_library_is_rejected_before_build(",
-            "end": 121225,
+            "end": 121035,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 121151,
+            "start": 120961,
             "test_id": "v06_glue_cli_rustc_without_the_target_library_is_rejected_before_build"
           }
         ],
@@ -7658,16 +7658,16 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
         "fixture": null,
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
-          "path": "source-interop-glue_owned.rs",
-          "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+          "path": "source-tests-glue_owned.rs",
+          "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
         },
         "input": null,
         "log": "case-R4-TOOL-02.json",
@@ -7675,7 +7675,7 @@
           "v06_glue_cli_rustc_without_the_target_library_is_rejected_before_build"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs"
       },
       "execution": "installed_host_harness",
       "id": "R4-TOOL-02",
@@ -7690,12 +7690,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_unusable_tools_fail_before_publication(",
-            "end": 115440,
+            "end": 115250,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 115385,
+            "start": 115195,
             "test_id": "v06_glue_cli_unusable_tools_fail_before_publication"
           }
         ],
@@ -7708,16 +7708,16 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
         "fixture": null,
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
-          "path": "source-interop-glue_owned.rs",
-          "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+          "path": "source-tests-glue_owned.rs",
+          "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
         },
         "input": null,
         "log": "case-R4-TOOL-03.json",
@@ -7725,7 +7725,7 @@
           "v06_glue_cli_unusable_tools_fail_before_publication"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs"
       },
       "execution": "installed_host_harness",
       "id": "R4-TOOL-03",
@@ -7740,12 +7740,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_hanging_tool_probe_is_terminated(",
-            "end": 122346,
+            "end": 122156,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 122297,
+            "start": 122107,
             "test_id": "v06_glue_cli_hanging_tool_probe_is_terminated"
           }
         ],
@@ -7758,17 +7758,17 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}",
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}",
             "BESKID_V06_RELEASE_FIXTURE": "{fixture}"
           },
           "tool_file": "{harness}"
         },
         "fixture": "beskid_release_fixture",
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
-          "path": "source-interop-glue_owned.rs",
-          "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+          "path": "source-tests-glue_owned.rs",
+          "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
         },
         "input": null,
         "log": "case-R4-TOOL-04.json",
@@ -7776,7 +7776,7 @@
           "v06_glue_cli_hanging_tool_probe_is_terminated"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs"
       },
       "execution": "installed_host_harness",
       "id": "R4-TOOL-04",
@@ -7791,22 +7791,22 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_ignores_inherited_rust_environment(",
-            "end": 80370,
+            "end": 80192,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 80319,
+            "start": 80141,
             "test_id": "v06_glue_cli_ignores_inherited_rust_environment"
           },
           {
             "declaration": "fn v06_glue_cli_rejects_ancestor_cargo_config(",
-            "end": 81133,
+            "end": 80955,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 81087,
+            "start": 80909,
             "test_id": "v06_glue_cli_rejects_ancestor_cargo_config"
           }
         ],
@@ -7819,16 +7819,16 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
         "fixture": null,
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
-          "path": "source-interop-glue_owned.rs",
-          "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+          "path": "source-tests-glue_owned.rs",
+          "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
         },
         "input": null,
         "log": "case-R4-TOOL-05.json",
@@ -7837,7 +7837,7 @@
           "v06_glue_cli_rejects_ancestor_cargo_config"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs"
       },
       "execution": "installed_host_harness",
       "id": "R4-TOOL-05",
@@ -7852,12 +7852,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_published_images_fail_closed_on_substitution(",
-            "end": 77371,
+            "end": 77193,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 77310,
+            "start": 77132,
             "test_id": "v06_glue_cli_published_images_fail_closed_on_substitution"
           }
         ],
@@ -7870,16 +7870,16 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
         "fixture": null,
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
-          "path": "source-interop-glue_owned.rs",
-          "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+          "path": "source-tests-glue_owned.rs",
+          "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
         },
         "input": null,
         "log": "case-R4-TOOL-06.json",
@@ -7887,7 +7887,7 @@
           "v06_glue_cli_published_images_fail_closed_on_substitution"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs"
       },
       "execution": "installed_host_harness",
       "id": "R4-TOOL-06",
@@ -7902,12 +7902,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_rebuild_replaces_and_failed_rebuild_preserves(",
-            "end": 82198,
+            "end": 82020,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 82136,
+            "start": 81958,
             "test_id": "v06_glue_cli_rebuild_replaces_and_failed_rebuild_preserves"
           }
         ],
@@ -7920,16 +7920,16 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
         "fixture": null,
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
-          "path": "source-interop-glue_owned.rs",
-          "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+          "path": "source-tests-glue_owned.rs",
+          "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
         },
         "input": null,
         "log": "case-R4-TOOL-07.json",
@@ -7937,7 +7937,7 @@
           "v06_glue_cli_rebuild_replaces_and_failed_rebuild_preserves"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs"
       },
       "execution": "installed_host_harness",
       "id": "R4-TOOL-07",
@@ -7952,12 +7952,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn v06_glue_cli_private_prefix_driver_admission_fails_closed(",
-            "end": 118522,
+            "end": 118332,
             "source": {
-              "path": "source-interop-glue_owned.rs",
-              "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+              "path": "source-tests-glue_owned.rs",
+              "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
             },
-            "start": 118461,
+            "start": 118271,
             "test_id": "v06_glue_cli_private_prefix_driver_admission_fails_closed"
           }
         ],
@@ -7970,16 +7970,16 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
         "fixture": null,
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
-          "path": "source-interop-glue_owned.rs",
-          "sha256": "847fd7824c4b12a1b315e8b361dd85f0070f6005ae92721ac861a2eedc21177c"
+          "path": "source-tests-glue_owned.rs",
+          "sha256": "f3cacb9e9eff845760208daa12d21600b96f67f4e252ce57b4c8f24d65b1aa38"
         },
         "input": null,
         "log": "case-R4-TOOL-08.json",
@@ -7988,7 +7988,13 @@
             "crate": "beskid_tests_interop",
             "kind": "cargo_test",
             "test_ids": [
-              "v06_glue_driver_denied_from_build_tree",
+              "v06_glue_driver_denied_from_build_tree"
+            ]
+          },
+          {
+            "crate": "beskid_tests_release",
+            "kind": "cargo_test",
+            "test_ids": [
               "v06_glue_driver_admitted_only_from_private_prefix",
               "v06_glue_driver_denied_when_sibling_tampered",
               "v06_glue_driver_denied_when_sibling_missing",
@@ -8010,7 +8016,7 @@
           "v06_glue_cli_private_prefix_driver_admission_fails_closed"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs"
       },
       "execution": "installed_host_harness",
       "id": "R4-TOOL-08",
@@ -8596,7 +8602,7 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
@@ -8766,7 +8772,7 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
@@ -8925,7 +8931,7 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
@@ -8975,7 +8981,7 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
@@ -9017,12 +9023,12 @@
         "assertion_provenance": [
           {
             "declaration": "fn glue_cli_extensions_records_enums_callbacks_roundtrip(",
-            "end": 11824,
+            "end": 11803,
             "source": {
               "path": "source-glue_owned-extensions.rs",
-              "sha256": "a6939f0e356e3ffbedfe7201140b8e30e528c6bfa7f3435e5d5680d01747ce64"
+              "sha256": "31f500fdeb0919500715aef8dd71acfc1bc80bfc2acda27af6f994edba743823"
             },
-            "start": 11767,
+            "start": 11746,
             "test_id": "glue_cli_extensions_records_enums_callbacks_roundtrip"
           }
         ],
@@ -9035,22 +9041,22 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
         "fixture": null,
-        "harness": "beskid_tests_interop",
+        "harness": "beskid_tests_release",
         "harness_language": "rust",
         "harness_source": {
           "path": "source-glue_owned-extensions.rs",
-          "sha256": "a6939f0e356e3ffbedfe7201140b8e30e528c6bfa7f3435e5d5680d01747ce64"
+          "sha256": "31f500fdeb0919500715aef8dd71acfc1bc80bfc2acda27af6f994edba743823"
         },
         "input": null,
         "log": "case-GLUE066-01.json",
         "related_evidence": [
           {
-            "crate": "beskid_tests_interop",
+            "crate": "beskid_tests_release",
             "kind": "cargo_test",
             "test_ids": [
               "glue_extensions_manual_c_abi",
@@ -9062,7 +9068,7 @@
           "glue_cli_extensions_records_enums_callbacks_roundtrip"
         ],
         "reviewed_source_binding": true,
-        "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned/extensions.rs"
+        "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned/extensions.rs"
       },
       "execution": "installed_host_harness",
       "id": "GLUE066-01",
@@ -9095,7 +9101,7 @@
             "--nocapture"
           ],
           "env": {
-            "BESKID_V06_QUALIFIED_PREFIX": "{installed_prefix}"
+            "BESKID_QUALIFIED_PREFIX": "{installed_prefix}"
           },
           "tool_file": "{harness}"
         },
@@ -9124,7 +9130,7 @@
     }
   ],
   "execution_kinds": {
-    "installed_host_harness": "a Rust libtest executable built from the same compiler commit runs one `--exact` test per required id against the installed candidate prefix named by BESKID_V06_QUALIFIED_PREFIX; every installed CLI invocation is proven by a `beskid-installed-invocation` line in retained stderr whose digest is the installed CLI",
+    "installed_host_harness": "a Rust libtest executable built from the same compiler commit runs one `--exact` test per required id against the installed candidate prefix named by BESKID_QUALIFIED_PREFIX; every installed CLI invocation is proven by a `beskid-installed-invocation` line in retained stderr whose digest is the installed CLI",
     "installed_native": "the installed candidate CLI runs one `beskid test --json` target of the bundled Corelib test workspace; required ids must be a subset of its passed tests and nothing in the target may fail, skip, filter out or time out"
   },
   "fixture_executables": {
@@ -9135,12 +9141,6 @@
     }
   },
   "harness_executables": {
-    "beskid_tests_interop": {
-      "crate": "beskid_tests_interop",
-      "source_root": "compiler/crates/beskid_tests_interop",
-      "target_kind": "lib",
-      "target_name": "beskid_tests_interop"
-    },
     "beskid_tests_release": {
       "crate": "beskid_tests_release",
       "source_root": "compiler/crates/beskid_tests_release",
@@ -9264,7 +9264,6 @@
     "source-http-ExchangeTests.bd",
     "source-http-SerializationTests.bd",
     "source-http-ValidationTests.bd",
-    "source-interop-glue_owned.rs",
     "source-network-NetworkSuite.bd",
     "source-parallel-ParallelSuite.bd",
     "source-process-ProcessSuite.bd",
@@ -9276,6 +9275,7 @@
     "source-tests-cli_journeys_v06.rs",
     "source-tests-dependency_journeys_v06.rs",
     "source-tests-features_host_v066.rs",
+    "source-tests-glue_owned.rs",
     "source-tests-serialization_host_v06.rs",
     "stderr-BSOL-06-01.log",
     "stderr-BSOL-06-02.log",
@@ -9708,17 +9708,14 @@
   "target_packet_files": {
     "aarch64-apple-darwin": [
       "fixture-beskid_release_fixture",
-      "harness-beskid_tests_interop",
       "harness-beskid_tests_release"
     ],
     "x86_64-pc-windows-msvc": [
       "fixture-beskid_release_fixture.exe",
-      "harness-beskid_tests_interop.exe",
       "harness-beskid_tests_release.exe"
     ],
     "x86_64-unknown-linux-gnu": [
       "fixture-beskid_release_fixture",
-      "harness-beskid_tests_interop",
       "harness-beskid_tests_release"
     ]
   },

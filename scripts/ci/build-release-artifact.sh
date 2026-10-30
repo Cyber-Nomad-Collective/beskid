@@ -150,7 +150,7 @@ case "$PACKAGE" in
     esac
     qualify_native_tool_driver
     driver_stage="$(mktemp -d)"
-    cargo test --no-run --locked --release --target "$TARGET" -p beskid_tests_release -p beskid_tests_interop --message-format=json >"${driver_stage}/harness.json"
+    cargo test --no-run --locked --release --target "$TARGET" -p beskid_tests_release --message-format=json >"${driver_stage}/harness.json"
     cargo build --locked --release --target "$TARGET" -p beskid_tests_interop --bin beskid_release_fixture --message-format=json >"${driver_stage}/fixture.json"
     node "${ROOT}/scripts/ci/release-harness-executables.mjs" "$TARGET" "$ASSET_NAME" \
       "${ROOT}/scripts/ci/release-cases-v06.json" "${driver_stage}/harness.json" "${driver_stage}/fixture.json"

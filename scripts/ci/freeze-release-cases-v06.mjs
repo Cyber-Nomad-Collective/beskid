@@ -35,7 +35,7 @@ function parseArguments(argv) {
 
 export function CommandTemplate(execution, binding) {
   const env = {};
-  if (execution === "installed_host_harness") env.BESKID_V06_QUALIFIED_PREFIX = "{installed_prefix}";
+  if (execution === "installed_host_harness") env.BESKID_QUALIFIED_PREFIX = "{installed_prefix}";
   if (binding.input) env.BESKID_BSOL_CORPUS = `{input_root}/${binding.input.corpus}`;
   if (binding.fixture) env.BESKID_V06_RELEASE_FIXTURE = "{fixture}";
   if (execution === "installed_native") {

@@ -215,15 +215,14 @@ cat >"${TMP}/harness-builder.sh" <<'EOF'
 set -euo pipefail
 [[ "$1" == beskid_release_harness ]] || exit 9
 mkdir -p "$4"
-printf 'fake harness\n' >"$4/harness-beskid_tests_release"
-cat >"$4/harness-beskid_tests_interop" <<'HARNESS'
+cat >"$4/harness-beskid_tests_release" <<'HARNESS'
 #!/usr/bin/env bash
 printf '%s\n' "$*" >"${FAKE_GLUE_LOG}"
-[[ "${BESKID_V06_QUALIFIED_PREFIX:-}" == */beskid-* ]] || exit 7
-ran=0; for argument in "$@"; do [[ "${argument}" == interop::* ]] && ran=$((ran + 1)); done
+[[ "${BESKID_QUALIFIED_PREFIX:-}" == */beskid-* ]] || exit 7
+ran=0; for argument in "$@"; do [[ "${argument}" == glue_owned::* ]] && ran=$((ran + 1)); done
 printf 'test result: ok. %s passed; 0 failed; 0 ignored; 0 measured; 0 filtered out\n' "$((ran - ${FAKE_GLUE_SKIP:-0}))"
 HARNESS
-chmod +x "$4/harness-beskid_tests_interop"
+chmod +x "$4/harness-beskid_tests_release"
 printf 'harness %s %s %s\n' "$3" "$4" "$5" >"${FAKE_HARNESS_LOG}"
 EOF
 chmod +x "${TMP}/harness-builder.sh"
@@ -263,9 +262,9 @@ test "$(cd "${v06}" && find . -mindepth 1 -maxdepth 1 ! -type f | wc -l | tr -d 
 test "$(jq -r .runtime_kit_sha256 "${v06}/woodpecker-build-result.json")" = "$(shasum -a 256 "${v06}/runtime-kit.json" | awk '{print $1}')"
 test -d "${v06}-logs/release-harness"
 # The private-prefix Glue tests run against the candidate prefix, each by its exact name.
-grep -q -- '^--exact interop::glue_owned::' "${TMP}/glue-v06.log"
-grep -q 'interop::glue_owned::v06_glue_owned_roundtrip_all_representations' "${TMP}/glue-v06.log"
-grep -q 'interop::glue_owned::v06_glue_driver_denied_when_sibling_escapes_prefix' "${TMP}/glue-v06.log"
+grep -q -- '^--exact glue_owned::' "${TMP}/glue-v06.log"
+grep -q 'glue_owned::v06_glue_owned_roundtrip_all_representations' "${TMP}/glue-v06.log"
+grep -q 'glue_owned::v06_glue_driver_denied_when_sibling_escapes_prefix' "${TMP}/glue-v06.log"
 grep -q 'private-prefix Glue tests: 14 passed' "${TMP}/v06.log"
 # A run in which any of them did not execute fails the platform build.
 if FAKE_INIT_LOG="${TMP}/init-v06b.log" FAKE_HARNESS_LOG="${TMP}/harness-v06b.log" FAKE_GLUE_LOG="${TMP}/glue-v06b.log" FAKE_GLUE_SKIP=1 \

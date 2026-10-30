@@ -107,8 +107,8 @@
     },
     "GLUE066-01": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned/extensions.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned/extensions.rs",
       "required_test_ids": [
         "glue_cli_extensions_records_enums_callbacks_roundtrip"
       ],
@@ -117,7 +117,7 @@
       "related_evidence": [
         {
           "kind": "cargo_test",
-          "crate": "beskid_tests_interop",
+          "crate": "beskid_tests_release",
           "test_ids": [
             "glue_extensions_manual_c_abi",
             "glue_extensions_owned_roundtrip"

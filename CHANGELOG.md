@@ -11,6 +11,19 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Tests that need a runtime kit or a Corelib provision it themselves, and the
+  compiler Rust gate runs the staged-evidence tests (`#[ignore = "staged
+  evidence: ..."]`) with `--include-ignored` against the kit it stages; the
+  two child-process fixtures are skipped by exact name. Installed-prefix tests
+  live only in the release harness: the Glue harness `glue_owned` moves into
+  `beskid_tests_release`, so the gate no longer skips `interop::glue_owned::`
+  or runs the build-tree driver denial as a separate step (it is a plain
+  workspace test now). The release cases, the private-prefix Glue step and the
+  harness build name `glue_owned::...` ids in `harness-beskid_tests_release`;
+  `harness-beskid_tests_interop` is no longer built. The harness variables
+  lose the `V06` prefix: `BESKID_QUALIFIED_PREFIX`, `BESKID_QUALIFIED_PROFILE`,
+  `BESKID_GLUE_CARGO`, `BESKID_GLUE_RUSTC` and `BESKID_GLUE_LINKER`. The
+  release case manifest is refrozen (digest `c1dd696a751d0aeb32482548bc500cd21c98cd0704ac46b159dbea30f1b77dd9`).
 - The compiler Rust gate runs the workspace tests in parallel (libtest's
   default thread count) instead of `--test-threads=1`: no compiler test changes
   the process environment or working directory any more. Two full parallel

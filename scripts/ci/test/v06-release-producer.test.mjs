@@ -19,7 +19,6 @@ const VERSION = "0.6.0";
 const SOURCE = { superrepo_commit: "a".repeat(40), compiler_commit: "b".repeat(40) };
 const sha256 = bytes => createHash("sha256").update(bytes).digest("hex");
 const identifier = id => `fixture_${id.replace(/[^A-Za-z0-9_]/g, "_")}`;
-const HOST_HARNESS = { "R4-ABI": "beskid_tests_interop", "R4-BIND": "beskid_tests_interop", "R4-CALL": "beskid_tests_interop", "R4-GEN": "beskid_tests_interop", "R4-TOOL": "beskid_tests_interop", "GLUE066-01": "beskid_tests_interop" };
 
 /** A fixture checkout: every case bound to a synthetic source under the layout the freeze tool expects. */
 function fixtureRepo(root) {
@@ -36,8 +35,8 @@ function fixtureRepo(root) {
       fragment.cases[item.id] = { execution: "installed_native", target, project: "compiler/corelib/beskid_corelib/tests/corelib_tests", source_file: file, required_test_ids: ids,
         input: null, fixture: /^R4-PROC-/.test(item.id) ? "beskid_release_fixture" : null };
     } else {
-      const harness = HOST_HARNESS[item.id.split("-").slice(0, 2).join("-")] ?? "beskid_tests_release";
-      const file = harness === "beskid_tests_interop" ? `compiler/crates/beskid_tests_interop/src/interop/${identifier(item.id)}.rs` : `compiler/crates/beskid_tests_release/tests/${identifier(item.id)}.rs`;
+      const harness = "beskid_tests_release";
+      const file = `compiler/crates/beskid_tests_release/tests/${identifier(item.id)}.rs`;
       mkdirSync(join(root, file, ".."), { recursive: true });
       writeFileSync(join(root, file), ids.map(id => `#[test]\nfn ${id}() {}\n`).join("\n"));
       const binding = { execution: "installed_host_harness", harness, source_file: file, required_test_ids: ids, input: item.id === "BSOL-06-01" ? { id: "bsol-corpus", source_root: "beskid_bsol", include: ["conformance", "schemas"], corpus: "conformance" } : null, fixture: null };
@@ -114,13 +113,13 @@ function fakeHarnesses(root, manifest, { proof = true } = {}) {
     writeFileSync(join(directory, `harness-${name}`), `#!/usr/bin/env bash
 set -euo pipefail
 [[ "$1" == --exact && "$3" == --test-threads=1 && "$4" == --nocapture ]] || { echo "fake harness: unexpected arguments $*" >&2; exit 2; }
-[[ -n "\${BESKID_V06_QUALIFIED_PREFIX:-}" ]] || { echo "fake harness: no qualified prefix" >&2; exit 3; }
+[[ -n "\${BESKID_QUALIFIED_PREFIX:-}" ]] || { echo "fake harness: no qualified prefix" >&2; exit 3; }
 if [[ -n "\${BESKID_BSOL_CORPUS:-}" ]]; then
   # Packet-mode corpus layout: cases under the corpus root, profiles at ../schemas, nothing else archived.
   [[ "$(basename "$BESKID_BSOL_CORPUS")" == conformance && -f "$BESKID_BSOL_CORPUS/cases/v06-values.bsol" && -f "$BESKID_BSOL_CORPUS/../schemas/schema.v1.bsol" ]] || { echo "fake harness: corpus layout missing" >&2; exit 4; }
   [[ ! -e "$BESKID_BSOL_CORPUS/../crates" ]] || { echo "fake harness: input archived an excluded directory" >&2; exit 5; }
 fi
-if command -v sha256sum >/dev/null 2>&1; then digest="$(sha256sum "\${BESKID_V06_QUALIFIED_PREFIX}/bin/beskid" | awk '{print $1}')"; else digest="$(shasum -a 256 "\${BESKID_V06_QUALIFIED_PREFIX}/bin/beskid" | awk '{print $1}')"; fi
+if command -v sha256sum >/dev/null 2>&1; then digest="$(sha256sum "\${BESKID_QUALIFIED_PREFIX}/bin/beskid" | awk '{print $1}')"; else digest="$(shasum -a 256 "\${BESKID_QUALIFIED_PREFIX}/bin/beskid" | awk '{print $1}')"; fi
 ${proof ? 'echo "beskid-installed-invocation sha256=$digest argv0=beskid" >&2' : 'echo "no proof" >&2'}
 printf '\\nrunning 1 test\\ntest %s ... ok\\n\\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s\\n\\n' "$2"
 `);

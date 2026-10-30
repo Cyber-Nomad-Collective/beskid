@@ -21,8 +21,8 @@ const PROVISIONAL_IDS = planned.provisional_cases.map(item => item.id);
 const PREFIX = "/reader-fixture/candidate";
 const SOURCE = { superrepo_commit: "1".repeat(40), compiler_commit: "2".repeat(40) };
 const identifier = id => `reader_fixture_${id.replace(/[^A-Za-z0-9_]/g, "_")}`;
-const HOST_HARNESS = { "R4-ABI": "beskid_tests_interop", "R4-BIND": "beskid_tests_interop", "R4-CALL": "beskid_tests_interop",
-  "R4-GEN": "beskid_tests_interop", "R4-TOOL": "beskid_tests_interop", "GLUE066-01": "beskid_tests_interop" };
+const HOST_HARNESS = { "R4-ABI": "beskid_tests_release", "R4-BIND": "beskid_tests_release", "R4-CALL": "beskid_tests_release",
+  "R4-GEN": "beskid_tests_release", "R4-TOOL": "beskid_tests_release", "GLUE066-01": "beskid_tests_release" };
 function plannedExecution(id) {
   const prefix = id.split("-").slice(0, 2).join("-");
   if (HOST_HARNESS[prefix]) return { execution: "installed_host_harness", harness: HOST_HARNESS[prefix] };
@@ -99,7 +99,6 @@ function fixture(target = planned.targets[0], options = {}) {
     }
     const language = execution === "installed_native" ? "beskid" : "rust";
     const source_file = language === "beskid" ? `reader-fixture/beskid-${item.id}.bd`
-      : harness === "beskid_tests_interop" ? `compiler/crates/beskid_tests_interop/src/interop/reader_fixture_${identifier(item.id)}.rs`
       : `compiler/crates/beskid_tests_release/tests/reader_fixture_${identifier(item.id)}.rs`;
     const qualified = id => language === "beskid" ? id : libtestPath(source_file, manifest.harness_executables[harness].source_root, id);
     const extra = `${identifier(item.id)}_unrequired_passing`;
@@ -116,7 +115,7 @@ function fixture(target = planned.targets[0], options = {}) {
     const input = item.id === "BSOL-06-01" ? { id: "bsol-corpus", path: corpus.path, sha256: corpus.sha256, source_root: "beskid_bsol", include: ["conformance", "schemas"], corpus: "conformance" } : null;
     const fixtureName = /^R4-PROC-/.test(item.id) ? "beskid_release_fixture" : null;
     const env = {};
-    if (execution === "installed_host_harness") env.BESKID_V06_QUALIFIED_PREFIX = "{installed_prefix}";
+    if (execution === "installed_host_harness") env.BESKID_QUALIFIED_PREFIX = "{installed_prefix}";
     if (input) env.BESKID_BSOL_CORPUS = "{input_root}/conformance";
     if (fixtureName) env.BESKID_V06_RELEASE_FIXTURE = "{fixture}";
     const command = execution === "installed_native"

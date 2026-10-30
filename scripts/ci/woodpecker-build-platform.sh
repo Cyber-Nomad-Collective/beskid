@@ -204,7 +204,7 @@ if [[ "${schema2}" == 1 ]]; then
   # Glue cases build a Rust owner with explicit tools (glue_owned.rs require_tools). Pin the
   # toolchain's own cargo and rustc, not rustup proxies: each case runs with a private HOME, and
   # the harness canonicalizes the paths it receives.
-  if [[ -z "${BESKID_V06_GLUE_CARGO:-}" || -z "${BESKID_V06_GLUE_RUSTC:-}" || -z "${BESKID_V06_GLUE_LINKER:-}" ]]; then
+  if [[ -z "${BESKID_GLUE_CARGO:-}" || -z "${BESKID_GLUE_RUSTC:-}" || -z "${BESKID_GLUE_LINKER:-}" ]]; then
     rust_sysroot="$(rustc --print sysroot | tr -d '\r')"
     glue_extension=""
     case "${platform}" in
@@ -219,45 +219,46 @@ if [[ "${schema2}" == 1 ]]; then
         ;;
       *) glue_linker="$(command -v cc)" ;;
     esac
-    export BESKID_V06_GLUE_CARGO="${BESKID_V06_GLUE_CARGO:-${rust_sysroot}/bin/cargo${glue_extension}}"
-    export BESKID_V06_GLUE_RUSTC="${BESKID_V06_GLUE_RUSTC:-${rust_sysroot}/bin/rustc${glue_extension}}"
-    export BESKID_V06_GLUE_LINKER="${BESKID_V06_GLUE_LINKER:-${glue_linker}}"
+    export BESKID_GLUE_CARGO="${BESKID_GLUE_CARGO:-${rust_sysroot}/bin/cargo${glue_extension}}"
+    export BESKID_GLUE_RUSTC="${BESKID_GLUE_RUSTC:-${rust_sysroot}/bin/rustc${glue_extension}}"
+    export BESKID_GLUE_LINKER="${BESKID_GLUE_LINKER:-${glue_linker}}"
   fi
-  for glue_tool in BESKID_V06_GLUE_CARGO BESKID_V06_GLUE_RUSTC BESKID_V06_GLUE_LINKER; do
+  for glue_tool in BESKID_GLUE_CARGO BESKID_GLUE_RUSTC BESKID_GLUE_LINKER; do
     [[ -f "${!glue_tool}" ]] || { echo "${glue_tool} does not name a file: ${!glue_tool}" >&2; exit 2; }
   done
-  printf 'glue tools: cargo=%s rustc=%s linker=%s\n' "${BESKID_V06_GLUE_CARGO}" "${BESKID_V06_GLUE_RUSTC}" "${BESKID_V06_GLUE_LINKER}"
+  printf 'glue tools: cargo=%s rustc=%s linker=%s\n' "${BESKID_GLUE_CARGO}" "${BESKID_GLUE_RUSTC}" "${BESKID_GLUE_LINKER}"
   case_arguments=("${platform}" "${version}" "${output_dir}" "${bundle_root}" --harness-dir "${harness_dir}")
   [[ -z "${release_cases_manifest}" ]] || case_arguments+=(--manifest "${release_cases_manifest}")
   node "${release_cases_runner}" "${case_arguments[@]}"
   # The Glue tests that rerun themselves inside a private copy of the qualified installation run
   # the harness, not the installed CLI, so they cannot carry the installed-invocation proof a
-  # frozen case requires; the source-tree gate skips them because they need the installation.
+  # frozen case requires; like every installed-prefix test they live in the release harness, which
+  # the source-tree gate does not run.
   # Run them here against the candidate prefix and fail unless every one of them executed.
   glue_private_prefix_tests=(
-    interop::glue_owned::v06_glue_driver_admitted_only_from_private_prefix
-    interop::glue_owned::v06_glue_driver_denied_when_sibling_tampered
-    interop::glue_owned::v06_glue_driver_denied_when_sibling_missing
-    interop::glue_owned::v06_glue_owned_roundtrip_all_representations
-    interop::glue_owned::v06_glue_owned_opaque_borrow_survives_release
-    interop::glue_owned::v06_glue_owned_denies_missing_import_row
-    interop::glue_owned::v06_glue_owned_denies_consumer_without_owner_domain
-    interop::glue_owned::v06_glue_owned_denies_duplicate_owner_library
-    interop::glue_owned::v06_glue_owned_rejects_foreign_owner_brand
-    interop::glue_owned::v06_glue_owned_rust_owner_fails_closed_outside_prefix
-    interop::glue_owned::v06_native_test_object_compiles_shared_helper_once_and_links_distinct_entries
-    interop::glue_owned::extensions::glue_extensions_owned_roundtrip
-    interop::glue_owned::extensions::glue_extensions_manual_c_abi
+    glue_owned::v06_glue_driver_admitted_only_from_private_prefix
+    glue_owned::v06_glue_driver_denied_when_sibling_tampered
+    glue_owned::v06_glue_driver_denied_when_sibling_missing
+    glue_owned::v06_glue_owned_roundtrip_all_representations
+    glue_owned::v06_glue_owned_opaque_borrow_survives_release
+    glue_owned::v06_glue_owned_denies_missing_import_row
+    glue_owned::v06_glue_owned_denies_consumer_without_owner_domain
+    glue_owned::v06_glue_owned_denies_duplicate_owner_library
+    glue_owned::v06_glue_owned_rejects_foreign_owner_brand
+    glue_owned::v06_glue_owned_rust_owner_fails_closed_outside_prefix
+    glue_owned::v06_native_test_object_compiles_shared_helper_once_and_links_distinct_entries
+    glue_owned::extensions::glue_extensions_owned_roundtrip
+    glue_owned::extensions::glue_extensions_manual_c_abi
   )
-  [[ "${platform}" == windows ]] || glue_private_prefix_tests+=(interop::glue_owned::v06_glue_driver_denied_when_sibling_escapes_prefix)
-  glue_harness="${harness_dir}/harness-beskid_tests_interop"
+  [[ "${platform}" == windows ]] || glue_private_prefix_tests+=(glue_owned::v06_glue_driver_denied_when_sibling_escapes_prefix)
+  glue_harness="${harness_dir}/harness-beskid_tests_release"
   [[ "${platform}" != windows ]] || glue_harness+=.exe
   glue_home="$(mktemp -d)"
   mkdir -p "${glue_home}/user-home" "${glue_home}/toolchain-home" "${glue_home}/config"
   glue_status=0
   (cd "${glue_home}" && HOME="${glue_home}/user-home" USERPROFILE="${glue_home}/user-home" \
     BESKID_HOME="${glue_home}/toolchain-home" BESKID_CONFIG_DIR="${glue_home}/config" OTEL_SDK_DISABLED=true \
-    BESKID_V06_QUALIFIED_PREFIX="${bundle_root}" \
+    BESKID_QUALIFIED_PREFIX="${bundle_root}" \
     "${glue_harness}" --exact "${glue_private_prefix_tests[@]}" --test-threads=1) \
     >"${logs_dir}/glue-private-prefix.log" 2>&1 || glue_status=$?
   rm -rf "${glue_home}"
