@@ -11,6 +11,13 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- OpenSpec change `v067-qualified-test-selection`: a test is identified by its
+  unit-relative qualified name (`Topic::Inner` for `test Inner` in `mod Topic`);
+  discovery, the `beskid test` report and the native test selection use that one
+  identity, a missing or ambiguous selection fails the build, and same-named tests in
+  different inline modules are distinct. `Network.Dns.Resolve` maps every resolver
+  answer that gives a name no usable address (`EAI_NONAME`, `EAI_NODATA`,
+  `EAI_ADDRFAMILY`, Windows `WSANO_DATA`) to `HostNotFound`.
 - OpenSpec change `v067-semantic-tokens-budget`: a semantic-tokens request waits at
   most 100 ms for the facts of the newest text, then answers from the last analyzed
   facts moved over the edit; the server sends one `workspace/semanticTokens/refresh`
