@@ -11,6 +11,13 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- The release cases are refrozen for 0.6.7-preview.11 against the integrated
+  compiler (semtok, lspwait, qualtests, s8b, modscope, arralias and arralias2
+  merged) and Corelib `5d3b9ba` (s8b test modules plus the arralias2 sources):
+  95 of 95 cases bound, and the digest stays
+  `c4069aad3809230567aa3996194925771d71456027339d32299f2af757ed25dd`, because
+  no release-harness or Corelib test source changed after the s8b freeze. The
+  pin in `woodpecker-release-evidence.mjs` is unchanged.
 - Release cases name the Corelib tests by their qualified ids. The Corelib
   test cleanup moved every test into a topic module and dropped the domain
   prefix that the module now names, so all 277 native required ids and the 6
