@@ -7,3 +7,11 @@ The code **E1104** SHALL also identify a qualified path whose first segment name
 - **GIVEN** `use Core.Random;`, `mod Random { pub i64 New() { return 5; } }` and `return Random.New();`
 - **WHEN** the code is checked
 - **THEN** the compiler SHALL report **E1104** at `Random.New` with the message "ambiguous module `Random`: both the inline module `Random` and the import `Core.Random` declare `New`"
+
+### Requirement: One code per duplicate name
+A duplicate function, `use` alias, module declaration, constant or test in one scope SHALL be reported only as **E1102**. The code **E1006** SHALL NOT be emitted and SHALL NOT be in the code registry; it SHALL NOT be reused for another meaning. **E1104** SHALL identify an ambiguous name or module path, not a duplicate `use` alias. Duplicate type, enum and contract names are outside this requirement.
+
+#### Scenario: Duplicate use alias
+- **GIVEN** `use Core.Random;` twice in one scope
+- **WHEN** the code is checked
+- **THEN** the compiler SHALL report **E1102** once and SHALL NOT report **E1006** or **E1104**

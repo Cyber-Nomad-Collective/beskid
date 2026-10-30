@@ -13,7 +13,7 @@ The probes also showed that a `use` inside an inline module has no effect in the
 
 - An inline module is a lexical scope. Constants, `use` bindings, functions and types of a scope are visible in the inline modules nested in it. An inner binding shadows an outer binding of the same name in the inner scope only.
 - A `use` inside an inline module binds in that module and its nested modules only.
-- Duplicate names are compared per scope: the file scope or one inline module. Two tests of one name in one module are E1102 only.
+- Duplicate names are compared per scope: the file scope or one inline module. Every duplicate of a function, `use` alias, module declaration, constant or test in one scope is one diagnostic, E1102. E1006 is retired.
 - A type position sees only types, enums, contracts and generic parameters. A module or function of the same name does not hide an imported type.
 - A qualified path whose first segment names an inline module and a `use` alias, where each one reaches a different item, is E1104 "ambiguous module". The compiler does not select one of the two items.
 

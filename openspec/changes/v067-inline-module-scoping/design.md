@@ -18,7 +18,7 @@ For `Name.Rest`, the resolver computes the import-alias reading and the inline-m
 
 ## Duplicates
 
-The staged rule checks functions, out-of-line module declarations and `use` bindings per scope. Tests are left to the resolver, which keys them by module and name and reports E1102.
+Coordinator ruling: every duplicate in one scope reports exactly one code. The resolver already keys functions, module declarations, inline modules, constants and tests by scope, and `use` aliases by scope after this change, so the staged duplicate check (E1006) and the file-level alias check (E1104 "ambiguous import") are removed. The one case only the staged rule covered, a `use` alias with the name of a function of the same scope, moves into the resolver as E1102. E1006 is no longer emitted and leaves the registry. Duplicate type, enum and contract names still report E1001 from the staged rule next to E1102; ruling A3 of `v07-name-binding-rulings` removes that stage, so this change leaves it.
 
 ## Rejected alternative
 

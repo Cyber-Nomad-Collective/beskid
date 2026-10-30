@@ -32,7 +32,7 @@ A `use` declaration inside an inline module SHALL bind its alias and the items t
 - **THEN** the compiler reports that `Random` is unknown at the file-level call
 
 ### Requirement: Duplicate names per scope
-The compiler SHALL compare the names of functions, module declarations, inline modules, constants and `use` bindings for duplicates in one scope only: the file scope or one inline module. The same name in two different scopes SHALL NOT be a duplicate. Two tests with the same name in one module SHALL be reported once, as **E1102**, and SHALL NOT also be reported as **E1006**.
+The compiler SHALL compare the names of functions, module declarations, inline modules, constants and `use` aliases for duplicates in one scope only: the file scope or one inline module. The same name in two different scopes SHALL NOT be a duplicate. Each duplicate in one scope SHALL be reported exactly once, as **E1102**, at the later declaration: two functions, two `use` aliases, a `use` alias and a function, two module declarations, two constants, or two tests with the same name in one module. A duplicate SHALL NOT also be reported as **E1006** or **E1104**.
 
 #### Scenario: Same function name in two scopes
 - **GIVEN** a file-level function `Helper` and a function `Helper` in `mod A { }`
@@ -48,6 +48,16 @@ The compiler SHALL compare the names of functions, module declarations, inline m
 - **GIVEN** `mod Topic { test Same { } test Same { } }`
 - **WHEN** the file is checked
 - **THEN** the compiler SHALL report **E1102** once and SHALL NOT report **E1006**
+
+#### Scenario: Duplicate function in one module
+- **GIVEN** `mod Topic { i64 Twice() { return 1; } i64 Twice() { return 2; } }`
+- **WHEN** the file is checked
+- **THEN** the compiler SHALL report **E1102** once for `Twice` and no other duplicate code
+
+#### Scenario: Duplicate use alias in one scope
+- **GIVEN** `use Core.Random;` twice at file level, or twice inside `mod Topic { }`
+- **WHEN** the file is checked
+- **THEN** the compiler SHALL report **E1102** once for `Random` and SHALL NOT report **E1006** or **E1104**
 
 ### Requirement: A module never hides a type
 In a type position, only types, enums, contracts and generic parameters SHALL be candidates. A module, a function or another binding that is not a type SHALL NOT satisfy a type name and SHALL NOT hide it. When a scope declares a module or a function with the name of a type that a `use` of that scope imports, the name SHALL denote the imported type in every type position where that scope is visible, inside and outside the module.
