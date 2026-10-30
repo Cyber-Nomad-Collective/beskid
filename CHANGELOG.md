@@ -11,6 +11,12 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Change `v067-array-growth-aliasing`: growing one array handle never changes
+  what another handle to the same array sees (new memory-model requirement
+  "Array growth never reaches another handle"); the typed growth operation
+  names the sharing mark in the hidden element-descriptor word and the growth
+  target of a copy (twice the length).
+
 - OpenSpec change `v067-qualified-test-selection`: a test is identified by its
   unit-relative qualified name (`Topic::Inner` for `test Inner` in `mod Topic`);
   discovery, the `beskid test` report and the native test selection use that one
