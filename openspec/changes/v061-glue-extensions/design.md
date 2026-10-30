@@ -64,7 +64,7 @@ The hand-linked `export_caller.rs` fixture is kept: it tests the plain `[Export(
 
 ### 6. Manual first
 
-The hand-written C ABI fixture `beskid_tests_interop/fixtures/glue/manual/extensions/` comes first: a C header whose static assertions fix the record layout of the C ABI profile, a hand-written Rust `extern "C"` library, and a hand-written consumer that does what the generated adapters do (discriminant and Bool/`char` checks, per-thread callback frames). Test `v061_glue_extensions_manual_c_abi` builds it with the explicit tools. The generated fixture `fixtures/glue/extensions/owned` and test `v061_glue_extensions_owned_roundtrip` then run the same behaviour through the owner build, the consumer image and `GlueProcess`.
+The hand-written C ABI fixture `beskid_tests_release/fixtures/glue/manual/extensions/` comes first: a C header whose static assertions fix the record layout of the C ABI profile, a hand-written Rust `extern "C"` library, and a hand-written consumer that does what the generated adapters do (discriminant and Bool/`char` checks, per-thread callback frames). Test `v061_glue_extensions_manual_c_abi` builds it with the explicit tools. The generated fixture `fixtures/glue/extensions/owned` and test `v061_glue_extensions_owned_roundtrip` then run the same behaviour through the owner build, the consumer image and `GlueProcess`.
 
 ## Risks / Trade-offs
 

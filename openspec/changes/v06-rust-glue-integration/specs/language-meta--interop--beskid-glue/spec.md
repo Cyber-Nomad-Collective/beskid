@@ -24,7 +24,7 @@ The acceptance evidence for this requirement SHALL be every `#[test]` function i
 - `src/interop/glue_owned.rs`: the owned path, driver admission, CLI build, published-image admission, manual and generated equivalence, borrow and foreign-thread release, owner abort, packet identity, closed boundary metadata, tool selection, hermetic Cargo and rebuild tests (27 functions in the current tree);
 - `src/interop/export.rs`: the C ABI export metadata, export table and non-public export rejection tests (3 functions in the current tree).
 
-The fixtures are `fixtures/glue/manual/owned/` and `fixtures/glue/manual/export_caller.rs`. An acceptance record SHALL state the test count for each named file and SHALL give the suite total as the sum of these counts (30 in the current tree). A total without the file names SHALL NOT satisfy acceptance. Every named test SHALL pass; a skipped, ignored or compile-only test SHALL count as a failure.
+The fixture is `compiler/crates/beskid_tests_release/fixtures/glue/manual/owned/`. An acceptance record SHALL state the test count for each named file and SHALL give the suite total as the sum of these counts (30 in the current tree). A total without the file names SHALL NOT satisfy acceptance. Every named test SHALL pass; a skipped, ignored or compile-only test SHALL count as a failure.
 
 #### Scenario: Owned fixture round trips in process
 - **GIVEN** the manual owned fixture built by `beskid build --backend glue-rust` with explicit Rust tools and linker
