@@ -185,7 +185,7 @@ Use beskid_analysis aligned with LSP.
 | Input is a `.bd` file outside any project root | File-scoped commands work; project commands error with manifest discovery diagnostics |
 | Missing `Project.lock` under strict policy | `build`/`run` fail with lock policy message before lowering |
 | `Mod` artifact cache miss | `build` triggers AOT compile or reports cache policy failure; no partial host compile |
-| Multiple workspace members | `--project` / focused member selection **must** match LSP `BESKID_WORKSPACE_MEMBER_FOR_META_DEFAULT` semantics when set |
+| Multiple workspace members | `--project` selects the member; the language server uses the focused project. No environment variable selects a default member |
 | `--entrypoint` on non-`app` target | Rejected with stable CLI error (no silent default to `main`) |
 | Corelib root only via env | `BESKID_CORELIB_ROOT` and install layout fallbacks in `resolver.rs` apply before graph build |
 

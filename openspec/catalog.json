@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "d7338f617a9216c6ee3d95e752d766d9bc48d4dc4832252092914e72bff20f68",
+  "revision": "7e4988e8d2aaf26715a64e02bcc901f9227c40708df598368b7578c916854dfc",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -62083,7 +62083,7 @@
       "decision": null,
       "title": "Build, analyze, and run contract",
       "status": "Standard",
-      "sourceHash": "c37d135edaab039060bade82cd71a92764acd29e590b38b295503fa90d04c838"
+      "sourceHash": "23f16d6b78f25601b43961d0aefc6b519740ef904faa5b207ca57f306b69959f"
     },
     {
       "id": "BSP-CAP-DA123DD4F7F0",
@@ -62347,7 +62347,7 @@
       "decision": null,
       "title": "Snapshot and refresh contract",
       "status": "Standard",
-      "sourceHash": "69c4530b2439c634f1023974ebd462382de6103f1777e1f41c6ab5c3d5dd2426"
+      "sourceHash": "becfe349ae5f88753443bde74c2677e6d230bc55fc03fc6a00843dce637b511b"
     },
     {
       "id": "BSP-CAP-08FECFB7E3ED",

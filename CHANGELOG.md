@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- The CLI build-analyze-run edge cases and the language-server snapshot FAQ no longer name
+  `BESKID_WORKSPACE_MEMBER_FOR_META_DEFAULT`; the compiler ignored the option and 0.6.7 removes it.
+  `--project` selects a workspace member, and no environment variable selects a default member.
 - OpenSpec change `v067-default-target-selection`: without `--target`,
   `beskid build` and `beskid run` never select a Test target (`run` selects the
   App target, `build` the App target or else the Lib target); `beskid test` runs
