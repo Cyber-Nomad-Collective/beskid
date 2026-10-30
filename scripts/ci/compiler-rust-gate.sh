@@ -70,17 +70,18 @@ run_runtime_phase() {
   # The one glue_owned test that needs no prefix (the driver is denied from the build tree) runs
   # here by its exact name, and the gate fails unless exactly that one test ran and passed.
   run_build_tree_driver_denial
-  # Tests run serially. Leave room for the measured full suite while retaining
-  # a hard cap for a deadlocked lowering test.
+  # Tests run in parallel (libtest's default thread count): no test changes process-global
+  # state. Leave room for the measured full suite while retaining a hard cap for a deadlocked
+  # lowering test.
   local test_timeout="${BESKID_TEST_TIMEOUT:-10800}"
   if [[ "${test_timeout}" == "0" ]]; then
-    cargo test --workspace --exclude beskid_e2e_tests --exclude beskid_tests_release -- --test-threads=1 --skip interop::glue_owned::
+    cargo test --workspace --exclude beskid_e2e_tests --exclude beskid_tests_release -- --skip interop::glue_owned::
     return
   fi
 
   set +e
   timeout --kill-after=60s "${test_timeout}" \
-    cargo test --workspace --exclude beskid_e2e_tests --exclude beskid_tests_release -- --test-threads=1 --skip interop::glue_owned::
+    cargo test --workspace --exclude beskid_e2e_tests --exclude beskid_tests_release -- --skip interop::glue_owned::
   local status=$?
   set -e
   if [[ "${status}" -eq 124 ]]; then
