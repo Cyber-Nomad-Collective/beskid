@@ -11,6 +11,12 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- The release cases are refrozen for 0.6.7-preview.10 against the integrated
+  compiler (tc-envtier, pkgparse and lspperf9 merged) and Corelib `022e7e9`:
+  95 of 95 cases bound, and the digest stays
+  `c1dd696a751d0aeb32482548bc500cd21c98cd0704ac46b159dbea30f1b77dd9`, because
+  no release-harness or Corelib test source changed after the tc-envtier
+  freeze. The pin in `woodpecker-release-evidence.mjs` is unchanged.
 - Tests that need a runtime kit or a Corelib provision it themselves, and the
   compiler Rust gate runs the staged-evidence tests (`#[ignore = "staged
   evidence: ..."]`) with `--include-ignored` against the kit it stages; the
