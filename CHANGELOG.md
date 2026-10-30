@@ -11,6 +11,12 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Change `v067-array-growth-aliasing`: shrinking one array handle
+  (`Array.RemoveLast`) never changes another handle either (requirement renamed
+  "Array length changes never reach another handle", shrink scenarios, owner-
+  aware `RemoveLast` in the typed-array-growth requirement); a field lent beside
+  an array of holders (`Holder[]`) is marked, which closes the former residual
+  boundary.
 - Change `v067-array-growth-aliasing`: growing one array handle never changes
   what another handle to the same array sees (new memory-model requirement
   "Array growth never reaches another handle"); the typed growth operation

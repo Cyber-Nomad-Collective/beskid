@@ -20,6 +20,15 @@ runtime read of the element descriptor MUST clear the mark. An array that the
 runtime allocates or copies MUST be unmarked. When the runtime copies, the new
 capacity SHALL be the larger of `minimum_capacity`, twice the length, and 4.
 
+`Array.RemoveLast` SHALL read the sharing mark of an owned array. A marked
+array, a `mut` or `move` parameter slot that still holds the caller's handle,
+and an argument that is not an owner SHALL be copied through this export
+(`minimum_capacity` one more than the capacity) before the last slot of the
+copy is cleared and its length decreased; the copy is written back to the
+owner. An unmarked owned array SHALL be shortened in place with no runtime
+call. Because `RemoveLast` can allocate, it is not a non-allocating operation
+for a serialization publication or rollback body.
+
 #### Scenario: Pointer-bearing storage grows under collection pressure
 - **GIVEN** a rooted array of pointer-bearing elements with a valid descriptor
   and initialized values
@@ -40,3 +49,9 @@ capacity SHALL be the larger of `minimum_capacity`, twice the length, and 4.
 - **WHEN** generated code grows it by one element
 - **THEN** the runtime returns a new unmarked array with length 2 and capacity
   5, and the source array keeps length 1, capacity 4 and its elements
+
+#### Scenario: A marked array shrinks into an unmarked copy
+- **GIVEN** a local array with length 3, capacity 4 and the sharing mark set
+- **WHEN** generated code runs `Array.RemoveLast` on it
+- **THEN** the local holds a new unmarked array with length 2 and the first two
+  elements, and the source array keeps length 3 and its elements
