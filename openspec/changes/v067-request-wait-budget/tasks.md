@@ -8,4 +8,4 @@
 - [x] 2.5 Compare the stored facts with the open text without a copy of the document on each wakeup.
 - [x] 2.6 The soak sends references, signature help, inlay hints, code actions, prepare rename and rename, with default budgets.
 ## 3. Verify
-- [ ] 3.1 30-minute soak with the new budgets enforced.
+- [x] 3.1 30-minute soak with the new budgets enforced: PASS (compiler 4759d926); p95 references 103 ms, signatureHelp 102, inlayHint 102, codeAction 502, prepareRename 502, rename 501; max 957 ms (prepareRename).
