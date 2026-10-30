@@ -1,11 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: Bound selection for generic receiver methods
-In a generic function, a call `value.M(...)` on a value of type parameter `T`
-SHALL resolve `M` through the one `where T: Contract` bound whose contract
-declares `M`, when `T` has one or more bounds. A method that no bound
-declares, or that more than one bound declares, SHALL be rejected. Without a
-bound, `T` SHALL expose no contract methods.
+In a generic function, a call `value.M(...)` on a value of type parameter `T` SHALL resolve `M` through the one `where T: Contract` bound whose contract declares `M`, when `T` has one or more bounds. A method that no bound declares, or that more than one bound declares, SHALL be rejected. Without a bound, `T` SHALL expose no contract methods.
 
 **Stable ID:** `BSP-REQ-CONTRACT-BOUND-METHOD-SELECTION`
 
@@ -27,10 +23,7 @@ bound, `T` SHALL expose no contract methods.
 - **THEN** the compiler reports an error for `Size`
 
 ### Requirement: Static dispatch per bounded specialization
-Each specialization of a generic function that calls a bound contract method
-on a `T` value SHALL call the concrete type's implementation of that method
-directly, with `T` inferred from the argument or given explicitly. No runtime
-virtual dispatch SHALL be used.
+Each specialization of a generic function that calls a bound contract method on a `T` value SHALL call the concrete type's implementation of that method directly, with `T` inferred from the argument or given explicitly. No runtime virtual dispatch SHALL be used.
 
 **Stable ID:** `BSP-REQ-CONTRACT-BOUND-STATIC-DISPATCH`
 

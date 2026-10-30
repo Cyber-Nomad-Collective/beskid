@@ -1,10 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: Empty string concatenation
-`+` with a `string` operand SHALL yield a new string holding the left text
-followed by the right text. When both texts are empty, the result SHALL be the
-empty string: a valid `string` of length 0 that behaves like any other string.
-This SHALL hold for interpolation, where `"${s}"` is `"" + s`.
+`+` with a `string` operand SHALL yield a new string holding the left text followed by the right text. When both texts are empty, the result SHALL be the empty string: a valid `string` of length 0 that behaves like any other string. This SHALL hold for interpolation, where `"${s}"` is `"" + s`.
 
 **Stable ID:** `BSP-REQ-STRING-CONCAT-EMPTY`
 
@@ -19,11 +16,7 @@ This SHALL hold for interpolation, where `"${s}"` is `"" + s`.
 - **THEN** the result is the empty string
 
 ### Requirement: Ordinal string ordering
-`<`, `<=`, `>`, and `>=` with two `string` operands SHALL type-check as
-`bool` and SHALL compare the UTF-8 bytes of the operands, which equals Unicode
-code point order. A proper prefix SHALL order before the longer string. The
-order SHALL be ordinal, not locale collation. Ordering a `string` against a
-non-`string` SHALL be a type error.
+`<`, `<=`, `>`, and `>=` with two `string` operands SHALL type-check as `bool` and SHALL compare the UTF-8 bytes of the operands, which equals Unicode code point order. A proper prefix SHALL order before the longer string. The order SHALL be ordinal, not locale collation. Ordering a `string` against a non-`string` SHALL be a type error.
 
 **Stable ID:** `BSP-REQ-STRING-ORDINAL-ORDERING`
 
@@ -38,10 +31,7 @@ non-`string` SHALL be a type error.
 - **THEN** the result is `true`, because U+005A orders before U+0061
 
 ### Requirement: Saturating f64 to integer conversion
-The conversions `i64(x)`, `i32(x)`, `u32(x)`, and `u8(x)` (also spelled
-`byte(x)`) of an `f64` `x` SHALL truncate toward zero. A value below or above
-the target range SHALL give the target's minimum or maximum. NaN SHALL give
-`0`. The conversion SHALL NOT trap.
+The conversions `i64(x)`, `i32(x)`, `u32(x)`, and `u8(x)` (also spelled `byte(x)`) of an `f64` `x` SHALL truncate toward zero. A value below or above the target range SHALL give the target's minimum or maximum. NaN SHALL give `0`. The conversion SHALL NOT trap.
 
 **Stable ID:** `BSP-REQ-F64-TO-INTEGER-SATURATES`
 
@@ -61,11 +51,7 @@ the target range SHALL give the target's minimum or maximum. NaN SHALL give
 - **THEN** the result is `0` and the program does not trap
 
 ### Requirement: Bulk parameters
-When the last parameter of a function or method is `bulk T[] name`, a call
-SHALL supply every earlier parameter and then zero or more trailing
-arguments. Each trailing argument SHALL be type-checked against `T`. The
-callee SHALL receive the trailing arguments, in order, as one `T[]`. Fewer
-arguments than the earlier parameters SHALL be an arity error.
+When the last parameter of a function or method is `bulk T[] name`, a call SHALL supply every earlier parameter and then zero or more trailing arguments. Each trailing argument SHALL be type-checked against `T`. The callee SHALL receive the trailing arguments, in order, as one `T[]`. Fewer arguments than the earlier parameters SHALL be an arity error.
 
 **Stable ID:** `BSP-REQ-BULK-PARAMETERS`
 
@@ -87,11 +73,7 @@ arguments than the earlier parameters SHALL be an arity error.
 - **THEN** the compiler reports an arity mismatch expecting 1 argument
 
 ### Requirement: Field access on call results and nested receivers
-A field access SHALL be valid on any expression whose static type is a
-nominal type that exposes the field, including a call result (`Make().x`,
-`value.Method().x`) and a chained projection through the implicit receiver
-(`this.inner.count`), also inside methods of a generic type for each of its
-specializations.
+A field access SHALL be valid on any expression whose static type is a nominal type that exposes the field, including a call result (`Make().x`, `value.Method().x`) and a chained projection through the implicit receiver (`this.inner.count`), also inside methods of a generic type for each of its specializations.
 
 **Stable ID:** `BSP-REQ-FIELD-ACCESS-ON-EXPRESSIONS`
 

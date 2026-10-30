@@ -4,4 +4,4 @@ LSP 3.16 lets a server answer `textDocument/semanticTokens/full` from facts that
 
 Tokens come from declaration symbols and attribute names (`.bd`) or from BSOL candidates (`.bproj`, `.bws`, `.bsol`). These spans move over an edit like the hover, definition and symbol facts. A span inside the edited range is dropped.
 
-Hover, definition and completion already answer from the facts carried over the edit. References, rename, signature help, inlay hints and code actions still wait for the facts of the newest text; they are not part of this change.
+Hover, definition and completion already answer from the facts carried over the edit. References, rename, signature help, inlay hints and code actions get their budgets in change `v067-request-wait-budget`. That change also limits the wait of the refresh task to 30 s.

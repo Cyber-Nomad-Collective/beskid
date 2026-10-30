@@ -1,11 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: Generic inference from bulk arguments
-For a generic callee whose last parameter is `bulk T[]`, the element type `T`
-SHALL be inferred from the trailing arguments as if they were one `T[]`
-argument, or SHALL be taken from explicit type arguments. A call with no
-trailing arguments SHALL leave `T` uninferred, so it SHALL supply explicit
-type arguments or be rejected for missing type arguments.
+For a generic callee whose last parameter is `bulk T[]`, the element type `T` SHALL be inferred from the trailing arguments as if they were one `T[]` argument, or SHALL be taken from explicit type arguments. A call with no trailing arguments SHALL leave `T` uninferred, so it SHALL supply explicit type arguments or be rejected for missing type arguments.
 
 **Stable ID:** `BSP-REQ-BULK-GENERIC-INFERENCE`
 
@@ -21,10 +17,7 @@ type arguments or be rejected for missing type arguments.
 - **THEN** the compiler rejects the call for missing type arguments
 
 ### Requirement: Locals annotated with a type parameter
-Inside a generic function, a local declared with a type parameter as its type
-(`T held = value;`) SHALL take the concrete type that the current
-specialization substitutes for that parameter, for scalar and reference
-types alike.
+Inside a generic function, a local declared with a type parameter as its type (`T held = value;`) SHALL take the concrete type that the current specialization substitutes for that parameter, for scalar and reference types alike.
 
 **Stable ID:** `BSP-REQ-GENERIC-ANNOTATED-LOCAL`
 
@@ -34,10 +27,7 @@ types alike.
 - **THEN** each specialization compiles, and the calls return `"s"` and `7`
 
 ### Requirement: Contextual enum constructors in method arguments
-An enum constructor written without type arguments SHALL take its type from
-the declared parameter type when it is an argument to a method called on a
-local whose type is written explicitly, as it already does for arguments to
-module functions.
+An enum constructor written without type arguments SHALL take its type from the declared parameter type when it is an argument to a method called on a local whose type is written explicitly, as it already does for arguments to module functions.
 
 **Stable ID:** `BSP-REQ-ENUM-CONSTRUCTOR-METHOD-ARGUMENT-CONTEXT`
 

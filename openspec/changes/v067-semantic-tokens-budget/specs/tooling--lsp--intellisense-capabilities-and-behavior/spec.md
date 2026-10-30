@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: Semantic tokens answer within a budget
-A `textDocument/semanticTokens/full` request SHALL wait at most 100 ms for the analyzed facts of the newest text of the document. When the facts are not stored within that time, the server SHALL answer from the last analyzed facts of the document, with each token span moved over the edit; a span inside the edited range SHALL be dropped. A document without analyzed facts SHALL get a null result. After such an answer, the server SHALL send one `workspace/semanticTokens/refresh` request when the facts of the newest text are stored, only to a client that sets `workspace.semanticTokens.refreshSupport`, and at most one refresh SHALL wait for each document.
+A `textDocument/semanticTokens/full` request SHALL wait at most 100 ms for the analyzed facts of the newest text of the document. When the facts are not stored within that time, the server SHALL answer from the last analyzed facts of the document, with each token span moved over the edit; a span inside the edited range SHALL be dropped. A document without analyzed facts SHALL get a null result. After such an answer, the server SHALL send one `workspace/semanticTokens/refresh` request when the facts of the newest text are stored, or after at most 30 s, only to a client that sets `workspace.semanticTokens.refreshSupport`, and at most one refresh SHALL wait for each document.
 
 #### Scenario: Tokens during a burst of edits
 - **GIVEN** an open `.bd` document whose analysis takes seconds

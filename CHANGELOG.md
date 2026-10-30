@@ -18,6 +18,14 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   different inline modules are distinct. `Network.Dns.Resolve` maps every resolver
   answer that gives a name no usable address (`EAI_NONAME`, `EAI_NODATA`,
   `EAI_ADDRFAMILY`, Windows `WSANO_DATA`) to `HostNotFound`.
+- OpenSpec change `v067-request-wait-budget`: references, signature help and inlay hints
+  wait at most 100 ms for the facts of the newest text, then answer from the carried
+  facts (inlay hints with one `workspace/inlayHint/refresh`); rename, prepare rename and
+  code actions wait at most 500 ms and never use facts of an older text: they fail with
+  `ContentModified` (`-32801`). No document request waits without a limit; a refresh task
+  waits at most 30 s. `v067-semantic-tokens-budget` states the same 30 s refresh limit.
+- OpenSpec change `specify-v0-5-4-language-fixes`: requirement paragraphs are on one line,
+  so `openspec validate --all --strict` (1.4.1) finds their SHALL; the text is unchanged.
 - OpenSpec change `v067-semantic-tokens-budget`: a semantic-tokens request waits at
   most 100 ms for the facts of the newest text, then answers from the last analyzed
   facts moved over the edit; the server sends one `workspace/semanticTokens/refresh`
