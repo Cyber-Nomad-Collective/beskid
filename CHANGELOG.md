@@ -11,6 +11,11 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- The compiler Rust gate runs the workspace tests in parallel (libtest's
+  default thread count) instead of `--test-threads=1`: no compiler test changes
+  the process environment or working directory any more. Two full parallel
+  gate runs passed with 4441 tests and no failure; `just test-corelib-spine`
+  drops the flag too.
 - The Corelib gate builds and tests the network packages. Its quality check
   covers the `network`, `uri`, `codec`, `connect`, `crypto`, `x509`,
   `tls`, `http`, `http2`, `quic`, `http3`, `websocket` and `web` members,
