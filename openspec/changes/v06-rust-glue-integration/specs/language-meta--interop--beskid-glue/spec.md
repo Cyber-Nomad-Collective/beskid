@@ -20,11 +20,12 @@ Each image SHALL contain an admission record. The host SHALL admit the consumer 
 
 A stdio bridge or another process transport SHALL NOT be necessary for delivered Rust Glue, and evidence from such a transport SHALL NOT qualify it. Glue generation SHALL NOT invoke Mod contracts. The compiler SHALL NOT have a `mod.glue` pipeline phase. Corelib SHALL NOT declare Glue Mod contracts or `[Glue]`, `[GlueImport]` or `[GlueExport]` attributes.
 
-The acceptance evidence for this requirement SHALL be every `#[test]` function in these files of `compiler/crates/beskid_tests_interop`, and no others:
-- `src/interop/glue_owned.rs`: the owned path, driver admission, CLI build, published-image admission, manual and generated equivalence, borrow and foreign-thread release, owner abort, packet identity, closed boundary metadata, tool selection, hermetic Cargo and rebuild tests (27 functions in the current tree);
-- `src/interop/export.rs`: the C ABI export metadata, export table and non-public export rejection tests (3 functions in the current tree).
+The acceptance evidence for this requirement SHALL be every `#[test]` function in these files, and no others:
+- `compiler/crates/beskid_tests_release/tests/glue_owned.rs`: the owned path, driver admission, CLI build, published-image admission, manual and generated equivalence, borrow and foreign-thread release, owner abort, packet identity, closed boundary metadata, tool selection, hermetic Cargo, rebuild and shared native test object tests (28 functions in the current tree);
+- `compiler/crates/beskid_tests_release/tests/glue_owned/extensions.rs`: the manual C ABI, owned and CLI round trips of records, enums and callbacks (3 functions in the current tree);
+- `compiler/crates/beskid_tests_interop/src/interop/export.rs`: the C ABI export metadata, export table and non-public export rejection tests (3 functions in the current tree).
 
-The fixture is `compiler/crates/beskid_tests_release/fixtures/glue/manual/owned/`. An acceptance record SHALL state the test count for each named file and SHALL give the suite total as the sum of these counts (30 in the current tree). A total without the file names SHALL NOT satisfy acceptance. Every named test SHALL pass; a skipped, ignored or compile-only test SHALL count as a failure.
+The fixture is `compiler/crates/beskid_tests_release/fixtures/glue/manual/owned/`. An acceptance record SHALL state the test count for each named file and SHALL give the suite total as the sum of these counts (34 in the current tree). A total without the file names SHALL NOT satisfy acceptance. Every named test SHALL pass; a skipped, ignored or compile-only test SHALL count as a failure.
 
 #### Scenario: Owned fixture round trips in process
 - **GIVEN** the manual owned fixture built by `beskid build --backend glue-rust` with explicit Rust tools and linker
@@ -42,7 +43,7 @@ The fixture is `compiler/crates/beskid_tests_release/fixtures/glue/manual/owned/
 - **THEN** acceptance is rejected
 
 #### Scenario: Acceptance names every evidence file
-- **GIVEN** an acceptance record that states a total Glue test count without the per-file counts for `glue_owned.rs` and `export.rs`
+- **GIVEN** an acceptance record that states a total Glue test count without the per-file counts for `glue_owned.rs`, `glue_owned/extensions.rs` and `export.rs`
 - **WHEN** the release evidence is validated
 - **THEN** the record is rejected
 

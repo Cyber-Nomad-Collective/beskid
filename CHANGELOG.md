@@ -11,6 +11,13 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- OpenSpec change `v067-semantic-tokens-budget`: a semantic-tokens request waits at
+  most 100 ms for the facts of the newest text, then answers from the last analyzed
+  facts moved over the edit; the server sends one `workspace/semanticTokens/refresh`
+  when the newest facts are stored, only to a client that supports it.
+- OpenSpec change `v06-rust-glue-integration`: the Rust Glue acceptance evidence names
+  `beskid_tests_release/tests/glue_owned.rs` (28 tests), `glue_owned/extensions.rs` (3)
+  and `beskid_tests_interop/src/interop/export.rs` (3), total 34.
 - The CLI build-analyze-run edge cases and the language-server snapshot FAQ no longer name
   `BESKID_WORKSPACE_MEMBER_FOR_META_DEFAULT`; the compiler ignored the option and 0.6.7 removes it.
   `--project` selects a workspace member, and no environment variable selects a default member.
