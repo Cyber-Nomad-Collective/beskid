@@ -8,12 +8,12 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/bsol/BsolSuite.bd",
       "required_test_ids": [
-        "BsolOrderedBlocksAssignmentsAndByteSpans",
-        "BsolAttributesReferencesEmptyMapInlineBlocksAndNumbers",
-        "BsolAggregateNodesIncludeCommentEntries",
-        "BsolWriterOutputMayExceedOriginalInputCap",
-        "BsolSharedCorpusValuesAndRuntimeManifest",
-        "BsolParseWriteParseRoundTrips"
+        "SyntaxTests::OrderedBlocksAssignmentsAndByteSpans",
+        "SyntaxTests::AttributesReferencesEmptyMapInlineBlocksAndNumbers",
+        "SyntaxTests::AggregateNodesIncludeCommentEntries",
+        "SyntaxTests::WriterOutputMayExceedOriginalInputCap",
+        "CorpusTests::SharedCorpusValuesAndRuntimeManifest",
+        "SyntaxTests::ParseWriteParseRoundTrips"
       ],
       "input": {
         "id": "bsol-corpus",
@@ -32,15 +32,15 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/bsol/SchemaTests.bd",
       "required_test_ids": [
-        "BsolNativeProfileV1AndV2DeclaredRuleLoad",
-        "BsolNativeSchemaValidPrimitivesReturnCheckedDocument",
-        "BsolNativeSchemaMissingRequiredField",
-        "BsolNativeSchemaDuplicateFieldKeepsBothSpans",
-        "BsolNativeSchemaUnknownFieldRejectsWithoutExtras",
-        "BsolNativeSchemaWrongPrimitiveKindAndIntegerRange",
-        "BsolNativeSchemaInvalidProfileFailsAtProfileBoundary",
-        "BsolAllFourteenCanonicalProfilesParseAndCompose",
-        "BsolAllFourteenBuiltinProfilesValidateRealDocuments"
+        "NativeSchemaTests::ProfileV1AndV2DeclaredRuleLoad",
+        "NativeSchemaTests::ValidPrimitivesReturnCheckedDocument",
+        "NativeSchemaTests::MissingRequiredField",
+        "NativeSchemaTests::DuplicateFieldKeepsBothSpans",
+        "NativeSchemaTests::UnknownFieldRejectsWithoutExtras",
+        "NativeSchemaTests::WrongPrimitiveKindAndIntegerRange",
+        "NativeSchemaTests::InvalidProfileFailsAtProfileBoundary",
+        "BuiltinProfilesTests::AllFourteenCanonicalProfilesParseAndCompose",
+        "BuiltinProfilesTests::AllFourteenBuiltinProfilesValidateRealDocuments"
       ],
       "input": {
         "id": "bsol-corpus",
@@ -59,40 +59,40 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/bsol/SchemaRulesSuite.bd",
       "required_test_ids": [
-        "BsolSchemaCompoundTypesHaveCheckedStructuralArena",
-        "BsolSchemaValidUnionMapInlineReferenceAndLocalAttributes",
-        "BsolSchemaUnionListAndMapValuesCheckEachElement",
-        "BsolSchemaInlineFieldsAndReferenceQualifierAreChecked",
-        "BsolSchemaBlockAndFieldAttributeAllowlistsAreLocal",
-        "BsolSchemaUnknownUnionAlternativeRejectsProfile",
-        "BsolSchemaAbsentAttributeAllowlistsRejectUnlistedAttributes",
-        "BsolSchemaMissingOnlyDefaultsRemainTyped",
-        "BsolSchemaSuppliedValuesOverrideDefaultsAtNumericBoundary",
-        "BsolSchemaNumericLimitsRejectOutsideBoundaries",
-        "BsolSchemaActualInlineMapConditionalConstraints",
-        "BsolSchemaVariantsRequirePayloadAndKnownDiscriminant",
-        "BsolSchemaInvalidTypedDefaultRejectsProfile",
-        "BsolPatternSharedAcceptedGrammar",
-        "BsolPatternSharedNonemptyStartzeroRejections",
-        "BsolPatternSharedInvalidUnsupportedGrammar",
-        "BsolPatternSharedSubjectExactLimit",
-        "BsolPatternSharedSubjectOverLimit",
-        "BsolPatternSharedNestedDefaultWorkLimit",
-        "BsolPatternSharedUnicodeScalarGrammar",
-        "BsolPatternCallerWorkAndDepthLimits",
-        "BsolPatternUnicodeSubjectLimitCountsBytes",
-        "BsolPatternUnicodeFailureHasExactUtf8AssignmentSpan",
-        "BsolPatternCallerBudgetIsSharedThroughInlineAndDefaults",
-        "BsolPatternInvalidCallerLimitsRejectChecked",
-        "BsolPatternClassWorkCountsInspectedRangesAndInitialAccept",
-        "BsolSchemaIdenticalDiamondComposesOnce",
-        "BsolSchemaCompositionCycleAndUnknownBaseReject",
-        "BsolSchemaIncompatibleOverlayRetainsBothDefinitions",
-        "BsolSchemaOverlayRefinesButCannotLoosenConstraints",
-        "BsolNativeCompositionValuesCanNarrowButNeverWiden",
-        "BsolNativeCompositionIncompatibleNestedSameNameRejects",
-        "BsolNativeCompositionIdenticalNestedDefinitionsCoalesce",
-        "BsolNativeCompositionAggregateSearchWorkIsBounded"
+        "StructureTests::CompoundTypesHaveCheckedStructuralArena",
+        "StructureTests::ValidUnionMapInlineReferenceAndLocalAttributes",
+        "StructureTests::UnionListAndMapValuesCheckEachElement",
+        "StructureTests::InlineFieldsAndReferenceQualifierAreChecked",
+        "StructureTests::BlockAndFieldAttributeAllowlistsAreLocal",
+        "StructureTests::UnknownUnionAlternativeRejectsProfile",
+        "StructureTests::AbsentAttributeAllowlistsRejectUnlistedAttributes",
+        "ConstraintsTests::MissingOnlyDefaultsRemainTyped",
+        "ConstraintsTests::SuppliedValuesOverrideDefaultsAtNumericBoundary",
+        "ConstraintsTests::NumericLimitsRejectOutsideBoundaries",
+        "ConstraintsTests::ActualInlineMapConditionalConstraints",
+        "ConstraintsTests::VariantsRequirePayloadAndKnownDiscriminant",
+        "ConstraintsTests::InvalidTypedDefaultRejectsProfile",
+        "PatternsTests::SharedAcceptedGrammar",
+        "PatternsTests::SharedNonemptyStartzeroRejections",
+        "PatternsTests::SharedInvalidUnsupportedGrammar",
+        "PatternsTests::SharedSubjectExactLimit",
+        "PatternsTests::SharedSubjectOverLimit",
+        "PatternsTests::SharedNestedDefaultWorkLimit",
+        "PatternsTests::SharedUnicodeScalarGrammar",
+        "PatternsTests::CallerWorkAndDepthLimits",
+        "PatternsTests::UnicodeSubjectLimitCountsBytes",
+        "PatternsTests::UnicodeFailureHasExactUtf8AssignmentSpan",
+        "PatternsTests::CallerBudgetIsSharedThroughInlineAndDefaults",
+        "PatternsTests::InvalidCallerLimitsRejectChecked",
+        "PatternsTests::ClassWorkCountsInspectedRangesAndInitialAccept",
+        "CompositionTests::IdenticalDiamondComposesOnce",
+        "CompositionTests::CompositionCycleAndUnknownBaseReject",
+        "CompositionTests::IncompatibleOverlayRetainsBothDefinitions",
+        "CompositionTests::OverlayRefinesButCannotLoosenConstraints",
+        "CompositionTests::ValuesCanNarrowButNeverWiden",
+        "CompositionTests::IncompatibleNestedSameNameRejects",
+        "CompositionTests::IdenticalNestedDefinitionsCoalesce",
+        "CompositionTests::AggregateSearchWorkIsBounded"
       ],
       "input": {
         "id": "bsol-corpus",
@@ -111,24 +111,24 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/bsol/BsolSuite.bd",
       "required_test_ids": [
-        "BsolImportPathCannotEscapeControlledRootLexically",
-        "BsolImportGitRevisionMustBeImmutable",
-        "BsolImportRequestsRejectBeforeHostResolution",
-        "BsolPackageShorthandPreservesExactLockedRequest",
-        "BsolImportDeclarationRetainsAliasProfileAndSourceSpan",
-        "BsolImportDeclarationRejectsDuplicateAndInapplicableProperties",
-        "BsolImportContentDigestIsCheckedBeforeAdmission",
-        "BsolTypedWriteReownsProfileBeforeInvokingBinding",
-        "BsolImportedAliasComposesDefaultsAndRevalidatesOwnedClosure",
-        "BsolImportedPrivateKeysDoNotShadowQuotedLocalRuleNames",
-        "BsolImportedReferenceAliasesShareOneOwnedTarget",
-        "BsolImportedQualifierParserRejectsEmptySegments",
-        "BsolImportGraphDiamondDeduplicatesOwnedSourceAndKeepsNamespaces",
-        "BsolImportGraphCyclesAndMissingCacheNeverPublishPartialGraph",
-        "BsolImportGraphLimitsCoverTheWholeClosure",
-        "BsolImportGraphPreservesSupportedSchemaVersionInOwnedCache",
-        "BsolSchemaImportMissingMaterializedCacheIsSourceSpanned",
-        "BsolSchemaImportSourceDigestMismatchRejects"
+        "ImportsTests::PathCannotEscapeControlledRootLexically",
+        "ImportsTests::GitRevisionMustBeImmutable",
+        "ImportsTests::RequestsRejectBeforeHostResolution",
+        "ImportsTests::PackageShorthandPreservesExactLockedRequest",
+        "ImportsTests::DeclarationRetainsAliasProfileAndSourceSpan",
+        "ImportsTests::DeclarationRejectsDuplicateAndInapplicableProperties",
+        "ImportsTests::ContentDigestIsCheckedBeforeAdmission",
+        "ImportGraphTests::TypedWriteReownsProfileBeforeInvokingBinding",
+        "ImportGraphTests::ImportedAliasComposesDefaultsAndRevalidatesOwnedClosure",
+        "ImportGraphTests::ImportedPrivateKeysDoNotShadowQuotedLocalRuleNames",
+        "ImportGraphTests::ImportedReferenceAliasesShareOneOwnedTarget",
+        "ImportGraphTests::ImportedQualifierParserRejectsEmptySegments",
+        "ImportGraphTests::DiamondDeduplicatesOwnedSourceAndKeepsNamespaces",
+        "ImportGraphTests::CyclesAndMissingCacheNeverPublishPartialGraph",
+        "ImportGraphTests::LimitsCoverTheWholeClosure",
+        "ImportGraphTests::PreservesSupportedSchemaVersionInOwnedCache",
+        "SchemaImportTests::MissingMaterializedCacheIsSourceSpanned",
+        "SchemaImportTests::SourceDigestMismatchRejects"
       ],
       "input": {
         "id": "bsol-corpus",
@@ -147,12 +147,12 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/bsol/SchemaRulesSuite.bd",
       "required_test_ids": [
-        "BsolSchemaReferenceResolvesToDocumentOwnedIndex",
-        "BsolSchemaSyntaxReferenceCyclesDoNotExpandOwnedValues",
-        "BsolSchemaReferenceMissingDuplicateAndAmbiguityReject",
-        "BsolSchemaReferencesTraverseListsMapsAndInlineBlocks",
-        "BsolSchemaDefaultReferenceRetainsCheckedFieldOwner",
-        "BsolSchemaReferenceKindAndRuleAliasShareCanonicalTarget"
+        "CompositionTests::ReferenceResolvesToDocumentOwnedIndex",
+        "CompositionTests::SyntaxReferenceCyclesDoNotExpandOwnedValues",
+        "CompositionTests::ReferenceMissingDuplicateAndAmbiguityReject",
+        "CompositionTests::ReferencesTraverseListsMapsAndInlineBlocks",
+        "CompositionTests::DefaultReferenceRetainsCheckedFieldOwner",
+        "CompositionTests::ReferenceKindAndRuleAliasShareCanonicalTarget"
       ],
       "input": {
         "id": "bsol-corpus",
@@ -171,14 +171,14 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/bsol/MigrationTests.bd",
       "required_test_ids": [
-        "BsolMigrationStageIsFreshAndRequiresDeclaredDefinition",
-        "BsolMigrationSelectedTypedNodesPreserveOtherStringsAndOriginal",
-        "BsolMigrationAmbiguousRoutesReportBothDefinitions",
-        "BsolMigrationSelfCycleRejects",
-        "BsolMigrationNoRouteAndAlreadyTargetAreDistinct",
-        "BsolMigrationDestinationCollisionPreservesOriginal",
-        "BsolMigrationChainReachesTargetWithoutMutatingInput",
-        "BsolMigrationChainCyclesAreCheckedBeforeApplication"
+        "MigrationTests::StageIsFreshAndRequiresDeclaredDefinition",
+        "MigrationTests::SelectedTypedNodesPreserveOtherStringsAndOriginal",
+        "MigrationTests::AmbiguousRoutesReportBothDefinitions",
+        "MigrationTests::SelfCycleRejects",
+        "MigrationTests::NoRouteAndAlreadyTargetAreDistinct",
+        "MigrationTests::DestinationCollisionPreservesOriginal",
+        "MigrationTests::ChainReachesTargetWithoutMutatingInput",
+        "MigrationTests::ChainCyclesAreCheckedBeforeApplication"
       ],
       "input": {
         "id": "bsol-corpus",
@@ -197,24 +197,24 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/bsol/SerializationWireTests.bd",
       "required_test_ids": [
-        "BsolSerializationWireExactUnsignedWidth",
-        "BsolSerializationWireFloatPreservesNegativeZero",
-        "BsolSerializationWireStrictCanonicalBase64",
-        "BsolSerializationWireOptionalCardinalityAndTag",
-        "BsolSerializationWireRejectsUnknownDuplicateAndMalformedFields",
-        "BsolSerializationWireCharScalarAndDepthPolicy",
-        "BsolSerializationWireArrayListShapesAreDistinct",
-        "BsolSerializationWireRecordDeclaredOrderAndRequiredFields",
-        "BsolSerializationWireMapOrdinalKeysAndDuplicateRejection",
-        "BsolSerializationWireVariantExactDiscriminantAndPayload",
-        "BsolSerializationStreamEncoderValidatesShapeAndTransaction",
-        "BsolSerializationStreamEncoderChecksNestedArity",
-        "BsolSerializationSharedGenericEncoderDecoderConstructsFreshT",
-        "BsolSerializationSharedTaggedCorpusUsesSameNativePolicy",
-        "BsolSerializationActivePathRejectsCycleNotSharedSiblings",
-        "BsolExplicitTypedBindingReadsExactIntegerAfterValidation",
-        "BsolExplicitTypedBindingWriteRoundtripIsProfileChecked",
-        "BsolTypedBindingMissingDuplicateAndWrongKindReject"
+        "WireTests::ExactUnsignedWidth",
+        "WireTests::FloatPreservesNegativeZero",
+        "WireTests::StrictCanonicalBase64",
+        "WireTests::OptionalCardinalityAndTag",
+        "WireTests::RejectsUnknownDuplicateAndMalformedFields",
+        "WireTests::CharScalarAndDepthPolicy",
+        "WireTests::ArrayListShapesAreDistinct",
+        "WireTests::RecordDeclaredOrderAndRequiredFields",
+        "WireTests::MapOrdinalKeysAndDuplicateRejection",
+        "WireTests::VariantExactDiscriminantAndPayload",
+        "WireTests::StreamEncoderValidatesShapeAndTransaction",
+        "WireTests::StreamEncoderChecksNestedArity",
+        "WireTests::SharedGenericEncoderDecoderConstructsFreshT",
+        "WireTests::SharedTaggedCorpusUsesSameNativePolicy",
+        "WireTests::ActivePathRejectsCycleNotSharedSiblings",
+        "TypedBindingTests::ReadsExactIntegerAfterValidation",
+        "TypedBindingTests::WriteRoundtripIsProfileChecked",
+        "TypedBindingTests::MissingDuplicateAndWrongKindReject"
       ],
       "input": {
         "id": "bsol-corpus",
@@ -233,14 +233,14 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/bsol/BsolSuite.bd",
       "required_test_ids": [
-        "BsolStrictEscapedUnicodeAndInvalidSurrogates",
-        "BsolLimitsFailBeforeUnboundedWork",
-        "BsolNormativeLimitsDefaultsAreExplicit",
-        "BsolScalarLimitUsesDecodedUtf8Bytes",
-        "BsolOutputLimitIsIndependentOfInputLimit",
-        "BsolLexicalMatrixRejectsInvalidTokens",
-        "BsolEachConfiguredLimitBoundaryAdmitsAndPlusOneRejectsAtomically",
-        "BsolFloatOutputIsShortestRoundtripAndKeepsNegativeZeroAtBothWidths"
+        "SyntaxTests::StrictEscapedUnicodeAndInvalidSurrogates",
+        "SyntaxTests::LimitsFailBeforeUnboundedWork",
+        "SyntaxTests::NormativeLimitsDefaultsAreExplicit",
+        "SyntaxTests::ScalarLimitUsesDecodedUtf8Bytes",
+        "SyntaxTests::OutputLimitIsIndependentOfInputLimit",
+        "SyntaxTests::LexicalMatrixRejectsInvalidTokens",
+        "SyntaxTests::EachConfiguredLimitBoundaryAdmitsAndPlusOneRejectsAtomically",
+        "SyntaxTests::FloatOutputIsShortestRoundtripAndKeepsNegativeZeroAtBothWidths"
       ],
       "input": {
         "id": "bsol-corpus",
@@ -259,8 +259,8 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/dynamic/DynamicSuite.bd",
       "required_test_ids": [
-        "DynamicZeroShapeAndMappingTokensRejectWithoutPublishing",
-        "DynamicUnregisteredTokensFailClosedForCreateCastAndMap"
+        "DynamicTests::ZeroShapeAndMappingTokensRejectWithoutPublishing",
+        "DynamicTests::UnregisteredTokensFailClosedForCreateCastAndMap"
       ],
       "input": null,
       "fixture": null
@@ -271,7 +271,7 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/dynamic/DynamicSuite.bd",
       "required_test_ids": [
-        "DynamicCastToWrongRegisteredShapeRejectsAndExactShapeSucceeds"
+        "DynamicTests::CastToWrongRegisteredShapeRejectsAndExactShapeSucceeds"
       ],
       "input": null,
       "fixture": null
@@ -284,9 +284,9 @@
       "input": null,
       "fixture": null,
       "required_test_ids": [
-        "DynamicMappingFreshNestedDestinationIsIsolatedFromSource",
-        "DynamicMappingIdentityPlanCopiesInsteadOfAliasing",
-        "DynamicMappingRuntimeKnownSourceShapeSelectsTheRegisteredMapping"
+        "MappingTests::FreshNestedDestinationIsIsolatedFromSource",
+        "MappingTests::IdentityPlanCopiesInsteadOfAliasing",
+        "MappingTests::RuntimeKnownSourceShapeSelectsTheRegisteredMapping"
       ]
     },
     "DYN-06-04": {
@@ -297,8 +297,8 @@
       "input": null,
       "fixture": null,
       "required_test_ids": [
-        "DynamicMappingNumericNarrowingIsRejectedWithoutDestination",
-        "DynamicMappingLateNestedFailureRejectsTheWholePlan"
+        "MappingTests::NumericNarrowingIsRejectedWithoutDestination",
+        "MappingTests::LateNestedFailureRejectsTheWholePlan"
       ]
     },
     "DYN-06-05": {
@@ -307,8 +307,8 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/dynamic/DynamicSuite.bd",
       "required_test_ids": [
-        "DynamicCellOnlyRootKeepsNestedPayloadAcrossForcedCollection",
-        "DynamicGenericInstantiationsKeepDistinctIdentities"
+        "DynamicTests::CellOnlyRootKeepsNestedPayloadAcrossForcedCollection",
+        "DynamicTests::GenericInstantiationsKeepDistinctIdentities"
       ],
       "input": null,
       "fixture": null
@@ -319,7 +319,7 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/process/ProcessSuite.bd",
       "required_test_ids": [
-        "ProcessSpawnPassesUnicodeSpaceQuoteAndShellMetacharacterArgvExactly"
+        "LifecycleTests::SpawnPassesUnicodeSpaceQuoteAndShellMetacharacterArgvExactly"
       ],
       "input": null,
       "fixture": "beskid_release_fixture",
@@ -327,7 +327,7 @@
         {
           "kind": "process",
           "obligation": "argv_unicode_no_shell",
-          "test_id": "ProcessSpawnPassesUnicodeSpaceQuoteAndShellMetacharacterArgvExactly"
+          "test_id": "LifecycleTests::SpawnPassesUnicodeSpaceQuoteAndShellMetacharacterArgvExactly"
         }
       ]
     },
@@ -337,7 +337,7 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/process/ProcessSuite.bd",
       "required_test_ids": [
-        "ProcessBinaryStdinStdoutRoundtripWithPartialTransfersPreservesOrder"
+        "LifecycleTests::BinaryStdinStdoutRoundtripWithPartialTransfersPreservesOrder"
       ],
       "input": null,
       "fixture": "beskid_release_fixture",
@@ -345,7 +345,7 @@
         {
           "kind": "process",
           "obligation": "binary_partial_pipes",
-          "test_id": "ProcessBinaryStdinStdoutRoundtripWithPartialTransfersPreservesOrder"
+          "test_id": "LifecycleTests::BinaryStdinStdoutRoundtripWithPartialTransfersPreservesOrder"
         }
       ]
     },
@@ -355,7 +355,7 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/process/ProcessSuite.bd",
       "required_test_ids": [
-        "ProcessStderrFloodIsDrainedConcurrentlyWithoutDeadlock"
+        "LifecycleTests::StderrFloodIsDrainedConcurrentlyWithoutDeadlock"
       ],
       "input": null,
       "fixture": "beskid_release_fixture",
@@ -363,7 +363,7 @@
         {
           "kind": "process",
           "obligation": "stderr_flood",
-          "test_id": "ProcessStderrFloodIsDrainedConcurrentlyWithoutDeadlock"
+          "test_id": "LifecycleTests::StderrFloodIsDrainedConcurrentlyWithoutDeadlock"
         }
       ]
     },
@@ -373,8 +373,8 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/process/ProcessSuite.bd",
       "required_test_ids": [
-        "ProcessWaitReturnsExitCodeAndRunReportsTypedExitAndMissingExecutable",
-        "ProcessWaitDeadlineExpiryIsTimedOutAndCloseReaps"
+        "LifecycleTests::WaitReturnsExitCodeAndRunReportsTypedExitAndMissingExecutable",
+        "LifecycleTests::WaitDeadlineExpiryIsTimedOutAndCloseReaps"
       ],
       "input": null,
       "fixture": "beskid_release_fixture",
@@ -382,7 +382,7 @@
         {
           "kind": "process",
           "obligation": "exit_wait",
-          "test_id": "ProcessWaitReturnsExitCodeAndRunReportsTypedExitAndMissingExecutable"
+          "test_id": "LifecycleTests::WaitReturnsExitCodeAndRunReportsTypedExitAndMissingExecutable"
         }
       ]
     },
@@ -392,7 +392,7 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/process/ProcessSuite.bd",
       "required_test_ids": [
-        "ProcessTerminateAndCloseReapTheChildTree"
+        "LifecycleTests::TerminateAndCloseReapTheChildTree"
       ],
       "input": null,
       "fixture": "beskid_release_fixture",
@@ -400,7 +400,7 @@
         {
           "kind": "process",
           "obligation": "cancel_terminate_reap",
-          "test_id": "ProcessTerminateAndCloseReapTheChildTree"
+          "test_id": "LifecycleTests::TerminateAndCloseReapTheChildTree"
         }
       ]
     },
@@ -410,8 +410,8 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/process/ProcessSuite.bd",
       "required_test_ids": [
-        "ProcessCloseIsIdempotentThroughAliases",
-        "ProcessFailedSpawnSetupLeavesNoChildAndLaterSpawnsSucceed"
+        "LifecycleTests::CloseIsIdempotentThroughAliases",
+        "LifecycleTests::FailedSpawnSetupLeavesNoChildAndLaterSpawnsSucceed"
       ],
       "input": null,
       "fixture": "beskid_release_fixture",
@@ -419,7 +419,7 @@
         {
           "kind": "process",
           "obligation": "idempotent_close_setup_cleanup",
-          "test_id": "ProcessCloseIsIdempotentThroughAliases"
+          "test_id": "LifecycleTests::CloseIsIdempotentThroughAliases"
         }
       ]
     },
@@ -429,12 +429,12 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/serialization/GeneratedTests.bd",
       "required_test_ids": [
-        "SerializationGeneratedFullShapeRecordRoundtripsThroughBsol",
-        "SerializationGeneratedNestedGenericRecordDecodesAtTopLevel",
-        "SerializationGeneratedScalarsAndContainersDecode",
-        "SerializationGeneratedVariantIdentityAndFieldOrderSurviveTypedDecode",
-        "SerializationGeneratedWordUsesDeclaredWidthAndRangeChecks",
-        "SerializationGeneratedDecoderRejectsTrailingInputWithoutPublishing"
+        "GeneratedTests::FullShapeRecordRoundtripsThroughBsol",
+        "GeneratedTests::NestedGenericRecordDecodesAtTopLevel",
+        "GeneratedTests::ScalarsAndContainersDecode",
+        "GeneratedTests::VariantIdentityAndFieldOrderSurviveTypedDecode",
+        "GeneratedTests::WordUsesDeclaredWidthAndRangeChecks",
+        "GeneratedTests::DecoderRejectsTrailingInputWithoutPublishing"
       ],
       "input": null,
       "fixture": null
@@ -445,10 +445,10 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/serialization/ModEligibilityTests.bd",
       "required_test_ids": [
-        "SerializationEligibilityRejectsIneligibleDeclaredTypesWithFieldSpans",
-        "SerializationClosureRejectsNonStringMapKeys",
-        "SerializationClosureRejectsNestedOpaqueReferencesAndResources",
-        "SerializationClosureRejectsHostGatedResources"
+        "EligibilityTests::RejectsIneligibleDeclaredTypesWithFieldSpans",
+        "ClosureTests::RejectsNonStringMapKeys",
+        "ClosureTests::RejectsNestedOpaqueReferencesAndResources",
+        "ClosureTests::RejectsHostGatedResources"
       ],
       "input": null,
       "fixture": null
@@ -459,10 +459,10 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/serialization/GeneratedTests.bd",
       "required_test_ids": [
-        "SerializationGeneratedRecordUsesOneDescriptorAndDecoderForBsolAndJson",
-        "SerializationGeneratedF32AndF64BitsSurviveBothFormatsWithoutCoercion",
-        "SerializationGeneratedEnumDecodesThroughTheJsonTestFormat",
-        "SerializationGeneratedJsonReaderRejectsADifferentWidth"
+        "GeneratedTests::RecordUsesOneDescriptorAndDecoderForBsolAndJson",
+        "GeneratedTests::F32AndF64BitsSurviveBothFormatsWithoutCoercion",
+        "GeneratedTests::EnumDecodesThroughTheJsonTestFormat",
+        "GeneratedTests::JsonReaderRejectsADifferentWidth"
       ],
       "input": null,
       "fixture": null
@@ -473,12 +473,12 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/bsol/SerializationWireTests.bd",
       "required_test_ids": [
-        "SerializationEachLimitIsInclusive",
-        "SerializationCycleRejectsAndAcyclicAliasCopiesByValue",
-        "SerializationRecordFieldPresenceRules",
-        "SerializationPrecisionAndUnicodeScalars",
-        "SerializationFailurePublicationHasNoMutablePayload",
-        "WireEncoderPreparesFallibleWorkBeforeNonallocatingCommit"
+        "BoundsTests::EachLimitIsInclusive",
+        "BoundsTests::CycleRejectsAndAcyclicAliasCopiesByValue",
+        "BoundsTests::RecordFieldPresenceRules",
+        "BoundsTests::PrecisionAndUnicodeScalars",
+        "WireTests::FailurePublicationHasNoMutablePayload",
+        "WireTests::WireEncoderPreparesFallibleWorkBeforeNonallocatingCommit"
       ],
       "input": {
         "id": "bsol-corpus",
@@ -497,11 +497,11 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/serialization/SerializationSuite.bd",
       "required_test_ids": [
-        "SerializationRegistrationConflictIsAtomicAndOwned",
-        "SerializationSignatureSha256Exact",
-        "SerializationShapeIdPreservesCompleteDigestAndRejectsNoncanonicalText",
-        "SerializationGraphMissingEdgeKeepsExistingTable",
-        "SerializationGraphAdmitsCompleteRecursiveClosure"
+        "RegistryTests::RegistrationConflictIsAtomicAndOwned",
+        "RegistryTests::SignatureSha256Exact",
+        "ValuesTests::ShapeIdPreservesCompleteDigestAndRejectsNoncanonicalText",
+        "RegistryTests::GraphMissingEdgeKeepsExistingTable",
+        "RegistryTests::GraphAdmitsCompleteRecursiveClosure"
       ],
       "input": null,
       "fixture": null

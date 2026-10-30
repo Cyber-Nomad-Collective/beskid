@@ -8,16 +8,16 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/core/CoreSuite.bd",
       "required_test_ids": [
-        "BytesNewHasLength",
-        "BytesFromStringMatchesUtf8Length",
-        "BytesFillSetsRange",
-        "BytesSubsliceCopiesWindow",
-        "BytesCompareLexicographic",
-        "BytesCopyRange",
-        "BytesNewOneMebibyteIsOneZeroedAllocation",
-        "BytesNewNonPositiveLengthIsEmpty",
-        "BytesFourMebibyteLiveBufferSurvivesChurn",
-        "BytesThreeLive64kBuffersWithGarbageDoNotExhaustHeap"
+        "BytesTests::NewHasLength",
+        "BytesTests::FromStringMatchesUtf8Length",
+        "BytesTests::FillSetsRange",
+        "BytesTests::SubsliceCopiesWindow",
+        "BytesTests::CompareLexicographic",
+        "BytesTests::CopyRange",
+        "BytesTests::NewOneMebibyteIsOneZeroedAllocation",
+        "BytesTests::NewNonPositiveLengthIsEmpty",
+        "BytesTests::FourMebibyteLiveBufferSurvivesChurn",
+        "BytesTests::ThreeLive64kBuffersWithGarbageDoNotExhaustHeap"
       ],
       "input": null,
       "fixture": null
@@ -28,15 +28,15 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/core/CoreSuite.bd",
       "required_test_ids": [
-        "Utf8IsValidAscii",
-        "Utf8IsValidTwoByte",
-        "Utf8IsInvalidSoloContinuation",
-        "Utf8DecodeFromBytesRoundtrip",
-        "Utf8EncodeToBytesRoundtrip",
-        "HexEncodeBytesRoundtrip",
-        "HexDecodeOddLengthRejected",
-        "Base64EncodeBytesRoundtrip",
-        "Base64DecodeInvalidLengthRejected"
+        "EncodingTests::Utf8IsValidAscii",
+        "EncodingTests::Utf8IsValidTwoByte",
+        "EncodingTests::Utf8IsInvalidSoloContinuation",
+        "EncodingTests::Utf8DecodeFromBytesRoundtrip",
+        "EncodingTests::Utf8EncodeToBytesRoundtrip",
+        "EncodingTests::HexEncodeBytesRoundtrip",
+        "EncodingTests::HexDecodeOddLengthRejected",
+        "EncodingTests::Base64EncodeBytesRoundtrip",
+        "EncodingTests::Base64DecodeInvalidLengthRejected"
       ],
       "input": null,
       "fixture": null
@@ -47,21 +47,21 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/system/SystemSuite.bd",
       "required_test_ids": [
-        "TimeIsLeapYearDivisibleBy4",
-        "TimeIsLeapYearDivisibleBy400",
-        "TimeDaysInMonthFebruaryLeap",
-        "TimeDaysInMonthFebruaryNonLeap",
-        "TimeDaysInMonthStandard",
-        "TimeNowUtcReturnsInstant",
-        "TimeMonotonicNowReturnsInstant",
-        "TimeFromMilliseconds",
-        "TimeFromSeconds",
-        "TimeSubtractInstants",
-        "TimeSleepRejectsNegativeDurationWithClosedError",
-        "TimeDeadlineAfterAcceptsZeroDuration",
-        "TimeDeadlineAfterRejectsNegativeDuration",
-        "TimeDeadlineAfterRejectsMonotonicOverflow",
-        "TimeFormatDateIsoFormatsMinimumI64Year"
+        "TimeTests::IsLeapYearDivisibleBy4",
+        "TimeTests::IsLeapYearDivisibleBy400",
+        "TimeTests::DaysInMonthFebruaryLeap",
+        "TimeTests::DaysInMonthFebruaryNonLeap",
+        "TimeTests::DaysInMonthStandard",
+        "TimeTests::NowUtcReturnsInstant",
+        "TimeTests::MonotonicNowReturnsInstant",
+        "TimeTests::FromMilliseconds",
+        "TimeTests::FromSeconds",
+        "TimeTests::SubtractInstants",
+        "TimeTests::SleepRejectsNegativeDurationWithClosedError",
+        "TimeTests::DeadlineAfterAcceptsZeroDuration",
+        "TimeTests::DeadlineAfterRejectsNegativeDuration",
+        "TimeTests::DeadlineAfterRejectsMonotonicOverflow",
+        "TimeTests::FormatDateIsoFormatsMinimumI64Year"
       ],
       "input": null,
       "fixture": null
@@ -72,9 +72,9 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/concurrency/ConcurrencySuite.bd",
       "required_test_ids": [
-        "SpawnedFiberJoinReturnsItsValue",
-        "RepeatedCancelThenJoinIsSafe",
-        "DetachedFiberStillRuns"
+        "FiberTests::SpawnedFiberJoinReturnsItsValue",
+        "FiberTests::RepeatedCancelThenJoinIsSafe",
+        "FiberTests::DetachedFiberStillRuns"
       ],
       "input": null,
       "fixture": null
@@ -85,13 +85,13 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/concurrency/ConcurrencySuite.bd",
       "required_test_ids": [
-        "ChannelCreateReturnsDistinctHandles",
-        "ChannelSendOnAnOpenChannelIsOk",
-        "ChannelReceiveReturnsTheSentValuesInOrder",
-        "ChannelTrySendReturnsTryResult",
-        "ChannelTryReceiveDistinguishesEmptyAndClaimedValues",
-        "ChannelCloseIsIdempotentAndRejectsLaterSends",
-        "ChannelCloseDrainsCommittedValue"
+        "ChannelTests::CreateReturnsDistinctHandles",
+        "ChannelTests::SendOnAnOpenChannelIsOk",
+        "ChannelTests::ReceiveReturnsTheSentValuesInOrder",
+        "ChannelTests::TrySendReturnsTryResult",
+        "ChannelTests::TryReceiveDistinguishesEmptyAndClaimedValues",
+        "ChannelTests::CloseIsIdempotentAndRejectsLaterSends",
+        "ChannelTests::CloseDrainsCommittedValue"
       ],
       "input": null,
       "fixture": null
@@ -102,11 +102,11 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/network/NetworkSuite.bd",
       "required_test_ids": [
-        "NetworkIpv4AndIpv6ValuesKeepBoundedPorts",
-        "NetworkDatagramKeepsSourceAndTruncation",
-        "NetworkCleanupConversionIsExplicitAndPortable",
-        "NetworkErrorUnionHasNoNativePayload",
-        "NetworkPortsRejectOutOfRangeNumbers"
+        "TypesTests::Ipv4AndIpv6ValuesKeepBoundedPorts",
+        "TypesTests::DatagramKeepsSourceAndTruncation",
+        "TypesTests::CleanupConversionIsExplicitAndPortable",
+        "TypesTests::ErrorUnionHasNoNativePayload",
+        "TypesTests::PortsRejectOutOfRangeNumbers"
       ],
       "input": null,
       "fixture": null
@@ -117,10 +117,10 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/network/NetworkSuite.bd",
       "required_test_ids": [
-        "NetworkDnsIpv4FilterPreservesTypedAddresses",
-        "NetworkDnsPortZeroIsRejectedBeforeResolving",
-        "NetworkDnsRepeatedCallsReturnIndependentlyOwnedResults",
-        "NetworkDnsExpiredTypedDeadlineTimesOutBeforeSubmission"
+        "DnsTests::Ipv4FilterPreservesTypedAddresses",
+        "DnsTests::PortZeroIsRejectedBeforeResolving",
+        "DnsTests::RepeatedCallsReturnIndependentlyOwnedResults",
+        "DnsTests::ExpiredTypedDeadlineTimesOutBeforeSubmission"
       ],
       "input": null,
       "fixture": null
@@ -131,18 +131,18 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/network/NetworkSuite.bd",
       "required_test_ids": [
-        "NetworkTcpReusesStreamTransferEofAndIdempotentClose",
-        "NetworkTcpInvalidBacklogHasTypedError",
-        "NetworkTcpSecondReadReportsBusyCause",
-        "NetworkTcpTypedReadDeadlineTimesOutAndRecovers",
-        "NetworkTcpPendingTypedReadDeadlineClearPreservesReadiness",
-        "NetworkTcpPendingReadExpiredPolicyReportsTimedOut",
-        "NetworkTcpPendingReadCloseReportsClosedWithArmedDeadline",
-        "NetworkTcpPendingReadinessReportsByteWithArmedDeadline",
-        "NetworkTcpPhysicalReadinessCloseDeadlineHasOneTypedWinner",
-        "NetworkTcpPeerResetIsNotEof",
-        "NetworkTcpTypedAcceptDeadlineTimesOutAndRecovers",
-        "NetworkTcpExpiredConnectHasOneOutcomeAndClosesOwnedStream"
+        "TcpTests::ReusesStreamTransferEofAndIdempotentClose",
+        "TcpTests::InvalidBacklogHasTypedError",
+        "TcpTests::SecondReadReportsBusyCause",
+        "TcpTests::TypedReadDeadlineTimesOutAndRecovers",
+        "TcpTests::PendingTypedReadDeadlineClearPreservesReadiness",
+        "TcpTests::PendingReadExpiredPolicyReportsTimedOut",
+        "TcpTests::PendingReadCloseReportsClosedWithArmedDeadline",
+        "TcpTests::PendingReadinessReportsByteWithArmedDeadline",
+        "TcpTests::PhysicalReadinessCloseDeadlineHasOneTypedWinner",
+        "TcpTests::PeerResetIsNotEof",
+        "TcpTests::TypedAcceptDeadlineTimesOutAndRecovers",
+        "TcpTests::ExpiredConnectHasOneOutcomeAndClosesOwnedStream"
       ],
       "input": null,
       "fixture": null
@@ -153,13 +153,13 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/network/NetworkSuite.bd",
       "required_test_ids": [
-        "NetworkUdpSameDirectionBusyAndOppositeDirectionSendReceive",
-        "NetworkUdpPreservesDatagramsSourcesAndTruncation",
-        "NetworkUdpConnectedOperationsAndClosedError",
-        "NetworkClosedResourceCannotReachAReusedSlot",
-        "NetworkUdpExhaustionIsTyped",
-        "NetworkUdpExpiredReceiveDeadlineTimesOutAndSocketRecovers",
-        "NetworkUdpExpiredSendKeepsUnsentPayloadAndSocket"
+        "UdpTests::SameDirectionBusyAndOppositeDirectionSendReceive",
+        "UdpTests::PreservesDatagramsSourcesAndTruncation",
+        "UdpTests::ConnectedOperationsAndClosedError",
+        "UdpTests::ClosedResourceCannotReachAReusedSlot",
+        "UdpTests::ExhaustionIsTyped",
+        "UdpTests::ExpiredReceiveDeadlineTimesOutAndSocketRecovers",
+        "UdpTests::ExpiredSendKeepsUnsentPayloadAndSocket"
       ],
       "input": null,
       "fixture": null
@@ -170,7 +170,7 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/network/NetworkSuite.bd",
       "required_test_ids": [
-        "NetworkTcpDisposableUsesFoundationCleanupConversion"
+        "DisposableTests::DisposableUsesFoundationCleanupConversion"
       ],
       "input": null,
       "fixture": null
@@ -181,7 +181,7 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/network/NetworkSuite.bd",
       "required_test_ids": [
-        "NetworkShutdownIsIdempotentAndRepeatedCyclesDoNotLeakSlots"
+        "ShutdownTests::ShutdownIsIdempotentAndRepeatedCyclesDoNotLeakSlots"
       ],
       "input": null,
       "fixture": null
@@ -192,8 +192,8 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/network/NetworkSuite.bd",
       "required_test_ids": [
-        "NetworkTcpStreamAfterDisposeFailsClosedAndDisposeIsIdempotent",
-        "NetworkTcpFreshStreamWorksAfterAPriorDispose"
+        "DisposableTests::StreamAfterDisposeFailsClosedAndDisposeIsIdempotent",
+        "DisposableTests::FreshStreamWorksAfterAPriorDispose"
       ],
       "input": null,
       "fixture": null
@@ -204,20 +204,20 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/http/CodecTests.bd",
       "required_test_ids": [
-        "HttpRequestParserNormalizesHeadersAndKeepsContentLengthBody",
-        "HttpRejectsBareLfAndConflictingFraming",
-        "HttpChunkedDecoderRequiresBoundariesAndTerminator",
-        "HttpFixedLimitsRejectOversizedDeclaredBodyBeforeAllocating",
-        "HttpMessageEndWaitsForHeadAndReportsDeclaredTotal",
-        "HttpMessageEndWalksChunksWithoutCopying",
-        "HttpMessageEndBoundsHeadAndRejectsBareLf",
-        "HttpRequestRequiresExactlyOneHost",
-        "HttpRequestRejectsInvalidHostBeforeBodyFraming",
-        "HttpResponseHeadRoleIgnoresContentLength",
-        "HttpResponse204WithBodyOctetsIsTrailingBytes",
-        "HttpUnframed2xxResponseIsCloseDelimited",
-        "HttpInterimResponseIsRejected",
-        "HttpIoErrorsKeepTransferFailureCause"
+        "CodecTests::RequestParserNormalizesHeadersAndKeepsContentLengthBody",
+        "CodecTests::RejectsBareLfAndConflictingFraming",
+        "CodecTests::ChunkedDecoderRequiresBoundariesAndTerminator",
+        "CodecTests::FixedLimitsRejectOversizedDeclaredBodyBeforeAllocating",
+        "CodecTests::MessageEndWaitsForHeadAndReportsDeclaredTotal",
+        "CodecTests::MessageEndWalksChunksWithoutCopying",
+        "CodecTests::MessageEndBoundsHeadAndRejectsBareLf",
+        "CodecTests::RequestRequiresExactlyOneHost",
+        "CodecTests::RequestRejectsInvalidHostBeforeBodyFraming",
+        "CodecTests::ResponseHeadRoleIgnoresContentLength",
+        "CodecTests::Response204WithBodyOctetsIsTrailingBytes",
+        "CodecTests::Unframed2xxResponseIsCloseDelimited",
+        "CodecTests::InterimResponseIsRejected",
+        "CodecTests::IoErrorsKeepTransferFailureCause"
       ],
       "input": null,
       "fixture": null
@@ -228,9 +228,9 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/http/ValidationTests.bd",
       "required_test_ids": [
-        "HttpHostIpv6LiteralsFollowRfc3986AddressGrammar",
-        "HttpFieldValuesAllowSpacesAndRejectControlsAndNonAscii",
-        "HttpStartLineComponentsRejectControlOctets"
+        "ValidationTests::HostIpv6LiteralsFollowRfc3986AddressGrammar",
+        "ValidationTests::FieldValuesAllowSpacesAndRejectControlsAndNonAscii",
+        "ValidationTests::StartLineComponentsRejectControlOctets"
       ],
       "input": null,
       "fixture": null
@@ -241,11 +241,11 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/http/SerializationTests.bd",
       "required_test_ids": [
-        "HttpRequestSerializationEmitsOneCanonicalContentLength",
-        "HttpSerializerRejectsCallerSuppliedFramingHeader",
-        "HttpSerializerRejectsHeaderControlAndNonAsciiOctets",
-        "HttpResponseParserRequiresHttp11StatusAndExactSuffix",
-        "HttpSerializerRequiresHost"
+        "SerializationTests::RequestSerializationEmitsOneCanonicalContentLength",
+        "SerializationTests::SerializerRejectsCallerSuppliedFramingHeader",
+        "SerializationTests::SerializerRejectsHeaderControlAndNonAsciiOctets",
+        "SerializationTests::ResponseParserRequiresHttp11StatusAndExactSuffix",
+        "SerializationTests::SerializerRequiresHost"
       ],
       "input": null,
       "fixture": null
@@ -256,12 +256,12 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/http/ExchangeTests.bd",
       "required_test_ids": [
-        "HttpExchangeReadsBodiesAcrossPartialReads",
-        "HttpExchangeHeadReturnsNoBody",
-        "HttpExchangeUnframedResponseIsCloseDelimited",
-        "HttpExchangeMissingHostIsAnswered400",
-        "HttpExchangeDuplicateHostRejectedBeforeDeclaredBody",
-        "HttpExchangePeerResetIsTransportCause"
+        "ExchangesTests::ReadsBodiesAcrossPartialReads",
+        "ExchangesTests::HeadReturnsNoBody",
+        "ExchangesTests::UnframedResponseIsCloseDelimited",
+        "ExchangesTests::MissingHostIsAnswered400",
+        "ExchangesTests::DuplicateHostRejectedBeforeDeclaredBody",
+        "ExchangesTests::PeerResetIsTransportCause"
       ],
       "input": null,
       "fixture": null

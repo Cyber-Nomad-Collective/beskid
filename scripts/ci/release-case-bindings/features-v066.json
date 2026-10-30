@@ -8,16 +8,16 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/parallel/ParallelSuite.bd",
       "required_test_ids": [
-        "IsolateHandlesCompareById",
-        "TaskBodyReportsItsIsolate",
-        "ScopeJoinsEveryTaskBeforeReturning",
-        "UnitTaskJoinsWithoutAValue",
-        "EarlyErrorReturnStillJoins",
-        "FailuresAreReportedInSpawnOrder",
-        "FailureCancelsSiblings",
-        "NestedScopesComplete",
-        "SerialScopeRunsEveryBodyOnTheCaller",
-        "FrozenArrayIsSharedWithATask"
+        "IsolatesTests::IsolateHandlesCompareById",
+        "IsolatesTests::TaskBodyReportsItsIsolate",
+        "ForkJoinTests::ScopeJoinsEveryTaskBeforeReturning",
+        "ForkJoinTests::UnitTaskJoinsWithoutAValue",
+        "ForkJoinTests::EarlyErrorReturnStillJoins",
+        "FailureTests::FailuresAreReportedInSpawnOrder",
+        "FailureTests::FailureCancelsSiblings",
+        "NestingTests::NestedScopesComplete",
+        "NestingTests::SerialScopeRunsEveryBodyOnTheCaller",
+        "ReadOnlyArrayTests::FrozenArrayIsSharedWithATask"
       ],
       "input": null,
       "fixture": null
@@ -38,13 +38,13 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/parallel/ParallelSuite.bd",
       "required_test_ids": [
-        "BoundedProducerAndConsumer",
-        "TryReceiveOnAnEmptyOpenPortWouldBlock",
-        "ClosedPortDrainsThenReportsClosed",
-        "PortHandleCrossesAPort",
-        "TwoWorkersShareOneInbox",
-        "ThreeStagePipelineKeepsInputOrder",
-        "StageFailureCancelsThePipeline"
+        "PortsTests::BoundedProducerAndConsumer",
+        "PortsTests::TryReceiveOnAnEmptyOpenPortWouldBlock",
+        "PortsTests::ClosedPortDrainsThenReportsClosed",
+        "PortsTests::PortHandleCrossesAPort",
+        "PortsTests::TwoWorkersShareOneInbox",
+        "PipelinesTests::ThreeStagePipelineKeepsInputOrder",
+        "PipelinesTests::StageFailureCancelsThePipeline"
       ],
       "input": null,
       "fixture": null
@@ -65,12 +65,12 @@
       "project": "compiler/corelib/beskid_corelib/tests/corelib_tests",
       "source_file": "compiler/corelib/beskid_corelib/tests/corelib_tests/src/parallel/ParallelSuite.bd",
       "required_test_ids": [
-        "WhereAndMapFuseIntoAReduction",
-        "SourceStaysUsableAndCountMatches",
-        "CollectPreservesInputOrder",
-        "OrderedReducePreservesAssociationOrder",
-        "UserCombinerWithBothMarkers",
-        "ShippedCombiners"
+        "SequencesTests::WhereAndMapFuseIntoAReduction",
+        "SequencesTests::SourceStaysUsableAndCountMatches",
+        "SequencesTests::CollectPreservesInputOrder",
+        "SequencesTests::OrderedReducePreservesAssociationOrder",
+        "SequencesTests::UserCombinerWithBothMarkers",
+        "SequencesTests::ShippedCombiners"
       ],
       "input": null,
       "fixture": null

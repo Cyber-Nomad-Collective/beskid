@@ -554,8 +554,8 @@ function nativeDeclarationFixture(transform = bytes => bytes) {
   // Real source declaration, synthetic execution receipt: reader coverage only.
   const value = fixture();
   const source = transform(readFileSync(new URL("compiler/corelib/beskid_corelib/tests/corelib_tests/src/bsol/SerializationWireTests.bd", repo)));
-  const test_id = "BsolSerializationWireExactUnsignedWidth";
-  const declaration = `test ${test_id}`;
+  const test_id = "WireTests::ExactUnsignedWidth";
+  const declaration = "test ExactUnsignedWidth";
   const start = source.indexOf(Buffer.from(declaration));
   assert(start >= 0);
   const source_file = "compiler/corelib/beskid_corelib/tests/corelib_tests/src/bsol/SerializationWireTests.bd";
@@ -568,7 +568,7 @@ function nativeDeclarationFixture(transform = bytes => bytes) {
   rewriteRow(value, nativeCase, row => {
     row.harness_source = harness;
     row.tests = [{ id: test_id, outcome: "passed" }];
-    row.stdout_sha256 = value.retain(row.stdout, JSON.stringify({ target: binding.target, summary: { passed: 1, failed: 0, skipped: 0, filtered_out: 0, timed_out: 0 }, tests: [{ name: test_id, qualified_name: test_id, outcome: "passed" }] })).sha256;
+    row.stdout_sha256 = value.retain(row.stdout, JSON.stringify({ target: binding.target, summary: { passed: 1, failed: 0, skipped: 0, filtered_out: 0, timed_out: 0 }, tests: [{ name: "ExactUnsignedWidth", qualified_name: test_id, outcome: "passed" }] })).sha256;
   });
   value.manifest.packet_files = [...new Set([...value.manifest.packet_files, harness.path])].sort();
   refreeze(value);
@@ -588,6 +588,6 @@ test("assertion declaration language is mandatory and cannot be relabeled", () =
 });
 test("native declaration cannot bind a prefix of another test identifier", () => {
   const value = nativeDeclarationFixture(bytes => Buffer.from(bytes.toString().replace(
-    "test BsolSerializationWireExactUnsignedWidth", "test BsolSerializationWireExactUnsignedWidth_extra")));
+    "test ExactUnsignedWidth", "test ExactUnsignedWidth_extra")));
   reject(value, /declaration/);
 });

@@ -11,6 +11,18 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Release cases name the Corelib tests by their qualified ids. The Corelib
+  test cleanup moved every test into a topic module and dropped the domain
+  prefix that the module now names, so all 277 native required ids and the 6
+  `R4-PROC` obligation assertion ids change (for example
+  `BsolOrderedBlocksAssignmentsAndByteSpans` becomes
+  `SyntaxTests::OrderedBlocksAssignmentsAndByteSpans`; targets and source
+  files are unchanged). The fragments and the reviewed ids name the new tests,
+  the manifest is refrozen against the s8b Corelib (95 of 95 cases bound), and
+  the pin in `woodpecker-release-evidence.mjs` moves to the new digest
+  `c4069aad3809230567aa3996194925771d71456027339d32299f2af757ed25dd`. The
+  matrix test that binds a real Corelib declaration uses the qualified id
+  `WireTests::ExactUnsignedWidth`.
 - Release case bindings accept qualified Beskid test ids. A native assertion
   id is the test's unit-relative qualified name, as `beskid test` reports it
   (`Topic::Inner` for `test Inner` in `mod Topic { ... }`), and the
