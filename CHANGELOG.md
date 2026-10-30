@@ -11,6 +11,13 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Change `v067-analysis-catch-up`: the analysis and diagnostics publication of
+  an open document judge that document's unit alone (the workspace index and
+  `beskid check` judge every own unit); a newer text or closing the document
+  stops the running analysis of an older text at its next database query; the
+  completion repair changes a member access only when the member is being
+  typed (new requirements in `tooling--lsp--diagnostics-and-workspace-analysis`
+  and `tooling--lsp--intellisense-capabilities-and-behavior`).
 - Change `v067-array-growth-aliasing`: shrinking one array handle
   (`Array.RemoveLast`) never changes another handle either (requirement renamed
   "Array length changes never reach another handle", shrink scenarios, owner-
