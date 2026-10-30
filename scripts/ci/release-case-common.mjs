@@ -15,7 +15,8 @@ export const SECTION_END = /^beskid-release-case end test=([A-Za-z0-9_:.-]+) exi
 export const OUTPUT_LIMIT = 8 * 1024 * 1024;
 export const TEMPLATE_KEYS = ["installed_cli", "installed_prefix", "installed_corelib", "harness", "fixture", "input_root"];
 export const RUST_TEST_ID = /^[A-Za-z_][A-Za-z0-9_]*$/;
-export const BESKID_TEST_ID = /^[A-Za-z_][A-Za-z0-9_]*$/;
+/** A Beskid test id is its unit-relative qualified name: `Name`, or `Topic::Name` inside `mod Topic`. */
+export const BESKID_TEST_ID = /^[A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)*$/;
 
 export function fail(message) {
   throw new Error(message);
@@ -149,19 +150,86 @@ export function libtestPath(sourceFile, sourceRoot, testId) {
   return [...segments, testId].join("::");
 }
 
-/** Beskid declaration grammar: `test <id>` at a line start followed by `{`. */
+/**
+ * Beskid declaration grammar: `test <name>` at a line start (indentation allowed) followed by `{`,
+ * nested in exactly the inline modules the id names: `Topic::Inner` is `test Inner` directly in
+ * `mod Topic { ... }`, and a bare id is a test at the unit root. Module nesting is tracked over
+ * braces outside comments and string or character literals. Returns every match (byte offsets
+ * into `source`) so duplicates can be rejected.
+ */
 export function findBeskidDeclaration(source, testId) {
   if (!BESKID_TEST_ID.test(testId)) fail(`native assertion identifier is invalid: ${testId}`);
-  const declaration = Buffer.from(`test ${testId}`);
+  const modules = testId.split("::");
+  const name = modules.pop();
+  const text = Buffer.isBuffer(source) ? source.toString("utf8") : String(source);
+  const identifier = /[A-Za-z0-9_]/;
   const matches = [];
-  let offset = 0;
-  while (true) {
-    const start = source.indexOf(declaration, offset);
-    if (start < 0) break;
-    offset = start + 1;
-    if (start !== 0 && source[start - 1] !== 10) continue;
-    if (!/^\s*\{/.test(source.subarray(start + declaration.length, start + declaration.length + 64).toString("utf8"))) continue;
-    matches.push({ start, end: start + declaration.length, declaration: declaration.toString("utf8") });
+  // One frame per open brace: the inline module it opens, or null for any other block.
+  const frames = [];
+  let pendingModule = null;
+  let lineStart = true;
+  let index = 0;
+  const word = at => {
+    let end = at;
+    while (end < text.length && identifier.test(text[end])) end++;
+    return text.slice(at, end);
+  };
+  const skipSpace = at => {
+    while (at < text.length && /\s/.test(text[at])) at++;
+    return at;
+  };
+  while (index < text.length) {
+    const char = text[index];
+    if (char === "\n") { lineStart = true; index++; continue; }
+    if (char === " " || char === "\t" || char === "\r") { index++; continue; }
+    if (char === "/" && text[index + 1] === "/") {
+      while (index < text.length && text[index] !== "\n") index++;
+      continue;
+    }
+    if (char === "/" && text[index + 1] === "*") {
+      const close = text.indexOf("*/", index + 2);
+      index = close < 0 ? text.length : close + 2;
+      lineStart = false;
+      continue;
+    }
+    if (char === "\"" || (char === "'" && /^'(?:\\.|[^'\\\n])'/.test(text.slice(index, index + 4)))) {
+      index++;
+      while (index < text.length && text[index] !== char) index += text[index] === "\\" ? 2 : 1;
+      index++;
+      lineStart = false;
+      continue;
+    }
+    if (char === "{") { frames.push(pendingModule); pendingModule = null; index++; lineStart = false; continue; }
+    if (char === "}") { frames.pop(); pendingModule = null; index++; lineStart = false; continue; }
+    if (identifier.test(char) && (index === 0 || !identifier.test(text[index - 1]))) {
+      const token = word(index);
+      const atLineStart = lineStart;
+      lineStart = false;
+      if (token === "mod") {
+        const next = skipSpace(index + token.length);
+        const moduleName = word(next);
+        const after = skipSpace(next + moduleName.length);
+        pendingModule = moduleName && text[after] === "{" ? moduleName : null;
+        index = next + moduleName.length;
+        continue;
+      }
+      if (token === "test" && atLineStart) {
+        const next = skipSpace(index + token.length);
+        const declared = word(next);
+        if (declared === name && next > index + token.length && !/[\r\n]/.test(text.slice(index + token.length, next))
+            && /^\s*\{/.test(text.slice(next + declared.length, next + declared.length + 64))
+            && frames.length === modules.length && frames.every((frame, depth) => frame === modules[depth])) {
+          const end = next + declared.length;
+          const start = Buffer.byteLength(text.slice(0, index));
+          const declaration = text.slice(index, end);
+          matches.push({ start, end: start + Buffer.byteLength(declaration), declaration });
+        }
+      }
+      index += token.length;
+      continue;
+    }
+    lineStart = false;
+    index++;
   }
   return matches;
 }

@@ -11,6 +11,13 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Release case bindings accept qualified Beskid test ids. A native assertion
+  id is the test's unit-relative qualified name, as `beskid test` reports it
+  (`Topic::Inner` for `test Inner` in `mod Topic { ... }`), and the
+  declaration finder binds an indented `test` line nested in exactly those
+  inline modules, ignoring comments and string literals. A bare id binds only
+  a test at the unit root. The frozen manifest is byte-identical (digest
+  `c1dd696a751d0aeb32482548bc500cd21c98cd0704ac46b159dbea30f1b77dd9`).
 - The release cases are refrozen for 0.6.7-preview.10 against the integrated
   compiler (tc-envtier, pkgparse and lspperf9 merged) and Corelib `022e7e9`:
   95 of 95 cases bound, and the digest stays

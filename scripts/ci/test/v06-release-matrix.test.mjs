@@ -7,7 +7,8 @@ import { tmpdir } from "node:os";
 import test, { after } from "node:test";
 import * as reader from "../woodpecker-release-evidence.mjs";
 import {
-  CanonicalManifestBytes, ManifestDigest, caseLogName, caseStderrName, caseStdoutName, findRustDeclaration, fixturePacketName,
+  CanonicalManifestBytes, ManifestDigest, caseLogName, caseStderrName, caseStdoutName, findBeskidDeclaration, findRustDeclaration,
+  fixturePacketName,
   harnessPacketName, inputPacketName, libtestPath, sourcePacketName, CORELIB_FINGERPRINT_FILE, INSTALLED_RECEIPT, MANIFEST_FILE,
   RUNTIME_ABI_RECEIPT, RUNTIME_KIT_RECEIPT,
 } from "../release-case-common.mjs";
@@ -239,13 +240,65 @@ test("binding fragments name real declarations and never provisional or library-
       const source = readFileSync(new URL(binding.source_file, repo));
       for (const testId of binding.required_test_ids) {
         if (binding.execution === "installed_host_harness") assert.equal(findRustDeclaration(source, testId).length, 1, `${id} declares ${testId} once`);
-        else assert(source.toString().split("\n").some(line => line.startsWith(`test ${testId}`)), `${id} declares ${testId}`);
+        else assert.equal(findBeskidDeclaration(source, testId).length, 1, `${id} declares ${testId} once`);
       }
       for (const related of binding.related_evidence ?? []) for (const testId of related.test_ids ?? []) assert(!binding.required_test_ids.includes(testId), `${id} requires library-only ${testId}`);
     }
   }
   const check = spawnSync(process.execPath, [new URL("../freeze-release-cases-v06.mjs", import.meta.url).pathname, "--check"], { encoding: "utf8" });
   assert.equal(check.status, 0, check.stderr);
+});
+test("Beskid test ids are qualified by their inline modules and declarations may be indented", () => {
+  const source = Buffer.from([
+    "use Testing.Assert;",
+    "/* test Shared { } in a comment is no declaration */",
+    "test Shared { return; }",
+    "pub mod Topic",
+    "{",
+    "    // test Inner { } in a line comment",
+    "    test Inner",
+    "    {",
+    "        Assert.True(\"{ not a block\" != \"}\", \"braces in strings\");",
+    "    }",
+    "    mod Deep",
+    "    {",
+    "        test Shared { return; }",
+    "    }",
+    "}",
+    "mod Alpha {",
+    "  test Shared { return; }",
+    "}",
+    "mod Beta { test Shared { return; } }",
+    "mod Twice",
+    "{",
+    "    test Shared { return; }",
+    "    test Shared { return; }",
+    "}",
+    "unit Helper() { char open = '{'; return; }",
+    "test Last { return; }",
+    "",
+  ].join("\n"));
+  const only = id => {
+    const matches = findBeskidDeclaration(source, id);
+    assert.equal(matches.length, 1, `${id}: ${JSON.stringify(matches)}`);
+    const [match] = matches;
+    assert.equal(source.subarray(match.start, match.end).toString("utf8"), match.declaration);
+    return match;
+  };
+  assert.equal(only("Shared").declaration, "test Shared");
+  assert.equal(only("Shared").start, source.indexOf("\ntest Shared") + 1);
+  assert.equal(only("Topic::Inner").start, source.indexOf("    test Inner\n") + 4);
+  assert.equal(only("Topic::Deep::Shared").start, source.indexOf("        test Shared") + 8);
+  assert.equal(only("Alpha::Shared").start, source.indexOf("test Shared", source.indexOf("mod Alpha")));
+  assert.equal(only("Last").declaration, "test Last");
+  assert.equal(findBeskidDeclaration(source, "Twice::Shared").length, 2, "a duplicate in one module is reported twice");
+  // A declaration starts its line, as before; one written after `mod Beta {` on the same line is not bound.
+  for (const missing of ["Beta::Shared", "Inner", "Deep::Shared", "Topic::Shared", "Gamma::Shared", "Topic::Inner::Extra"]) {
+    assert.equal(findBeskidDeclaration(source, missing).length, 0, missing);
+  }
+  for (const invalid of ["Topic::", "::Inner", "Topic.Inner", "Topic:::Inner", ""]) {
+    assert.throws(() => findBeskidDeclaration(source, invalid), /native assertion identifier is invalid/, invalid);
+  }
 });
 test("harness crates cannot reach the checkout or the build-tree CLI", () => {
   for (const crate of ["beskid_tests_release", "beskid_tests_interop"]) {
