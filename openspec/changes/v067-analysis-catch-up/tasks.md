@@ -7,4 +7,4 @@
 - [x] 2.4 One grammar pass per successful parse; one parse for the syntax facts of an analysis.
 ## 3. Verify
 - [x] 3.1 Catch-up probe: the newest facts are stored 1.0-2.4 s after a 10 s burst (was 13.6-41.3 s).
-- [ ] 3.2 30-minute soak with the lspwait budgets: PASS.
+- [x] 3.2 30-minute soak with the lspwait budgets: PASS (compiler 1f7da335); p95 hover 14 ms, definition 4, references 116, semanticTokens 107, inlayHint 103, codeAction 503, prepareRename 502, rename 502; memory -1.1%; 144 errors, all ContentModified; probe catch-up 0.83-1.16 s.
