@@ -20,7 +20,17 @@ The alternative, versioned edits in `documentChanges`, needs a client capability
 | completion | 100 ms | carried facts, no database queries |
 | references, signature help | 100 ms | carried facts |
 | semantic tokens, inlay hints | 100 ms | carried facts and one refresh |
-| rename, prepare rename, code actions | 500 ms | `ContentModified` |
+| rename, prepare rename, code actions | 500 ms, including each wait for the server state | `ContentModified` |
+| code actions, computation | 500 ms after the facts | the actions computed by then |
 | refresh task (background) | 30 s | refresh |
 
 The request compares the stored facts with the open text in place on each stored analysis, and copies the document once, when it has its answer.
+
+## Waits that are not for the analysis (0.6.7 stability proof)
+
+The 30-minute stability-proof soak found `textDocument/codeAction` answers of 5.5-6.2 s under builder load (preview.11 and preview.12). The 500 ms limit covered only the wait for the newest analysis. A soak with `BESKID_LSP_TRACE=1` (builder load median 18, maximum 31) measured two other costs that had no limit: state waits of up to 620 ms added to the 500 ms (916 ms at most over 1071 edit-request reads), and action computations of up to 991 ms (the documentation comment of a 37 KB file) and 652 ms (the formatting of a 39 KB file) after the facts:
+
+- Each read of the server state. The state lock is fair: a read waits behind a queued writer, and the writer waits for the readers before it.
+- The computation of the actions on the request's task: quick fixes, providers, the formatting of the whole document, and the documentation-comment facts (a parse when the document has none).
+
+An edit-producing request now counts its state waits in its 500 ms and fails with `ContentModified` past it, as for a missing analysis. The code actions are computed on a blocking thread, cheapest first; the request waits 500 ms for them and answers with what it has. Fewer actions is a correct answer: each action comes from the facts of the newest text. Read-only requests keep an unlimited state wait: their answer is late, not wrong. The traced soak of the fix saw the largest cost directly: the documentation-comment action of a 141 KB file with a syntax error parsed the text again for 5950 ms; the request answered after 500 ms without that action.

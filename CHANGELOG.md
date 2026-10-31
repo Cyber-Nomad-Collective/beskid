@@ -11,6 +11,12 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Change `v067-request-wait-budget`: the 500 ms limit of rename, prepare
+  rename and code actions includes each wait for the server state (past it,
+  `ContentModified`); after the facts, code actions wait at most 500 ms for
+  their computation, computed cheapest first, and answer with the actions
+  computed by then (new requirement "Code actions answer within a computation
+  budget" in `tooling--lsp--intellisense-capabilities-and-behavior`).
 - Change `v067-analysis-catch-up`: the analysis and diagnostics publication of
   an open document judge that document's unit alone (the workspace index and
   `beskid check` judge every own unit); a newer text or closing the document
