@@ -20,7 +20,7 @@ gate_phase="${1:-all}"
 # Ignored tests that are not staged evidence: child-process fixtures that their parent test runs by
 # exact name with `--ignored`. They are not tests on their own.
 CHILD_PROCESS_FIXTURES=(
-  compiler_trace_child_lowers_a_syntax_entrypoint
+  prepared_syntax::compiler_trace_child_lowers_a_syntax_entrypoint
   initialization_fixture
 )
 

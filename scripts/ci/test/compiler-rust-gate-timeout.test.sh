@@ -21,14 +21,14 @@ if grep -Eq 'glue_owned|beskid_tests_interop' "$fixture/default.log"; then
   echo 'the source-tree gate still runs or skips an installed-prefix Glue test by name' >&2; exit 1
 fi
 grep -Fxq -- '--kill-after=60s 600 bash scripts/stage-native-runtime-kit.sh' "$fixture/default.log"
-grep -Fxq -- '--kill-after=60s 10800 cargo test --workspace --exclude beskid_e2e_tests --exclude beskid_tests_release -- --include-ignored --exact --skip compiler_trace_child_lowers_a_syntax_entrypoint --skip initialization_fixture' "$fixture/default.log"
+grep -Fxq -- '--kill-after=60s 10800 cargo test --workspace --exclude beskid_e2e_tests --exclude beskid_tests_release -- --include-ignored --exact --skip prepared_syntax::compiler_trace_child_lowers_a_syntax_entrypoint --skip initialization_fixture' "$fixture/default.log"
 # The proof harness Python tests run in the gate, before the workspace tests.
 grep -Fxq -- '--kill-after=60s 300 python3 -I scripts/proof/test-proof-common.py' "$fixture/default.log"
 [ "$(grep -n 'test-proof-common' "$fixture/default.log" | cut -d: -f1)" -lt "$(grep -n -m1 'cargo test' "$fixture/default.log" | cut -d: -f1)" ]
 
 PATH="$fixture/bin:$PATH" BESKID_TIMEOUT_CAPTURE="$fixture/override.log" BESKID_TEST_TIMEOUT=75 \
   bash "$fixture/scripts/ci/compiler-rust-gate.sh" runtime
-grep -Fxq -- '--kill-after=60s 75 cargo test --workspace --exclude beskid_e2e_tests --exclude beskid_tests_release -- --include-ignored --exact --skip compiler_trace_child_lowers_a_syntax_entrypoint --skip initialization_fixture' "$fixture/override.log"
+grep -Fxq -- '--kill-after=60s 75 cargo test --workspace --exclude beskid_e2e_tests --exclude beskid_tests_release -- --include-ignored --exact --skip prepared_syntax::compiler_trace_child_lowers_a_syntax_entrypoint --skip initialization_fixture' "$fixture/override.log"
 
 # The lint phase is clippy alone: no source-text search for retired identifiers (the #325 false
 # positive matched TypeContext inside ExpectedTypeContext).
