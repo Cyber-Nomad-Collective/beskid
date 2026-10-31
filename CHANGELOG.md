@@ -11,6 +11,18 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- The compiler Rust gate skips the codegen compiler-trace child fixture by its
+  module-qualified id, `prepared_syntax::compiler_trace_child_lowers_a_syntax_entrypoint`.
+  S9b moved the codegen tests into one `tests/codegen` executable, and the gate
+  runs the workspace with `--exact`, so the bare name no longer matched and the
+  child fixture would have run on its own.
+- The release cases are refrozen for 0.6.7-preview.12 against the integrated
+  compiler (lspcatch, dupty, S9a, S9b and S9c merged) and Corelib `5945b13`
+  (the regenerated compiler-sdk diagnostics mirror): 95 of 95 cases bound, and
+  the digest stays
+  `c4069aad3809230567aa3996194925771d71456027339d32299f2af757ed25dd`, because
+  no release-harness or Corelib test source changed. The pin in
+  `woodpecker-release-evidence.mjs` is unchanged.
 - The release cases are refrozen for 0.6.7-preview.11 against the integrated
   compiler (semtok, lspwait, qualtests, s8b, modscope, arralias and arralias2
   merged) and Corelib `5d3b9ba` (s8b test modules plus the arralias2 sources):
