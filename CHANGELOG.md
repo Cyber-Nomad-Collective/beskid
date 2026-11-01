@@ -236,6 +236,9 @@ log is in `compiler/CHANGELOG.md`. Draft release notes:
 
 ### Fixed
 
+- On macOS, closing or terminating a child process that has already exited
+  succeeds. Darwin rejects a signal to a process group that holds only an
+  unreaped child, and the runtime treated that as a failure.
 - `beskid doc`: `@ref` links to items in a dependency's `.generated` units point
   at that dependency's package, and a path outside a package's source and
   generated roots fails with an error that names both roots.
