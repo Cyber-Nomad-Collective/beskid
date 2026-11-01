@@ -83,6 +83,8 @@ A type marked `[CopyOnAssign]` (an attribute of `Core.Attributes` for type defin
 - **WHEN** `b.Push(1)` runs and then `a.Push(2)` runs
 - **THEN** `b` holds `1` and `a` holds `2`
 
+## ADDED Requirements
+
 ### Requirement: Lent and detached lists
 An argument of a plain parameter of a direct call SHALL be a lent view of the list (`Borrow`): the view SHALL NOT count as a holder, the callee SHALL copy the storage before it writes, and the callee SHALL copy whatever it keeps or returns. The runtime SHALL NOT decrement a share count, because a decrement is unsound when a share record is reachable from two isolates. Arguments of `move` parameters, of `spawn` targets, of compiler-lowered collection operations and of unknown callees SHALL be copied (`Copy`). A list that is detached from its sharers (`Detached`) and has a sole owner SHALL be written in place. `Get` on a `List<T>` SHALL return a copy of the element, so a write through the result SHALL NOT reach the list.
 
