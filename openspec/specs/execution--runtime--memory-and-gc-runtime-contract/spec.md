@@ -11,7 +11,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 > | Phase | Mutators | Ship order |
 > | --- | --- | --- |
 > | **A (v0.2)** | One Beskid mutator; many cooperative fibers | **Default ship** |
-> | **B** | Parallel mutators | Not implemented in 0.6.0; the runtime has no Phase B switch. Parallel execution is planned in the changes `v061-attributes-and-isolate-prerequisites` through `v065-parallel-sequences` |
+> | **B** | Parallel mutators | Not implemented: the runtime has no Phase B switch. Parallel execution runs on separate isolates, each with its own heap and one mutator |
 > 
 > Phase B **must not** become the default without updating this feature hub and fiber
 > scheduler contracts.
