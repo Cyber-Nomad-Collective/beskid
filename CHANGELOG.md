@@ -217,6 +217,12 @@ log is in `compiler/CHANGELOG.md`. Draft release notes:
   (1), `Concurrency.HostProcessorCount()` reports the host processors, and
   `Core.Parallel` scopes, ports and parallel sequences run work on other
   isolates, bounded by `BESKID_ISOLATES_MAX`.
+- Release candidate 3 changes wording only. The `SetProcessorCount` and
+  `ProcessorCount` doc comments, the fiber-scheduler, concurrency-package and
+  memory-and-GC specifications and the `[0.6.0]` heading below no longer
+  describe 0.6.0 behavior as current. `api-json-contract` states that every
+  packed path is relative to the artifact root of the declaring package, as the
+  code writes it.
 - OpenSpec: the shipped changes `specify-v0-5-4-language-fixes`, the `v06-*`
   changes, the `v061-*` changes, `v063-isolates-and-scope`,
   `v064-ports-and-pipelines` and `v065-parallel-sequences` are archived, so the
@@ -341,11 +347,12 @@ Draft release notes: `docs/release/v0.6.6-release-notes.md`.
   and capturing a Never value in an isolate task are compile errors.
 - A native Mod cache from 0.6.0 is not reused; the first build rebuilds it.
 
-## [0.6.0] - Unreleased (in qualification)
+## [0.6.0] - 2026-10-16
 
-Not released. The candidate is in qualification on Linux x64, macOS arm64 and
-Windows x64 against `scripts/ci/release-cases-v06.json` (86 mandatory cases and
-15 provisional stdio bridge cases that fail closed). This section is the release
+Released 2026-10-16 (compiler tag `v0.6.0`, commit `5b859b18`). The release was
+qualified on Linux x64, macOS arm64 and Windows x64 against
+`scripts/ci/release-cases-v06.json` (86 mandatory cases and 15 provisional
+stdio bridge cases that fail closed). This section is the release
 summary; the itemized development log follows it and is also in
 `compiler/CHANGELOG.md`. Draft release notes:
 `docs/release/v0.6.0-release-notes.md`.

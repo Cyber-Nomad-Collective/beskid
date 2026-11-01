@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "ca68597e3f738c86fe67ed67e1e829c4ef4f5c627abbad6ad4113e9410d38379",
+  "revision": "f58cdee3ed9bc907f1061483cf3850a2f681fb5fef7692454ed168c750401167",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
     "nodes": 1042,
     "capabilities": 210,
-    "requirements": 1016,
+    "requirements": 1017,
     "normativeSources": 304,
     "provisionalCapabilities": 52,
     "legacyArtifacts": 3189,
@@ -37558,6 +37558,17 @@
           "migrationStatus": "extracted",
           "title": "Structured documentation serves the packed api.json",
           "anchor": "requirement-structured-documentation-serves-the-packed-api-json"
+        },
+        {
+          "id": "BSP-REQ-5D9A2A07D874",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--cli--api-json-contract/spec.md",
+          "sourceHash": "1effdeddb783c8544dde33cadaa9d2f187bc8cc172bea56b0bb731fc85f3c23e",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "api.json paths are artifact-relative",
+          "anchor": "requirement-api-json-paths-are-artifact-relative"
         }
       ],
       "records": [
@@ -64349,7 +64360,7 @@
       "decision": null,
       "title": "Concurrency package",
       "status": "Standard",
-      "sourceHash": "c3ae4a3285b182e65fdf5c7ec2703c0d11cba42bb999a85b16af2403200135b4"
+      "sourceHash": "0235222c9d515cfcecd2332892c5c9d485541d68e1eaead8d84fa4b0dba3b21c"
     },
     {
       "id": "BSP-CAP-5A17C93FCF20",
@@ -65317,7 +65328,7 @@
       "decision": null,
       "title": "Fiber scheduler and stacks",
       "status": "Standard",
-      "sourceHash": "6d26f8d2ac58b8ff846c07452fb038727714f2c3722e9d345707404dccf5d478"
+      "sourceHash": "6963b59792e8a156d55e427e7e7104b916cda2e2de8cfd68f78df5a479139cdc"
     },
     {
       "id": "BSP-CAP-22A6F84F9533",
@@ -65361,7 +65372,7 @@
       "decision": null,
       "title": "Memory and GC runtime contract",
       "status": "Standard",
-      "sourceHash": "76dc551fa2e9a1dc3f387ed1d3535d7c1508c93fb4b46b1396a1f8dceafab52b"
+      "sourceHash": "348bad5c9a3d1988f56861a6e931c9b30975aa4a8bbda344fa426ba12439d1fd"
     },
     {
       "id": "BSP-CAP-EA8021771AAF",
@@ -66131,7 +66142,7 @@
       "decision": null,
       "title": "api.json contract",
       "status": "Standard",
-      "sourceHash": "43eaca75c418c2ce1a05a7b2a3529380a71fec55062ed125d4e5e012728d7f55"
+      "sourceHash": "1effdeddb783c8544dde33cadaa9d2f187bc8cc172bea56b0bb731fc85f3c23e"
     },
     {
       "id": "BSP-CAP-9AC9ED4570D4",
