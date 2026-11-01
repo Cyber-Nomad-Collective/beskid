@@ -56,7 +56,7 @@
 - **AND** `total` SHALL be `8`
 
 #### Scenario: Generic iterator with managed elements
-- **GIVEN** `pub type Repeat<T> { T value, i64 left, pub Option<T> Next() { ... } }` and a loop over a `Repeat<Cell>` value whose body forces a garbage collection and then reads `cell.value`
+- **GIVEN** `pub type Repeat<T> { T value; i64 left; pub Option<T> Next() { ... } }` and a loop over a `Repeat<Cell>` value whose body forces a garbage collection and then reads `cell.value`
 - **WHEN** the program is built and the loop runs
 - **THEN** `Next` SHALL be specialized for `Repeat<Cell>`
 - **AND** each `Cell` the loop variable holds SHALL survive the collection

@@ -16,7 +16,7 @@ Hover on an attribute name at any declaration site SHALL resolve to the attribut
 - **THEN** the hover shows the declaration with the target `Parameter`
 
 #### Scenario: Hover shows the transfer class
-- **GIVEN** `[Immutable] pub type Job { string id, i64 size }`
+- **GIVEN** `[Immutable] pub type Job { string id; i64 size; }`
 - **WHEN** the client hovers `Job` at a use site
 - **THEN** the hover contains `transfer class: Shared`
 

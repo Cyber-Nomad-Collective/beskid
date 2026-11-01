@@ -50,7 +50,7 @@ The descriptor `flags` word SHALL carry `TYPE_DESCRIPTOR_IMMUTABLE = 4` next to 
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
 #### Scenario: Immutable type descriptor flag
-- **GIVEN** `[Immutable] pub type Job { string id, i64 size }` and `pub type Draft { string id, i64 size }`
+- **GIVEN** `[Immutable] pub type Job { string id; i64 size; }` and `pub type Draft { string id; i64 size; }`
 - **WHEN** the two aggregate descriptors are emitted
 - **THEN** `Job`'s flags word has bit 4 set and `Draft`'s does not
 

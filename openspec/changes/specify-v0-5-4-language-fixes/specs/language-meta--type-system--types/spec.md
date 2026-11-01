@@ -78,14 +78,14 @@ A field access SHALL be valid on any expression whose static type is a nominal t
 **Stable ID:** `BSP-REQ-FIELD-ACCESS-ON-EXPRESSIONS`
 
 #### Scenario: Field of a call result
-- **GIVEN** `type Point { i64 x, i64 y, }` and
+- **GIVEN** `type Point { i64 x; i64 y; }` and
   `Point Make() { return Point { x: 9_i64, y: 2_i64 }; }`
 - **WHEN** `Make().x + Make().y` is evaluated
 - **THEN** the result is `11`
 
 #### Scenario: Nested projection in a generic method
-- **GIVEN** `type Inner<T> { T[] items, i64 count, }` and
-  `type Outer<T> { Inner<T> inner, pub i64 Count() { return this.inner.count; } }`
+- **GIVEN** `type Inner<T> { T[] items; i64 count; }` and
+  `type Outer<T> { Inner<T> inner; pub i64 Count() { return this.inner.count; } }`
 - **WHEN** `outer.Count()` is compiled for an `Outer<i64>` value `outer`
 - **THEN** the method compiles for that specialization and returns
   `outer.inner.count`

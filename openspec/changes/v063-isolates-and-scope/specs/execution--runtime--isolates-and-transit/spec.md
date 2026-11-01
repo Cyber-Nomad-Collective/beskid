@@ -92,7 +92,7 @@ The runtime SHALL provide `Runtime/Mem/Transit.bd`, a descriptor-driven deep cop
 7. The copier SHALL allocate in the destination heap only; it SHALL NOT write to the source heap.
 
 #### Scenario: Shared substructure stays shared
-- **GIVEN** `[Copyable] pub type Pair { Leaf left, Leaf right }` and `[Copyable] pub type Leaf { i64 v }`, with `Pair p = Pair { left: leaf, right: leaf }` captured by a task that returns `p.left == p.right`
+- **GIVEN** `[Copyable] pub type Pair { Leaf left; Leaf right; }` and `[Copyable] pub type Leaf { i64 v; }`, with `Pair p = Pair { left: leaf, right: leaf }` captured by a task that returns `p.left == p.right`
 - **WHEN** the task runs on another isolate
 - **THEN** the body observes one copied `Leaf` referenced twice and returns `true`
 
@@ -107,7 +107,7 @@ The runtime SHALL provide `Runtime/Mem/Transit.bd`, a descriptor-driven deep cop
 - **THEN** the returned string has equal bytes and its backing array is in the joiner's heap, distinct from the source object
 
 #### Scenario: Foreign pointer inside a copied graph is kept
-- **GIVEN** `[Copyable] pub type View { Config config, i64 offset }` where `Config` is `[Immutable]`, with the `View` captured as `Copied` and its `config` already a scope-rooted `Shared` capture
+- **GIVEN** `[Copyable] pub type View { Config config; i64 offset; }` where `Config` is `[Immutable]`, with the `View` captured as `Copied` and its `config` already a scope-rooted `Shared` capture
 - **WHEN** the task reads `view.config`
 - **THEN** it reads the parent's `Config` object at its original address and only the `View` record was copied
 

@@ -4,9 +4,7 @@
 ## Purpose
 
 LSP diagnostic and workspace analysis contracts for Beskid editor integrations.
-
 ## Requirements
-
 ### Requirement: Document and workspace analysis paths
 LSP document analysis SHALL support cached and cold diagnostic paths with equivalent semantic rule outcomes. Workspace scanning and symbol features SHALL use project graph context rather than isolated file parsing when available. Document analysis snapshots for `.bd` IntelliSense SHALL be built with the same `CompilationContext` / `ProgramAssembly` path as project-aware diagnostics (`build_document_analysis_with_context`), not single-file `Resolver::resolve_program` alone. Manifest diagnostics for `.proj` files SHALL be surfaced through project-specific diagnostic adapters. LSP diagnostics SHALL preserve severity and code identity from compiler analysis diagnostics.
 
@@ -38,6 +36,61 @@ IntelliSense and diagnostics share project scope but MUST NOT run full Executabl
 - **GIVEN** a user is typing in a `.bd` buffer and the debounced typed prepare has not completed
 - **WHEN** completion is requested
 - **THEN** the handler reads resolution from the current assembly generation via `entry_resolution_with_db` / `SharedResolution` without waiting for a full Executable prepare
+
+### Requirement: The analysis of an open document judges that document alone
+The analysis of an open `.bd` document after an edit and the publication of its diagnostics SHALL run the structural rules and the typing and legality obligations for the unit of that document only. The other own units of its project SHALL keep the diagnostics of their own analysis or of the workspace index. The diagnostics that the server publishes for the document SHALL be the same as the diagnostics of its unit when every own unit is judged. The workspace index and `beskid check` SHALL judge every own unit.
+
+#### Scenario: Edit in a file of a large library
+- **GIVEN** an open document of a library package with many own units
+- **WHEN** the client edits the document
+- **THEN** the analysis judges the unit of that document only
+- **AND** the published diagnostics of the document are the diagnostics of its unit when every own unit is judged
+
+#### Scenario: Error in a unit that the document does not reach
+- **GIVEN** an open document and another own unit of its project with an error that no item of the document reaches
+- **WHEN** the server analyzes the open document
+- **THEN** the server does not judge the other unit for that analysis
+- **AND** the workspace index reports the error for the other unit
+
+### Requirement: A newer text stops the analysis of an older text
+When the client sends a newer text of an open document, or closes the document, the server SHALL stop a running analysis of an older text of that document at its next database query and SHALL NOT store its facts. The analysis of the newest text SHALL NOT wait for the end of the analysis of an older text.
+
+#### Scenario: End of a burst of edits
+- **GIVEN** a running analysis of an open document
+- **WHEN** the client sends a newer text and then stops editing
+- **THEN** the server stops the running analysis without storing its facts
+- **AND** the facts of the newest text are stored after one analysis of that text
+
+#### Scenario: Close during an analysis
+- **GIVEN** a running analysis of an open document
+- **WHEN** the client closes the document
+- **THEN** the server stops the analysis and stores no facts for the closed document
+
+### Requirement: Editor diagnostic shape
+The server SHALL publish one diagnostic per cause. The server SHALL anchor the diagnostic where the fix goes. For repeated assignments to an immutable binding, the anchor SHALL be the declaration. The `message` SHALL be one sentence that names the cause, followed by at most one second line of the form `Help: <text>` when the compiler has a help sentence. A help sentence SHALL NOT be a separate diagnostic. The message SHALL NOT contain a file path, a grammar rule name, a source snippet, or an arrow such as `-->`. The `range` SHALL be the exact token. Other places SHALL be `relatedInformation` entries with a short label such as "assigned again" or "host declaration starts here". For each related place in the same buffer, the server SHALL also publish a diagnostic of severity `Hint` at that place, with the label as message. A related place in another file SHALL NOT get a Hint marker. The `source` SHALL be `beskid`. The `code` SHALL be the diagnostic code, and `codeDescription.href` SHALL be the registry page of the diagnostic code registry, without a fragment. A diagnostic for an unused item SHALL carry the `Unnecessary` tag. A diagnostic for a deprecated item SHALL carry the `Deprecated` tag. A diagnostic for a project manifest SHALL be anchored on the offending block or field in the manifest.
+
+#### Scenario: Repeated assignment
+- **GIVEN** a binding `let x = 1;` that two later statements assign
+- **WHEN** diagnostics are published
+- **THEN** one diagnostic is anchored on the declaration, and each assignment is a related location with the label "assigned again"
+
+#### Scenario: Message content
+- **GIVEN** any diagnostic produced by the compiler
+- **WHEN** the server converts it
+- **THEN** the message contains no path, no rule name and no snippet, and has at most one `Help:` line
+
+### Requirement: Quick fixes carry applicability
+Each quick fix SHALL carry an applicability: `machine-applicable`, `maybe-incorrect` or `has-placeholders`. The server SHALL mark a fix as preferred only when it is `machine-applicable` and sits at the cause. The title of a `maybe-incorrect` fix SHALL tell the user to check the result. When the parser repairs a mistake, the server SHALL publish the original mistake as an error and the repair as a quick fix. The text of a diagnostic SHALL NOT use the word "recovery".
+
+#### Scenario: Missing semicolon
+- **GIVEN** a statement without `;`
+- **WHEN** diagnostics and code actions are requested
+- **THEN** the error is on the token found, and a preferred `machine-applicable` fix inserts `;`
+
+#### Scenario: Fix that may change meaning
+- **GIVEN** a parse mistake whose repair may change the meaning
+- **WHEN** code actions are requested
+- **THEN** the fix is not preferred and its title asks the user to check the result
 
 ## Informative Source Provenance
 

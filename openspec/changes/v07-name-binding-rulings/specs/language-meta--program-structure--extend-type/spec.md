@@ -9,6 +9,6 @@ Members inside `extend type` MAY access public members of the extended type only
 - **THEN** the compiler rejects the private member access
 
 #### Scenario: Extend type in the declaring unit
-- **GIVEN** `Account.bd` that declares `pub type Account { i64 balance }` and `extend type Account { pub i64 Peek() { return this.balance; } }`
+- **GIVEN** `Account.bd` that declares `pub type Account { i64 balance; }` and `extend type Account { pub i64 Peek() { return this.balance; } }`
 - **WHEN** access checking runs
 - **THEN** the compiler emits **E1511** for `balance`

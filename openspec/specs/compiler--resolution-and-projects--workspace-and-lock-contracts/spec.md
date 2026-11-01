@@ -4,9 +4,7 @@
 ## Purpose
 
 Compiler workspace graph, lock materialization, and resolution diagnostics (schema defers to tooling).
-
 ## Requirements
-
 ### Requirement: Graph-verified portable lock authority
 The compiler SHALL treat each v2 `project`/`manifest`/`source_root` triple as a portable description, not filesystem authority. It SHALL resolve the triple against its source-specific base, canonicalize existing paths, and compare the full dependency identity with the current `CompilePlan` before using locked roots. It SHALL reject copied same-name locks with different manifests, missing declared path dependencies, and symlink escapes. A `corelib` source SHALL be minted only from a dependency actually resolved beneath the verified canonical installed Corelib workspace root; neither a lock claim nor a similarly named directory SHALL grant Corelib provenance. Invalid ownership or graph identity SHALL fail without granting service-code authority.
 
@@ -39,9 +37,9 @@ The compiler SHALL derive a dependency's materialized directory name from a cano
 - **THEN** it fails before copying or replaying content outside that directory
 
 ### Requirement: Pinned registry artifacts
-When a valid v2 lock exists, ordinary and strict resolution SHALL select its exact pinned registry version and verify the downloaded archive's SHA-256 against `artifact_digest` before extraction. An unavailable pinned version or a digest mismatch SHALL fail without selecting a newer version or extracting the artifact. `beskid update` MAY deliberately select a newer version and SHALL write its new version and digest. The compiler SHALL stream each compressed registry archive through auto-cleaned scratch storage while hashing, and SHALL reject an archive larger than 64 MiB (67,108,864 bytes) before extraction or project preparation output, regardless of pin or unresolved-warning policy. The compiler SHALL fully validate and stage an archive before changing its materialized package directory, SHALL reject conflicting or unsafe ZIP entries, and SHALL enforce both a 512 MiB (536,870,912 byte) per-entry and 1 GiB (1,073,741,824 byte) total uncompressed output limit during extraction. Digest-derived registry materialization directories SHALL be immutable: a newly staged package MAY be renamed into an absent destination, but an existing destination SHALL be reused only after byte-for-byte and path/type-for-path validation against the staged package, without mutation; mismatches SHALL fail closed. A rejected archive SHALL leave the prior materialized package unchanged and remove its scratch data. Path dependencies SHALL remain live sources: their contents MAY change without a lock change, while their manifest-derived identity and relative location remain checked.
+When a valid v2 lock exists, ordinary and strict resolution SHALL select its exact pinned registry version and verify the downloaded archive's SHA-256 against `artifact_digest` before extraction. An unavailable pinned version or a digest mismatch SHALL fail without selecting a newer version or extracting the artifact. Selected `beskid update <package>` or explicit `beskid update --all` SHALL refresh only eligible scoped coordinates and necessary transitives, preserving unrelated valid pins. Exact declared intent SHALL change only with selected `--version`; a permitted new coordinate SHALL record its exact version and digest. The compiler SHALL stream each compressed registry archive through auto-cleaned scratch storage while hashing, and SHALL reject an archive larger than 64 MiB (67,108,864 bytes) before extraction or project preparation output, regardless of pin or unresolved-warning policy. The compiler SHALL fully validate and stage an archive before changing its materialized package directory, SHALL reject conflicting or unsafe ZIP entries, and SHALL enforce both a 512 MiB (536,870,912 byte) per-entry and 1 GiB (1,073,741,824 byte) total uncompressed output limit during extraction. Digest-derived registry materialization directories SHALL be immutable: a newly staged package MAY be renamed into an absent destination, but an existing destination SHALL be reused only after byte-for-byte and path/type-for-path validation against the staged package, without mutation; mismatches SHALL fail closed. A rejected archive SHALL leave the prior materialized package unchanged and remove its scratch data. Path dependencies SHALL remain live sources: their contents MAY change without a lock change, while their manifest-derived identity and relative location remain checked.
 
-The compiler SHALL treat exact duplicate raw ZIP names and Unicode-normalized, full-case-folded aliases for the same ZIP path as conflicts on every supported host, regardless of that host's case sensitivity. Every raw ZIP entry name SHALL be valid UTF-8; non-ASCII names SHALL carry the ZIP UTF-8 flag, Unicode Path override fields SHALL be rejected, and each local-header name SHALL match its central-directory name. This canonical-name profile prevents a ZIP library from coalescing distinct raw records under one decoded name before validation. The compiler SHALL reject ZIP path components that are non-portable on Windows, including reserved device names and trailing dots or spaces. Directory entries SHALL contain no payload and SHALL pass integrity validation rather than being skipped during full-archive checks. Before building path-prefix indexes or writing output, it SHALL reject archives with more than 10,000 raw central-directory entries (counting duplicate names), an entry name longer than 4,096 UTF-8 bytes, or more than 256 path components in one name. ZIP64 archives SHALL be rejected in v0.5, including ZIP64 entry metadata rather than only ZIP64 end-of-directory markers. Multidisk metadata SHALL be rejected both at the end-of-directory record and in each central-directory entry. The compiler SHALL require one unambiguous end-of-central-directory record anchored at the archive end, with the declared central-directory range immediately preceding that record. It SHALL walk the entire declared central-directory range, count its raw file records before ZIP-library name coalescing, and require the walked count and consumed range to match the record's declarations; ambiguous, truncated, or forged count/range metadata SHALL fail closed. The cumulative UTF-8 bytes retained for planned path-prefix keys SHALL not exceed 64 MiB (67,108,864 bytes). These preflight budgets SHALL apply independently of the compressed and uncompressed output limits.
+The compiler SHALL treat exact duplicate raw ZIP names and Unicode-normalized, full-case-folded aliases for the same ZIP path as conflicts on every supported host, regardless of that host's case sensitivity. Every raw ZIP entry name SHALL be valid UTF-8; non-ASCII names SHALL carry the ZIP UTF-8 flag, Unicode Path override fields SHALL be rejected, and each local-header name SHALL match its central-directory name. This canonical-name profile prevents a ZIP library from coalescing distinct raw records under one decoded name before validation. The compiler SHALL reject ZIP path components that are non-portable on Windows, including reserved device names and trailing dots or spaces. Directory entries SHALL contain no payload and SHALL pass integrity validation rather than being skipped during full-archive checks. Before building path-prefix indexes or writing output, it SHALL reject archives with more than 10,000 raw central-directory entries (counting duplicate names), an entry name longer than 4,096 UTF-8 bytes, or more than 256 path components in one name. ZIP64 archives SHALL be rejected in v0.6, including ZIP64 entry metadata rather than only ZIP64 end-of-directory markers. Multidisk metadata SHALL be rejected both at the end-of-directory record and in each central-directory entry. The compiler SHALL require one unambiguous end-of-central-directory record anchored at the archive end, with the declared central-directory range immediately preceding that record. It SHALL walk the entire declared central-directory range, count its raw file records before ZIP-library name coalescing, and require the walked count and consumed range to match the record's declarations; ambiguous, truncated, or forged count/range metadata SHALL fail closed. The cumulative UTF-8 bytes retained for planned path-prefix keys SHALL not exceed 64 MiB (67,108,864 bytes). These preflight budgets SHALL apply independently of the compressed and uncompressed output limits.
 
 The registry dependency's `source_root` SHALL be derived from the ZIP's exact top-level path spelling, not from host filesystem case-insensitive lookup: a literal directory `src` selects `src`, otherwise a literal `Src` selects `Src`, and otherwise the package root selects `.`. Preflight and post-extraction derivation SHALL agree so the same pinned archive produces identical lock bytes across supported hosts.
 
@@ -159,6 +157,71 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **GIVEN** an implementation claims conformance with this capability
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
+
+### Requirement: Independent lock and network policies
+Ordinary check/build/run/test/doc SHALL preserve valid eligible registry pins. Locked SHALL reject missing or drifted locks and forbid lock writes but MAY access network for exact pinned artifacts. Offline SHALL forbid every network request and require verified cached pinned artifact bytes; absent or tampered cache SHALL fail before executable preparation. Frozen SHALL combine locked and offline. These meanings SHALL apply uniformly through shared resolution, including dependency commands; incompatible mutation under locked SHALL fail rather than silently ignore the policy.
+
+#### Scenario: DEP06-04 Locked network
+- **GIVEN** valid lock and cold cache with registry available
+- **WHEN** build --locked runs
+- **THEN** it may fetch the exact digest-verified pin without modifying lock
+
+#### Scenario: DEP06-04 Offline warm and cold
+- **GIVEN** valid lock and warm verified cache, then cold or tampered cache
+- **WHEN** build --offline runs
+- **THEN** warm verified materialization succeeds without requests; cold/tampered fails with zero requests
+
+#### Scenario: DEP06-04 Frozen drift
+- **GIVEN** missing or stale lock and registry available
+- **WHEN** build --frozen runs
+- **THEN** it fails without requests or lock writes
+
+#### Scenario: Offline documentation preparation shares the resolver policy
+- **GIVEN** a project has an uncached registry dependency
+- **WHEN** doc --offline prepares its project graph
+- **THEN** it fails with an offline-cache diagnostic before any network request, materialized workspace, lockfile write or documentation output
+
+### Requirement: Shared Corelib
+A toolchain SHALL provide exactly one Corelib, a sealed bundle identified by its fingerprint. A project SHALL read Corelib packages from that bundle in place. Preparation SHALL NOT copy a Corelib package into the project and SHALL NOT write any file below the bundle root. Each installed toolchain SHALL have its own Corelib bundle, and a project SHALL use the Corelib of the toolchain that prepares it. A Corelib root without a fingerprint is a developer checkout, and its packages SHALL be treated as path dependencies. A diagnostic in a Corelib unit SHALL name the file in the shared bundle.
+
+#### Scenario: No copy
+- **GIVEN** a project that depends on Corelib packages
+- **WHEN** the project is prepared
+- **THEN** no Corelib file is written below `obj/beskid/` and no file is written below the bundle root
+
+### Requirement: Corelib seal
+Before any Corelib unit is used, the toolchain SHALL verify that the content of the bundle matches its fingerprint. When it does not match, preparation SHALL fail with **E3032** and SHALL NOT repair the bundle.
+
+#### Scenario: Modified bundle
+- **GIVEN** a Corelib bundle with one modified file
+- **WHEN** a project is prepared
+- **THEN** preparation fails with **E3032**
+
+### Requirement: Copies in obj/beskid
+Preparation SHALL copy the host sources and each path dependency into `obj/beskid/`, and SHALL extract each registry package into `obj/beskid/deps/src/`. Preparation SHALL remove every other entry of `obj/beskid/deps/src/`. A diagnostic in a copied unit SHALL name the authored file when the authored file still has the same text.
+
+#### Scenario: Stale dependency entry
+- **GIVEN** `obj/beskid/deps/src/` holds an entry that no dependency needs
+- **WHEN** the project is prepared
+- **THEN** the entry is removed
+
+### Requirement: Lock file format 3
+`Project.lock` format 3 SHALL record a Corelib dependency with `source=corelib`, its project path relative to the Corelib bundle root, its manifest and its source root. It SHALL NOT record a materialized root, a toolchain path, a version or a fingerprint for it. A path or registry dependency SHALL record its materialized root below `obj/beskid/deps/src/`. The first line of a format 3 lock file SHALL be `# Project.lock v3`. When the first line of a present lock file is different (format 1, format 2 or an unknown header), every consumer SHALL fail with **E3025** before it writes preparation output. No command SHALL read, regenerate or rewrite such a file: ordinary preparation, `--locked`, `--frozen`, `beskid dev project lock`, `beskid update` and the language server SHALL leave its bytes unchanged. The user deletes the file, and the next preparation that may write a lock writes format 3.
+
+#### Scenario: Older lock format
+- **GIVEN** a lock file whose first line is `# Project.lock v2`, and whose dependencies are all Corelib dependencies
+- **WHEN** the project is prepared, with or without `beskid dev project lock`
+- **THEN** preparation fails with **E3025** and the lock file bytes do not change
+
+#### Scenario: Unknown header
+- **GIVEN** a lock file whose first line is `# Project.lock v9`
+- **WHEN** a build, a check or the language server reads the project
+- **THEN** each fails with **E3025** and no file is written
+
+#### Scenario: Deleted lock
+- **GIVEN** the user deleted a lock file that failed with **E3025**
+- **WHEN** `beskid dev project lock` runs
+- **THEN** it writes a format 3 lock file from the current manifests
 
 ## Informative Source Provenance
 

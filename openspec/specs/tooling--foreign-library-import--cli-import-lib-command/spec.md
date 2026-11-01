@@ -4,9 +4,7 @@
 ## Purpose
 
 CLI workflow for mapping foreign libraries into Project.proj link metadata (v0.3).
-
 ## Requirements
-
 ### Requirement: Import lib command responsibilities
 `beskid import lib <logical> [options]` (or an implementation alias such as `beskid link import`) MUST accept a logical library string matching or intended for `Extern` `Library` fields, select an `ExternalLibrary` provider for the current host (default `c-posix` on tier-1), emit or update `project.link` manifest entries, and print resolved linker args and search paths without requiring authors to hand-edit `-l` flags.
 
@@ -23,13 +21,18 @@ The command SHALL support `--provider <id>` to choose an `ExternalLibrary` imple
 - **WHEN** the user runs `beskid import lib <logical> --dry-run`
 - **THEN** resolution output is printed and the manifest file is not modified
 
-### Requirement: Extern allow/deny enforcement for imported libraries
-Imported libraries MUST be subject to `BESKID_EXTERN_ALLOW` / `BESKID_EXTERN_DENY` at link/run drivers when those variables are set.
+### Requirement: Imported libraries are checked at link time
+`beskid import lib` SHALL only write link metadata into the manifest; it SHALL NOT load the library. A library that the command records in `project.link` SHALL be the only library that satisfies a required extern of that name at AOT link time. A required extern whose library is not recorded SHALL fail with **E4050** before linking. The command SHALL fail with a structured error for an unknown provider or an unknown logical name, and SHALL NOT change the manifest in that case.
 
-#### Scenario: Denied library blocked at link driver
-- **GIVEN** `BESKID_EXTERN_DENY` includes a logical library previously imported into `project.link`
-- **WHEN** a link or run driver evaluates extern libraries
-- **THEN** that library is rejected according to the deny list
+#### Scenario: Unknown logical name
+- **GIVEN** a logical library name that the selected provider does not know
+- **WHEN** the user runs `beskid import lib <logical>`
+- **THEN** the command fails with a structured error and the manifest is unchanged
+
+#### Scenario: Library not imported
+- **GIVEN** a required extern whose library is not in `project.link`
+- **WHEN** the project is built with AOT
+- **THEN** the build fails with **E4050**
 
 ## Informative Source Provenance
 

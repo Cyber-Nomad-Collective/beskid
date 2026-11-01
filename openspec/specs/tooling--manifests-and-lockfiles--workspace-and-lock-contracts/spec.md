@@ -4,9 +4,7 @@
 ## Purpose
 
 Workspace manifest and lockfile behavior for dependency resolution, reproducibility, and update flows.
-
 ## Requirements
-
 ### Requirement: Portable Project.lock v2 representation
 Tooling SHALL write `Project.lock` as LF-terminated lines in this exact order: `# Project.lock v2`, `root_manifest=<value>`, `project_name=<value>`, `dependencies:`, then zero or more dependency lines sorted deterministically by dependency identity. Each dependency line SHALL begin with the literal `- ` and contain `key=value` fields joined by literal `;`, with no extra spaces. The common fields SHALL occur exactly once in this order: `name`, `source`, `project`, `manifest`, `source_root`, `materialized_root`. `source` SHALL be one of `path`, `corelib`, or `registry`. A `registry` line SHALL then append exactly `registry`, `resolved_version`, and `artifact_digest`, in that order; other source kinds SHALL NOT contain these fields. The digest SHALL have the form `sha256:` followed by exactly 64 lowercase hexadecimal digits. The parser SHALL reject missing, duplicate, unknown, or out-of-order fields, unknown headers, extra lines, and malformed entries; it SHALL never interpret v1 data as v2.
 
@@ -45,48 +43,6 @@ Tooling SHALL encode every v2 file path with `/` separators on every host. `root
 - **WHEN** tooling writes and reads its v2 lock entry
 - **THEN** it writes `source_root=.` and resolves that sole sentinel to the verified project directory without accepting dot segments in other path fields
 
-### Requirement: Explicit lock migration and strict read-only policy
-`beskid lock` and `beskid update` SHALL be the only commands authorized to replace an existing v1 lock with v2, and SHALL derive the replacement from the current manifest graph rather than stale v1 absolute paths. Other consumers, including `build`, `run`, `test`, and LSP replay, SHALL reject a present v1 lock with an actionable migration diagnostic. Unknown headers and malformed v2 locks SHALL fail. A valid but stale v2 lock SHALL not be silently repaired by a non-update consumer. `--locked` and `--frozen` SHALL never write or rewrite a lock, even when a valid v2 lock is present; they SHALL reject missing, v1, or stale locks before writing any preparation output. When no lock exists, a normal unlocked build MAY create a v2 lock from the current graph. Only CLI lock mutation commands SHALL change an existing lock.
-
-When ordinary warning-only registry resolution leaves a declared package unavailable, the v2 lock MAY omit that package's registry pin. A later ordinary preparation SHALL preserve that lock while the package remains unavailable; if the package becomes available, it SHALL require an explicit `beskid update` before materializing or adding the pin. Strict `--locked` and `--frozen` preparation SHALL reject a declared registry package without a pin before materialization.
-
-#### Scenario: Explicit v1 migration
-- **GIVEN** a v1 lock whose absolute paths refer to an old checkout
-- **WHEN** `beskid lock` or `beskid update` runs against the current manifests
-- **THEN** it writes v2 using the newly resolved graph, without inferring paths from v1
-
-#### Scenario: Non-update consumer sees v1 or stale v2
-- **GIVEN** a present v1 lock or a v2 lock that no longer matches the current graph
-- **WHEN** `build`, `run`, `test`, or LSP consumes it
-- **THEN** the consumer reports migration or staleness and does not rewrite the lock
-
-#### Scenario: Strict command rejects a missing or invalid lock
-- **GIVEN** `--locked` or `--frozen` and a missing, v1, or stale lock
-- **WHEN** the command starts project preparation
-- **THEN** it fails before creating preparation output or changing lock bytes
-
-#### Scenario: Strict command accepts a valid v2 lock without writing it
-- **GIVEN** `--locked` or `--frozen` and a valid v2 lock matching the current graph
-- **WHEN** the command resolves and prepares the project
-- **THEN** it may use the locked graph but leaves the lock bytes and file metadata unchanged
-
-#### Scenario: Unavailable unpinned registry remains warning-only on retry
-- **GIVEN** a declared registry package was unavailable during ordinary preparation and its v2 lock has no pin
-- **WHEN** ordinary preparation retries while the package is still unavailable
-- **THEN** it retains the warning-only result without changing the lock or prepared output
-
-#### Scenario: Previously unavailable package becomes available
-- **GIVEN** a declared registry package has no pin in an existing v2 lock
-- **WHEN** ordinary preparation can resolve the package
-- **THEN** it requires explicit `beskid update` before materializing that package or changing the lock
-
-#### Scenario: Strict preparation requires a registry pin
-- **GIVEN** a declared registry package has no pin in an existing v2 lock
-- **WHEN** `--locked` or `--frozen` starts preparation
-- **THEN** it fails before materializing the package or changing the lock
-
-The v1 descriptions retained below are historical informative provenance. They do not define a currently accepted lock format.
-
 ### Requirement: Hub authority: Decision [D-TOOL-MAN-0001]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
 
@@ -114,6 +70,84 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **GIVEN** an implementation claims conformance with this capability
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
+
+### Requirement: Recoverable dependency pair transactions
+Recovery journals and private staging SHALL be created with access restricted to the current owner before writing their contents. Replacement and rollback SHALL preserve the original manifest and lock security state, including owner and discretionary access controls on Windows. Concurrent-change detection SHALL use platform file identity as well as contents and reject reparse or symlink substitution. Native qualification SHALL cover ordinary non-administrator execution, interruption recovery and the durability claims made by the supported filesystem publication path.
+
+Add/remove/update SHALL plan intent, strict resolution, verified materialization and replacement Project.lock before exposing success. A failure before completed commit SHALL restore original manifest/lock bytes and original missing-file state. Commit SHALL use durable recoverable state before its first visible replacement; interrupted commit SHALL recover before subsequent project reads. Concurrent external edits SHALL be detected and preserved rather than overwritten. Success SHALL require a coherent manifest/lock/materialization result. Dry-run SHALL report the same planned effects without visible project writes; private cache staging MAY survive but SHALL NOT imply committed project success.
+
+#### Scenario: Windows security state survives replacement and recovery
+- **GIVEN** a manifest and lock with explicit owner and discretionary access controls
+- **WHEN** a dependency command commits or recovers an interrupted pair replacement under a non-administrator account
+- **THEN** the coherent recovered pair preserves that security state and private journal contents were never exposed through inherited public access
+
+#### Scenario: DEP06-05 Resolution rollback
+- **GIVEN** original manifest and lock
+- **WHEN** resolution/download/hash or staging fails during add
+- **THEN** the operation exits nonzero with original pair unchanged
+
+#### Scenario: DEP06-05 Replacement rollback
+- **GIVEN** a planned pair transaction
+- **WHEN** second replacement or sync fails after first replacement
+- **THEN** original pair and missing-file state are restored or terminal recovery guidance is reported without success
+
+#### Scenario: DEP06-05 Interrupted recovery
+- **GIVEN** process death after first replacement
+- **WHEN** the next project command begins
+- **THEN** it recovers original pair before any resolution or compilation read
+
+#### Scenario: DEP06-05 Concurrent preservation
+- **GIVEN** a transaction planned against original bytes
+- **WHEN** another actor edits the manifest before commit
+- **THEN** commit fails without overwriting that external edit
+
+### Requirement: Explicit conservative update and removal
+Update SHALL require package or --all, reject their combination, and show guidance with status 2 when scope is absent. Selected refresh SHALL change only selected eligible closure and necessary transitives, preserving unrelated pins. Exact declared intent SHALL change only through selected update --version; --all SHALL NOT rewrite exact intent. Remove SHALL delete direct intent and recompute reachability retaining shared transitives. Update --dry-run SHALL report deterministic old/new coordinates and manifest/lock effects without visible writes.
+
+#### Scenario: DEP06-03 Scope and exact intent
+- **GIVEN** two exact dependencies and shared transitives
+- **WHEN** selected update or update --all runs without version
+- **THEN** exact intentions and unrelated valid pins remain unchanged
+
+#### Scenario: DEP06-03 Explicit version
+- **GIVEN** an exact dependency
+- **WHEN** update package --version chooses a valid different version
+- **THEN** only selected intent and necessary reachable lock closure change transactionally
+
+#### Scenario: DEP06-03 Shared removal
+- **GIVEN** two direct packages share a transitive
+- **WHEN** one direct dependency is removed
+- **THEN** remaining reachable transitive stays locked
+
+#### Scenario: DEP06-03 Dry-run
+- **GIVEN** a proposed selected upgrade
+- **WHEN** update --version runs with --dry-run
+- **THEN** effects are reported and manifest/lock/materialized project bytes remain unchanged
+
+### Requirement: Strict read-only lock policy
+Tooling SHALL NOT migrate a lock file from an older format. A present lock file that is not in the current format SHALL fail with **E3025** in every command and in the language server, and no command SHALL change its bytes. A malformed lock file in the current format SHALL fail. A valid but stale lock SHALL NOT be silently repaired by a consumer other than `beskid dev project lock` and an explicitly scoped `beskid update <package>` or `beskid update --all`. `--locked` and `--frozen` SHALL never write or rewrite a lock; they SHALL reject a missing, unsupported or stale lock before they write any preparation output. When no lock exists, a normal unlocked build MAY create a lock from the current graph.
+
+Required declared registry dependencies SHALL fail ordinary and strict application preparation when unavailable. An existing lock without a pin for a declared registry package SHALL remain unchanged until an explicit lock mutation resolves the missing pin. A declared registry package without a pin SHALL fail strict preparation before materialization.
+
+#### Scenario: Older lock is not migrated
+- **GIVEN** a present lock file whose first line is `# Project.lock v1`
+- **WHEN** `beskid dev project lock`, `beskid update --all`, `build`, `run`, `test` or the language server reads the project
+- **THEN** each fails with **E3025** and the lock file bytes do not change
+
+#### Scenario: Strict command rejects a missing or invalid lock
+- **GIVEN** `--locked` or `--frozen` and a missing, unsupported or stale lock
+- **WHEN** the command starts project preparation
+- **THEN** it fails before creating preparation output or changing lock bytes
+
+#### Scenario: Strict command accepts a valid lock without writing it
+- **GIVEN** `--locked` or `--frozen` and a valid lock matching the current graph
+- **WHEN** the command resolves and prepares the project
+- **THEN** it may use the locked graph but leaves the lock bytes and file metadata unchanged
+
+#### Scenario: Strict preparation requires a registry pin
+- **GIVEN** a declared registry package has no pin in an existing lock
+- **WHEN** `--locked` or `--frozen` starts preparation
+- **THEN** it fails before materializing the package or changing the lock
 
 ## Informative Source Provenance
 

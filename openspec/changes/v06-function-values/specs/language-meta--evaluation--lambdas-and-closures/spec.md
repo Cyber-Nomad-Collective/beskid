@@ -51,7 +51,7 @@ A call whose callee is an expression of function type SHALL call indirectly thro
 - **THEN** it is a closure record with the entry of `Double` and a null environment
 
 #### Scenario: Call through a function-typed field
-- **GIVEN** `type Handler { (i64) => i64 op }` and `h.op(5)` on a `Handler` local `h`
+- **GIVEN** `type Handler { (i64) => i64 op; }` and `h.op(5)` on a `Handler` local `h`
 - **WHEN** the call is compiled
 - **THEN** it is an indirect call through the record stored in the `op` field
 

@@ -4,21 +4,19 @@
 ## Purpose
 
 Expected CLI behavior and outputs across build, analysis, and runtime execution commands.
-
 ## Requirements
-
 ### Requirement: Line-oriented command progress
-Pipeline-backed commands SHALL report bounded progress and phase trees without entering an alternate screen or raw-input mode. On a TTY they MAY update progress bars in place but MUST leave a readable final summary and MUST NOT wait for a keypress after completion. `--plain` and non-TTY streams SHALL use deterministic newline-delimited output without cursor-control sequences. `beskid graph --tui` is the sole permitted full-screen terminal UI.
+Pipeline commands SHALL report bounded progress and readable phase trees without alternate-screen or raw input. TTY in-place bars SHALL leave readable final summaries and return without keypress. Non-TTY and --plain streams SHALL be deterministic newline-delimited output without cursor controls. Only explicit dev project graph --tui SHALL permit full-screen interaction.
 
 #### Scenario: Interactive build returns after completion
-- **GIVEN** a project and an interactive terminal
-- **WHEN** `beskid build` completes
-- **THEN** the summary remains readable and control returns without a keypress or alternate-screen transition
+- **GIVEN** interactive project build
+- **WHEN** build finishes
+- **THEN** control returns with readable summary without keypress
 
 #### Scenario: Plain build is machine-readable
-- **GIVEN** the same project with redirected output
-- **WHEN** `beskid build --plain` completes
-- **THEN** progress and result lines contain no cursor-control sequences
+- **GIVEN** redirected project build
+- **WHEN** build finishes
+- **THEN** progress has no cursor controls and is emitted to stderr
 
 ### Requirement: Hub authority: Decision [D-TOOL-CLI-0001]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
@@ -47,6 +45,192 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **GIVEN** an implementation claims conformance with this capability
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
+
+### Requirement: Check and manifest validation
+Check SHALL perform semantic checking through shared generation-bound analysis without producing a linked executable. Check/build/run/test SHALL validate selected manifests and fail required unresolved dependencies before executable lowering; they SHALL NOT silently upgrade valid pins.
+
+#### Scenario: Semantic check
+- **GIVEN** a project with a semantic error
+- **WHEN** check runs
+- **THEN** a shared diagnostic is emitted with status 1 and no linked executable
+
+#### Scenario: Unresolved project
+- **GIVEN** a required dependency cannot resolve
+- **WHEN** build/run/test/check runs
+- **THEN** the operation fails before executable lowering rather than succeeding with a warning
+
+### Requirement: Program arguments streams and outcome
+Run SHALL accept trailing -- arguments preserving OsString argument boundaries, including empty values, spaces, Unicode and leading dashes; a --json after -- SHALL belong to the program. It SHALL inherit stdin and preserve independent child stdout/stderr bytes without mixing progress into stdout. It SHALL forward cancellation, reap the child and propagate numeric child status; Unix signal termination SHALL map to 128+signal and Windows cancellation to 130. Successful ordinary execution SHALL NOT impose an undocumented unconditional 60-second timeout. Captured internal execution SHALL drain both pipes concurrently. Linker, subprocess and interrupted test failures SHALL NOT report success.
+
+#### Scenario: CLI06-03 Boundaries and status
+- **GIVEN** a program reading stdin and argv and exiting 7
+- **WHEN** run -- passes empty, spaced and leading-dash arguments
+- **THEN** arguments/stdin arrive unchanged, streams remain separate and CLI exits 7
+
+#### Scenario: CLI06-03 Large output
+- **GIVEN** a child writes more than pipe capacity to both streams
+- **WHEN** run executes it
+- **THEN** both outputs complete without deadlock or dropped bytes
+
+#### Scenario: CLI06-03 Cancellation
+- **GIVEN** a running child
+- **WHEN** the user interrupts run
+- **THEN** the child is interrupted and reaped and CLI returns the specified nonzero cancellation status
+
+### Requirement: Native test execution shares one compiled selected closure
+Test SHALL execute through AOT native objects and the exact verified ABI-v5 runtime kit. For each target it SHALL lower the union of selected, non-skipped test entrypoints once and compile shared reachable functions once into one common object. Unselected unreachable tests SHALL NOT acquire execution authority. Each test SHALL run in a fresh process with canonical runtime initialization and termination. Assertion or panic failure SHALL be captured without preventing subsequent selected tests. Target and matrix timeout or cancellation SHALL terminate and reap the active child and report remaining unexecuted tests distinctly. Test execution SHALL NOT initialize a JIT engine or rebuild a compilation database per test.
+
+#### Scenario: CLI06-NATIVE-TEST-UNION Shared reachable helper
+- **GIVEN** two selected tests sharing a helper and an unreachable unselected function
+- **WHEN** the target is prepared and executed
+- **THEN** one common object contains both selected entries and one helper compilation, omits the unreachable function, and each selected entry runs exactly once
+
+#### Scenario: CLI06-NATIVE-TEST-FAILURE Failure isolation
+- **GIVEN** a failing assertion followed by a passing selected test
+- **WHEN** native tests execute
+- **THEN** the first process failure is reported and the second test runs in a fresh runtime process
+
+#### Scenario: CLI06-NATIVE-TEST-BUDGET Active child budget
+- **GIVEN** a selected test exceeding the execution budget
+- **WHEN** the budget expires or execution is cancelled
+- **THEN** the child is terminated and reaped and remaining tests are reported as unexecuted because of budget or cancellation
+
+### Requirement: Native preparation deadlines cover contained tool processes
+Selected native test compilation, object emission, bootstrap compilation, linking and execution SHALL share one absolute target/matrix deadline and cancellation state. Each spawned native tool or test SHALL belong to a descendant containment boundary established before it executes; deadline, cancellation, error and leader exit SHALL terminate that boundary and reap the direct child before returning. Unix process groups and Windows suspended-spawn job assignment SHALL implement this boundary without a direct-child-only fallback. Preparation SHALL report existing pipeline progress. Synchronous compiler work that cannot be preempted SHALL retain checks before and after the serviced call and SHALL NOT be described as a hard interruptible phase.
+
+#### Scenario: CLI06-NATIVE-TREE Native descendant deadline
+- **GIVEN** a native tool or test that spawns a sleeping descendant
+- **WHEN** its shared absolute deadline expires
+- **THEN** its containment boundary terminates the descendant and reaps the direct child before the phase returns
+
+#### Scenario: CLI06-NATIVE-CANCEL Shared cancellation
+- **GIVEN** an active native preparation phase and the shared cancellation state
+- **WHEN** cancellation is requested
+- **THEN** the phase terminates its process tree and returns a cancellation diagnostic without resetting the deadline for a later phase
+
+#### Scenario: CLI06-NATIVE-PROGRESS Union compilation
+- **GIVEN** selected tests with a shared callee
+- **WHEN** their reachable union is compiled
+- **THEN** one existing pipeline progress observer reports the union preparation and shared object emission
+
+### Requirement: Matrix supervision cancels active native descendants before worker termination
+The matrix supervisor SHALL split the selected targets round-robin over a bounded number of worker processes, each preparing the workspace once and running only its shard, and SHALL report targets in manifest order regardless of completion order. Within a target, selected tests MAY link and run concurrently, each in its own process, and SHALL be reported in source order. The supervisor SHALL own a private cancellation channel for each worker. Deadline, supervision error, a fatal error in any worker or supervisor-channel closure SHALL request every worker's shared cancellation state so an active native containment boundary can terminate and reap its child before worker exit. Supervisor cleanup SHALL provide a bounded grace interval and SHALL reap every worker on every return path. A hard stop after that grace SHALL remain available for synchronous compiler work that cannot service cancellation; it SHALL NOT substitute for cleanup of an active native test process.
+
+#### Scenario: CLI06-MATRIX-NATIVE-CANCEL Parent deadline precedes target deadline
+- **GIVEN** a matrix worker executing an observed endless native test and a matrix deadline earlier than its target deadline
+- **WHEN** the supervisor reaches the matrix deadline
+- **THEN** it signals shared cancellation, waits only the bounded cleanup grace, reaps the worker and leaves no running native test process
+
+#### Scenario: CLI06-MATRIX-PARENT-EXIT Parent channel closes
+- **GIVEN** a matrix worker and its private supervisor channel
+- **WHEN** the supervisor exits or an error closes the channel
+- **THEN** the worker receives cancellation without a signal handler or a second deadline reset
+
+### Requirement: Rust Glue build selection
+`beskid build --backend glue-rust` SHALL build the selected Lib target as a shared Glue consumer image through the compiler-owned `beskid_aot` prepared Glue route. It SHALL also build one Rust owner image for each manifest glue block that a selected Extern import or `GlueHandle` type references. Runtime linkage SHALL be the shared Glue provider (`GlueSharedProviderV1`).
+
+The consumer native library identity SHALL be the selected target name. Each owner identity SHALL be its glue label, and the two SHALL differ. The consumer image SHALL be written to `--output` or to the default target output name. Each owner image SHALL be written beside it with the platform shared-library name of its label. `--release` and `--target-triple` SHALL apply to both images.
+
+Outputs SHALL be produced in a fresh staging directory and published only after every image has been admitted. A failure SHALL leave the previous outputs unchanged. A rebuild SHALL replace both images atomically, not fail because an output already exists.
+
+The CLI SHALL reject each of these cases before any external tool runs:
+- `glue-rust` for a project without a referenced glue block;
+- a glue block that no selected binding references;
+- a manifest with glue blocks built with the default `clif` backend;
+- an App or Test target, or a `--kind` other than shared;
+- `glue-dotnet`, which SHALL report the backend as unavailable in 0.6.
+
+The obsolete 0.4/0.5 "declared but not implemented" diagnostic SHALL be removed.
+
+#### Scenario: Owned fixture builds through the CLI alone
+- **GIVEN** the manual owned Glue fixture with a `glue "glue_manual"` block and explicit Rust tools
+- **WHEN** `beskid build --backend glue-rust` runs for its Lib target
+- **THEN** it emits an admitted consumer image and an admitted `glue_manual` owner image whose loaded calls match the manual results, without test code constructing owner type or callable mappings
+
+#### Scenario: Backend and project shape mismatches fail closed
+- **GIVEN** `--backend glue-rust` on a project without glue blocks, a glue project built with `clif`, an App target, or `--backend glue-dotnet`
+- **WHEN** `beskid build` runs
+- **THEN** it exits non-zero with an actionable diagnostic before starting Cargo, rustc or the linker, and writes no output
+
+#### Scenario: Failed rebuild preserves prior outputs
+- **GIVEN** previously published consumer and owner images and an owner source that no longer compiles
+- **WHEN** `beskid build --backend glue-rust` runs again
+- **THEN** the build fails, the previous images remain byte-identical, and no staging directory remains as an output
+
+### Requirement: Published Rust Glue image admission
+Each Glue producer SHALL compile an immutable admission record into its image before the link: the consumer through a generated object, and each Rust owner through its generated bridge crate. The record SHALL be an exported read-only data symbol (`beskid_glue_artifact_v1_admission_record` or `beskid_glue_rust_owner_v1_admission_record`). It SHALL hold the producer, source, tool and provider evidence that loader initialization needs. A producer SHALL NOT modify a linked image, because that invalidates platform code signatures. Each producer SHALL read the record back from its linked image and fail if it differs from the issued record.
+
+The consumer record SHALL pin the exact SHA-256 of every Rust owner image that the build produced for a referenced library. `beskid build --backend glue-rust` SHALL print the SHA-256 of each published image.
+
+`beskid_aot::api::glue::admit_published_glue_images` SHALL admit published images only with a consumer digest that the host supplies. The host SHALL receive that digest through a channel it trusts. No file beside the outputs SHALL grant admission. Before any image code runs, the loader SHALL read every record from the file bytes and fail closed in each of these cases:
+- the consumer bytes differ from the supplied digest;
+- a record is absent, ambiguous, not canonically encoded, or from another compiler version;
+- the target, runtime ABI or provider differs from the validated installed kit provider;
+- the consumer record does not pin exactly one owner for each referenced library;
+- a supplied owner image is not pinned, is supplied twice, or one pinned owner is missing;
+- an owner record names another library, source generation or provider;
+- an owner record names a compiler driver whose digest differs from the driver under the installed prefix;
+- a required export is absent.
+
+Admission SHALL then use the same process initialization as the in-process producer route.
+
+#### Scenario: Published images match the manual results
+- **GIVEN** the consumer and owner images that `beskid build --backend glue-rust` published for the manual owned fixture, and the consumer digest that the build printed
+- **WHEN** the host admits them through the installed kit with that digest
+- **THEN** the loaded calls match the manual results of the in-process producer route
+
+#### Scenario: Substituted published images fail closed
+- **GIVEN** a consumer image with one code byte changed, an owner image with one code byte changed, an owner image from another build of the same library, or a correctly pinned consumer from another build with the first build's owner
+- **WHEN** the host requests admission
+- **THEN** admission fails before any image is loaded, and the unchanged images still admit
+
+#### Scenario: Owner set must equal the pinned set
+- **GIVEN** a published consumer that pins one owner image
+- **WHEN** the host supplies no owner image, or the same owner image twice
+- **THEN** admission fails closed
+
+### Requirement: Explicit Rust Glue tool selection
+A `glue-rust` build SHALL take tools only from command-line flags. The flags are `--rust-toolchain <prefix>`, which resolves `<prefix>/bin/cargo` and `<prefix>/bin/rustc` with the platform executable suffix, or `--cargo <path>` and `--rustc <path>` together; these two forms SHALL be mutually exclusive. `--linker <path>` SHALL also be required.
+
+The CLI SHALL NOT select tools from `CARGO`, `RUSTC`, `PATH`, Cargo configuration or rustup defaults. Each selected tool SHALL pass the bounded probe and executable identity recheck defined for Glue tool validation. The flags SHALL be rejected for `clif` builds. Machine-local tool paths SHALL NOT enter the portable artifact identity.
+
+#### Scenario: Missing or conflicting tool flags
+- **GIVEN** a glue-rust build with no Rust tool flags, `--rust-toolchain` together with `--cargo`, only one of `--cargo` and `--rustc`, or no `--linker`
+- **WHEN** `beskid build` runs
+- **THEN** it fails before the probe and names the required flag form
+
+#### Scenario: Ambient tool variables do not select tools
+- **GIVEN** inherited `CARGO`, `RUSTC` and `PATH` values that point at different executables
+- **WHEN** a glue-rust build runs with explicit flags
+- **THEN** only the flagged executables are probed, receipted and invoked
+
+### Requirement: Default target of build and run
+When `beskid build` or `beskid run` resolves a host project manifest and the command has no `--target` and no source-file input, the command SHALL select the target by kind. The order of the target blocks in the manifest SHALL NOT change the selection. Neither command SHALL select a target of `kind = Test`.
+
+- `beskid run` SHALL select the App target.
+- `beskid build` SHALL select the App target. When the manifest declares no App target, `beskid build` SHALL select the Lib target.
+
+When the manifest declares two or more targets of the kind that the command selects, the command SHALL fail before it resolves dependencies. The error SHALL name each of those targets with its kind and SHALL tell the user to pass `--target <name>`. When the manifest declares no target of a kind that the command can select, the command SHALL fail with an error that names the targets of the manifest and tells the user to pass `--target <name>`. The command MUST NOT fall back to another target. `--target <name>` SHALL select the named target as before, also a Test target.
+
+#### Scenario: A library with a Test target builds the library
+- **GIVEN** a manifest that declares `target "lib" { kind = Lib }` and then `target "tests" { kind = Test }`
+- **WHEN** `beskid build` runs in the project directory
+- **THEN** the command builds the `lib` target as a shared library and does not report a missing `Main`
+
+#### Scenario: An application with Lib and Test targets
+- **GIVEN** a manifest that declares a Test target, an App target `app` and a Lib target, in that order
+- **WHEN** `beskid run` and `beskid build` run without `--target`
+- **THEN** both commands use the `app` target
+
+#### Scenario: Two App targets
+- **GIVEN** a manifest that declares `target "one" { kind = App }` and `target "two" { kind = App }`
+- **WHEN** `beskid build` or `beskid run` runs without `--target`
+- **THEN** the command fails with an error that names `one` and `two` and says to pass `--target <name>`
+
+#### Scenario: Only a Test target
+- **GIVEN** a manifest that declares only `target "tests" { kind = Test }`
+- **WHEN** `beskid build` runs without `--target`
+- **THEN** the command fails with an error that names `tests` and says to pass `--target <name>`
 
 ## Informative Source Provenance
 

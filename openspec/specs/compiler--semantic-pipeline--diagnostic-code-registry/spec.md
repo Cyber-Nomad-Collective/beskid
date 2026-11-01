@@ -55,6 +55,36 @@ inside this band. E2101 identifies an unavailable semantic fact after the
 gate has passed. E2102 identifies a missing ISLE lowering rule or fact after
 the gate has passed. E2103–E2199 remain reserved.
 
+**E1233** identifies a lambda capture of a stack reference: a lambda that is not a `spawn` operand captures a `mut` local or a native pointer. Captures are by-value snapshots, so the capture would silently stop aliasing its source. E1233 is a user-facing semantic diagnostic. It SHALL identify the lambda expression and name the captured binding. A `spawn` operand that captures a stack reference keeps **E1225**.
+
+**E1209** also identifies a string concatenation or interpolation operand whose proven type has no text form (a nominal, array or function value, `char`, `u64`, `word`, `unit`). The diagnostic SHALL name the source type of the operand and SHALL be reported at the operand.
+
+The block **E1234–E1255** SHALL be reserved for transfer, capture and move diagnostics, continuing the closure and spawn band after **E1233**. Codes SHALL be assigned as follows, and a code SHALL be emitted only from the release that owns it; until then the `SemanticIssueKind` variant SHALL exist with its code and SHALL have no emission site.
+
+| Code | Kind | Condition | First emitted |
+| --- | --- | --- | --- |
+| **E1234** | `UseAfterMove` | Moved-class or `Fiber` value used after it was consumed | 0.6.2 |
+| **E1235** | `CapturedLocalAssignedInBoundLambda` | `[Captures]` lambda assigns a captured local | 0.6.2 |
+| **E1236** | `CaptureNotTransferable` | `[Captures]` lambda captures a value whose class the bound rejects | 0.6.2 |
+| **E1237** | `MovedCaptureWithoutMove` | `[Captures]` lambda captures a Moved value without `move` | 0.6.2 |
+| **E1238** | `CapturesArgumentNotLiteral` | argument to a `[Captures]` parameter is not a lambda literal or function item | 0.6.2 |
+| **E1239** | `MoveOfNonOwningName` | `move` on a name that is not an owning Moved-class name | 0.6.2 |
+| **E1240** | `MoveInLoopWithoutReassignment` | Moved value consumed in a loop body without reassignment before the next iteration | 0.6.2 |
+| **E1241** | `BorrowEscapes` | borrowed Moved value stored, returned, captured or passed to a `move` parameter | 0.6.2 |
+| **E1242** | `ImplicitAliasOfMovedValue` | Moved value stored, passed to a `move` parameter or returned while a live name still owns it | 0.6.2 |
+| **E1243** | `DestructiveReadWithoutEmpty` | `move x.f` on a field type with no canonical empty value | 0.6.2 |
+| **E1244** | `ImmutableFieldNotShared` | field of an `[Immutable]` type is not Shared | 0.6.1 |
+| **E1245** | `ImmutableFieldAssignment` | assignment to or escape of a field of an `[Immutable]` object outside construction | 0.6.1 |
+| **E1246** | `MarkerOnNeverTransferable` | `[Copyable]`, `[Isolated]` or `[Immutable]` on a never-transferable type | 0.6.1 |
+| **E1247** | `MarkerFieldClassMismatch` | field class not admitted by `[Isolated]` or `[Copyable]` | 0.6.1 |
+| **E1248** | `CapturesBoundNotMarker` | `[Captures]` bound is not a marker contract or sits on a non-function parameter | 0.6.2 |
+| **E1249** | `InjectInsideIsolateBody` | `inject` field read inside a task body | 0.6.3 |
+| **E1250–E1255** | reserved | unassigned | none |
+
+From 0.6.2, **E1234–E1243** and **E1248** SHALL have emission sites in the query layer (`affine_ownership`, the `[Captures]` call-site fact and the attribute check), and **E1234** SHALL replace the former `SpawnDiagnosticKind::UseAfterMove` rendering for `Fiber` handles. The messages SHALL use the labels "moved here" for the consuming use and "borrowed here" for the borrowed declaration, and the help texts "write `move <name>`" (**E1237**, **E1242**), "use a reduction" (**E1235**), "pass the lambda literal" (**E1238**), "declare the parameter `move T <name>`" (**E1239** on a borrowed parameter, **E1241**) and "use `exchange(<place>, move <value>)`" (**E1243**).
+
+**E1509** and **E1510** SHALL be emitted by the query layer for attribute target declarations and attribute uses at every declaration site; **E1510** is no longer limited to `Extern` on a non-contract.
+
 **Stable ID:** `BSP-REQ-072159A73908`
 
 #### Scenario: Conformance exercises Decision
@@ -77,6 +107,215 @@ the gate has passed. E2103–E2199 remain reserved.
 - **THEN** the compiler SHALL report E2101 for an unavailable semantic fact
   or E2102 for a missing ISLE rule or fact, carrying the query or rule name
   and the site
+
+#### Scenario: Lambda capture of a mutable binding
+- **GIVEN** `i64 Main() { mut i64 count = 1; let read = () => count; return read(); }`
+- **WHEN** the legality gate judges `Main`
+- **THEN** the compiler SHALL report **E1233** at the lambda, naming `count`
+- **AND** the compiler SHALL NOT report an internal error for the lambda
+
+#### Scenario: Interpolation of a nominal value
+- **GIVEN** `type Point { i64 x; }` and `string Show(Point p) { return "at ${p}"; }`
+- **WHEN** `beskid check` judges `Show`
+- **THEN** the compiler SHALL report **E1209** at the `p` operand, naming `Point`
+
+#### Scenario: Block codes present in the catalogue
+- **GIVEN** `SemanticIssueKind::code()` after this change
+- **WHEN** the codes E1234 through E1249 are looked up
+- **THEN** each maps to the kind named in the table and no other kind maps to a code in E1234–E1255
+
+#### Scenario: Codes of later releases have no emission in 0.6.1
+- **GIVEN** the 0.6.1 compiler and the full surface test corpus
+- **WHEN** every diagnostic emitted is collected
+- **THEN** no E1234–E1243, E1248 or E1249 appears, and E1244–E1247 appear only in the marker and immutability tests
+
+#### Scenario: Use after move renders with E1234
+- **GIVEN** `unit Main(move u8[] buffer, Archive archive) { Archive a2 = archive.Add(move buffer); Log.Info(Array.Len<u8>(buffer)); }`
+- **WHEN** `beskid check` reports the diagnostic
+- **THEN** its code is **E1234**, its primary span is the second `buffer`, and a related label "moved here" points at `move buffer`
+
+#### Scenario: Fiber double join renders with E1234
+- **GIVEN** `i64 Main() { Fiber<i64> f = spawn Work(); i64 a = f.Join()?; return a + f.Join()?; }`
+- **WHEN** `beskid check` reports the diagnostic
+- **THEN** its code is **E1234** and no diagnostic with the former Fiber-only rendering is reported
+
+### Requirement: Dead assignment to a mutable parameter
+The code **E1259** SHALL identify an assignment to a `mut` parameter whose value no later read of the parameter can observe. The message SHALL have the form "the value assigned to the `mut` parameter `<name>` is never read". The primary span SHALL be the assignment. The diagnostic SHALL have a related note at the parameter declaration with the text "`<name>` is passed by value". The help SHALL tell the user to return the new value, or to assign the fields of the caller's object.
+
+#### Scenario: Dead assignment to a parameter
+- **GIVEN** `unit AssignWhole(mut Size s) { s = Size { columns: 80, rows: 24, }; }`
+- **WHEN** the code is checked
+- **THEN** the compiler SHALL report **E1259** at the assignment with the message "the value assigned to the `mut` parameter `s` is never read" and the note "`s` is passed by value"
+
+### Requirement: Default parameter codes E1251 to E1256
+The registry SHALL allocate: **E1251** a required parameter after an optional parameter; **E1252** a default value that is not a compile-time constant; **E1253** a default value that does not fit the parameter type; **E1254** a default value or caller-information attribute on a hook parameter or a `bulk` parameter; **E1255** a caller-information parameter without a default value; **E1256** a caller-information parameter of the wrong type. **E1612** an implementation default value that differs from the contract. **E1204** SHALL identify an argument count outside the range of the callee and SHALL state the range.
+
+#### Scenario: Codes are stable
+- **GIVEN** the registry page
+- **WHEN** a tool looks up E1251 to E1256
+- **THEN** each code has the meaning listed in this requirement
+
+### Requirement: Missing return at end of body
+The code **E1258** SHALL identify a function or method whose declared result is not `unit` or `never` and whose end of body is reachable. The message SHALL have the form "`<name>` can reach the end of its body without returning a value". The primary span SHALL be the closing brace of the body. The diagnostic SHALL have a related note at the declared name with the text "`<name>` returns `<type>`".
+
+#### Scenario: Value function without a final return
+- **GIVEN** `i32 Main() { 0; }`
+- **WHEN** the code is checked
+- **THEN** the compiler SHALL report **E1258** at the closing brace with the message "`Main` can reach the end of its body without returning a value" and the note "`Main` returns `i32`"
+
+### Requirement: Parse error codes and unused-item warning
+The inclusive range **E0101–E0199** SHALL be reserved for parse errors. The codes **E0101–E0117** are allocated: E0101 unexpected token, E0102 missing `;`, E0103 unclosed delimiter, E0104 `host` without a parameter list, E0105 `++` or `--`, E0106 typed `let`, E0107 reserved word used as a name, E0108 block used as a match-arm value, E0109 unknown string escape, E0110 invalid `\u{...}` value, E0111 unexpected syntax tree shape, E0112 `self` parameter, E0113 nothing to parse, E0114 character literal with more than one character, E0115 comma between type fields, E0116 conditional expression without `:`, E0117 documentation comment that is not attached to an item. Every parse error SHALL carry a code from this range. A parse code SHALL NOT be reused for another rule. The code **W2101** SHALL identify an unused item, and a diagnostic with that code SHALL carry the `Unnecessary` tag. A parse error message SHALL say what the parser was parsing, in the form "Expected X while parsing Y", with Y written in plain words. A table from each grammar rule to its plain words SHALL exist beside the grammar, and a test SHALL fail when a rule has no entry. All codes SHALL link to the registry page of this capability.
+
+#### Scenario: Parse error has a code
+- **GIVEN** the source `host Greeter { }` where `(` is expected
+- **WHEN** the file is parsed
+- **THEN** the diagnostic carries a code from E0101–E0199 and the message reads "Expected `(` while parsing host `Greeter`."
+
+#### Scenario: Unused item
+- **GIVEN** a private function that no item uses
+- **WHEN** the file is analyzed
+- **THEN** the compiler reports **W2101** with the `Unnecessary` tag
+
+#### Scenario: Unknown string escape
+- **GIVEN** the literal `"\q"`
+- **WHEN** the file is parsed
+- **THEN** the compiler SHALL report **E0109** on the escape
+
+#### Scenario: Rule without words
+- **GIVEN** a grammar rule that has no entry in the rule-to-words table
+- **WHEN** the completeness test runs
+- **THEN** the test fails
+
+### Requirement: Composition codes E1717 to E1725
+The registry SHALL allocate: **E1717** `startup` hook inside a named scope; **E1718** contract registered as itself; **E1719** registered type that the container cannot create (value field, generic, enum); **E1720** registration for a contract that the type does not conform to; **E1721** `with` that does not follow `launch` in the same function body; **E1722** a `launch` whose argument count does not match the host parameters, or that passes arguments to a launched host from another unit; **E1723** parameters on a base host or on a scope of a base host; **E1724** the same implementation registered twice for one key in one host and scope; **E1725** a host-level `single` that injects a per-activation service, directly or through a `transient`. **E1708** SHALL identify a `with` whose argument count does not match the scope parameters. **E1705** SHALL identify a singular `inject` that matches several registrations, and **E1713** SHALL identify a lifetime mismatch in a host override and SHALL name the contract.
+
+#### Scenario: Codes are stable
+- **GIVEN** the registry page
+- **WHEN** a tool looks up E1717 to E1723
+- **THEN** each code has the meaning listed in this requirement
+
+### Requirement: Ambiguous module qualifier diagnostic
+The code **E1104** SHALL also identify a qualified path whose first segment names both an inline module and a `use` alias, where each of them reaches a different item for the rest of the path. The message SHALL have the form "ambiguous module `<Name>`: both the inline module `<Name>` and the import `<Path>` declare `<Member>`". The primary span SHALL be the path. The help SHALL tell the user to rename the inline module or to import the module under another name with `use <Path> as <Name>;`.
+
+#### Scenario: Ambiguous qualifier message
+- **GIVEN** `use Core.Random;`, `mod Random { pub i64 New() { return 5; } }` and `return Random.New();`
+- **WHEN** the code is checked
+- **THEN** the compiler SHALL report **E1104** at `Random.New` with the message "ambiguous module `Random`: both the inline module `Random` and the import `Core.Random` declare `New`"
+
+### Requirement: One code per duplicate name
+A duplicate function, type, enum, contract, `use` alias, module declaration, constant or test in one scope SHALL be reported only as **E1102**. The codes **E1001** and **E1006** SHALL NOT be emitted and SHALL NOT be in the code registry; they SHALL NOT be reused for another meaning. **E1104** SHALL identify an ambiguous name or module path, not a duplicate `use` alias.
+
+#### Scenario: Duplicate use alias
+- **GIVEN** `use Core.Random;` twice in one scope
+- **WHEN** the code is checked
+- **THEN** the compiler SHALL report **E1102** once and SHALL NOT report **E1006** or **E1104**
+
+#### Scenario: Duplicate type
+- **GIVEN** `type Point { i64 x; }` twice in one scope
+- **WHEN** the code is checked
+- **THEN** the compiler SHALL report **E1102** once and SHALL NOT report **E1001**
+
+### Requirement: Literal does not fit its type
+The code **T0905** SHALL identify a numeric literal whose value does not fit the type given by its context or suffix. The message SHALL have the form "`<value>` does not fit in `<type>`" and SHALL be reported at the literal. The literal SHALL NOT be wrapped or truncated.
+
+#### Scenario: Negative unsigned
+- **GIVEN** `u32 x = -1;`
+- **WHEN** the code is checked
+- **THEN** the compiler SHALL report **T0905** with the message "`-1` does not fit in `u32`"
+
+### Requirement: Invalid primitive implementation E1611
+The code **E1611** SHALL identify an invalid implementation block for a primitive type. It SHALL be reported at the block, and the block SHALL issue no conformance.
+
+#### Scenario: Unit cannot conform
+- **GIVEN** `impl unit : Formatting { }`
+- **WHEN** the block is checked
+- **THEN** the compiler SHALL report **E1611**
+
+### Requirement: Internal-error floor E2101 to E2105
+The registry SHALL allocate: **E2101** an unavailable semantic fact after the legality gate; **E2102** a missing ISLE lowering rule or fact; **E2103** any other lowering invariant failure, including verification failures; **E2104** a failure of Mod semantic authority; **E2105** a build failure that has no source site, such as a text-only compiler gap, a duplicate symbol or a module error. Every internal error SHALL be reported as exactly one of these codes. The message SHALL have the form "internal compiler error: <summary in words>; please report this". The label SHALL be "the compiler failed here", the help SHALL name the issue tracker and the internal reason, and the diagnostic SHALL be reported at the construct that failed. A failure without a site SHALL be reported at the start of the entry unit with the label "while compiling this program". An invalid CLIF block SHALL NOT be an internal error; it SHALL be **E1232** at the block. E2106–E2199 SHALL stay reserved.
+
+#### Scenario: Lowering failure
+- **GIVEN** a construct for which lowering finds no rule
+- **WHEN** the program is built
+- **THEN** the compiler reports one diagnostic with a code from E2101–E2105 at the construct, with the text "internal compiler error" and "please report this"
+
+#### Scenario: Failure without a site
+- **GIVEN** a duplicate symbol at link time
+- **WHEN** the program is built
+- **THEN** the compiler reports **E2105** at the start of the entry unit
+
+### Requirement: CopyOnAssign diagnostic E1512
+The code **E1512** SHALL identify a type that carries `[CopyOnAssign]` and has no valid `Copy` method. A valid method is exactly one method named `Copy` with a borrowed receiver, no parameters and the type as return type. The diagnostic SHALL be reported at the attribute, and the help SHALL name the required method `This Copy()`.
+
+#### Scenario: Missing Copy
+- **GIVEN** `[CopyOnAssign] type Bag { i64 n; }` without a `Copy` method
+- **WHEN** the type is checked
+- **THEN** the compiler SHALL report **E1512** at the attribute
+
+### Requirement: Unused item warning W2101
+The code **W2101** SHALL identify an unused private item and SHALL replace **W1504**. The code W1504 SHALL be retired. The message SHALL have the form "`Helper` is never used", the label SHALL be "unused function" (or the kind of the item), and the diagnostic SHALL carry the `Unnecessary` tag and a `MaybeIncorrect` fix that removes the item.
+
+#### Scenario: Unused private function
+- **GIVEN** a private function `Helper` that no item uses
+- **WHEN** the file is analyzed
+- **THEN** the compiler SHALL report **W2101** with the message "`Helper` is never used"
+
+### Requirement: Serialize help for a Serializable bound
+When a generic bound `Serializable` is violated by a type `T` (**E1610**), the help SHALL say "add `[Serialize]` to type `T` so the compiler derives its `Serializable` conformance". When the declaration of `T` is in the analysed source, the diagnostic SHALL carry a machine-applicable fix that inserts the attribute `[Serialize]` on its own line above the declaration of `T`.
+
+#### Scenario: Missing Serialize attribute
+- **GIVEN** `type Point { i64 x; }` without `[Serialize]` and a call that requires `Point: Serializable`
+- **WHEN** the call is checked
+- **THEN** the compiler SHALL report **E1610** with the help "add `[Serialize]` to type `Point` so the compiler derives its `Serializable` conformance" and a machine-applicable fix that inserts `[Serialize]` above `type Point`
+
+### Requirement: Discarded array growth W1240
+The code **W1240** SHALL identify an `Array.Append` or `Array.RemoveLast` call used as a statement on an array that the caller does not own (a parameter that is not `mut` or `move`, a loop or pattern variable, a lambda parameter, a call result, an element), so that the result is discarded and the array is not changed: the call works on a copy. The message SHALL have the form "the result of `Array.Append` is discarded; the call works on a copy, so `xs` is not changed" (with `Array.RemoveLast` for a shrink) and SHALL be reported at the call. The help SHALL suggest using the result or passing an owner, and the help and the fix SHALL depend on the kind of the argument. For a parameter that is not `mut`, the fix SHALL declare the parameter `mut` (machine-applicable). For a pattern binding or a lambda parameter, the fix SHALL assign the result to the name (machine-applicable). For a `for` variable, a call result or an element, the fix SHALL use the result in a new local, `T[] grown = Array.Append(...)` or `T[] shortened = Array.RemoveLast(...)` when the element type is known (applicability `MaybeIncorrect`). A call whose first argument is an owner (a `let` local, a `mut` or `move` parameter, a field), and a call whose result is used, SHALL NOT be reported. `Array.TryAppend` is not covered, because it returns a flag.
+
+#### Scenario: Non-mut parameter
+- **GIVEN** `unit Add(i64[] xs) { Array.Append<i64>(xs, 1); }`
+- **WHEN** the function is checked
+- **THEN** the compiler SHALL report **W1240** at the call with a machine-applicable fix that declares `mut i64[] xs`
+
+#### Scenario: Pattern binding
+- **GIVEN** a pattern binding `xs` and the statement `Array.Append<i64>(xs, 1);`
+- **WHEN** the code is checked
+- **THEN** the compiler SHALL report **W1240** with a fix that assigns the result to `xs`
+
+#### Scenario: Discarded shrink of a parameter or an element
+- **GIVEN** `unit Trim(i64[] xs, i64[][] rows) { Array.RemoveLast<i64>(xs); Array.RemoveLast<i64>(rows[0]); }`
+- **WHEN** the function is checked
+- **THEN** the compiler SHALL report **W1240** at both calls, and the fix for the element SHALL bind `i64[] shortened = Array.RemoveLast<i64>(rows[0]);`
+
+#### Scenario: Owned array
+- **GIVEN** `mut i64[] xs = Array.Empty<i64>(); Array.Append<i64>(xs, 1);`
+- **WHEN** the code is checked
+- **THEN** no diagnostic is reported
+
+### Requirement: Corelib seal and retired lock codes
+The code **E3032** SHALL identify a Corelib bundle whose content does not match its fingerprint. The code **E3025** SHALL identify a `Project.lock` file whose first line is not `# Project.lock v3`. The message of **E3025** SHALL name the lock file and SHALL tell the user to delete the file and run `beskid dev project lock` to write a new one. The code **E3024** is retired: the compiler SHALL NOT emit it, and the registry SHALL NOT give it a new meaning.
+
+#### Scenario: Codes are stable
+- **GIVEN** the registry page
+- **WHEN** a tool looks up E3025 and E3032
+- **THEN** each code has the meaning listed in this requirement
+
+#### Scenario: Retired code
+- **GIVEN** the registry
+- **WHEN** a tool looks up E3024
+- **THEN** the registry has no entry for it
+
+### Requirement: Test name case diagnostic
+The code **W1637** SHALL identify a `test` name that is not PascalCase. The code SHALL keep its number. Before 0.6.7 it identified a test name that was not snake_case. The warning SHALL be reported on the test name token.
+
+#### Scenario: Snake_case test name
+- **GIVEN** `test parse_empty_input { }`
+- **WHEN** the naming check runs
+- **THEN** the compiler SHALL report **W1637** on `parse_empty_input`
+
+#### Scenario: PascalCase test name
+- **GIVEN** `test ParseEmptyInput { }`
+- **WHEN** the naming check runs
+- **THEN** no diagnostic is reported
 
 ## Informative Source Provenance
 

@@ -46,12 +46,12 @@ A contract declared with `[CompilerDerived]` SHALL NOT be listed in any conforma
   is not relaxed
 
 #### Scenario: Declared conformance to a derived marker is rejected
-- **GIVEN** `use Core.Parallel;` and `pub type Token : Shared { i64 id }`
+- **GIVEN** `use Core.Parallel;` and `pub type Token : Shared { i64 id; }`
 - **WHEN** contract satisfaction checking runs
 - **THEN** the compiler SHALL report **E1607** at `Shared` noting that the contract is compiler-derived
 
 #### Scenario: Derived bound fails with the offending field
-- **GIVEN** `pub type Cache { Map<string, i64> entries }` without a marker and `unit Keep<T>(T value) where T: Transferable { }` and the call `Keep<Cache>(cache)`
+- **GIVEN** `pub type Cache { Map<string, i64> entries; }` without a marker and `unit Keep<T>(T value) where T: Transferable { }` and the call `Keep<Cache>(cache)`
 - **WHEN** the where-bound is proven at the call
 - **THEN** the compiler SHALL report **E1610** naming `Cache` and the reason "no marker attribute"
 
@@ -92,17 +92,17 @@ The compiler SHALL compute, for every type identity, exactly one transfer class 
 A type parameter SHALL take the class of its bound inside the generic definition: `Shared`, `Moved` or `Copied` give that class; `Transferable` gives the class "some Transferable", which satisfies only the `Transferable` bound; no bound gives Never. A generic nominal type's class SHALL be computed after substituting its arguments, so `List<i64>` is Moved and `List<Fiber<i64>>` is Never. Exactly one marker among `[Immutable]`, `[Isolated]`, `[Copyable]` SHALL appear on one type; a second SHALL be reported as **E1510** at the second marker with the note that markers are exclusive. The class SHALL be a generation-bound fact available to the LSP hover of the type.
 
 #### Scenario: Immutable record is Shared
-- **GIVEN** `[Immutable] pub type Job { string id, i64 size }`
+- **GIVEN** `[Immutable] pub type Job { string id; i64 size; }`
 - **WHEN** the class of `Job` is computed
 - **THEN** it is Shared
 
 #### Scenario: Isolated record over a collection is Moved
-- **GIVEN** `[Isolated] pub type Index { List<string> terms, i64[] offsets }`
+- **GIVEN** `[Isolated] pub type Index { List<string> terms; i64[] offsets; }`
 - **WHEN** the class of `Index` is computed
 - **THEN** it is Moved
 
 #### Scenario: Copyable record with an array field is Never
-- **GIVEN** `[Copyable] pub type Frame { i64 width, u8[] pixels }`
+- **GIVEN** `[Copyable] pub type Frame { i64 width; u8[] pixels; }`
 - **WHEN** the class of `Frame` is computed
 - **THEN** it is Never naming `pixels` and the declaration is reported as **E1247** at `pixels`
 
@@ -112,7 +112,7 @@ A type parameter SHALL take the class of its bound inside the generic definition
 - **THEN** it is Moved, and `Option<i64>` is Shared
 
 #### Scenario: Generic parameter class from its bound
-- **GIVEN** `pub type Box<T> { T item }` with `[Isolated]` and the use `Box<string>` and `Box<Mutex>`
+- **GIVEN** `pub type Box<T> { T item; }` with `[Isolated]` and the use `Box<string>` and `Box<Mutex>`
 - **WHEN** both classes are computed
 - **THEN** `Box<string>` is Moved and `Box<Mutex>` is Never naming `item`
 
@@ -120,17 +120,17 @@ A type parameter SHALL take the class of its bound inside the generic definition
 A type carrying `[Immutable]` SHALL be transitively immutable. At the declaration, every field SHALL be of a Shared type, or SHALL carry `[ImmutableStorage]` and have the type `T[]` with `T` Shared; any other field SHALL be reported as **E1244** at the field, naming its type and class. In every unit, an assignment (`=`, `+=`, `-=`) whose target is a member access or subscript whose receiver's proven type is an `[Immutable]` nominal type SHALL be reported as **E1245** at the assignment, including assignments through `this` inside the type's own methods and event subscription on its fields; the struct literal that constructs the value SHALL be the only way to set its fields. An `[ImmutableStorage]` field SHALL additionally not be returned, stored into another place, captured by a lambda or passed to a parameter declared `mut`; each SHALL be reported as **E1245** at the use. `[ImmutableStorage]` SHALL be accepted only inside corelib (`Core.*` packages); elsewhere it SHALL be reported as **E1510**.
 
 #### Scenario: Field of a mutable type
-- **GIVEN** `[Immutable] pub type Snapshot { i64 taken, List<string> names }`
+- **GIVEN** `[Immutable] pub type Snapshot { i64 taken; List<string> names; }`
 - **WHEN** the declaration is checked
 - **THEN** the compiler SHALL report **E1244** at `names` naming `List<string>` and class Moved
 
 #### Scenario: Assignment through this
-- **GIVEN** `[Immutable] pub type Job { string id, i64 size, pub unit Grow() { this.size = this.size + 1; } }`
+- **GIVEN** `[Immutable] pub type Job { string id; i64 size; pub unit Grow() { this.size = this.size + 1; } }`
 - **WHEN** the legality gate judges the unit
 - **THEN** the compiler SHALL report **E1245** at `this.size = ...`
 
 #### Scenario: Assignment through a local
-- **GIVEN** `[Immutable] pub type Job { string id, i64 size }` and `unit Rename(Job job) { job.id = "renamed"; }`
+- **GIVEN** `[Immutable] pub type Job { string id; i64 size; }` and `unit Rename(Job job) { job.id = "renamed"; }`
 - **WHEN** the legality gate judges the unit
 - **THEN** the compiler SHALL report **E1245** at the assignment
 
@@ -140,7 +140,7 @@ A type carrying `[Immutable]` SHALL be transitively immutable. At the declaratio
 - **THEN** no **E1245** is reported
 
 #### Scenario: Immutable storage field in corelib
-- **GIVEN** a corelib unit with `[Immutable] pub type ReadOnlyArray<T> { [ImmutableStorage] T[] items, pub i64 Count() { return Array.Len<T>(this.items); } }`
+- **GIVEN** a corelib unit with `[Immutable] pub type ReadOnlyArray<T> { [ImmutableStorage] T[] items; pub i64 Count() { return Array.Len<T>(this.items); } }`
 - **WHEN** the declaration is checked
 - **THEN** no **E1244** is reported and `ReadOnlyArray<i64>` is Shared
 
@@ -153,12 +153,12 @@ A type carrying `[Immutable]` SHALL be transitively immutable. At the declaratio
 A type carrying `[Isolated]` SHALL have only fields whose class is Shared or Moved; a type carrying `[Copyable]` SHALL have only fields whose class is Shared or Copied. A field that violates this SHALL be reported as **E1247** at the field, naming the field, its class and the classes the marker admits. `[Copyable]` SHALL NOT depend on `[Serialize]`: the two attributes are independent and either may appear without the other. The marker SHALL impose no other rule in this release; the owning, borrowing and consuming rules for Moved values are specified with the `move` expression.
 
 #### Scenario: Isolated with a Copied field
-- **GIVEN** `[Copyable] pub type Pixel { u8 r, u8 g, u8 b }` and `[Isolated] pub type Image { Pixel[] rows, Pixel background }`
+- **GIVEN** `[Copyable] pub type Pixel { u8 r; u8 g; u8 b; }` and `[Isolated] pub type Image { Pixel[] rows; Pixel background; }`
 - **WHEN** the declaration is checked
 - **THEN** the compiler SHALL report **E1247** at `background` naming class Copied and the admitted classes Shared and Moved, and `rows` is accepted because `Pixel[]` is Moved
 
 #### Scenario: Copyable without Serialize
-- **GIVEN** `[Copyable] pub type Pixel { u8 r, u8 g, u8 b }` in a project that does not reference the serialization Mod
+- **GIVEN** `[Copyable] pub type Pixel { u8 r; u8 g; u8 b; }` in a project that does not reference the serialization Mod
 - **WHEN** the class of `Pixel` is computed
 - **THEN** it is Copied
 
@@ -171,7 +171,7 @@ Corelib SHALL declare `[NeverTransferable]` on `Concurrency.Fiber<T>`, `Concurre
 - **THEN** the compiler SHALL report **E1246** at `[Copyable]` naming `[NeverTransferable]`
 
 #### Scenario: Immutable record with a pointer field
-- **GIVEN** `[Immutable] pub type Raw { pointer data, i64 length }`
+- **GIVEN** `[Immutable] pub type Raw { pointer data; i64 length; }`
 - **WHEN** the declaration is checked
 - **THEN** the compiler SHALL report **E1246** at `[Immutable]` naming `data`
 
@@ -181,6 +181,6 @@ Corelib SHALL declare `[NeverTransferable]` on `Concurrency.Fiber<T>`, `Concurre
 - **THEN** it is Never with the reason `[NeverTransferable]`
 
 #### Scenario: Process-wide identity handle derives Shared
-- **GIVEN** `[Immutable] pub type WorkerId { u64 process_id, u64 sequence }`
+- **GIVEN** `[Immutable] pub type WorkerId { u64 process_id; u64 sequence; }`
 - **WHEN** the class is computed
 - **THEN** it is Shared without any identity-specific rule

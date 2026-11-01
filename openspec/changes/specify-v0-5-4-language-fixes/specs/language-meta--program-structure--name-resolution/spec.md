@@ -34,12 +34,12 @@ Inside a method, a bare name SHALL resolve to a parameter or local of that name 
 **Stable ID:** `BSP-REQ-NAME-LOCALS-SHADOW-FIELDS`
 
 #### Scenario: Parameter shadows a field
-- **GIVEN** `type Holder { string text, string Echo(string text) { return text; } }`
+- **GIVEN** `type Holder { string text; string Echo(string text) { return text; } }`
 - **WHEN** `holder.Echo("arg")` is evaluated on a `Holder` whose field `text`
   is `"field"`
 - **THEN** the result is `"arg"`
 
 #### Scenario: Local shadows a field
-- **GIVEN** `type Holder { i64 count, i64 Local() { i64 count = 7; return count; } }`
+- **GIVEN** `type Holder { i64 count; i64 Local() { i64 count = 7; return count; } }`
 - **WHEN** `Local()` is called on a `Holder` whose field `count` is `1`
 - **THEN** the result is `7`

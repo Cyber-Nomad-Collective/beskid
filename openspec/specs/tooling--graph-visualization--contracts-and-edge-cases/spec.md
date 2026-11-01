@@ -4,9 +4,7 @@
 ## Purpose
 
 LSP beskid.getGraph payload, CLI flags, and graph edge-case policy.
-
 ## Requirements
-
 ### Requirement: LSP beskid.getGraph contract
 The LSP `beskid.getGraph` request SHALL accept `[{ projectUri: string, kind: string, entryUri?: string, workspaceUri?: string }]` and return a payload with `kind`, `mermaid`, `revision`, `warnings`, and `metadata` (including lightweight `nodes`). The server MUST route graph generation through `beskid_queries::graph_mermaid` on `compilation_db`. `metadata.nodes` MUST remain lightweight navigation data only — not a parallel graph model. `hostComposition` MAY return empty mermaid with warning `no_host` when the entry has no launched host. Project dependency cycles MUST still fail at graph build; import cycles MAY render with warning styling.
 
@@ -24,11 +22,11 @@ The LSP `beskid.getGraph` request SHALL accept `[{ projectUri: string, kind: str
 - **THEN** it calls `beskid.getGraph` with `kind=projectDeps` and does not call `beskid.getProjectGraph`
 
 ### Requirement: CLI beskid graph surface
-`beskid graph` SHALL support `--kind project|workspace|module|imports|host`, `--project PATH`, `--entry PATH`, `--mermaid`, `--plain`, and `--out FILE`. On a TTY the default SHALL render via `graphs-tui`; `--mermaid` SHALL emit raw Mermaid to stdout; non-TTY sessions SHALL auto-select `--mermaid` unless `--tui` is forced.
+`beskid dev project graph` SHALL support `--kind project|workspace|module|imports|host`, `--project PATH`, `--entry PATH`, `--mermaid`, `--plain`, and `--out FILE`. On a TTY the default SHALL render readable line-oriented graph output; only explicit `--tui` SHALL render via `graphs-tui`; `--mermaid` SHALL emit raw Mermaid to stdout; non-TTY sessions SHALL auto-select `--mermaid` unless `--tui` is forced.
 
 #### Scenario: Non-TTY emits Mermaid
 - **GIVEN** stdout is not a TTY
-- **WHEN** the user runs `beskid graph --kind project`
+- **WHEN** the user runs `beskid dev project graph --kind project`
 - **THEN** raw Mermaid is emitted without requiring an explicit `--mermaid` flag
 
 ### Requirement: VS Code Graph Explorer panel

@@ -11,7 +11,7 @@ Immutability SHALL be proven by the transfer class query: a value whose type is 
 - **THEN** the compiler rejects the sharing or diagnoses detectable mutable capture
 
 #### Scenario: Shared record aliased by two fibers
-- **GIVEN** `[Immutable] pub type Config { string name, i64 retries }` and two `spawn` operands that both read a `Config` local
+- **GIVEN** `[Immutable] pub type Config { string name; i64 retries; }` and two `spawn` operands that both read a `Config` local
 - **WHEN** sharing analysis runs
 - **THEN** the alias is accepted because `Config` is Shared
 
@@ -40,7 +40,7 @@ The class of a value read from a field or element SHALL follow from the receiver
 There SHALL be no fourth case: an `[Immutable]` type cannot hold a Moved field (**E1244**), and types without a marker are subject to no rule. Read-only reference views (`box`) and write-unique references (`trn`) are not part of Beskid; immutability and isolation are properties of types, not of references.
 
 #### Scenario: Shared field through an isolated receiver
-- **GIVEN** `[Isolated] pub type Index { List<string> terms, string name }` and `string Name(Index index) { return index.name; }`
+- **GIVEN** `[Isolated] pub type Index { List<string> terms; string name; }` and `string Name(Index index) { return index.name; }`
 - **WHEN** the read is classified
 - **THEN** `index.name` is a Shared value and may be returned
 

@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "7e4988e8d2aaf26715a64e02bcc901f9227c40708df598368b7578c916854dfc",
+  "revision": "66c06bd72fa4c72c8c50a710b5a0c2bf31c7558d6e86473bd508738ad8bc77f9",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
     "nodes": 1042,
-    "capabilities": 206,
-    "requirements": 665,
+    "capabilities": 209,
+    "requirements": 868,
     "normativeSources": 304,
     "provisionalCapabilities": 52,
     "legacyArtifacts": 3189,
     "informativeDocuments": 183,
     "documentsWithNormativeKeywords": 10,
-    "specDocuments": 198
+    "specDocuments": 201
   },
   "entries": [
     {
@@ -1207,6 +1207,204 @@
           "status": "Standard",
           "normative": true,
           "migrationStatus": "extracted"
+        },
+        {
+          "id": "BSP-REQ-FD6ED901C1A8",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--build-pipeline--backends-jit-aot/spec.md",
+          "sourceHash": "0ac380cad4cb86ad08cfee18162d22dbbdb696861dc4aa9f58bd15db1b2bb9bf",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Glue deterministic artifact closure",
+          "anchor": "requirement-glue-deterministic-artifact-closure"
+        },
+        {
+          "id": "BSP-REQ-7EECCEAE2500",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--build-pipeline--backends-jit-aot/spec.md",
+          "sourceHash": "0ac380cad4cb86ad08cfee18162d22dbbdb696861dc4aa9f58bd15db1b2bb9bf",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Bounded explicit Glue tool validation",
+          "anchor": "requirement-bounded-explicit-glue-tool-validation"
+        },
+        {
+          "id": "BSP-REQ-DDDCEB7AF0C2",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--build-pipeline--backends-jit-aot/spec.md",
+          "sourceHash": "0ac380cad4cb86ad08cfee18162d22dbbdb696861dc4aa9f58bd15db1b2bb9bf",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Compiler owned external driver identity",
+          "anchor": "requirement-compiler-owned-external-driver-identity"
+        },
+        {
+          "id": "BSP-REQ-FBFE1C3DAC2B",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--build-pipeline--backends-jit-aot/spec.md",
+          "sourceHash": "0ac380cad4cb86ad08cfee18162d22dbbdb696861dc4aa9f58bd15db1b2bb9bf",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Canonical closed Glue declaration facts",
+          "anchor": "requirement-canonical-closed-glue-declaration-facts"
+        },
+        {
+          "id": "BSP-REQ-EE40A4EBCF5E",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--build-pipeline--backends-jit-aot/spec.md",
+          "sourceHash": "0ac380cad4cb86ad08cfee18162d22dbbdb696861dc4aa9f58bd15db1b2bb9bf",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Canonical managed field classification for emitted descriptors",
+          "anchor": "requirement-canonical-managed-field-classification-for-emitted-descriptors"
+        },
+        {
+          "id": "BSP-REQ-419E2475DD4B",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--build-pipeline--backends-jit-aot/spec.md",
+          "sourceHash": "0ac380cad4cb86ad08cfee18162d22dbbdb696861dc4aa9f58bd15db1b2bb9bf",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Producer and loader issued Glue initialization",
+          "anchor": "requirement-producer-and-loader-issued-glue-initialization"
+        },
+        {
+          "id": "BSP-REQ-A5F2D84FA9EF",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--build-pipeline--backends-jit-aot/spec.md",
+          "sourceHash": "0ac380cad4cb86ad08cfee18162d22dbbdb696861dc4aa9f58bd15db1b2bb9bf",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Canonical library owner shape domain",
+          "anchor": "requirement-canonical-library-owner-shape-domain"
+        },
+        {
+          "id": "BSP-REQ-1824BFB1508E",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--build-pipeline--backends-jit-aot/spec.md",
+          "sourceHash": "0ac380cad4cb86ad08cfee18162d22dbbdb696861dc4aa9f58bd15db1b2bb9bf",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Checked library closure and allocation-free reclamation",
+          "anchor": "requirement-checked-library-closure-and-allocation-free-reclamation"
+        },
+        {
+          "id": "BSP-REQ-947AD9213BBC",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--build-pipeline--backends-jit-aot/spec.md",
+          "sourceHash": "0ac380cad4cb86ad08cfee18162d22dbbdb696861dc4aa9f58bd15db1b2bb9bf",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Consumer-branded opaque release follows privately admitted owner domains",
+          "anchor": "requirement-consumer-branded-opaque-release-follows-privately-admitted-owner-domains"
+        },
+        {
+          "id": "BSP-REQ-B483DB5F983A",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--build-pipeline--backends-jit-aot/spec.md",
+          "sourceHash": "0ac380cad4cb86ad08cfee18162d22dbbdb696861dc4aa9f58bd15db1b2bb9bf",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Opaque Rust payload borrows retain a canonical owner lease",
+          "anchor": "requirement-opaque-rust-payload-borrows-retain-a-canonical-owner-lease"
+        },
+        {
+          "id": "BSP-REQ-8484094F3992",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--build-pipeline--backends-jit-aot/spec.md",
+          "sourceHash": "0ac380cad4cb86ad08cfee18162d22dbbdb696861dc4aa9f58bd15db1b2bb9bf",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Native Rust imports use a privately issued checked dispatch closure",
+          "anchor": "requirement-native-rust-imports-use-a-privately-issued-checked-dispatch-closure"
+        },
+        {
+          "id": "BSP-REQ-08A245547FEB",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--build-pipeline--backends-jit-aot/spec.md",
+          "sourceHash": "0ac380cad4cb86ad08cfee18162d22dbbdb696861dc4aa9f58bd15db1b2bb9bf",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Fallible Rust imports return their status through checked export invocations",
+          "anchor": "requirement-fallible-rust-imports-return-their-status-through-checked-export-invocations"
+        },
+        {
+          "id": "BSP-REQ-4F200D8E1AF9",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--build-pipeline--backends-jit-aot/spec.md",
+          "sourceHash": "0ac380cad4cb86ad08cfee18162d22dbbdb696861dc4aa9f58bd15db1b2bb9bf",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Rust owner builds exclude ambient Cargo configuration",
+          "anchor": "requirement-rust-owner-builds-exclude-ambient-cargo-configuration"
+        },
+        {
+          "id": "BSP-REQ-67A8B5745D66",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--build-pipeline--backends-jit-aot/spec.md",
+          "sourceHash": "0ac380cad4cb86ad08cfee18162d22dbbdb696861dc4aa9f58bd15db1b2bb9bf",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Library output item selection",
+          "anchor": "requirement-library-output-item-selection"
+        },
+        {
+          "id": "BSP-REQ-1A0017889103",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--build-pipeline--backends-jit-aot/spec.md",
+          "sourceHash": "0ac380cad4cb86ad08cfee18162d22dbbdb696861dc4aa9f58bd15db1b2bb9bf",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "JIT and AOT extern resolution",
+          "anchor": "requirement-jit-and-aot-extern-resolution"
+        },
+        {
+          "id": "BSP-REQ-C22499BEF672",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--build-pipeline--backends-jit-aot/spec.md",
+          "sourceHash": "0ac380cad4cb86ad08cfee18162d22dbbdb696861dc4aa9f58bd15db1b2bb9bf",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Target CPU baseline",
+          "anchor": "requirement-target-cpu-baseline"
+        },
+        {
+          "id": "BSP-REQ-CE286A2AF51D",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--build-pipeline--backends-jit-aot/spec.md",
+          "sourceHash": "0ac380cad4cb86ad08cfee18162d22dbbdb696861dc4aa9f58bd15db1b2bb9bf",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "JIT host CPU check",
+          "anchor": "requirement-jit-host-cpu-check"
+        },
+        {
+          "id": "BSP-REQ-5D6EDE08074C",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--build-pipeline--backends-jit-aot/spec.md",
+          "sourceHash": "0ac380cad4cb86ad08cfee18162d22dbbdb696861dc4aa9f58bd15db1b2bb9bf",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "No Cranelift runtime helpers",
+          "anchor": "requirement-no-cranelift-runtime-helpers"
         }
       ],
       "records": [
@@ -2262,6 +2460,39 @@
           "migrationStatus": "extracted",
           "title": "Build-time findings match analyze and LSP",
           "anchor": "requirement-build-time-findings-match-analyze-and-lsp"
+        },
+        {
+          "id": "BSP-REQ-13D6D935F858",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--build-pipeline--diagnostics-parity/spec.md",
+          "sourceHash": "6da8cbba96d5145975c286a1e95c1c872137d2312db34f8fe55b674189fbb08a",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "One diagnostic structure, two renderers",
+          "anchor": "requirement-one-diagnostic-structure-two-renderers"
+        },
+        {
+          "id": "BSP-REQ-F90F98DA925D",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--build-pipeline--diagnostics-parity/spec.md",
+          "sourceHash": "6da8cbba96d5145975c286a1e95c1c872137d2312db34f8fe55b674189fbb08a",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Authored spans and deduplication",
+          "anchor": "requirement-authored-spans-and-deduplication"
+        },
+        {
+          "id": "BSP-REQ-738976C80ED5",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--build-pipeline--diagnostics-parity/spec.md",
+          "sourceHash": "6da8cbba96d5145975c286a1e95c1c872137d2312db34f8fe55b674189fbb08a",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Mod activation errors keep their code and authored file",
+          "anchor": "requirement-mod-activation-errors-keep-their-code-and-authored-file"
         }
       ],
       "records": [
@@ -3018,6 +3249,17 @@
           "migrationStatus": "extracted",
           "title": "Reachability-scoped legality gate precedes specialization",
           "anchor": "requirement-reachability-scoped-legality-gate-precedes-specialization"
+        },
+        {
+          "id": "BSP-REQ-CF4357E8E0AA",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--build-pipeline--stage-ordering/spec.md",
+          "sourceHash": "b524e40d79cc7930a81a1e9c1e27a88b015922856d4ada88e44e4eaf82d1855b",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Bounded atomic compiler snapshot restoration",
+          "anchor": "requirement-bounded-atomic-compiler-snapshot-restoration"
         }
       ],
       "records": [
@@ -4206,6 +4448,28 @@
           "migrationStatus": "extracted",
           "title": "MethodDefinition ISLE lowering: Decision [D-COMP-IR-0016]",
           "anchor": "requirement-methoddefinition-isle-lowering-decision-d-comp-ir-0016"
+        },
+        {
+          "id": "BSP-REQ-9891B359C337",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--codegen-and-ir--lowering-contract/spec.md",
+          "sourceHash": "7d4acf0acc452d244e6f2e3b6994b75e8e7570c54ee9eaeb5aadd829057d44da",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Generic trap is named panic",
+          "anchor": "requirement-generic-trap-is-named-panic"
+        },
+        {
+          "id": "BSP-REQ-A33EBEB6222C",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--codegen-and-ir--lowering-contract/spec.md",
+          "sourceHash": "7d4acf0acc452d244e6f2e3b6994b75e8e7570c54ee9eaeb5aadd829057d44da",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Parenthesized constant loop condition",
+          "anchor": "requirement-parenthesized-constant-loop-condition"
         }
       ],
       "records": [
@@ -9814,6 +10078,28 @@
           "status": "Standard",
           "normative": true,
           "migrationStatus": "extracted"
+        },
+        {
+          "id": "BSP-REQ-3A6D429DA1FC",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--resolution-and-projects--registry-and-overrides-contract/spec.md",
+          "sourceHash": "d44a0f912b886a790b0372ab3bab210d76dbbb8508130560e8faba1edbbe2e2a",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Strict registry coordinates and stable addition",
+          "anchor": "requirement-strict-registry-coordinates-and-stable-addition"
+        },
+        {
+          "id": "BSP-REQ-B844E419868C",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--resolution-and-projects--registry-and-overrides-contract/spec.md",
+          "sourceHash": "d44a0f912b886a790b0372ab3bab210d76dbbb8508130560e8faba1edbbe2e2a",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Transitive registry closure with one version per package",
+          "anchor": "requirement-transitive-registry-closure-with-one-version-per-package"
         }
       ],
       "records": [
@@ -10116,6 +10402,61 @@
           "status": "Standard",
           "normative": true,
           "migrationStatus": "extracted"
+        },
+        {
+          "id": "BSP-REQ-7240C60A4816",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--resolution-and-projects--workspace-and-lock-contracts/spec.md",
+          "sourceHash": "b0c75b6047a4848dd839687cafc23f35eaa91cd0ff23936c13186ee86f13ee90",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Independent lock and network policies",
+          "anchor": "requirement-independent-lock-and-network-policies"
+        },
+        {
+          "id": "BSP-REQ-C63E461DF458",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--resolution-and-projects--workspace-and-lock-contracts/spec.md",
+          "sourceHash": "b0c75b6047a4848dd839687cafc23f35eaa91cd0ff23936c13186ee86f13ee90",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Shared Corelib",
+          "anchor": "requirement-shared-corelib"
+        },
+        {
+          "id": "BSP-REQ-AD9383424868",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--resolution-and-projects--workspace-and-lock-contracts/spec.md",
+          "sourceHash": "b0c75b6047a4848dd839687cafc23f35eaa91cd0ff23936c13186ee86f13ee90",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Corelib seal",
+          "anchor": "requirement-corelib-seal"
+        },
+        {
+          "id": "BSP-REQ-3891A531F0A7",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--resolution-and-projects--workspace-and-lock-contracts/spec.md",
+          "sourceHash": "b0c75b6047a4848dd839687cafc23f35eaa91cd0ff23936c13186ee86f13ee90",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Copies in obj/beskid",
+          "anchor": "requirement-copies-in-obj-beskid"
+        },
+        {
+          "id": "BSP-REQ-C4CA408152B9",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--resolution-and-projects--workspace-and-lock-contracts/spec.md",
+          "sourceHash": "b0c75b6047a4848dd839687cafc23f35eaa91cd0ff23936c13186ee86f13ee90",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Lock file format 3",
+          "anchor": "requirement-lock-file-format-3"
         }
       ],
       "records": [
@@ -10422,6 +10763,28 @@
           "status": "Standard",
           "normative": true,
           "migrationStatus": "extracted"
+        },
+        {
+          "id": "BSP-REQ-7C1AF4F8DA6A",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--resolution-and-projects--workspace-resolution-contract/spec.md",
+          "sourceHash": "decf4b57ce3b2ee5884de8172addf8e8e80c192927c8975ab3a274f8a7b07ea9",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Parsed declaration dependency authority",
+          "anchor": "requirement-parsed-declaration-dependency-authority"
+        },
+        {
+          "id": "BSP-REQ-4C6DCCADCCFA",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--resolution-and-projects--workspace-resolution-contract/spec.md",
+          "sourceHash": "decf4b57ce3b2ee5884de8172addf8e8e80c192927c8975ab3a274f8a7b07ea9",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Explicit assembly recovery authority policy",
+          "anchor": "requirement-explicit-assembly-recovery-authority-policy"
         }
       ],
       "records": [
@@ -10796,6 +11159,182 @@
           "status": "Standard",
           "normative": true,
           "migrationStatus": "extracted"
+        },
+        {
+          "id": "BSP-REQ-ECCF26F048AD",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--semantic-pipeline--diagnostic-code-registry/spec.md",
+          "sourceHash": "5456fcaf206b3f57ec478a72526bdac53a365b9625a703f780efade18185e669",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Dead assignment to a mutable parameter",
+          "anchor": "requirement-dead-assignment-to-a-mutable-parameter"
+        },
+        {
+          "id": "BSP-REQ-5B2DFF3199BD",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--semantic-pipeline--diagnostic-code-registry/spec.md",
+          "sourceHash": "5456fcaf206b3f57ec478a72526bdac53a365b9625a703f780efade18185e669",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Default parameter codes E1251 to E1256",
+          "anchor": "requirement-default-parameter-codes-e1251-to-e1256"
+        },
+        {
+          "id": "BSP-REQ-06FBF5566A08",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--semantic-pipeline--diagnostic-code-registry/spec.md",
+          "sourceHash": "5456fcaf206b3f57ec478a72526bdac53a365b9625a703f780efade18185e669",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Missing return at end of body",
+          "anchor": "requirement-missing-return-at-end-of-body"
+        },
+        {
+          "id": "BSP-REQ-769877FAC3E2",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--semantic-pipeline--diagnostic-code-registry/spec.md",
+          "sourceHash": "5456fcaf206b3f57ec478a72526bdac53a365b9625a703f780efade18185e669",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Parse error codes and unused-item warning",
+          "anchor": "requirement-parse-error-codes-and-unused-item-warning"
+        },
+        {
+          "id": "BSP-REQ-AA43062F48CD",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--semantic-pipeline--diagnostic-code-registry/spec.md",
+          "sourceHash": "5456fcaf206b3f57ec478a72526bdac53a365b9625a703f780efade18185e669",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Composition codes E1717 to E1725",
+          "anchor": "requirement-composition-codes-e1717-to-e1725"
+        },
+        {
+          "id": "BSP-REQ-F3DDB1E0DCE0",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--semantic-pipeline--diagnostic-code-registry/spec.md",
+          "sourceHash": "5456fcaf206b3f57ec478a72526bdac53a365b9625a703f780efade18185e669",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Ambiguous module qualifier diagnostic",
+          "anchor": "requirement-ambiguous-module-qualifier-diagnostic"
+        },
+        {
+          "id": "BSP-REQ-73D5A7FFB3A3",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--semantic-pipeline--diagnostic-code-registry/spec.md",
+          "sourceHash": "5456fcaf206b3f57ec478a72526bdac53a365b9625a703f780efade18185e669",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "One code per duplicate name",
+          "anchor": "requirement-one-code-per-duplicate-name"
+        },
+        {
+          "id": "BSP-REQ-C594AC021B8C",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--semantic-pipeline--diagnostic-code-registry/spec.md",
+          "sourceHash": "5456fcaf206b3f57ec478a72526bdac53a365b9625a703f780efade18185e669",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Literal does not fit its type",
+          "anchor": "requirement-literal-does-not-fit-its-type"
+        },
+        {
+          "id": "BSP-REQ-85F04778262B",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--semantic-pipeline--diagnostic-code-registry/spec.md",
+          "sourceHash": "5456fcaf206b3f57ec478a72526bdac53a365b9625a703f780efade18185e669",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Invalid primitive implementation E1611",
+          "anchor": "requirement-invalid-primitive-implementation-e1611"
+        },
+        {
+          "id": "BSP-REQ-9904BF939952",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--semantic-pipeline--diagnostic-code-registry/spec.md",
+          "sourceHash": "5456fcaf206b3f57ec478a72526bdac53a365b9625a703f780efade18185e669",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Internal-error floor E2101 to E2105",
+          "anchor": "requirement-internal-error-floor-e2101-to-e2105"
+        },
+        {
+          "id": "BSP-REQ-BDDE2CBB02A1",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--semantic-pipeline--diagnostic-code-registry/spec.md",
+          "sourceHash": "5456fcaf206b3f57ec478a72526bdac53a365b9625a703f780efade18185e669",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "CopyOnAssign diagnostic E1512",
+          "anchor": "requirement-copyonassign-diagnostic-e1512"
+        },
+        {
+          "id": "BSP-REQ-D6F080377257",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--semantic-pipeline--diagnostic-code-registry/spec.md",
+          "sourceHash": "5456fcaf206b3f57ec478a72526bdac53a365b9625a703f780efade18185e669",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Unused item warning W2101",
+          "anchor": "requirement-unused-item-warning-w2101"
+        },
+        {
+          "id": "BSP-REQ-492651237AED",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--semantic-pipeline--diagnostic-code-registry/spec.md",
+          "sourceHash": "5456fcaf206b3f57ec478a72526bdac53a365b9625a703f780efade18185e669",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Serialize help for a Serializable bound",
+          "anchor": "requirement-serialize-help-for-a-serializable-bound"
+        },
+        {
+          "id": "BSP-REQ-A947BB4631E6",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--semantic-pipeline--diagnostic-code-registry/spec.md",
+          "sourceHash": "5456fcaf206b3f57ec478a72526bdac53a365b9625a703f780efade18185e669",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Discarded array growth W1240",
+          "anchor": "requirement-discarded-array-growth-w1240"
+        },
+        {
+          "id": "BSP-REQ-E41A60067C61",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--semantic-pipeline--diagnostic-code-registry/spec.md",
+          "sourceHash": "5456fcaf206b3f57ec478a72526bdac53a365b9625a703f780efade18185e669",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Corelib seal and retired lock codes",
+          "anchor": "requirement-corelib-seal-and-retired-lock-codes"
+        },
+        {
+          "id": "BSP-REQ-FBFC114FA607",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--semantic-pipeline--diagnostic-code-registry/spec.md",
+          "sourceHash": "5456fcaf206b3f57ec478a72526bdac53a365b9625a703f780efade18185e669",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Test name case diagnostic",
+          "anchor": "requirement-test-name-case-diagnostic"
         }
       ],
       "records": [
@@ -13726,6 +14265,39 @@
           "migrationStatus": "extracted",
           "title": "Disposable and Core.IO define typed cleanup and transfer contracts",
           "anchor": "requirement-disposable-and-core-io-define-typed-cleanup-and-transfer-contracts"
+        },
+        {
+          "id": "BSP-REQ-6D628AD33461",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/core-library--concurrency--concurrency-package/spec.md",
+          "sourceHash": "c3ae4a3285b182e65fdf5c7ec2703c0d11cba42bb999a85b16af2403200135b4",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Blocking operations in Main park",
+          "anchor": "requirement-blocking-operations-in-main-park"
+        },
+        {
+          "id": "BSP-REQ-90CE21D9EA39",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/core-library--concurrency--concurrency-package/spec.md",
+          "sourceHash": "c3ae4a3285b182e65fdf5c7ec2703c0d11cba42bb999a85b16af2403200135b4",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Process ends when Main returns",
+          "anchor": "requirement-process-ends-when-main-returns"
+        },
+        {
+          "id": "BSP-REQ-109CC5506362",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/core-library--concurrency--concurrency-package/spec.md",
+          "sourceHash": "c3ae4a3285b182e65fdf5c7ec2703c0d11cba42bb999a85b16af2403200135b4",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Closed error sets with Unexpected",
+          "anchor": "requirement-closed-error-sets-with-unexpected"
         }
       ],
       "records": [
@@ -14785,6 +15357,28 @@
           "migrationStatus": "extracted",
           "title": "Direct bounds-checked array element access",
           "anchor": "requirement-direct-bounds-checked-array-element-access"
+        },
+        {
+          "id": "BSP-REQ-E875EFE3C289",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/core-library--foundation-and-primitives--core-collections/spec.md",
+          "sourceHash": "e2d5332e79ca7a30248fa016642916b14bcc1c7082ac3003097629aa88d8a4a4",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Lent and detached lists",
+          "anchor": "requirement-lent-and-detached-lists"
+        },
+        {
+          "id": "BSP-REQ-D812FEC8A8DF",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/core-library--foundation-and-primitives--core-collections/spec.md",
+          "sourceHash": "e2d5332e79ca7a30248fa016642916b14bcc1c7082ac3003097629aa88d8a4a4",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Array.Append ownership",
+          "anchor": "requirement-array-append-ownership"
         }
       ],
       "records": [
@@ -15657,6 +16251,72 @@
           "migrationStatus": "extracted",
           "title": "Supported process capability: Decision [D-CORE-PRIM-0181]",
           "anchor": "requirement-supported-process-capability-decision-d-core-prim-0181"
+        },
+        {
+          "id": "BSP-REQ-03EDFFE9133D",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/core-library--foundation-and-primitives--core-process/spec.md",
+          "sourceHash": "a6c1f40ad695faa620c6d7d18230c6460e0bb405e83fc301fe0219ebd3b8098d",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Streaming child process control",
+          "anchor": "requirement-streaming-child-process-control"
+        },
+        {
+          "id": "BSP-REQ-0030C285043D",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/core-library--foundation-and-primitives--core-process/spec.md",
+          "sourceHash": "a6c1f40ad695faa620c6d7d18230c6460e0bb405e83fc301fe0219ebd3b8098d",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Bounded child session lifetime",
+          "anchor": "requirement-bounded-child-session-lifetime"
+        },
+        {
+          "id": "BSP-REQ-1A05B3E9BBA0",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/core-library--foundation-and-primitives--core-process/spec.md",
+          "sourceHash": "a6c1f40ad695faa620c6d7d18230c6460e0bb405e83fc301fe0219ebd3b8098d",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Structured capture shares child authority",
+          "anchor": "requirement-structured-capture-shares-child-authority"
+        },
+        {
+          "id": "BSP-REQ-87C58E1160C0",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/core-library--foundation-and-primitives--core-process/spec.md",
+          "sourceHash": "a6c1f40ad695faa620c6d7d18230c6460e0bb405e83fc301fe0219ebd3b8098d",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Nonblocking pump and scoped cleanup",
+          "anchor": "requirement-nonblocking-pump-and-scoped-cleanup"
+        },
+        {
+          "id": "BSP-REQ-D11035EAA579",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/core-library--foundation-and-primitives--core-process/spec.md",
+          "sourceHash": "a6c1f40ad695faa620c6d7d18230c6460e0bb405e83fc301fe0219ebd3b8098d",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Cooperative spawn settlement",
+          "anchor": "requirement-cooperative-spawn-settlement"
+        },
+        {
+          "id": "BSP-REQ-88F2C24DAC96",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/core-library--foundation-and-primitives--core-process/spec.md",
+          "sourceHash": "a6c1f40ad695faa620c6d7d18230c6460e0bb405e83fc301fe0219ebd3b8098d",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Issued absolute shutdown deadlines",
+          "anchor": "requirement-issued-absolute-shutdown-deadlines"
         }
       ],
       "records": [],
@@ -18206,6 +18866,46 @@
       "bookLinks": []
     },
     {
+      "id": "BSP-CAP-42263385E52D",
+      "capability": "core-library--terminal-and-console--console-hosting",
+      "specPath": "openspec/specs/core-library--terminal-and-console--console-hosting/spec.md",
+      "path": "/platform-spec/capabilities/core-library--terminal-and-console--console-hosting/",
+      "title": "Console Hosting",
+      "description": "Canonical OpenSpec capability for Console Hosting.",
+      "status": "Standard",
+      "domain": "core-library",
+      "area": "terminal-and-console",
+      "feature": "console-hosting",
+      "legacySlugs": [],
+      "aliases": [],
+      "requirements": [
+        {
+          "id": "BSP-REQ-D21F0A01A45C",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/core-library--terminal-and-console--console-hosting/spec.md",
+          "sourceHash": "5cc54f6f4678fb2719f0dd1d9e13ecd99a35be1015024718bf07cb206290071e",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "ConsoleHost base host",
+          "anchor": "requirement-consolehost-base-host"
+        },
+        {
+          "id": "BSP-REQ-D72C73439B83",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/core-library--terminal-and-console--console-hosting/spec.md",
+          "sourceHash": "5cc54f6f4678fb2719f0dd1d9e13ecd99a35be1015024718bf07cb206290071e",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "CommandLine service",
+          "anchor": "requirement-commandline-service"
+        }
+      ],
+      "records": [],
+      "bookLinks": []
+    },
+    {
       "id": "BSP-CAP-D2FACDF0AD2D",
       "capability": "core-library--terminal-and-console--console-io-streams",
       "specPath": "openspec/specs/core-library--terminal-and-console--console-io-streams/spec.md",
@@ -19028,6 +19728,35 @@
           "relation": "Parent feature hub"
         }
       ],
+      "bookLinks": []
+    },
+    {
+      "id": "BSP-CAP-1A6B5F38CF29",
+      "capability": "core-library--text-and-parsing--formatting",
+      "specPath": "openspec/specs/core-library--text-and-parsing--formatting/spec.md",
+      "path": "/platform-spec/capabilities/core-library--text-and-parsing--formatting/",
+      "title": "Formatting",
+      "description": "Canonical OpenSpec capability for Formatting.",
+      "status": "Standard",
+      "domain": "core-library",
+      "area": "text-and-parsing",
+      "feature": "formatting",
+      "legacySlugs": [],
+      "aliases": [],
+      "requirements": [
+        {
+          "id": "BSP-REQ-FA31A40C0D21",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/core-library--text-and-parsing--formatting/spec.md",
+          "sourceHash": "59ca0b2671b72349c2f1254f8364845ffd7a95fb5eee6c5d2bb1fe6dc5c11c54",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Formatting contract",
+          "anchor": "requirement-formatting-contract"
+        }
+      ],
+      "records": [],
       "bookLinks": []
     },
     {
@@ -20389,6 +21118,17 @@
           "status": "Standard",
           "normative": true,
           "migrationStatus": "extracted"
+        },
+        {
+          "id": "BSP-REQ-599802BB8B40",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/execution--abi-and-host--extern-dispatch-and-policy/spec.md",
+          "sourceHash": "6dbdfaf6bbaf8a08fdbc8416dfa9843c71826617b557cd9fc2ca736a96a2943c",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Extern resolution fails closed",
+          "anchor": "requirement-extern-resolution-fails-closed"
         }
       ],
       "records": [
@@ -20808,6 +21548,17 @@
           "migrationStatus": "extracted",
           "title": "Channel parking releases queue ownership",
           "anchor": "requirement-channel-parking-releases-queue-ownership"
+        },
+        {
+          "id": "BSP-REQ-97228713A314",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/execution--runtime--channels-and-synchronization/spec.md",
+          "sourceHash": "a700b55b40f25de1c170836e09a0432b57be5f482ec5a75f3cdf5530e0f64b54",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Unexpected status codes",
+          "anchor": "requirement-unexpected-status-codes"
         }
       ],
       "records": [
@@ -21464,17 +22215,6 @@
           "anchor": "requirement-heap-growth-pacing-and-committed-size-cap"
         },
         {
-          "id": "BSP-REQ-A03B6EAE5FCB",
-          "legacySlug": null,
-          "sourcePath": "openspec/specs/execution--runtime--memory-and-gc-runtime-contract/spec.md",
-          "sourceHash": "9a46b21e8a8650c41428356d65d65a2184c1fd324a63e8c14df9bd353168513f",
-          "status": "Standard",
-          "normative": true,
-          "migrationStatus": "extracted",
-          "title": "Span-queued marking and per-span sweep",
-          "anchor": "requirement-span-queued-marking-and-per-span-sweep"
-        },
-        {
           "id": "BSP-REQ-0FC58CAAF5D8",
           "legacySlug": null,
           "sourcePath": "openspec/specs/execution--runtime--memory-and-gc-runtime-contract/spec.md",
@@ -21495,6 +22235,138 @@
           "migrationStatus": "extracted",
           "title": "Diagnosable managed-heap exhaustion",
           "anchor": "requirement-diagnosable-managed-heap-exhaustion"
+        },
+        {
+          "id": "BSP-REQ-B7A6C28F4E82",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/execution--runtime--memory-and-gc-runtime-contract/spec.md",
+          "sourceHash": "3fe8fd11957360ebf212090005649ffc57b8222cfea5521b1a1501d5ba4f44ce",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Canonical provider GC handle and root registration exports",
+          "anchor": "requirement-canonical-provider-gc-handle-and-root-registration-exports"
+        },
+        {
+          "id": "BSP-REQ-DF250314C20C",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/execution--runtime--memory-and-gc-runtime-contract/spec.md",
+          "sourceHash": "3fe8fd11957360ebf212090005649ffc57b8222cfea5521b1a1501d5ba4f44ce",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Native provider imports retain target and symbol kind",
+          "anchor": "requirement-native-provider-imports-retain-target-and-symbol-kind"
+        },
+        {
+          "id": "BSP-REQ-A328739CA341",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/execution--runtime--memory-and-gc-runtime-contract/spec.md",
+          "sourceHash": "3fe8fd11957360ebf212090005649ffc57b8222cfea5521b1a1501d5ba4f44ce",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Span-queued incremental marking and per-span sweep",
+          "anchor": "requirement-span-queued-incremental-marking-and-per-span-sweep"
+        },
+        {
+          "id": "BSP-REQ-D2CED7A9DE22",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/execution--runtime--memory-and-gc-runtime-contract/spec.md",
+          "sourceHash": "3fe8fd11957360ebf212090005649ffc57b8222cfea5521b1a1501d5ba4f44ce",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Incremental collection cycle",
+          "anchor": "requirement-incremental-collection-cycle"
+        },
+        {
+          "id": "BSP-REQ-B05E1453C785",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/execution--runtime--memory-and-gc-runtime-contract/spec.md",
+          "sourceHash": "3fe8fd11957360ebf212090005649ffc57b8222cfea5521b1a1501d5ba4f44ce",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Mark pacing and bounded steps",
+          "anchor": "requirement-mark-pacing-and-bounded-steps"
+        },
+        {
+          "id": "BSP-REQ-8CA908F26C9A",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/execution--runtime--memory-and-gc-runtime-contract/spec.md",
+          "sourceHash": "3fe8fd11957360ebf212090005649ffc57b8222cfea5521b1a1501d5ba4f44ce",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Hybrid write barrier",
+          "anchor": "requirement-hybrid-write-barrier"
+        },
+        {
+          "id": "BSP-REQ-30B5726EB034",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/execution--runtime--memory-and-gc-runtime-contract/spec.md",
+          "sourceHash": "3fe8fd11957360ebf212090005649ffc57b8222cfea5521b1a1501d5ba4f44ce",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Write barrier emission in generated code",
+          "anchor": "requirement-write-barrier-emission-in-generated-code"
+        },
+        {
+          "id": "BSP-REQ-DA9FC9770BB8",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/execution--runtime--memory-and-gc-runtime-contract/spec.md",
+          "sourceHash": "3fe8fd11957360ebf212090005649ffc57b8222cfea5521b1a1501d5ba4f44ce",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Allocation and sweeping during a cycle",
+          "anchor": "requirement-allocation-and-sweeping-during-a-cycle"
+        },
+        {
+          "id": "BSP-REQ-4BC7C585A9F7",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/execution--runtime--memory-and-gc-runtime-contract/spec.md",
+          "sourceHash": "3fe8fd11957360ebf212090005649ffc57b8222cfea5521b1a1501d5ba4f44ce",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Roots during incremental marking",
+          "anchor": "requirement-roots-during-incremental-marking"
+        },
+        {
+          "id": "BSP-REQ-40135E126192",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/execution--runtime--memory-and-gc-runtime-contract/spec.md",
+          "sourceHash": "3fe8fd11957360ebf212090005649ffc57b8222cfea5521b1a1501d5ba4f44ce",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Per-heap collection state",
+          "anchor": "requirement-per-heap-collection-state"
+        },
+        {
+          "id": "BSP-REQ-D73EF04194BC",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/execution--runtime--memory-and-gc-runtime-contract/spec.md",
+          "sourceHash": "3fe8fd11957360ebf212090005649ffc57b8222cfea5521b1a1501d5ba4f44ce",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Incremental collection verification and stress mode",
+          "anchor": "requirement-incremental-collection-verification-and-stress-mode"
+        },
+        {
+          "id": "BSP-REQ-873244A9569D",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/execution--runtime--memory-and-gc-runtime-contract/spec.md",
+          "sourceHash": "3fe8fd11957360ebf212090005649ffc57b8222cfea5521b1a1501d5ba4f44ce",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Event handler words are traced fields",
+          "anchor": "requirement-event-handler-words-are-traced-fields"
         }
       ],
       "records": [
@@ -21818,6 +22690,50 @@
           "status": "Standard",
           "normative": true,
           "migrationStatus": "extracted"
+        },
+        {
+          "id": "BSP-REQ-4FDCA10D700A",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/execution--runtime--panic-io-and-syscalls/spec.md",
+          "sourceHash": "b3af337857253e37246b96e825c5acbc81762959718774cba8b99fd8fcb82c44",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Canonical child process syscall ownership",
+          "anchor": "requirement-canonical-child-process-syscall-ownership"
+        },
+        {
+          "id": "BSP-REQ-044873B70C4A",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/execution--runtime--panic-io-and-syscalls/spec.md",
+          "sourceHash": "b3af337857253e37246b96e825c5acbc81762959718774cba8b99fd8fcb82c44",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Canonical Glue owner issuer and registry V3",
+          "anchor": "requirement-canonical-glue-owner-issuer-and-registry-v3"
+        },
+        {
+          "id": "BSP-REQ-29EE87F6C9BC",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/execution--runtime--panic-io-and-syscalls/spec.md",
+          "sourceHash": "b3af337857253e37246b96e825c5acbc81762959718774cba8b99fd8fcb82c44",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Installed Glue shared provider identity",
+          "anchor": "requirement-installed-glue-shared-provider-identity"
+        },
+        {
+          "id": "BSP-REQ-8B28007EBBC6",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/execution--runtime--panic-io-and-syscalls/spec.md",
+          "sourceHash": "b3af337857253e37246b96e825c5acbc81762959718774cba8b99fd8fcb82c44",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Relocatable canonical shared provider identity",
+          "anchor": "requirement-relocatable-canonical-shared-provider-identity"
         }
       ],
       "records": [
@@ -22157,6 +23073,17 @@
           "migrationStatus": "extracted",
           "title": "Required ABI-v5 runtime semantics are not feature-gated",
           "anchor": "requirement-required-abi-v5-runtime-semantics-are-not-feature-gated"
+        },
+        {
+          "id": "BSP-REQ-62A85FA424B2",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/execution--runtime--runtime-feature-flags/spec.md",
+          "sourceHash": "1a66207975cc89e467f41b6500b193f74d1b047c5b268df4f086c571fb10d77e",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Engine has no dynamic extern feature",
+          "anchor": "requirement-engine-has-no-dynamic-extern-feature"
         }
       ],
       "records": [
@@ -22549,6 +23476,116 @@
           "status": "Standard",
           "normative": true,
           "migrationStatus": "extracted"
+        },
+        {
+          "id": "BSP-REQ-4F824F558940",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--composition--dependency-injection/spec.md",
+          "sourceHash": "5bf65cc3597af9dc046d980cef498f3ff3cf270266021cb21fb12f2947238752",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Injection of contract values",
+          "anchor": "requirement-injection-of-contract-values"
+        },
+        {
+          "id": "BSP-REQ-771E824AFF9F",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--composition--dependency-injection/spec.md",
+          "sourceHash": "5bf65cc3597af9dc046d980cef498f3ff3cf270266021cb21fb12f2947238752",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Inject fields end with a semicolon",
+          "anchor": "requirement-inject-fields-end-with-a-semicolon"
+        },
+        {
+          "id": "BSP-REQ-5B6F8503B3F4",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--composition--dependency-injection/spec.md",
+          "sourceHash": "5bf65cc3597af9dc046d980cef498f3ff3cf270266021cb21fb12f2947238752",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Host hook order",
+          "anchor": "requirement-host-hook-order"
+        },
+        {
+          "id": "BSP-REQ-892FD9963B29",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--composition--dependency-injection/spec.md",
+          "sourceHash": "5bf65cc3597af9dc046d980cef498f3ff3cf270266021cb21fb12f2947238752",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Registration shape rules",
+          "anchor": "requirement-registration-shape-rules"
+        },
+        {
+          "id": "BSP-REQ-F17FF4E71FEE",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--composition--dependency-injection/spec.md",
+          "sourceHash": "5bf65cc3597af9dc046d980cef498f3ff3cf270266021cb21fb12f2947238752",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Registrations of one key and overrides",
+          "anchor": "requirement-registrations-of-one-key-and-overrides"
+        },
+        {
+          "id": "BSP-REQ-91B2CD37C15C",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--composition--dependency-injection/spec.md",
+          "sourceHash": "5bf65cc3597af9dc046d980cef498f3ff3cf270266021cb21fb12f2947238752",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Base hosts from any unit",
+          "anchor": "requirement-base-hosts-from-any-unit"
+        },
+        {
+          "id": "BSP-REQ-31688D5D4443",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--composition--dependency-injection/spec.md",
+          "sourceHash": "5bf65cc3597af9dc046d980cef498f3ff3cf270266021cb21fb12f2947238752",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Launch and with arguments",
+          "anchor": "requirement-launch-and-with-arguments"
+        },
+        {
+          "id": "BSP-REQ-BF21CA65A5EB",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--composition--dependency-injection/spec.md",
+          "sourceHash": "5bf65cc3597af9dc046d980cef498f3ff3cf270266021cb21fb12f2947238752",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Duplicate registration",
+          "anchor": "requirement-duplicate-registration"
+        },
+        {
+          "id": "BSP-REQ-916008D2E3E7",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--composition--dependency-injection/spec.md",
+          "sourceHash": "5bf65cc3597af9dc046d980cef498f3ff3cf270266021cb21fb12f2947238752",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Lifetimes per activation",
+          "anchor": "requirement-lifetimes-per-activation"
+        },
+        {
+          "id": "BSP-REQ-273FC77E6B13",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--composition--dependency-injection/spec.md",
+          "sourceHash": "5bf65cc3597af9dc046d980cef498f3ff3cf270266021cb21fb12f2947238752",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Captive dependency",
+          "anchor": "requirement-captive-dependency"
         }
       ],
       "records": [
@@ -23225,6 +24262,83 @@
           "migrationStatus": "extracted",
           "title": "Generation-bound conformance fact in semantic contract",
           "anchor": "requirement-generation-bound-conformance-fact-in-semantic-contract"
+        },
+        {
+          "id": "BSP-REQ-9E13CD8A595E",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--contracts-and-effects--contracts/spec.md",
+          "sourceHash": "eecdf051efba3f123f3b1d21dcf2b0e2f76ec65bec8d83fe6c3bb6067b42c17c",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Contract types as value types",
+          "anchor": "requirement-contract-types-as-value-types"
+        },
+        {
+          "id": "BSP-REQ-34FA773EDD2D",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--contracts-and-effects--contracts/spec.md",
+          "sourceHash": "eecdf051efba3f123f3b1d21dcf2b0e2f76ec65bec8d83fe6c3bb6067b42c17c",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Conversion to a contract type",
+          "anchor": "requirement-conversion-to-a-contract-type"
+        },
+        {
+          "id": "BSP-REQ-6CD63A5F86F9",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--contracts-and-effects--contracts/spec.md",
+          "sourceHash": "eecdf051efba3f123f3b1d21dcf2b0e2f76ec65bec8d83fe6c3bb6067b42c17c",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Runtime dispatch through a contract value",
+          "anchor": "requirement-runtime-dispatch-through-a-contract-value"
+        },
+        {
+          "id": "BSP-REQ-5B906BD2AD6E",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--contracts-and-effects--contracts/spec.md",
+          "sourceHash": "eecdf051efba3f123f3b1d21dcf2b0e2f76ec65bec8d83fe6c3bb6067b42c17c",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Equality of contract values",
+          "anchor": "requirement-equality-of-contract-values"
+        },
+        {
+          "id": "BSP-REQ-59CE3F99CAC6",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--contracts-and-effects--contracts/spec.md",
+          "sourceHash": "eecdf051efba3f123f3b1d21dcf2b0e2f76ec65bec8d83fe6c3bb6067b42c17c",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Contract values have no serialization shape",
+          "anchor": "requirement-contract-values-have-no-serialization-shape"
+        },
+        {
+          "id": "BSP-REQ-F4A1C3124535",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--contracts-and-effects--contracts/spec.md",
+          "sourceHash": "eecdf051efba3f123f3b1d21dcf2b0e2f76ec65bec8d83fe6c3bb6067b42c17c",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Contract methods declare default parameters",
+          "anchor": "requirement-contract-methods-declare-default-parameters"
+        },
+        {
+          "id": "BSP-REQ-23A16B9F53FF",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--contracts-and-effects--contracts/spec.md",
+          "sourceHash": "eecdf051efba3f123f3b1d21dcf2b0e2f76ec65bec8d83fe6c3bb6067b42c17c",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Primitive types implement contracts",
+          "anchor": "requirement-primitive-types-implement-contracts"
         }
       ],
       "records": [
@@ -23779,6 +24893,72 @@
           "migrationStatus": "extracted",
           "title": "Test discovery and execution semantics",
           "anchor": "requirement-test-discovery-and-execution-semantics"
+        },
+        {
+          "id": "BSP-REQ-6ED9804BA42A",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--contracts-and-effects--testing/spec.md",
+          "sourceHash": "f41bec8e6d487c4af39cc20bd15b0d0562a603f5c4344a4fcbd2a6984ebc25b1",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Default test targets",
+          "anchor": "requirement-default-test-targets"
+        },
+        {
+          "id": "BSP-REQ-DC20DBEAB1E5",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--contracts-and-effects--testing/spec.md",
+          "sourceHash": "f41bec8e6d487c4af39cc20bd15b0d0562a603f5c4344a4fcbd2a6984ebc25b1",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Generic equality assertions",
+          "anchor": "requirement-generic-equality-assertions"
+        },
+        {
+          "id": "BSP-REQ-0D66D3D19864",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--contracts-and-effects--testing/spec.md",
+          "sourceHash": "f41bec8e6d487c4af39cc20bd15b0d0562a603f5c4344a4fcbd2a6984ebc25b1",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Qualified test identity and selection",
+          "anchor": "requirement-qualified-test-identity-and-selection"
+        },
+        {
+          "id": "BSP-REQ-701447DCB8FD",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--contracts-and-effects--testing/spec.md",
+          "sourceHash": "f41bec8e6d487c4af39cc20bd15b0d0562a603f5c4344a4fcbd2a6984ebc25b1",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Test discovery with a separate namespace",
+          "anchor": "requirement-test-discovery-with-a-separate-namespace"
+        },
+        {
+          "id": "BSP-REQ-D16811D6AE68",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--contracts-and-effects--testing/spec.md",
+          "sourceHash": "f41bec8e6d487c4af39cc20bd15b0d0562a603f5c4344a4fcbd2a6984ebc25b1",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Assertion failure reporting",
+          "anchor": "requirement-assertion-failure-reporting"
+        },
+        {
+          "id": "BSP-REQ-7B7480FCDB44",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--contracts-and-effects--testing/spec.md",
+          "sourceHash": "f41bec8e6d487c4af39cc20bd15b0d0562a603f5c4344a4fcbd2a6984ebc25b1",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "A project without tests passes",
+          "anchor": "requirement-a-project-without-tests-passes"
         }
       ],
       "records": [
@@ -24058,6 +25238,28 @@
           "migrationStatus": "extracted",
           "title": "Control-flow HIR normalization",
           "anchor": "requirement-control-flow-hir-normalization"
+        },
+        {
+          "id": "BSP-REQ-5FF4DE6509C0",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--evaluation--control-flow/spec.md",
+          "sourceHash": "22a129f8d06c5a86cec203360a04067df5612e4c65e5b4e1ac77d14437a3a78d",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Definite return",
+          "anchor": "requirement-definite-return"
+        },
+        {
+          "id": "BSP-REQ-6FEA15E8562C",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--evaluation--control-flow/spec.md",
+          "sourceHash": "22a129f8d06c5a86cec203360a04067df5612e4c65e5b4e1ac77d14437a3a78d",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Conditional expression evaluation and typing",
+          "anchor": "requirement-conditional-expression-evaluation-and-typing"
         }
       ],
       "records": [
@@ -24320,6 +25522,17 @@
           "migrationStatus": "extracted",
           "title": "Raise subscribe and synchrony",
           "anchor": "requirement-raise-subscribe-and-synchrony"
+        },
+        {
+          "id": "BSP-REQ-35D9CFDE273B",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--evaluation--events/spec.md",
+          "sourceHash": "4a238e213f8c22564ba32f61bde2e2a699841e0c085b2c19a19a6c470111e23c",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Event handlers belong to the owning object",
+          "anchor": "requirement-event-handlers-belong-to-the-owning-object"
         }
       ],
       "records": [
@@ -24680,6 +25893,17 @@
           "migrationStatus": "extracted",
           "title": "Non-detached children complete during main shutdown",
           "anchor": "requirement-non-detached-children-complete-during-main-shutdown"
+        },
+        {
+          "id": "BSP-REQ-535C08A1C4DB",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--evaluation--fibers-and-spawn/spec.md",
+          "sourceHash": "3ec92388f1d90965b942ae695ffbcfb19fc744649274b61b45cda820bcae9fad",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Fiber handles use the general affine analysis",
+          "anchor": "requirement-fiber-handles-use-the-general-affine-analysis"
         }
       ],
       "records": [
@@ -25009,6 +26233,17 @@
           "migrationStatus": "extracted",
           "title": "Capture and closure lifetime",
           "anchor": "requirement-capture-and-closure-lifetime"
+        },
+        {
+          "id": "BSP-REQ-0437AA5ECDD3",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--evaluation--lambdas-and-closures/spec.md",
+          "sourceHash": "f43b172e359f10453281e150e271fcd92a612d313f980f4896ffd28e1c911fe7",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Capture bounds on function-typed parameters",
+          "anchor": "requirement-capture-bounds-on-function-typed-parameters"
         }
       ],
       "records": [
@@ -25225,6 +26460,68 @@
       ]
     },
     {
+      "id": "BSP-CAP-9F105C5547CE",
+      "capability": "language-meta--interop--beskid-glue",
+      "specPath": "openspec/specs/language-meta--interop--beskid-glue/spec.md",
+      "path": "/platform-spec/capabilities/language-meta--interop--beskid-glue/",
+      "title": "Beskid Glue",
+      "description": "Canonical OpenSpec capability for Beskid Glue.",
+      "status": "Standard",
+      "domain": "language-meta",
+      "area": "interop",
+      "feature": "beskid-glue",
+      "legacySlugs": [],
+      "aliases": [],
+      "requirements": [
+        {
+          "id": "BSP-REQ-2CBD6163D89B",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--interop--beskid-glue/spec.md",
+          "sourceHash": "1befbf3a24f588c81720806a3cca0137944058c3b300a07e0549840b6d99edcf",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Rust Glue manual and generated equivalence",
+          "anchor": "requirement-rust-glue-manual-and-generated-equivalence"
+        },
+        {
+          "id": "BSP-REQ-E3BF9D4AB1D7",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--interop--beskid-glue/spec.md",
+          "sourceHash": "1befbf3a24f588c81720806a3cca0137944058c3b300a07e0549840b6d99edcf",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Delivered Rust Glue is the in-process checked C ABI owned path",
+          "anchor": "requirement-delivered-rust-glue-is-the-in-process-checked-c-abi-owned-path"
+        },
+        {
+          "id": "BSP-REQ-FC4FA726366E",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--interop--beskid-glue/spec.md",
+          "sourceHash": "1befbf3a24f588c81720806a3cca0137944058c3b300a07e0549840b6d99edcf",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Loader-issued native descriptor and callback closure",
+          "anchor": "requirement-loader-issued-native-descriptor-and-callback-closure"
+        },
+        {
+          "id": "BSP-REQ-EBA4085A459D",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--interop--beskid-glue/spec.md",
+          "sourceHash": "1befbf3a24f588c81720806a3cca0137944058c3b300a07e0549840b6d99edcf",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Rust owner mappings are declared in Beskid source",
+          "anchor": "requirement-rust-owner-mappings-are-declared-in-beskid-source"
+        }
+      ],
+      "records": [],
+      "bookLinks": []
+    },
+    {
       "id": "BSP-CAP-416DC1F89FF5",
       "capability": "language-meta--interop--c-abi-profile",
       "specPath": "openspec/specs/language-meta--interop--c-abi-profile/spec.md",
@@ -25320,6 +26617,39 @@
           "status": "Standard",
           "normative": true,
           "migrationStatus": "extracted"
+        },
+        {
+          "id": "BSP-REQ-C375CCCED5A6",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--interop--c-abi-profile/spec.md",
+          "sourceHash": "719bb72897bbb7fa9376a8af18283f309c34e5a40f7483f20bdf36856dcd6876",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Rust Glue required primitive and ownership profile",
+          "anchor": "requirement-rust-glue-required-primitive-and-ownership-profile"
+        },
+        {
+          "id": "BSP-REQ-CCC929FC1362",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--interop--c-abi-profile/spec.md",
+          "sourceHash": "719bb72897bbb7fa9376a8af18283f309c34e5a40f7483f20bdf36856dcd6876",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Checked invocation transport preserves failure separately from values",
+          "anchor": "requirement-checked-invocation-transport-preserves-failure-separately-from-values"
+        },
+        {
+          "id": "BSP-REQ-61DCA6E77E78",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--interop--c-abi-profile/spec.md",
+          "sourceHash": "719bb72897bbb7fa9376a8af18283f309c34e5a40f7483f20bdf36856dcd6876",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Canonical native kit resolves only proved internal provider symbols",
+          "anchor": "requirement-canonical-native-kit-resolves-only-proved-internal-provider-symbols"
         }
       ],
       "records": [
@@ -25774,6 +27104,17 @@
           "status": "Standard",
           "normative": true,
           "migrationStatus": "extracted"
+        },
+        {
+          "id": "BSP-REQ-7F268374F475",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--interop--export-and-callbacks/spec.md",
+          "sourceHash": "ce84702dea81d3225b8b740598a09dcdb5a5f638766258ca0bb6c676abc759f3",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Export entries resolve by declaration identity",
+          "anchor": "requirement-export-entries-resolve-by-declaration-identity"
         }
       ],
       "records": [
@@ -26447,6 +27788,17 @@
           "status": "Standard",
           "normative": true,
           "migrationStatus": "extracted"
+        },
+        {
+          "id": "BSP-REQ-E3AABD637100",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--interop--interop-contracts/spec.md",
+          "sourceHash": "297c2c5a083a4d465fd08571baa28d76b10771655350f4a5050d7b341dbd029e",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Normalized Glue binding identity",
+          "anchor": "requirement-normalized-glue-binding-identity"
         }
       ],
       "records": [
@@ -26883,6 +28235,94 @@
           "status": "Standard",
           "normative": true,
           "migrationStatus": "extracted"
+        },
+        {
+          "id": "BSP-REQ-DE77CE2ADFC9",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--interop--rust-abi-profile/spec.md",
+          "sourceHash": "663424b0332dc7f867ba7689dc1d00da7b0975195cbe9626313b0e2f6c6c843b",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Rust Glue C ABI separation",
+          "anchor": "requirement-rust-glue-c-abi-separation"
+        },
+        {
+          "id": "BSP-REQ-FF3E829EAED8",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--interop--rust-abi-profile/spec.md",
+          "sourceHash": "663424b0332dc7f867ba7689dc1d00da7b0975195cbe9626313b0e2f6c6c843b",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Normalized managed local transport",
+          "anchor": "requirement-normalized-managed-local-transport"
+        },
+        {
+          "id": "BSP-REQ-19DDAA92A80E",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--interop--rust-abi-profile/spec.md",
+          "sourceHash": "663424b0332dc7f867ba7689dc1d00da7b0975195cbe9626313b0e2f6c6c843b",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Source-owned rooted owner record lifecycle",
+          "anchor": "requirement-source-owned-rooted-owner-record-lifecycle"
+        },
+        {
+          "id": "BSP-REQ-70B023CC6DCC",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--interop--rust-abi-profile/spec.md",
+          "sourceHash": "663424b0332dc7f867ba7689dc1d00da7b0975195cbe9626313b0e2f6c6c843b",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Canonical GC-owned primitive UTF-8 storage",
+          "anchor": "requirement-canonical-gc-owned-primitive-utf-8-storage"
+        },
+        {
+          "id": "BSP-REQ-FB4B243B62C1",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--interop--rust-abi-profile/spec.md",
+          "sourceHash": "663424b0332dc7f867ba7689dc1d00da7b0975195cbe9626313b0e2f6c6c843b",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Shared compiled-shape registration authority",
+          "anchor": "requirement-shared-compiled-shape-registration-authority"
+        },
+        {
+          "id": "BSP-REQ-0C3946088E6B",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--interop--rust-abi-profile/spec.md",
+          "sourceHash": "663424b0332dc7f867ba7689dc1d00da7b0975195cbe9626313b0e2f6c6c843b",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Issuer-bound managed Dynamic erasure",
+          "anchor": "requirement-issuer-bound-managed-dynamic-erasure"
+        },
+        {
+          "id": "BSP-REQ-1AA75C3F4AF0",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--interop--rust-abi-profile/spec.md",
+          "sourceHash": "663424b0332dc7f867ba7689dc1d00da7b0975195cbe9626313b0e2f6c6c843b",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Source-derived opaque nominal boxing",
+          "anchor": "requirement-source-derived-opaque-nominal-boxing"
+        },
+        {
+          "id": "BSP-REQ-BA1C07D4C294",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--interop--rust-abi-profile/spec.md",
+          "sourceHash": "663424b0332dc7f867ba7689dc1d00da7b0975195cbe9626313b0e2f6c6c843b",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Opaque owner lifecycle in the canonical traced chain",
+          "anchor": "requirement-opaque-owner-lifecycle-in-the-canonical-traced-chain"
         }
       ],
       "records": [
@@ -27311,6 +28751,138 @@
           "migrationStatus": "extracted",
           "title": "Dead growth of a mutable array parameter",
           "anchor": "requirement-dead-growth-of-a-mutable-array-parameter"
+        },
+        {
+          "id": "BSP-REQ-BCAA990AF303",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--memory-model--memory-and-references/spec.md",
+          "sourceHash": "6f4e49579fdc269710ae7cf1e1eac3a3a95df9c7e64000a739e29523f2dd8c5b",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "The move expression",
+          "anchor": "requirement-the-move-expression"
+        },
+        {
+          "id": "BSP-REQ-2C8E686EE25F",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--memory-model--memory-and-references/spec.md",
+          "sourceHash": "6f4e49579fdc269710ae7cf1e1eac3a3a95df9c7e64000a739e29523f2dd8c5b",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Array length changes never reach another handle",
+          "anchor": "requirement-array-length-changes-never-reach-another-handle"
+        },
+        {
+          "id": "BSP-REQ-0AEBF673041C",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--memory-model--memory-and-references/spec.md",
+          "sourceHash": "6f4e49579fdc269710ae7cf1e1eac3a3a95df9c7e64000a739e29523f2dd8c5b",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Contract values at an isolate crossing",
+          "anchor": "requirement-contract-values-at-an-isolate-crossing"
+        },
+        {
+          "id": "BSP-REQ-EC4888BF7A7A",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--memory-model--memory-and-references/spec.md",
+          "sourceHash": "6f4e49579fdc269710ae7cf1e1eac3a3a95df9c7e64000a739e29523f2dd8c5b",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Mutable parameters pass by value",
+          "anchor": "requirement-mutable-parameters-pass-by-value"
+        },
+        {
+          "id": "BSP-REQ-630CF1673BB9",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--memory-model--memory-and-references/spec.md",
+          "sourceHash": "6f4e49579fdc269710ae7cf1e1eac3a3a95df9c7e64000a739e29523f2dd8c5b",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Move applies at isolate crossings",
+          "anchor": "requirement-move-applies-at-isolate-crossings"
+        },
+        {
+          "id": "BSP-REQ-063C9CE79FA2",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--memory-model--memory-and-references/spec.md",
+          "sourceHash": "6f4e49579fdc269710ae7cf1e1eac3a3a95df9c7e64000a739e29523f2dd8c5b",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Consumption at a crossing",
+          "anchor": "requirement-consumption-at-a-crossing"
+        },
+        {
+          "id": "BSP-REQ-1D28884A6C59",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--memory-model--memory-and-references/spec.md",
+          "sourceHash": "6f4e49579fdc269710ae7cf1e1eac3a3a95df9c7e64000a739e29523f2dd8c5b",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Taking a field out at a crossing",
+          "anchor": "requirement-taking-a-field-out-at-a-crossing"
+        },
+        {
+          "id": "BSP-REQ-4F480B331B7D",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--memory-model--memory-and-references/spec.md",
+          "sourceHash": "6f4e49579fdc269710ae7cf1e1eac3a3a95df9c7e64000a739e29523f2dd8c5b",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "ORCA preconditions at crossings",
+          "anchor": "requirement-orca-preconditions-at-crossings"
+        },
+        {
+          "id": "BSP-REQ-3B0D39A127CE",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--memory-model--memory-and-references/spec.md",
+          "sourceHash": "6f4e49579fdc269710ae7cf1e1eac3a3a95df9c7e64000a739e29523f2dd8c5b",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Plain parameters cannot be kept",
+          "anchor": "requirement-plain-parameters-cannot-be-kept"
+        },
+        {
+          "id": "BSP-REQ-1D34C77E7051",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--memory-model--memory-and-references/spec.md",
+          "sourceHash": "6f4e49579fdc269710ae7cf1e1eac3a3a95df9c7e64000a739e29523f2dd8c5b",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Nested copy-on-assign values at a crossing",
+          "anchor": "requirement-nested-copy-on-assign-values-at-a-crossing"
+        },
+        {
+          "id": "BSP-REQ-02FC1FE9174B",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--memory-model--memory-and-references/spec.md",
+          "sourceHash": "6f4e49579fdc269710ae7cf1e1eac3a3a95df9c7e64000a739e29523f2dd8c5b",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Scope-borrowed values do not escape",
+          "anchor": "requirement-scope-borrowed-values-do-not-escape"
+        },
+        {
+          "id": "BSP-REQ-81D55C4E18C6",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--memory-model--memory-and-references/spec.md",
+          "sourceHash": "6f4e49579fdc269710ae7cf1e1eac3a3a95df9c7e64000a739e29523f2dd8c5b",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Immutable assignment is reported once per binding",
+          "anchor": "requirement-immutable-assignment-is-reported-once-per-binding"
         }
       ],
       "records": [
@@ -29172,6 +30744,17 @@
           "migrationStatus": "extracted",
           "title": "File-scoped module nesting restrictions",
           "anchor": "requirement-file-scoped-module-nesting-restrictions"
+        },
+        {
+          "id": "BSP-REQ-7B7B4F9EF55C",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--program-structure--modules-and-visibility/spec.md",
+          "sourceHash": "b0d262825d555faf21434059765567055c306a9b4a7968507b8a8a2ee1000b22",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Unused private items",
+          "anchor": "requirement-unused-private-items"
         }
       ],
       "records": [
@@ -29462,6 +31045,72 @@
           "migrationStatus": "extracted",
           "title": "Single resolver snapshot and stable qualified names",
           "anchor": "requirement-single-resolver-snapshot-and-stable-qualified-names"
+        },
+        {
+          "id": "BSP-REQ-61A4BB2B47A5",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--program-structure--name-resolution/spec.md",
+          "sourceHash": "8e33d7af4346b80bbbe2fbda60b3400dd626c77cbde52b5d444b1a7a8e733e04",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Inline modules are lexical scopes",
+          "anchor": "requirement-inline-modules-are-lexical-scopes"
+        },
+        {
+          "id": "BSP-REQ-1D93E78F1601",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--program-structure--name-resolution/spec.md",
+          "sourceHash": "8e33d7af4346b80bbbe2fbda60b3400dd626c77cbde52b5d444b1a7a8e733e04",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Use declarations in inline modules",
+          "anchor": "requirement-use-declarations-in-inline-modules"
+        },
+        {
+          "id": "BSP-REQ-545FC23F715F",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--program-structure--name-resolution/spec.md",
+          "sourceHash": "8e33d7af4346b80bbbe2fbda60b3400dd626c77cbde52b5d444b1a7a8e733e04",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Duplicate names per scope",
+          "anchor": "requirement-duplicate-names-per-scope"
+        },
+        {
+          "id": "BSP-REQ-186E368BBD2C",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--program-structure--name-resolution/spec.md",
+          "sourceHash": "8e33d7af4346b80bbbe2fbda60b3400dd626c77cbde52b5d444b1a7a8e733e04",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "A module never hides a type",
+          "anchor": "requirement-a-module-never-hides-a-type"
+        },
+        {
+          "id": "BSP-REQ-BD6908787613",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--program-structure--name-resolution/spec.md",
+          "sourceHash": "8e33d7af4346b80bbbe2fbda60b3400dd626c77cbde52b5d444b1a7a8e733e04",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Ambiguous module qualifier",
+          "anchor": "requirement-ambiguous-module-qualifier"
+        },
+        {
+          "id": "BSP-REQ-84BB27AEFF8D",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--program-structure--name-resolution/spec.md",
+          "sourceHash": "8e33d7af4346b80bbbe2fbda60b3400dd626c77cbde52b5d444b1a7a8e733e04",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Tests have their own namespace",
+          "anchor": "requirement-tests-have-their-own-namespace"
         }
       ],
       "records": [
@@ -29984,6 +31633,94 @@
           "migrationStatus": "extracted",
           "title": "Parse validity does not imply semantic validity",
           "anchor": "requirement-parse-validity-does-not-imply-semantic-validity"
+        },
+        {
+          "id": "BSP-REQ-05D6D19FCA92",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--surface-syntax--lexical-and-syntax/spec.md",
+          "sourceHash": "4bc8e97c03bdf88608daa769043a72297df5d6db1925c7a807211827d2e5fc8b",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "move grammar productions",
+          "anchor": "requirement-move-grammar-productions"
+        },
+        {
+          "id": "BSP-REQ-7C612EA6FC3A",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--surface-syntax--lexical-and-syntax/spec.md",
+          "sourceHash": "4bc8e97c03bdf88608daa769043a72297df5d6db1925c7a807211827d2e5fc8b",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Default parameter grammar",
+          "anchor": "requirement-default-parameter-grammar"
+        },
+        {
+          "id": "BSP-REQ-FBFEAFADD90E",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--surface-syntax--lexical-and-syntax/spec.md",
+          "sourceHash": "4bc8e97c03bdf88608daa769043a72297df5d6db1925c7a807211827d2e5fc8b",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Conditional expression grammar and precedence",
+          "anchor": "requirement-conditional-expression-grammar-and-precedence"
+        },
+        {
+          "id": "BSP-REQ-C1757DF38460",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--surface-syntax--lexical-and-syntax/spec.md",
+          "sourceHash": "4bc8e97c03bdf88608daa769043a72297df5d6db1925c7a807211827d2e5fc8b",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Statement-level match needs no semicolon",
+          "anchor": "requirement-statement-level-match-needs-no-semicolon"
+        },
+        {
+          "id": "BSP-REQ-B5B2655CB8F3",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--surface-syntax--lexical-and-syntax/spec.md",
+          "sourceHash": "4bc8e97c03bdf88608daa769043a72297df5d6db1925c7a807211827d2e5fc8b",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "String literal escape sequences",
+          "anchor": "requirement-string-literal-escape-sequences"
+        },
+        {
+          "id": "BSP-REQ-D847F83C94C5",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--surface-syntax--lexical-and-syntax/spec.md",
+          "sourceHash": "4bc8e97c03bdf88608daa769043a72297df5d6db1925c7a807211827d2e5fc8b",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Compound assignment operators",
+          "anchor": "requirement-compound-assignment-operators"
+        },
+        {
+          "id": "BSP-REQ-910D4723DC15",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--surface-syntax--lexical-and-syntax/spec.md",
+          "sourceHash": "4bc8e97c03bdf88608daa769043a72297df5d6db1925c7a807211827d2e5fc8b",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Word literal suffix",
+          "anchor": "requirement-word-literal-suffix"
+        },
+        {
+          "id": "BSP-REQ-6F8DC8DE0C86",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--surface-syntax--lexical-and-syntax/spec.md",
+          "sourceHash": "4bc8e97c03bdf88608daa769043a72297df5d6db1925c7a807211827d2e5fc8b",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Documentation run attachment",
+          "anchor": "requirement-documentation-run-attachment"
         }
       ],
       "records": [
@@ -30788,6 +32525,17 @@
           "migrationStatus": "extracted",
           "title": "Inference diagnostics and conformance",
           "anchor": "requirement-inference-diagnostics-and-conformance"
+        },
+        {
+          "id": "BSP-REQ-89EA9AEFC338",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--type-system--type-inference/spec.md",
+          "sourceHash": "4ab9cda35c36e5892bb791d6b29b40caea471f2819d676a7a3c5694701639a43",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Contextual numeric literal typing",
+          "anchor": "requirement-contextual-numeric-literal-typing"
         }
       ],
       "records": [
@@ -31063,6 +32811,83 @@
           "migrationStatus": "extracted",
           "title": "Static type rules and diagnostics",
           "anchor": "requirement-static-type-rules-and-diagnostics"
+        },
+        {
+          "id": "BSP-REQ-CE7735BCC6A7",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--type-system--types/spec.md",
+          "sourceHash": "c36454b3325bf8543fc3eced40acf34aa33e264fa3a329585441f456433a6fb8",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Aggregate unit fields retain semantics without physical storage",
+          "anchor": "requirement-aggregate-unit-fields-retain-semantics-without-physical-storage"
+        },
+        {
+          "id": "BSP-REQ-53F12699C2BA",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--type-system--types/spec.md",
+          "sourceHash": "c36454b3325bf8543fc3eced40acf34aa33e264fa3a329585441f456433a6fb8",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Private canonical runtime helpers require verified corpus scope",
+          "anchor": "requirement-private-canonical-runtime-helpers-require-verified-corpus-scope"
+        },
+        {
+          "id": "BSP-REQ-C67302F7464F",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--type-system--types/spec.md",
+          "sourceHash": "c36454b3325bf8543fc3eced40acf34aa33e264fa3a329585441f456433a6fb8",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Default parameter values",
+          "anchor": "requirement-default-parameter-values"
+        },
+        {
+          "id": "BSP-REQ-72B90D87F782",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--type-system--types/spec.md",
+          "sourceHash": "c36454b3325bf8543fc3eced40acf34aa33e264fa3a329585441f456433a6fb8",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Caller-information parameters",
+          "anchor": "requirement-caller-information-parameters"
+        },
+        {
+          "id": "BSP-REQ-95F67814A3F8",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--type-system--types/spec.md",
+          "sourceHash": "c36454b3325bf8543fc3eced40acf34aa33e264fa3a329585441f456433a6fb8",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Field declarations end with a semicolon",
+          "anchor": "requirement-field-declarations-end-with-a-semicolon"
+        },
+        {
+          "id": "BSP-REQ-1C6628A2E20A",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--type-system--types/spec.md",
+          "sourceHash": "c36454b3325bf8543fc3eced40acf34aa33e264fa3a329585441f456433a6fb8",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Result and Option mismatch help",
+          "anchor": "requirement-result-and-option-mismatch-help"
+        },
+        {
+          "id": "BSP-REQ-2C75EF1EB938",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--type-system--types/spec.md",
+          "sourceHash": "c36454b3325bf8543fc3eced40acf34aa33e264fa3a329585441f456433a6fb8",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Generic arity in type positions",
+          "anchor": "requirement-generic-arity-in-type-positions"
         }
       ],
       "records": [
@@ -34377,6 +36202,105 @@
           "status": "Standard",
           "normative": true,
           "migrationStatus": "extracted"
+        },
+        {
+          "id": "BSP-REQ-0001D1A8BAB9",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--cli--build-analyze-run-contract/spec.md",
+          "sourceHash": "0fb010a41361e797730b7962ed9631428dbad654a957024ddba8624d63bbc4f7",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Check and manifest validation",
+          "anchor": "requirement-check-and-manifest-validation"
+        },
+        {
+          "id": "BSP-REQ-70F7A27081FE",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--cli--build-analyze-run-contract/spec.md",
+          "sourceHash": "0fb010a41361e797730b7962ed9631428dbad654a957024ddba8624d63bbc4f7",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Program arguments streams and outcome",
+          "anchor": "requirement-program-arguments-streams-and-outcome"
+        },
+        {
+          "id": "BSP-REQ-721B55DB7D5A",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--cli--build-analyze-run-contract/spec.md",
+          "sourceHash": "0fb010a41361e797730b7962ed9631428dbad654a957024ddba8624d63bbc4f7",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Native test execution shares one compiled selected closure",
+          "anchor": "requirement-native-test-execution-shares-one-compiled-selected-closure"
+        },
+        {
+          "id": "BSP-REQ-5C6266360DEA",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--cli--build-analyze-run-contract/spec.md",
+          "sourceHash": "0fb010a41361e797730b7962ed9631428dbad654a957024ddba8624d63bbc4f7",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Native preparation deadlines cover contained tool processes",
+          "anchor": "requirement-native-preparation-deadlines-cover-contained-tool-processes"
+        },
+        {
+          "id": "BSP-REQ-6EAD4F6CC253",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--cli--build-analyze-run-contract/spec.md",
+          "sourceHash": "0fb010a41361e797730b7962ed9631428dbad654a957024ddba8624d63bbc4f7",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Matrix supervision cancels active native descendants before worker termination",
+          "anchor": "requirement-matrix-supervision-cancels-active-native-descendants-before-worker-termination"
+        },
+        {
+          "id": "BSP-REQ-58BECC5C9AC6",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--cli--build-analyze-run-contract/spec.md",
+          "sourceHash": "0fb010a41361e797730b7962ed9631428dbad654a957024ddba8624d63bbc4f7",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Rust Glue build selection",
+          "anchor": "requirement-rust-glue-build-selection"
+        },
+        {
+          "id": "BSP-REQ-33A9BE200634",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--cli--build-analyze-run-contract/spec.md",
+          "sourceHash": "0fb010a41361e797730b7962ed9631428dbad654a957024ddba8624d63bbc4f7",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Published Rust Glue image admission",
+          "anchor": "requirement-published-rust-glue-image-admission"
+        },
+        {
+          "id": "BSP-REQ-0A6B1C67F063",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--cli--build-analyze-run-contract/spec.md",
+          "sourceHash": "0fb010a41361e797730b7962ed9631428dbad654a957024ddba8624d63bbc4f7",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Explicit Rust Glue tool selection",
+          "anchor": "requirement-explicit-rust-glue-tool-selection"
+        },
+        {
+          "id": "BSP-REQ-4CB0FF61025A",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--cli--build-analyze-run-contract/spec.md",
+          "sourceHash": "0fb010a41361e797730b7962ed9631428dbad654a957024ddba8624d63bbc4f7",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Default target of build and run",
+          "anchor": "requirement-default-target-of-build-and-run"
         }
       ],
       "records": [
@@ -34699,6 +36623,138 @@
           "migrationStatus": "extracted",
           "title": "Doc command alignment",
           "anchor": "requirement-doc-command-alignment"
+        },
+        {
+          "id": "BSP-REQ-50FFB48B6CFA",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--cli--command-surface/spec.md",
+          "sourceHash": "e0e4668f38b5f18ea9a879fa8dc2b64ae58edcf017c5f49153a587185954cb4d",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Discoverable help and scoped provisioning",
+          "anchor": "requirement-discoverable-help-and-scoped-provisioning"
+        },
+        {
+          "id": "BSP-REQ-4FB36B38456F",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--cli--command-surface/spec.md",
+          "sourceHash": "e0e4668f38b5f18ea9a879fa8dc2b64ae58edcf017c5f49153a587185954cb4d",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Versioned CLI-owned output and statuses",
+          "anchor": "requirement-versioned-cli-owned-output-and-statuses"
+        },
+        {
+          "id": "BSP-REQ-D6F598B33A32",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--cli--command-surface/spec.md",
+          "sourceHash": "e0e4668f38b5f18ea9a879fa8dc2b64ae58edcf017c5f49153a587185954cb4d",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Canonical consumer and capability migration",
+          "anchor": "requirement-canonical-consumer-and-capability-migration"
+        },
+        {
+          "id": "BSP-REQ-53DC4D7736B1",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--cli--command-surface/spec.md",
+          "sourceHash": "e0e4668f38b5f18ea9a879fa8dc2b64ae58edcf017c5f49153a587185954cb4d",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Installed beginner workflow acceptance",
+          "anchor": "requirement-installed-beginner-workflow-acceptance"
+        },
+        {
+          "id": "BSP-REQ-0F0DBCB10585",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--cli--command-surface/spec.md",
+          "sourceHash": "e0e4668f38b5f18ea9a879fa8dc2b64ae58edcf017c5f49153a587185954cb4d",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Toolchain operations bind to the running installation owner",
+          "anchor": "requirement-toolchain-operations-bind-to-the-running-installation-owner"
+        },
+        {
+          "id": "BSP-REQ-917BD6A5FB6E",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--cli--command-surface/spec.md",
+          "sourceHash": "e0e4668f38b5f18ea9a879fa8dc2b64ae58edcf017c5f49153a587185954cb4d",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Installation owner receipt production is explicit and prefix bound",
+          "anchor": "requirement-installation-owner-receipt-production-is-explicit-and-prefix-bound"
+        },
+        {
+          "id": "BSP-REQ-2B46C5EC0C7D",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--cli--command-surface/spec.md",
+          "sourceHash": "e0e4668f38b5f18ea9a879fa8dc2b64ae58edcf017c5f49153a587185954cb4d",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Dependency change reports preserve source coordinates",
+          "anchor": "requirement-dependency-change-reports-preserve-source-coordinates"
+        },
+        {
+          "id": "BSP-REQ-77AFD4DC9FED",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--cli--command-surface/spec.md",
+          "sourceHash": "e0e4668f38b5f18ea9a879fa8dc2b64ae58edcf017c5f49153a587185954cb4d",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Output levels and progress",
+          "anchor": "requirement-output-levels-and-progress"
+        },
+        {
+          "id": "BSP-REQ-FBCD98B71B94",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--cli--command-surface/spec.md",
+          "sourceHash": "e0e4668f38b5f18ea9a879fa8dc2b64ae58edcf017c5f49153a587185954cb4d",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Closed output pipe",
+          "anchor": "requirement-closed-output-pipe"
+        },
+        {
+          "id": "BSP-REQ-8F428715EC37",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--cli--command-surface/spec.md",
+          "sourceHash": "e0e4668f38b5f18ea9a879fa8dc2b64ae58edcf017c5f49153a587185954cb4d",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "No persisted query cache in the CLI",
+          "anchor": "requirement-no-persisted-query-cache-in-the-cli"
+        },
+        {
+          "id": "BSP-REQ-69BC001F54D0",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--cli--command-surface/spec.md",
+          "sourceHash": "e0e4668f38b5f18ea9a879fa8dc2b64ae58edcf017c5f49153a587185954cb4d",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Machine-readable diagnostics",
+          "anchor": "requirement-machine-readable-diagnostics"
+        },
+        {
+          "id": "BSP-REQ-8C12E296D56D",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--cli--command-surface/spec.md",
+          "sourceHash": "e0e4668f38b5f18ea9a879fa8dc2b64ae58edcf017c5f49153a587185954cb4d",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Check all workspace members",
+          "anchor": "requirement-check-all-workspace-members"
         }
       ],
       "records": [
@@ -34960,15 +37016,15 @@
           "anchor": "requirement-import-lib-options-minimum"
         },
         {
-          "id": "BSP-REQ-47799221B341",
+          "id": "BSP-REQ-471DEA7DDEC6",
           "legacySlug": null,
           "sourcePath": "openspec/specs/tooling--foreign-library-import--cli-import-lib-command/spec.md",
-          "sourceHash": "2259dc086030005e89d57b6bc141e6351e6b384bfeb0fa3788b2ff98b8f77183",
+          "sourceHash": "89443d364269277ede387bb9d02466786df01335057d547d81ca55b98096da8a",
           "status": "Standard",
           "normative": true,
           "migrationStatus": "extracted",
-          "title": "Extern allow/deny enforcement for imported libraries",
-          "anchor": "requirement-extern-allow-deny-enforcement-for-imported-libraries"
+          "title": "Imported libraries are checked at link time",
+          "anchor": "requirement-imported-libraries-are-checked-at-link-time"
         }
       ],
       "records": [
@@ -35216,6 +37272,28 @@
           "migrationStatus": "extracted",
           "title": "Format check detects source drift",
           "anchor": "requirement-format-check-detects-source-drift"
+        },
+        {
+          "id": "BSP-REQ-71BD7B18303F",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--formatter--verification-and-traceability/spec.md",
+          "sourceHash": "ed7d6212eb07b04b6a066a9d312022a5ac89d4c18f044752943350eb0690e928",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "move forms in the formatter corpus",
+          "anchor": "requirement-move-forms-in-the-formatter-corpus"
+        },
+        {
+          "id": "BSP-REQ-1EAAA7FE4282",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--formatter--verification-and-traceability/spec.md",
+          "sourceHash": "ed7d6212eb07b04b6a066a9d312022a5ac89d4c18f044752943350eb0690e928",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "The formatter never renames",
+          "anchor": "requirement-the-formatter-never-renames"
         }
       ],
       "records": [
@@ -35471,6 +37549,50 @@
           "migrationStatus": "extracted",
           "title": "Debounced typed entry bundle policy",
           "anchor": "requirement-debounced-typed-entry-bundle-policy"
+        },
+        {
+          "id": "BSP-REQ-614E2B292E54",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--lsp--diagnostics-and-workspace-analysis/spec.md",
+          "sourceHash": "baed96b3eb6cc2de7cb5e4303b3c864e29dff60350d92994f374fba983615f8c",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "The analysis of an open document judges that document alone",
+          "anchor": "requirement-the-analysis-of-an-open-document-judges-that-document-alone"
+        },
+        {
+          "id": "BSP-REQ-4552FBAB0ACA",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--lsp--diagnostics-and-workspace-analysis/spec.md",
+          "sourceHash": "baed96b3eb6cc2de7cb5e4303b3c864e29dff60350d92994f374fba983615f8c",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "A newer text stops the analysis of an older text",
+          "anchor": "requirement-a-newer-text-stops-the-analysis-of-an-older-text"
+        },
+        {
+          "id": "BSP-REQ-3ED50FAB9048",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--lsp--diagnostics-and-workspace-analysis/spec.md",
+          "sourceHash": "baed96b3eb6cc2de7cb5e4303b3c864e29dff60350d92994f374fba983615f8c",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Editor diagnostic shape",
+          "anchor": "requirement-editor-diagnostic-shape"
+        },
+        {
+          "id": "BSP-REQ-8AF35067DA8E",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--lsp--diagnostics-and-workspace-analysis/spec.md",
+          "sourceHash": "baed96b3eb6cc2de7cb5e4303b3c864e29dff60350d92994f374fba983615f8c",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Quick fixes carry applicability",
+          "anchor": "requirement-quick-fixes-carry-applicability"
         }
       ],
       "records": [
@@ -35612,6 +37734,72 @@
           "migrationStatus": "extracted",
           "title": "IntelliSense capability advertisement compatibility",
           "anchor": "requirement-intellisense-capability-advertisement-compatibility"
+        },
+        {
+          "id": "BSP-REQ-F56E0EE89F60",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--lsp--intellisense-capabilities-and-behavior/spec.md",
+          "sourceHash": "7dcd57d1dbb97d0581d8d86c7e730599decda9da79b9b15de17cae8191b12362",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Only a member that is being typed is repaired for completion",
+          "anchor": "requirement-only-a-member-that-is-being-typed-is-repaired-for-completion"
+        },
+        {
+          "id": "BSP-REQ-2B19B3D6C542",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--lsp--intellisense-capabilities-and-behavior/spec.md",
+          "sourceHash": "7dcd57d1dbb97d0581d8d86c7e730599decda9da79b9b15de17cae8191b12362",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Read-only document requests answer within a budget",
+          "anchor": "requirement-read-only-document-requests-answer-within-a-budget"
+        },
+        {
+          "id": "BSP-REQ-1F7E06CD14B9",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--lsp--intellisense-capabilities-and-behavior/spec.md",
+          "sourceHash": "7dcd57d1dbb97d0581d8d86c7e730599decda9da79b9b15de17cae8191b12362",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Edit-producing requests never use facts of an older text",
+          "anchor": "requirement-edit-producing-requests-never-use-facts-of-an-older-text"
+        },
+        {
+          "id": "BSP-REQ-78F8C0C2E924",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--lsp--intellisense-capabilities-and-behavior/spec.md",
+          "sourceHash": "7dcd57d1dbb97d0581d8d86c7e730599decda9da79b9b15de17cae8191b12362",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Code actions answer within a computation budget",
+          "anchor": "requirement-code-actions-answer-within-a-computation-budget"
+        },
+        {
+          "id": "BSP-REQ-35E846B4586D",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--lsp--intellisense-capabilities-and-behavior/spec.md",
+          "sourceHash": "7dcd57d1dbb97d0581d8d86c7e730599decda9da79b9b15de17cae8191b12362",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "No document request waits without a limit",
+          "anchor": "requirement-no-document-request-waits-without-a-limit"
+        },
+        {
+          "id": "BSP-REQ-4071428849CE",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--lsp--intellisense-capabilities-and-behavior/spec.md",
+          "sourceHash": "7dcd57d1dbb97d0581d8d86c7e730599decda9da79b9b15de17cae8191b12362",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Semantic tokens answer within a budget",
+          "anchor": "requirement-semantic-tokens-answer-within-a-budget"
         }
       ],
       "records": [
@@ -36247,6 +38435,39 @@
           "status": "Standard",
           "normative": true,
           "migrationStatus": "extracted"
+        },
+        {
+          "id": "BSP-REQ-0B9EC1D25494",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--manifests-and-lockfiles--project-manifest-contract/spec.md",
+          "sourceHash": "1ea67ff4bcd7c94da89493c0523e60074884a1153ec284acf0b685d1ad1effb2",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Preserving dependency intent mutation",
+          "anchor": "requirement-preserving-dependency-intent-mutation"
+        },
+        {
+          "id": "BSP-REQ-70EECD9BFE4B",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--manifests-and-lockfiles--project-manifest-contract/spec.md",
+          "sourceHash": "1ea67ff4bcd7c94da89493c0523e60074884a1153ec284acf0b685d1ad1effb2",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Unambiguous mutation targeting",
+          "anchor": "requirement-unambiguous-mutation-targeting"
+        },
+        {
+          "id": "BSP-REQ-EB3BAEAF81CE",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--manifests-and-lockfiles--project-manifest-contract/spec.md",
+          "sourceHash": "1ea67ff4bcd7c94da89493c0523e60074884a1153ec284acf0b685d1ad1effb2",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Rust Glue owner declaration in the project manifest",
+          "anchor": "requirement-rust-glue-owner-declaration-in-the-project-manifest"
         }
       ],
       "records": [
@@ -36679,17 +38900,6 @@
           "anchor": "requirement-portable-lock-path-anchors"
         },
         {
-          "id": "BSP-REQ-DCEEFDE17B6E",
-          "legacySlug": null,
-          "sourcePath": "openspec/specs/tooling--manifests-and-lockfiles--workspace-and-lock-contracts/spec.md",
-          "sourceHash": "041d87efd042b4660bee1ea4d5896db58727f2bd8f42c37cb19ba61359a35894",
-          "status": "Standard",
-          "normative": true,
-          "migrationStatus": "extracted",
-          "title": "Explicit lock migration and strict read-only policy",
-          "anchor": "requirement-explicit-lock-migration-and-strict-read-only-policy"
-        },
-        {
           "id": "BSP-REQ-4CF0609B398D",
           "title": "Hub authority: Decision [D-TOOL-MAN-0001]",
           "anchor": "requirement-hub-authority-decision-d-tool-man-0001",
@@ -36710,6 +38920,39 @@
           "status": "Standard",
           "normative": true,
           "migrationStatus": "extracted"
+        },
+        {
+          "id": "BSP-REQ-80BAA1DA13EC",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--manifests-and-lockfiles--workspace-and-lock-contracts/spec.md",
+          "sourceHash": "b70403fa9e645f900d949078709cec9ebafa7bb5aff20112591be21dc6ed4bd3",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Recoverable dependency pair transactions",
+          "anchor": "requirement-recoverable-dependency-pair-transactions"
+        },
+        {
+          "id": "BSP-REQ-91A43345D1D6",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--manifests-and-lockfiles--workspace-and-lock-contracts/spec.md",
+          "sourceHash": "b70403fa9e645f900d949078709cec9ebafa7bb5aff20112591be21dc6ed4bd3",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Explicit conservative update and removal",
+          "anchor": "requirement-explicit-conservative-update-and-removal"
+        },
+        {
+          "id": "BSP-REQ-5419051EDBEF",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--manifests-and-lockfiles--workspace-and-lock-contracts/spec.md",
+          "sourceHash": "b70403fa9e645f900d949078709cec9ebafa7bb5aff20112591be21dc6ed4bd3",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Strict read-only lock policy",
+          "anchor": "requirement-strict-read-only-lock-policy"
         }
       ],
       "records": [
@@ -37223,6 +39466,39 @@
           "status": "Standard",
           "normative": true,
           "migrationStatus": "extracted"
+        },
+        {
+          "id": "BSP-REQ-7C551F923D11",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--project-scaffolding--beskid-new/spec.md",
+          "sourceHash": "ed448617ca82ddc0d05dbc27e8e05a1ec3e31feb5b69036e2d14d922e7abf007",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Bundled default application creation",
+          "anchor": "requirement-bundled-default-application-creation"
+        },
+        {
+          "id": "BSP-REQ-D561DEB77983",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--project-scaffolding--beskid-new/spec.md",
+          "sourceHash": "ed448617ca82ddc0d05dbc27e8e05a1ec3e31feb5b69036e2d14d922e7abf007",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Offline template lifecycle preserves verified source authority",
+          "anchor": "requirement-offline-template-lifecycle-preserves-verified-source-authority"
+        },
+        {
+          "id": "BSP-REQ-1CCA5E2B314E",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--project-scaffolding--beskid-new/spec.md",
+          "sourceHash": "ed448617ca82ddc0d05dbc27e8e05a1ec3e31feb5b69036e2d14d922e7abf007",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Installed template digest binds the copied regular-file inventory",
+          "anchor": "requirement-installed-template-digest-binds-the-copied-regular-file-inventory"
         }
       ],
       "records": [
@@ -39849,6 +42125,17 @@
           "status": "Standard",
           "normative": true,
           "migrationStatus": "extracted"
+        },
+        {
+          "id": "BSP-REQ-11522C3A628E",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/tooling--vscode-extension--workspace-project-explorer/spec.md",
+          "sourceHash": "31e9e680605213beda11c35e661c6a0c6559103b4e1d91d9e918180c64bd8a55",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Canonical negotiated project operations",
+          "anchor": "requirement-canonical-negotiated-project-operations"
         }
       ],
       "records": [
@@ -59553,7 +61840,7 @@
       "decision": null,
       "title": "Backends (JIT and AOT)",
       "status": "Standard",
-      "sourceHash": "55a20db8ac01ef168c36eb525ace858ab329b6deec51a19a21f57f0d4bd74f2a"
+      "sourceHash": "0ac380cad4cb86ad08cfee18162d22dbbdb696861dc4aa9f58bd15db1b2bb9bf"
     },
     {
       "id": "BSP-CAP-385EB951CF77",
@@ -59619,7 +61906,7 @@
       "decision": null,
       "title": "Diagnostics parity (CLI and LSP)",
       "status": "Standard",
-      "sourceHash": "4269937bfbee9f73210da4aa31fa2ff7fef4056b4d5a7f2ff71d438516b86ee2"
+      "sourceHash": "6da8cbba96d5145975c286a1e95c1c872137d2312db34f8fe55b674189fbb08a"
     },
     {
       "id": "BSP-CAP-308B6B3BFBE4",
@@ -59663,7 +61950,7 @@
       "decision": null,
       "title": "Stage ordering and lowering",
       "status": "Standard",
-      "sourceHash": "9b4a479b42a58e0a358e1171ed8a40a59e8c7c22aea4f9d0efe33bda1bbccfe5"
+      "sourceHash": "b524e40d79cc7930a81a1e9c1e27a88b015922856d4ada88e44e4eaf82d1855b"
     },
     {
       "id": "BSP-CAP-5117C8E20F48",
@@ -59751,7 +62038,7 @@
       "decision": null,
       "title": "Lowering contract",
       "status": "Standard",
-      "sourceHash": "5e70b596b73f101d01292ca11819e7b6d20c9fe41c0e6f2c0ba3326485917531"
+      "sourceHash": "7d4acf0acc452d244e6f2e3b6994b75e8e7570c54ee9eaeb5aadd829057d44da"
     },
     {
       "id": "BSP-CAP-17D447489B2D",
@@ -60125,7 +62412,7 @@
       "decision": null,
       "title": "Registry and overrides contract",
       "status": "Standard",
-      "sourceHash": "5ae2daecc0be0f432959719e937dd2f16774b8d778c8dc178f1baa517ed4c9c6"
+      "sourceHash": "d44a0f912b886a790b0372ab3bab210d76dbbb8508130560e8faba1edbbe2e2a"
     },
     {
       "id": "BSP-CAP-5E3A9B427D59",
@@ -60147,7 +62434,7 @@
       "decision": null,
       "title": "Workspace and lock contracts",
       "status": "Standard",
-      "sourceHash": "7c90dadb3bf9a05a1139f14030a168740507a059d71606dd7f36c05dc3488682"
+      "sourceHash": "b0c75b6047a4848dd839687cafc23f35eaa91cd0ff23936c13186ee86f13ee90"
     },
     {
       "id": "BSP-CAP-9B3CB614FCB7",
@@ -60169,7 +62456,7 @@
       "decision": null,
       "title": "Workspace resolution contract",
       "status": "Standard",
-      "sourceHash": "232e513fb63fa60e841da39c2d02cb692da1f19d781438ab957bbfab03a4cfab"
+      "sourceHash": "decf4b57ce3b2ee5884de8172addf8e8e80c192927c8975ab3a274f8a7b07ea9"
     },
     {
       "id": "BSP-CAP-2721F2CC2593",
@@ -60191,7 +62478,7 @@
       "decision": null,
       "title": "Diagnostic code registry",
       "status": "Standard",
-      "sourceHash": "9843588bbefa511371190526b5bf4b47f255e67e43d2706bcafcaaf59f84debb"
+      "sourceHash": "5456fcaf206b3f57ec478a72526bdac53a365b9625a703f780efade18185e669"
     },
     {
       "id": "BSP-CAP-613D8D805D24",
@@ -60389,7 +62676,7 @@
       "decision": null,
       "title": "Concurrency package",
       "status": "Standard",
-      "sourceHash": "a5741cedcaacc10970e7d9563cb79f503f4ad28c9dfa1109224fd26d774b8a9b"
+      "sourceHash": "c3ae4a3285b182e65fdf5c7ec2703c0d11cba42bb999a85b16af2403200135b4"
     },
     {
       "id": "BSP-CAP-5A17C93FCF20",
@@ -60433,7 +62720,7 @@
       "decision": null,
       "title": "Core Args",
       "status": "Standard",
-      "sourceHash": "39a1b06c8bffaded7ef418a6955e070202d276ee2cd22b8a7696815636286aa1"
+      "sourceHash": "1153dc29aff4dd234b74f5e940c590ac8d3bae6691375a2ba41d38f478460127"
     },
     {
       "id": "BSP-CAP-5227A84F3018",
@@ -60477,7 +62764,7 @@
       "decision": null,
       "title": "Core.Collections",
       "status": "Standard",
-      "sourceHash": "56ffd81df8774ea0a0061ee1aebc30b3032d7a36fd5ca3fa3c5c7c22bc538c55"
+      "sourceHash": "e2d5332e79ca7a30248fa016642916b14bcc1c7082ac3003097629aa88d8a4a4"
     },
     {
       "id": "BSP-CAP-9A450EC7FC62",
@@ -60697,7 +62984,7 @@
       "decision": null,
       "title": "Core Process",
       "status": "Standard",
-      "sourceHash": "d1d07911d0473c6875c514f0c6a884d63f4a82e73801427109b29f2bbf2c3459"
+      "sourceHash": "a6c1f40ad695faa620c6d7d18230c6460e0bb405e83fc301fe0219ebd3b8098d"
     },
     {
       "id": "BSP-CAP-513DF003CA8D",
@@ -60807,7 +63094,7 @@
       "decision": null,
       "title": "Network Dns",
       "status": "Standard",
-      "sourceHash": "1adb8ad91598066277a990c2585eb6e56547eb49ea4954fa084ee828bbc2551e"
+      "sourceHash": "cefbcfa5bbb3e80913a1f73afcb651ac9173cd9df732e0585da5914663ce5a68"
     },
     {
       "id": "BSP-CAP-09176701F5F6",
@@ -61052,6 +63339,28 @@
       "sourceHash": "7518e15b41b357e35a38afd1c99c9d683e1574405836352222892c85ff0152f0"
     },
     {
+      "id": "BSP-CAP-42263385E52D",
+      "key": "core-library--terminal-and-console--console-hosting",
+      "kind": "feature",
+      "canonicalPath": "openspec/specs/core-library--terminal-and-console--console-hosting/spec.md",
+      "publicSlug": "platform-spec/capabilities/core-library--terminal-and-console--console-hosting",
+      "href": "/platform-spec/capabilities/core-library--terminal-and-console--console-hosting/",
+      "capability": "core-library--terminal-and-console--console-hosting",
+      "parentCapability": "taxonomy--core-library--terminal-and-console",
+      "layout": "feature",
+      "specLevel": "feature",
+      "authority": "normative",
+      "disposition": "normative-standard",
+      "domain": "core-library",
+      "area": "terminal-and-console",
+      "feature": "console-hosting",
+      "article": null,
+      "decision": null,
+      "title": "Console Hosting",
+      "status": "Standard",
+      "sourceHash": "5cc54f6f4678fb2719f0dd1d9e13ecd99a35be1015024718bf07cb206290071e"
+    },
+    {
       "id": "BSP-CAP-D2FACDF0AD2D",
       "key": "core-library--terminal-and-console--console-io-streams",
       "kind": "feature",
@@ -61116,6 +63425,28 @@
       "title": "Console terminal events",
       "status": "Standard",
       "sourceHash": "46ae02e128696fa332b936109cc21f134a1361bfb91979a24cf1384b47a58610"
+    },
+    {
+      "id": "BSP-CAP-1A6B5F38CF29",
+      "key": "core-library--text-and-parsing--formatting",
+      "kind": "feature",
+      "canonicalPath": "openspec/specs/core-library--text-and-parsing--formatting/spec.md",
+      "publicSlug": "platform-spec/capabilities/core-library--text-and-parsing--formatting",
+      "href": "/platform-spec/capabilities/core-library--text-and-parsing--formatting/",
+      "capability": "core-library--text-and-parsing--formatting",
+      "parentCapability": "taxonomy--core-library--text-and-parsing",
+      "layout": "feature",
+      "specLevel": "feature",
+      "authority": "normative",
+      "disposition": "normative-standard",
+      "domain": "core-library",
+      "area": "text-and-parsing",
+      "feature": "formatting",
+      "article": null,
+      "decision": null,
+      "title": "Formatting",
+      "status": "Standard",
+      "sourceHash": "59ca0b2671b72349c2f1254f8364845ffd7a95fb5eee6c5d2bb1fe6dc5c11c54"
     },
     {
       "id": "BSP-CAP-3D04E50A6A95",
@@ -61247,7 +63578,7 @@
       "decision": null,
       "title": "Extern dispatch and policy",
       "status": "Standard",
-      "sourceHash": "e08e6c5d78c00ca6a3701aa3b8206d1902d0437bd6e923716376ffb820de83ac"
+      "sourceHash": "6dbdfaf6bbaf8a08fdbc8416dfa9843c71826617b557cd9fc2ca736a96a2943c"
     },
     {
       "id": "BSP-CAP-97C444BA51D6",
@@ -61269,7 +63600,7 @@
       "decision": null,
       "title": "Channels and synchronization",
       "status": "Standard",
-      "sourceHash": "523e78819fa6be89994771d2e7574b5ff9538fd3ba72ae4efd5ebdd2fd140242"
+      "sourceHash": "a700b55b40f25de1c170836e09a0432b57be5f482ec5a75f3cdf5530e0f64b54"
     },
     {
       "id": "BSP-CAP-7AB40A9AC59D",
@@ -61313,7 +63644,7 @@
       "decision": null,
       "title": "Memory and GC runtime contract",
       "status": "Standard",
-      "sourceHash": "1cce2a955a687fba596376cf4959205de6825516818b2301f3183e134f64aa6d"
+      "sourceHash": "3fe8fd11957360ebf212090005649ffc57b8222cfea5521b1a1501d5ba4f44ce"
     },
     {
       "id": "BSP-CAP-EA8021771AAF",
@@ -61335,7 +63666,7 @@
       "decision": null,
       "title": "Panic, IO, and syscalls",
       "status": "Standard",
-      "sourceHash": "b662f099ce750f19e6326defd08387cd88a8b32f4046ca361c036dcd5379ee96"
+      "sourceHash": "b3af337857253e37246b96e825c5acbc81762959718774cba8b99fd8fcb82c44"
     },
     {
       "id": "BSP-CAP-E20CFCDC2386",
@@ -61357,7 +63688,7 @@
       "decision": null,
       "title": "Runtime feature flags",
       "status": "Standard",
-      "sourceHash": "c950bd81af48067b468d12a9553c996a7972f8180b47b1865ac4a38a94279947"
+      "sourceHash": "1a66207975cc89e467f41b6500b193f74d1b047c5b268df4f086c571fb10d77e"
     },
     {
       "id": "BSP-CAP-3380C7E3C94B",
@@ -61379,7 +63710,7 @@
       "decision": null,
       "title": "Native dependency injection",
       "status": "Standard",
-      "sourceHash": "9e58615b21451fabd47ebc8432b73b8ebd5c758e92c22ae1db3ab75fbc3a5962"
+      "sourceHash": "5bf65cc3597af9dc046d980cef498f3ff3cf270266021cb21fb12f2947238752"
     },
     {
       "id": "BSP-CAP-19A30D104B4E",
@@ -61423,7 +63754,7 @@
       "decision": null,
       "title": "Contracts",
       "status": "Standard",
-      "sourceHash": "39d35c0ba43f1e11485b4ece738bbece04f83e1df73bdf58295d7923f02e77e7"
+      "sourceHash": "eecdf051efba3f123f3b1d21dcf2b0e2f76ec65bec8d83fe6c3bb6067b42c17c"
     },
     {
       "id": "BSP-CAP-0A39C0F74F66",
@@ -61467,7 +63798,7 @@
       "decision": null,
       "title": "Testing",
       "status": "Standard",
-      "sourceHash": "8c990290825cefc8112424521139eb97fb54d9cff820ad9881dd62ab1d383499"
+      "sourceHash": "f41bec8e6d487c4af39cc20bd15b0d0562a603f5c4344a4fcbd2a6984ebc25b1"
     },
     {
       "id": "BSP-CAP-B535BD936B47",
@@ -61489,7 +63820,7 @@
       "decision": null,
       "title": "Control flow",
       "status": "Standard",
-      "sourceHash": "14b8c38dcc75226d4076ea5ca21bf91baa199302243d40a2e47269c192bc4849"
+      "sourceHash": "22a129f8d06c5a86cec203360a04067df5612e4c65e5b4e1ac77d14437a3a78d"
     },
     {
       "id": "BSP-CAP-45225798B5DF",
@@ -61511,7 +63842,7 @@
       "decision": null,
       "title": "Events",
       "status": "Standard",
-      "sourceHash": "15c392a2c37f8fbcfec76e102e057f0712f00c2896df58807ed7b0a077d1b66a"
+      "sourceHash": "4a238e213f8c22564ba32f61bde2e2a699841e0c085b2c19a19a6c470111e23c"
     },
     {
       "id": "BSP-CAP-72E38AE0DF50",
@@ -61533,7 +63864,7 @@
       "decision": null,
       "title": "Fibers and spawn",
       "status": "Standard",
-      "sourceHash": "b730497ef4f8c316c4f3d53ba7a33b75f2e3bad459370b7cb2ee4feb277bae18"
+      "sourceHash": "3ec92388f1d90965b942ae695ffbcfb19fc744649274b61b45cda820bcae9fad"
     },
     {
       "id": "BSP-CAP-87E5FC603669",
@@ -61555,7 +63886,29 @@
       "decision": null,
       "title": "Lambdas and closures",
       "status": "Standard",
-      "sourceHash": "5d9685bcf4327a6f7a3270b7c9ee780137eaaa5620a72e7b321c97966da561e7"
+      "sourceHash": "f43b172e359f10453281e150e271fcd92a612d313f980f4896ffd28e1c911fe7"
+    },
+    {
+      "id": "BSP-CAP-9F105C5547CE",
+      "key": "language-meta--interop--beskid-glue",
+      "kind": "feature",
+      "canonicalPath": "openspec/specs/language-meta--interop--beskid-glue/spec.md",
+      "publicSlug": "platform-spec/capabilities/language-meta--interop--beskid-glue",
+      "href": "/platform-spec/capabilities/language-meta--interop--beskid-glue/",
+      "capability": "language-meta--interop--beskid-glue",
+      "parentCapability": "taxonomy--language-meta--interop",
+      "layout": "feature",
+      "specLevel": "feature",
+      "authority": "normative",
+      "disposition": "normative-standard",
+      "domain": "language-meta",
+      "area": "interop",
+      "feature": "beskid-glue",
+      "article": null,
+      "decision": null,
+      "title": "Beskid Glue",
+      "status": "Standard",
+      "sourceHash": "1befbf3a24f588c81720806a3cca0137944058c3b300a07e0549840b6d99edcf"
     },
     {
       "id": "BSP-CAP-416DC1F89FF5",
@@ -61577,7 +63930,7 @@
       "decision": null,
       "title": "C ABI profile",
       "status": "Standard",
-      "sourceHash": "48bd352946670e2ea669b7382e3671154256ef1a105d4fa4d56672328bb1883c"
+      "sourceHash": "719bb72897bbb7fa9376a8af18283f309c34e5a40f7483f20bdf36856dcd6876"
     },
     {
       "id": "BSP-CAP-D9DF6656F2E5",
@@ -61599,7 +63952,7 @@
       "decision": null,
       "title": "Export and callbacks",
       "status": "Standard",
-      "sourceHash": "d65244be279a0f5fcedd353feda495ba9020681fe272e69cc13fb2dc9da0aa0b"
+      "sourceHash": "ce84702dea81d3225b8b740598a09dcdb5a5f638766258ca0bb6c676abc759f3"
     },
     {
       "id": "BSP-CAP-8F568DA0ED40",
@@ -61643,7 +63996,7 @@
       "decision": null,
       "title": "Interop.Contracts",
       "status": "Standard",
-      "sourceHash": "a6def0aa322530e47d5dc4bafe0c326510faf8b08d0bba6563ae2e89a0a080b2"
+      "sourceHash": "297c2c5a083a4d465fd08571baa28d76b10771655350f4a5050d7b341dbd029e"
     },
     {
       "id": "BSP-CAP-B651F3BAC326",
@@ -61665,7 +64018,7 @@
       "decision": null,
       "title": "Rust ABI profile",
       "status": "Standard",
-      "sourceHash": "e577c5244bcf6cd8d6b1bb014162cb951ed9a39df018ff1c5a35ca093713c7ca"
+      "sourceHash": "663424b0332dc7f867ba7689dc1d00da7b0975195cbe9626313b0e2f6c6c843b"
     },
     {
       "id": "BSP-CAP-8A8FEB92F30E",
@@ -61687,7 +64040,7 @@
       "decision": null,
       "title": "Memory and references",
       "status": "Standard",
-      "sourceHash": "0d2489810f2cfc8ecca08a041161fc16b5b951616acd1a1e83e82c149edc0d79"
+      "sourceHash": "6f4e49579fdc269710ae7cf1e1eac3a3a95df9c7e64000a739e29523f2dd8c5b"
     },
     {
       "id": "BSP-CAP-8795D7DA34F0",
@@ -61797,7 +64150,7 @@
       "decision": null,
       "title": "Code style and naming",
       "status": "Standard",
-      "sourceHash": "de10f2fa11f5c8740422f0305758c73fc6f8dd1e67ac54f4f5b3b4ca9e4c5c15"
+      "sourceHash": "1b19fd06138804a6b41792751ed487aa257ea5addff3f2449cdd89b270fcfdc6"
     },
     {
       "id": "BSP-CAP-2037047479B0",
@@ -61841,7 +64194,7 @@
       "decision": null,
       "title": "Modules and visibility",
       "status": "Standard",
-      "sourceHash": "3edd609d8f33180aaff2ea0318b122c2068ad428f16d4370eb6406a40cb4d6cc"
+      "sourceHash": "b0d262825d555faf21434059765567055c306a9b4a7968507b8a8a2ee1000b22"
     },
     {
       "id": "BSP-CAP-063F92D8A165",
@@ -61863,7 +64216,7 @@
       "decision": null,
       "title": "Name resolution",
       "status": "Standard",
-      "sourceHash": "18b62a14b17e4ad3b83c9e487d9b557edc62be007db451f915d45edddcf5ec71"
+      "sourceHash": "8e33d7af4346b80bbbe2fbda60b3400dd626c77cbde52b5d444b1a7a8e733e04"
     },
     {
       "id": "BSP-CAP-5D479AB90C45",
@@ -61907,7 +64260,7 @@
       "decision": null,
       "title": "Lexical and syntax",
       "status": "Standard",
-      "sourceHash": "e43e6b04ae0fafeebd47adc44b9ab832486a1e3cab51de961fadd112917d84c0"
+      "sourceHash": "4bc8e97c03bdf88608daa769043a72297df5d6db1925c7a807211827d2e5fc8b"
     },
     {
       "id": "BSP-CAP-0A3FAA1D6D8D",
@@ -61973,7 +64326,7 @@
       "decision": null,
       "title": "Type inference",
       "status": "Standard",
-      "sourceHash": "7614177ebdd664188a59d22209fe1f135953a88f02b05762d9eca5bc8ced6bba"
+      "sourceHash": "4ab9cda35c36e5892bb791d6b29b40caea471f2819d676a7a3c5694701639a43"
     },
     {
       "id": "BSP-CAP-BD8338F463C9",
@@ -61995,7 +64348,7 @@
       "decision": null,
       "title": "Types",
       "status": "Standard",
-      "sourceHash": "a94311192cc0af1e14a24584a64601abe455fee5e720b5cf2c1443a0c8db4795"
+      "sourceHash": "c36454b3325bf8543fc3eced40acf34aa33e264fa3a329585441f456433a6fb8"
     },
     {
       "id": "BSP-CAP-4513A496C8E2",
@@ -62083,7 +64436,7 @@
       "decision": null,
       "title": "Build, analyze, and run contract",
       "status": "Standard",
-      "sourceHash": "23f16d6b78f25601b43961d0aefc6b519740ef904faa5b207ca57f306b69959f"
+      "sourceHash": "0fb010a41361e797730b7962ed9631428dbad654a957024ddba8624d63bbc4f7"
     },
     {
       "id": "BSP-CAP-DA123DD4F7F0",
@@ -62105,7 +64458,7 @@
       "decision": null,
       "title": "Command surface",
       "status": "Standard",
-      "sourceHash": "74072d2a8a76d9f31726e88e75e1a405d8c01555363f9768b38bcbdbd077c586"
+      "sourceHash": "e0e4668f38b5f18ea9a879fa8dc2b64ae58edcf017c5f49153a587185954cb4d"
     },
     {
       "id": "BSP-CAP-EDE0E71BF830",
@@ -62127,7 +64480,7 @@
       "decision": null,
       "title": "Hi command",
       "status": "Standard",
-      "sourceHash": "9f1f88991ff4cbcc5abf0d7fde1181f15aa07c20019f7d511be96ccfc97f6ce9"
+      "sourceHash": "3f115b5243af6c5a3deb4ba74fcfce3d189042febb5fd69b0d3a45ce7d21b448"
     },
     {
       "id": "BSP-CAP-EC168DCD7411",
@@ -62149,7 +64502,7 @@
       "decision": null,
       "title": "REPL command",
       "status": "Standard",
-      "sourceHash": "69fe800572c9d6f1544009670f1763c780b0fe6293edb7329599dc78bb756f10"
+      "sourceHash": "760bf50705c89ee078a688bd3a47239dd0397971880dc6422b53efb948e3200f"
     },
     {
       "id": "BSP-CAP-76964FA71797",
@@ -62171,7 +64524,7 @@
       "decision": null,
       "title": "beskid import lib command",
       "status": "Standard",
-      "sourceHash": "fd18450503d7221282ca34962942b1e4c215bffd0d4ec56804de57404d3a983c"
+      "sourceHash": "89443d364269277ede387bb9d02466786df01335057d547d81ca55b98096da8a"
     },
     {
       "id": "BSP-CAP-62C3D7F308C1",
@@ -62237,7 +64590,7 @@
       "decision": null,
       "title": "Formatter verification and traceability",
       "status": "Standard",
-      "sourceHash": "3b580525205038a08aaf587a0b55ac8a2e3c898597e8477560364584d0499f92"
+      "sourceHash": "ed7d6212eb07b04b6a066a9d312022a5ac89d4c18f044752943350eb0690e928"
     },
     {
       "id": "BSP-CAP-C93B7A5B7319",
@@ -62259,7 +64612,7 @@
       "decision": null,
       "title": "Contracts and edge cases",
       "status": "Standard",
-      "sourceHash": "9d1762f0a550c5371231a1aae1b484f8d9ebd8e0be21fcde7a454f2b21bcac1d"
+      "sourceHash": "fe6c8b43fc26f75f430b099f3eb0146315e6b2b87af71657cd7759cd596e8ee3"
     },
     {
       "id": "BSP-CAP-3F83EAB70C19",
@@ -62303,7 +64656,7 @@
       "decision": null,
       "title": "Diagnostics and workspace analysis",
       "status": "Standard",
-      "sourceHash": "9d72cbd3d2c0e25ed56a8965f68768d1466727dacbf94eea3e9b827cd4a27ce7"
+      "sourceHash": "baed96b3eb6cc2de7cb5e4303b3c864e29dff60350d92994f374fba983615f8c"
     },
     {
       "id": "BSP-CAP-1BF0235C3E03",
@@ -62325,7 +64678,7 @@
       "decision": null,
       "title": "IntelliSense capabilities and behavior",
       "status": "Standard",
-      "sourceHash": "fc9eb988ee203879c42849a529016932a0a6cea7e47e3c5861f04671eb35d0de"
+      "sourceHash": "7dcd57d1dbb97d0581d8d86c7e730599decda9da79b9b15de17cae8191b12362"
     },
     {
       "id": "BSP-CAP-942BDF7AAE15",
@@ -62391,7 +64744,7 @@
       "decision": null,
       "title": "Project manifest contract",
       "status": "Standard",
-      "sourceHash": "27612b4eda0a57d625e67d532af77ff07a2f39abefb81e4102fe628cfedd1194"
+      "sourceHash": "1ea67ff4bcd7c94da89493c0523e60074884a1153ec284acf0b685d1ad1effb2"
     },
     {
       "id": "BSP-CAP-A877247F8D66",
@@ -62413,7 +64766,7 @@
       "decision": null,
       "title": "Workspace and lock contracts",
       "status": "Standard",
-      "sourceHash": "0d7740fbbdf533e9edceebc3c670a7931e8cd17a466b9d524cb41dde6c2c0f40"
+      "sourceHash": "b70403fa9e645f900d949078709cec9ebafa7bb5aff20112591be21dc6ed4bd3"
     },
     {
       "id": "BSP-CAP-5A70F93AE083",
@@ -62479,7 +64832,7 @@
       "decision": null,
       "title": "beskid new command",
       "status": "Standard",
-      "sourceHash": "d43686d4f4ad6509eb879d6938750056ec86e591c2b3d6e4d95d76a924973d52"
+      "sourceHash": "ed448617ca82ddc0d05dbc27e8e05a1ec3e31feb5b69036e2d14d922e7abf007"
     },
     {
       "id": "BSP-CAP-8CB6099B132E",
@@ -62699,7 +65052,7 @@
       "decision": null,
       "title": "Workspace and project explorer",
       "status": "Standard",
-      "sourceHash": "001a76388812eb4ecd5471d483c80e9cd0a6178a28205831ea6c1c08de5f29c5"
+      "sourceHash": "31e9e680605213beda11c35e661c6a0c6559103b4e1d91d9e918180c64bd8a55"
     },
     {
       "id": "BSP-CAP-593F6CB29061",

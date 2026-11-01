@@ -9,7 +9,7 @@ A `Moved` value (a `move` capture of a task body passed to `s.Spawn` or `s.Isola
 - **THEN** the task reads the array at its original address in the parent heap, the parent's local table holds one entry for the array object, and the spawn completed in constant time independent of 64 MiB
 
 #### Scenario: Mutable graph gets one entry per object
-- **GIVEN** `[Isolated] pub type Chain { Option<Chain> next, string label }` with 1000 nodes and 1000 distinct strings, captured with `move`
+- **GIVEN** `[Isolated] pub type Chain { Option<Chain> next; string label; }` with 1000 nodes and 1000 distinct strings, captured with `move`
 - **WHEN** the send is instrumented
 - **THEN** the parent's local table gains 1000 mutable entries (the nodes) and 1000 immutable entries (the strings), and the string payloads were not entered
 

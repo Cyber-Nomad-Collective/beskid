@@ -13,21 +13,21 @@ From 0.6.3 a value SHALL cross a runtime instance boundary only as a `Scope.Spaw
 - **THEN** the compiler rejects the sharing or diagnoses detectable mutable capture
 
 #### Scenario: Shared record aliased by two fibers
-- **GIVEN** `[Immutable] pub type Config { string name, i64 retries }` and two `spawn` operands that both read a `Config` local
+- **GIVEN** `[Immutable] pub type Config { string name; i64 retries; }` and two `spawn` operands that both read a `Config` local
 - **WHEN** sharing analysis runs
 - **THEN** the alias is accepted because `Config` is Shared
 
 #### Scenario: Shared record read by two tasks
-- **GIVEN** `[Immutable] pub type Table { ReadOnlyArray<i64> rows }` and a scope that captures one `Table` into two tasks that both sum `rows`
+- **GIVEN** `[Immutable] pub type Table { ReadOnlyArray<i64> rows; }` and a scope that captures one `Table` into two tasks that both sum `rows`
 - **WHEN** both tasks run at once
 - **THEN** both read the same object address and return equal sums, and no copy of `rows` is made
 
 #### Scenario: Copied record is independent in the task
-- **GIVEN** `[Copyable] pub type Counter { i64 n }` captured by a task that returns `counter.n + 1`
+- **GIVEN** `[Copyable] pub type Counter { i64 n; }` captured by a task that returns `counter.n + 1`
 - **WHEN** the parent reads `counter.n` after the join
 - **THEN** the parent still reads the original value and the task heap held a distinct `Counter` object
 
 #### Scenario: Mutable record cannot cross
-- **GIVEN** `pub type Cache { i64[] slots }` (neither `[Immutable]` nor `[Copyable]`) captured by a `Scope.Spawn` lambda
+- **GIVEN** `pub type Cache { i64[] slots; }` (neither `[Immutable]` nor `[Copyable]`) captured by a `Scope.Spawn` lambda
 - **WHEN** the legality gate judges the lambda
 - **THEN** the compiler reports **E1236** naming `Cache`, class Never and the reason "no marker attribute"
