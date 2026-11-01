@@ -203,9 +203,36 @@ log is in `compiler/CHANGELOG.md`. Draft release notes:
   x86-64-v2 CPU level in AOT, JIT and tests; aarch64-apple-darwin builds for
   Armv8.0-A; a Cranelift runtime helper call is E4004. The Docs install pages
   state the CPU requirement.
+- The Book targets page and the `build`, `run` and `test` references state the
+  default target rule: without `--target`, `build` and `run` never use a Test
+  target (`run` uses the App target, `build` the App target or else the Lib
+  target), and `test` runs every Test target with a `Total:` line, or else the
+  Lib target; two candidates of one kind are an error.
+- The Book lockfile reference names E3025: a `Project.lock` whose first line
+  is not `# Project.lock v3` has an unsupported format, and the user deletes
+  it and writes a new lock. The stale E3024 row is removed, and the glossary
+  no longer names a `glue-dotnet` backend.
+- Book chapter 11 describes 0.6.7 concurrency: fibers run on the scheduler of
+  their isolate, `Concurrency.ProcessorCount()` counts that isolate's mutators
+  (1), `Concurrency.HostProcessorCount()` reports the host processors, and
+  `Core.Parallel` scopes, ports and parallel sequences run work on other
+  isolates, bounded by `BESKID_ISOLATES_MAX`.
+- OpenSpec: the shipped changes `specify-v0-5-4-language-fixes`, the `v06-*`
+  changes, the `v061-*` changes, `v063-isolates-and-scope`,
+  `v064-ports-and-pipelines` and `v065-parallel-sequences` are archived, so the
+  Standard holds the isolate, port and parallel sequence requirements. The
+  `standard-normative-manifest` capability is deleted. Changes whose work did
+  not ship stay open: `add-clif-block-indirect-calls`,
+  `v06-glue-stdio-bridge-provisional`, `v06-serialization-bsol` and the `v07-*`
+  changes.
+- The root changelog has one `[Unreleased]` heading. The 0.4.0 to 0.6.0
+  development log is part of the 0.6.0 section.
 
 ### Fixed
 
+- `beskid doc`: `@ref` links to items in a dependency's `.generated` units point
+  at that dependency's package, and a path outside a package's source and
+  generated roots fails with an error that names both roots.
 - The Corelib gate's `libcrypto.so.3` check reads the whole `ldconfig -p`
   listing before matching, so `pipefail` no longer turns an early `grep -q`
   exit (SIGPIPE) into a false "missing" failure.
@@ -319,7 +346,7 @@ Draft release notes: `docs/release/v0.6.6-release-notes.md`.
 Not released. The candidate is in qualification on Linux x64, macOS arm64 and
 Windows x64 against `scripts/ci/release-cases-v06.json` (86 mandatory cases and
 15 provisional stdio bridge cases that fail closed). This section is the release
-summary; the itemized development log stays under [Unreleased] below and in
+summary; the itemized development log follows it and is also in
 `compiler/CHANGELOG.md`. Draft release notes:
 `docs/release/v0.6.0-release-notes.md`.
 
@@ -531,19 +558,10 @@ summary; the itemized development log stays under [Unreleased] below and in
 - The `Std` namespace and its App-only alias layer.
 - The fixed runtime table sizes and the fixed 1 GiB heap cap.
 
-## [Unreleased]
+**Development log, 0.4.0 to the 0.6.0 candidate (newest first).** These entries were written while the work was in progress; the summary above is authoritative.
 
 ### Changed
 
-- The Book targets page and the `build`, `run` and `test` references state the
-  default target rule: without `--target`, `build` and `run` never use a Test
-  target (`run` uses the App target, `build` the App target or else the Lib
-  target), and `test` runs every Test target with a `Total:` line, or else the
-  Lib target; two candidates of one kind are an error.
-- The Book lockfile reference names E3025: a `Project.lock` whose first line
-  is not `# Project.lock v3` has an unsupported format, and the user deletes
-  it and writes a new lock. The stale E3024 row is removed, and the glossary
-  no longer names a `glue-dotnet` backend.
 - Publish stable releases from `ci.beskid-lang.org` through the manual
   `main`-only Woodpecker `release-publish` lane. A credential-free
   `verify-release` step proves the qualified state and owner waiver; only the
