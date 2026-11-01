@@ -59,13 +59,13 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
   && mkdir -p /workspace/runtime-output \
   && cd compiler \
   && CARGO_TARGET_DIR=/workspace/target cargo build -p beskid_cli --release \
-  && CARGO_TARGET_DIR=/workspace/target cargo build -p beskid_lsp --release \
+  && CARGO_TARGET_DIR=/workspace/target cargo build -p beskid_lsp --profile release-lsp \
   && BESKID_RUNTIME_PREFIX=/workspace/target/native-runtime-kit \
   BESKID_RUNTIME_KIT_PROFILE=debug \
   BESKID_CLI_BIN=/workspace/target/release/beskid_cli \
   ./scripts/stage-native-runtime-kit.sh \
   && install -m 0755 /workspace/target/release/beskid_cli /workspace/runtime-output/beskid \
-  && install -m 0755 /workspace/target/release/beskid_lsp /workspace/runtime-output/beskid_lsp \
+  && install -m 0755 /workspace/target/release-lsp/beskid_lsp /workspace/runtime-output/beskid_lsp \
   && cp -a corelib /workspace/runtime-output/beskid_corelib \
   && test -f /workspace/runtime-output/beskid_corelib/beskid_corelib/corelib.bproj \
   && test -x /workspace/runtime-output/beskid \
