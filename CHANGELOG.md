@@ -9,8 +9,60 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ## [Unreleased]
 
+## [0.6.7] - 2026-11-01
+
+Release candidate; not released until the three-platform build of the 0.6.7
+candidate passes and the owner confirms publication. 0.6.7 is the last 0.6
+release. 0.6.6 was never released (its Linux build failed on a generated
+Corelib `Project.lock` in the source inventory), so 0.6.7 also ships the work
+of the 0.6.6 section below; where 0.6.7 changes a 0.6.6 rule, the 0.6.7 rule
+ships (`move` only at isolate crossings, collection mutators on `mut this`).
+OpenSpec changes: every `v067-*` change, archived on 2026-11-01. The itemized
+log is in `compiler/CHANGELOG.md`. Draft release notes:
+`docs/release/v0.6.7-release-notes.md`.
+
+### Highlights
+
+- No uncoded internal compiler error: each one is a coded diagnostic at its
+  construct. One structured diagnostic for the CLI and the editor, with codes
+  from one registry, help and quick fixes; parse errors have codes E0101 to
+  E0117; `--error-format=json`.
+- The language server isolates a panic per request and writes a crash report,
+  and no request waits without a limit during an edit burst (semantic tokens,
+  references, signature help and inlay hints 100 ms; rename, prepare rename and
+  code actions 500 ms, then `ContentModified`).
+- `move` only where a value crosses to another isolate; collection mutators
+  take `mut this`.
+- Fields end with `;`; the conditional expression `cond ? a : b`; string
+  escapes; `*=`, `/=` and `%=`; optional parameters and caller information;
+  contextual numeric literals; contract values with runtime dispatch;
+  primitives and `string` conform to contracts; inline modules are lexical
+  scopes; tests have their own namespace and PascalCase names.
+- One sealed, shared Corelib per toolchain and `Project.lock` format 3; any
+  other lock format is E3025.
+- Every x86_64 target builds for x86-64-v2, aarch64 for Armv8.0-A.
+
 ### Changed
 
+- Version 0.6.7: `beskid`, `beskid_lsp` and `beskid-up` (compiler crates), the
+  VS Code extension and the Zed extension. The release case manifest is not
+  changed by the bump (digest
+  `c4069aad3809230567aa3996194925771d71456027339d32299f2af757ed25dd`).
+- The 0.6.7 OpenSpec changes are archived into `openspec/specs`, together with
+  `v06-cli-dependencies`, `v06-rust-glue-integration` and
+  `v062-captures-and-move`, whose requirements the 0.6.7 changes edit. Spec
+  examples use `;` after type fields, and the type-system notes name E1102 as
+  the only duplicate code.
+- The retired platform-spec seed corpus (`beskid_sites/apps/platform-spec`) is
+  deleted; the Standard is built from `openspec/` only.
+- The `site/learn` playground builds its language server with the
+  `release-lsp` profile (`panic = "unwind"`), so a handler panic does not end
+  the shared server.
+- The tree-sitter grammar parses numeric literal suffixes (`_word` and the
+  sized ones), hexadecimal and `_`-grouped integers, float exponents and a
+  statement `match` without `;`.
+- Book chapter 10: an element write through an array handle reaches every
+  handle; growing or shrinking one handle never changes another.
 - The compiler Rust gate skips the codegen compiler-trace child fixture by its
   module-qualified id, `prepared_syntax::compiler_trace_child_lowers_a_syntax_entrypoint`.
   S9b moved the codegen tests into one `tests/codegen` executable, and the gate
@@ -158,10 +210,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   listing before matching, so `pipefail` no longer turns an early `grep -q`
   exit (SIGPIPE) into a false "missing" failure.
 
-## [0.6.6] - 2026-10-16
+## [0.6.6] - Not released
 
-Not released until the three-platform build of the 0.6.6 candidate passes and
-the owner confirms publication. One release carries the work planned as 0.6.1
+Never released; this work ships in 0.6.7 (see above). One release carries the work planned as 0.6.1
 to 0.6.5 (OpenSpec changes `v061-attributes-and-isolate-prerequisites`,
 `v061-gc-stress-and-poison`, `v061-glue-extensions`, `v062-captures-and-move`,
 `v063-isolates-and-scope`, `v064-ports-and-pipelines` and
