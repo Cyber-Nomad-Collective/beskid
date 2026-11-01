@@ -9,8 +9,8 @@ Normative LSP IntelliSense feature contract for Beskid editors.
 Completion SHALL be provided for `.bd`, `.bproj`, and `.bws` documents. `.bd` candidates SHALL come from `beskid_queries::completion_candidates`; `.bproj` and `.bws` completion SHALL include manifest keywords and enum-like value suggestions. Project-backed `.bd` IntelliSense SHALL assemble the current in-memory entry buffer through the shared `ProgramAssembly` prepare spine and expose generation-bound syntax facts for the resolved project. After a trailing `.` following a registered `use` alias, completion SHALL list public members from the aliased module path. While the member identifier is only partially typed, matching members SHALL remain available from a bounded owned dependency surface even when semantic lowering reports the expression as incomplete. A retained surface SHALL match both the current import's exact logical module path and its local binding; changing an import target while retaining its alias SHALL NOT expose members from the former target. The fallback surface SHALL be used only for imported-member completion; document symbols SHALL come from the recoverable current buffer, and diagnostics, rename, formatting, semantic tokens, navigation, and compilation SHALL NOT treat the fallback surface as current semantic authority. On a `use` line, completion SHALL offer next path segments from assembly-known logical module paths.
 
 #### Scenario: Member completion after use alias
-- **GIVEN** a `.bd` buffer with `use Std.System.IO` and a `CompilationContext` that resolves the project
-- **WHEN** the user requests completion after `IO.`
+- **GIVEN** a `.bd` buffer with `use Core.Output` and a `CompilationContext` that resolves the project
+- **WHEN** the user requests completion after `Output.`
 - **THEN** candidates include public members from the aliased module path in the assembly `ModuleGraph`
 
 #### Scenario: Partial imported member keeps current-generation suggestions
@@ -23,6 +23,11 @@ Completion SHALL be provided for `.bd`, `.bproj`, and `.bws` documents. `.bd` ca
 - **WHEN** the other buffer advances the shared workspace Salsa generation
 - **THEN** completion in the partial sibling still lists matching imported members from its owned dependency surface
 
+#### Scenario: Use-path completion offers package-native segments
+- **GIVEN** a `.bd` buffer in a project with the `Core` dependency
+- **WHEN** the user requests completion after `use Core.`
+- **THEN** candidates include the next segment `Output` and no candidate repeats the typed prefix or starts with `Std`
+
 #### Scenario: Retargeted alias rejects former members
 - **GIVEN** a `.bd` buffer previously imported `Old.Tools as Api`
 - **WHEN** the current buffer changes the declaration to `New.Tools as Api` while semantic preparation is incomplete
@@ -31,18 +36,37 @@ Completion SHALL be provided for `.bd`, `.bproj`, and `.bws` documents. `.bd` ca
 ### Requirement: Hover, navigation, and references
 Hover SHALL return Markdown for resolved `.bd` symbols and `.bproj`/`.bws` manifest tokens; hover ranges SHALL map through generation-bound syntax locations and the declaring unit source. Go to definition SHALL resolve to the declaration span for resolved `.bd` symbols and SHALL navigate manifest `path = "..."` dependencies to the target `.bproj`. Go to declaration SHALL follow the same target resolution contract. Find references SHALL support resolved `.bd` symbols and manifest tokens; with `ProgramAssembly`, workspace references SHALL include non-entry units and SHALL honor `includeDeclaration`.
 
+Hover on an attribute name at any declaration site SHALL resolve to the attribute declaration and show its target list; go to definition on it SHALL navigate to the declaration. Hover on a nominal type name SHALL append one line `transfer class: Shared | Moved | Copied | Never (reason)` from the transfer class query.
+
 #### Scenario: Cross-unit go-to-definition
 - **GIVEN** a resolved symbol whose `ItemInfo.source_path` points at a dependency unit
 - **WHEN** the client requests go-to-definition at that symbol
 - **THEN** the LSP returns a `file://` location for the dependency unit declaration span
 
+#### Scenario: Hover on a parameter attribute
+- **GIVEN** `pub attribute Trace(Parameter) { }` and `i64 Add([Trace] i64 left, i64 right)`
+- **WHEN** the client hovers `Trace` inside the parameter list
+- **THEN** the hover shows the declaration with the target `Parameter`
+
+#### Scenario: Hover shows the transfer class
+- **GIVEN** `[Immutable] pub type Job { string id; i64 size; }`
+- **WHEN** the client hovers `Job` at a use site
+- **THEN** the hover contains `transfer class: Shared`
+
 ### Requirement: Rename, signature help, symbols, and tokens
 Rename and prepare rename SHALL be supported for resolved symbols and manifest tokens with identifier validation (`[A-Za-z_][A-Za-z0-9_]*`); invalid identifiers SHALL return no rename edit. Rename remains single-document per request. Signature help SHALL be supported for `.bd` call sites with one active signature derived from the callable hover payload. Document symbols SHALL be supported for `.bd`, `.bproj`, and `.bws` with stable symbol-kind mapping. Workspace symbols SHALL be supported for indexed `.bd` documents from open buffers plus closed-file workspace snapshots. Semantic tokens SHALL be supported in full-document mode with declaration tagging.
+
+Semantic tokens SHALL tag attribute names at every declaration site (parameters, receivers, lambdas, lambda parameters, type parameters, `let` statements, enum variants, contract members, `impl` blocks, constants, attribute declarations) with the same token type as attributes on items. Completion inside `[` at any declaration site SHALL offer the attributes whose target list admits that site, and completion inside an `AttributeTargetList` SHALL offer the target catalogue.
 
 #### Scenario: Invalid rename identifier rejected
 - **GIVEN** a resolved symbol at the cursor
 - **WHEN** prepare rename or rename is requested with a new name that fails `[A-Za-z_][A-Za-z0-9_]*`
 - **THEN** the server returns no rename edit
+
+#### Scenario: Attribute completion filtered by site
+- **GIVEN** `pub attribute Trace(Parameter) { }` and `pub attribute Pure(LambdaExpression) { }`
+- **WHEN** completion is requested inside `[` before a lambda
+- **THEN** `Pure` is offered and `Trace` is not
 
 ### Requirement: Code actions and diagnostic publication for IntelliSense
 Code actions SHALL include source formatting for `.bd`, a quick-fix for unused imports (`W1503`) when diagnostic context is present, and documentation actions (generate/update `///` stubs with `@arg` / `@returns` / `@variant` / `@par` where applicable, plus quick fixes for W1610–W1615 and W1620–W1625). Diagnostics SHALL preserve compiler severity/code identity for open buffers and workspace-indexed closed files; for `.bd` files with a document analysis snapshot, published diagnostics SHALL be the union of semantic diagnostics and `doc_diagnostics` (stable sort by span then code).
