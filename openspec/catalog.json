@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "6e2c28cb54e322d34cda5baf95a3589be0e0cc0710ff5e711e64149213deaf6f",
+  "revision": "ca68597e3f738c86fe67ed67e1e829c4ef4f5c627abbad6ad4113e9410d38379",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -15622,7 +15622,9 @@
         }
       ],
       "records": [],
-      "bookLinks": []
+      "bookLinks": [
+        "/book/11-fibers-cheaper-than-threads/corelib-concurrency/"
+      ]
     },
     {
       "id": "BSP-CAP-F78042412924",
@@ -16101,7 +16103,10 @@
           "relation": "Parent feature hub"
         }
       ],
-      "bookLinks": []
+      "bookLinks": [
+        "/book/10-memory-without-billion-dollar-mistake/memory-model-overview/",
+        "/book/appendix-spec-map/"
+      ]
     },
     {
       "id": "BSP-CAP-9A450EC7FC62",
@@ -23048,7 +23053,9 @@
         }
       ],
       "records": [],
-      "bookLinks": []
+      "bookLinks": [
+        "/book/11-fibers-cheaper-than-threads/corelib-concurrency/"
+      ]
     },
     {
       "id": "BSP-CAP-BBA823493190",
@@ -25115,7 +25122,9 @@
           "relation": "Evidence policy for compiler features"
         }
       ],
-      "bookLinks": []
+      "bookLinks": [
+        "/book/appendix-spec-map/"
+      ]
     },
     {
       "id": "BSP-CAP-19A30D104B4E",
@@ -33508,7 +33517,8 @@
       ],
       "bookLinks": [
         "/book/07-compiler-is-not-your-therapist/control-flow/",
-        "/book/07-compiler-is-not-your-therapist/lexical-basics/"
+        "/book/07-compiler-is-not-your-therapist/lexical-basics/",
+        "/book/appendix-spec-map/"
       ]
     },
     {
@@ -33760,7 +33770,8 @@
       "bookLinks": [
         "/book/07-compiler-is-not-your-therapist/control-flow/",
         "/book/07-compiler-is-not-your-therapist/option-and-nullability/",
-        "/book/07-compiler-is-not-your-therapist/types-and-generics/"
+        "/book/07-compiler-is-not-your-therapist/types-and-generics/",
+        "/book/appendix-spec-map/"
       ]
     },
     {
@@ -34058,7 +34069,8 @@
       ],
       "bookLinks": [
         "/book/07-compiler-is-not-your-therapist/functions-and-methods/",
-        "/book/07-compiler-is-not-your-therapist/types-and-generics/"
+        "/book/07-compiler-is-not-your-therapist/types-and-generics/",
+        "/book/appendix-spec-map/"
       ]
     },
     {
@@ -34388,7 +34400,8 @@
         }
       ],
       "bookLinks": [
-        "/book/07-compiler-is-not-your-therapist/types-and-generics/"
+        "/book/07-compiler-is-not-your-therapist/types-and-generics/",
+        "/book/appendix-spec-map/"
       ]
     },
     {
@@ -34809,7 +34822,8 @@
         "/book/04-where-does-this-file-go/corelib-layout/",
         "/book/07-compiler-is-not-your-therapist/option-and-nullability/",
         "/book/07-compiler-is-not-your-therapist/types-and-generics/",
-        "/book/10-memory-without-billion-dollar-mistake/stack-heap-and-spans/"
+        "/book/10-memory-without-billion-dollar-mistake/stack-heap-and-spans/",
+        "/book/appendix-spec-map/"
       ]
     },
     {
@@ -36289,7 +36303,9 @@
         }
       ],
       "relations": [],
-      "bookLinks": []
+      "bookLinks": [
+        "/book/appendix-spec-map/"
+      ]
     },
     {
       "id": "BSP-CAP-53F27F5F7BF5",
@@ -44219,7 +44235,7 @@
       "path": "GLOSSARY.md",
       "title": "Glossary",
       "authority": "informative",
-      "sourceHash": "26c2c6c3f861f25973147ae20d3ef8ebe57a6a7325cba0c2660c0aeaf75b5024",
+      "sourceHash": "9bac6264c939dc1e972a829115fc311f01d59d8172f161834ac60f5525a44d47",
       "standardLinks": [
         "/platform-spec/"
       ],
@@ -44395,7 +44411,7 @@
       "path": "site/website/src/content/docs/book/01-it-works-on-my-machine/first-smoke-test.md",
       "title": "First smoke test",
       "authority": "informative",
-      "sourceHash": "820dbe487244a29727a7868368c7eeb5687d98743325d6fd1058863fcd2165c5",
+      "sourceHash": "51067cf4af6b564728b6517bdd4a8c63ce27334f48af51a4caa38c621a1a580e",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -44527,7 +44543,7 @@
       "path": "site/website/src/content/docs/book/03-project-proj-or-it-didnt-happen/index.md",
       "title": "Project.proj or it didn't happen",
       "authority": "informative",
-      "sourceHash": "b9450a01473932f119e17209ad73f1e52c319cffd2dad43676cdb02daa5bf37d",
+      "sourceHash": "7194b1aeef77890e64789d51f19a18c81bebc4723f6fdf296cfe665e29956ac2",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -44610,7 +44626,7 @@
       "path": "site/website/src/content/docs/book/04-where-does-this-file-go/visibility-basics.md",
       "title": "Visibility basics",
       "authority": "informative",
-      "sourceHash": "850073118cdbc013a09253fb64d310af85f84958394e7445d43266c9291d44ba",
+      "sourceHash": "aa7a11523cb9225cca99f81c271037095eea296cbf44e2ce31ab128332d2028c",
       "standardLinks": [
         "/platform-spec/capabilities/language-meta--program-structure--modules-and-visibility/",
         "/platform-spec/capabilities/language-meta--program-structure--code-style-and-naming/"
@@ -44654,7 +44670,7 @@
       "path": "site/website/src/content/docs/book/05-names-nobody-agreed-on/name-resolution.md",
       "title": "Name resolution",
       "authority": "informative",
-      "sourceHash": "ab2a2aed6e7862303237c555f25c9dfa47d482841fc24ae9d67ffed39a80c0e0",
+      "sourceHash": "6d53fcab9ea802a3aa628da53f1a9bf50e3a341348d6c345a80c6f467f3492ed",
       "standardLinks": [
         "/platform-spec/capabilities/language-meta--program-structure--name-resolution/"
       ],
@@ -44712,7 +44728,7 @@
       "path": "site/website/src/content/docs/book/07-compiler-is-not-your-therapist/control-flow.md",
       "title": "Control flow",
       "authority": "informative",
-      "sourceHash": "c66b683463e3ffdf6e56bd46a399932c2e6088f326a3720ec6de96a174b39ab5",
+      "sourceHash": "21087f4b053395413c912de456a8a7c2e82b0c20a2de0c993fc659d853d1c783",
       "standardLinks": [
         "/platform-spec/capabilities/language-meta--surface-syntax--lexical-and-syntax/",
         "/platform-spec/capabilities/language-meta--type-system--enums-and-match/",
@@ -44725,7 +44741,7 @@
       "path": "site/website/src/content/docs/book/07-compiler-is-not-your-therapist/functions-and-methods.md",
       "title": "Functions and methods",
       "authority": "informative",
-      "sourceHash": "246f7b77dd83a584f0a0b0480c02d789510f76069b1493b4e000b582f99267d4",
+      "sourceHash": "b7757fd6916385ab148259a045eca9f27a4929bc3c575718fb6f422e5ea0c718",
       "standardLinks": [
         "/platform-spec/capabilities/language-meta--type-system--method-dispatch/",
         "/platform-spec/capabilities/language-meta--contracts-and-effects--contracts/",
@@ -44739,7 +44755,7 @@
       "path": "site/website/src/content/docs/book/07-compiler-is-not-your-therapist/index.md",
       "title": "The compiler is not your therapist",
       "authority": "informative",
-      "sourceHash": "53798021bafeff22118c57039068b5ead6188d1f83d1bd5128f2702d4b69b1f3",
+      "sourceHash": "9cd699f056faa94bf9ce51dce338e95c2865de30585991e22ec0c98c52903784",
       "standardLinks": [
         "/platform-spec/capabilities/taxonomy--language-meta/"
       ],
@@ -44750,7 +44766,7 @@
       "path": "site/website/src/content/docs/book/07-compiler-is-not-your-therapist/lexical-basics.md",
       "title": "Lexical basics",
       "authority": "informative",
-      "sourceHash": "90f574d9e04d6e83e4d1cacd720de22cbb5e413df306e4d50065e5170ea82aa9",
+      "sourceHash": "3f1ebdbdbcaaead1d53d7ded1e84ead8b044a06cb3f9b3deb63aec37c4bcd941",
       "standardLinks": [
         "/platform-spec/capabilities/language-meta--surface-syntax--lexical-and-syntax/",
         "/platform-spec/capabilities/language-meta--surface-syntax--documentation-comments/"
@@ -44788,7 +44804,7 @@
       "path": "site/website/src/content/docs/book/07-compiler-is-not-your-therapist/types-and-generics.md",
       "title": "Types and generics",
       "authority": "informative",
-      "sourceHash": "98e671ffe4e450f7498ffe9e95d221586d80f863779128c5a77d14626f61ec8a",
+      "sourceHash": "645299ca1647ca7d12086e5e2ffd458fe8726637af43ddbb87132702e7409d34",
       "standardLinks": [
         "/platform-spec/capabilities/language-meta--type-system--type-inference/",
         "/platform-spec/capabilities/language-meta--type-system--method-dispatch/",
@@ -44850,7 +44866,7 @@
       "path": "site/website/src/content/docs/book/08-green-tests-red-production/test-items-in-source.md",
       "title": "Test items in source",
       "authority": "informative",
-      "sourceHash": "1a6bfc46c67daf4253f2785e653516c2378436ac94a277ca7f3b207c4f550e77",
+      "sourceHash": "c098bdcc877e8cad5a46cfe44f9cf4997a268155ec9ebf1484f78ffb2134d202",
       "standardLinks": [
         "/platform-spec/capabilities/language-meta--contracts-and-effects--testing/",
         "/platform-spec/capabilities/tooling--manifests-and-lockfiles--project-manifest-contract/"
@@ -44862,7 +44878,7 @@
       "path": "site/website/src/content/docs/book/09-contracts-effects-and-polite-threats/contracts-in-source.md",
       "title": "Contracts in source",
       "authority": "informative",
-      "sourceHash": "4cecb0975b55b45d788af25681ce1a81ae6e7aabbc6265ebc45c8a44683ead9e",
+      "sourceHash": "b0386e7bda62792cf782607b57948bad94a3a036547fb246ecfb8df7c54503f0",
       "standardLinks": [
         "/platform-spec/capabilities/language-meta--contracts-and-effects--contracts/",
         "/platform-spec/capabilities/language-meta--metaprogramming--compiler-mod-sdk/"
@@ -44930,7 +44946,7 @@
       "path": "site/website/src/content/docs/book/10-memory-without-billion-dollar-mistake/index.mdx",
       "title": "Memory without another billion-dollar mistake",
       "authority": "informative",
-      "sourceHash": "ffced1092c3aad33b9cc73167443a6b154446ca8305889af0c41d815db2db409",
+      "sourceHash": "316fa3d02c8ae4503f1fc3d4ad695a526165f4b51ff31a0d7449311cafeee1e6",
       "standardLinks": [
         "/platform-spec/capabilities/taxonomy--language-meta--memory-model/",
         "/platform-spec/capabilities/execution--runtime--memory-and-gc-runtime-contract/"
@@ -44942,11 +44958,12 @@
       "path": "site/website/src/content/docs/book/10-memory-without-billion-dollar-mistake/memory-model-overview.md",
       "title": "Memory model overview",
       "authority": "informative",
-      "sourceHash": "4a94790356169020347cf3efa8d792c5088d6b99c6cb5e380a82ba7c251f5c9f",
+      "sourceHash": "f59b8ceac92fbe7b9ee1e5b1e9841c2bd0fdb80be744a4a792baef078ccc8d69",
       "standardLinks": [
         "/platform-spec/capabilities/language-meta--memory-model--memory-and-references/",
         "/platform-spec/capabilities/execution--runtime--memory-and-gc-runtime-contract/",
         "/platform-spec/capabilities/language-meta--evaluation--lambdas-and-closures/",
+        "/platform-spec/capabilities/core-library--foundation-and-primitives--core-collections/",
         "/platform-spec/capabilities/language-meta--evaluation--fibers-and-spawn/",
         "/platform-spec/capabilities/taxonomy--language-meta--memory-model/",
         "/platform-spec/capabilities/taxonomy--execution--runtime/"
@@ -44958,7 +44975,7 @@
       "path": "site/website/src/content/docs/book/10-memory-without-billion-dollar-mistake/ownership-preview.md",
       "title": "Ownership preview",
       "authority": "informative",
-      "sourceHash": "7957b507f462c80ae35369282fd65124c4c729bf95a79867b477691e5d4bbff3",
+      "sourceHash": "609f342116b1bf7ddc3af74255802a12ead9db3dc1bf2fa260fa76a88a83d2b6",
       "standardLinks": [
         "/platform-spec/capabilities/language-meta--evaluation--fibers-and-spawn/",
         "/platform-spec/capabilities/language-meta--memory-model--memory-and-references/"
@@ -45011,11 +45028,13 @@
       "path": "site/website/src/content/docs/book/11-fibers-cheaper-than-threads/corelib-concurrency.md",
       "title": "Corelib concurrency",
       "authority": "informative",
-      "sourceHash": "4b3708149a754508b8fce9934566a9aab3ea3201f5dac7b8ab7915d59ad119b9",
+      "sourceHash": "68a1832d5c46cb156a9b02854e91efb5276a44d67a8b1d58e10acd458b24766c",
       "standardLinks": [
         "/platform-spec/capabilities/core-library--concurrency--concurrency-package/",
         "/platform-spec/capabilities/language-meta--evaluation--fibers-and-spawn/",
         "/platform-spec/capabilities/execution--runtime--fiber-scheduler-and-stacks/",
+        "/platform-spec/capabilities/core-library--concurrency--isolates-and-parallel/",
+        "/platform-spec/capabilities/execution--runtime--isolates-and-transit/",
         "/platform-spec/capabilities/compiler--implementation-map--crate-to-spec-anchors/"
       ],
       "containsNormativeKeywords": false,
@@ -45038,7 +45057,7 @@
       "path": "site/website/src/content/docs/book/11-fibers-cheaper-than-threads/fibers-and-spawn.md",
       "title": "Fibers and spawn",
       "authority": "informative",
-      "sourceHash": "bd32b7defc89bc5c37edea9607647c34c683adcec9a8e6a7c57ca09caac68479",
+      "sourceHash": "6d831c2f88bd83c7ac7282d07541a6537993a4bf66207c307090663e8aae8f4c",
       "standardLinks": [
         "/platform-spec/capabilities/language-meta--evaluation--fibers-and-spawn/",
         "/platform-spec/capabilities/execution--runtime--channels-and-synchronization/",
@@ -45051,7 +45070,7 @@
       "path": "site/website/src/content/docs/book/11-fibers-cheaper-than-threads/index.mdx",
       "title": "Fibers: cheaper than threads, still scary",
       "authority": "informative",
-      "sourceHash": "4628ba1f1d663a5cfb8dc85e4a123c08925b38cfc08c0fed9e5af03c0481d9f7",
+      "sourceHash": "3c592d89b15cfc40639a0dad3555954f069757dc9f318db5adec835efe30c468",
       "standardLinks": [
         "/platform-spec/capabilities/language-meta--evaluation--fibers-and-spawn/",
         "/platform-spec/capabilities/execution--runtime--fiber-scheduler-and-stacks/",
@@ -45709,7 +45728,7 @@
       "path": "site/website/src/content/docs/book/19-public-api-that-survives-review/pub-boundaries.md",
       "title": "pub boundaries",
       "authority": "informative",
-      "sourceHash": "b181a14dc66bf9fc7164ac258282f200a4dfe3f7be4c6e7606494ae4b5842ff1",
+      "sourceHash": "d9d8e5d2caa7537cb62f815051288b8c0e62af7053812f6fe50c4fcc5535fd14",
       "standardLinks": [
         "/platform-spec/capabilities/language-meta--program-structure--modules-and-visibility/"
       ],
@@ -45930,7 +45949,7 @@
       "path": "site/website/src/content/docs/book/appendix-spec-map.md",
       "title": "Appendix: Spec Map",
       "authority": "informative",
-      "sourceHash": "7c849953cecf9a6b40c7fffad768c95fb661de01dae54e5ef9d1d590f0fb2466",
+      "sourceHash": "f7a326b47a0fe4d9f8157219f24d1d0d42c447729c335db680621cd1259d9ea9",
       "standardLinks": [
         "/platform-spec/capabilities/taxonomy--tooling--cli/",
         "/platform-spec/capabilities/tooling--cli--build-analyze-run-contract/",
@@ -45938,16 +45957,24 @@
         "/platform-spec/capabilities/taxonomy--tooling--vscode-extension/",
         "/platform-spec/capabilities/tooling--manifests-and-lockfiles--project-manifest-contract/",
         "/platform-spec/capabilities/taxonomy--tooling--project-scaffolding/",
+        "/platform-spec/capabilities/language-meta--surface-syntax--lexical-and-syntax/",
+        "/platform-spec/capabilities/language-meta--type-system--types/",
+        "/platform-spec/capabilities/language-meta--type-system--enums-and-match/",
         "/platform-spec/capabilities/taxonomy--language-meta--program-structure/",
         "/platform-spec/capabilities/language-meta--program-structure--modules-and-visibility/",
         "/platform-spec/capabilities/language-meta--program-structure--name-resolution/",
         "/platform-spec/capabilities/tooling--manifests-and-lockfiles--workspace-and-lock-contracts/",
         "/platform-spec/capabilities/taxonomy--language-meta--surface-syntax/",
         "/platform-spec/capabilities/taxonomy--language-meta--type-system/",
+        "/platform-spec/capabilities/language-meta--type-system--type-inference/",
+        "/platform-spec/capabilities/language-meta--type-system--method-dispatch/",
+        "/platform-spec/capabilities/core-library--foundation-and-primitives--core-collections/",
         "/platform-spec/capabilities/taxonomy--language-meta--contracts-and-effects/",
         "/platform-spec/capabilities/taxonomy--language-meta--memory-model/",
         "/platform-spec/capabilities/language-meta--evaluation--fibers-and-spawn/",
         "/platform-spec/capabilities/execution--runtime--channels-and-synchronization/",
+        "/platform-spec/capabilities/language-meta--composition--dependency-injection/",
+        "/platform-spec/capabilities/taxonomy--language-meta--composition/",
         "/platform-spec/capabilities/taxonomy--community--spec-maintenance/",
         "/platform-spec/",
         "/platform-spec/capabilities/compiler--implementation-map--crate-to-spec-anchors/",
@@ -45979,7 +46006,7 @@
       "path": "site/website/src/content/docs/book/index.md",
       "title": "The Beskid Book",
       "authority": "informative",
-      "sourceHash": "f3b62e90cb814f491027ef918d51727d094f00aa63e786017a39232c1071e969",
+      "sourceHash": "54ce553857b24fd5c46162889cd5d14195904953a2e6782144b1a6e440f1e9cb",
       "standardLinks": [
         "/platform-spec/",
         "/platform-spec/capabilities/taxonomy--language-meta/"
@@ -46261,7 +46288,7 @@
       "path": "site/website/src/content/docs/book/reference/projects/lockfile.md",
       "title": "Lockfile (`Project.lock`)",
       "authority": "informative",
-      "sourceHash": "675ceef6305f60479584bc5a6d7cc9bb5d85a4b6ded0f4d374d69cbc8fafb446",
+      "sourceHash": "a79328c720c422215d6b0d9392b1f93575b5992eb9734cdcbfd2e18ab22c67b7",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -46313,7 +46340,7 @@
       "path": "site/website/src/content/docs/book/reference/testing/index.md",
       "title": "Testing Framework",
       "authority": "informative",
-      "sourceHash": "ed7b842d0664b9cd48c6441b10d4fc52b469cd0831dd458f6d4fdf85680f6f6a",
+      "sourceHash": "c14dabf8a0178eb749b4b3c1d1b04a33630d659fca16e393bfad22aca7c2aa3a",
       "standardLinks": [
         "/platform-spec/capabilities/language-meta--contracts-and-effects--testing/"
       ],
