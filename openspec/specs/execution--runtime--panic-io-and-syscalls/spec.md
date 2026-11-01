@@ -16,6 +16,8 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 > | Outcome | Runtime panics **terminate** the process (trap / abort) |
 > | Builtin kind | `AbiReturnKind::Never` in the generated ABI-v5 tables from `compiler/runtime_manifest.bsol` |
 
+A panic SHALL be contained by the nearest enclosing fiber or isolate, in this order: a panic in a joinable child fiber SHALL become that fiber's `Panicked` join outcome; a panic in an isolate main fiber SHALL end that isolate with the outcome `panicked` and SHALL be reported to the joining isolate as `TaskError::Failed` with the message copied through `IsolatePanicMessage` into the joiner's heap. A panic in the main isolate's main fiber, a panic in a detached fiber of any isolate, and a panic outside any fiber SHALL terminate the process. A trap (`beskid_rt_v5_trap`) SHALL terminate the process from any isolate. No Beskid stack SHALL be unwound in any case.
+
 **Stable ID:** `BSP-REQ-53203A00411B`  
 **Legacy source:** `site/spec-content/platform-spec/execution/runtime/panic-io-and-syscalls/adr/0008-panic-terminates-process/content.md`  
 **Source SHA-256:** `b96ed9a5740e3a4441248dae6d324a418d7c178d34a5e83444fed807f3e573f9`
@@ -24,6 +26,21 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **GIVEN** an implementation claims conformance with this capability
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
+
+#### Scenario: Panic in an isolate does not terminate the process
+- **GIVEN** `Task<i64> t = s.Spawn(() => { __panic_str("isolated"); return 0_i64; });`
+- **WHEN** the parent joins `t` and then returns `Result::Ok(1_i64)` from the scope
+- **THEN** `Join` returned `TaskError::Failed` with message `"isolated"`, the scope returned `ParallelError::Failed`, and the process continues to its normal exit status
+
+#### Scenario: Panic in the main isolate still terminates
+- **GIVEN** a program whose main fiber calls `__panic_str("fatal")` outside any scope
+- **WHEN** the panic runs
+- **THEN** the process terminates through the trap path with exit status 101
+
+#### Scenario: Detached fiber panic inside an isolate terminates
+- **GIVEN** a task body that spawns a fiber, detaches it, and the detached fiber panics
+- **WHEN** the panic runs
+- **THEN** the process terminates through the trap path with exit status 101
 
 ### Requirement: Syscalls centralized in runtime builtins: Decision [D-EXEC-RT-0009]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
@@ -139,6 +156,19 @@ The canonical shared-provider producer SHALL assign its loader identity at link 
 - **GIVEN** a provider built in an owned temporary staging directory and atomically installed with its packet
 - **WHEN** staging is removed and an actual foreign caller links and loads the installed shared image
 - **THEN** the loader SHALL resolve the canonical installed provider through its target loader search mechanism without requesting the deleted staging pathname.
+
+### Requirement: Panic message survives heap release
+When a runtime instance is destroyed, the panic message of its main fiber, if the fiber ended in `FIBER_JOIN_PANICKED`, SHALL be copied into process-owned native storage (`SystemAllocate`) before the instance's heap is released, and `beskid_rt_v5_isolate_panic_message(runtime, data_out, length_out)` SHALL return 1 and the copied bytes and length while the instance record is still valid, or 0 when the main fiber did not panic. The copy SHALL be released by `ProcessShutdown`, or by the destroyer of a non-primary instance once it has read it. A panic outside a fiber or in a detached fiber SHALL keep its process-trap behavior.
+
+#### Scenario: Main fiber panic message readable after heap release
+- **GIVEN** a runtime-corpus test whose main fiber panics with the message `"disk full"`
+- **WHEN** `IsolateDestroy` releases the heap and `IsolatePanicMessage` is called
+- **THEN** it returns 1 and the bytes `disk full` from native storage, not from the released heap
+
+#### Scenario: No panic, no message
+- **GIVEN** a runtime instance whose main fiber returned normally
+- **WHEN** `IsolatePanicMessage` is called
+- **THEN** it returns 0 and writes nothing
 
 ## Informative Source Provenance
 

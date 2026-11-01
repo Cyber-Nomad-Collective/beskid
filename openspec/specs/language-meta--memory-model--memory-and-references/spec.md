@@ -10,6 +10,8 @@ Assignment to immutable bindings MUST error (**E1214**). `mut` MUST appear as a 
 
 `move` SHALL be a parameter modifier in the same position as `mut` (`move T name`), and a method receiver MAY be declared `move this` or `mut this` as its first parameter. `move` and `mut` SHALL NOT both appear on one parameter; the parser SHALL reject `move mut T name` and `mut move T name`. A parameter declared `move` SHALL have a Moved-class type; `move` on a parameter of any other class SHALL be reported as **E1239** at the modifier, naming the class. `move this` SHALL be accepted only in a method of an `[Isolated]` type or of a type whose class is Moved; otherwise **E1239**. No `[Owned]` attribute exists.
 
+From 0.6.4 a parameter declared `move` MAY also have as its type a type parameter bounded by `Transferable` (class "some Transferable"), directly or through the owner bound of a method. Inside the generic definition such a parameter SHALL be an owning name. At each call the instantiation SHALL decide: when the type argument is Moved, the argument SHALL be an owned expression or `move x` and SHALL consume `x` (**E1242** for an owning name without `move`, **E1241** for a borrowed name); when the type argument is Shared or Copied, the argument SHALL be passed without `move`, as to a parameter without the modifier (**E1239** on `move`, naming the class). A type parameter with any other bound, or with none, SHALL keep the rule above (**E1239** at the modifier).
+
 #### Scenario: Assignment to immutable local
 - **GIVEN** a non-`mut` local binding
 - **WHEN** code assigns to that binding
@@ -24,6 +26,11 @@ Assignment to immutable bindings MUST error (**E1214**). `mut` MUST appear as a 
 - **GIVEN** `i64 Size(move string name) { return name.Length(); }`
 - **WHEN** the declaration is checked
 - **THEN** the compiler SHALL report **E1239** at `move` naming class Shared
+
+#### Scenario: Owning parameter over a Transferable type parameter
+- **GIVEN** `Port<T>.Send(move T value)` (owner bound `where T: Transferable`), `Port<u8[]> blocks`, `Port<string> names`, `u8[] block` and `string name`
+- **WHEN** `blocks.Send(move block)`, `blocks.Send(block)`, `names.Send(name)` and `names.Send(move name)` are checked
+- **THEN** the first is accepted and consumes `block`, the second is reported as **E1242** with the help "write `move block`", the third is accepted and `name` stays usable, and the fourth is reported as **E1239** naming class Shared
 
 ### Requirement: Arrays heap and null prohibition
 `T[]` values MUST use the manifest-derived `BeskidArray` header and a precise
@@ -71,10 +78,34 @@ use `Option<T>`.
 ### Requirement: Cross-fiber sharing
 Values MUST NOT be shared across fibers by alias unless immutability is proven or synchronization uses `Channel<T>`. Capturing mutable shared state in `spawn` closures SHOULD be rejected when detectable. Closure environments MUST outlive uses tracked by the compiler’s capture analysis.
 
+Immutability SHALL be proven by the transfer class query: a value whose type is Shared is immutable and MAY be aliased across fibers and across runtime instances. A value of any other class SHALL NOT cross a runtime instance boundary by alias. Fibers, `spawn` and `Channel<T>` SHALL stay inside one runtime instance.
+
+From 0.6.3 a value SHALL cross a runtime instance boundary only as a `Scope.Spawn` capture, a task result, or (from 0.6.4) a port message, and only when its type is `Transferable`. A `Shared` value SHALL be passed by pointer and SHALL be readable by every isolate that holds it; because `Shared` types are transitively immutable, no isolate SHALL write to it and the runtime SHALL add no barrier or lock for it. A `Moved` value SHALL be consumed in the sender and SHALL be reachable only from the receiver afterwards; in 0.6.3 the runtime realizes the transfer as a copy of the graph, which is observationally a move because the sender holds no live name for it. A `Copied` value SHALL be deep-copied into the receiver's heap; the receiver's copy SHALL be a distinct object graph that preserves the sharing and cycles of the source. A value of class Never SHALL be rejected at compile time by the capture rule (**E1236**) or the `Transferable` bound (**E1610**).
+
 #### Scenario: Unsynchronized cross-fiber alias
 - **GIVEN** a mutable value aliased into two fibers without proven immutability or a `Channel<T>`
 - **WHEN** sharing analysis runs
 - **THEN** the compiler rejects the sharing or diagnoses detectable mutable capture
+
+#### Scenario: Shared record aliased by two fibers
+- **GIVEN** `[Immutable] pub type Config { string name; i64 retries; }` and two `spawn` operands that both read a `Config` local
+- **WHEN** sharing analysis runs
+- **THEN** the alias is accepted because `Config` is Shared
+
+#### Scenario: Shared record read by two tasks
+- **GIVEN** `[Immutable] pub type Table { ReadOnlyArray<i64> rows; }` and a scope that captures one `Table` into two tasks that both sum `rows`
+- **WHEN** both tasks run at once
+- **THEN** both read the same object address and return equal sums, and no copy of `rows` is made
+
+#### Scenario: Copied record is independent in the task
+- **GIVEN** `[Copyable] pub type Counter { i64 n; }` captured by a task that returns `counter.n + 1`
+- **WHEN** the parent reads `counter.n` after the join
+- **THEN** the parent still reads the original value and the task heap held a distinct `Counter` object
+
+#### Scenario: Mutable record cannot cross
+- **GIVEN** `pub type Cache { i64[] slots; }` (neither `[Immutable]` nor `[Copyable]`) captured by a `Scope.Spawn` lambda
+- **WHEN** the legality gate judges the lambda
+- **THEN** the compiler reports **E1236** naming `Cache`, class Never and the reason "no marker attribute"
 
 ### Requirement: Dead growth of a mutable array parameter
 A growth operation is a canonical `Core.Collections.Array` call that can reallocate the array named by its first argument and that returns the grown handle. `Array.Append` is a growth operation. Each sibling with the same shape is a growth operation. Parameters pass by value, so a growth operation on a `mut T[]` parameter changes only the callee's copy of the handle. The growth SHALL NOT change the length, the capacity or the elements of the caller's array, whatever the capacity of that array. While the parameter holds the handle that the caller passed, the first growth SHALL copy the array into a new array. An element write through the parameter before that growth SHALL write the caller's array.
@@ -407,6 +438,106 @@ Assignment to an immutable binding SHALL be reported with **E1214** once per bin
 - **GIVEN** `i64 x = 1; x = 2; x = 3;`
 - **WHEN** the code is checked
 - **THEN** one **E1214** is reported at the declaration of `x`, with two related locations "assigned again" and a fix that gives `mut i64 x = 1;`
+
+### Requirement: Array literal elements
+Each element of an array literal `[e1, e2, ...]` SHALL be any expression of the element type, including a call, a string concatenation, a field read, a parameter, and an enum value. Elements of a reference type SHALL be traced by the garbage collector as references in the array.
+
+**Stable ID:** `BSP-REQ-ARRAY-LITERAL-ELEMENTS`
+
+#### Scenario: Call and concatenation elements
+- **GIVEN** `string Piece(string text) { return text; }`
+- **WHEN** `string[] texts = [Piece("a") + Piece("b"), Piece("c")];` is
+  evaluated
+- **THEN** `texts` holds `"ab"` and `"c"`
+
+#### Scenario: Enum value elements
+- **GIVEN** `enum Shape { Dot, Line(i64 length) }`
+- **WHEN** `Shape[] shapes = [Shape::Dot, Shape::Line(3_i64)];` is evaluated
+- **THEN** `shapes` holds the two values as traced references
+
+### Requirement: String immutability invariant
+`string` SHALL be an immutable value: no language operation and no corelib function SHALL change the bytes or length of an existing string record. The runtime's string data setter (`beskid_rt_v5_utf8_record_set_data`) SHALL be called only on a record that has not yet been returned to any caller (construction), and the runtime corpus SHALL have no other writer of a string record's `data`, `length` or payload after construction. A test SHALL assert that the manifest exports no other string mutator and that every call site of the setter in the runtime corpus is inside a construction routine.
+
+#### Scenario: String bytes are stable under aliasing
+- **GIVEN** `string a = "left"; string b = a;` followed by any sequence of corelib string operations on `b`
+- **WHEN** `a` is read afterwards
+- **THEN** `a` is still `"left"`
+
+#### Scenario: Setter outside construction is rejected by review test
+- **GIVEN** a runtime corpus edit that calls `Utf8RecordSetData` on a record obtained from an existing `string`
+- **WHEN** the runtime invariant test runs
+- **THEN** it fails naming the call site
+
+### Requirement: Field reads through typed receivers
+The class of a value read from a field or element SHALL follow from the receiver's type and the field's type, with exactly three rules and no adaptation table:
+
+1. A field of an `[Immutable]` object is Shared (its type is Shared by construction), and the read yields a Shared value.
+2. A field of Shared type read through an `[Isolated]` object yields a Shared value.
+3. A field of Moved type read through an `[Isolated]` object, or an element of a `T[]` with `T` Moved, yields a borrow: a non-owning name that may be read and mutated and that may not be stored, captured, returned or `move`d.
+
+There SHALL be no fourth case: an `[Immutable]` type cannot hold a Moved field (**E1244**), and types without a marker are subject to no rule. Read-only reference views (`box`) and write-unique references (`trn`) are not part of Beskid; immutability and isolation are properties of types, not of references.
+
+#### Scenario: Shared field through an isolated receiver
+- **GIVEN** `[Isolated] pub type Index { List<string> terms; string name; }` and `string Name(Index index) { return index.name; }`
+- **WHEN** the read is classified
+- **THEN** `index.name` is a Shared value and may be returned
+
+#### Scenario: Moved field through an isolated receiver is a borrow
+- **GIVEN** the same `Index` and `List<string> Terms(Index index) { List<string> t = index.terms; return t; }`
+- **WHEN** the read is classified
+- **THEN** `t` is a borrow of `index.terms`
+
+#### Scenario: Element of an array of arrays is a borrow
+- **GIVEN** `u8[] First(u8[][] blocks) { return blocks[0]; }`
+- **WHEN** the read is classified
+- **THEN** `blocks[0]` is a borrow
+
+### Requirement: Port and isolate builtins consume their payload
+The runtime builtins that move a value across a runtime instance boundary SHALL be consuming uses in the affine analysis: passing a name as the `value` argument of `__port_send`, or as the result of a task body, SHALL consume an owning Moved-class name and SHALL be reported as **E1242** when the name is still owned by a live name and no `move` was written, exactly as passing to a `move` parameter. Inside a generic definition whose type parameter is bounded by `Transferable` (class "some Transferable"), passing an owning name of that type to `__port_send` SHALL likewise consume it, because the instantiation may be Moved; the corelib SHALL therefore declare such parameters `move` and write `move` at these sites. A public corelib surface MAY declare a `move` parameter over a type parameter bounded by `Transferable` (requirement "Locals mut and assignment"); `Port<T>.Send(move T value)` is such a surface, and its callers write `move` exactly when the instantiation is Moved. The builtins themselves SHALL NOT be callable from user code (**E1101**).
+
+#### Scenario: Corelib send over a Transferable parameter
+- **GIVEN** the corelib pipeline worker `unit Forward<T>(Port<T> out, move T item) where T: Transferable { __port_send(out.id, move item); }`
+- **WHEN** the item is checked
+- **THEN** it is accepted and `item` is a Moved place after the call
+
+#### Scenario: Corelib send without move is rejected
+- **GIVEN** the same worker written `__port_send(out.id, item);`
+- **WHEN** the item is checked
+- **THEN** the compiler reports **E1242** at `item` with the help "write `move item`"
+
+#### Scenario: User code cannot call the builtin
+- **GIVEN** a user project that calls `__port_send(1_i64, value)`
+- **WHEN** it is checked
+- **THEN** the compiler reports **E1101**
+
+### Requirement: Moved values are handed over by pointer
+From 0.6.5 a `Moved` value that crosses an isolate boundary SHALL keep its identity: the receiver SHALL observe the same object addresses the sender had, and no byte of the graph SHALL be copied. This is sound only because of two static facts the 0.6.2 rules establish and this requirement names as preconditions: after `move x` no name in the sender reaches the graph (external uniqueness, the `iso` precondition), and every object reachable from the graph is `Shared` (transitively immutable, the `val` precondition) or `Moved` (reachable only through the graph). Consequently at every instant exactly one isolate may write a given mutable object, and an object that one isolate may write SHALL NOT be readable by another; the runtime relies on this to trace without barriers or locks. A `Moved` value returned from a task SHALL be owned by the joiner after `Join`; a `Moved` value sent through a port SHALL be owned by the receiver after `Receive`. The sender's binding SHALL be dead in both cases.
+
+#### Scenario: Identity preserved across a round trip
+- **GIVEN** `[Isolated] pub type Index { List<string> terms; i64[] offsets; }` and
+  ```beskid
+  Result<Index, ParallelError> BuildAndSort(move Index index) {
+      return Parallel.Scope<Index>((Scope s) => {
+          Task<Index> t = s.Spawn(() => Sorter.Sort(move index));
+          return match t.Join() {
+              Result::Ok(sorted) => Result::Ok(sorted),
+              Result::Error(_) => Result::Error(ParallelError::Cancelled),
+          };
+      });
+  }
+  ```
+- **WHEN** `BuildAndSort` runs with an `Index` whose `offsets` array has a recorded address
+- **THEN** the returned `Index.offsets` has the same address and the sort happened on another isolate
+
+#### Scenario: Sender cannot reach the graph after move
+- **GIVEN** `this.cache = data; s.Spawn(() => Work(move data));` where `data` is `u8[]`
+- **WHEN** the legality gate judges the function
+- **THEN** the compiler reports **E1242** at the store or at the move, so the field and the task never share a mutable array
+
+#### Scenario: Mutable object has one writer
+- **GIVEN** a Moved graph handed to a task that writes it while the parent's collector runs
+- **WHEN** both run concurrently
+- **THEN** the parent reads no field of the graph and the task's writes are complete and visible to the parent after `Join`
 
 ## Informative Source Provenance
 

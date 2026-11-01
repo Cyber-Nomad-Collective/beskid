@@ -6,7 +6,7 @@
 This specification defines the type grammar. The grammar covers nominal types, generics, and `Option T`. The grammar is the backbone of static checking. All analysis phases share these definitions.
 ## Requirements
 ### Requirement: Type expression grammar
-A type expression SHALL be a primitive (`bool`, `i8`, `i16`, `i32`, `i64`, `u8`, `u16`, `u32`, `u64`, `f32`, `f64`, `char`, `string`, `unit`, `never`, `word`, `pointer`), named Path with optional GenericArguments, array `T[]`, or function type `T(params)` / `(params) => R`. Primitive identity SHALL be consistent through parser, generated SDK syntax, semantic/query typing, typed AST and canonical ISLE lowering; retired HIR representations SHALL NOT be restored. Signed/unsigned fixed integers SHALL have their declared bit width, exact representable range and checked rejection of out-of-range literals/conversions; f32/f64 SHALL use IEEE 754 binary32/binary64, round-to-nearest ties-to-even for narrowing and preserve signed zero. Char SHALL denote a Unicode scalar, excluding surrogates and values above 0x10ffff. Word SHALL be unsigned selected-target pointer width; pointer SHALL remain an explicitly unsafe address construct, not a serializable value. Unit SHALL denote no value, never nonreturning control flow. Nullable syntax `?T`, `T?` and `optional T` SHALL remain rejected; absence SHALL use Option<T> or an explicit enum.
+A type expression SHALL be a primitive (`bool`, `i8`, `i16`, `i32`, `i64`, `u8`, `u16`, `u32`, `u64`, `f32`, `f64`, `char`, `string`, `unit`, `never`, `word`, `pointer`), named Path with optional GenericArguments, array `T[]`, or function type `T(params)` / `(params) => R`. The element type `T` of an array MAY be an array type, so `T[][]` is an array whose elements are `T[]`; each `[]` suffix adds one array rank. Primitive identity SHALL be consistent through parser, generated SDK syntax, semantic/query typing, typed AST and canonical ISLE lowering; retired HIR representations SHALL NOT be restored. Signed/unsigned fixed integers SHALL have their declared bit width, exact representable range and checked rejection of out-of-range literals/conversions; f32/f64 SHALL use IEEE 754 binary32/binary64, round-to-nearest ties-to-even for narrowing and preserve signed zero. Char SHALL denote a Unicode scalar, excluding surrogates and values above 0x10ffff. Word SHALL be unsigned selected-target pointer width; pointer SHALL remain an explicitly unsafe address construct, not a serializable value. Unit SHALL denote no value, never nonreturning control flow. Nullable syntax `?T`, `T?` and `optional T` SHALL remain rejected; absence SHALL use Option<T> or an explicit enum.
 
 #### Scenario: Full primitives are real language types
 - **GIVEN** a program with each fixed-width integer and f32/f64 plus generic instantiations
@@ -27,6 +27,11 @@ A type expression SHALL be a primitive (`bool`, `i8`, `i16`, `i32`, `i64`, `u8`,
 - **GIVEN** a nullable type annotation such as T?
 - **WHEN** the grammar is parsed
 - **THEN** the nullable form is rejected
+
+#### Scenario: Array of arrays
+- **GIVEN** the type annotation `i64[][]`
+- **WHEN** the type grammar is parsed
+- **THEN** the type is an array whose element type is `i64[]`
 
 ### Requirement: Nominal type declarations and members
 `type Name<G…> : Contracts… { members }` MUST introduce a nominal record-like type. Members MAY be value fields, `event` fields, `inject` fields, or methods with implicit receiver access to the type's fields. Inline methods in the owning type body MAY access all fields (public and private) of that type. Conformance lists MUST declare contract implementations checked by the contracts capability. `extend type` MUST add members externally per the extend-type capability.
@@ -146,6 +151,129 @@ When a type position (a parameter, a return type, a field, a `let` declaration, 
 - **GIVEN** the same `Pair` and `unit Demo(Pair<i64> pair) { return; }`
 - **WHEN** the code is checked
 - **THEN** the compiler SHALL report **E1204** "generic argument mismatch: expected 2, got 1" and no **E1201**
+
+### Requirement: Empty string concatenation
+`+` with a `string` operand SHALL yield a new string holding the left text followed by the right text. When both texts are empty, the result SHALL be the empty string: a valid `string` of length 0 that behaves like any other string. This SHALL hold for interpolation, where `"${s}"` is `"" + s`.
+
+**Stable ID:** `BSP-REQ-STRING-CONCAT-EMPTY`
+
+#### Scenario: Two empty operands
+- **GIVEN** `string a = "";` and `string b = "";`
+- **WHEN** `string c = a + b;` is evaluated and `c == ""` is tested
+- **THEN** the test is `true`
+
+#### Scenario: Interpolating an empty string
+- **GIVEN** `string s = "";`
+- **WHEN** `"${s}"` is evaluated
+- **THEN** the result is the empty string
+
+### Requirement: Ordinal string ordering
+`<`, `<=`, `>`, and `>=` with two `string` operands SHALL type-check as `bool` and SHALL compare the UTF-8 bytes of the operands, which equals Unicode code point order. A proper prefix SHALL order before the longer string. The order SHALL be ordinal, not locale collation. Ordering a `string` against a non-`string` SHALL be a type error.
+
+**Stable ID:** `BSP-REQ-STRING-ORDINAL-ORDERING`
+
+#### Scenario: Prefix orders first
+- **GIVEN** `string a = "ab";` and `string b = "abc";`
+- **WHEN** `a < b` and `b <= a` are evaluated
+- **THEN** the results are `true` and `false`
+
+#### Scenario: Code point order, not collation
+- **GIVEN** `string upper = "Z";` and `string lower = "a";`
+- **WHEN** `upper < lower` is evaluated
+- **THEN** the result is `true`, because U+005A orders before U+0061
+
+### Requirement: Saturating f64 to integer conversion
+The conversions `i64(x)`, `i32(x)`, `u32(x)`, and `u8(x)` (also spelled `byte(x)`) of an `f64` `x` SHALL truncate toward zero. A value below or above the target range SHALL give the target's minimum or maximum. NaN SHALL give `0`. The conversion SHALL NOT trap.
+
+**Stable ID:** `BSP-REQ-F64-TO-INTEGER-SATURATES`
+
+#### Scenario: Truncation toward zero
+- **GIVEN** `f64 x = -2.9;`
+- **WHEN** `i64(x)` is evaluated
+- **THEN** the result is `-2`
+
+#### Scenario: Out-of-range values clamp
+- **GIVEN** the `f64` literals `300.0`, `-1.0`, and `10000000000.0`
+- **WHEN** `u8(300.0)`, `u32(-1.0)`, and `i32(10000000000.0)` are evaluated
+- **THEN** the results are `255`, `0`, and `2147483647`
+
+#### Scenario: NaN converts to zero
+- **GIVEN** an `f64` value `x` that is NaN
+- **WHEN** `i64(x)` is evaluated
+- **THEN** the result is `0` and the program does not trap
+
+### Requirement: Bulk parameters
+When the last parameter of a function or method is `bulk T[] name`, a call SHALL supply every earlier parameter and then zero or more trailing arguments. Each trailing argument SHALL be type-checked against `T`. The callee SHALL receive the trailing arguments, in order, as one `T[]`. Fewer arguments than the earlier parameters SHALL be an arity error.
+
+**Stable ID:** `BSP-REQ-BULK-PARAMETERS`
+
+#### Scenario: Any number of trailing arguments
+- **GIVEN** `i64 Sum(bulk i64[] values)` and
+  `i64 Tail(string label, bulk i64[] values)`
+- **WHEN** `Sum()`, `Sum(1_i64, 2_i64, 3_i64)`, `Tail("t")`, and
+  `Tail("t", 1_i64, 2_i64)` are type-checked
+- **THEN** every call is accepted
+
+#### Scenario: Trailing argument of the wrong type
+- **GIVEN** the same `Sum`
+- **WHEN** `Sum(1_i64, "two")` is type-checked
+- **THEN** the compiler reports a type mismatch
+
+#### Scenario: Missing fixed argument
+- **GIVEN** the same `Tail`
+- **WHEN** `Tail()` is type-checked
+- **THEN** the compiler reports an arity mismatch expecting 1 argument
+
+### Requirement: Field access on call results and nested receivers
+A field access SHALL be valid on any expression whose static type is a nominal type that exposes the field, including a call result (`Make().x`, `value.Method().x`) and a chained projection through the implicit receiver (`this.inner.count`), also inside methods of a generic type for each of its specializations.
+
+**Stable ID:** `BSP-REQ-FIELD-ACCESS-ON-EXPRESSIONS`
+
+#### Scenario: Field of a call result
+- **GIVEN** `type Point { i64 x; i64 y; }` and
+  `Point Make() { return Point { x: 9_i64, y: 2_i64 }; }`
+- **WHEN** `Make().x + Make().y` is evaluated
+- **THEN** the result is `11`
+
+#### Scenario: Nested projection in a generic method
+- **GIVEN** `type Inner<T> { T[] items; i64 count; }` and
+  `type Outer<T> { Inner<T> inner; pub i64 Count() { return this.inner.count; } }`
+- **WHEN** `outer.Count()` is compiled for an `Outer<i64>` value `outer`
+- **THEN** the method compiles for that specialization and returns
+  `outer.inner.count`
+
+### Requirement: Integer literal and module constant types
+An integer literal with a type suffix (`_i8`, `_i16`, `_i32`, `_i64`, `_u8`, `_u16`, `_u32`, `_u64`) MUST have the type of its suffix. An unsuffixed integer literal MUST take the integer type of its destination when the destination declares a primitive integer type: a typed `let`, a `return` value of a function with a declared result, or an argument of a direct call. An unsuffixed integer literal that is an operand of a binary expression MUST take the type of the other operand, including when the other operand is a call result (rule T1); when both operands are unsuffixed literals or constant uses, both take the type that the binary expression takes from its own destination. The other operand MUST NOT be promoted to a wider type to hold the literal, in arithmetic or in a comparison. An unsuffixed integer literal without such a destination or operand MUST have its natural type: `i32` when the value fits `i32`; else `i64` when the value fits `i64`; else `word` for a hexadecimal literal whose value fits 64 bits. A use of a module constant (`const Name = IntegerLiteral;`) MUST have the type that its declared literal has at the same position. A literal or a constant use whose value does not fit the type it takes MUST be rejected with **T0905** (numeric literal outside range) at that literal or use. The compiler MUST NOT truncate, wrap, or sign-change an integer value to make it fit a type, and MUST NOT report an internal compiler error in place of **T0905**.
+
+#### Scenario: Wide literal in an inferred let keeps its value
+- **GIVEN** `let x = 3000000000;`
+- **WHEN** the program is type-checked and lowered
+- **THEN** `x` has the type `i64` and holds `3000000000`
+
+#### Scenario: Word-sized constant keeps its bit pattern
+- **GIVEN** `const LIMIT_INVALID = 0xFFFFFFFFFFFFFFFE;` and a `word` value compared with `LIMIT_INVALID`
+- **WHEN** the comparison is lowered
+- **THEN** the constant has the type `word` and its 64-bit value `0xFFFFFFFFFFFFFFFE`
+
+#### Scenario: Constant that does not fit its destination
+- **GIVEN** `const BIG = 3000000000;` and the statement `i32 x = BIG;`
+- **WHEN** the program is checked
+- **THEN** the compiler reports **T0905** at the use of `BIG` and does not lower the program
+
+#### Scenario: Literal operand takes the type of the other operand
+- **GIVEN** `x` of type `i32` and the statement `i32 y = x + 3000000000;`
+- **WHEN** the program is checked
+- **THEN** the literal takes the type `i32` from `x`, and the compiler reports **T0905** at the literal instead of promoting `x` to `i64`
+
+#### Scenario: Constant compared with a narrower operand
+- **GIVEN** `const BIG = 3000000000;`, `x` of type `i32`, and the comparison `x == BIG`
+- **WHEN** the program is checked
+- **THEN** `BIG` takes the type `i32` from `x`, and the compiler reports **T0905** at the use of `BIG`; the comparison is not done at `i64`
+
+#### Scenario: Inferred literal without a natural integer type
+- **GIVEN** `let x = 10000000000000000000;`
+- **WHEN** the program is checked
+- **THEN** the compiler reports **T0905** at the literal, because the decimal value does not fit `i64`
 
 ## Informative Source Provenance
 

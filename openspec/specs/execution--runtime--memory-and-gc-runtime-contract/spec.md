@@ -16,6 +16,8 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 > Phase B **must not** become the default without updating this feature hub and fiber
 > scheduler contracts.
 
+Phase A SHALL be read per heap, not per process: a process holds many heaps, one per runtime instance, and each heap has one allocator, one collector and one mutator thread. One object SHALL be written by at most one runtime instance at any time. Phase A per heap is preserved when several runtime instances run in parallel, because no two of them share an allocator, a collector or a mutable object.
+
 **Stable ID:** `BSP-REQ-46C4422DC096`  
 **Legacy source:** `site/spec-content/platform-spec/execution/runtime/memory-and-gc-runtime-contract/adr/0005-phase-a-before-phase-b/content.md`  
 **Source SHA-256:** `e1c463259520657e4c81b6420e3a90e87afaea20ee7f12314a79dec3275d8563`
@@ -24,6 +26,11 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **GIVEN** an implementation claims conformance with this capability
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
+
+#### Scenario: Two runtime instances keep one mutator each
+- **GIVEN** two runtime instances created by `IsolateCreate` on two threads
+- **WHEN** both allocate at the same time
+- **THEN** each allocation lands in its own instance's heap and neither instance's collector marks, sweeps or frees an object in the other heap
 
 ### Requirement: Span-batched tri-color mark-sweep collection and barrier exports: Decision [D-EXEC-RT-0006]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
@@ -62,6 +69,8 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 > | Roots | Stacks (stack maps), globals (registered roots), `gc_root_handle` externals |
 > | Compiler | Lowers descriptors and stack maps; does not embed collector policy |
 
+The descriptor `flags` word SHALL carry `TYPE_DESCRIPTOR_IMMUTABLE = 4` next to `TYPE_DESCRIPTOR_ARRAY = 1` and `TYPE_DESCRIPTOR_UTF8_VIEW = 2`. The compiler SHALL set it on the descriptor of every nominal type whose transfer class is Shared and that is not an enum, and the runtime SHALL set it on the canonical string record descriptor. Array descriptors SHALL never carry it. The runtime SHALL expose the flag through `TypeDescriptorImmutableFlag()` in `Runtime/Bootstrap/Objects.bd`. No collector behavior SHALL depend on the flag in this release.
+
 **Stable ID:** `BSP-REQ-8EDA62A2D0E0`  
 **Legacy source:** `site/spec-content/platform-spec/execution/runtime/memory-and-gc-runtime-contract/adr/0007-heap-type-descriptors/content.md`  
 **Source SHA-256:** `d048da0588f5491093ffb15b350cced510c8f6e9a617aa315d22936e6e97da9d`
@@ -70,6 +79,16 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **GIVEN** an implementation claims conformance with this capability
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
+
+#### Scenario: Immutable type descriptor flag
+- **GIVEN** `[Immutable] pub type Job { string id; i64 size; }` and `pub type Draft { string id; i64 size; }`
+- **WHEN** the two aggregate descriptors are emitted
+- **THEN** `Job`'s flags word has bit 4 set and `Draft`'s does not
+
+#### Scenario: Arrays never immutable
+- **GIVEN** the array descriptor for `i64[]`
+- **WHEN** its flags are read
+- **THEN** `TYPE_DESCRIPTOR_ARRAY` is set and `TYPE_DESCRIPTOR_IMMUTABLE` is clear
 
 ### Requirement: Growable managed heap of chained regions
 The managed heap SHALL be a chain of one or more independently mapped regions obtained through `system_allocate`. Each region SHALL begin with a 64-byte region header (`next`, `size`, `bump`, `limit`, `free_bytes`, `largest_free`, `objects_start`, reserved) and SHALL hold a span directory followed by objects only in `[objects_start, bump)`, where `objects_start` accounts for the directory's size. The runtime SHALL add regions to the chain while a program is running instead of failing an allocation that the committed-size cap still permits. Objects SHALL NOT move when a region is added, when a span is carved or freed within a region, or when a collection runs. Marking, sweeping, free-list reuse, and every heap-membership test (`HeapContains`/`spanOf`-equivalent lookup, `IsAllocatedObject`, `ManagedObjectForReference`) SHALL treat every region in the chain and every span within it, and SHALL keep the existing per-block boundary rule inside each span. The `BeskidHeapState` layout in `runtime_manifest.bsol` and the `HEAP_*` constants in the canonical runtime sources SHALL be identical, and a compiler test SHALL fail when they differ.
@@ -362,6 +381,228 @@ The runtime SHALL store the handlers of an event in the handler words of the own
 - **GIVEN** an owner object with two subscribed handlers, rooted through a handle
 - **WHEN** a collection runs, then the handle is released and another collection runs
 - **THEN** the external root count stays zero, the first collection keeps the owner and both handlers, and the second collection reclaims all three
+
+### Requirement: Fail fast on a dead managed operand
+A runtime service that receives a non-null managed reference SHALL check that the reference resolves to a live managed object on the current heap before it uses the operand. When the reference does not resolve to a live managed object (a freed object, or an address that the heap did not allocate), the service SHALL call the runtime trap with code 6 (`invalid_or_stale_handle`) and a message of the form `<service>: managed operand is not live (use after collection)`; a service that takes a string operand SHALL write `managed string operand` in place of `managed operand`. The service SHALL NOT return a substitute value for that operand: not null, not an empty string, not zero, and not a failure status. The trap host SHALL print `beskid runtime trap v5: invalid_or_stale_handle (6): <message>` and exit with status 101.
+
+The rule SHALL apply at minimum to `str_len`, `str_eq`, `str_cmp`, `str_concat`, `str_slice`, the adoption of a read text into the caller's string record by `beskid_rt_v5_fs_read_text`, `gc_root_handle`, `beskid_rt_v5_gc_try_root_handle`, and `beskid_rt_v5_abi_value_initialize`. A null reference is not a dead operand, and each service SHALL keep its documented null behavior. A handle admission that fails because a checked scope recorded a failure, or because the handle stack cannot grow inside a checked scope, SHALL remain a recorded checked failure. The check SHALL NOT allocate and SHALL NOT start a collection, so a service that cannot reach a collection stays one that cannot reach a collection. A live managed string, which includes every string literal and every `Core.Args` value, SHALL pass the check.
+
+#### Scenario: Concatenation with a collected string operand traps
+- **GIVEN** a string that `str_new` allocated and that nothing roots, and a collection that freed it
+- **WHEN** `str_concat` receives it as an operand
+- **THEN** the process exits with status 101, was not terminated by a signal, its standard error contains `invalid_or_stale_handle (6): str_concat: managed string operand is not live (use after collection)`, and `str_concat` did not return
+
+#### Scenario: Reading services trap and do not read freed memory
+- **GIVEN** a collected string as in the previous scenario
+- **WHEN** `str_len`, `str_eq`, `str_cmp` or `str_slice` receives it
+- **THEN** the process exits with status 101 and the diagnostic names that service
+
+#### Scenario: Root handle of a freed object traps
+- **GIVEN** a managed object that a collection freed
+- **WHEN** `gc_root_handle` or `beskid_rt_v5_gc_try_root_handle` receives it
+- **THEN** the process exits with status 101 with a diagnostic that names the service, and the service does not return 0
+
+#### Scenario: Boxing a freed payload traps
+- **GIVEN** a vacant value slot and a managed payload that a collection freed
+- **WHEN** `beskid_rt_v5_abi_value_initialize` receives the payload
+- **THEN** the process exits with status 101 with a diagnostic that names `abi_value_initialize`, and the call does not return false
+
+#### Scenario: Live operands keep working
+- **GIVEN** strings that a root handle keeps live across a collection
+- **WHEN** `str_concat`, `str_slice`, `str_len`, `str_eq` and `str_cmp` receive them
+- **THEN** each service returns its ordinary result and the process does not trap
+
+### Requirement: Non-moving collector
+The collector SHALL be non-moving: once allocated, a managed object SHALL keep its address until it is freed, in every heap and in every collection phase. No compaction, promotion by copy, or relocation of managed objects SHALL be introduced without a change to this capability. Sharing an object between heaps by pointer depends on this rule.
+
+#### Scenario: Address stable across collections
+- **GIVEN** a managed object whose address is recorded before an allocation-triggered collection
+- **WHEN** the collection completes and the object is still reachable
+- **THEN** the object is at the recorded address
+
+### Requirement: Foreign references
+A foreign reference is a managed pointer, held by one runtime instance, whose target lies in a heap region owned by a different runtime instance. The owner of an object SHALL be the runtime instance whose heap allocated it and SHALL not change while the object lives. A runtime instance's collector SHALL never mark, sweep, free or write the header or span metadata of a foreign object; marking SHALL stop at a foreign reference. In this release no foreign reference is created by the language, the corelib or the runtime; the definition and the stop rule are normative so that later releases add counting without changing this contract.
+
+#### Scenario: Marking stops at a foreign pointer
+- **GIVEN** a test harness that stores, into an object of heap A, a pointer to an object allocated in heap B
+- **WHEN** heap A collects
+- **THEN** the object in heap B is neither marked nor freed by A's collector and heap B's span metadata is byte-identical before and after A's collection
+
+### Requirement: Process-wide region-to-owner map
+The runtime SHALL keep one process-wide map from heap region address range to owning runtime instance. `IsolateCreate` and every region growth SHALL register the region before the first allocation in it, and `IsolateDestroy` SHALL unregister the instance's regions after its heap is released. The export `beskid_rt_v5_region_owner(address) -> pointer` SHALL return the owning runtime instance of any address inside a registered region's object range and null otherwise, from any attached or unattached thread, without taking a lock on the lookup path; registrations SHALL publish with release ordering and lookups SHALL read with acquire ordering through the atomic intrinsics. `FindHeapRegionContaining` SHALL keep its per-heap meaning.
+
+#### Scenario: Owner of a primary-heap address
+- **GIVEN** a process with one runtime instance and a managed object `o` allocated in it
+- **WHEN** `RegionOwner(o)` is called
+- **THEN** it returns the primary runtime instance
+
+#### Scenario: Unregistered address
+- **GIVEN** a `SystemAllocate`d native buffer
+- **WHEN** `RegionOwner` is called with its address
+- **THEN** it returns null
+
+### Requirement: GC stress mode for root verification
+The runtime SHALL read `BESKID_GC_STRESS` during `beskid_rt_v5_process_init`, in the same activation-independent way as `BESKID_HEAP_MAX`. The value SHALL be a comma-separated list of `alloc`, `alloc:<n>` with `n` at least 1, and `verify`. With `alloc` the runtime SHALL run a full collection before every managed allocation; with `alloc:<n>` before every `n`-th managed allocation. With `verify` the runtime SHALL verify the heap before and after every collection and SHALL trap with code 10 (`runtime_internal_corruption`) when the verification fails. An absent or empty variable SHALL leave the pacing policy unchanged. A malformed value SHALL terminate initialization through the runtime trap path with exit status 101 and the variable name in the diagnostic.
+
+#### Scenario: Stress exposes a missing root
+- **GIVEN** a fixture that holds a managed string in a slot that is not rooted while it allocates, and then passes the string to `str_concat`
+- **WHEN** it runs with `BESKID_GC_STRESS=alloc`
+- **THEN** the process exits with status 101 and the `invalid_or_stale_handle (6)` diagnostic of `str_concat`
+
+#### Scenario: Malformed stress setting
+- **GIVEN** a process started with `BESKID_GC_STRESS=often`
+- **WHEN** `beskid_rt_v5_process_init` runs
+- **THEN** the process exits with status 101 and `BESKID_GC_STRESS` in the diagnostic
+
+### Requirement: Freed-object poisoning and quarantine in the debug runtime kit
+The debug runtime kit SHALL overwrite each freed small slot after its free-list link with a fixed poison pattern, and SHALL hold freed small slots in a first-in-first-out quarantine with a byte budget before it returns them to their span's free list. A slot in quarantine SHALL NOT be reported as an allocated object, so a service that receives a reference to it SHALL trap through the fail-fast rule for a dead managed operand. The release runtime kit SHALL NOT poison or quarantine freed slots.
+
+#### Scenario: Dangling reference to a quarantined slot
+- **GIVEN** the debug kit, a collected string, and further allocations that are smaller than the quarantine budget
+- **WHEN** the collected string is passed to `str_len`
+- **THEN** the process exits with status 101 and the `invalid_or_stale_handle (6)` diagnostic of `str_len`, because the freed slot was not given to a new object
+
+### Requirement: Foreign references are recorded during marking
+Each heap SHALL own a foreign reference table (foreign table; `Runtime/Mem/Gc/Foreign.bd`, the ORCA FRC) keyed by the foreign object's address, with one entry `{count, epoch, immutable}` per foreign object this heap holds. When marking meets a managed pointer that is not inside one of the current heap's regions (`GcMarkGray`, `Runtime/Mem/Gc/Marking.bd:116-119`), the collector SHALL resolve the owning runtime instance through the process-wide region-to-owner map, SHALL create or stamp the entry with the current collection epoch, and SHALL return without marking the object or tracing its fields; a pointer that resolves to no instance SHALL be ignored as today. In 0.6.3 every recorded entry SHALL have `immutable = 1` and `count = 1`, because the only foreign references are `Shared` scope captures and objects reachable from them; the owner is kept alive by the scope frame, not by the count. At the end of marking, entries not stamped in this epoch SHALL be removed from the table. The table SHALL be native memory (`SystemAllocate`), never a managed object, and marking SHALL NOT write into the owner's heap or span directory.
+
+#### Scenario: Foreign entry created and dropped
+- **GIVEN** a task that holds a captured `Shared` record in a local, forces a collection, drops the local and forces a second collection
+- **WHEN** both collections complete
+- **THEN** after the first the task's foreign table has one entry for the record stamped with epoch 1, and after the second the table is empty
+
+#### Scenario: Owner heap is not written by a foreign collector
+- **GIVEN** a parent object captured by two tasks that both force collections while the parent's collector is idle
+- **WHEN** the parent then runs its own collection
+- **THEN** every span mark bit of the parent heap is clear at the start of the parent's marking and the parent object is marked only by the parent
+
+### Requirement: Heap adoption at join
+When a task completes and is joined, and the task's heap holds no entry in its own local reference count table (0.6.4) with a count held by a third isolate (always true in 0.6.3, where no isolate but the parent can hold a pointer into a child heap), the parent SHALL adopt the child's heap regions instead of copying the result: it SHALL relink every child region into the parent heap's region chain (`HEAP_FIRST_REGION`, `Runtime/Mem/Gc/State.bd:140-147`), update the process-wide region-to-owner map so each region resolves to the parent, add the child's live bytes to the parent's live-byte count, remove from the child's foreign table every entry that names the parent, append the remaining child foreign entries to the parent's foreign table, and transfer the child's local reference count entries to the parent. The collector is non-moving, so no pointer SHALL be rewritten. A `Shared` or `Moved` result SHALL then be read by the parent as an ordinary pointer into an adopted region; a `Copied` result SHALL be copied through `Transit.bd` and the child heap discarded. A task that failed or was cancelled SHALL have its heap discarded whole after the panic message copy-out, with no adoption. The parent's next collection SHALL reclaim adopted garbage; adopted regions SHALL count against the parent's `BESKID_HEAP_MAX`. Under the incremental collector of 0.6.2, an exiting isolate's heap SHALL first become idle (an in-progress mark is discarded and its barrier flag lowered, an in-progress sweep is finished), so that a heap that is adopted, retained or discarded carries clean mark and scanned bitmaps and its own sweep generation. When the parent's heap is marking at adoption, every allocated slot of an adopted small span SHALL be marked and scanned and every adopted large object SHALL be set black (adopted black, as allocation during marking); when the parent's heap is sweeping, every adopted span SHALL be stamped with the parent's current sweep generation so that the parent's sweep does not free it. Adopted garbage is then reclaimed by the parent's next complete cycle. A child whose local reference count table names a third isolate SHALL follow the fallback of a later release (heap retention, then adoption at scope exit) and SHALL have its result copied.
+
+#### Scenario: Moved result is adopted, not copied
+- **GIVEN** `Task<u8[]> t = s.Spawn(() => Array.Zeroed<u8>(1048576_i64));` joined by the parent
+- **WHEN** `t.Join()` returns `Result::Ok(bytes)`
+- **THEN** `bytes` points into a region that was allocated by the task isolate, the region is now in the parent heap's chain, and no 1 MiB copy was performed
+
+#### Scenario: Adopted garbage is reclaimed by the parent
+- **GIVEN** a task that allocates 8 MiB of unreachable objects and returns `1_i64`
+- **WHEN** the parent joins it and runs `Assert.CollectGarbage()`
+- **THEN** the parent's live bytes after the collection exclude the 8 MiB and the adopted regions remain in the parent chain
+
+#### Scenario: Failed task heap is discarded
+- **GIVEN** a task that allocates 8 MiB and then panics
+- **WHEN** the parent joins it
+- **THEN** the parent heap gains no region, the panic message is a string in the parent heap, and the child heap's mappings are released
+
+### Requirement: Owner external count table
+Each heap SHALL own a local reference count table (local table; `Runtime/Mem/Gc/Foreign.bd`, the ORCA LRC) keyed by the address of an object this heap owns, with one entry `{count, epoch, immutable}` per object that another isolate may reach. Entries SHALL be created or incremented by the owner when it sends one of its own objects through a port, and incremented when an INC for the object arrives in the owner mailbox; they SHALL be decremented when a DEC arrives or when the owner receives its own object back. An entry with `count > 0` SHALL protect the object from the owner's sweep: in 0.6.4 every entry is immutable (`Shared` values are the only pointer-crossing class) and the owner's collector SHALL treat each such object as a traced root (mark it and trace its fields before sweeping, ORCA `markimmut`). Under the incremental collector of 0.6.2 the entries with `count > 0` at mark start SHALL be shaded with the roots at mark start, and an entry created or raised from zero while the owner's heap is marking SHALL shade its object at that moment. An entry whose count reaches zero SHALL be dropped, and the object SHALL be reclaimed by the next collection if it is otherwise unreachable. The table SHALL be native memory and SHALL be written only by the owner's thread.
+
+#### Scenario: Sent Shared object survives the owner's collection
+- **GIVEN** a parent that sends a `[Immutable]` record it no longer references through a port to a task, then forces two collections before the task receives
+- **WHEN** the task receives the record and reads its fields
+- **THEN** the fields are intact, and the parent's table held an entry with `count >= 1` for the record during both collections
+
+#### Scenario: Count returns to zero
+- **GIVEN** the record of the previous scenario after the task dropped it and collected
+- **WHEN** the parent drains its mailbox and collects once more
+- **THEN** the entry is gone and the record's bytes are free in the parent heap
+
+### Requirement: Receiver side increments and collector-driven decrements
+When an isolate receives a `Shared` object it does not own, it SHALL create or increment the foreign reference table entry for that object (`{count, epoch, immutable = 1}`) and SHALL NOT trace into the object (the owner traces immutable graphs). When it receives an object it owns, it SHALL decrement the local count instead. When a receiver forwards a foreign object through a port, it SHALL decrement its own foreign count if the count stays above zero, otherwise SHALL inflate the count by a fixed constant and post an INC for the difference to the owner before publishing the slot. During marking, a reached foreign object SHALL have its entry stamped with the current epoch and SHALL NOT be traced. A foreign entry created or incremented while the receiver's heap is marking (at receive, at forward or by the write barrier of 0.6.2) SHALL be stamped with the current epoch at that moment, as an object allocated during marking is black, because the value that holds it may be in a root registered after mark start and the rescan at termination does not visit foreign entries. After marking, for every foreign entry not stamped in this epoch the collector SHALL post one DEC per owner carrying the summed counts, grouped by the owner resolved through the region-to-owner map at posting time, and SHALL drop the entries. The receiver SHALL add the recorded size of its foreign entries to its live-byte estimate so that an isolate that handles only foreign objects still collects and sends its DECs.
+
+#### Scenario: Foreign entry and DEC
+- **GIVEN** a task that receives one `Shared` record from the parent, holds it across one collection, drops it and collects again
+- **WHEN** the two collections complete
+- **THEN** after the first the task's foreign table holds the entry stamped with that epoch, after the second the entry is gone and exactly one DEC for the record is in the parent's mailbox
+
+#### Scenario: Forward inflates and posts INC first
+- **GIVEN** isolate `B` with foreign count `1` for `o` owned by `A`, forwarding `o` to `C`
+- **WHEN** `B` sends
+- **THEN** `B`'s entry is inflated, an INC for `o` is in `A`'s mailbox before the slot is published, and `C` records a foreign entry for `o` at receive
+
+#### Scenario: Foreign-only isolate still collects
+- **GIVEN** a task that receives 100,000 `Shared` strings and drops each after reading it, allocating nothing itself
+- **WHEN** the task runs
+- **THEN** its collector runs at least once before the task ends and posts DECs so that the parent reclaims the strings
+
+### Requirement: Heap retention and adoption after isolate exit
+When a task's isolate exits and its local reference count table holds an entry with `count > 0` held by an isolate other than the parent, the parent SHALL NOT discard or adopt the heap at join. The heap SHALL be retained by the process with no mutator and no collector: its regions stay mapped, its owner mailbox stays open, and the owning scope SHALL drain that mailbox at each of its own joins and at scope exit, applying INCs and DECs to the retained table. The task's result SHALL be copied into the parent through `Transit.bd` in this case. At scope exit, after every sibling has been joined, the parent SHALL adopt every retained heap of the scope exactly as a completed child (region relink, owner map, table merge); at that point every third-party stake has been merged into the parent's own foreign table, so the merge is a rename, and the parent's next collection reclaims the retained garbage. A retained heap SHALL count against the owning isolate's `BESKID_HEAP_MAX` from the moment of retention.
+
+#### Scenario: Sibling holds a reference into an exited heap
+- **GIVEN** task `A` that sends a `Shared` record to sibling `B` through a port and returns `1_i64` while `B` still holds the record and loops for 20 ms
+- **WHEN** the parent joins `A` before `B` ends
+- **THEN** `A`'s heap is retained, `A`'s result is copied, `B` reads the record intact until it drops it, and the retained heap is adopted when the scope returns
+
+#### Scenario: Retained heap is released at scope exit
+- **GIVEN** the scope of the previous scenario
+- **WHEN** the parent runs a collection after the scope returned
+- **THEN** no region of `A`'s heap remains mapped outside the parent chain and the record's bytes are free
+
+### Requirement: No cycle detector; structural isolate lifetime
+The runtime SHALL NOT implement a cycle detector for isolates or for cross-heap object cycles. Isolate lifetime SHALL be structural: every isolate is owned by exactly one scope, is joined by it, and cannot be detached, so no isolate is ever collectable by reference count. Cross-heap object cycles SHALL need no special treatment because counts are stakes, not paths: a cycle of unreachable objects owned by `n` isolates SHALL be reclaimed after each of the `n` owners has completed one collection and posted its DECs. The only residual leak SHALL be a long-lived isolate cancelled while a sibling still holds references into its heap, before the scope exits; the adoption at scope exit of the previous requirement SHALL close it, so that no heap outlives the scope that created its isolate.
+
+#### Scenario: Two-heap cycle is reclaimed
+- **GIVEN** isolates `P` and `C` each holding a `Shared` object of the other, with neither object reachable from any local root
+- **WHEN** `P` collects, then `C` collects, then `P` drains its mailbox and collects
+- **THEN** both objects are freed and no detector ran
+
+#### Scenario: Cancelled worker with a referencing sibling
+- **GIVEN** a long-lived isolate `W` cancelled by `Scope.Cancel` while sibling `S` holds a `Shared` record owned by `W`
+- **WHEN** the scope returns
+- **THEN** `W`'s heap was retained until `S` was joined, then adopted, and after the parent's next collection no byte of `W`'s heap is mapped outside the parent chain
+
+### Requirement: Owner collector treats counted entries by mutability
+At mark start, together with its own roots (0.6.2 incremental cycle), the owner's collector SHALL process every local count entry with `count > 0`: an entry whose object is immutable (`TYPE_DESCRIPTOR_IMMUTABLE`, `ReadOnlyArray` records and strings included) SHALL be marked and its fields traced through the ordinary mark work (the owner traces shared immutable graphs); an entry whose object is mutable SHALL be marked shallow: for a small-object span the collector SHALL set both the mark bit (`SPAN_MARK_BITS`) and the scanned bit (`SPAN_SCANNED_BITS`) of the slot so `DrainSpan` (`Runtime/Mem/Gc/Marking.bd:194-211`) never scans it; for a large object it SHALL set the header state to black directly (`Marking.bd:127-133, 232`). The owner SHALL NOT read a field of a mutable object with `count > 0`, because another isolate may be writing it. An immutable object reachable from a shallow-marked mutable object SHALL be kept alive by its own entry (the sender gave every immutable sub-object an entry) and SHALL be traced from that entry. Entries with `count == 0` SHALL be dropped before the pass. An entry for a mutable object created while the owner's heap is marking (a Moved send during a cycle) SHALL be shallow-marked by the sender when the entry is created, before the port slot or task capture is published, because the object may already be shaded and queued and a later `DrainSpan` would otherwise read fields that the receiver is writing; an immutable entry created during marking SHALL shade its object.
+
+#### Scenario: Owner never scans a handed-over mutable object
+- **GIVEN** a parent that handed a 1000-node mutable `Chain` to a task that is mutating it, then forces a collection
+- **WHEN** the parent's marking runs
+- **THEN** each node's slot has both the mark and scanned bits set before `DrainSpan` runs, no node field is read by the parent, and the 1000 strings are traced through their own entries
+
+#### Scenario: Immutable entry is traced
+- **GIVEN** a parent that sent a `[Immutable] Table { ReadOnlyArray<i64> rows }` through a port, dropped its binding and collects
+- **WHEN** marking completes
+- **THEN** the `Table` record and its backing array are both marked and the array bytes are intact
+
+#### Scenario: Large mutable object
+- **GIVEN** a 2 MiB `u8[]` handed over to a task that is writing it, and a parent collection
+- **WHEN** the parent's marking drains the array's span
+- **THEN** the array header is set black without `TraceObjectAt` being called on it
+
+### Requirement: Receiver collector traces through foreign mutable objects
+During marking, when the collector meets a pointer into another instance's heap, it SHALL resolve the owner through the region-to-owner map, stamp the foreign entry with the current epoch, and: if the object's descriptor is mutable, trace its fields with `TraceObjectFields` (the receiver may have stored its own objects into the graph); if the descriptor is immutable, stop (the owner traces it). Under the incremental collector of 0.6.2, tracing a foreign mutable object is mark work: stamping its entry for the first time in an epoch SHALL also enqueue the entry on a receiver-side work list kept in the foreign table (native memory), a mark step SHALL trace it under the step budget, and mark termination SHALL require that list to be empty as well as the mark queue; the write barrier only stamps and enqueues. A foreign mutable object received while the receiver's heap is marking SHALL be stamped and enqueued at receive. The collector SHALL read the foreign object's header, descriptor and span words with `AtomicWordLoad`, because the owner's sweep may concurrently flip other bits in the same span word; the bit of an object with `count > 0` is stable because the owner never frees it. The receiver SHALL record marking state for foreign objects only in its own foreign table (an epoch stamp), SHALL NOT write a mark bit, scanned bit or header word of the owner's heap, and SHALL NOT write the owner's span directory. A foreign object met for the first time during marking (reachable but not recorded at receive, which can only happen through a mutable foreign graph that another isolate extended) SHALL be recorded with `count = 1` and an INC posted to its owner before the collection ends.
+
+#### Scenario: Receiver-owned child inside a foreign graph survives
+- **GIVEN** a task that stores a task-allocated string into a node of a handed-over mutable `Chain`, then forces a collection with no other reference to the string
+- **WHEN** the task's marking runs
+- **THEN** the string is marked (reached through the foreign mutable node) and survives the sweep
+
+#### Scenario: Foreign immutable is not entered
+- **GIVEN** a task holding a received `[Immutable] Table` with a 1 GiB `ReadOnlyArray<u8>` and forcing a collection
+- **WHEN** the task's marking runs
+- **THEN** the array is not traced by the task, the `Table` entry is stamped, and the collection time does not grow with 1 GiB
+
+#### Scenario: No write into the owner heap
+- **GIVEN** any task collection while holding foreign objects
+- **WHEN** the owner compares its span directory and object headers before and after the task's collection with its own mutator parked
+- **THEN** no word changed
+
+### Requirement: Adoption at join in every case
+From 0.6.5 the parent SHALL adopt a completed task's heap at join whether or not a third isolate holds counts into it, superseding the 0.6.4 retention fallback for completed tasks. Adoption SHALL: relink the regions into the parent chain; update the region-to-owner map so every address of the child resolves to the parent; transfer the child's local count entries to the parent's local table (merging with any parent entry for the same object); cancel the child's foreign entries that name the parent against the parent's local entries for those objects; append the remaining child foreign entries to the parent's foreign table; then drain the child's owner mailbox into the parent's tables, so that any INC or DEC posted to the child before the map update is applied, and any posted afterwards resolves to the parent. Because every holder resolves the owner through the map at posting time, no owner id forwarding SHALL be needed. `Shared` and `Moved` results SHALL be read in place; `Copied` results SHALL be copied. Retention SHALL remain only for an isolate that exits while a sibling is still running and the scope has not yet joined it, and SHALL end at that join.
+
+#### Scenario: Adopt with a live third-party count
+- **GIVEN** task `A` handing a Moved graph to sibling `B` through a port and returning while `B` still mutates the graph
+- **WHEN** the parent joins `A`
+- **THEN** `A`'s regions are in the parent chain, the parent's local table holds the entries `B` depends on, `B` continues to read and write the graph, and `B`'s later DEC is applied to the parent's table
+
+#### Scenario: Late message to the child mailbox
+- **GIVEN** a DEC posted to `A`'s mailbox one instruction before the parent updates the owner map
+- **WHEN** adoption completes
+- **THEN** the DEC was applied to the parent's local entry and the count is exact
+
+#### Scenario: Three-generation adoption
+- **GIVEN** a grandchild handing a Moved graph to its parent (a task) which returns it to the main isolate
+- **WHEN** both joins complete
+- **THEN** the graph's regions are in the main heap, no copy was made, and the main isolate's tables hold no entry for the graph
 
 ## Informative Source Provenance
 

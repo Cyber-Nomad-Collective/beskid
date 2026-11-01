@@ -4,16 +4,9 @@
 ## Purpose
 
 The OS-level thread surface of corelib. In 0.6.0 it exposes only `Thread.Yield`; Beskid code cannot create or join OS threads. Concurrent work starts as a cooperative fiber with the `spawn` expression, which returns a `Fiber<T>` handle from the Concurrency package. CPU parallelism is planned through isolates in the changes `v061-attributes-and-isolate-prerequisites`, `v063-isolates-and-scope` and `v065-parallel-sequences`.
-
 ## Requirements
-
 ### Requirement: Core.Threading is the OS-thread surface: Decision [D-CORE-SYST-0001]
-The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
-
-> | Rule | Detail |
-> | --- | --- |
-> | API | `Core.Threading` is the only supported **preemptive** OS-thread module |
-> | Fibers | Cooperative APIs stay in the concurrency package |
+`Core.Threading` SHALL expose only the OS-level `Thread.Yield` operation. Corelib SHALL NOT expose raw OS-thread creation or joining. Concurrent work SHALL be started as a fiber with the `spawn` expression and coordinated with the Concurrency package (`Fiber`, channels). Release 0.6.0 provides no CPU-parallel execution API; parallel execution through isolates is planned in changes `v061-attributes-and-isolate-prerequisites`, `v062-captures-and-move`, `v063-isolates-and-scope`, `v064-ports-and-pipelines` and `v065-parallel-sequences`.
 
 **Stable ID:** `BSP-REQ-DEC34B7C1AC5`  
 **Legacy source:** `site/spec-content/platform-spec/core-library/concurrency/core-threading/adr/0001-os-thread-surface-only/content.md`  
@@ -23,6 +16,11 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **GIVEN** an implementation claims conformance with this capability
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
+
+#### Scenario: Corelib exposes no raw thread spawn
+- **GIVEN** the corelib foundation package
+- **WHEN** its `Core.Threading` module is resolved
+- **THEN** it declares `Thread.Yield` and declares no `Spawn`, `Join`, thread handle type or pthread extern contract
 
 ### Requirement: Do not build fibers on OS threads: Decision [D-CORE-SYST-0002]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
@@ -74,6 +72,19 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **GIVEN** an implementation claims conformance with this capability
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
+
+### Requirement: Isolate threads are runtime-owned sessions
+Every OS thread that runs Beskid code other than the main thread SHALL be created by the runtime for an isolate through the `thread_create` intrinsic and SHALL establish its heap session through `IsolateCreate` before executing any generated code. `Core.Threading` SHALL expose no operation that creates, joins or names such a thread; `Core.Threading.Thread.Yield` SHALL remain the only OS-level operation and SHALL yield the calling isolate's thread. The runtime SHALL join every isolate thread it created before `beskid_rt_v5_process_shutdown` returns.
+
+#### Scenario: No corelib thread creation surface
+- **GIVEN** the corelib `Core.Threading` module after 0.6.3
+- **WHEN** its public declarations are listed
+- **THEN** `Yield` is the only exported function and no `Thread` handle type exists
+
+#### Scenario: Isolate threads are joined at shutdown
+- **GIVEN** a program whose last scope returned and whose pool still holds idle isolates
+- **WHEN** `beskid_rt_v5_process_shutdown` runs
+- **THEN** every pool isolate's thread has exited before shutdown returns and the process exit status is the program's own
 
 ## Informative Source Provenance
 

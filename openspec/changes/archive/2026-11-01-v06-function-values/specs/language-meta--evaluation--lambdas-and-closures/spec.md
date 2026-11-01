@@ -20,19 +20,6 @@ The type of a lambda SHALL be a function type. A typed parameter SHALL have its 
 - **WHEN** the literal `2` is typed
 - **THEN** it has the type `u8` from the lambda's function type, not the result of the enclosing function
 
-### Requirement: Capture and closure lifetime
-Captured locals MUST be definitely assigned before capture or diagnosed per definite-assignment rules. A capture SHALL be a by-value snapshot taken when the closure record is created. A lambda that is not a `spawn` operand SHALL NOT capture a `mut` binding or a native pointer; the compiler SHALL report **E1233** at the lambda and SHALL name the captured binding. A `spawn` operand that captures a stack reference SHALL keep **E1225**. A closure MUST extend the lifetime of captured storage to at least the closure value's lifetime: a captured managed value SHALL be traced through the closure environment. Closures passed to `spawn` MUST be compatible with fiber entry signatures.
-
-#### Scenario: Capture of mut binding rejected
-- **GIVEN** `i64 Main() { mut i64 count = 1; let read = () => count; return read(); }`
-- **WHEN** capture analysis runs
-- **THEN** the compiler emits **E1233** at the lambda, naming `count`, and rejects the lambda
-
-#### Scenario: Captured string is traced
-- **GIVEN** `string Call((string) => string f) { return f("!"); }` and `string Main(string prefix) { return Call((string s) => prefix + s); }`
-- **WHEN** the lambda's closure environment is laid out
-- **THEN** `prefix` is a traced field of the environment
-
 ## ADDED Requirements
 
 ### Requirement: Function values and indirect calls

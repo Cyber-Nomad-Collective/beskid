@@ -1,12 +1,27 @@
 ## MODIFIED Requirements
 
 ### Requirement: Type expression grammar
-A type expression (`BeskidType`) MUST be exactly one of: a primitive (`bool`, `i32`, `i64`, `u8`, `f64`, `char`, `string`, `unit`); a named `Path` with optional `GenericArguments`; an array `T[]`; or a function type `T(params)` / `(params) => R`. The element type `T` of an array MAY be an array type, so `T[][]` is an array whose elements are `T[]`; each `[]` suffix adds one array rank. Primitives MUST map to `HirPrimitiveType` variants in the reference compiler. There is no `null` literal and no nullable reference type (`?T`, `T?`, or `optional` keyword) in v0.1. Optional presence MUST use `Option<T>` or an explicit enum with a dedicated absent variant.
+A type expression SHALL be a primitive (`bool`, `i8`, `i16`, `i32`, `i64`, `u8`, `u16`, `u32`, `u64`, `f32`, `f64`, `char`, `string`, `unit`, `never`, `word`, `pointer`), named Path with optional GenericArguments, array `T[]`, or function type `T(params)` / `(params) => R`. The element type `T` of an array MAY be an array type, so `T[][]` is an array whose elements are `T[]`; each `[]` suffix adds one array rank. Primitive identity SHALL be consistent through parser, generated SDK syntax, semantic/query typing, typed AST and canonical ISLE lowering; retired HIR representations SHALL NOT be restored. Signed/unsigned fixed integers SHALL have their declared bit width, exact representable range and checked rejection of out-of-range literals/conversions; f32/f64 SHALL use IEEE 754 binary32/binary64, round-to-nearest ties-to-even for narrowing and preserve signed zero. Char SHALL denote a Unicode scalar, excluding surrogates and values above 0x10ffff. Word SHALL be unsigned selected-target pointer width; pointer SHALL remain an explicitly unsafe address construct, not a serializable value. Unit SHALL denote no value, never nonreturning control flow. Nullable syntax `?T`, `T?` and `optional T` SHALL remain rejected; absence SHALL use Option<T> or an explicit enum.
+
+#### Scenario: Full primitives are real language types
+- **GIVEN** a program with each fixed-width integer and f32/f64 plus generic instantiations
+- **WHEN** parse/typecheck/query and canonical AOT lowering run
+- **THEN** each type retains the declared width and value semantics through actual native execution rather than wrapper-only aliases
+
+#### Scenario: Ranges and scalar validity reject
+- **GIVEN** an integer outside its exact width or a surrogate char literal
+- **WHEN** the compiler checks the program
+- **THEN** it rejects the value with a source diagnostic before code generation
+
+#### Scenario: Float narrowing and native width
+- **GIVEN** an exactly halfway f64-to-f32 narrowing, negative zero and a word conversion on a selected target
+- **WHEN** the operations execute
+- **THEN** narrowing uses ties-to-even, negative zero is preserved and native-width overflow is rejected
 
 #### Scenario: Nullable reference type rejected
-- **GIVEN** a type annotation written as a nullable form such as `T?` or `optional T`
-- **WHEN** the type grammar is parsed or checked under v0.1
-- **THEN** the compiler rejects the nullable form
+- **GIVEN** a nullable type annotation such as T?
+- **WHEN** the grammar is parsed
+- **THEN** the nullable form is rejected
 
 #### Scenario: Array of arrays
 - **GIVEN** the type annotation `i64[][]`

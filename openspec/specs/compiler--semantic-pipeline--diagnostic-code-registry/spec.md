@@ -83,6 +83,8 @@ The block **E1234–E1255** SHALL be reserved for transfer, capture and move dia
 
 From 0.6.2, **E1234–E1243** and **E1248** SHALL have emission sites in the query layer (`affine_ownership`, the `[Captures]` call-site fact and the attribute check), and **E1234** SHALL replace the former `SpawnDiagnosticKind::UseAfterMove` rendering for `Fiber` handles. The messages SHALL use the labels "moved here" for the consuming use and "borrowed here" for the borrowed declaration, and the help texts "write `move <name>`" (**E1237**, **E1242**), "use a reduction" (**E1235**), "pass the lambda literal" (**E1238**), "declare the parameter `move T <name>`" (**E1239** on a borrowed parameter, **E1241**) and "use `exchange(<place>, move <value>)`" (**E1243**).
 
+From 0.6.3, **E1249** SHALL have an emission site in the query layer: a read of an `inject` field lexically inside a task body (a lambda literal passed to a `[Captures]` parameter) SHALL be reported at the field read with the message "composition is not available inside an isolate". The runtime fails closed for reads the static rule cannot see.
+
 **E1509** and **E1510** SHALL be emitted by the query layer for attribute target declarations and attribute uses at every declaration site; **E1510** is no longer limited to `Extern` on a non-contract.
 
 **Stable ID:** `BSP-REQ-072159A73908`
@@ -138,6 +140,11 @@ From 0.6.2, **E1234–E1243** and **E1248** SHALL have emission sites in the que
 - **GIVEN** `i64 Main() { Fiber<i64> f = spawn Work(); i64 a = f.Join()?; return a + f.Join()?; }`
 - **WHEN** `beskid check` reports the diagnostic
 - **THEN** its code is **E1234** and no diagnostic with the former Fiber-only rendering is reported
+
+#### Scenario: Injected read inside a task body renders with E1249
+- **GIVEN** `s.Spawn(() => this.clock.Now())` where `clock` is an `inject global::` field
+- **WHEN** `beskid check` reports the diagnostic
+- **THEN** its code is **E1249**, its primary span is `this.clock`, and the message is "composition is not available inside an isolate"
 
 ### Requirement: Dead assignment to a mutable parameter
 The code **E1259** SHALL identify an assignment to a `mut` parameter whose value no later read of the parameter can observe. The message SHALL have the form "the value assigned to the `mut` parameter `<name>` is never read". The primary span SHALL be the assignment. The diagnostic SHALL have a related note at the parameter declaration with the text "`<name>` is passed by value". The help SHALL tell the user to return the new value, or to assign the fields of the caller's object.

@@ -32,10 +32,12 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 > | --- | --- |
 > | Initial size | **64 KiB** per fiber |
 > | Growth | Growable until cap |
-> | Maximum | **8 MiB** cap per fiber |
+> | Maximum | **8 MiB** per fiber by default; `BESKID_FIBER_STACK_MAX` sets another whole multiple of 64 KiB for the process |
 > | Overflow | `FiberError::StackOverflow` at **Join** — no undefined behavior |
 > | Switching | Callee stacks ABI-aligned; callee-saved registers saved per platform ABI |
 > | GC | All fiber stacks enumerable at safepoints via compiler stack maps |
+
+The runtime SHALL read `BESKID_FIBER_STACK_MAX` during `beskid_rt_v5_process_init` as a decimal byte count with an optional `k`, `m` or `g` suffix (powers of 1024, either case). The value SHALL apply to every fiber spawned afterwards. A value that is not a whole multiple of 64 KiB, is below 64 KiB, or does not parse SHALL terminate initialization through the runtime trap path with the variable name as the diagnostic message.
 
 **Stable ID:** `BSP-REQ-62223D68B5BA`  
 **Legacy source:** `site/spec-content/platform-spec/execution/runtime/fiber-scheduler-and-stacks/adr/0002-fiber-stack-sizes/content.md`  
@@ -45,6 +47,16 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **GIVEN** an implementation claims conformance with this capability
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
+
+#### Scenario: Stack maximum from the environment
+- **GIVEN** a process started with `BESKID_FIBER_STACK_MAX=1M`
+- **WHEN** it spawns a fiber and joins it
+- **THEN** the fiber's reservation is 1 MiB and the join succeeds
+
+#### Scenario: Misaligned stack maximum is rejected
+- **GIVEN** a process started with `BESKID_FIBER_STACK_MAX=100000`
+- **WHEN** `beskid_rt_v5_process_init` runs
+- **THEN** the process terminates through the trap path with exit status 101 and `BESKID_FIBER_STACK_MAX` in the diagnostic
 
 ### Requirement: Phase A single GC mutator on scheduler threads: Decision [D-EXEC-RT-0003]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
@@ -59,6 +71,8 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 > 
 > Aligns with [D-CORE-CONC-0007](/platform-spec/core-library/concurrency/concurrency-package/adr/0007-gc-phase-a-single-mutator/).
 
+The "one thread" of Phase A SHALL be read per runtime instance: a process MAY hold many runtime instances, each with its own heap, scheduler table and one mutator thread (many heaps, one mutator each). The scheduler, its fiber table, the Phase-A mutator token and the external wait table SHALL hang off the runtime instance, never off process-global state. The syscall worker pool is process-wide and SHALL route completions to the owning scheduler by owner id.
+
 **Stable ID:** `BSP-REQ-3EE23921CE98`  
 **Legacy source:** `site/spec-content/platform-spec/execution/runtime/fiber-scheduler-and-stacks/adr/0003-phase-a-single-mutator/content.md`  
 **Source SHA-256:** `2e87305c7dcd49eed1cf442a1e78be495f479d58d8d4ea48e474badcfe8b24cf`
@@ -67,6 +81,11 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **GIVEN** an implementation claims conformance with this capability
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
+
+#### Scenario: Scheduler state is per instance
+- **GIVEN** two runtime instances on two threads
+- **WHEN** each spawns fibers and parks on a syscall
+- **THEN** each instance's fibers are listed only in its own scheduler table and each completion wakes only the owning scheduler
 
 ### Requirement: Main fiber shutdown joins spawned children: Decision [D-EXEC-RT-0004]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
@@ -188,6 +207,93 @@ MUST NOT reveal a native descriptor.
 - **GIVEN** a TCP stream with a pending read
 - **WHEN** its owner invokes close twice
 - **THEN** the socket is released once, the read receives one terminal outcome, and the leak check reports no live handle
+
+### Requirement: Native reactor cancellation is bounded and keeps native storage alive
+A runtime cancel of a pending native socket operation (a deadline, fiber cancellation, or runtime close winner) SHALL return to its caller within a bounded time on every reactor backend. When the cancel returns, the request status SHALL be final: either the operation completed and its transfer is delivered, or the operation is reported as cancelled and its caller observes the cancellation or deadline result.
+
+A backend whose cancellation is a request to the kernel (IOCP) SHALL wait for the operation's completion for at most 250 milliseconds. When the completion does not arrive within that bound, the runtime SHALL report the operation as cancelled and SHALL keep the native operation storage (the OVERLAPPED structure, native buffers, and any accept socket) owned by the reactor until the kernel delivers its completion. The runtime SHALL NOT free or reuse that storage, and SHALL NOT write the caller's buffer, after the cancel returns. Until that completion arrives, a new operation in the same direction on that socket SHALL report `Busy`.
+
+If that late completion shows that a stream transfer happened (bytes read or written) or that a stream connect completed, the runtime SHALL fail every later operation on that socket with `ConnectionAborted`. A late completion that shows an abort, a failure, or end of stream SHALL leave the socket usable.
+
+Runtime shutdown SHALL close every native socket handle and then wait for outstanding completions for at most 2 seconds. Operations whose completions do not arrive within that bound SHALL be leaked with their reactor rather than freed.
+
+#### Scenario: Completed transfer wins over its deadline within the bound
+- **GIVEN** a TCP read on Windows whose data arrived in the kernel at the moment its read deadline expired
+- **WHEN** the deadline wins the one-winner wait and the runtime cancels the operation
+- **THEN** the completion is received within the bound and the read returns the bytes instead of `TimedOut`
+
+#### Scenario: Withheld completion does not block the caller
+- **GIVEN** a pending TCP read on Windows whose completion is not delivered after `CancelIoEx`
+- **WHEN** its read deadline expires
+- **THEN** the read returns `TimedOut` within the bound, a new read on that socket reports `Busy` until the completion arrives, and the operation storage is released only after it arrives
+
+#### Scenario: Late stream transfer fails the socket closed
+- **GIVEN** a TCP read on Windows that was reported as `TimedOut` after the bound expired
+- **WHEN** its late completion shows that bytes were received
+- **THEN** every later operation on that socket fails with `ConnectionAborted`
+
+#### Scenario: Shutdown drain is bounded
+- **GIVEN** a runtime with pending native socket operations
+- **WHEN** the network runtime shuts down
+- **THEN** every socket handle is closed and shutdown waits at most 2 seconds for the remaining completions
+
+### Requirement: Scheduler tables grow on demand
+The scheduler SHALL keep its fiber records, run queue, and pending spawn, cancel and wake lists in storage that grows on demand from the system allocator. The scheduler SHALL NOT impose a fixed maximum on the number of live fibers, queued fibers or pending operations. A fiber record SHALL keep its address for the life of the scheduler once allocated, so a public fiber handle (slot index in the low 32 bits, generation in the high 32 bits) and every traced slot inside the record stay valid across growth. Slot reuse SHALL keep the generation discipline: a released slot SHALL be reused only with an advanced generation, and a stale handle SHALL be rejected. The no-fiber sentinel SHALL lie outside the 32-bit slot range.
+
+The only failure of fiber allocation SHALL be the system allocator refusing more memory, reported to the spawner as the existing `-1` handle. A wake that cannot be recorded because the allocator refused SHALL trap as `out_of_memory`; the scheduler SHALL NOT drop a wake.
+
+The `BeskidSchedulerState` layout SHALL be a fixed header of pointers and counters without inline arrays; its generated constants SHALL name `fiber_table` and `fiber_stack_max`.
+
+#### Scenario: Ten thousand fibers
+- **GIVEN** a program that spawns fibers in fifty nested chains of 200, each parent joining its child
+- **WHEN** every chain completes
+- **THEN** 10,000 fibers have spawned and joined with their values and the heap verifies clean
+
+#### Scenario: Seventeenth live fiber
+- **GIVEN** sixteen fibers parked on a join
+- **WHEN** a seventeenth fiber is spawned
+- **THEN** the spawn returns a valid handle and the fiber runs
+
+### Requirement: Runtime instance lifecycle split
+The runtime SHALL provide `IsolateCreate(config) -> pointer` and `IsolateDestroy(runtime)` (exports `beskid_rt_v5_isolate_create`, `beskid_rt_v5_isolate_destroy`) that perform the per-instance part of today's `ProcessInit`: allocate the heap and callback registry, attach the calling thread, initialize the scheduler, register the heap regions in the region-to-owner map and acquire the process-wide worker pool; and release them in reverse. `IsolateCreate` SHALL inherit the process limits (`BESKID_HEAP_MAX`, stack limits) already applied by `ProcessInit` and SHALL NOT read the environment again. `ProcessInit` SHALL keep its export and behavior: it SHALL perform the process-wide steps once (argument storage, environment limits, worker pool creation, region map creation), then call `IsolateCreate` for the primary instance and launch the composition container. `ProcessShutdown` SHALL call `IsolateDestroy` for the primary instance and then release the process-wide state. From 0.6.3 a process MAY hold many instances: the runtime corpus SHALL call `IsolateCreate` on a thread it created with `ThreadCreate` for every isolate the corelib `Core.Parallel` spawns through `__isolate_spawn`, bounded by `BESKID_ISOLATES_MAX`, and `IsolateDestroy` when the isolate ends. No corelib or user surface SHALL reach `IsolateCreate` or `ThreadCreate` directly; the `Core.Parallel` isolate builtins (`__isolate_spawn` from 0.6.3) are the only entry points.
+
+#### Scenario: ProcessInit observable behavior unchanged
+- **GIVEN** the full corelib and projects test suites
+- **WHEN** they run against a runtime with the split lifecycle
+- **THEN** every test passes with the same outcomes as before the split
+
+#### Scenario: IsolateCreate on a second thread
+- **GIVEN** a runtime-corpus test that calls `IsolateCreate` from a thread created with `ThreadCreate` while the primary instance is active
+- **WHEN** the call returns
+- **THEN** it returns a non-null instance whose heap, scheduler and TLS state differ from the primary's, and `IsolateDestroy` on it leaves the primary instance running
+
+#### Scenario: Limits inherited
+- **GIVEN** `BESKID_HEAP_MAX` set before `ProcessInit`
+- **WHEN** a second instance is created in a runtime-corpus test
+- **THEN** its heap cap equals the primary's and no environment read occurs during `IsolateCreate`
+
+#### Scenario: Many instances through Scope.Spawn
+- **GIVEN** `BESKID_ISOLATES_MAX=4` and a scope that spawns four tasks that each wait for all four to have started
+- **WHEN** the scope runs
+- **THEN** four runtime instances are alive at once, each created by `IsolateCreate` on its own thread, and all four are destroyed before the scope returns
+
+#### Scenario: User code cannot create an instance
+- **GIVEN** a user project that calls `IsolateCreate` or `__isolate_spawn`
+- **WHEN** it is checked
+- **THEN** the compiler reports the name as unresolved (**E1101**)
+
+### Requirement: Process-wide worker pool shared by runtime instances
+The syscall worker pool SHALL be process-wide and reference counted. `worker_pool_init(count)` SHALL create the threads on the first call and SHALL succeed on later calls by sharing the existing pool and incrementing the instance count; it SHALL fail only when `count` is zero or above the pool maximum on the creating call. `worker_pool_shutdown()` SHALL decrement the count and SHALL stop and join the threads only when the count reaches zero. Requests SHALL carry the owner scheduler id and completions SHALL be posted to that owner's mailbox.
+
+#### Scenario: Second init shares the pool
+- **GIVEN** a process whose primary instance initialized the pool with four workers
+- **WHEN** a runtime-corpus test calls `WorkerPoolInit(4)` again
+- **THEN** the call returns 0, no new threads are created, and the pool keeps running after the test calls `WorkerPoolShutdown()` once
+
+#### Scenario: Last release stops the threads
+- **GIVEN** two holders of the pool
+- **WHEN** both call `WorkerPoolShutdown()`
+- **THEN** the worker threads exit and are joined after the second call and not before
 
 ## Informative Source Provenance
 
