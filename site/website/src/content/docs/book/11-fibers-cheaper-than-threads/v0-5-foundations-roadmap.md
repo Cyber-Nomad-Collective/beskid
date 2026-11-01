@@ -1,14 +1,14 @@
 ---
 title: "What shipped and what is planned"
-description: "Where Beskid concurrency stands in 0.6.0, which limits are gone, and what the planned isolate work is for."
+description: "Where Beskid concurrency stands in 0.6.7: the limits that are gone, and the isolates that run CPU work in parallel."
 tableOfContents: true
 ---
 
 :::caution[Status page, not an API reference]
-This page describes the state of the 0.6.0 release candidate, which is in release qualification. It is informative. The [Beskid Standard](/docs/standard/) defines behavior, and planned work below has no syntax or API until an accepted change says so.
+This page describes the state of the 0.6.7 release. It is informative. The [Beskid Standard](/docs/standard/) defines behavior.
 :::
 
-The 0.5 line built the foundations this chapter describes: a bindable `spawn`, typed `Fiber<T>` results, generic channels, owner-routed wakeups, deadlines, and `Core.IO`. Networking was built on top of them, through TLS, HTTP/2, WebSocket, QUIC, and HTTP/3 in 0.5.3. The roadmap that used to live on this page is history now. What follows is what changed for 0.6.0 and what comes next.
+The 0.5 line built the foundations this chapter describes: a bindable `spawn`, typed `Fiber<T>` results, generic channels, owner-routed wakeups, deadlines, and `Core.IO`. Networking was built on top of them, through TLS, HTTP/2, WebSocket, QUIC, and HTTP/3 in 0.5.3. The roadmap that used to live on this page is history now. What follows is what changed in the 0.6 line.
 
 ## What 0.6.0 changes
 
@@ -25,16 +25,34 @@ The runtime reads them when the process starts. A value it cannot parse or accep
 
 **No raw OS threads.** `Thread.Spawn` passed a null pointer where `pthread_create` expected somewhere to write, and nothing in Corelib called it. It was deleted along with `Thread.Join`. `Core.Threading.Thread.Yield` stays. Fibers are the concurrency model.
 
+## What 0.6.7 adds: isolates
+
+The isolate work was planned for 0.6.1 to 0.6.5. None of those versions was released on its own, and neither was 0.6.6, so all of it ships in 0.6.7.
+
+Fibers still interleave on one scheduler, but that scheduler belongs to an **isolate**, not to the process. An isolate is one runtime instance: its own heap, its own scheduler, its own thread, and exactly one mutator. `Concurrency.ProcessorCount()` returns 1 because it counts the mutators of the calling isolate. `Concurrency.HostProcessorCount()` returns the number of logical processors the operating system reports.
+
+A process runs many isolates. `Core.Parallel` is how you get them:
+
+| Surface | What it does |
+| --- | --- |
+| `Parallel.Scope` and `Scope.Spawn` | Fork-join: each task body runs on another isolate, and the scope joins every task before it returns |
+| `Port<T>` | A bounded queue between isolates, with back-pressure, close, and drain |
+| `ParallelSeq<T>` | Data-parallel `Map`, `Where`, `Reduce`, and `Collect` over chunks of a list or array, in order by default |
+
+The process runs at most `BESKID_ISOLATES_MAX` isolates at once; the default is the host processor count. A value crosses to another isolate only as a capture, a task result, or a port message, and only when its type is `Transferable`. Shared values cross by pointer, copyable values are copied, and moved values are handed over. [Move applies where a value crosses an isolate](/book/10-memory-without-billion-dollar-mistake/ownership-preview/) has the rules. A panic in a task ends that task with a failure for its scope; it does not end the process.
+
+One thing did not change: two mutators never share one heap. Parallelism comes from more heaps, not from more threads in one heap.
+
 ## What is planned
 
-In 0.6.0, fibers interleave on one scheduler. `Concurrency.ProcessorCount()` returns 1. That is fine for I/O-bound work, which is what fibers are for, and useless for spreading CPU work over cores.
-
-CPU parallelism is planned for the 0.6.1 to 0.6.5 releases, through **isolates**. The work is split into proposed OpenSpec changes, and none of them is accepted. That means no syntax, no API names, and no dates are promised here. When a change is accepted, the Standard will say what an isolate is; until then, treat any isolate example you find as a sketch.
+Nothing on this page is promised for a date. Planned language and runtime work starts as an OpenSpec change, and the Standard says what it means only after the change is accepted.
 
 ## Where to look
 
 - [Fibers and spawn](/docs/standard/capabilities/language-meta--evaluation--fibers-and-spawn/) for the language rules.
 - [Fiber scheduler and stacks](/docs/standard/capabilities/execution--runtime--fiber-scheduler-and-stacks/) for scheduler and stack behavior.
+- [Isolates and parallel](/docs/standard/capabilities/core-library--concurrency--isolates-and-parallel/) for the `Core.Parallel` API.
+- [Isolates and transit](/docs/standard/capabilities/execution--runtime--isolates-and-transit/) for isolate creation, transit copy, and `BESKID_ISOLATES_MAX`.
 - [Memory and GC runtime contract](/docs/standard/capabilities/execution--runtime--memory-and-gc-runtime-contract/) for the heap cap.
 
 For the difference between a page like this and enforceable behavior, see [Informative vs normative](/book/12-the-normative-bible/informative-vs-normative/).

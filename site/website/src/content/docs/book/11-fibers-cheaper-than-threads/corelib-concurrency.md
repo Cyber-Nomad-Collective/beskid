@@ -19,9 +19,13 @@ Expected surfaces (names per spec):
 
 Corelib lives in the **`corelib`** package identity (the `compiler/corelib` workspace), not a random Rust crate beside the compiler.
 
-## One core at a time, for now
+## Fibers share a core; isolates use the others
 
-In 0.6.0 fibers interleave on one scheduler; they do not run in parallel. `Concurrency.ProcessorCount()` returns 1, and `SetProcessorCount` does nothing. Use fibers for I/O-bound concurrency. CPU parallelism through isolates is planned for the 0.6.1 to 0.6.5 releases. Nothing about its syntax or API is settled yet, so do not design around a guess.
+Fibers run on the scheduler of the isolate that spawned them, and they never leave it. Inside one isolate they interleave; they do not run in parallel. `Concurrency.ProcessorCount()` counts the mutators of the calling isolate, which is always 1, so it is not the number of cores. `Concurrency.HostProcessorCount()` is the number of logical processors the operating system reports. `SetProcessorCount` does nothing.
+
+CPU parallelism comes from more isolates, not from more threads under one scheduler. `Parallel.Scope` in `Core.Parallel` runs each `Scope.Spawn` body on another isolate, which has its own heap, scheduler, and thread, and the scope joins every task before it returns. The process runs at most `BESKID_ISOLATES_MAX` isolates at once; the default is the host processor count. When the bound is reached, `Spawn` runs the body on the caller instead of waiting, so nested scopes cannot deadlock on the pool. A value crosses to another isolate only as a capture, a task result, or a `Port<T>` message, and only when its type is `Transferable`. [Move applies where a value crosses an isolate](/book/10-memory-without-billion-dollar-mistake/ownership-preview/) explains what that costs.
+
+Use fibers for waiting and isolates for computing. A fiber that spins on arithmetic still holds its isolate's only mutator, and every other fiber in that isolate waits for it.
 
 ## Split of responsibility
 
@@ -30,6 +34,8 @@ In 0.6.0 fibers interleave on one scheduler; they do not run in parallel. `Concu
 | [Language meta: Fibers and spawn](/docs/standard/capabilities/language-meta--evaluation--fibers-and-spawn/) | `spawn` syntax, diagnostics, capture rules |
 | [Execution: Fiber scheduler](/docs/standard/capabilities/execution--runtime--fiber-scheduler-and-stacks/) | Stacks, scheduler, shutdown join |
 | [Core library: Concurrency package](/docs/standard/capabilities/core-library--concurrency--concurrency-package/) | User-facing structs and methods |
+| [Core library: Isolates and parallel](/docs/standard/capabilities/core-library--concurrency--isolates-and-parallel/) | `Core.Parallel`: scopes, tasks, ports, parallel sequences |
+| [Execution: Isolates and transit](/docs/standard/capabilities/execution--runtime--isolates-and-transit/) | Isolate creation, transit copy, the isolate bound |
 
 ## Workspace crates (implementation)
 
