@@ -16,7 +16,7 @@ An attribute declaration SHALL list its targets from the closed target catalogue
 - **THEN** the compiler SHALL report **E1509** at `Widget` and SHALL list the catalogue names in the help
 
 #### Scenario: Declaration without targets accepts nothing
-- **GIVEN** `pub attribute Sealed { }` and `[Sealed] pub type Door { i64 width }`
+- **GIVEN** `pub attribute Sealed { }` and `[Sealed] pub type Door { i64 width; }`
 - **WHEN** the use is checked
 - **THEN** the compiler SHALL report **E1510** at `[Sealed]`
 
@@ -54,7 +54,7 @@ The grammar SHALL accept an `AttributeList` immediately before each of these pro
 - **THEN** every attribute attaches to its node and the formatter round-trips each one
 
 #### Scenario: Attribute on an explicit receiver
-- **GIVEN** `pub attribute Receiver(ReceiverParameter) { }` and `pub type Counter { i64 count, pub i64 Read([Receiver] this) { return this.count; } }`
+- **GIVEN** `pub attribute Receiver(ReceiverParameter) { }` and `pub type Counter { i64 count; pub i64 Read([Receiver] this) { return this.count; } }`
 - **WHEN** the type is parsed
 - **THEN** the method's `ReceiverParameter` node carries `Receiver` and `this` resolves to the receiver as it does for a method without an explicit receiver
 
@@ -62,17 +62,17 @@ The grammar SHALL accept an `AttributeList` immediately before each of these pro
 Every attribute use SHALL be checked against the target list of the attribute's declaration, and a use on a site whose target name is not listed SHALL be reported as **E1510** at the attribute, naming the attribute, the site's target name and the allowed targets. A use whose name resolves to no attribute declaration and to no compiler-recognized attribute SHALL be reported as **E1510** with the note that no declaration exists. The check SHALL run in the query layer as a legality fact of the unit (the same gate as **E1233**), once per use, and the diagnostic SHALL be reported in `beskid check`, `beskid build` and the LSP.
 
 #### Scenario: Field attribute on a type
-- **GIVEN** `pub attribute FluentInner(Field) { }` and `[FluentInner] pub type Wrapper { i64 inner }`
+- **GIVEN** `pub attribute FluentInner(Field) { }` and `[FluentInner] pub type Wrapper { i64 inner; }`
 - **WHEN** the legality gate judges the unit
 - **THEN** the compiler SHALL report **E1510** at `[FluentInner]`, naming the site `TypeDefinition` and the allowed target `Field`
 
 #### Scenario: Correct site is silent
-- **GIVEN** the same declaration and `pub type Wrapper { [FluentInner] i64 inner }`
+- **GIVEN** the same declaration and `pub type Wrapper { [FluentInner] i64 inner; }`
 - **WHEN** the legality gate judges the unit
 - **THEN** no diagnostic SHALL be reported for the attribute
 
 #### Scenario: Undeclared attribute
-- **GIVEN** `[Frozen] pub type Ice { i64 temperature }` with no declaration of `Frozen` in scope
+- **GIVEN** `[Frozen] pub type Ice { i64 temperature; }` with no declaration of `Frozen` in scope
 - **WHEN** the legality gate judges the unit
 - **THEN** the compiler SHALL report **E1510** at `[Frozen]` noting that no declaration exists
 
@@ -85,11 +85,11 @@ Each attribute the compiler recognizes by name SHALL have a corelib declaration 
 - **THEN** the compiler SHALL report **E1510** at the attribute, naming the allowed target `ContractDefinition`
 
 #### Scenario: Immutable on a field is rejected
-- **GIVEN** `pub type Point { [Immutable] i64 x, i64 y }`
+- **GIVEN** `pub type Point { [Immutable] i64 x; i64 y; }`
 - **WHEN** the legality gate judges the unit
 - **THEN** the compiler SHALL report **E1510** naming the allowed target `TypeDefinition`
 
 #### Scenario: Shadowing declaration is not recognized
-- **GIVEN** a user module declaring `pub attribute Immutable(Field) { }` and `pub type Point { [Immutable] i64 x }` under that module's `use`
+- **GIVEN** a user module declaring `pub attribute Immutable(Field) { }` and `pub type Point { [Immutable] i64 x; }` under that module's `use`
 - **WHEN** the unit is checked
 - **THEN** no **E1510** SHALL be reported and the type SHALL NOT be classified Shared by the user attribute

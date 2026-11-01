@@ -320,10 +320,6 @@ Full workspace scan is O(files); excluded directories are skipped but large tree
 ## Stale hover after mod emit
 
 Hard-invalidate paths apply when generated sources touch disk. If emit stays in-memory only, invalidation follows document generation counters—clear and rebuild generation-bound syntax facts when changing that contract.
-
-## `BESKID_WORKSPACE_MEMBER_FOR_META_DEFAULT`
-
-Sets default workspace member for meta scheduling when the environment variable is present; must align with extension focus for consistent mod attachment.
 ``````
 
 </details>

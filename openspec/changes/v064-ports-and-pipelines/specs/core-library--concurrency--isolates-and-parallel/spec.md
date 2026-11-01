@@ -109,7 +109,7 @@ The `Scope` method `pub Isolate Isolate([Captures(Bound: Transferable)] () => un
 A `Shared` value sent through a port SHALL arrive as the same object address in the receiver; no bytes of the value SHALL be copied. The sender SHALL record a count for the object in the owner's local table (or inflate its own foreign count and post an INC when forwarding), and the receiver SHALL record a foreign table entry, as specified in the memory and GC runtime contract. A `Shared` value SHALL remain valid in the receiver until the receiver's collector finds it unreachable, regardless of what the owner does with its own references, and regardless of whether the owner isolate has exited.
 
 #### Scenario: Same address on both sides
-- **GIVEN** `[Immutable] pub type Blob { ReadOnlyArray<u8> bytes }` with a 64 MiB array, sent by the parent through a port to a task that returns `blob.bytes.Count()`
+- **GIVEN** `[Immutable] pub type Blob { ReadOnlyArray<u8> bytes; }` with a 64 MiB array, sent by the parent through a port to a task that returns `blob.bytes.Count()`
 - **WHEN** the task runs
 - **THEN** the task observed the parent's object address, the send completed in constant time independent of 64 MiB, and the task returns `67108864`
 

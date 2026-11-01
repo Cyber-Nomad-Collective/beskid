@@ -13,7 +13,7 @@ From 0.6.4 a parameter declared `move` MAY also have as its type a type paramete
 - **THEN** the compiler emits **E1214**
 
 #### Scenario: Owning parameter and receiver
-- **GIVEN** `[Isolated] pub type Archive { List<u8[]> blocks, pub Archive Add(move this, move u8[] block) { this.blocks = this.blocks.Push(move block); return this; } }`
+- **GIVEN** `[Isolated] pub type Archive { List<u8[]> blocks; pub Archive Add(move this, move u8[] block) { this.blocks = this.blocks.Push(move block); return this; } }`
 - **WHEN** the type is parsed and checked
 - **THEN** both `move` modifiers are accepted and no diagnostic is reported
 

@@ -4,9 +4,7 @@
 ## Purpose
 
 Project manifest schema including Mod project type, resolution inputs, and mod orchestration wiring.
-
 ## Requirements
-
 ### Requirement: Hub authority: Decision [D-TOOL-MAN-0001]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
 
@@ -34,6 +32,59 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **GIVEN** an implementation claims conformance with this capability
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
+
+### Requirement: Preserving dependency intent mutation
+Add SHALL accept package[@version] and optional --project or --path, reject incompatible selectors, unsupported range expressions and dependency Git sources, and record exact selected registry intent or selected path intent. Identical repeated add and absent repeated remove SHALL be no-ops; conflicting source/version add SHALL fail with guidance to use explicit update --version or remove. Edits SHALL preserve comments, attributes, line endings, Unicode and unrelated BSOL bytes outside edited dependency spans, and SHALL validate edited text before resolution.
+
+#### Scenario: DEP06-01 Text preservation
+- **GIVEN** CRLF/Unicode/comments and unrelated blocks around a manifest dependency section
+- **WHEN** add/remove changes one dependency
+- **THEN** all untouched byte spans remain identical and edited BSOL validates
+
+#### Scenario: DEP06-01 Repetition and conflict
+- **GIVEN** a declared exact registry dependency
+- **WHEN** same add is repeated then a conflicting source add is attempted
+- **THEN** repeat makes no writes and conflict fails without overwriting intent
+
+#### Scenario: DEP06-01 Unsupported sources
+- **GIVEN** a Git or range selector
+- **WHEN** add parses it
+- **THEN** the CLI returns usage guidance without claiming materialization support
+
+### Requirement: Unambiguous mutation targeting
+Mutation SHALL select a unique project inferred from input context or explicit --project; multiple candidates SHALL fail with sorted candidate manifests and exact --project guidance without interactive selection. An explicit member SHALL modify only that member. Relative path dependency intent SHALL resolve from the selected manifest parent, including paths with spaces; malformed or duplicate dependency declarations SHALL fail before edits.
+
+#### Scenario: DEP06-01 Workspace ambiguity
+- **GIVEN** a workspace with multiple equally eligible projects
+- **WHEN** add runs without --project
+- **THEN** it fails listing candidates and leaves all member manifests/locks unchanged
+
+#### Scenario: DEP06-01 Explicit member path
+- **GIVEN** two members and a relative path containing spaces
+- **WHEN** add --project selects one member with --path
+- **THEN** only selected member changes and path base is its manifest parent
+
+### Requirement: Rust Glue owner declaration in the project manifest
+A project manifest SHALL declare each Rust Glue owner library with one top-level `glue "<library>" { backend = rust path = "<directory>" }` block. The label SHALL be the canonical owner native library identity. It SHALL contain 1 to 256 ASCII letters, digits, `_` or `-`, and SHALL be unique among glue blocks. `backend` SHALL be required. The only accepted value in 0.6 SHALL be `rust`, and `dotnet` SHALL be rejected as unavailable. `path` SHALL be required. It SHALL name a project-relative directory confined to the project root after canonicalization.
+
+That directory SHALL contain `implementation.rs` and only regular `.rs` files, within the producer bounds: at most 1024 files, 8 MiB per file and 32 MiB in total. `Cargo.toml`, `Cargo.lock`, `build.rs`, `owner_bridge.rs`, symbolic links and every other file SHALL be rejected, not ignored. The compiler generates the owner Cargo package and lock, and 0.6 SHALL NOT admit third-party crate dependencies.
+
+A glue label SHALL NOT also appear in `link.libraries`. Unknown keys SHALL fail with a stable manifest diagnostic. Tool paths SHALL NOT be manifest keys. A manifest without glue blocks SHALL be unaffected.
+
+#### Scenario: Valid owner declaration lowers to a typed section
+- **GIVEN** `glue "glue_manual" { backend = rust path = "rust" }` and a `rust/implementation.rs` file
+- **WHEN** the manifest is parsed and validated
+- **THEN** the project model exposes one Rust Glue owner with library `glue_manual` and the canonical confined source directory
+
+#### Scenario: Ambiguous or unsupported declarations fail closed
+- **GIVEN** a duplicate glue label, an invalid label character, `backend = dotnet`, an unknown key, an escaping `path`, or a label also listed in `link.libraries`
+- **WHEN** the manifest is validated
+- **THEN** validation fails before resolution, names the block, and produces no Glue build input
+
+#### Scenario: Owner directory content is closed
+- **GIVEN** an owner directory that lacks `implementation.rs`, or contains `Cargo.toml`, `build.rs`, a symbolic link, or a non-`.rs` file
+- **WHEN** the Glue owner sources are collected
+- **THEN** collection fails and names the offending relative path, and no partial source inventory reaches the producer
 
 ## Informative Source Provenance
 

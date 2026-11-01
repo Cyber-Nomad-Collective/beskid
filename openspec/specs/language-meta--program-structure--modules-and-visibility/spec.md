@@ -4,9 +4,7 @@
 ## Purpose
 
 This specification defines the file layout and the `public` and `internal` boundaries. It defines how packages compose. The driver and package manager use the same module graph as the typechecker.
-
 ## Requirements
-
 ### Requirement: Module forms and identity
 Path `mod` (`mod a.b;`) MUST declare the file’s module path and MUST be the first top-level item when used (**E1505**, **E1506**, **E1507**). Inline `mod name { items }` MUST nest a submodule in the current file. Without a file-scoped `mod`, module identity MUST derive from the file path relative to the project source root. Explicit `mod path;` MUST take precedence over path-derived module identity when present.
 
@@ -38,6 +36,14 @@ Duplicate module declarations in one file MUST error. Nested `mod` declarations 
 - **GIVEN** a file that begins with file-scoped `mod path;` and later contains a nested `mod` declaration
 - **WHEN** module collection runs
 - **THEN** the compiler emits **E1507**
+
+### Requirement: Unused private items
+The compiler SHALL report an unused private item with the warning **W2101**. The code W1504 SHALL NOT be used.
+
+#### Scenario: Unused private item
+- **GIVEN** a private function that no item uses
+- **WHEN** the module is analyzed
+- **THEN** the compiler SHALL report **W2101**
 
 ## Informative Source Provenance
 

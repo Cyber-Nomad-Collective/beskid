@@ -1,10 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: Array literal elements
-Each element of an array literal `[e1, e2, ...]` SHALL be any expression of
-the element type, including a call, a string concatenation, a field read, a
-parameter, and an enum value. Elements of a reference type SHALL be traced by
-the garbage collector as references in the array.
+Each element of an array literal `[e1, e2, ...]` SHALL be any expression of the element type, including a call, a string concatenation, a field read, a parameter, and an enum value. Elements of a reference type SHALL be traced by the garbage collector as references in the array.
 
 **Stable ID:** `BSP-REQ-ARRAY-LITERAL-ELEMENTS`
 

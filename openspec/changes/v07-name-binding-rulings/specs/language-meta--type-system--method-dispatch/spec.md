@@ -19,7 +19,7 @@ Instance calls MUST use postfix `.Identifier` after a primary expression that de
 - **THEN** the compiler emits **E1107**
 
 #### Scenario: Unknown literal field
-- **GIVEN** `pub type Point { pub i64 x, pub i64 y }`
+- **GIVEN** `pub type Point { pub i64 x; pub i64 y; }`
 - **WHEN** a unit builds `Point { x: 1, z: 2 }`
 - **THEN** the compiler emits **E1211** for `z`
 
@@ -37,7 +37,7 @@ A method name SHALL identify one member of the receiver type's member set; Beski
 The receiver of a method SHALL be named `this`. `self` SHALL NOT name the receiver; it SHALL be an ordinary identifier that binds only where it is declared, for example as a parameter. Inside an inline method of a type body, a bare field name SHALL mean `this.field`, and a bare call `Name(...)` or `this.Name(...)` SHALL bind the sibling method `Name` of the type. A local or parameter of the same name SHALL take precedence over the field or sibling method. Inside an `impl` or `extend type` method, fields and methods SHALL be reached only through `this`.
 
 #### Scenario: Undeclared self
-- **GIVEN** `type Counter { i64 n, i64 Get() { return self.n; } }`
+- **GIVEN** `type Counter { i64 n; i64 Get() { return self.n; } }`
 - **WHEN** the method is resolved
 - **THEN** the compiler emits **E1101** for `self`
 

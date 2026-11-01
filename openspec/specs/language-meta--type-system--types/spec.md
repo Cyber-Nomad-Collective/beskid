@@ -4,16 +4,29 @@
 ## Purpose
 
 This specification defines the type grammar. The grammar covers nominal types, generics, and `Option T`. The grammar is the backbone of static checking. All analysis phases share these definitions.
-
 ## Requirements
-
 ### Requirement: Type expression grammar
-A type expression (`BeskidType`) MUST be exactly one of: a primitive (`bool`, `i32`, `i64`, `u8`, `f64`, `char`, `string`, `unit`); a named `Path` with optional `GenericArguments`; an array `T[]`; or a function type `T(params)` / `(params) => R`. Primitives MUST map to `HirPrimitiveType` variants in the reference compiler. There is no `null` literal and no nullable reference type (`?T`, `T?`, or `optional` keyword) in v0.1. Optional presence MUST use `Option<T>` or an explicit enum with a dedicated absent variant.
+A type expression SHALL be a primitive (`bool`, `i8`, `i16`, `i32`, `i64`, `u8`, `u16`, `u32`, `u64`, `f32`, `f64`, `char`, `string`, `unit`, `never`, `word`, `pointer`), named Path with optional GenericArguments, array `T[]`, or function type `T(params)` / `(params) => R`. Primitive identity SHALL be consistent through parser, generated SDK syntax, semantic/query typing, typed AST and canonical ISLE lowering; retired HIR representations SHALL NOT be restored. Signed/unsigned fixed integers SHALL have their declared bit width, exact representable range and checked rejection of out-of-range literals/conversions; f32/f64 SHALL use IEEE 754 binary32/binary64, round-to-nearest ties-to-even for narrowing and preserve signed zero. Char SHALL denote a Unicode scalar, excluding surrogates and values above 0x10ffff. Word SHALL be unsigned selected-target pointer width; pointer SHALL remain an explicitly unsafe address construct, not a serializable value. Unit SHALL denote no value, never nonreturning control flow. Nullable syntax `?T`, `T?` and `optional T` SHALL remain rejected; absence SHALL use Option<T> or an explicit enum.
+
+#### Scenario: Full primitives are real language types
+- **GIVEN** a program with each fixed-width integer and f32/f64 plus generic instantiations
+- **WHEN** parse/typecheck/query and canonical AOT lowering run
+- **THEN** each type retains the declared width and value semantics through actual native execution rather than wrapper-only aliases
+
+#### Scenario: Ranges and scalar validity reject
+- **GIVEN** an integer outside its exact width or a surrogate char literal
+- **WHEN** the compiler checks the program
+- **THEN** it rejects the value with a source diagnostic before code generation
+
+#### Scenario: Float narrowing and native width
+- **GIVEN** an exactly halfway f64-to-f32 narrowing, negative zero and a word conversion on a selected target
+- **WHEN** the operations execute
+- **THEN** narrowing uses ties-to-even, negative zero is preserved and native-width overflow is rejected
 
 #### Scenario: Nullable reference type rejected
-- **GIVEN** a type annotation written as a nullable form such as `T?` or `optional T`
-- **WHEN** the type grammar is parsed or checked under v0.1
-- **THEN** the compiler rejects the nullable form
+- **GIVEN** a nullable type annotation such as T?
+- **WHEN** the grammar is parsed
+- **THEN** the nullable form is rejected
 
 ### Requirement: Nominal type declarations and members
 `type Name<G…> : Contracts… { members }` MUST introduce a nominal record-like type. Members MAY be value fields, `event` fields, `inject` fields, or methods with implicit receiver access to the type's fields. Inline methods in the owning type body MAY access all fields (public and private) of that type. Conformance lists MUST declare contract implementations checked by the contracts capability. `extend type` MUST add members externally per the extend-type capability.
@@ -24,12 +37,115 @@ A type expression (`BeskidType`) MUST be exactly one of: a primitive (`bool`, `i
 - **THEN** the nominal type exposes both the field and the method to subsequent resolution
 
 ### Requirement: Static type rules and diagnostics
-Duplicate type or member names in the same scope MUST error (**E1001**, **E1006**). Unknown types in definitions MUST error (**E1005**, **E1201**). Generic arity MUST match at use sites (**E1203**, **E1204**). `unit` is the statement-result type; `never` is the bottom type for non-returning calls. Array values MUST use the `BeskidArray` layout documented in execution ABI material. L2 conforming implementations MUST reject programs with unknown types, arity mismatches, and invalid field access per the reference query gate tests in `beskid_queries`; the legacy `beskid_analysis` `TypeChecker` is retired and is not a conformance reference.
+Duplicate type, enum or contract names in the same scope MUST error with **E1102**, reported once at the later declaration (name resolution, "Duplicate names per scope"); **E1001** and **E1006** SHALL NOT be reported for a duplicate name. Unknown types in definitions MUST error (**E1005**, **E1201**). Generic arity MUST match at use sites (**E1203**, **E1204**). `unit` is the statement-result type; `never` is the bottom type for non-returning calls. Array values MUST use the `BeskidArray` layout documented in execution ABI material. L2 conforming implementations MUST reject programs with unknown types, arity mismatches, and invalid field access per the reference query gate tests in `beskid_queries`; the legacy `beskid_analysis` `TypeChecker` is retired and is not a conformance reference.
 
 #### Scenario: Generic arity mismatch
 - **GIVEN** a generic type used with the wrong number of type arguments
 - **WHEN** type checking runs
 - **THEN** the compiler emits **E1203** or **E1204**
+
+#### Scenario: Duplicate type name
+- **GIVEN** `type Point { i64 x; }` and `enum Point { Dot }` in one scope
+- **WHEN** the file is checked
+- **THEN** the compiler emits **E1102** once for `Point` and does not emit **E1001**
+
+### Requirement: Aggregate unit fields retain semantics without physical storage
+The compiler SHALL retain unit-valued aggregate fields in the logical field ordering while assigning them no payload bytes or GC pointer-map entry. It SHALL evaluate their initializers and assignment receivers and right-hand sides for effects exactly once. Field accesses following a unit field SHALL retain their declared logical indices and refer to their own physical offsets. A no-storage slot SHALL accept only an exact semantic unit value, including compiler-issued generic specializations.
+
+#### Scenario: Concrete generic unit box
+- **WHEN** the canonical runtime constructs `DynamicBoxV1<unit>` through its registered generic helper
+- **THEN** its allocation metadata SHALL describe a header-only managed object with no payload pointer-map entries
+- **AND** its logical value field SHALL remain unit typed
+
+#### Scenario: Unit initializer effects and later field access
+- **WHEN** an aggregate contains a unit-valued initializer with side effects followed by a scalar field
+- **THEN** lowering SHALL execute that initializer once without a payload store
+- **AND** accessing the later field SHALL use its original logical index and correct physical offset
+
+#### Scenario: Forged no-storage slot
+- **WHEN** a no-storage aggregate slot is supplied a nonunit initializer
+- **THEN** lowering SHALL reject that initializer instead of discarding its value
+
+### Requirement: Private canonical runtime helpers require verified corpus scope
+The compiler SHALL resolve an unqualified private helper across canonical runtime units only when both units retain current runtime source authority and their import edge was issued as the private canonical corpus scope. Ordinary imports and support units SHALL retain public export visibility; spelling the private scope binding SHALL NOT grant runtime authority. Distinct matching declarations SHALL remain ambiguous.
+
+#### Scenario: Canonical process string-view helpers
+- **WHEN** a verified canonical process wrapper calls private StringViewData or StringViewLength from another verified runtime unit
+- **THEN** the call SHALL resolve to that exact registered helper declaration
+
+#### Scenario: Ordinary private import remains denied
+- **WHEN** an ordinary unit imports a module containing a private helper
+- **THEN** the private helper SHALL remain inaccessible regardless of alias spelling
+
+### Requirement: Default parameter values
+A default value SHALL be a compile-time constant: a boolean, integer, float, character or string literal (a string without interpolation), a negated integer or float literal, or the name of a constant (`const`) declared at the top level of the same file. Any other expression SHALL be **E1252**. A default value SHALL have the type of the parameter under the literal typing rules. An integer literal without a suffix SHALL fit any integer type whose range holds it and SHALL convert to `f32` and `f64`. A float literal without a suffix SHALL fit `f32` and `f64` when it is finite. A suffix SHALL fix the type. A `bool`, `char` or `string` literal SHALL fit only its own type. Any other default SHALL be **E1253**. Optional parameters SHALL follow every required parameter; a required parameter after an optional parameter SHALL be **E1251**. Defaults MAY be declared on parameters of top-level functions, functions in inline modules, methods (of a `type`, an `impl` and an `extend type`), contract methods, hosts and scopes. A default value or a caller-information attribute on a hook parameter or on a `bulk` parameter SHALL be **E1254**, because no call passes the arguments of a hook and a default cannot apply to a `bulk` parameter. A default value in an event parameter list SHALL be a parse error. A call MAY omit any number of trailing optional arguments. The compiler SHALL pass the default value of each omitted parameter at the call site. An argument that the call passes SHALL NOT be replaced. A call with fewer arguments than the required parameters, or more than all parameters, SHALL be **E1204** with the text "expected R–T arguments, got N", or "expected T arguments, got N" when the callee has no optional parameters.
+
+#### Scenario: Omitted trailing argument
+- **GIVEN** `unit Log(string text, i64 level = 1)` and the call `Log("a")`
+- **WHEN** the call is checked and lowered
+- **THEN** the call passes `1` for `level`
+
+#### Scenario: Required after optional
+- **GIVEN** `unit Log(i64 level = 1, string text)`
+- **WHEN** the function is checked
+- **THEN** the compiler SHALL report **E1251** at `text`
+
+#### Scenario: Not a constant
+- **GIVEN** `unit Log(i64 level = Compute())`
+- **WHEN** the function is checked
+- **THEN** the compiler SHALL report **E1252**
+
+#### Scenario: Arity wording
+- **GIVEN** `unit Log(string text, i64 level = 1, bool loud = false)` and the call `Log()`
+- **WHEN** the call is checked
+- **THEN** the compiler SHALL report **E1204** with "expected 1–3 arguments, got 0"
+
+### Requirement: Caller-information parameters
+A parameter marked `[CallerFilePath]` (type `string`), `[CallerLineNumber]` or `[CallerColumnNumber]` (type `i64`) SHALL be an optional parameter. When a call omits it, the compiler SHALL pass the file of the call, or the 1-based line or column where the callee expression of the call starts, instead of a default value. A caller-information parameter without a default value SHALL be **E1255**. A caller-information parameter of another type SHALL be **E1256**.
+
+#### Scenario: Line number
+- **GIVEN** `unit Trace([CallerLineNumber] i64 line = 0)` and the call `Trace()` on line 12
+- **WHEN** the call is lowered
+- **THEN** the call passes `12`
+
+### Requirement: Field declarations end with a semicolon
+Each field declaration in a `type` body SHALL end with `;`. This SHALL apply to value fields (`i32 x;`), `inject` fields (`inject Configuration configuration;`) and `event` fields (`event Changed();`). The parser SHALL report **E0115** at the comma when a comma follows a field declaration. The help SHALL say to end the field with `;`, and the diagnostic SHALL carry a fix that replaces `,` with `;`. Enum variants, struct literal fields, arguments and array literals SHALL keep comma separation.
+
+#### Scenario: Fields with semicolons
+- **GIVEN** `type Point { i32 x; i32 y; }`
+- **WHEN** the type is parsed
+- **THEN** the type has the fields `x` and `y` and no diagnostic is reported
+
+#### Scenario: Comma between fields
+- **GIVEN** `type Point { i32 x, i32 y }`
+- **WHEN** the type is parsed
+- **THEN** the parser SHALL report **E0115** at the comma with a fix that replaces `,` with `;`
+
+#### Scenario: Enum variants keep commas
+- **GIVEN** `enum Color { Red, Green, Blue }`
+- **WHEN** the enum is parsed
+- **THEN** no diagnostic is reported
+
+### Requirement: Result and Option mismatch help
+When an expression of type `Result<T, E>` or `Option<T>` is used where `T` is expected, the mismatch diagnostic SHALL print the short type names and SHALL give the help "add `?` to propagate the error, or `match` on the result". The help SHALL NOT suggest a cast. A cast SHALL be suggested only between numeric primitive types.
+
+#### Scenario: Result where a value is expected
+- **GIVEN** `i64 n = Parse(text);` where `Parse` returns `Result<i64, ParseError>`
+- **WHEN** the code is checked
+- **THEN** the mismatch help says to add `?` or to `match`, and does not suggest a cast
+
+### Requirement: Generic arity in type positions
+When a type position (a parameter, a return type, a field, a `let` declaration, a lambda parameter or an explicit type argument) names a generic type with the wrong number of type arguments, the compiler SHALL NOT report the name as unknown (**E1201**). A generic type written without type arguments SHALL be **E1203** with the message "missing type arguments for generic type". A generic type written with a different number of type arguments than it declares SHALL be **E1204** with the message "generic argument mismatch: expected <declared>, got <written>". A name that no declaration resolves at any arity SHALL stay **E1201**.
+
+#### Scenario: Missing type arguments
+- **GIVEN** `pub type Pair<A, B> { A first; B second; }` and `unit Demo(Pair pair) { return; }`
+- **WHEN** the code is checked
+- **THEN** the compiler SHALL report **E1203** "missing type arguments for generic type" at the parameter and no **E1201**
+
+#### Scenario: Wrong number of type arguments
+- **GIVEN** the same `Pair` and `unit Demo(Pair<i64> pair) { return; }`
+- **WHEN** the code is checked
+- **THEN** the compiler SHALL report **E1204** "generic argument mismatch: expected 2, got 1" and no **E1201**
 
 ## Informative Source Provenance
 
@@ -78,7 +194,7 @@ Primitives **must** map to `HirPrimitiveType` variants in the reference compiler
 
 ### Static rules
 
-- Duplicate type or member names in the same scope **must** error (**E1001**, **E1006**).
+- Duplicate type, enum or contract names in the same scope **must** error once, with **E1102** (name resolution, "Duplicate names per scope").
 - Unknown types in definitions **must** error (**E1005**, **E1201**).
 - Generic arity **must** match at use sites (**E1203**, **E1204**).
 - `unit` is the statement-result type; `never` is the bottom type for non-returning calls.
@@ -156,7 +272,7 @@ Reserved for type system diagnostics in `diagnostic_kinds.rs`:
 
 ## Edge cases
 
-- **Duplicate type names** — Same-scope `type Foo` and `enum Foo` collide with **E1006**.
+- **Duplicate type names** — Same-scope `type Foo` and `enum Foo` collide; the compiler reports **E1102** once, at the later declaration.
 - **Generic shadowing** — A generic parameter `T` on a type shadows an outer type named `T` within that type's scope only.
 - **Self-referential types** — Direct recursive type definitions (for example `type Node { Node next; }`) are allowed; the compiler handles them through HIR lowering.
 - **Empty structs** — `type Empty { }` is valid; it has size determined by the codegen backend.
@@ -469,7 +585,7 @@ Type aliases are not in v0.1. Use `extend type` to add behavior, or declare a wr
 | **E1204** | Wrong number of generic arguments |
 | **E1213** | Accessing a member that does not exist on the receiver type |
 | **E1005** | Field type refers to an undefined name |
-| **E1006** | Two types with the same name in one scope |
+| **E1102** | Two types with the same name in one scope |
 ``````
 
 </details>
@@ -510,7 +626,7 @@ Orchestration lives in [`typed_hir_from_lowered`](compiler/crates/beskid_analysi
 
 1. **Parse program** — `Program = ItemList` from `beskid.pest`; each `TypeDefinition` and `EnumDefinition` becomes an AST node.
 2. **Collect definitions** — `analysis/rules/staged/definitions.rs` walks items and builds a name-to-definition map.
-3. **Check duplicates** — `DuplicateDefinitionName` (**E1001**) and `DuplicateItemName` (**E1006**) fire when names collide in the same scope.
+3. **Check duplicates** — name resolution reports a type, enum or contract name that is declared two times in one scope once, as **E1102**. **E1001** and **E1006** are retired and are not emitted.
 4. **Validate conformance targets** — `ResolveInvalidConformanceTarget` (**E1607**) checks that `: Contract` paths resolve to actual contract definitions.
 
 ## `lower.type_check` algorithm (normative)
@@ -599,7 +715,7 @@ Re-run surface and check passes when `TypeDefinition`, `EnumDefinition`, field s
 | Type declaration with fields | AST round-trip preserves `TypeDefinition` structure |
 | Generic arity mismatch | **E1204** emitted at use site |
 | Unknown type in field | **E1005** emitted during definition checking |
-| Duplicate type name | **E1001** or **E1006** emitted |
+| Duplicate type name | **E1102** emitted once |
 | Array type parsing | `T[]` resolves to array type node |
 | `mut T` parameter | Accepted in signatures; reassignment allowed in callee |
 | Conformance target resolution | **E1607** for invalid contract paths |

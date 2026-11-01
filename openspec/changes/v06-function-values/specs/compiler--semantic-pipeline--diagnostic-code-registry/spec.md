@@ -56,6 +56,6 @@ the gate has passed. E2103–E2199 remain reserved.
 - **AND** the compiler SHALL NOT report an internal error for the lambda
 
 #### Scenario: Interpolation of a nominal value
-- **GIVEN** `type Point { i64 x }` and `string Show(Point p) { return "at ${p}"; }`
+- **GIVEN** `type Point { i64 x; }` and `string Show(Point p) { return "at ${p}"; }`
 - **WHEN** `beskid check` judges `Show`
 - **THEN** the compiler SHALL report **E1209** at the `p` operand, naming `Point`

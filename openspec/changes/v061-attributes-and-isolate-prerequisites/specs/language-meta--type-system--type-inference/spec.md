@@ -17,7 +17,7 @@ Inference SHALL NOT use the expected type of the call itself and SHALL NOT bind 
 - **THEN** `T` is bound to `i64` and no diagnostic is reported
 
 #### Scenario: Lambda parameter from the receiver, result from the body
-- **GIVEN** `pub type Seq<T> { T[] items, pub Seq<U> Map<U>((T) => U f) { ... } }` and `Seq<string> Show(Seq<i64> numbers) { return numbers.Map((x) => "${x}"); }`
+- **GIVEN** `pub type Seq<T> { T[] items; pub Seq<U> Map<U>((T) => U f) { ... } }` and `Seq<string> Show(Seq<i64> numbers) { return numbers.Map((x) => "${x}"); }`
 - **WHEN** the call is checked
 - **THEN** `x` has type `i64`, `U` is bound to `string`, and no diagnostic is reported
 

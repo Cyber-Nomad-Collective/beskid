@@ -85,6 +85,73 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - The release source inventory also skips a `Project.lock` written directly
   in a `tests` directory.
 
+- Change `v067-request-wait-budget`: the 500 ms limit of rename, prepare
+  rename and code actions includes each wait for the server state (past it,
+  `ContentModified`); after the facts, code actions wait at most 500 ms for
+  their computation, computed cheapest first, and answer with the actions
+  computed by then (new requirement "Code actions answer within a computation
+  budget" in `tooling--lsp--intellisense-capabilities-and-behavior`).
+- Change `v067-analysis-catch-up`: the analysis and diagnostics publication of
+  an open document judge that document's unit alone (the workspace index and
+  `beskid check` judge every own unit); a newer text or closing the document
+  stops the running analysis of an older text at its next database query; the
+  completion repair changes a member access only when the member is being
+  typed (new requirements in `tooling--lsp--diagnostics-and-workspace-analysis`
+  and `tooling--lsp--intellisense-capabilities-and-behavior`).
+- Change `v067-array-growth-aliasing`: shrinking one array handle
+  (`Array.RemoveLast`) never changes another handle either (requirement renamed
+  "Array length changes never reach another handle", shrink scenarios, owner-
+  aware `RemoveLast` in the typed-array-growth requirement); a field lent beside
+  an array of holders (`Holder[]`) is marked, which closes the former residual
+  boundary. W1240 ("Discarded array growth", `v067-semantic-diagnostics`) also
+  covers a discarded `Array.RemoveLast` on an array that is not an owner.
+- Change `v067-array-growth-aliasing`: growing one array handle never changes
+  what another handle to the same array sees (new memory-model requirement
+  "Array growth never reaches another handle"); the typed growth operation
+  names the sharing mark in the hidden element-descriptor word and the growth
+  target of a copy (twice the length).
+
+- OpenSpec change `v067-qualified-test-selection`: a test is identified by its
+  unit-relative qualified name (`Topic::Inner` for `test Inner` in `mod Topic`);
+  discovery, the `beskid test` report and the native test selection use that one
+  identity, a missing or ambiguous selection fails the build, and same-named tests in
+  different inline modules are distinct. `Network.Dns.Resolve` maps every resolver
+  answer that gives a name no usable address (`EAI_NONAME`, `EAI_NODATA`,
+  `EAI_ADDRFAMILY`, Windows `WSANO_DATA`) to `HostNotFound`.
+- OpenSpec change `v067-request-wait-budget`: references, signature help and inlay hints
+  wait at most 100 ms for the facts of the newest text, then answer from the carried
+  facts (inlay hints with one `workspace/inlayHint/refresh`); rename, prepare rename and
+  code actions wait at most 500 ms and never use facts of an older text: they fail with
+  `ContentModified` (`-32801`). No document request waits without a limit; a refresh task
+  waits at most 30 s. `v067-semantic-tokens-budget` states the same 30 s refresh limit.
+- OpenSpec change `specify-v0-5-4-language-fixes`: requirement paragraphs are on one line,
+  so `openspec validate --all --strict` (1.4.1) finds their SHALL; the text is unchanged.
+- OpenSpec change `v067-semantic-tokens-budget`: a semantic-tokens request waits at
+  most 100 ms for the facts of the newest text, then answers from the last analyzed
+  facts moved over the edit; the server sends one `workspace/semanticTokens/refresh`
+  when the newest facts are stored, only to a client that supports it.
+- OpenSpec change `v06-rust-glue-integration`: the Rust Glue acceptance evidence names
+  `beskid_tests_release/tests/glue_owned.rs` (28 tests), `glue_owned/extensions.rs` (3)
+  and `beskid_tests_interop/src/interop/export.rs` (3), total 34.
+- The CLI build-analyze-run edge cases and the language-server snapshot FAQ no longer name
+  `BESKID_WORKSPACE_MEMBER_FOR_META_DEFAULT`; the compiler ignored the option and 0.6.7 removes it.
+  `--project` selects a workspace member, and no environment variable selects a default member.
+- OpenSpec change `v067-default-target-selection`: without `--target`,
+  `beskid build` and `beskid run` never select a Test target (`run` selects the
+  App target, `build` the App target or else the Lib target); `beskid test` runs
+  every Test target in manifest order with a combined summary, or else the Lib
+  target; two candidates of one kind fail with an error that names them.
+- OpenSpec change `v067-retire-extern-dlopen`: the `extern_dlopen` engine feature and the
+  `BESKID_EXTERN_ALLOW` and `BESKID_EXTERN_DENY` lists are retired from the specification; the
+  specification states how JIT and AOT extern resolution fail closed.
+- OpenSpec change `v067-lock-format-fail-closed`: a `Project.lock` that is not
+  in format 3 fails with E3025 (delete it and write a new lock); the lock
+  migration and E3024 are retired.
+- OpenSpec change `v067-x86-64-baseline`: every x86_64 target builds for the
+  x86-64-v2 CPU level in AOT, JIT and tests; aarch64-apple-darwin builds for
+  Armv8.0-A; a Cranelift runtime helper call is E4004. The Docs install pages
+  state the CPU requirement.
+
 ### Fixed
 
 - The Corelib gate's `libcrypto.so.3` check reads the whole `ldconfig -p`

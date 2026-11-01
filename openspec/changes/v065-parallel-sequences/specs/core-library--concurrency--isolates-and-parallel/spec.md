@@ -71,7 +71,7 @@ A terminal SHALL evaluate the operator chain once per element inside the worker 
 - **GIVEN**
   ```beskid
   [Immutable]
-  pub type Stats { i64 count, f64 total, f64 max }
+  pub type Stats { i64 count; f64 total; f64 max; }
 
   [Immutable]
   pub type MergeStats : Associative<Stats>, Commutative<Stats> {

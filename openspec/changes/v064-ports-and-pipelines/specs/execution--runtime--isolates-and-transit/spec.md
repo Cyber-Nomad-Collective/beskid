@@ -9,7 +9,7 @@ A port SHALL be a process-wide object identified by an `i64` id, consisting of a
 - **THEN** the parent receives the values in sending order and the sender's fiber parked at most while the ring held 64 unreceived values
 
 #### Scenario: Copied value crosses through a native record
-- **GIVEN** `[Copyable] pub type Job { string id, i64 size }` and a task that sends `Job { id: "a", size: 3 }` through `Port<Job>`
+- **GIVEN** `[Copyable] pub type Job { string id; i64 size; }` and a task that sends `Job { id: "a", size: 3 }` through `Port<Job>`
 - **WHEN** the parent receives it
 - **THEN** the received `Job` is an object in the parent heap, the sender's `Job` is unchanged in the task heap, and no heap of either isolate was written by the other's thread
 
@@ -53,7 +53,7 @@ The corelib SHALL reach ports only through `__port_create(capacity: i64) -> i64`
 #### Scenario: Worker with an inbox
 - **GIVEN**
   ```beskid
-  [Immutable] pub type Job { string id, ReadOnlyArray<u8> payload }
+  [Immutable] pub type Job { string id; ReadOnlyArray<u8> payload; }
 
   Result<i64, ParallelError> RunWorker(List<Job> jobs) {
       return Parallel.Scope<i64>((Scope s) => {

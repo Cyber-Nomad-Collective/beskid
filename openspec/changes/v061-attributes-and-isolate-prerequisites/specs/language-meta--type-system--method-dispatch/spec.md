@@ -6,7 +6,7 @@ A method SHALL be able to declare its own type parameters and bounds: `ImplMetho
 `MemberAccess` SHALL accept `GenericArguments?` after the member name (`MemberAccess = { "." ~ Identifier ~ GenericArguments? }`), with the same disambiguation from the comparison operators that `PathSegment` (`Identifier ~ GenericArguments?`) already has. Explicit type arguments on a method call, written on the last path segment (`s.Spawn<i64>(body)`) or on a member access (`values.Parallel().Map<i64>(f)`), SHALL bind the method's own type parameters only, all of them and in declaration order; a count that differs from the number of own type parameters, or type arguments on a method that declares none, SHALL be reported as **E1204**. The owner's type parameters SHALL be bound by the instantiated receiver, as for every method call today. The syntax model SHALL carry `generics` and `where_clause` on `MethodDefinition` and `type_args` on `MemberExpression`; the formatter SHALL emit both without spaces inside the angle brackets; hover and signature help SHALL show the method's own type parameters with their bindings at the call.
 
 #### Scenario: Generic method with explicit arguments on a path receiver
-- **GIVEN** `pub type Box<T> { T item, pub U Apply<U>((T) => U f) { return f(this.item); } }` and `i64 Main() { Box<string> b = Box<string> { item: "abc" }; return b.Apply<i64>((string s) => s.Length()); }`
+- **GIVEN** `pub type Box<T> { T item; pub U Apply<U>((T) => U f) { return f(this.item); } }` and `i64 Main() { Box<string> b = Box<string> { item: "abc" }; return b.Apply<i64>((string s) => s.Length()); }`
 - **WHEN** the program is checked and run
 - **THEN** no diagnostic is reported and `Main` returns 3
 
@@ -21,12 +21,12 @@ A method SHALL be able to declare its own type parameters and bounds: `ImplMetho
 - **THEN** the compiler reports **E1204** at the type argument list
 
 #### Scenario: Method bound on an own type parameter
-- **GIVEN** `pub type Seq<T> { T[] items, pub T Fold<C>(T seed, C combiner) where C: Folder<T> { return seed; } }` and a type `Plain` that does not conform to `Folder<i64>`
+- **GIVEN** `pub type Seq<T> { T[] items; pub T Fold<C>(T seed, C combiner) where C: Folder<T> { return seed; } }` and a type `Plain` that does not conform to `Folder<i64>`
 - **WHEN** `seq.Fold<Plain>(0_i64, Plain {})` is checked
 - **THEN** the compiler reports **E1610** naming `Folder<i64>`
 
 #### Scenario: Method bound on an owner type parameter
-- **GIVEN** `pub type Cell<T> { T value, pub T Read() where T: Shared { return this.value; } }` and a `Cell<u8[]> c`
+- **GIVEN** `pub type Cell<T> { T value; pub T Read() where T: Shared { return this.value; } }` and a `Cell<u8[]> c`
 - **WHEN** `c.Read()` is checked
 - **THEN** the compiler reports **E1610** at the call naming `Shared`, and `Cell<string>` calls `Read` without a diagnostic
 

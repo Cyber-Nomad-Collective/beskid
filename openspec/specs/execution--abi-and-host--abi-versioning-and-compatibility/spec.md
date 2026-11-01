@@ -607,7 +607,7 @@ Missing symbols surface as **`JitError::MissingFunction`** at finalize time rath
 | --- | --- |
 | `compiler/crates/beskid_tests/src/runtime/jit.rs` | JIT compiles and runs lowered programs against in-process runtime |
 | `compiler/crates/beskid_e2e_tests/src/tests/runtime_cases.rs` | End-to-end runtime builtins including panic/IO paths |
-| `compiler/crates/beskid_engine` (feature `extern_dlopen`) | Dynamic extern resolution when enabled; see [Extern dispatch](/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/) |
+| `compiler/crates/beskid_engine/tests/extern_tests.rs` | JIT extern resolution; see [Extern dispatch](/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/) |
 
 ## Traceability matrix
 

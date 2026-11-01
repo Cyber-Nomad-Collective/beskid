@@ -541,7 +541,7 @@ another unit is E1211. Ruling: keep that change's text; no delta. Blast radius: 
   (LR/visibility.rs:121-200).
 - Query: only cross-unit field access is denied (F4); an `extend type` in the declaring unit can
   read private fields.
-- Example: `Account.bd` declares `pub type Account { i64 balance, }` and
+- Example: `Account.bd` declares `pub type Account { i64 balance; }` and
   `extend type Account { pub i64 Peek() { return this.balance; } }`.
 - Ruling: spec (ET:18, and `v06-field-visibility` "extend type bodies SHALL keep E1511"). An
   `extend type` body never reads, writes or calls a non-`pub` member of the target, also in the
@@ -618,7 +618,7 @@ layer reports it. Blast radius: none.
   (L/rr/types_paths.rs:49-74).
 - Query: constants and functions are separate facts; constants are tried after the lexical
   check (Q/locals.rs:98-117; Q/resolution.rs:44-53).
-- Example: `const limit = 4;` and `type Pool { i64 limit, i64 Get() { return limit; } }`.
+- Example: `const limit = 4;` and `type Pool { i64 limit; i64 Get() { return limit; } }`.
   Legacy: the constant. Ruling: the field.
 - Ruling: one order: (1) locals and parameters, innermost first; (2) in an inline type method,
   the receiver's fields and sibling methods (I3, I4); (3) items and constants of the unit,
@@ -649,7 +649,7 @@ legacy none. CT:164 and CT:299 already require it. Ruling: keep. Blast radius: n
 **H8. Generic arity in type lookup.**
 - Legacy: by name (L/rr/types_paths.rs:132-149). Query: by (name, arity)
   (Q/layouts/common.rs:304-312, 425-458), so `Box<i64>` with only a non-generic `Box` is E1201.
-- Example: `pub type Box { i64 v, }` and a parameter `Box<i64> b`.
+- Example: `pub type Box { i64 v; }` and a parameter `Box<i64> b`.
 - Ruling: look up by name; then check the arity and report E1203 or E1204 (TY:26). A bare
   qualifier in a type-qualified call (E8) names the type whatever its arity.
 - Blast radius: diagnostic. Flagged (query keying changes).
@@ -659,7 +659,7 @@ legacy none. CT:164 and CT:299 already require it. Ruling: keep. Blast radius: n
 **I2. Receiver name.**
 - Legacy: `this` only (L/rr/items_statements.rs:58, 83, 140, 236). Query: `this` and `self`
   (Q/locals.rs:47-55; Q/layouts/field_access.rs:982-990; Q/calls/resolution.rs:226-274).
-- Example: `type Counter { i64 n, i64 Get() { return self.n; } }`.
+- Example: `type Counter { i64 n; i64 Get() { return self.n; } }`.
 - Ruling: spec CT:202: the receiver is `this`; `self` is not a receiver name. `self` is an
   ordinary identifier and binds only where it is declared, for example as a parameter
   (`Result<WsFrameIn, WsError> ReadFrame(WsConnection self)` in
