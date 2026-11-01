@@ -33,4 +33,4 @@ Use the canonical [Projects guide](/docs/projects/) to create a project, select 
 
 ## Next
 
-[04. Where does this file even go?](/book/04-where-does-this-file-go/)
+[03a. The everyday language: values, operators, loops and types](/book/03a-the-everyday-language/)

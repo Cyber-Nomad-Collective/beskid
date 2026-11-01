@@ -28,14 +28,15 @@ The directory must contain `implementation.rs` and nothing but regular `.rs` fil
 **An `[Extern]` contract** declares the functions in Beskid terms, against the library the `glue` block names:
 
 ```beskid
-[Extern(Abi:"C", Library:"glue_manual")]
-pub contract Foreign {
+[Extern(Abi: "C", Library: "glue_manual")]
+pub contract Foreign
+{
     i32 glue_i32(i32 value);
     f64 glue_f64(f64 value);
     char glue_char(char value);
-    [RustOwner(Fallible:true)]
+    [RustOwner(Fallible: true)]
     string glue_utf8(string value);
-    [RustOwner(Fallible:true)]
+    [RustOwner(Fallible: true)]
     u8[] glue_bytes(u8[] value);
 }
 ```
@@ -63,9 +64,12 @@ The 0.6.0 matrix covers every fixed-width integer (`i8` to `u64`), `f32` and `f6
 A Rust value that Beskid holds but never looks inside gets a branded handle type:
 
 ```beskid
-[GlueHandle(Library:"glue_manual", Nullable:false)]
-[RustOwner(Path:"implementation::ManualOwned")]
-pub type ManualOpaque<T> { u64 token, }
+[GlueHandle(Library: "glue_manual", Nullable: false)]
+[RustOwner(Path: "implementation::ManualOwned")]
+pub type ManualOpaque<T>
+{
+    u64 token;
+}
 ```
 
 `[GlueHandle]` brands the type for one Glue library; a nominal type that crosses the boundary needs exactly one such brand. `[RustOwner(Path: ...)]` names the Rust type that owns the value.

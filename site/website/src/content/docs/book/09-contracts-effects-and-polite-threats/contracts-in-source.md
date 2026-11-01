@@ -8,15 +8,20 @@ A Beskid **`contract`** is a **structural interface**: required members, optiona
 
 ## Declaration
 
+A contract lists method signatures. Each ends with a semicolon, and none has a body or `pub`.
+
 ```beskid
-contract Disposable
+contract Closer
 {
-    unit Dispose();
+    unit Close();
 }
 
-type Logger : Disposable
+type Logger : Closer
 {
-    unit Dispose() { /* ... */ }
+    pub unit Close()
+    {
+        return;
+    }
 }
 ```
 
@@ -28,15 +33,45 @@ Types declare **`type Name : I, J { ... }`**. The compiler checks every required
 
 ## Embeddings
 
+A contract embeds another by naming it on a line of its body. A contract has no `: Base` list in its header; only types and `impl` blocks have conformance lists.
+
 ```beskid
-contract Readable
+contract Reader
 {
-    i32 Read(ref u8 buffer);
+    i64 Read();
 }
 
-contract ReadWrite : Readable
+contract Writer
 {
-    i32 Write(ref u8 buffer);
+    unit Write(i64 value);
+}
+
+contract Channel
+{
+    Reader;
+    Writer;
+    unit Close();
+}
+
+type Pipe : Channel
+{
+    i64 last;
+
+    pub i64 Read()
+    {
+        return this.last;
+    }
+
+    pub unit Write(i64 value)
+    {
+        this.last = value;
+        return;
+    }
+
+    pub unit Close()
+    {
+        return;
+    }
 }
 ```
 

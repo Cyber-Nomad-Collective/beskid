@@ -11,7 +11,7 @@ AOT-compiles a resolved Beskid program, links a real binary, and runs it in a su
 | --- | --- |
 | `[INPUT]` | Optional `.bd` entry |
 | `--project` | Project directory or `.bproj` manifest path |
-| `--target` | Target name from the manifest |
+| `--target` | Target name from the manifest. Without it, `run` uses the App target. It never uses a Test target. Two App targets are an error |
 | `--workspace-member` | Workspace member when resolving via a `.bws` workspace manifest |
 | `--frozen` | Require lockfile match; forbid updates |
 | `--locked` | Require an existing lockfile |

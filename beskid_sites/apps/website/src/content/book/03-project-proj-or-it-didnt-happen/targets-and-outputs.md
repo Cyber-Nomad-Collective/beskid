@@ -23,6 +23,8 @@ beskid build --project ./MyApp.bproj --target App
 beskid test  --project ./MyApp.bproj --target Tests
 ```
 
+Leave `--target` off and each command picks by kind, never by the order of blocks in the manifest. `build` and `run` never pick a `Test` target, because a test harness has no `Main` and nobody typing `beskid build` in a library wants one. `run` takes the `App` target. `build` takes the `App` target, or the `Lib` target when there is no `App`. `test` runs every `Test` target in manifest order and ends with one `Total:` line, or tests the `Lib` target when there is no `Test` target. Two candidates of the same kind get an error that names both and tells you to pass `--target`. The toolchain does not guess.
+
 `--project` accepts either the manifest path or its directory. Run from inside the project and the toolchain walks up to find the manifest, then down if there is exactly one below. Ambiguity is an error, not a coin flip.
 
 ## What `build` produces

@@ -37,7 +37,8 @@ Assuming `use Foo;` lets you shadow a local `Foo` is a fast path to embarrassmen
 Fully qualified paths follow module nesting declared by files and `mod` statements. A fully qualified path to a public module of any package in your resolved dependency closure works without a `use`:
 
 ```beskid
-i32 Main() {
+i32 Main()
+{
     Core.Output.WriteLine("no import needed");
     return 0;
 }

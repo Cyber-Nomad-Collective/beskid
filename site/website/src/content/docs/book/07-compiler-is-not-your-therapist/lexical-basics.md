@@ -15,6 +15,8 @@ Beskid source uses familiar C-family cues:
 - Line and block comments (`//`, `/* */` per spec)
 - String and numeric literals (exact lexical rules: [lexical and syntax](/docs/standard/capabilities/language-meta--surface-syntax--lexical-and-syntax/))
 
+The literals, escapes and operators themselves are taught in [03a. The everyday language](/book/03a-the-everyday-language/values-and-literals/).
+
 ## Modules still matter lexically
 
 File-scoped `mod` must appear as the first top-level item when used. The parser assumes structure before semantic phases attach module identity.

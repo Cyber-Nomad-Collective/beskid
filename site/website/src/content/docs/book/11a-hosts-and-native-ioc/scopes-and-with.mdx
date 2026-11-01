@@ -1,0 +1,183 @@
+---
+title: "Scopes and with"
+description: Declare named scopes on a host, activate them with with, and understand the scope stack and the services that live inside it.
+tableOfContents: true
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+The host registry is **global**: it exists from `launch` to the end of the run. Some things live shorter than that. A web request has a session. A batch job has a transaction. A **scope** declares such a shorter life, and **`with`** starts and ends one.
+
+## Declaring a scope
+
+A scope is declared inside a host. It has a name and parameters, like a function, and a body of registrations and hooks.
+
+```text
+scope Request(string id)
+{
+    Session;
+
+    init(Session session)
+    {
+        session.Open(id);
+    }
+
+    dispose(Session session)
+    {
+        session.Close();
+    }
+}
+```
+
+`Session;` is a registration with no lifetime keyword, and inside a scope that means **scoped**: one instance per activation. Two requests get two sessions. The scope's parameters (`id`) are values the activation receives, and the hooks can read them.
+
+## Activating a scope
+
+`with Name(arguments) { ... }` activates the scope for the duration of its block:
+
+```beskid
+use Core.Output;
+
+type Session
+{
+    pub unit Open(string id)
+    {
+        Output.WriteLine("open ${id}");
+        return;
+    }
+
+    pub unit Close()
+    {
+        Output.WriteLine("close");
+        return;
+    }
+}
+
+host AppHost()
+{
+    scope Request(string id)
+    {
+        Session;
+
+        init(Session session)
+        {
+            session.Open(id);
+        }
+
+        dispose(Session session)
+        {
+            session.Close();
+        }
+    }
+}
+
+i32 Main()
+{
+    launch AppHost();
+
+    with Request("a-1")
+    {
+        Output.WriteLine("handling a-1");
+    }
+
+    with Request("b-2")
+    {
+        Output.WriteLine("handling b-2");
+    }
+    return 0;
+}
+```
+
+Each `with` is a new activation, so the program should print:
+
+```text
+open a-1
+handling a-1
+close
+open b-2
+handling b-2
+close
+```
+
+The order is fixed: enter the scope, run `init`, run the block, run `dispose`, leave the scope. `dispose` runs on every way out of the block, including `return`, `break` and `continue`. The arguments of `with` must match the parameters of the scope. A `with` that names an unknown scope, or passes the wrong arguments, is E1708. A `with` must also follow a `launch` in the **same function**, in the `launch` block or a block inside it; one anywhere else (another function, a lambda, a method, a `match` arm) is E1721.
+
+<Aside type="note">
+In this release you write `with` yourself. The Standard describes web-style hosts that enter a scope for every request automatically as later work.
+</Aside>
+
+## Nested scopes
+
+A scope can contain scopes. A child scope is activated inside an activation of its parent:
+
+```beskid
+use Core.Output;
+
+host AppHost()
+{
+    scope Request(string id)
+    {
+        init()
+        {
+            Output.WriteLine("request ${id} begins");
+        }
+
+        dispose()
+        {
+            Output.WriteLine("request ${id} ends");
+        }
+
+        scope Transaction(bool readOnly)
+        {
+            init()
+            {
+                Output.WriteLine("begin");
+            }
+
+            dispose()
+            {
+                Output.WriteLine("commit");
+            }
+        }
+    }
+}
+
+i32 Main()
+{
+    launch AppHost();
+
+    with Request("a-1")
+    {
+        with Transaction(false)
+        {
+            Output.WriteLine("saving");
+        }
+    }
+    return 0;
+}
+```
+
+The output shows the nesting, outermost first on the way in and innermost first on the way out:
+
+```text
+request a-1 begins
+begin
+saving
+commit
+request a-1 ends
+```
+
+The same scope can be activated more than once, each time with a fresh set of scoped services. A scope that the host's scope tree cannot attach to a parent is E1707, and declaring two scopes with the same name in one host is E1716.
+
+## The scope stack
+
+While your code runs, the runtime keeps a **stack of active scopes**, with the global registry at the bottom and the innermost `with` on top. A service is resolved by walking from the top of the stack towards the bottom (see [Inject fields](/book/11a-hosts-and-native-ioc/inject-fields/) for `global::` and `parent::`, which change where the walk starts).
+
+The stack belongs to the **fiber** that runs the `with`. Two fibers can sit in different scopes at the same time without seeing each other's sessions. See [Fibers and spawn](/book/11-fibers-cheaper-than-threads/fibers-and-spawn/) for the fiber side, and [Runtime fibers](/book/17-execution-abi-host-runtime/runtime-fibers/) for how the runtime keeps the stack.
+
+## Scoped services outside a scope
+
+A scoped service has no meaning without an activation. Asking for one from a place where no matching scope is active is E1706. If a service should be shared by the whole run, register it with `single` in the host registry. If it should exist per activation, keep it in a scope and use it from the scope's hooks and from other registrations of that scope.
+
+## Next
+
+[Hooks](/book/11a-hosts-and-native-ioc/hooks/)
