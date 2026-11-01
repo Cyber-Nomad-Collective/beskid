@@ -12,7 +12,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 > | --- | --- |
 > | Model | **M:N** — many **fibers** on a pool of **OS worker threads** |
 > | API surface | `fiber_*` builtins back `` `Fiber<T>` ``; no async lowering in compiler |
-> | Preemption | User fibers are **cooperative**; 0.6.0 has no preemptive or parallel execution API for Beskid code, and `spawn` always starts a fiber |
+> | Preemption | User fibers are **cooperative**. The runtime does not preempt a fiber. The `spawn` expression always starts a fiber in the calling isolate. Parallel execution uses `Core.Parallel`, which runs work on other isolates |
 > | Work stealing | Per-worker run queues; work-stealing **permitted** |
 > | Parking | Fibers park on channel ops, join, cancel, and blocking syscalls |
 
@@ -66,8 +66,8 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 > | Phase A (default) | **One** thread at a time may execute Beskid allocations as GC mutator |
 > | Scheduler | Transfers mutator execution between fibers on that contract |
 > | Syscall pool | Workers run blocking host work **without** arbitrary Beskid mutator code or generated allocation; runtime tags them and traps stray allocations (`assert_mutator_allowed`) |
-> | Phase B | Not implemented in 0.6.0: the runtime has no API that attaches a second Beskid mutator to a heap, and Phase A is the only mode |
-> | Future | Parallel execution is planned in the changes `v061-attributes-and-isolate-prerequisites` through `v065-parallel-sequences` |
+> | Phase B | Not implemented: the runtime has no API that attaches a second Beskid mutator to a heap, and Phase A is the only mode |
+> | Parallelism | Parallel execution runs on separate isolates. Each isolate has its own heap, its own scheduler and one mutator. `Core.Parallel` starts isolates, up to `BESKID_ISOLATES_MAX` (default: the host processor count) |
 > 
 > Aligns with [D-CORE-CONC-0007](/platform-spec/core-library/concurrency/concurrency-package/adr/0007-gc-phase-a-single-mutator/).
 
@@ -582,7 +582,12 @@ Only **one** thread at a time may hold the mutator role for GC allocation in Pha
 
 ## Processor count
 
-`ProcessorCount` / `SetProcessorCount` map to worker pool size (Go **GOMAXPROCS** analogue); default logical CPUs.
+The scheduler belongs to an isolate. Each isolate runs one mutator.
+
+- `ProcessorCount()` returns the number of mutators of the calling isolate. The value is 1.
+- `HostProcessorCount()` returns the number of logical processors of the host.
+- `SetProcessorCount` does nothing.
+- `Core.Parallel` runs work on other isolates, up to `BESKID_ISOLATES_MAX`. The default is the host processor count.
 
 ## Implementation anchors
 - `compiler/crates/beskid_runtime/src/scheduler/` — scheduler run queue, parking, and GC safepoints

@@ -139,7 +139,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 
 > | Setting | Default |
 > | --- | --- |
-> | `ProcessorCount` | `1` in 0.6.0: the runtime runs one scheduler worker; `SetProcessorCount` has no effect |
+> | `ProcessorCount` | `1`: the scheduler belongs to an isolate and runs one mutator, and `ProcessorCount()` counts the mutators of the calling isolate. `HostProcessorCount()` reports the logical processors of the host. `SetProcessorCount` does nothing |
 > | Stacks | 64 KiB initial, 8 MiB max |
 > | Arena | Phase A: **one process arena**; pool threads run Beskid mutator code under scheduler rules |
 
