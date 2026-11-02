@@ -250,6 +250,13 @@ log is in `compiler/CHANGELOG.md`. Draft release notes:
   second time. Cases that share a command now retain the same report in their
   own evidence files. This shortens the Windows build, which ran out of time in
   rc4, and removes the repeat CoreSuite run that hung there once.
+- Windows Glue builds compile the native adapter with plain drive paths.
+  Clang could not find the adapter's Glue header from a verbatim (`\\?\`)
+  path, and 7 of 13 private-prefix Glue tests failed in the Windows rc4 build.
+- The release source inventory skips the `Project.lock` files that compiler
+  tests write beside their fixture projects, as it already did for test
+  projects. The Linux rc4 build passed every gate and then failed this check
+  on `crates/beskid_e2e_tests/fixtures/corelib_mvp/Project.lock`.
 - `beskid doc`: `@ref` links to items in a dependency's `.generated` units point
   at that dependency's package, and a path outside a package's source and
   generated roots fails with an error that names both roots.

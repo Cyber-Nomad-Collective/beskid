@@ -58,4 +58,13 @@ if bash "$script" "$tmp" corelib >"$tmp/package-lock.out" 2>&1; then
   echo 'untracked package lock outside tests was accepted' >&2; exit 1
 fi
 grep -Fq 'packages/tls/Project.lock' "$tmp/package-lock.out"
+rm "$tmp/packages/tls/Project.lock"
+mkdir -p "$tmp/crates/beskid_e2e_tests/fixtures/corelib_mvp"
+printf 'lock\n' >"$tmp/crates/beskid_e2e_tests/fixtures/corelib_mvp/Project.lock"
+bash "$script" "$tmp" compiler
+printf 'lock\n' >"$tmp/crates/beskid_e2e_tests/Project.lock"
+if bash "$script" "$tmp" compiler >"$tmp/crate-lock.out" 2>&1; then
+  echo 'untracked crate lock outside fixtures was accepted' >&2; exit 1
+fi
+grep -Fq 'crates/beskid_e2e_tests/Project.lock' "$tmp/crate-lock.out"
 echo 'release source inventory tests OK'
