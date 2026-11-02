@@ -239,6 +239,17 @@ log is in `compiler/CHANGELOG.md`. Draft release notes:
 - On macOS, closing or terminating a child process that has already exited
   succeeds. Darwin rejects a signal to a process group that holds only an
   unreaped child, and the runtime treated that as a failure.
+- The Windows runtime-kit audit no longer rejects the kit because the MSVC
+  string literal for the trap name "panic" spells a forbidden symbol family.
+- The release gates expect the quieter 0.6.7 `beskid run` output: the CLI
+  surface gate passes `-v` to see the "Run complete" summary, and the Linux
+  package check expects only "Build complete" after `beskid run`.
+- The release-case runner runs each distinct installed-native command once.
+  34 cases bind only 11 suite commands (all 7 network cases run NetworkSuite,
+  all 6 process cases run ProcessSuite), so every platform ran 23 suites a
+  second time. Cases that share a command now retain the same report in their
+  own evidence files. This shortens the Windows build, which ran out of time in
+  rc4, and removes the repeat CoreSuite run that hung there once.
 - `beskid doc`: `@ref` links to items in a dependency's `.generated` units point
   at that dependency's package, and a path outside a package's source and
   generated roots fails with an error that names both roots.

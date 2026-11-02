@@ -204,6 +204,9 @@ export function ProduceReleaseCases(options) {
       const text = streams.map(stream => stream.toString("utf8").split(/\r?\n/).slice(-40).join("\n")).join("\n").slice(-6000);
       diagnostics.push(`--- ${label} ---\n${text}`);
     };
+    // Cases that bind the same installed-native command share one run: the bundle, command and
+    // environment are identical, so a second run only repeats the report (and its exposure to a hang).
+    const nativeRuns = new Map();
     for (const item of manifest.cases) {
       const binding = item.binding;
       const values = {
@@ -218,7 +221,9 @@ export function ProduceReleaseCases(options) {
       const toolFile = binding.harness ? harnesses[binding.harness] : { path: definition.cli, sha256: cliDigest };
       let stdout, stderr, tests, exitCode = 0, timedOut = false;
       if (item.execution === "installed_native") {
-        const result = run(command.argv, env, home, options.cellTimeout);
+        const runKey = JSON.stringify([command.argv, command.env, binding.target]);
+        if (!nativeRuns.has(runKey)) nativeRuns.set(runKey, run(command.argv, env, home, options.cellTimeout));
+        const result = nativeRuns.get(runKey);
         stdout = result.stdout; stderr = result.stderr; exitCode = result.status; timedOut = result.timedOut;
         let passed = [];
         try { passed = nativeReportOutcomes(stdout, binding.target, item.id); } catch (error) { failures.push(`${item.id}: ${error.message}`); exitCode = exitCode === 0 ? 1 : exitCode; }

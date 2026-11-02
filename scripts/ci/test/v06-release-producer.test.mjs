@@ -2,7 +2,7 @@
 // fake harness executables, then validate the produced directory with the real reader seam.
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { chmodSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { appendFileSync, chmodSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
@@ -21,17 +21,19 @@ const sha256 = bytes => createHash("sha256").update(bytes).digest("hex");
 const identifier = id => `fixture_${id.replace(/[^A-Za-z0-9_]/g, "_")}`;
 
 /** A fixture checkout: every case bound to a synthetic source under the layout the freeze tool expects. */
-function fixtureRepo(root) {
+function fixtureRepo(root, { shareCoreSuite = false } = {}) {
   const fragment = { schema_version: 1, slice: "fixture", cases: {} };
   const nativeTargets = new Map();
   for (const item of planned.cases) {
     const ids = [`${identifier(item.id)}_a`, `${identifier(item.id)}_b`];
     if (item.execution === "installed_native") {
-      const target = `Suite_${identifier(item.id)}`;
+      // With shareCoreSuite, foundations.encoding_utf8 binds the same suite as foundations.core_bytes, as the real manifest does.
+      const owner = shareCoreSuite && item.id === "foundations.encoding_utf8" ? "foundations.core_bytes" : item.id;
+      const target = `Suite_${identifier(owner)}`;
       const file = `compiler/corelib/beskid_corelib/tests/corelib_tests/src/fixture/${target}.bd`;
       mkdirSync(join(root, "compiler/corelib/beskid_corelib/tests/corelib_tests/src/fixture"), { recursive: true });
-      writeFileSync(join(root, file), ids.map(id => `test ${id} {\n}\n`).join("\n") + `\ntest ${identifier(item.id)}_extra {\n}\n`);
-      nativeTargets.set(target, [...ids, `${identifier(item.id)}_extra`]);
+      appendFileSync(join(root, file), ids.map(id => `test ${id} {\n}\n`).join("\n") + `\ntest ${identifier(item.id)}_extra {\n}\n`);
+      nativeTargets.set(target, [...(nativeTargets.get(target) ?? []), ...ids, `${identifier(item.id)}_extra`]);
       fragment.cases[item.id] = { execution: "installed_native", target, project: "compiler/corelib/beskid_corelib/tests/corelib_tests", source_file: file, required_test_ids: ids,
         input: null, fixture: /^R4-PROC-/.test(item.id) ? "beskid_release_fixture" : null };
     } else {
@@ -91,6 +93,7 @@ if [[ "\${1:-}" == --version ]]; then echo "beskid ${VERSION}"; exit 0; fi
 target=""; prev=""
 for arg in "$@"; do [[ "$prev" == --target ]] && target="$arg"; prev="$arg"; done
 [[ -n "\${HOME:-}" && "\${BESKID_CORELIB_ROOT:-unset}" == unset ]] || { echo "fake cli: developer overrides present" >&2; exit 3; }
+echo "$target" >>"$here/fake-tests/invocations.log"
 names="$here/fake-tests/$target.txt"
 [[ -f "$names" ]] || { echo "fake cli: unknown target $target" >&2; exit 1; }
 count="$(wc -l <"$names" | tr -d ' ')"
@@ -149,11 +152,11 @@ function platformOutput(root, bundle) {
   return { output, buildResult };
 }
 
-function scenario({ proof = true } = {}) {
+function scenario({ proof = true, shareCoreSuite = false } = {}) {
   const root = mkdtempSync(join(tmpdir(), "beskid-v06-producer-"));
   const repo = join(root, "repo");
   mkdirSync(repo);
-  const { manifestBytes, manifest, nativeTargets } = fixtureRepo(repo);
+  const { manifestBytes, manifest, nativeTargets } = fixtureRepo(repo, { shareCoreSuite });
   const manifestPath = join(root, "release-cases-v06.json");
   writeFileSync(manifestPath, manifestBytes);
   const bundle = fakeBundle(root, nativeTargets);
@@ -193,6 +196,19 @@ test("the producer emits a schema-2 packet that the reader validates end to end"
   assert.deepEqual(result.provisional_cases.length, 15);
   const manifest = value.manifest;
   for (const name of [...manifest.packet_files, ...manifest.target_packet_files[TARGET]]) assert(names.includes(name), `${name} retained`);
+});
+
+test("cases that bind the same installed-native command share one run", (t) => {
+  const value = scenario({ shareCoreSuite: true });
+  t.after(() => rmSync(value.root, { recursive: true, force: true }));
+  assert.equal(value.run.status, 0, value.run.stderr);
+  const invocations = readFileSync(join(value.bundle, "fake-tests/invocations.log"), "utf8").split("\n").filter(Boolean);
+  assert.equal(invocations.filter(target => target === "Suite_fixture_foundations_core_bytes").length, 1, "the shared suite runs once");
+  const feature = JSON.parse(readFileSync(join(value.output, "feature-evidence-v2.json"), "utf8"));
+  const rows = ["foundations.core_bytes", "foundations.encoding_utf8"].map(id => feature.cases.find(row => row.id === id));
+  assert(rows.every(row => row.status === "success"));
+  assert.equal(rows[0].stdout_sha256, rows[1].stdout_sha256, "both cases retain the one report");
+  assert.notEqual(rows[0].stdout, rows[1].stdout, "each case keeps its own retained file");
 });
 
 test("a harness test without an installed invocation proof is not_executed and fails the producer", (t) => {

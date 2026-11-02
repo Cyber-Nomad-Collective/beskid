@@ -215,7 +215,7 @@ export function ValidateQualificationLogs(definition, redPath, greenPath) {
     "libc-header-c-probe": new RegExp(`^\\+ clang -target ${Escape(definition.target)} -std=c11 -fPIC -c .+/probe\\.c -o .+/probe\\.o$[\\s\\S]*^\\+ ar rcs .+/probe\\.a .+/probe\\.o$[\\s\\S]*^\\+ ranlib .+/probe\\.a$[\\s\\S]*^\\+ cc .+/probe\\.a -o .+/probe$[\\s\\S]*^\\+ .+/probe$`, "m"),
     analyze: /^\+ \/usr\/bin\/beskid check --project Smoke\.bproj --plain$/m,
     "locked-build": /^\+ \/usr\/bin\/beskid build --project Smoke\.bproj --locked --plain$/m,
-    "locked-run": /^\+ \/usr\/bin\/beskid run --project Smoke\.bproj --locked --plain$[\s\S]*^Run complete in .+$[\s\S]*^\s*exit:\s*0$/m,
+    "locked-run": /^\+ \/usr\/bin\/beskid run --project Smoke\.bproj --locked --plain$\r?\n^Build complete in .+$/m,
     "lockfile-unchanged": /^\+ sha256sum Project\.lock$[\s\S]*^\+ sha256sum --check .+\/lock\.sha256$[\s\S]*^Project\.lock: OK$/m,
   };
   Has(green, new RegExp(`^\\+ \\[\\[ ${Escape(environment.os)} == ${Escape(environment.os)} \\]\\]$`, "m"), "GREEN qualification trace does not bind the operating system");
