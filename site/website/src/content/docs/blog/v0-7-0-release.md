@@ -5,7 +5,14 @@ date: 2026-11-19
 blogStatus: released
 release: v0.7.0
 draft: false
+cover:
+  src: "/blog-covers/v0-7-0-release.png"
+  alt: "A flock of sheep grazes below wooded hills in autumn."
+  sourceHref: "/blog-covers/v0-7-0-release.png"
+  sourceLabel: "View original photograph"
 ---
+
+![A flock of sheep grazes below wooded hills in autumn.](/blog-covers/v0-7-0-release.png)
 
 **beskid 0.7.0 is out for Linux x64, Windows x64 and macOS Apple Silicon.** Generated code now uses Cranelift stack maps to tell the collector which references are live. Types gain properties with backing storage, custom accessors and computed getters. Those changes ship in a toolchain we can use to start building a resource-oriented application framework in beskid.
 
