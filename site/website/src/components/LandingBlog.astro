@@ -1,0 +1,68 @@
+---
+import { getCollection } from 'astro:content';
+import { sortBlogEntries, type BlogStatus } from '../lib/blog';
+
+const posts = sortBlogEntries((await getCollection('docs')).filter(
+  (entry): entry is typeof entry & { data: typeof entry.data & { blogStatus: BlogStatus; date: Date } } =>
+    entry.id.startsWith('blog/') && !entry.data.draft &&
+    entry.data.blogStatus !== undefined && entry.data.date !== undefined,
+)).slice(0, 3);
+const dates = new Intl.DateTimeFormat('en', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+---
+
+{posts.length > 0 && (
+  <section class="landing-section landing-news" aria-labelledby="landing-news-title">
+    <div class="landing-section__inner">
+      <div class="landing-news__heading">
+        <div>
+          <p class="landing-news__eyebrow">From the blog</p>
+          <h2 id="landing-news-title">What we're building</h2>
+          <p class="landing-news__lead">Release notes, compiler work, and the decisions behind the next version.</p>
+        </div>
+        <a class="landing-news__all" href="/blog/">All posts <span aria-hidden="true">→</span></a>
+      </div>
+      <ol class="landing-news__grid">
+        {posts.map((post) => (
+          <li>
+            <article class="landing-news__card">
+              {post.data.cover && <a href={`/${post.id}/`} class="landing-news__image" tabindex="-1" aria-hidden="true"><img src={post.data.cover.src} alt="" loading="lazy" width="640" height="360" /></a>}
+              <div class="landing-news__body">
+                <div class="landing-news__meta"><time datetime={post.data.date.toISOString()}>{dates.format(post.data.date)}</time>{post.data.release && <span>{post.data.release}{post.data.blogStatus === 'in-progress' ? ' · In progress' : ''}</span>}</div>
+                <h3><a href={`/${post.id}/`}>{post.data.title}</a></h3>
+                <p>{post.data.description}</p>
+                <a class="landing-news__read" href={`/${post.id}/`}>Read the post <span aria-hidden="true">→</span></a>
+              </div>
+            </article>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+)}
+
+<style>
+.landing-news { border-block: 1px solid var(--sl-color-gray-5); background: color-mix(in srgb, var(--sl-color-bg-nav) 45%, var(--sl-color-bg)); }
+.landing-news__heading { display: flex; align-items: end; justify-content: space-between; gap: 1.5rem; margin-bottom: 1.75rem; }
+.landing-news__eyebrow { margin: 0 0 .5rem; color: var(--sl-color-text-accent); font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.landing-news h2 { margin: 0; scroll-margin-top: 6rem; }
+.landing-news__lead { margin: .7rem 0 0; color: var(--sl-color-gray-2); max-width: 42rem; }
+.landing-news__all, .landing-news__read { color: var(--sl-color-text-accent); font-weight: 700; text-decoration: none; }
+.landing-news__all { white-space: nowrap; }
+.landing-news__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; margin: 0; padding: 0; list-style: none; }
+.landing-news__grid > li { min-width: 0; }
+.landing-news__card { min-width: 0; height: 100%; overflow: hidden; border: 1px solid var(--sl-color-gray-5); border-radius: .8rem; background: var(--sl-color-bg); display: flex; flex-direction: column; }
+.landing-news__image { position: relative; display: block; width: 100%; min-width: 0; overflow: hidden; aspect-ratio: 16/9; }
+.landing-news__image img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; filter: saturate(.65); }
+.landing-news__body { min-width: 0; overflow-wrap: anywhere; display: flex; flex: 1; flex-direction: column; gap: 1rem; padding: 1.4rem; }
+.landing-news__meta { display: flex; flex-wrap: wrap; gap: .35rem .8rem; color: var(--sl-color-gray-2); font-size: .75rem; }
+.landing-news h3 { font-size: clamp(1.2rem, 2vw, 1.55rem); line-height: 1.25; margin: 0; }
+.landing-news h3 a { color: var(--sl-color-white); text-decoration: none; }
+.landing-news__body > p { color: var(--sl-color-gray-2); font-size: .92rem; line-height: 1.65; margin: 0; }
+.landing-news__read { display: block; margin-top: auto; padding-top: .6rem; }
+.landing-news a:hover { text-decoration: underline; text-underline-offset: .2em; }
+.landing-news a:focus-visible { outline: 2px solid var(--sl-color-text-accent); outline-offset: 4px; }
+@media (max-width: 850px) { .landing-news__grid { grid-template-columns: 1fr; } .landing-news__card { height: auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); } .landing-news__image { height: 100%; aspect-ratio: auto; } }
+@media (max-width: 520px) { .landing-news__heading { align-items: start; flex-direction: column; } .landing-news__card { height: auto; display: flex; } .landing-news__image { height: auto; aspect-ratio: 16/9; } }
+
+.landing-news__image img[src$="v0-7-0-properties-preview.png"] { object-fit: contain; background: #f5f1e8; padding: .7rem; box-sizing: border-box; }
+</style>

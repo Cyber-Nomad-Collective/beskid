@@ -1,5 +1,6 @@
 ---
 import { Code } from 'astro:components';
+import LandingBlog from './LandingBlog.astro';
 import { beskidUiSrcUrl } from '../lib/beskid-ui-root.mjs';
 import type { LandingTileSectionData } from '../data/landing-tile-sections';
 import type { LandingCodeTab } from '../data/landing-code-tabs';
@@ -136,6 +137,8 @@ const cliDownloadUrls = cliPackageUrls(loadCliVersion());
       </div>
     </div>
   </header>
+
+  {landingPage && <LandingBlog />}
 
   {showCompare && (
     <section class="landing-section landing-compare" id="why-beskid">
