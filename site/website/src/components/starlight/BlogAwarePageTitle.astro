@@ -38,7 +38,7 @@ const date = data.date
 	@layer starlight.core {
 		h1 { margin-top: 1rem; font-size: var(--sl-text-h1); line-height: var(--sl-line-height-headings); font-weight: 600; color: var(--sl-color-white); }
 	}
-	.blog-post-header { max-width: 48rem; padding: 2.5rem 0 1rem; }
+	.blog-post-header { max-width: none; padding: 2.5rem 0 1rem; }
 	.blog-post-header__eyebrow { margin: 0 0 .75rem; color: var(--sl-color-text-accent); font-size: var(--sl-text-sm); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 	.blog-post-header h1 { margin: 0; font-size: clamp(2.5rem, 6vw, 4.5rem); line-height: 1.02; }
 	.blog-post-header__description { margin: 1.25rem 0; color: var(--sl-color-gray-3); font-size: var(--sl-text-xl); line-height: 1.5; }
@@ -52,7 +52,8 @@ const date = data.date
 	.blog-post-header__meta span { color: var(--sl-color-text-accent); font-weight: 700; }
 	.blog-post-header > a { display: inline-block; margin-top: 1.5rem; color: var(--sl-color-text-accent); font-weight: 700; text-decoration: none; }
 	:global(.page:has(.blog-post-header) nav.sidebar), :global(.page:has(.blog-post-header) .right-sidebar-container) { display: none; }
-	:global(.page:has(.blog-post-header) .main-pane) { margin-inline: auto; max-width: 72rem; }
-	:global(.page:has(.blog-post-header) .content-panel .sl-container) { max-width: 56rem; }
+	:global(.page:has(.blog-post-header) .main-frame) { padding-inline-start: 0; padding-top: var(--sl-nav-height); width: 100%; }
+	:global(.page:has(.blog-post-header) .main-pane) { width: 100%; margin-inline: 0; max-width: none; }
+	:global(.page:has(.blog-post-header) .content-panel .sl-container) { max-width: none; margin-inline: 0; }
 	@media (max-width: 32rem) { .blog-post-header__meta :global(.blog-share__trigger span) { display: none; } .blog-post-header__meta :global(.blog-share__trigger) { padding: .45rem; } }
 </style>
