@@ -1,74 +1,85 @@
 ---
-const version = "0.7.0";
-const releaseTag = `v${version}`;
-const releasesUrl = "https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases";
-const assetsUrl = `${releasesUrl}/download/${releaseTag}`;
-const platforms = [
-	{ name: "Linux x64", target: "x86_64-unknown-linux-gnu", editor: "linux-x64" },
-	{ name: "Windows x64", target: "x86_64-pc-windows-msvc", editor: "win32-x64" },
-	{ name: "macOS (Apple silicon)", target: "aarch64-apple-darwin", editor: "darwin-arm64" },
-];
+import { DownloadsSection, type PinnedDownloadRelease, type PlatformId } from "@beskid/ui-react/downloads";
 
+const version = "0.7.0";
+const tag = `v${version}`;
+const releasesUrl = "https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases";
+const assetsUrl = `${releasesUrl}/download/${tag}`;
+
+function downloadForPlatform(build: {
+	platform: PlatformId;
+	target: string;
+	editor: string;
+	packageFilename: string;
+	packageLabel: string;
+	packageCommand: string;
+}) {
+	const directory = `beskid-${version}-${build.target}`;
+	const filename = `${directory}.tar.gz`;
+	const url = `${assetsUrl}/${filename}`;
+	const editorFilename = `beskid-vscode-${version}-${build.editor}.vsix`;
+	const isWindows = build.platform === "windows-amd64";
+	return {
+		asset: { platform: build.platform, kind: "binary" as const, filename, url },
+		package: {
+			platform: build.platform,
+			label: build.packageLabel,
+			command: build.packageCommand,
+			url: `${assetsUrl}/${build.packageFilename}`,
+		},
+		install: {
+			installCommand: isWindows
+				? `curl.exe -fLO "${url}"\nif ($LASTEXITCODE -eq 0) { tar.exe -xzf "${filename}" }`
+				: `curl -fLO "${url}" && tar -xzf "${filename}"`,
+			installLocation: isWindows ? `.\\${directory}\\bin\\beskid.exe` : `./${directory}/bin/beskid`,
+			editor: { filename: editorFilename, url: `${assetsUrl}/${editorFilename}` },
+		},
+	};
+}
+
+const linux = downloadForPlatform({
+	platform: "linux-amd64",
+	target: "x86_64-unknown-linux-gnu",
+	editor: "linux-x64",
+	packageFilename: `beskid-${version}-amd64.deb`,
+	packageLabel: "Ubuntu / Debian (.deb)",
+	packageCommand: `sudo apt install ./beskid-${version}-amd64.deb`,
+});
+const macos = downloadForPlatform({
+	platform: "darwin-arm64",
+	target: "aarch64-apple-darwin",
+	editor: "darwin-arm64",
+	packageFilename: `beskid-${version}-macos-arm64.dmg`,
+	packageLabel: "macOS (.dmg)",
+	packageCommand: "Open the disk image and drag Beskid.app to Applications",
+});
+const windows = downloadForPlatform({
+	platform: "windows-amd64",
+	target: "x86_64-pc-windows-msvc",
+	editor: "win32-x64",
+	packageFilename: `beskid-${version}-windows-amd64.msi`,
+	packageLabel: "Windows (.msi)",
+	packageCommand: `msiexec /i beskid-${version}-windows-amd64.msi`,
+});
+
+const pinnedRelease: PinnedDownloadRelease = {
+	version,
+	tag,
+	source: "github:stable",
+	url: `${releasesUrl}/tag/${tag}`,
+	checksumsUrl: `${assetsUrl}/SHA256SUMS`,
+	assets: [linux.asset, macos.asset, windows.asset],
+	packages: [linux.package, macos.package, windows.package],
+	platforms: {
+		"linux-amd64": linux.install,
+		"darwin-arm64": macos.install,
+		"windows-amd64": windows.install,
+	},
+};
 ---
 
 <div class="downloads-page">
 	<div class="downloads-layout">
-		<section class="downloads-block" aria-labelledby="stable-release">
-			<header class="downloads-block__header">
-				<h1 id="stable-release" class="downloads-title">Download beskid {version}</h1>
-				<p class="downloads-lead">
-					Each toolchain archive includes the CLI, language server, Corelib, and native runtime.
-					Choose the matching VSIX to add language support to VS Code.
-				</p>
-			</header>
-			<div class="downloads-platform-rows">
-				{platforms.map(({ name, target, editor }) => (
-					<div class="downloads-platform-row">
-						<h2 class="downloads-platform-row__label">{name}</h2>
-						<div class="downloads-actions">
-							<a
-								class="downloads-btn downloads-btn--primary"
-								href={`${assetsUrl}/beskid-${version}-${target}.tar.gz`}
-								aria-label={`Download toolchain archive for ${name}`}
-							>
-								Toolchain (.tar.gz)
-							</a>
-							<a
-								class="downloads-btn downloads-btn--secondary"
-								href={`${assetsUrl}/beskid-vscode-${version}-${editor}.vsix`}
-								aria-label={`Download VS Code extension for ${name}`}
-							>
-								VS Code (.vsix)
-							</a>
-						</div>
-					</div>
-				))}
-			</div>
-			<div class="downloads-actions">
-				<a class="downloads-btn downloads-btn--secondary" href={`${assetsUrl}/SHA256SUMS`}>
-					SHA-256 checksums
-				</a>
-				<a class="downloads-btn downloads-btn--secondary" href={`${releasesUrl}/tag/${releaseTag}`}>
-					Release on GitHub
-				</a>
-			</div>
-		</section>
-
-		<section class="downloads-block" aria-labelledby="install-details">
-			<h2 id="install-details" class="downloads-title downloads-title--section">Install</h2>
-			<ol>
-				<li>Compare the SHA-256 hash of each downloaded file with its entry in <code>SHA256SUMS</code>.</li>
-				<li>
-					Extract the toolchain archive and keep the extracted directory together.
-					Run <code>bin/beskid --version</code> on Linux or macOS,
-					or <code>.\bin\beskid.exe --version</code> on Windows, from that directory.
-				</li>
-				<li>
-					In VS Code, choose <strong>Extensions: Install from VSIX...</strong> in the Command Palette
-					and select the VSIX for your platform.
-				</li>
-			</ol>
-			<p class="downloads-footnote"><a href={releasesUrl}>Browse previous releases on GitHub</a>.</p>
-		</section>
+		<DownloadsSection client:only="react" pinnedRelease={pinnedRelease} />
 	</div>
 </div>

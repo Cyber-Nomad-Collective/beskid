@@ -90,6 +90,34 @@ i32 Main()
 
 A type used without its arguments is an error (E1203, "missing type arguments for generic type"), and a type used with the wrong number of arguments is a different one (E1204). Both are in [Common errors](/book/07a-generics-write-it-once/common-errors/).
 
+## A property of type `T`
+
+A property can store a value of the enclosing type parameter. Here the compiler uses `T` for the backing storage, the setter input and the getter result.
+
+```beskid
+type Box<T>
+{
+    T Value { get; set; }
+}
+
+T Replace<T>(Box<T> box, T next)
+{
+    T previous = box.Value;
+    box.Value = next;
+    return previous;
+}
+
+i32 Main()
+{
+    Box<string> label = Box<string> { Value: "draft" };
+    string previous = Replace<string>(label, "ready");
+    if previous != "draft" || label.Value != "ready" { return 1; }
+    return 0;
+}
+```
+
+The same declaration can hold a contract value. With `Box<Runner>`, reading `Value` gives you a `Runner`, so a call to one of its required methods dispatches to the stored implementation. For custom accessors and initialization, see [Properties](/book/03a-the-everyday-language/types-structs-and-enums/#properties).
+
 ## Generic enums
 
 Enums take parameters the same way. `Option<T>` and `Result<TValue, TError>` in Corelib are ordinary generic enums, and you can write your own.

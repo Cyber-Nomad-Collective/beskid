@@ -1,6 +1,6 @@
 ---
 title: "Types, structs and enums"
-description: Declare a type with fields and methods, build values with struct literals, model alternatives with enum and match, and use arrays and constants.
+description: Declare a type with fields, properties and methods, build values with struct literals, model alternatives with enum and match, and use arrays and constants.
 tableOfContents: true
 ---
 
@@ -43,6 +43,39 @@ pub type Size
     pub i32 Area() => this.width * this.height;
 }
 ```
+
+## Properties
+
+A property gives a member a read operation, a write operation, or both. At the call site you use the same dot syntax as for a field. In this example, assigning a negative count stores zero. Reading the doubled count always uses the current count.
+
+```beskid
+type Tally
+{
+    i32 Count
+    {
+        get;
+        set { field = value < 0 ? 0 : value; }
+    } = 0;
+
+    i32 Double => Count + Count;
+}
+
+i32 Main()
+{
+    Tally tally = Tally {};
+    tally.Count = 3;
+    if tally.Double != 6 { return 1; }
+    tally.Count = -4;
+    if tally.Double != 0 { return 2; }
+    return 0;
+}
+```
+
+The automatic getter `get;` reads the property’s backing storage. Inside the setter, `value` is the incoming value and `field` names that same storage. Writing `field` inside the setter avoids calling the setter again. For an ordinary read/write property, `i32 Count { get; set; } = 0;` supplies both accessors automatically.
+
+The initializer `= 0;` supplies the starting value for `Tally {}`. A named initializer such as `Tally { Count: -4 }` writes the initial value directly, so this instance starts at −4. Use the setter after construction when you want its validation to run.
+
+`Double` is a read-only property. Its expression runs each time you read it. Compound assignment such as `tally.Count += 1;` reads through the getter and writes the result through the setter, evaluating the receiver once.
 
 ## Struct literals
 
