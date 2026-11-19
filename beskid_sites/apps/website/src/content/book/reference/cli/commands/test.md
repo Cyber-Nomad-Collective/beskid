@@ -22,8 +22,9 @@ beskid test [input] [--project <path>] [--target <name>] [--workspace-member <na
 ## Behavior
 
 - Tests are discovered from parsed source (`test` items at top-level and inline modules).
+- Without `--target`, `beskid test` runs every `kind = Test` target in manifest order, then prints a `Total:` line for all targets. With `--json` it writes one `result` record with a `targets` list. When the project has no Test target, it runs the Lib target. A project with only an App target has no tests.
 - `skip.condition = true` marks a test as skipped and bypasses execution.
-- Exit code is non-zero when any test fails.
+- Exit code is non-zero when any test or any target fails.
 
 ## Example
 

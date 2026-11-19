@@ -7,12 +7,374 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/standard/).
 
-## [0.6.0] - Unreleased (in qualification)
+## [Unreleased]
 
-Not released. The candidate is in qualification on Linux x64, macOS arm64 and
-Windows x64 against `scripts/ci/release-cases-v06.json` (86 mandatory cases and
-15 provisional stdio bridge cases that fail closed). This section is the release
-summary; the itemized development log stays under [Unreleased] below and in
+## [0.6.7] - 2026-11-01
+
+Release candidate; not released until the three-platform build of the 0.6.7
+candidate passes and the owner confirms publication. 0.6.7 is the last 0.6
+release. 0.6.6 was never released (its Linux build failed on a generated
+Corelib `Project.lock` in the source inventory), so 0.6.7 also ships the work
+of the 0.6.6 section below; where 0.6.7 changes a 0.6.6 rule, the 0.6.7 rule
+ships (`move` only at isolate crossings, collection mutators on `mut this`).
+OpenSpec changes: every `v067-*` change, archived on 2026-11-01. The itemized
+log is in `compiler/CHANGELOG.md`. Draft release notes:
+`docs/release/v0.6.7-release-notes.md`.
+
+### Highlights
+
+- No uncoded internal compiler error: each one is a coded diagnostic at its
+  construct. One structured diagnostic for the CLI and the editor, with codes
+  from one registry, help and quick fixes; parse errors have codes E0101 to
+  E0117; `--error-format=json`.
+- The language server isolates a panic per request and writes a crash report,
+  and no request waits without a limit during an edit burst (semantic tokens,
+  references, signature help and inlay hints 100 ms; rename, prepare rename and
+  code actions 500 ms, then `ContentModified`).
+- `move` only where a value crosses to another isolate; collection mutators
+  take `mut this`.
+- Fields end with `;`; the conditional expression `cond ? a : b`; string
+  escapes; `*=`, `/=` and `%=`; optional parameters and caller information;
+  contextual numeric literals; contract values with runtime dispatch;
+  primitives and `string` conform to contracts; inline modules are lexical
+  scopes; tests have their own namespace and PascalCase names.
+- One sealed, shared Corelib per toolchain and `Project.lock` format 3; any
+  other lock format is E3025.
+- Every x86_64 target builds for x86-64-v2, aarch64 for Armv8.0-A.
+
+### Changed
+
+- Version 0.6.7: `beskid`, `beskid_lsp` and `beskid-up` (compiler crates), the
+  VS Code extension and the Zed extension. The release case manifest is not
+  changed by the bump (digest
+  `c4069aad3809230567aa3996194925771d71456027339d32299f2af757ed25dd`).
+- The 0.6.7 OpenSpec changes are archived into `openspec/specs`, together with
+  `v06-cli-dependencies`, `v06-rust-glue-integration` and
+  `v062-captures-and-move`, whose requirements the 0.6.7 changes edit. Spec
+  examples use `;` after type fields, and the type-system notes name E1102 as
+  the only duplicate code.
+- The retired platform-spec seed corpus (`beskid_sites/apps/platform-spec`) is
+  deleted; the Standard is built from `openspec/` only.
+- The `site/learn` playground builds its language server with the
+  `release-lsp` profile (`panic = "unwind"`), so a handler panic does not end
+  the shared server.
+- The tree-sitter grammar parses numeric literal suffixes (`_word` and the
+  sized ones), hexadecimal and `_`-grouped integers, float exponents and a
+  statement `match` without `;`.
+- Book chapter 10: an element write through an array handle reaches every
+  handle; growing or shrinking one handle never changes another.
+- The compiler Rust gate skips the codegen compiler-trace child fixture by its
+  module-qualified id, `prepared_syntax::compiler_trace_child_lowers_a_syntax_entrypoint`.
+  S9b moved the codegen tests into one `tests/codegen` executable, and the gate
+  runs the workspace with `--exact`, so the bare name no longer matched and the
+  child fixture would have run on its own.
+- The release cases are refrozen for 0.6.7-preview.12 against the integrated
+  compiler (lspcatch, dupty, S9a, S9b and S9c merged) and Corelib `5945b13`
+  (the regenerated compiler-sdk diagnostics mirror): 95 of 95 cases bound, and
+  the digest stays
+  `c4069aad3809230567aa3996194925771d71456027339d32299f2af757ed25dd`, because
+  no release-harness or Corelib test source changed. The pin in
+  `woodpecker-release-evidence.mjs` is unchanged.
+- The release cases are refrozen for 0.6.7-preview.11 against the integrated
+  compiler (semtok, lspwait, qualtests, s8b, modscope, arralias and arralias2
+  merged) and Corelib `5d3b9ba` (s8b test modules plus the arralias2 sources):
+  95 of 95 cases bound, and the digest stays
+  `c4069aad3809230567aa3996194925771d71456027339d32299f2af757ed25dd`, because
+  no release-harness or Corelib test source changed after the s8b freeze. The
+  pin in `woodpecker-release-evidence.mjs` is unchanged.
+- Release cases name the Corelib tests by their qualified ids. The Corelib
+  test cleanup moved every test into a topic module and dropped the domain
+  prefix that the module now names, so all 277 native required ids and the 6
+  `R4-PROC` obligation assertion ids change (for example
+  `BsolOrderedBlocksAssignmentsAndByteSpans` becomes
+  `SyntaxTests::OrderedBlocksAssignmentsAndByteSpans`; targets and source
+  files are unchanged). The fragments and the reviewed ids name the new tests,
+  the manifest is refrozen against the s8b Corelib (95 of 95 cases bound), and
+  the pin in `woodpecker-release-evidence.mjs` moves to the new digest
+  `c4069aad3809230567aa3996194925771d71456027339d32299f2af757ed25dd`. The
+  matrix test that binds a real Corelib declaration uses the qualified id
+  `WireTests::ExactUnsignedWidth`.
+- Release case bindings accept qualified Beskid test ids. A native assertion
+  id is the test's unit-relative qualified name, as `beskid test` reports it
+  (`Topic::Inner` for `test Inner` in `mod Topic { ... }`), and the
+  declaration finder binds an indented `test` line nested in exactly those
+  inline modules, ignoring comments and string literals. A bare id binds only
+  a test at the unit root. The frozen manifest is byte-identical (digest
+  `c1dd696a751d0aeb32482548bc500cd21c98cd0704ac46b159dbea30f1b77dd9`).
+- The release cases are refrozen for 0.6.7-preview.10 against the integrated
+  compiler (tc-envtier, pkgparse and lspperf9 merged) and Corelib `022e7e9`:
+  95 of 95 cases bound, and the digest stays
+  `c1dd696a751d0aeb32482548bc500cd21c98cd0704ac46b159dbea30f1b77dd9`, because
+  no release-harness or Corelib test source changed after the tc-envtier
+  freeze. The pin in `woodpecker-release-evidence.mjs` is unchanged.
+- Tests that need a runtime kit or a Corelib provision it themselves, and the
+  compiler Rust gate runs the staged-evidence tests (`#[ignore = "staged
+  evidence: ..."]`) with `--include-ignored` against the kit it stages; the
+  two child-process fixtures are skipped by exact name. Installed-prefix tests
+  live only in the release harness: the Glue harness `glue_owned` moves into
+  `beskid_tests_release`, so the gate no longer skips `interop::glue_owned::`
+  or runs the build-tree driver denial as a separate step (it is a plain
+  workspace test now). The release cases, the private-prefix Glue step and the
+  harness build name `glue_owned::...` ids in `harness-beskid_tests_release`;
+  `harness-beskid_tests_interop` is no longer built. The harness variables
+  lose the `V06` prefix: `BESKID_QUALIFIED_PREFIX`, `BESKID_QUALIFIED_PROFILE`,
+  `BESKID_GLUE_CARGO`, `BESKID_GLUE_RUSTC` and `BESKID_GLUE_LINKER`. The
+  release case manifest is refrozen (digest `c1dd696a751d0aeb32482548bc500cd21c98cd0704ac46b159dbea30f1b77dd9`).
+- The compiler Rust gate runs the workspace tests in parallel (libtest's
+  default thread count) instead of `--test-threads=1`: no compiler test changes
+  the process environment or working directory any more. Two full parallel
+  gate runs passed with 4441 tests and no failure; `just test-corelib-spine`
+  drops the flag too.
+- The Corelib gate builds and tests the network packages. Its quality check
+  covers the `network`, `uri`, `codec`, `connect`, `crypto`, `x509`,
+  `tls`, `http`, `http2`, `quic`, `http3`, `websocket` and `web` members,
+  and a new step runs every target of their test projects on loopback inside
+  the build container. Benchmarks (tag `bench`) are compiled but not run;
+  the OpenSSL 3 provider tests (tag `native-crypto`) run on Linux and are
+  excluded on other hosts. A separate step requires each
+  `packages/network/tests/compile-fail` target to be rejected with its
+  diagnostic. Interop suites stay manual.
+- The release source inventory also skips a `Project.lock` written directly
+  in a `tests` directory.
+
+- Change `v067-request-wait-budget`: the 500 ms limit of rename, prepare
+  rename and code actions includes each wait for the server state (past it,
+  `ContentModified`); after the facts, code actions wait at most 500 ms for
+  their computation, computed cheapest first, and answer with the actions
+  computed by then (new requirement "Code actions answer within a computation
+  budget" in `tooling--lsp--intellisense-capabilities-and-behavior`).
+- Change `v067-analysis-catch-up`: the analysis and diagnostics publication of
+  an open document judge that document's unit alone (the workspace index and
+  `beskid check` judge every own unit); a newer text or closing the document
+  stops the running analysis of an older text at its next database query; the
+  completion repair changes a member access only when the member is being
+  typed (new requirements in `tooling--lsp--diagnostics-and-workspace-analysis`
+  and `tooling--lsp--intellisense-capabilities-and-behavior`).
+- Change `v067-array-growth-aliasing`: shrinking one array handle
+  (`Array.RemoveLast`) never changes another handle either (requirement renamed
+  "Array length changes never reach another handle", shrink scenarios, owner-
+  aware `RemoveLast` in the typed-array-growth requirement); a field lent beside
+  an array of holders (`Holder[]`) is marked, which closes the former residual
+  boundary. W1240 ("Discarded array growth", `v067-semantic-diagnostics`) also
+  covers a discarded `Array.RemoveLast` on an array that is not an owner.
+- Change `v067-array-growth-aliasing`: growing one array handle never changes
+  what another handle to the same array sees (new memory-model requirement
+  "Array growth never reaches another handle"); the typed growth operation
+  names the sharing mark in the hidden element-descriptor word and the growth
+  target of a copy (twice the length).
+
+- OpenSpec change `v067-qualified-test-selection`: a test is identified by its
+  unit-relative qualified name (`Topic::Inner` for `test Inner` in `mod Topic`);
+  discovery, the `beskid test` report and the native test selection use that one
+  identity, a missing or ambiguous selection fails the build, and same-named tests in
+  different inline modules are distinct. `Network.Dns.Resolve` maps every resolver
+  answer that gives a name no usable address (`EAI_NONAME`, `EAI_NODATA`,
+  `EAI_ADDRFAMILY`, Windows `WSANO_DATA`) to `HostNotFound`.
+- OpenSpec change `v067-request-wait-budget`: references, signature help and inlay hints
+  wait at most 100 ms for the facts of the newest text, then answer from the carried
+  facts (inlay hints with one `workspace/inlayHint/refresh`); rename, prepare rename and
+  code actions wait at most 500 ms and never use facts of an older text: they fail with
+  `ContentModified` (`-32801`). No document request waits without a limit; a refresh task
+  waits at most 30 s. `v067-semantic-tokens-budget` states the same 30 s refresh limit.
+- OpenSpec change `specify-v0-5-4-language-fixes`: requirement paragraphs are on one line,
+  so `openspec validate --all --strict` (1.4.1) finds their SHALL; the text is unchanged.
+- OpenSpec change `v067-semantic-tokens-budget`: a semantic-tokens request waits at
+  most 100 ms for the facts of the newest text, then answers from the last analyzed
+  facts moved over the edit; the server sends one `workspace/semanticTokens/refresh`
+  when the newest facts are stored, only to a client that supports it.
+- OpenSpec change `v06-rust-glue-integration`: the Rust Glue acceptance evidence names
+  `beskid_tests_release/tests/glue_owned.rs` (28 tests), `glue_owned/extensions.rs` (3)
+  and `beskid_tests_interop/src/interop/export.rs` (3), total 34.
+- The CLI build-analyze-run edge cases and the language-server snapshot FAQ no longer name
+  `BESKID_WORKSPACE_MEMBER_FOR_META_DEFAULT`; the compiler ignored the option and 0.6.7 removes it.
+  `--project` selects a workspace member, and no environment variable selects a default member.
+- OpenSpec change `v067-default-target-selection`: without `--target`,
+  `beskid build` and `beskid run` never select a Test target (`run` selects the
+  App target, `build` the App target or else the Lib target); `beskid test` runs
+  every Test target in manifest order with a combined summary, or else the Lib
+  target; two candidates of one kind fail with an error that names them.
+- OpenSpec change `v067-retire-extern-dlopen`: the `extern_dlopen` engine feature and the
+  `BESKID_EXTERN_ALLOW` and `BESKID_EXTERN_DENY` lists are retired from the specification; the
+  specification states how JIT and AOT extern resolution fail closed.
+- OpenSpec change `v067-lock-format-fail-closed`: a `Project.lock` that is not
+  in format 3 fails with E3025 (delete it and write a new lock); the lock
+  migration and E3024 are retired.
+- OpenSpec change `v067-x86-64-baseline`: every x86_64 target builds for the
+  x86-64-v2 CPU level in AOT, JIT and tests; aarch64-apple-darwin builds for
+  Armv8.0-A; a Cranelift runtime helper call is E4004. The Docs install pages
+  state the CPU requirement.
+- The Book targets page and the `build`, `run` and `test` references state the
+  default target rule: without `--target`, `build` and `run` never use a Test
+  target (`run` uses the App target, `build` the App target or else the Lib
+  target), and `test` runs every Test target with a `Total:` line, or else the
+  Lib target; two candidates of one kind are an error.
+- The Book lockfile reference names E3025: a `Project.lock` whose first line
+  is not `# Project.lock v3` has an unsupported format, and the user deletes
+  it and writes a new lock. The stale E3024 row is removed, and the glossary
+  no longer names a `glue-dotnet` backend.
+- Book chapter 11 describes 0.6.7 concurrency: fibers run on the scheduler of
+  their isolate, `Concurrency.ProcessorCount()` counts that isolate's mutators
+  (1), `Concurrency.HostProcessorCount()` reports the host processors, and
+  `Core.Parallel` scopes, ports and parallel sequences run work on other
+  isolates, bounded by `BESKID_ISOLATES_MAX`.
+- Release candidate 3 changes wording only. The `SetProcessorCount` and
+  `ProcessorCount` doc comments, the fiber-scheduler, concurrency-package and
+  memory-and-GC specifications and the `[0.6.0]` heading below no longer
+  describe 0.6.0 behavior as current. `api-json-contract` states that every
+  packed path is relative to the artifact root of the declaring package, as the
+  code writes it.
+- OpenSpec: the shipped changes `specify-v0-5-4-language-fixes`, the `v06-*`
+  changes, the `v061-*` changes, `v063-isolates-and-scope`,
+  `v064-ports-and-pipelines` and `v065-parallel-sequences` are archived, so the
+  Standard holds the isolate, port and parallel sequence requirements. The
+  `standard-normative-manifest` capability is deleted. Changes whose work did
+  not ship stay open: `add-clif-block-indirect-calls`,
+  `v06-glue-stdio-bridge-provisional`, `v06-serialization-bsol` and the `v07-*`
+  changes.
+- The root changelog has one `[Unreleased]` heading. The 0.4.0 to 0.6.0
+  development log is part of the 0.6.0 section.
+
+### Fixed
+
+- On macOS, closing or terminating a child process that has already exited
+  succeeds. Darwin rejects a signal to a process group that holds only an
+  unreaped child, and the runtime treated that as a failure.
+- The Windows runtime-kit audit no longer rejects the kit because the MSVC
+  string literal for the trap name "panic" spells a forbidden symbol family.
+- The release gates expect the quieter 0.6.7 `beskid run` output: the CLI
+  surface gate passes `-v` to see the "Run complete" summary, and the Linux
+  package check expects only "Build complete" after `beskid run`.
+- The release-case runner runs each distinct installed-native command once.
+  34 cases bind only 11 suite commands (all 7 network cases run NetworkSuite,
+  all 6 process cases run ProcessSuite), so every platform ran 23 suites a
+  second time. Cases that share a command now retain the same report in their
+  own evidence files. This shortens the Windows build, which ran out of time in
+  rc4, and removes the repeat CoreSuite run that hung there once.
+- Windows Glue builds compile the native adapter with plain drive paths.
+  Clang could not find the adapter's Glue header from a verbatim (`\\?\`)
+  path, and 7 of 13 private-prefix Glue tests failed in the Windows rc4 build.
+- The release source inventory skips the `Project.lock` files that compiler
+  tests write beside their fixture projects, as it already did for test
+  projects. The Linux rc4 build passed every gate and then failed this check
+  on `crates/beskid_e2e_tests/fixtures/corelib_mvp/Project.lock`.
+- `beskid doc`: `@ref` links to items in a dependency's `.generated` units point
+  at that dependency's package, and a path outside a package's source and
+  generated roots fails with an error that names both roots.
+- The Corelib gate's `libcrypto.so.3` check reads the whole `ldconfig -p`
+  listing before matching, so `pipefail` no longer turns an early `grep -q`
+  exit (SIGPIPE) into a false "missing" failure.
+
+## [0.6.6] - Not released
+
+Never released; this work ships in 0.6.7 (see above). One release carries the work planned as 0.6.1
+to 0.6.5 (OpenSpec changes `v061-attributes-and-isolate-prerequisites`,
+`v061-gc-stress-and-poison`, `v061-glue-extensions`, `v062-captures-and-move`,
+`v063-isolates-and-scope`, `v064-ports-and-pipelines` and
+`v065-parallel-sequences`). The itemized log is in `compiler/CHANGELOG.md`.
+Draft release notes: `docs/release/v0.6.6-release-notes.md`.
+
+### Language
+
+- Transfer classes. Every type is Shared, Moved, Copied or Never. Markers
+  `[Immutable]`, `[Isolated]`, `[Copyable]` and `[NeverTransferable]` in
+  `Core.Attributes` decide the class of a nominal type; a bound
+  `where T: Transferable` is proven from the class. Attributes are accepted on
+  every declaration site, checked against a target catalogue (E1508-E1510).
+- Ownership with `move`. `move x` consumes an owning name, `move x.f` is a
+  destructive read, `exchange(place, move value)` swaps a field or element and
+  returns the old value, and `move this` makes a receiver owning. Use after
+  move and the related ownership errors are E1234-E1243.
+- `[Captures(Bound: C)]` judges the captures of every lambda passed to a
+  function-typed parameter or field.
+- Generic methods: own type parameters and `where` clauses on methods,
+  explicit type arguments on member calls and inference from the receiver,
+  the arguments and lambda bodies.
+
+### Runtime and memory
+
+- Incremental marking with a hybrid write barrier and lazy sweeping.
+- GC stress mode (`BESKID_GC_STRESS`), heap verification and a debug-kit
+  quarantine (`BESKID_GC_QUARANTINE`).
+- Isolates: a task runs on its own thread with its own heap, bounded by
+  `BESKID_ISOLATES_MAX` (default: host processor count). A finished task's heap
+  is adopted by the joiner.
+- Ports: bounded channels between isolates. Shared and Moved values cross by
+  pointer, Copied values are copied. Cross-heap references are counted
+  (ORCA-style) and released by the collector.
+
+### Corelib
+
+- `Core.Parallel`: fork-join scopes, tasks, `Isolate` handles, `Port<T>`,
+  long-lived isolate workers, pipelines and `ParallelSeq<T>` with fused
+  `Where`/`Map`, adaptive chunking and `Reduce` over associative combiners.
+- Collections are `[Isolated]` and their mutators take `move this`
+  (`list = list.Push(v)`).
+
+### Interop (Rust Glue)
+
+- Records by value, fieldless enums, callbacks of function type, and a
+  generated Rust module for consumer exports. Glue lowers to the
+  Interop.Contracts vocabulary.
+
+### CLI and tooling
+
+- `beskid check --project` checks every target of the manifest.
+- Applications may call `Core.Parallel.Isolate.Main()`: the program entry is
+  matched by exact function identity, not by the name `Main`.
+- LSP quick fixes insert `move` and rewrite a store as `exchange`; hover shows
+  transfer classes and capture lists.
+- pckg: file browser for verified package artifacts and NodeBB discussion
+  threads per package.
+
+### Build and release
+
+- The Linux build packages and uploads its handoff before it exits with the
+  release gate status, so a failed gate keeps the artifacts for inspection
+  (OpenSpec `v06-release-gate-calibration` task 6.0).
+- Bundle assembly removes the Corelib Mod prebuild caches; the platform build
+  checks the archive and packaging refuses a bundle that still carries one
+  (task 6.5).
+- A native Mod cache entry is named by a 32-digit key, so the deepest sealed
+  Corelib Mod file of an installed toolchain is 32 characters shorter (task
+  6.6).
+- `beskid_cli`, `beskid_lsp`, `beskid_up`, the VS Code extension and the Zed
+  extension carry version 0.6.6. The release case manifest is re-frozen
+  against the merged sources.
+- Nine mandatory 0.6.6 release cases (95 mandatory in total): fork-join scopes
+  (`PAR066-01`, `PAR066-02`, also at `BESKID_ISOLATES_MAX=1`), ports and
+  pipelines (`PORT066-01`, `PORT066-02`), parallel sequences (`PSEQ066-01`,
+  `PSEQ066-02`), `move`/`exchange` with E1234 through the CLI (`MOVE066-01`),
+  Glue extensions built by the installed CLI (`GLUE066-01`) and a
+  `BESKID_GC_STRESS=alloc:64,verify` smoke (`GCS066-01`). Fragment
+  `scripts/ci/release-case-bindings/features-v066.json`; the new manifest digest
+  is pinned (task 6.7).
+
+### Fixed
+
+- The macOS native runtime kit builds again. The runtime's write-barrier word
+  `beskid_rt_v5_gc_barrier_active`, the first `export_data` symbol, was a bare
+  C tentative definition, which Apple clang emits as a Mach-O common symbol
+  (`N_UNDF | N_EXT` with a non-zero value), so the provenance check read it as
+  an import and failed with `E4002` ("defined symbol table is missing"). The
+  word now has an explicit zero initializer on every platform, and the symbol
+  inventory classifies a common symbol as a definition on Mach-O as it already
+  did on ELF and COFF.
+
+### Breaking changes
+
+- Corelib collection mutators consume `this`; code that kept using a list
+  after `Push` must rebind it.
+- Storing a borrowed Moved value, using a Moved value after a consuming use,
+  and capturing a Never value in an isolate task are compile errors.
+- A native Mod cache from 0.6.0 is not reused; the first build rebuilds it.
+
+## [0.6.0] - 2026-10-16
+
+Released 2026-10-16 (compiler tag `v0.6.0`, commit `5b859b18`). The release was
+qualified on Linux x64, macOS arm64 and Windows x64 against
+`scripts/ci/release-cases-v06.json` (86 mandatory cases and 15 provisional
+stdio bridge cases that fail closed). This section is the release
+summary; the itemized development log follows it and is also in
 `compiler/CHANGELOG.md`. Draft release notes:
 `docs/release/v0.6.0-release-notes.md`.
 
@@ -224,7 +586,7 @@ summary; the itemized development log stays under [Unreleased] below and in
 - The `Std` namespace and its App-only alias layer.
 - The fixed runtime table sizes and the fixed 1 GiB heap cap.
 
-## [Unreleased]
+**Development log, 0.4.0 to the 0.6.0 candidate (newest first).** These entries were written while the work was in progress; the summary above is authoritative.
 
 ### Changed
 

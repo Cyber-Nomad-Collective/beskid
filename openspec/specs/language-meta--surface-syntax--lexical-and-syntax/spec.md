@@ -4,9 +4,7 @@
 ## Purpose
 
 This specification defines tokens, whitespace, and the context-free skeleton. Every later phase assumes this skeleton. The normative grammar and lexical rules live in the Language Spec. This page records the platform ownership.
-
 ## Requirements
-
 ### Requirement: Authoritative pest grammar
 Implementations SHALL treat the checked-in grammar `compiler/crates/beskid_analysis/src/beskid.pest` as the single syntactic truth. A tool claiming Beskid L0 conformance MUST accept the same token stream as `beskid.pest` for all inputs in the reference parser test corpus.
 
@@ -18,10 +16,17 @@ Implementations SHALL treat the checked-in grammar `compiler/crates/beskid_analy
 ### Requirement: Identifier and keyword lexical rules
 Identifiers MUST match the `Identifier` production (ASCII letter or `_` followed by alphanumeric/`_` characters) and MUST NOT spell a reserved `Keyword`. Reserved keywords, including DI tokens such as `host`, `registry`, `scope`, `launch`, and `inject`, MUST be tokenized as keywords even when unused in a given compilation unit.
 
+`move` SHALL be a reserved keyword (`MoveKeyword = @{ "move" ~ !IdentTail }` listed in `Keyword`). `exchange` SHALL NOT be a keyword; it is a builtin resolved by name.
+
 #### Scenario: Keyword rejected as identifier
 - **GIVEN** source that uses a reserved keyword as a binding name
 - **WHEN** the lexer and parser process the input
 - **THEN** the name is not accepted as an `Identifier`
+
+#### Scenario: move rejected as identifier
+- **GIVEN** `i64 move = 1;`
+- **WHEN** the statement is parsed
+- **THEN** the parser rejects `move` as an `Identifier`
 
 ### Requirement: Documentation comment lexical form
 `///` on items begins a documentation run attached only via `ItemWithDocs`. `////` and longer slash runs MUST NOT be treated as documentation. Ordinary `//` line comments (not starting a third `/`) and `/* ... */` block comments (nesting by terminator only) remain non-documentation comments.
@@ -38,6 +43,197 @@ Lexical and syntactic validity MUST NOT be treated as semantic validity. Phases 
 - **GIVEN** a program that parses successfully but violates a module, type, or contract rule
 - **WHEN** semantic analysis runs
 - **THEN** the program is rejected by a post-parse phase and is not accepted solely because parsing succeeded
+
+### Requirement: move grammar productions
+The grammar SHALL add `MoveExpression = { MoveKeyword ~ PostfixExpression }` as an alternative of `UnaryExpression` beside `SpawnUnary` and `PrefixUnary`; `Parameter = { BulkKeyword? ~ (MutKeyword | MoveKeyword)? ~ BeskidType ~ Identifier }`; and `ReceiverParameter = { AttributeList? ~ (MutKeyword | MoveKeyword)? ~ "this" }` as the optional first entry of a method `ParameterList`. The syntax model SHALL expose `MoveExpression`, a `movable: bool` on `Parameter` and a `ReceiverParameter` node; the formatter SHALL emit `move` followed by one space in each position; semantic tokens SHALL tag `move` as a keyword.
+
+#### Scenario: Move expression parses as a unary
+- **GIVEN** `Archive a2 = archive.Add(move buffer);`
+- **WHEN** the statement is parsed
+- **THEN** `move buffer` is a `MoveExpression` whose operand is the path `buffer`, and `-move x` is rejected
+
+#### Scenario: Receiver and parameter modifiers round-trip
+- **GIVEN** `pub Archive Add(move this, move u8[] block) { return this; }`
+- **WHEN** the method is parsed and formatted
+- **THEN** the formatter emits the signature unchanged and `mut move u8[] block` is rejected by the parser
+
+### Requirement: Default parameter grammar
+A parameter SHALL have the form `Attributes? "bulk"? ("mut" | "move")? Type Identifier ("=" Expression)?`. A parameter with `= Expression` SHALL be optional, and its expression SHALL be its default value. A default value in an event parameter list SHALL be a parse error.
+
+#### Scenario: Optional parameter
+- **GIVEN** `unit Log(string text, i64 level = 1) { }`
+- **WHEN** the function is parsed
+- **THEN** `level` is an optional parameter with the default value `1`
+
+### Requirement: Conditional expression grammar and precedence
+The grammar SHALL contain the conditional expression `cond ? a : b`. It SHALL bind more loosely than `||` and more tightly than assignment. It SHALL be right-associative: `c1 ? a : c2 ? b : d` SHALL group as `c1 ? a : (c2 ? b : d)`. The branches `a` and `b` SHALL be full expressions that may themselves be conditional expressions. A `?` after a complete operand SHALL be resolved as follows. The parser SHALL first try the conditional expression: it SHALL parse a full expression as the first branch and look for the matching `:`. When a matching `:` completes the conditional, the `?` SHALL start a conditional expression. Otherwise the `?` SHALL be the error-propagation suffix. A `?` that cannot be error propagation, because the token after it cannot continue an expression that ends in a propagation suffix, and that has no matching `:`, SHALL be **E0116** at the `?`, with the construct start as a related location. Hence `c ? -1 : 2` is a conditional, `x? - 1` is propagation followed by a subtraction, and `F()? ? x : y` propagates the result of `F()` and then branches.
+
+#### Scenario: Right associativity
+- **GIVEN** `x = c1 ? 1 : c2 ? 2 : 3`
+- **WHEN** the expression is parsed
+- **THEN** the value of the conditional is assigned to `x`, and the inner conditional is the else branch of the outer one
+
+#### Scenario: Propagation then branch
+- **GIVEN** `let v = F()? ? 1 : 2;`
+- **WHEN** the statement is parsed
+- **THEN** the first `?` is error propagation and the second starts the conditional
+
+#### Scenario: Negative literal in a branch
+- **GIVEN** `let v = c ? -1 : 2;`
+- **WHEN** the statement is parsed
+- **THEN** the `?` starts a conditional with the branches `-1` and `2`
+
+#### Scenario: Propagation before a binary operator
+- **GIVEN** `let v = x? - 1;`
+- **WHEN** the statement is parsed
+- **THEN** no matching `:` exists, so the `?` is error propagation and the result is subtracted by 1
+
+#### Scenario: Conditional without colon
+- **GIVEN** `let v = flag ? 1;`
+- **WHEN** the statement is parsed
+- **THEN** the parser SHALL report **E0116** at the `?`
+
+#### Scenario: Propagation stays distinct
+- **GIVEN** `let v = Parse(text)?;`
+- **WHEN** the statement is parsed
+- **THEN** the `?` is the propagation suffix and not a conditional
+
+### Requirement: Statement-level match needs no semicolon
+An expression statement that starts with `match` SHALL NOT need a terminating `;`. A `;` after it SHALL stay valid. The formatter SHALL keep the written form and SHALL NOT add or remove the `;`.
+
+#### Scenario: Match without semicolon
+- **GIVEN** `match k { 0 => Log("zero"), _ => Log("other") }` as a statement
+- **WHEN** the statement is parsed
+- **THEN** no diagnostic is reported
+
+### Requirement: String literal escape sequences
+A string literal SHALL accept these escape sequences: `\"` (quotation mark), `\\` (backslash), `\${` (literal interpolation opener), `\n` (U+000A), `\t` (U+0009), `\r` (U+000D), `\0` (U+0000), and `\u{H}` where `H` is one to six hexadecimal digits. The value of `\u{H}` SHALL be the Unicode scalar value that the digits spell. The parser SHALL report **E0110** for a `\u{H}` whose value is in the range U+D800 to U+DFFF or is greater than U+10FFFF. The parser SHALL report **E0110** for a `\u` that is not followed by a braced digit sequence. The parser SHALL report **E0109** for every other backslash sequence. Escape sequences SHALL NOT apply inside a char literal, which keeps only `\'`. A char literal that holds more than one character SHALL be **E0114**.
+
+#### Scenario: Newline and tab
+- **GIVEN** the literal `"a\tb\n"`
+- **WHEN** the literal is decoded
+- **THEN** the value is the characters `a`, TAB, `b`, LF
+
+#### Scenario: Unicode scalar value
+- **GIVEN** the literal `"\u{1F600}"`
+- **WHEN** the literal is decoded
+- **THEN** the value is the single scalar value U+1F600
+
+#### Scenario: Surrogate value
+- **GIVEN** the literal `"\u{D800}"`
+- **WHEN** the literal is lexed
+- **THEN** the parser SHALL report **E0110**
+
+#### Scenario: Unknown escape
+- **GIVEN** the literal `"\q"`
+- **WHEN** the literal is lexed
+- **THEN** the parser SHALL report **E0109** and name the sequence `\q`
+
+### Requirement: Compound assignment operators
+The assignment operators SHALL be `=`, `+=`, `-=`, `*=`, `/=` and `%=`. For an arithmetic operator `op`, `a op= b` SHALL mean `a = a op b`, with the place `a` evaluated once. The operands SHALL follow the typing rules of the arithmetic operator. The target SHALL be a mutable local binding, a field place such as `p.x`, or an element place such as `xs[i]`. The compiler SHALL evaluate the place once. Assignment to an immutable binding SHALL be **E1214**. For `string`, `+=` SHALL concatenate. Each of the five operators SHALL be accepted for every numeric type for which the plain operator is defined. For a type for which the plain operator is not defined, such as `%=` on a float, the compiler SHALL report the diagnostic of the plain operator for that type, at the operator, and SHALL NOT lower the statement.
+
+#### Scenario: Multiply and assign
+- **GIVEN** `mut i64 x = 3; x *= 4;`
+- **WHEN** the code runs
+- **THEN** `x` is 12
+
+#### Scenario: Field and element targets
+- **GIVEN** `p.x += 1; xs[i] *= 2;` where `p` is a `mut` record with an `i64` field `x` and `xs` is an `i64[]`
+- **WHEN** the code runs
+- **THEN** `p.x` increases by 1, `xs[i]` doubles, and `xs[i]` and `p` are each evaluated once
+
+#### Scenario: Operator the type lacks
+- **GIVEN** `mut f64 r = 1.5; r %= 2.0;` where `%` is not defined for `f64`
+- **WHEN** the code is checked
+- **THEN** the compiler SHALL report the diagnostic of the plain operator `%` for `f64` at `%=`
+
+#### Scenario: Immutable target
+- **GIVEN** `i64 x = 3; x %= 2;`
+- **WHEN** the code is checked
+- **THEN** the compiler SHALL report **E1214**
+
+#### Scenario: Char literal with two characters
+- **GIVEN** the literal `'ab'`
+- **WHEN** the literal is parsed
+- **THEN** the parser SHALL report **E0114**
+
+### Requirement: Word literal suffix
+The integer literal suffix `_word` SHALL be part of the lexical grammar beside the other numeric suffixes. A literal with the suffix `_word` SHALL have type `word`, and the literal typing rules, including the fit check **T0905**, SHALL apply to it as to any suffix. A default parameter value MAY use it.
+
+#### Scenario: Word literal
+- **GIVEN** `let n = 4096_word;`
+- **WHEN** the code is checked
+- **THEN** `n` has type `word`
+
+#### Scenario: Word suffix against another context
+- **GIVEN** `u8 x = 1_word;`
+- **WHEN** the code is checked
+- **THEN** the compiler SHALL report **E1206**
+
+### Requirement: Documentation run attachment
+A `///` documentation run SHALL be attached to the item that follows it directly. A documentation run that a blank line separates from its item SHALL NOT parse; the parser SHALL report **E0117** "documentation comment is not attached to an item" at the run, with the fixes "remove the blank line" and "turn it into `//` comments". A file header SHALL use `//` comments, not `///`.
+
+#### Scenario: Detached documentation run
+- **GIVEN** a `///` run followed by a blank line and then an item
+- **WHEN** the file is parsed
+- **THEN** the parser SHALL report **E0117** at the run
+
+#### Scenario: File header
+- **GIVEN** a `//` comment run followed by a blank line and then an item
+- **WHEN** the file is parsed
+- **THEN** no diagnostic is reported
+
+### Requirement: String interpolation operand text
+Each `${ expression }` operand SHALL contribute text by its static type: a `string` itself; `i64`, `i32`, `u32`, or `u8` its decimal value, with a leading `-` when negative, including the minimum `i64`; a `bool` `true` or `false`; an `f64` its shortest round-trip text. An operand of any other type SHALL fail compilation.
+
+**Stable ID:** `BSP-REQ-STRING-INTERPOLATION-OPERANDS`
+
+#### Scenario: Minimum i64 prints all of its digits
+- **GIVEN** an `i64` value `v` equal to `-9223372036854775808`
+- **WHEN** `"${v}"` is evaluated
+- **THEN** the result is `"-9223372036854775808"`
+
+#### Scenario: Bool prints its keyword spelling
+- **GIVEN** `bool flag = true;`
+- **WHEN** `"flag=${flag}"` is evaluated
+- **THEN** the result is `"flag=true"`, not `"flag=1"`
+
+#### Scenario: Unsigned operand prints without a sign
+- **GIVEN** a `u32` value `n` equal to `4294967295`
+- **WHEN** `"${n}"` is evaluated
+- **THEN** the result is `"4294967295"`
+
+### Requirement: Shortest round-trip f64 digits
+The text of an `f64` interpolation operand SHALL use the fewest significant decimal digits that read back as the same `f64` under round-half-even input. When two digit strings of that length both read back, the one whose last digit is even SHALL be used.
+
+**Stable ID:** `BSP-REQ-STRING-INTERPOLATION-F64-DIGITS`
+
+#### Scenario: Binary fraction keeps only the digits it needs
+- **GIVEN** `f64 a = 0.1;` and `f64 b = 0.2;`
+- **WHEN** `"${a}"` and `"${a + b}"` are evaluated
+- **THEN** the results are `"0.1"` and `"0.30000000000000004"`
+
+### Requirement: f64 interpolation text layout
+`f64` text SHALL follow ECMAScript `Number::toString`: plain decimal for magnitudes in [1e-6, 1e21); otherwise one digit, an optional fraction, and `e+x` or `e-x`. Integral values SHALL have no fraction. NaN SHALL print `NaN`, infinities `Infinity` and `-Infinity`, and both zeros `0`.
+
+**Stable ID:** `BSP-REQ-STRING-INTERPOLATION-F64-LAYOUT`
+
+#### Scenario: Integral value has no fraction
+- **GIVEN** `f64 v = 2.0;`
+- **WHEN** `"${v}"` is evaluated
+- **THEN** the result is `"2"`
+
+#### Scenario: Large and small magnitudes switch to exponent form
+- **GIVEN** `f64` values equal to 1e20, 1e21, 0.000001, 1e-7, and 1.5e300
+- **WHEN** each is interpolated
+- **THEN** the results are `"100000000000000000000"`, `"1e+21"`,
+  `"0.000001"`, `"1e-7"`, and `"1.5e+300"`
+
+#### Scenario: Special values
+- **GIVEN** `f64` values that are NaN, positive infinity, negative infinity,
+  and negative zero
+- **WHEN** each is interpolated
+- **THEN** the results are `"NaN"`, `"Infinity"`, `"-Infinity"`, and `"0"`
 
 ## Informative Source Provenance
 

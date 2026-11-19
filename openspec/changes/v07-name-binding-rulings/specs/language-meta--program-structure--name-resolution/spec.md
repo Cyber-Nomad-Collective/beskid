@@ -73,7 +73,7 @@ The compiler SHALL have one name-binding authority: the generation-bound semanti
 ## ADDED Requirements
 
 ### Requirement: Module item namespace
-The top-level declarations of a module (functions, types, enums, contracts, tests, inline modules and module declarations) SHALL share one item namespace for uniqueness: two declarations of one name in one module SHALL fail with **E1102**. Lookup SHALL be filtered by position. A type position SHALL consider generic parameters, types, enums and contracts. A value position SHALL consider locals, functions and constants. A declaration of the source unit SHALL shadow an imported name only in its own position kind.
+The top-level declarations of a module (functions, types, enums, contracts, inline modules and module declarations) SHALL share one item namespace for uniqueness: two declarations of one name in one module SHALL fail with **E1102**. Tests SHALL stay in their own namespace ("Tests have their own namespace"): a test SHALL NOT collide with a non-test item. Lookup SHALL be filtered by position. A type position SHALL consider generic parameters, types, enums and contracts. A value position SHALL consider locals, functions and constants. A declaration of the source unit SHALL shadow an imported name only in its own position kind.
 
 #### Scenario: Local function does not hide an imported type
 - **GIVEN** a unit with `use Shapes;`, where `Shapes` declares `pub type Box`, and the unit declares `unit Box() {}`
@@ -130,7 +130,7 @@ A `use` declaration SHALL bind names only in the source unit that contains it. S
 An unqualified value name SHALL bind at the first of these levels that has a match: (1) locals and parameters, innermost scope first; (2) inside an inline method of a type, the fields and sibling methods of the receiver type; (3) items and constants of the source unit, the nearest enclosing inline module first, then outward to the unit's top level; (4) names imported into the source unit; (5) builtins. Two matches on one level SHALL fail with **E1104**. Unqualified lookup SHALL NOT reach items of parent modules or of other source units of the same parent module; those require a `use` or a qualified path. A local, item or import of the same name as a builtin SHALL shadow the builtin and SHALL NOT be a duplicate.
 
 #### Scenario: Field before constant
-- **GIVEN** `const limit = 4;` and `type Pool { i64 limit, i64 Get() { return limit; } }` in one unit
+- **GIVEN** `const limit = 4;` and `type Pool { i64 limit; i64 Get() { return limit; } }` in one unit
 - **WHEN** `Get` is resolved
 - **THEN** `limit` binds to the field of the receiver
 
@@ -171,7 +171,7 @@ A single-segment type name SHALL bind at the first of these levels that has a ma
 - **THEN** each `T` in the signature and body of `Id` binds to the generic parameter
 
 #### Scenario: Arity mismatch
-- **GIVEN** a unit that declares `pub type Box { i64 v, }` and a parameter `Box<i64> b`
+- **GIVEN** a unit that declares `pub type Box { i64 v; }` and a parameter `Box<i64> b`
 - **WHEN** the parameter type is resolved
 - **THEN** the compiler emits **E1203** or **E1204** for `Box`
 

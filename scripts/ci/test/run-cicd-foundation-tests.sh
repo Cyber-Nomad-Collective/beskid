@@ -12,7 +12,6 @@ for script in \
   build-release-platform.sh \
   build-release-state.sh \
   compiler-rust-gate.sh \
-  corelib-publish.sh \
   publish-release-stream.sh; do
   bash -n "${root}/scripts/ci/${script}"
 done
@@ -30,6 +29,7 @@ bash "${root}/scripts/ci/test/rust-linker-toolchain-contract.test.sh"
 # names; the quality gate must validate each member's package declaration.
 CORELIB_QUALITY_ONLY=1 "${root}/scripts/ci/corelib-gate.sh"
 bash "${root}/scripts/ci/test/corelib-gate-report.test.sh"
-bash "${root}/scripts/ci/test/corelib-publish-contract.test.sh"
+bash "${root}/scripts/ci/test/publish-corelib.test.sh"
+bash "${root}/scripts/ci/test/preview.test.sh"
 
 echo "build and release foundation tests OK"

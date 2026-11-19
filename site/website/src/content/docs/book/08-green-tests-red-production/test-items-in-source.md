@@ -11,16 +11,21 @@ Beskid tests are **first-class source items**, not comments you forgot to delete
 Normative syntax is in [Testing](/docs/standard/capabilities/language-meta--contracts-and-effects--testing/):
 
 ```beskid
-test ParseFast {
-    meta {
+test ParseFast
+{
+    meta
+    {
         tags = "fast,parser";
         group = "analysis.parser";
         timeout = 30;
     }
-    skip {
+
+    skip
+    {
         condition = false;
         reason = "flip to true when the parser is on fire again";
     }
+
     return;
 }
 ```

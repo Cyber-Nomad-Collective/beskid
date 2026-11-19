@@ -4,9 +4,7 @@
 ## Purpose
 
 This specification defines local type inference. The inference reduces the annotation burden. The inference keeps programs predictable. The specification defines the inference algorithm. Diagnostics reference these rules.
-
 ## Requirements
-
 ### Requirement: Let and generic inference sites
 `let name = expr` MUST infer the variable type from `expr` when unambiguous. `let T name = expr` MUST check `expr` against `T` with no inference of `T` from the initializer alone. Generic arguments at call sites MAY be inferred from parameter types when a unique solution exists (**E1203** when missing). Lambda parameter types MAY be inferred from expected function type; untyped lambda parameters require contextual type (**E1202** when missing).
 
@@ -30,6 +28,112 @@ Mismatch after inference MUST diagnose **E1206**. Inference affects compile-time
 - **GIVEN** an inferred expression that does not match a required contextual type
 - **WHEN** checking completes after inference
 - **THEN** the compiler emits **E1206**
+
+### Requirement: Contextual numeric literal typing
+An integer literal without a suffix SHALL have the type that its context requires when the context requires a primitive integer type. The contexts SHALL be: a declared local or field type; an assignment target; a function, method or enum variant parameter, after generic inference; a type literal field; a `return` value; an array element of a known element type; a match arm or value block whose result type is known; the other operand of a binary operator whose type is known; and a branch of a conditional expression as stated in the control-flow capability. A float literal without a suffix SHALL have type `f32` when its context requires `f32`, and otherwise `f64`. An integer literal without a suffix where `f32` or `f64` is required SHALL be converted to that type. Without a context, an integer literal without a suffix SHALL have type `i32` when its value fits, and otherwise `i64`; a hexadecimal literal above `i64::MAX` SHALL have type `word`. A suffix (`_u8`, `_i64`, `_f32`) SHALL fix the type of the literal and SHALL take precedence over the context. When the type of a suffix differs from the numeric type that the context requires, the compiler SHALL report **E1206**, except when the literal is an operand of a binary operator, where the numeric promotion rules of the operator apply. A float literal where an integer type is required SHALL be **E1206**. A literal whose value does not fit the type that its context or suffix gives it SHALL be **T0905** at the literal, and SHALL NOT be wrapped or truncated. A negative value SHALL NOT fit an unsigned type. A float literal fits when it is finite in its type.
+
+#### Scenario: Field context
+- **GIVEN** `type Port { u8 high; u8 low; }` and `Port { high: 1, low: 2 }`
+- **WHEN** the code is checked
+- **THEN** both literals have type `u8` and no diagnostic is reported
+
+#### Scenario: No context
+- **GIVEN** `let n = 3000000000;`
+- **WHEN** the code is checked
+- **THEN** `n` has type `i64`, and `let m = 7;` gives `m` the type `i32`
+
+#### Scenario: Literal does not fit
+- **GIVEN** `u8 x = 300;`
+- **WHEN** the code is checked
+- **THEN** the compiler SHALL report **T0905** at `300` with the message "`300` does not fit in `u8`"
+
+#### Scenario: Conflicting suffix
+- **GIVEN** `u8 x = 1_i64;`
+- **WHEN** the code is checked
+- **THEN** the compiler SHALL report **E1206**
+
+#### Scenario: Suffix as a binary operand
+- **GIVEN** `i64 y = a + 1_i64;` where `a` is `i64`
+- **WHEN** the code is checked
+- **THEN** no diagnostic is reported
+
+### Requirement: Generic inference from bulk arguments
+For a generic callee whose last parameter is `bulk T[]`, the element type `T` SHALL be inferred from the trailing arguments as if they were one `T[]` argument, or SHALL be taken from explicit type arguments. A call with no trailing arguments SHALL leave `T` uninferred, so it SHALL supply explicit type arguments or be rejected for missing type arguments.
+
+**Stable ID:** `BSP-REQ-BULK-GENERIC-INFERENCE`
+
+#### Scenario: Element type inferred from trailing arguments
+- **GIVEN** `T First<T>(bulk T[] values) { return values[0]; }`
+- **WHEN** `First(4_i64, 5_i64)` and `First<i64>(4, 5, 6)` are compiled
+- **THEN** both calls specialize `First` with `T` as `i64` and pack their
+  trailing arguments as `i64` elements
+
+#### Scenario: No trailing arguments needs type arguments
+- **GIVEN** the same `First`
+- **WHEN** `First()` is type-checked
+- **THEN** the compiler rejects the call for missing type arguments
+
+### Requirement: Locals annotated with a type parameter
+Inside a generic function, a local declared with a type parameter as its type (`T held = value;`) SHALL take the concrete type that the current specialization substitutes for that parameter, for scalar and reference types alike.
+
+**Stable ID:** `BSP-REQ-GENERIC-ANNOTATED-LOCAL`
+
+#### Scenario: Scalar and string specializations
+- **GIVEN** `T Same<T>(T value) { T held = value; return held; }`
+- **WHEN** `Same("s")` and `Same(7_i64)` are compiled and run
+- **THEN** each specialization compiles, and the calls return `"s"` and `7`
+
+### Requirement: Contextual enum constructors in method arguments
+An enum constructor written without type arguments SHALL take its type from the declared parameter type when it is an argument to a method called on a local whose type is written explicitly, as it already does for arguments to module functions.
+
+**Stable ID:** `BSP-REQ-ENUM-CONSTRUCTOR-METHOD-ARGUMENT-CONTEXT`
+
+#### Scenario: Generic constructor takes the parameter's application
+- **GIVEN** `enum Maybe<T> { None(), Some(T value) }`, a type `Holder` with
+  method `i64 Pick(Maybe<i64> other)`, and `Holder holder = Holder { n: 1 };`
+- **WHEN** `holder.Pick(Maybe::None())` is type-checked
+- **THEN** the constructor resolves to `Maybe<i64>::None`
+
+### Requirement: Method type argument inference
+A call of a generic function or method whose own type parameters are not given explicitly SHALL infer them, and the inference SHALL proceed in this order:
+
+1. The owner type parameters of a method SHALL be bound by the instantiated receiver.
+2. Explicit type arguments, when written, SHALL bind every own type parameter, and steps 3 and 4 SHALL then only check.
+3. Each argument that is not a lambda literal SHALL be synthesized and its proven type SHALL be unified structurally with its declared parameter type (through nominal type arguments, array elements and function parameter and result types), left to right. Two different bindings of one type parameter SHALL be reported as **E1229**.
+4. Each lambda literal argument SHALL then be typed left to right against its declared function-typed parameter with the bindings of steps 1-3 and of earlier lambdas applied. An untyped lambda parameter SHALL take its type from that parameter type, which SHALL be fully bound at this point (**E1202** otherwise); a typed lambda parameter SHALL be unified like a step 3 argument. When the declared result type still names an unbound type parameter, the lambda's result SHALL be synthesized: an expression body from its own proven type (an unsuffixed integer literal takes the language default `i32`), a block body from its `return` expressions, which SHALL all have the same proven type (a block with no `return` value is `unit`); the synthesized result SHALL then be unified with the declared result type.
+5. A type parameter that is still unbound SHALL be reported as **E1203** at the call, naming the parameter, with the help to write the type arguments.
+
+Inference SHALL NOT use the expected type of the call itself and SHALL NOT bind a type parameter from a lambda's parameters' use inside its body. The expected type of an argument SHALL keep the 2026-10-09 rule (bound only by explicit arguments or the receiver), with one refinement: a function-typed parameter whose unbound type parameters appear only in its result SHALL still supply its parameter types to an untyped lambda, and the lambda's result SHALL have no expected type. After inference every argument SHALL be checked against the substituted parameter type (**E1206** on mismatch) and every `where` bound SHALL be proven (**E1610**).
+
+#### Scenario: Result type inferred from an expression body
+- **GIVEN** a method `pub Task<T> Spawn<T>(() => T body)` on `Scope` and `Task<i64> t = s.Spawn(() => 20_i64);`
+- **WHEN** the call is checked
+- **THEN** `T` is bound to `i64` and no diagnostic is reported
+
+#### Scenario: Lambda parameter from the receiver, result from the body
+- **GIVEN** `pub type Seq<T> { T[] items; pub Seq<U> Map<U>((T) => U f) { ... } }` and `Seq<string> Show(Seq<i64> numbers) { return numbers.Map((x) => "${x}"); }`
+- **WHEN** the call is checked
+- **THEN** `x` has type `i64`, `U` is bound to `string`, and no diagnostic is reported
+
+#### Scenario: Type parameter from a non-lambda argument
+- **GIVEN** a method `pub T Fold<C>(T seed, C combiner) where C: Folder<T>` on `Seq<T>`, a type `AddAll : Folder<i64>`, and `numbers.Fold(0_i64, AddAll {})`
+- **WHEN** the call is checked
+- **THEN** `C` is bound to `AddAll` and the bound is proven
+
+#### Scenario: Block body result from its returns
+- **GIVEN** `Task<i64> t = s.Spawn(() => { Log.Info("start"); return 7_i64; });`
+- **WHEN** the call is checked
+- **THEN** `T` is bound to `i64`
+
+#### Scenario: Unresolvable result requires type arguments
+- **GIVEN** `pub Task<T> SpawnTry<T>(() => Result<T, string> body)` and `s.SpawnTry(() => Result::Error("no input"))`
+- **WHEN** the call is checked
+- **THEN** the compiler reports **E1203** naming `T`, and `s.SpawnTry<i64>(() => Result::Error("no input"))` is accepted
+
+#### Scenario: Conflicting bindings
+- **GIVEN** `pub T Pick<T>(T a, T b)` and `Pick(1_i64, "x")`
+- **WHEN** the call is checked
+- **THEN** the compiler reports **E1229** naming `T`, `i64` and `string`
 
 ## Informative Source Provenance
 

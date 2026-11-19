@@ -7,7 +7,8 @@ import { tmpdir } from "node:os";
 import test, { after } from "node:test";
 import * as reader from "../woodpecker-release-evidence.mjs";
 import {
-  CanonicalManifestBytes, ManifestDigest, caseLogName, caseStderrName, caseStdoutName, findRustDeclaration, fixturePacketName,
+  CanonicalManifestBytes, ManifestDigest, caseLogName, caseStderrName, caseStdoutName, findBeskidDeclaration, findRustDeclaration,
+  fixturePacketName,
   harnessPacketName, inputPacketName, libtestPath, sourcePacketName, CORELIB_FINGERPRINT_FILE, INSTALLED_RECEIPT, MANIFEST_FILE,
   RUNTIME_ABI_RECEIPT, RUNTIME_KIT_RECEIPT,
 } from "../release-case-common.mjs";
@@ -21,12 +22,12 @@ const PROVISIONAL_IDS = planned.provisional_cases.map(item => item.id);
 const PREFIX = "/reader-fixture/candidate";
 const SOURCE = { superrepo_commit: "1".repeat(40), compiler_commit: "2".repeat(40) };
 const identifier = id => `reader_fixture_${id.replace(/[^A-Za-z0-9_]/g, "_")}`;
-const HOST_HARNESS = { "R4-ABI": "beskid_tests_interop", "R4-BIND": "beskid_tests_interop", "R4-CALL": "beskid_tests_interop",
-  "R4-GEN": "beskid_tests_interop", "R4-TOOL": "beskid_tests_interop" };
+const HOST_HARNESS = { "R4-ABI": "beskid_tests_release", "R4-BIND": "beskid_tests_release", "R4-CALL": "beskid_tests_release",
+  "R4-GEN": "beskid_tests_release", "R4-TOOL": "beskid_tests_release", "GLUE066-01": "beskid_tests_release" };
 function plannedExecution(id) {
   const prefix = id.split("-").slice(0, 2).join("-");
   if (HOST_HARNESS[prefix]) return { execution: "installed_host_harness", harness: HOST_HARNESS[prefix] };
-  if (/^(CLI06|DEP06|MOD-06)-|^SER-04$|^BSOL-06-01$/.test(id)) return { execution: "installed_host_harness", harness: "beskid_tests_release" };
+  if (/^(CLI06|DEP06|MOD-06)-|^SER-04$|^BSOL-06-01$|^(PAR066|PORT066|PSEQ066)-02$|^(MOVE066|GCS066)-/.test(id)) return { execution: "installed_host_harness", harness: "beskid_tests_release" };
   return { execution: "installed_native", harness: null };
 }
 function libtestSection(id, { outcome = "ok", running = 1, exit = 0, qualified = id } = {}) {
@@ -99,7 +100,6 @@ function fixture(target = planned.targets[0], options = {}) {
     }
     const language = execution === "installed_native" ? "beskid" : "rust";
     const source_file = language === "beskid" ? `reader-fixture/beskid-${item.id}.bd`
-      : harness === "beskid_tests_interop" ? `compiler/crates/beskid_tests_interop/src/interop/reader_fixture_${identifier(item.id)}.rs`
       : `compiler/crates/beskid_tests_release/tests/reader_fixture_${identifier(item.id)}.rs`;
     const qualified = id => language === "beskid" ? id : libtestPath(source_file, manifest.harness_executables[harness].source_root, id);
     const extra = `${identifier(item.id)}_unrequired_passing`;
@@ -116,7 +116,7 @@ function fixture(target = planned.targets[0], options = {}) {
     const input = item.id === "BSOL-06-01" ? { id: "bsol-corpus", path: corpus.path, sha256: corpus.sha256, source_root: "beskid_bsol", include: ["conformance", "schemas"], corpus: "conformance" } : null;
     const fixtureName = /^R4-PROC-/.test(item.id) ? "beskid_release_fixture" : null;
     const env = {};
-    if (execution === "installed_host_harness") env.BESKID_V06_QUALIFIED_PREFIX = "{installed_prefix}";
+    if (execution === "installed_host_harness") env.BESKID_QUALIFIED_PREFIX = "{installed_prefix}";
     if (input) env.BESKID_BSOL_CORPUS = "{input_root}/conformance";
     if (fixtureName) env.BESKID_V06_RELEASE_FIXTURE = "{fixture}";
     const command = execution === "installed_native"
@@ -194,9 +194,9 @@ const nativeCase = "foundations.time";
 const hostCase = "DEP06-02";
 
 test("the draft manifest retains all mandatory IDs and only reviewed bindings", () => {
-  assert.equal(planned.cases.length, 86);
+  assert.equal(planned.cases.length, 95);
   assert.equal(planned.cases.filter(item => item.spec_change === null).length, 16);
-  assert.equal(new Set(planned.cases.map(item => item.id)).size, 86);
+  assert.equal(new Set(planned.cases.map(item => item.id)).size, 95);
   assert.equal(planned.provisional_cases.length, 15);
   assert(planned.provisional_cases.every(item => item.moved_from === "v06-rust-glue-integration" && typeof item.reason === "string" && item.reason.length > 0));
   // R4-IO-* live on in the provisional stdio bridge change; R4-GEN-04..06 (Glue Mod contracts) are deleted in 0.6 and kept by no change.
@@ -240,13 +240,65 @@ test("binding fragments name real declarations and never provisional or library-
       const source = readFileSync(new URL(binding.source_file, repo));
       for (const testId of binding.required_test_ids) {
         if (binding.execution === "installed_host_harness") assert.equal(findRustDeclaration(source, testId).length, 1, `${id} declares ${testId} once`);
-        else assert(source.toString().split("\n").some(line => line.startsWith(`test ${testId}`)), `${id} declares ${testId}`);
+        else assert.equal(findBeskidDeclaration(source, testId).length, 1, `${id} declares ${testId} once`);
       }
       for (const related of binding.related_evidence ?? []) for (const testId of related.test_ids ?? []) assert(!binding.required_test_ids.includes(testId), `${id} requires library-only ${testId}`);
     }
   }
   const check = spawnSync(process.execPath, [new URL("../freeze-release-cases-v06.mjs", import.meta.url).pathname, "--check"], { encoding: "utf8" });
   assert.equal(check.status, 0, check.stderr);
+});
+test("Beskid test ids are qualified by their inline modules and declarations may be indented", () => {
+  const source = Buffer.from([
+    "use Testing.Assert;",
+    "/* test Shared { } in a comment is no declaration */",
+    "test Shared { return; }",
+    "pub mod Topic",
+    "{",
+    "    // test Inner { } in a line comment",
+    "    test Inner",
+    "    {",
+    "        Assert.True(\"{ not a block\" != \"}\", \"braces in strings\");",
+    "    }",
+    "    mod Deep",
+    "    {",
+    "        test Shared { return; }",
+    "    }",
+    "}",
+    "mod Alpha {",
+    "  test Shared { return; }",
+    "}",
+    "mod Beta { test Shared { return; } }",
+    "mod Twice",
+    "{",
+    "    test Shared { return; }",
+    "    test Shared { return; }",
+    "}",
+    "unit Helper() { char open = '{'; return; }",
+    "test Last { return; }",
+    "",
+  ].join("\n"));
+  const only = id => {
+    const matches = findBeskidDeclaration(source, id);
+    assert.equal(matches.length, 1, `${id}: ${JSON.stringify(matches)}`);
+    const [match] = matches;
+    assert.equal(source.subarray(match.start, match.end).toString("utf8"), match.declaration);
+    return match;
+  };
+  assert.equal(only("Shared").declaration, "test Shared");
+  assert.equal(only("Shared").start, source.indexOf("\ntest Shared") + 1);
+  assert.equal(only("Topic::Inner").start, source.indexOf("    test Inner\n") + 4);
+  assert.equal(only("Topic::Deep::Shared").start, source.indexOf("        test Shared") + 8);
+  assert.equal(only("Alpha::Shared").start, source.indexOf("test Shared", source.indexOf("mod Alpha")));
+  assert.equal(only("Last").declaration, "test Last");
+  assert.equal(findBeskidDeclaration(source, "Twice::Shared").length, 2, "a duplicate in one module is reported twice");
+  // A declaration starts its line, as before; one written after `mod Beta {` on the same line is not bound.
+  for (const missing of ["Beta::Shared", "Inner", "Deep::Shared", "Topic::Shared", "Gamma::Shared", "Topic::Inner::Extra"]) {
+    assert.equal(findBeskidDeclaration(source, missing).length, 0, missing);
+  }
+  for (const invalid of ["Topic::", "::Inner", "Topic.Inner", "Topic:::Inner", ""]) {
+    assert.throws(() => findBeskidDeclaration(source, invalid), /native assertion identifier is invalid/, invalid);
+  }
 });
 test("harness crates cannot reach the checkout or the build-tree CLI", () => {
   for (const crate of ["beskid_tests_release", "beskid_tests_interop"]) {
@@ -502,8 +554,8 @@ function nativeDeclarationFixture(transform = bytes => bytes) {
   // Real source declaration, synthetic execution receipt: reader coverage only.
   const value = fixture();
   const source = transform(readFileSync(new URL("compiler/corelib/beskid_corelib/tests/corelib_tests/src/bsol/SerializationWireTests.bd", repo)));
-  const test_id = "bsol_serialization_wire_exact_unsigned_width";
-  const declaration = `test ${test_id}`;
+  const test_id = "WireTests::ExactUnsignedWidth";
+  const declaration = "test ExactUnsignedWidth";
   const start = source.indexOf(Buffer.from(declaration));
   assert(start >= 0);
   const source_file = "compiler/corelib/beskid_corelib/tests/corelib_tests/src/bsol/SerializationWireTests.bd";
@@ -516,7 +568,7 @@ function nativeDeclarationFixture(transform = bytes => bytes) {
   rewriteRow(value, nativeCase, row => {
     row.harness_source = harness;
     row.tests = [{ id: test_id, outcome: "passed" }];
-    row.stdout_sha256 = value.retain(row.stdout, JSON.stringify({ target: binding.target, summary: { passed: 1, failed: 0, skipped: 0, filtered_out: 0, timed_out: 0 }, tests: [{ name: test_id, qualified_name: test_id, outcome: "passed" }] })).sha256;
+    row.stdout_sha256 = value.retain(row.stdout, JSON.stringify({ target: binding.target, summary: { passed: 1, failed: 0, skipped: 0, filtered_out: 0, timed_out: 0 }, tests: [{ name: "ExactUnsignedWidth", qualified_name: test_id, outcome: "passed" }] })).sha256;
   });
   value.manifest.packet_files = [...new Set([...value.manifest.packet_files, harness.path])].sort();
   refreeze(value);
@@ -536,6 +588,6 @@ test("assertion declaration language is mandatory and cannot be relabeled", () =
 });
 test("native declaration cannot bind a prefix of another test identifier", () => {
   const value = nativeDeclarationFixture(bytes => Buffer.from(bytes.toString().replace(
-    "test bsol_serialization_wire_exact_unsigned_width", "test bsol_serialization_wire_exact_unsigned_width_extra")));
+    "test ExactUnsignedWidth", "test ExactUnsignedWidth_extra")));
   reject(value, /declaration/);
 });

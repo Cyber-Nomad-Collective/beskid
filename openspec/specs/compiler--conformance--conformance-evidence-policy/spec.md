@@ -4,9 +4,7 @@
 ## Purpose
 
 Feature hub for the conformance evidence policy in the reference compiler.
-
 ## Requirements
-
 ### Requirement: Feature hub authority: Decision [D-COMP-CONF-0001]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
 
@@ -48,6 +46,73 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **GIVEN** an implementation claims conformance with this capability
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
+
+### Requirement: 0.6.6 feature release cases
+The frozen 0.6 release case manifest SHALL include mandatory cases for the 0.6.6 language and runtime features, and each case SHALL run on Linux x64, macOS arm64 and Windows x64 like every other mandatory case. The cases SHALL cover: fork-join scopes with Spawn/Join results at `BESKID_ISOLATES_MAX=1` and at the default isolate bound (`PAR066-01`, `PAR066-02`); a bounded port producer and consumer and a pipeline that keeps input order (`PORT066-01`, `PORT066-02`); parallel sequence Map/Reduce and Collect results equal to the serial result (`PSEQ066-01`, `PSEQ066-02`); `move` and `exchange` at run time and a read after `move` rejected as **E1234** through the installed CLI (`MOVE066-01`); generated Rust owner records, fieldless enums and call-scoped callbacks built by the installed CLI (`GLUE066-01`); and a `BESKID_GC_STRESS=alloc:64,verify` smoke run with a malformed setting rejected at runtime initialization (`GCS066-01`). Library-level tests that do not run the installed prefix SHALL be related evidence only.
+
+#### Scenario: A 0.6.6 candidate fails a feature case
+- **GIVEN** a candidate whose installed CLI runs the `PAR066-02` program at `BESKID_ISOLATES_MAX=1` with a task outside the main isolate
+- **WHEN** the release cases run on any target
+- **THEN** `PAR066-02` fails and qualification fails with that case identity
+
+#### Scenario: The feature cases are bound to reviewed sources
+- **GIVEN** the release case manifest is frozen with the official freeze tool
+- **WHEN** a reader validates the evidence of a 0.6.6 candidate
+- **THEN** every 0.6.6 feature case names its retained source, its required test ids and their byte offsets, and the manifest digest equals the pinned digest
+
+### Requirement: Complete 0.6 native acceptance matrix
+An implementation claiming beskid 0.6.0 release qualification SHALL execute every mandatory case in a frozen requirement-to-case manifest on Linux x64, macOS arm64 and Windows x64. The manifest SHALL cover everyday CLI and transactional dependency journeys; generated generic serialization and its format independence; checked dynamic casts, fresh mapping and forced-GC retention; native Beskid BSOL syntax, writer, schema profiles, controlled imports, references, constraints, structural migration and typed mapping; and manual plus generated bidirectional Rust Glue primitive, ownership and subprocess lifecycle behavior. The stdio bridge is provisional for 0.6 (`v06-glue-stdio-bridge-provisional`): its cases SHALL be listed as provisional in the manifest, SHALL never be required and SHALL be rejected if any evidence row names them. It SHALL include positive, negative and boundary cases, with analysis fixtures, documentation examples and native executable evidence appropriate to each obligation. Native generator materialization, missing primitive support and process/pipe prerequisites SHALL be tested through real production paths. Existing required foundations, networking and HTTP regression cases SHALL remain required. .NET Glue SHALL be classified separately as stretch.
+
+#### Scenario: A scalar-only Glue success is insufficient
+- **GIVEN** integer import generation passes but required export, floating-point, string, ownership or lifecycle cases are absent
+- **WHEN** the 0.6 candidate is aggregated
+- **THEN** qualification fails with the missing mandatory case identities
+
+#### Scenario: BSOL is implemented by native corelib
+- **GIVEN** the candidate contains a native Beskid BSOL implementation and the shared positive and negative corpus
+- **WHEN** installed consumers execute syntax, schema and typed round trips on each required target
+- **THEN** results and normalized diagnostics match the corpus and dependency inspection proves those APIs do not forward parsing or schema evaluation to the Rust BSOL implementation
+
+#### Scenario: Existing behavior remains protected
+- **GIVEN** a candidate supplies all new feature cases but omits a previously required foundations, networking or HTTP case
+- **WHEN** the acceptance reader validates the matrix
+- **THEN** the candidate is rejected rather than qualifying on the new features alone
+
+### Requirement: Source-bound complete case evidence
+Every mandatory release case SHALL retain its case and requirement identities, target, exact consumed source revisions, command/harness identity, tools, input digests, artifact and runtime-kit digests, bounded output digests, exit status and execution result. Readers SHALL verify the retained evidence against its declared sources and immutable candidate artifacts. Missing, duplicate, skipped, filtered-out, timed-out, malformed, source-mismatched or nonexecuted mandatory cells SHALL fail qualification. A passing command without proof that its required assertions executed SHALL NOT qualify a case. Installed-consumer cases SHALL use the candidate's complete installed prefix and package paths rather than source-tree or developer-kit fallback discovery.
+
+#### Scenario: Stale evidence cannot qualify new bytes
+- **GIVEN** a passing case consumes a different compiler, corelib, harness or artifact than the declared candidate
+- **WHEN** the release reader checks evidence
+- **THEN** it rejects that case and reports the mismatched consumed identity
+
+#### Scenario: A harness exits without executing required cases
+- **GIVEN** a test command exits successfully but filters out a mandatory case or reports it skipped
+- **WHEN** evidence is validated
+- **THEN** qualification fails for that case regardless of the process exit status
+
+#### Scenario: Installed discovery is exact
+- **GIVEN** a packaged candidate has a missing or mismatched runtime kit and a valid development kit is also available
+- **WHEN** the installed-consumer journey executes
+- **THEN** it fails closed without using the development kit to qualify the package
+
+### Requirement: Execution kinds derive outcomes from retained raw output
+The frozen manifest SHALL give every mandatory case exactly one execution kind. `installed_native` SHALL run one `beskid test --json` target of the bundled Corelib test workspace through the installed candidate CLI; the retained stdout SHALL be the raw JSON report, the reader SHALL derive executed outcomes from that report, every test of the target SHALL pass, and the required assertion ids SHALL be a subset of the passed tests. `installed_host_harness` SHALL run a reviewed Rust libtest executable built from the same compiler commit, one `--exact` process per required id, with the installed prefix named by `BESKID_V06_QUALIFIED_PREFIX`; the retained stdout and stderr SHALL be the raw libtest streams in per-test sections, and every installed CLI invocation SHALL write `beskid-installed-invocation sha256=<digest> argv0=<name>` to stderr, where the digest is the installed CLI's bytes. A harness test without that proof SHALL be recorded as not executed. Readers SHALL never trust a producer-authored outcome list, SHALL verify command templates against the installed prefix and the retained harness executable, SHALL require the frozen manifest in canonical bytes, and SHALL treat library-level tests that never touch the installed prefix as related evidence only.
+
+#### Scenario: Filtered row cannot hide a failing target
+- **GIVEN** a native cell whose raw report contains one failed non-required test and a row listing only passing required ids
+- **WHEN** the reader validates the cell
+- **THEN** it rejects the cell from the raw report regardless of the row
+
+#### Scenario: Harness without installed invocation proof
+- **GIVEN** a host cell whose retained stderr section carries no `beskid-installed-invocation` line or a line with a digest other than the installed CLI
+- **WHEN** the reader validates the cell
+- **THEN** the assertion is nonexecuted and qualification fails
+
+#### Scenario: Provisional case cannot enter evidence
+- **GIVEN** a feature row, profile row or obligation row naming a provisional case id
+- **WHEN** the reader validates the packet
+- **THEN** it rejects the packet
 
 ## Informative Source Provenance
 

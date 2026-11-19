@@ -52,6 +52,12 @@ Result<Deadline, TimerError> by = Deadline.After(Time.FromSeconds(5_i64));
 
 Both return `Result` because a negative duration or an unavailable monotonic clock is an error the caller should see, not a silent zero.
 
+## Parallel work
+
+Fibers wait well and compute on one core. A fiber that spins on arithmetic holds its isolate's only mutator, and every other fiber in that isolate waits for it. `SetProcessorCount` does nothing, so there is no knob that changes this.
+
+CPU work goes to `Core.Parallel`, in the same package. `Parallel.Scope` runs each `Scope.Spawn` body on another isolate, with its own heap, scheduler, and thread, and joins every task before it returns. `Port<T>` is a bounded queue between isolates, and `ParallelSeq<T>` splits a list or array into chunks for `Map`, `Where`, and `Reduce`. The process runs at most `BESKID_ISOLATES_MAX` isolates at once; the default is the host processor count. A value crosses to another isolate only as a capture, a task result, or a port message, and only when its type is `Transferable`. The rules are in [isolates and parallel](/docs/standard/capabilities/core-library--concurrency--isolates-and-parallel/) and [isolates and transit](/docs/standard/capabilities/execution--runtime--isolates-and-transit/).
+
 ## What the package does not have
 
-No `select` statement; use `Hub`. No async iterators. No thread-affinity API, because there are no threads in the model. No `ConfigureAwait`. If you are looking for one of those, the thing you actually need is probably on the previous page.
+No `select` statement; use `Hub`. No async iterators. No thread-affinity API: isolates own their threads, and no Beskid surface hands one out. No `ConfigureAwait`. If you are looking for one of those, the thing you actually need is probably on the previous page.

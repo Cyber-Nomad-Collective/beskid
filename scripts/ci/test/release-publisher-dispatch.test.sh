@@ -14,13 +14,9 @@ log="$tmp/calls.log"
 # A fake checkout whose scripts record their name, arguments and credential exposure.
 ws="$tmp/ws"; mkdir -p "$ws/scripts/ci"; git -C "$ws" init -q
 recorder='printf "%s|%s|gh=%s|pckg=%s|ovsx=%s|plugin=%s\n" "$(basename "$0")" "$*" "${GH_TOKEN:-}" "${BESKID_PCKG_API_KEY:-}" "${OVSX_PAT:-}" "${PLUGIN_GH_TOKEN:-}${PLUGIN_PCKG_API_KEY:-}${PLUGIN_OVSX_PAT:-}" >>"$CALLS_LOG"'
-for script in woodpecker-release-lane.sh init-submodules.sh corelib-publish.sh; do
+for script in woodpecker-release-lane.sh init-submodules.sh; do
   printf '#!/usr/bin/env bash\n%s\nprintf "pins=%%s,%%s,%%s|task=%%s\\n" "${BESKID_LINUX_BUILD:-}" "${BESKID_MACOS_BUILD:-}" "${BESKID_WINDOWS_BUILD:-}" "${BESKID_TASK:-}" >>"$CALLS_LOG.env"\n' "$recorder" >"$ws/scripts/ci/$script"
 done
-cat >"$ws/scripts/ci/prepare-pckg-toolchain.mjs" <<'NODE'
-import {appendFileSync} from 'node:fs';const e=process.env;
-appendFileSync(e.CALLS_LOG,`prepare-pckg-toolchain.mjs|${process.argv.slice(2).join(' ')}|gh=${e.GH_TOKEN??''}|pckg=${e.BESKID_PCKG_API_KEY??''}|ovsx=${e.OVSX_PAT??''}|plugin=\n`);
-NODE
 cat >"$ws/scripts/ci/prebuilt-editor-publish.py" <<'PY'
 import os, sys
 e = os.environ
@@ -48,14 +44,6 @@ expect_calls 1
 expect_line 'woodpecker-release-lane.sh|publish|gh=gh-secret|pckg=|ovsx=|plugin='
 grep -Fxq 'pins=11,12,13|task=release-publish' "$log.env" || fail 'release pins or task did not reach the lane'
 
-# pckg-publish: the token reaches only the toolchain fetch, the publisher key only corelib-publish.sh.
-dispatch PLUGIN_ACTION=pckg-publish PLUGIN_TASK=pckg-publish PLUGIN_GH_TOKEN=gh-secret PLUGIN_PCKG_API_KEY=pckg-secret \
-  PLUGIN_COMPILER_RELEASE_VERSION=0.6.0
-expect_calls 3
-expect_line 'init-submodules.sh|compiler beskid_bsol beskid_templates beskid_distrib|gh=|pckg=|ovsx=|plugin='
-expect_line "prepare-pckg-toolchain.mjs|0.6.0 $tmp/root/woodpecker-toolchain/prefix|gh=gh-secret|pckg=|ovsx=|plugin="
-expect_line 'corelib-publish.sh||gh=|pckg=pckg-secret|ovsx=|plugin='
-
 # editor-publish: the Open VSX token reaches only the publish call.
 dispatch PLUGIN_ACTION=editor-publish PLUGIN_TASK=editor-publish PLUGIN_OVSX_PAT=ovsx-secret PLUGIN_EDITOR_VERSION=0.5.2
 expect_calls 2
@@ -78,9 +66,6 @@ rejects 'malformed pin' "${release_ok[@]}" PLUGIN_WINDOWS_BUILD='13; rm -rf /'
 rejects 'malformed source' "${release_ok[@]}" PLUGIN_LINUX_SOURCE=main
 rejects 'malformed version' "${release_ok[@]}" PLUGIN_RELEASE_VERSION='0.6.0 --x'
 rejects 'test root in Woodpecker' "${release_ok[@]}" CI_SYSTEM_NAME=woodpecker
-rejects 'missing pckg key' PLUGIN_ACTION=pckg-publish PLUGIN_TASK=pckg-publish PLUGIN_GH_TOKEN=x PLUGIN_COMPILER_RELEASE_VERSION=0.6.0
-rejects 'malformed bump' PLUGIN_ACTION=pckg-publish PLUGIN_TASK=pckg-publish PLUGIN_GH_TOKEN=x PLUGIN_PCKG_API_KEY=y \
-  PLUGIN_COMPILER_RELEASE_VERSION=0.6.0 PLUGIN_VERSION_BUMP=huge
 rejects 'missing ovsx token' PLUGIN_ACTION=editor-publish PLUGIN_TASK=editor-publish
 grep -Fq 'setting ovsx_pat is required' "$tmp/err" || fail 'missing ovsx token was not diagnosed'
 

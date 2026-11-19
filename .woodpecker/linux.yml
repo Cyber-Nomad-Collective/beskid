@@ -53,11 +53,19 @@ steps:
         output="/woodpecker-output/$${CI_PIPELINE_NUMBER}-$${CI_COMMIT_SHA}/linux"
         bash scripts/ci/woodpecker-build-platform.sh linux "$${release_version}" "$${output}"
         find . -path ./target -prune -o -type d -name __pycache__ -prune -exec rm -rf {} +
-        bash scripts/ci/woodpecker-release-gates.sh "$${release_version}" "$${output}"
+        # Design D5 (v06-release-gate-calibration): a failed gate must not lose the built artifacts.
+        # Capture the gate status, package and upload, then exit with it; the aggregate still refuses
+        # to publish a handoff whose gate reports are not successful.
+        gate_status=0
+        bash scripts/ci/woodpecker-release-gates.sh "$${release_version}" "$${output}" || gate_status=$$?
         package_output="$${output}-package"
         node scripts/ci/woodpecker-package-platform.mjs linux "$$(dirname "$${output}")" "$${package_output}"
         node -e 'const fs=require("fs"),p=process.argv[1],o=process.argv[2],r=JSON.parse(fs.readFileSync(p+"/package-result.json")); for(const a of r.artifacts) fs.copyFileSync(p+"/"+a.name,o+"/"+a.name); fs.copyFileSync(p+"/package-result.json",o+"/package-result.json")' "$${package_output}" "$${output}"
         bash scripts/ci/woodpecker-upload-handoff.sh linux "$${output}" "$${CI_COMMIT_SHA}" "$$(git rev-parse HEAD:compiler)" "$${release_version}" "$${CI_PIPELINE_NUMBER}"
+        if [ "$${gate_status}" -ne 0 ]; then
+          echo "release gates failed with exit $${gate_status}; the artifacts were packaged and uploaded for inspection" >&2
+          exit "$${gate_status}"
+        fi
 
 when:
   - event: [push, tag]

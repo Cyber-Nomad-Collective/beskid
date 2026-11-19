@@ -39,7 +39,8 @@ repository-native maintenance.
 | [`woodpecker-release-gates.sh`](ci/woodpecker-release-gates.sh) | Source-bound compiler Rust and Corelib reports from the Linux build worker |
 | [`woodpecker-release.sh`](ci/woodpecker-release.sh) | Credential-free Woodpecker preparation and external manual publication entrypoint |
 | [`render-compiler-release-notes.sh`](ci/render-compiler-release-notes.sh) | Human-readable release notes generated from release state |
-| [`corelib-publish.sh`](ci/corelib-publish.sh) | Pack and publish the production corelib closure plus all first-party templates to pckg (`--dry-run` validates every artifact without secrets or registry mutation) |
+| [`release/publish-corelib.sh`](release/publish-corelib.sh) | Manual publish from the Mac: `--bundle <prefix> --key <key-file>` checks key owner, tags, versions and API docs, packs every package, then publishes the corelib closure plus all first-party templates to pckg; a re-run resumes from registry state (`--dry-run` writes nothing) |
+| [`dev/preview.sh`](dev/preview.sh) | Mac preview build `0.6.7-preview.N`: CLI, language server, runtime bundle and VS Code extension, installed side by side with wrappers and the two VS Code settings repointed |
 | [`open-vsx-publish.sh`](ci/open-vsx-publish.sh) | Open VSX publish (native) |
 | [`openspec-gate.sh`](ci/openspec-gate.sh) | Strict OpenSpec authority validation |
 | [`conformance-gate.sh`](ci/conformance-gate.sh) | Requirement/provenance conformance validation |

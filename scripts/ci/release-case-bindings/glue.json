@@ -4,8 +4,8 @@
   "cases": {
     "R4-BIND-01": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
       ],
@@ -24,8 +24,8 @@
     },
     "R4-BIND-02": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
       ],
@@ -44,8 +44,8 @@
     },
     "R4-BIND-03": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_published_images_fail_closed_on_substitution",
         "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
@@ -55,7 +55,7 @@
       "related_evidence": [
         {
           "kind": "cargo_test",
-          "crate": "beskid_tests_interop",
+          "crate": "beskid_tests_release",
           "test_ids": [
             "v06_glue_owned_denies_missing_import_row",
             "v06_glue_owned_rejects_foreign_owner_brand",
@@ -70,8 +70,8 @@
     },
     "R4-BIND-04": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_rejects_closed_boundary_metadata_violations"
       ],
@@ -96,8 +96,8 @@
     },
     "R4-ABI-01": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_builds_owned_fixture_alone",
         "v06_glue_cli_manual_and_generated_routes_agree",
@@ -108,7 +108,7 @@
       "related_evidence": [
         {
           "kind": "cargo_test",
-          "crate": "beskid_tests_interop",
+          "crate": "beskid_tests_release",
           "test_ids": [
             "v06_glue_owned_roundtrip_all_representations"
           ]
@@ -117,8 +117,8 @@
     },
     "R4-ABI-02": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_builds_owned_fixture_alone",
         "v06_glue_cli_manual_and_generated_routes_agree"
@@ -128,7 +128,7 @@
       "related_evidence": [
         {
           "kind": "cargo_test",
-          "crate": "beskid_tests_interop",
+          "crate": "beskid_tests_release",
           "test_ids": [
             "v06_glue_owned_roundtrip_all_representations"
           ]
@@ -235,8 +235,8 @@
     },
     "R4-ABI-03": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_builds_owned_fixture_alone",
         "v06_glue_cli_manual_and_generated_routes_agree"
@@ -246,7 +246,7 @@
       "related_evidence": [
         {
           "kind": "cargo_test",
-          "crate": "beskid_tests_interop",
+          "crate": "beskid_tests_release",
           "test_ids": [
             "v06_glue_owned_roundtrip_all_representations"
           ]
@@ -353,8 +353,8 @@
     },
     "R4-ABI-04": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_builds_owned_fixture_alone",
         "v06_glue_cli_manual_and_generated_routes_agree"
@@ -364,7 +364,7 @@
       "related_evidence": [
         {
           "kind": "cargo_test",
-          "crate": "beskid_tests_interop",
+          "crate": "beskid_tests_release",
           "test_ids": [
             "v06_glue_owned_roundtrip_all_representations"
           ]
@@ -423,8 +423,8 @@
     },
     "R4-ABI-05": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_builds_owned_fixture_alone",
         "v06_glue_cli_manual_and_generated_routes_agree"
@@ -434,7 +434,7 @@
       "related_evidence": [
         {
           "kind": "cargo_test",
-          "crate": "beskid_tests_interop",
+          "crate": "beskid_tests_release",
           "test_ids": [
             "v06_glue_owned_roundtrip_all_representations"
           ]
@@ -476,8 +476,8 @@
     },
     "R4-ABI-06": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_builds_owned_fixture_alone",
         "v06_glue_cli_manual_and_generated_routes_agree"
@@ -487,7 +487,7 @@
       "related_evidence": [
         {
           "kind": "cargo_test",
-          "crate": "beskid_tests_interop",
+          "crate": "beskid_tests_release",
           "test_ids": [
             "v06_glue_owned_roundtrip_all_representations"
           ]
@@ -529,8 +529,8 @@
     },
     "R4-ABI-07": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_builds_owned_fixture_alone",
         "v06_glue_cli_manual_and_generated_routes_agree"
@@ -540,7 +540,7 @@
       "related_evidence": [
         {
           "kind": "cargo_test",
-          "crate": "beskid_tests_interop",
+          "crate": "beskid_tests_release",
           "test_ids": [
             "v06_glue_owned_roundtrip_all_representations"
           ]
@@ -587,8 +587,8 @@
     },
     "R4-ABI-08": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_builds_owned_fixture_alone",
         "v06_glue_cli_manual_and_generated_routes_agree"
@@ -598,7 +598,7 @@
       "related_evidence": [
         {
           "kind": "cargo_test",
-          "crate": "beskid_tests_interop",
+          "crate": "beskid_tests_release",
           "test_ids": [
             "v06_glue_owned_roundtrip_all_representations"
           ]
@@ -633,8 +633,8 @@
     },
     "R4-ABI-09": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_builds_owned_fixture_alone",
         "v06_glue_cli_manual_and_generated_routes_agree"
@@ -644,7 +644,7 @@
       "related_evidence": [
         {
           "kind": "cargo_test",
-          "crate": "beskid_tests_interop",
+          "crate": "beskid_tests_release",
           "test_ids": [
             "v06_glue_owned_roundtrip_all_representations"
           ]
@@ -679,8 +679,8 @@
     },
     "R4-ABI-10": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_builds_owned_fixture_alone",
         "v06_glue_cli_published_borrow_survives_release",
@@ -692,7 +692,7 @@
       "related_evidence": [
         {
           "kind": "cargo_test",
-          "crate": "beskid_tests_interop",
+          "crate": "beskid_tests_release",
           "test_ids": [
             "v06_glue_owned_roundtrip_all_representations",
             "v06_glue_owned_opaque_borrow_survives_release",
@@ -753,8 +753,8 @@
     },
     "R4-ABI-11": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_builds_owned_fixture_alone",
         "v06_glue_cli_manual_and_generated_routes_agree",
@@ -765,7 +765,7 @@
       "related_evidence": [
         {
           "kind": "cargo_test",
-          "crate": "beskid_tests_interop",
+          "crate": "beskid_tests_release",
           "test_ids": [
             "v06_glue_owned_roundtrip_all_representations"
           ]
@@ -807,8 +807,8 @@
     },
     "R4-ABI-12": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_builds_owned_fixture_alone"
       ],
@@ -817,7 +817,7 @@
       "related_evidence": [
         {
           "kind": "cargo_test",
-          "crate": "beskid_tests_interop",
+          "crate": "beskid_tests_release",
           "test_ids": [
             "v06_glue_owned_roundtrip_all_representations"
           ]
@@ -833,8 +833,8 @@
     },
     "R4-CALL-01": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_manual_and_generated_routes_agree"
       ],
@@ -843,8 +843,8 @@
     },
     "R4-CALL-02": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_manual_and_generated_routes_agree"
       ],
@@ -853,8 +853,8 @@
     },
     "R4-CALL-03": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_builds_owned_fixture_alone"
       ],
@@ -863,7 +863,7 @@
       "related_evidence": [
         {
           "kind": "cargo_test",
-          "crate": "beskid_tests_interop",
+          "crate": "beskid_tests_release",
           "test_ids": [
             "v06_glue_owned_roundtrip_all_representations"
           ]
@@ -872,8 +872,8 @@
     },
     "R4-CALL-04": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_builds_owned_fixture_alone",
         "v06_glue_cli_owner_abort_is_a_terminal_process_failure"
@@ -883,7 +883,7 @@
       "related_evidence": [
         {
           "kind": "cargo_test",
-          "crate": "beskid_tests_interop",
+          "crate": "beskid_tests_release",
           "test_ids": [
             "v06_glue_owned_roundtrip_all_representations"
           ]
@@ -904,8 +904,8 @@
     },
     "R4-GEN-01": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_equivalent_projects_issue_identical_packets"
       ],
@@ -914,8 +914,8 @@
     },
     "R4-GEN-02": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations"
       ],
@@ -924,8 +924,8 @@
     },
     "R4-GEN-03": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_published_packet_rejects_identity_profile_and_path_mutations",
         "v06_glue_cli_published_images_fail_closed_on_substitution",
@@ -936,8 +936,8 @@
     },
     "R4-TOOL-01": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_tool_selection_names_the_required_form"
       ],
@@ -958,8 +958,8 @@
     },
     "R4-TOOL-02": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_rustc_without_the_target_library_is_rejected_before_build"
       ],
@@ -968,8 +968,8 @@
     },
     "R4-TOOL-03": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_unusable_tools_fail_before_publication"
       ],
@@ -978,8 +978,8 @@
     },
     "R4-TOOL-04": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_hanging_tool_probe_is_terminated"
       ],
@@ -988,8 +988,8 @@
     },
     "R4-TOOL-05": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_ignores_inherited_rust_environment",
         "v06_glue_cli_rejects_ancestor_cargo_config"
@@ -999,8 +999,8 @@
     },
     "R4-TOOL-06": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_published_images_fail_closed_on_substitution"
       ],
@@ -1009,8 +1009,8 @@
     },
     "R4-TOOL-07": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_rebuild_replaces_and_failed_rebuild_preserves"
       ],
@@ -1019,8 +1019,8 @@
     },
     "R4-TOOL-08": {
       "execution": "installed_host_harness",
-      "harness": "beskid_tests_interop",
-      "source_file": "compiler/crates/beskid_tests_interop/src/interop/glue_owned.rs",
+      "harness": "beskid_tests_release",
+      "source_file": "compiler/crates/beskid_tests_release/tests/glue_owned.rs",
       "required_test_ids": [
         "v06_glue_cli_private_prefix_driver_admission_fails_closed"
       ],
@@ -1031,7 +1031,13 @@
           "kind": "cargo_test",
           "crate": "beskid_tests_interop",
           "test_ids": [
-            "v06_glue_driver_denied_from_build_tree",
+            "v06_glue_driver_denied_from_build_tree"
+          ]
+        },
+        {
+          "kind": "cargo_test",
+          "crate": "beskid_tests_release",
+          "test_ids": [
             "v06_glue_driver_admitted_only_from_private_prefix",
             "v06_glue_driver_denied_when_sibling_tampered",
             "v06_glue_driver_denied_when_sibling_missing",

@@ -52,6 +52,8 @@ block MUST populate the conformance table identically to `type T : Contract`
 and MUST be permitted only in the module that defines `T` (closed extension
 with private-member access, not subject to **E1511**).
 
+A contract declared with `[CompilerDerived]` SHALL NOT be listed in any conformance list (`type X : C`, `impl X : C`); such a listing SHALL be reported as **E1607**. Conformance to a `[CompilerDerived]` contract SHALL be proven only by the compiler through the requirement "Transfer class query", and a bound on it SHALL be reported as **E1610** when the proof fails, with the help text naming the first offending field or the reason returned by the query.
+
 **Stable ID:** `BSP-REQ-CA9C4460BD37`
 
 #### Scenario: Missing required member
@@ -81,6 +83,16 @@ with private-member access, not subject to **E1511**).
 - **WHEN** the resolver processes the impl block
 - **THEN** the compiler rejects it; the closed-form private access of `impl`
   is not relaxed
+
+#### Scenario: Declared conformance to a derived marker is rejected
+- **GIVEN** `use Core.Parallel;` and `pub type Token : Shared { i64 id; }`
+- **WHEN** contract satisfaction checking runs
+- **THEN** the compiler SHALL report **E1607** at `Shared` noting that the contract is compiler-derived
+
+#### Scenario: Derived bound fails with the offending field
+- **GIVEN** `pub type Cache { Map<string, i64> entries; }` without a marker and `unit Keep<T>(T value) where T: Transferable { }` and the call `Keep<Cache>(cache)`
+- **WHEN** the where-bound is proven at the call
+- **THEN** the compiler SHALL report **E1610** naming `Cache` and the reason "no marker attribute"
 
 ### Requirement: Contract call dispatch
 Contract calls MUST use static dispatch on the receiver's type after
@@ -352,6 +364,305 @@ corpus and MUST NOT depend on a legacy analysis pass.
   `generic_specialization_instance_for_call`
 - **THEN** the check consults the generation-bound conformance fact and
   admits the call
+
+### Requirement: Contract types as value types
+A contract name SHALL be usable as a value type. A value of contract type SHALL hold any value whose type conforms to the contract: a `type`, an `enum`, or a primitive type or `string` with an `impl` block for the contract. Contract values SHALL be allowed as locals, including `mut` locals, as fields, as array and `List` elements, as parameters, as return values, and as the elements of `inject Contract[]`. A contract that embeds other contracts SHALL be convertible to each embedded contract type.
+
+#### Scenario: Several implementations in a list
+- **GIVEN** `contract Shape { f64 Area(); }`, `type Square : Shape { f64 side; ... }` and `type Circle : Shape { f64 radius; ... }`
+- **WHEN** `List<Shape> shapes` receives `Square { side: 2.0 }` and `Circle { radius: 1.0 }` and the code sums `shape.Area()` over the list
+- **THEN** each call runs the implementation of the held value
+
+#### Scenario: Primitive as a contract value
+- **GIVEN** `impl i64 : Formatting { ... }` and `string Show(Formatting f) { return f.Format(); }`
+- **WHEN** `Show(3)` is checked and run
+- **THEN** no diagnostic is reported and the result is the text of `3`
+
+### Requirement: Conversion to a contract type
+A contract value SHALL be a value whose static type is a contract `C` or an applied contract `C<A...>`. It SHALL hold one implementing value of a type `T` with `T : C`, together with the implementation of `C` of `T`. A value of type `T` SHALL convert to `C` wherever `C` is expected exactly when `T : C` is proven. The positions SHALL be: a typed `let`; an assignment to a contract-typed local, field or element; an argument of a contract-typed parameter, or of a generic parameter bound to `C`; a `return` from a callable that returns `C`; and a struct field, array element or enum payload of a construction, including every element of an array literal whose element type is a contract. The conversion SHALL select the implementation at compile time and SHALL keep the held value. A value that is already a contract value of `C` SHALL pass through unchanged. A contract value of `D` SHALL convert to every non-generic contract `C` that `D` embeds, directly or transitively; the conversion SHALL keep the held value and SHALL use the implementation table of the implementing type for `C`. A generic embedded contract SHALL NOT be a conversion target. A value of a copy-on-assign type SHALL be copied before it is converted. A primitive SHALL be held by value: a later change of the source variable SHALL NOT reach the held value. When the expected type is a contract, the branches of a conditional expression, the results of match arms and the result of a block SHALL also be conversion positions, as with target typing in C#. Each branch or result SHALL convert to the contract on its own, and the whole expression SHALL have the contract type. The body of a lambda, and a `return` inside it, SHALL convert to the declared or inferred contract return type of the lambda, as any `return` does. Without an expected contract type these expressions SHALL keep their ordinary typing rules. A value whose type does not conform SHALL be reported with the ordinary type-mismatch diagnostic **E1206** naming the contract. A contract value SHALL NOT convert back to a concrete type implicitly.
+
+#### Scenario: Value that does not conform
+- **GIVEN** `Shape s = 3;` where `i64` has no `impl` for `Shape`
+- **WHEN** the code is checked
+- **THEN** the compiler SHALL report **E1206** that names `Shape`
+
+#### Scenario: Upcast to an embedded contract
+- **GIVEN** `contract Reader { ... }`, `contract Stream : Reader { ... }` and a `Stream s`
+- **WHEN** `Reader r = s;` is checked
+- **THEN** no diagnostic is reported and `r` holds the same implementing value
+
+#### Scenario: Conditional branches convert to the expected contract
+- **GIVEN** `Greeter g = c ? Hello {} : Bye {};` where `Hello` and `Bye` conform to `Greeter`
+- **WHEN** the code is checked
+- **THEN** no diagnostic is reported and `g` holds a `Hello` or a `Bye` according to `c`
+
+#### Scenario: Match arms and blocks convert to the expected contract
+- **GIVEN** `Greeter g = match k { 0 => Hello {}, _ => Bye {} };`
+- **WHEN** the code is checked
+- **THEN** no diagnostic is reported
+
+#### Scenario: Lambda body
+- **GIVEN** the lambda `() => Hello {}` where the expected function type returns `Greeter`
+- **WHEN** the code is checked
+- **THEN** no diagnostic is reported and a call of the lambda returns a contract value that holds a `Hello`
+
+#### Scenario: Conditional without an expected contract
+- **GIVEN** `let g = c ? Hello {} : Bye {};`
+- **WHEN** the code is checked
+- **THEN** the compiler SHALL report **E1206** at the second branch, because the branch types differ and no contract is expected
+
+#### Scenario: Primitive held by value
+- **GIVEN** `mut i64 n = 1; Formatting f = n; n = 2;`
+- **WHEN** `f.Format()` runs
+- **THEN** the result is `"1"`
+
+### Requirement: Runtime dispatch through a contract value
+A call through a contract value SHALL dispatch at run time to the implementation of the held value, with the held value as receiver. Default parameter values SHALL come from the contract. The compiler MAY call the implementation directly when it proves the implementing type statically; the observable behavior SHALL be the same. Static selection for an immutable local SHALL require that the initializer is itself the conversion site of the `let` and has the identity of one non-generic nominal type; everything else, including a conditional, a match, a block, a lambda, a primitive and a contract-valued initializer, SHALL dispatch at run time. A method of an implementation block for a primitive type SHALL NOT declare a `mut this` receiver, because the receiver is a copy; such a method SHALL be **E1611**. A contract type SHALL be a valid generic argument (`List<Greeter>`, `Greeter[]`). A bound `where T: C` SHALL be satisfied by `T = C`, and calls through such a `T` SHALL dispatch at run time. A call through a generic bound for a concrete `T` SHALL keep static dispatch for each specialization.
+
+#### Scenario: Dispatch follows the held value
+- **GIVEN** `Shape s = Square { side: 2.0 }; s = Circle { radius: 1.0 };` where `s` is a `mut` local
+- **WHEN** `s.Area()` runs after each assignment
+- **THEN** the first call runs `Square.Area` and the second runs `Circle.Area`
+
+### Requirement: Equality of contract values
+The operators `==` and `!=` SHALL be defined only between two contract values, of any contracts. Two contract values SHALL be equal exactly when they hold values of the same implementing type and the held values are identical: the same object for a `type` and for `string`, and an equal value for a primitive (floats compare by IEEE equality). A comparison between a contract value and a concrete operand SHALL be **E1209**, the invalid binary operation, because operators do not box. Ordering and arithmetic operators SHALL NOT be defined on contract values and SHALL be **E1209**.
+
+#### Scenario: Same object
+- **GIVEN** `Greeter a = h; Greeter b = a;` where `h` is a `Hello` object
+- **WHEN** `a == b` is evaluated
+- **THEN** the result is `true`
+
+#### Scenario: Boxed primitives
+- **GIVEN** `Formatting a = 3_i64; Formatting b = 3_i64;`
+- **WHEN** `a == b` is evaluated
+- **THEN** the result is `true`
+
+#### Scenario: Contract against a concrete operand
+- **GIVEN** a contract value `a` and an `i64` value `n`
+- **WHEN** `a == n` is checked
+- **THEN** the compiler SHALL report **E1209**
+
+#### Scenario: Ordering
+- **GIVEN** two contract values `a` and `b`
+- **WHEN** `a < b` is checked
+- **THEN** the compiler SHALL report **E1209**
+
+### Requirement: Contract values have no serialization shape
+A contract value SHALL have no serialization shape, no field codec and no dynamic packing. An attempt to serialize or pack one SHALL be an error that names "contract value".
+
+#### Scenario: Serialize a contract value
+- **GIVEN** a `[Serialize]` type with a field of contract type
+- **WHEN** the type is checked
+- **THEN** the compiler SHALL report an error that names "contract value"
+
+### Requirement: Contract methods declare default parameters
+A contract method MAY declare default values for its parameters under the rules of default parameter values. The default values belong to the contract declaration. A method that implements a contract method (same name and parameter count, in `type X : C` or `impl X : C`) and declares no optional parameter SHALL have the default values of the contract method. A call through a contract bound or a contract-typed value SHALL use the defaults of the contract. An implementing method that declares a default value different from the one of the contract method, or where the contract method has none, SHALL be **E1612**. Repeating the same default value SHALL be allowed.
+
+#### Scenario: Default through a bound
+- **GIVEN** `contract Writer { unit Write(string text, bool newline = true); }` and a function `unit Emit<T>(T w) where T: Writer { w.Write("a"); }`
+- **WHEN** the function is specialized
+- **THEN** the call passes `true` for `newline`
+
+#### Scenario: Inherited default
+- **GIVEN** `contract Writer { unit Write(string text, bool newline = true); }` and `impl Console : Writer { pub unit Write(string text, bool newline) { ... } }`
+- **WHEN** the code calls `console.Write("a")`
+- **THEN** the call passes `true` for `newline`
+
+#### Scenario: Different default
+- **GIVEN** the same contract and an implementation that declares `bool newline = false`
+- **WHEN** the implementation is checked
+- **THEN** the compiler SHALL report **E1612**
+
+### Requirement: Primitive types implement contracts
+A primitive type SHALL conform to a contract through an implementation block `impl P : C { ... }`, where `P` is one of `i8`, `i16`, `i32`, `i64`, `u8`, `u16`, `u32`, `u64`, `word`, `f32`, `f64`, `bool`, `char` and `string`. The types `unit`, `never` and `pointer` SHALL NOT conform. An implementation block for a primitive SHALL name at least one contract, SHALL NOT declare type parameters or `where` bounds, and SHALL be in the source file that declares each contract it names. A primitive SHALL NOT implement the same applied contract twice in one file. A violation SHALL be **E1611** at the block, and such a block SHALL issue no conformance. The methods SHALL satisfy the contract by the ordinary rules: a missing method is **E1601**, a different signature is **E1602**, and a method that implements a contract method is `pub`. A bound `where T: C` SHALL be satisfied by a primitive `P` exactly when one conforming implementation block `impl P : C`, or `impl P : D` where `D` embeds `C`, exists in the compilation; otherwise the call SHALL be **E1610** and the message SHALL name `P`. Inside a method of `impl P : C`, `this` SHALL be a value of type `P` that the method receives by value. A call `value.M()` through a bound `T: C` in a function specialized with `T = P` SHALL call the implementation of `P` with the value as receiver, by static dispatch. A direct call on a primitive value whose type has a conforming implementation block, such as `n.Format()` or `3.Format()`, SHALL call that implementation by static dispatch, with the value as receiver. When no implementation block provides the method for the primitive type, the call SHALL be the ordinary unknown-method error.
+
+#### Scenario: Primitive satisfies a bound
+- **GIVEN** `impl i64 : Formatting { pub string Format() { ... } }` and `string Show<T>(T v) where T: Formatting { return v.Format(); }`
+- **WHEN** `Show<i64>(3)` is checked
+- **THEN** no diagnostic is reported and the call uses the implementation for `i64`
+
+#### Scenario: Direct call on a primitive
+- **GIVEN** `impl i64 : Formatting { pub string Format() { ... } }`
+- **WHEN** `3.Format()` and `n.Format()` with `i64 n` are checked
+- **THEN** no diagnostic is reported and both calls use the implementation for `i64`
+
+#### Scenario: Direct call without implementation
+- **GIVEN** no `impl bool : Formatting`
+- **WHEN** `true.Format()` is checked
+- **THEN** the compiler SHALL report the unknown-method error
+
+#### Scenario: Primitive without implementation
+- **GIVEN** the same `Show<T>` and no `impl bool : Formatting`
+- **WHEN** `Show<bool>(true)` is checked
+- **THEN** the compiler SHALL report **E1610** that names `bool`
+
+#### Scenario: Generic primitive block
+- **GIVEN** `impl i64 : Formatting where T: Other { ... }` with bounds, or `impl unit : Formatting { }`
+- **WHEN** the block is checked
+- **THEN** the compiler SHALL report **E1611** at the block
+
+### Requirement: Bound selection for generic receiver methods
+In a generic function, a call `value.M(...)` on a value of type parameter `T` SHALL resolve `M` through the one `where T: Contract` bound whose contract declares `M`, when `T` has one or more bounds. A method that no bound declares, or that more than one bound declares, SHALL be rejected. Without a bound, `T` SHALL expose no contract methods.
+
+**Stable ID:** `BSP-REQ-CONTRACT-BOUND-METHOD-SELECTION`
+
+#### Scenario: Two bounds, each method from its own contract
+- **GIVEN** `contract Sized { i64 Size(); }`, `contract Scaled { i64 Scale(i64 factor); }`,
+  and `i64 Both<T>(T value) where T: Sized, T: Scaled { return value.Size() + value.Scale(10); }`
+- **WHEN** the program is checked
+- **THEN** `Size` resolves through `Sized`, `Scale` through `Scaled`, and no
+  error is reported
+
+#### Scenario: Method outside every bound
+- **GIVEN** `i64 Other<T>(T value) where T: Sized { return value.Extra(); }`
+- **WHEN** the program is checked
+- **THEN** the compiler reports an error for `Extra`
+
+#### Scenario: Unbounded type parameter
+- **GIVEN** `i64 Free<T>(T value) { return value.Size(); }`
+- **WHEN** the program is checked
+- **THEN** the compiler reports an error for `Size`
+
+### Requirement: Static dispatch per bounded specialization
+Each specialization of a generic function that calls a bound contract method on a `T` value SHALL call the concrete type's implementation of that method directly, with `T` inferred from the argument or given explicitly. No runtime virtual dispatch SHALL be used.
+
+**Stable ID:** `BSP-REQ-CONTRACT-BOUND-STATIC-DISPATCH`
+
+#### Scenario: One specialization per receiver type
+- **GIVEN** `type Box : Sized` whose `Size()` returns its field `n`, `type Bag : Sized`
+  whose `Size()` returns `100`, and
+  `i64 SizeOf<T>(T value) where T: Sized { return value.Size(); }`
+- **WHEN** `SizeOf<Box>(Box { n: 2 }) + SizeOf(Bag { m: 1 })` is compiled and run
+- **THEN** two specializations of `SizeOf` are emitted, each calling its own
+  type's `Size`, and the result is `102`
+
+### Requirement: Compiler-derived marker contracts
+Corelib SHALL declare, in `Core.Parallel`, four contracts with no members: `Transferable`, `Shared`, `Moved` and `Copied`, each carrying `[CompilerDerived]`. `[CompilerDerived]` SHALL be accepted only on a `ContractDefinition` that declares no members; a member in such a contract SHALL be reported as **E1003** at the member. The compiler SHALL recognize these four contracts by their corelib declaration and SHALL prove a bound `where T: M` on any of them from the transfer class of the substituted type: `Transferable` is satisfied by Shared, Moved and Copied; `Shared`, `Moved` and `Copied` are each satisfied only by their own class. Any other `[CompilerDerived]` contract SHALL be reported as **E1607** at the attribute.
+
+#### Scenario: Primitive satisfies Transferable
+- **GIVEN** `i64 Twice<T>(T value) where T: Transferable { return 2; }` and `Twice<i64>(21)`
+- **WHEN** the where-bound is proven
+- **THEN** the proof succeeds without any declared conformance of `i64`
+
+#### Scenario: Array satisfies Moved and not Shared
+- **GIVEN** `unit Own<T>(T value) where T: Moved { }`, `unit View<T>(T value) where T: Shared { }` and the calls `Own<u8[]>(bytes)` and `View<u8[]>(bytes)`
+- **WHEN** both bounds are proven
+- **THEN** `Own<u8[]>` succeeds and `View<u8[]>` is reported as **E1610** with the reason "class Moved, bound requires Shared"
+
+#### Scenario: Member in a derived contract
+- **GIVEN** `[CompilerDerived] pub contract Shared { i64 Size(); }`
+- **WHEN** the contract is checked
+- **THEN** the compiler SHALL report **E1003** at `Size`
+
+### Requirement: Transfer class query
+The compiler SHALL compute, for every type identity, exactly one transfer class from the set Shared, Moved, Copied, Never(reason), through one query (`transfer_class`) in the query layer, with these rules applied in order:
+
+1. `i8`, `i16`, `i32`, `i64`, `u8`, `u16`, `u32`, `u64`, `f32`, `f64`, `bool`, `char`, `word`, `unit` and `string` are Shared.
+2. `pointer`, `never` and every function type are Never.
+3. `T[]` is Moved when `T` is Shared, Moved or Copied, and Never otherwise.
+4. A nominal type carrying `[NeverTransferable]` is Never.
+5. A nominal type with a field of class Never is Never, naming that field.
+6. A nominal type carrying `[Immutable]` is Shared when every field is Shared or is an `[ImmutableStorage]` field of type `T[]` with `T` Shared.
+7. A nominal type carrying `[Isolated]` is Moved when every field is Shared or Moved.
+8. A nominal type carrying `[Copyable]` is Copied when every field is Shared or Copied.
+9. An enum is Shared when every variant field is Shared; Moved when every variant field is Shared or Moved and at least one is Moved; Copied when every variant field is Shared or Copied and at least one is Copied; Never otherwise.
+10. Any other nominal type is Never with the reason "no marker attribute".
+
+A type parameter SHALL take the class of its bound inside the generic definition: `Shared`, `Moved` or `Copied` give that class; `Transferable` gives the class "some Transferable", which satisfies only the `Transferable` bound; no bound gives Never. A generic nominal type's class SHALL be computed after substituting its arguments, so `List<i64>` is Moved and `List<Fiber<i64>>` is Never. Exactly one marker among `[Immutable]`, `[Isolated]`, `[Copyable]` SHALL appear on one type; a second SHALL be reported as **E1510** at the second marker with the note that markers are exclusive. The class SHALL be a generation-bound fact available to the LSP hover of the type.
+
+#### Scenario: Immutable record is Shared
+- **GIVEN** `[Immutable] pub type Job { string id; i64 size; }`
+- **WHEN** the class of `Job` is computed
+- **THEN** it is Shared
+
+#### Scenario: Isolated record over a collection is Moved
+- **GIVEN** `[Isolated] pub type Index { List<string> terms; i64[] offsets; }`
+- **WHEN** the class of `Index` is computed
+- **THEN** it is Moved
+
+#### Scenario: Copyable record with an array field is Never
+- **GIVEN** `[Copyable] pub type Frame { i64 width; u8[] pixels; }`
+- **WHEN** the class of `Frame` is computed
+- **THEN** it is Never naming `pixels` and the declaration is reported as **E1247** at `pixels`
+
+#### Scenario: Option of an array is Moved
+- **GIVEN** the corelib `Option<T>` and the type `Option<u8[]>`
+- **WHEN** the class is computed
+- **THEN** it is Moved, and `Option<i64>` is Shared
+
+#### Scenario: Generic parameter class from its bound
+- **GIVEN** `pub type Box<T> { T item; }` with `[Isolated]` and the use `Box<string>` and `Box<Mutex>`
+- **WHEN** both classes are computed
+- **THEN** `Box<string>` is Moved and `Box<Mutex>` is Never naming `item`
+
+### Requirement: Immutable types
+A type carrying `[Immutable]` SHALL be transitively immutable. At the declaration, every field SHALL be of a Shared type, or SHALL carry `[ImmutableStorage]` and have the type `T[]` with `T` Shared; any other field SHALL be reported as **E1244** at the field, naming its type and class. In every unit, an assignment (`=`, `+=`, `-=`) whose target is a member access or subscript whose receiver's proven type is an `[Immutable]` nominal type SHALL be reported as **E1245** at the assignment, including assignments through `this` inside the type's own methods and event subscription on its fields; the struct literal that constructs the value SHALL be the only way to set its fields. An `[ImmutableStorage]` field SHALL additionally not be returned, stored into another place, captured by a lambda or passed to a parameter declared `mut`; each SHALL be reported as **E1245** at the use. `[ImmutableStorage]` SHALL be accepted only inside corelib (`Core.*` packages); elsewhere it SHALL be reported as **E1510**.
+
+#### Scenario: Field of a mutable type
+- **GIVEN** `[Immutable] pub type Snapshot { i64 taken; List<string> names; }`
+- **WHEN** the declaration is checked
+- **THEN** the compiler SHALL report **E1244** at `names` naming `List<string>` and class Moved
+
+#### Scenario: Assignment through this
+- **GIVEN** `[Immutable] pub type Job { string id; i64 size; pub unit Grow() { this.size = this.size + 1; } }`
+- **WHEN** the legality gate judges the unit
+- **THEN** the compiler SHALL report **E1245** at `this.size = ...`
+
+#### Scenario: Assignment through a local
+- **GIVEN** `[Immutable] pub type Job { string id; i64 size; }` and `unit Rename(Job job) { job.id = "renamed"; }`
+- **WHEN** the legality gate judges the unit
+- **THEN** the compiler SHALL report **E1245** at the assignment
+
+#### Scenario: Construction by literal is allowed
+- **GIVEN** the same `Job` and `Job Make() { return Job { id: "a", size: 1 }; }`
+- **WHEN** the unit is checked
+- **THEN** no **E1245** is reported
+
+#### Scenario: Immutable storage field in corelib
+- **GIVEN** a corelib unit with `[Immutable] pub type ReadOnlyArray<T> { [ImmutableStorage] T[] items; pub i64 Count() { return Array.Len<T>(this.items); } }`
+- **WHEN** the declaration is checked
+- **THEN** no **E1244** is reported and `ReadOnlyArray<i64>` is Shared
+
+#### Scenario: Immutable storage passed to a mut parameter
+- **GIVEN** the same `ReadOnlyArray<T>` with a method `pub unit Add(T value) { Array.Append<T>(this.items, value); }` where `Array.Append<T>(mut T[] values, T value)`
+- **WHEN** the legality gate judges the unit
+- **THEN** the compiler SHALL report **E1245** at `this.items`
+
+### Requirement: Isolated and Copyable types
+A type carrying `[Isolated]` SHALL have only fields whose class is Shared or Moved; a type carrying `[Copyable]` SHALL have only fields whose class is Shared or Copied. A field that violates this SHALL be reported as **E1247** at the field, naming the field, its class and the classes the marker admits. `[Copyable]` SHALL NOT depend on `[Serialize]`: the two attributes are independent and either may appear without the other. The marker SHALL impose no other rule in this release; the owning, borrowing and consuming rules for Moved values are specified with the `move` expression.
+
+#### Scenario: Isolated with a Copied field
+- **GIVEN** `[Copyable] pub type Pixel { u8 r; u8 g; u8 b; }` and `[Isolated] pub type Image { Pixel[] rows; Pixel background; }`
+- **WHEN** the declaration is checked
+- **THEN** the compiler SHALL report **E1247** at `background` naming class Copied and the admitted classes Shared and Moved, and `rows` is accepted because `Pixel[]` is Moved
+
+#### Scenario: Copyable without Serialize
+- **GIVEN** `[Copyable] pub type Pixel { u8 r; u8 g; u8 b; }` in a project that does not reference the serialization Mod
+- **WHEN** the class of `Pixel` is computed
+- **THEN** it is Copied
+
+### Requirement: Never-transferable handle types
+Corelib SHALL declare `[NeverTransferable]` on `Concurrency.Fiber<T>`, `Concurrency.Channel<T>`, `Concurrency.Hub<T>`, `Concurrency.Mutex`, `Concurrency.MutexGuard`, `Concurrency.WaitGroup`, `Network.TcpStream`, `Network.TcpListener`, `Network.UdpSocket` and on every Glue owner type. `[Copyable]`, `[Isolated]` or `[Immutable]` on a type that carries `[NeverTransferable]`, or on a type with a field of type `pointer`, of a function type or of a Never class, SHALL be reported as **E1246** at the marker, naming the field or the `[NeverTransferable]` attribute. A type whose identity is an `i64` or `pointer` handle into a scheduler-local or host-local table SHALL carry `[NeverTransferable]`; a type whose identity is a process-wide id SHALL instead be declared `[Immutable]` with Shared fields and SHALL derive Shared through the transfer class query, with no special class for identities.
+
+#### Scenario: Copyable on Channel
+- **GIVEN** a corelib edit adding `[Copyable]` to `pub type Channel<T>`
+- **WHEN** the declaration is checked
+- **THEN** the compiler SHALL report **E1246** at `[Copyable]` naming `[NeverTransferable]`
+
+#### Scenario: Immutable record with a pointer field
+- **GIVEN** `[Immutable] pub type Raw { pointer data; i64 length; }`
+- **WHEN** the declaration is checked
+- **THEN** the compiler SHALL report **E1246** at `[Immutable]` naming `data`
+
+#### Scenario: Fiber is Never despite Shared fields
+- **GIVEN** the corelib `Fiber<T> { i64 handle }` carrying `[NeverTransferable]`
+- **WHEN** the class of `Fiber<i64>` is computed
+- **THEN** it is Never with the reason `[NeverTransferable]`
+
+#### Scenario: Process-wide identity handle derives Shared
+- **GIVEN** `[Immutable] pub type WorkerId { u64 process_id; u64 sequence; }`
+- **WHEN** the class is computed
+- **THEN** it is Shared without any identity-specific rule
 
 ## Informative Source Provenance
 

@@ -126,7 +126,7 @@ The records below preserve migration history. They are not normative except wher
 - Changes to **`BESKID_RUNTIME_ABI_VERSION`** and the frozen runtime builtin export table — runtime embedding stays on the **[Rust ABI profile](/platform-spec/language-meta/interop/rust-abi-profile/)**.
 - **`repr(C)` record types** on arbitrary Beskid types — **v0.3.1** (see **[C layout types](/platform-spec/language-meta/interop/c-abi-profile/c-layout-types/)**).
 - **WinAPI / stdcall** as a **stdlib** concern — tier-1 **Standard** conformance does not require Windows user-extern linking in corelib; platform packages may document **Proposed** mappings separately.
-- **Runtime `dlopen` resolution** — demoted to **[dynamic resolution profile](/platform-spec/language-meta/interop/c-abi-profile/dynamic-resolution-profile/)** (non-Standard appendix).
+- **Runtime `dlopen` resolution** — not a Standard path; the dynamic resolution profile is retired.
 </SpecSection>
 
 <SpecSection title="Profile boundary map" id="profile-boundary-map">

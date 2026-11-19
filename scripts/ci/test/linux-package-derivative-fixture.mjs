@@ -115,7 +115,7 @@ function greenTrace(harnessSha) { return [`QUALIFICATION_START phase=green image
   "+ ranlib /tmp/work/probe.a", "+ cc /tmp/work/probe.a -o /tmp/work/probe", "+ /tmp/work/probe", "+ cp -a /test/tests/fixtures/deb-console/. /tmp/work/project/",
   "+ /usr/bin/beskid check --project Smoke.bproj --plain", "Analysis complete in 1ms", "+ sha256sum Project.lock",
   "+ /usr/bin/beskid build --project Smoke.bproj --locked --plain", "Build complete in 1ms", "+ /usr/bin/beskid run --project Smoke.bproj --locked --plain",
-  "Run complete in 1ms", "  exit: 0", "+ sha256sum --check /tmp/work/lock.sha256", "Project.lock: OK", "Clean DEB toolchain install and AOT build/run: PASS",
+  "Build complete in 1ms", "+ sha256sum --check /tmp/work/lock.sha256", "Project.lock: OK", "Clean DEB toolchain install and AOT build/run: PASS",
   "QUALIFICATION_EXIT phase=green exit_code=0", ""].join("\n"); }
 
 export function createDerivativeFixture(root) {

@@ -21,27 +21,30 @@ This book is the practical introduction to Beskid. It is written as a tutorial t
 
 ## Learning tracks
 
-- **Language user:** [01. It works on my machine](/book/01-it-works-on-my-machine/) → [07. The compiler is not your therapist](/book/07-compiler-is-not-your-therapist/) → [08. Green tests, red production](/book/08-green-tests-red-production/) → [19. Public API that survives review](/book/19-public-api-that-survives-review/) → [20. /// comments that are not lies](/book/20-doc-comments-that-are-not-lies/)
+- **Language user:** [01. It works on my machine](/book/01-it-works-on-my-machine/) → [03a. The everyday language](/book/03a-the-everyday-language/) → [07. The compiler is not your therapist](/book/07-compiler-is-not-your-therapist/) → [07a. Generics](/book/07a-generics-write-it-once/) → [08. Green tests, red production](/book/08-green-tests-red-production/) → [11a. Hosts](/book/11a-hosts-and-native-ioc/) → [19. Public API that survives review](/book/19-public-api-that-survives-review/) → [20. /// comments that are not lies](/book/20-doc-comments-that-are-not-lies/)
 - **Monorepo / packages:** [03. Project.proj or it didn't happen](/book/03-project-proj-or-it-didnt-happen/) → [06. Monorepo as coping mechanism](/book/06-monorepo-as-coping-mechanism/) → [18. Packages without npm trauma](/book/18-packages-without-npm-trauma/) → [19. Public API that survives review](/book/19-public-api-that-survives-review/)
 - **Spec collaborator:** [12. The normative bible](/book/12-the-normative-bible/) → [13. Reading the law](/book/13-reading-the-law/) → feature under test in the Standard
 - **Compiler contributor:** [13. Reading the law](/book/13-reading-the-law/) → [14. From source to something that runs](/book/14-from-source-to-runs/) → [15. Mods: plugins with consequences](/book/15-mods-plugins-with-consequences/) → [17. Execution](/book/17-execution-abi-host-runtime/) → [22. So you want to contribute](/book/22-so-you-want-to-contribute/)
 - **Philosophy optional:** [00. Why Beskid exists](/book/00-why-beskid-exists/), or jump straight to [01](/book/01-it-works-on-my-machine/)
 
-## Tutorial chapters (01–22)
+## Tutorial chapters (01–22, with 03a, 07a and 11a)
 
 | # | Chapter |
 | --- | --- |
 | 01 | [It works on my machine](/book/01-it-works-on-my-machine/) |
 | 02 | [PATH not found: tooling anyway](/book/02-path-not-found-tooling-anyway/) |
 | 03 | [Project.proj or it didn't happen](/book/03-project-proj-or-it-didnt-happen/) |
+| 03a | [The everyday language: values, operators, loops and types](/book/03a-the-everyday-language/) |
 | 04 | [Where does this file even go?](/book/04-where-does-this-file-go/) |
 | 05 | [Names nobody agreed on](/book/05-names-nobody-agreed-on/) |
 | 06 | [Monorepo as coping mechanism](/book/06-monorepo-as-coping-mechanism/) |
 | 07 | [The compiler is not your therapist](/book/07-compiler-is-not-your-therapist/) |
+| 07a | [Generics: write it once, argue about it once](/book/07a-generics-write-it-once/) |
 | 08 | [Green tests, red production](/book/08-green-tests-red-production/) |
 | 09 | [Contracts, effects, and polite threats](/book/09-contracts-effects-and-polite-threats/) |
 | 10 | [Memory without another billion-dollar mistake](/book/10-memory-without-billion-dollar-mistake/) |
 | 11 | [Fibers: cheaper than threads](/book/11-fibers-cheaper-than-threads/) |
+| 11a | [Hosts: dependency injection without a framework](/book/11a-hosts-and-native-ioc/) |
 | 12 | [The normative bible](/book/12-the-normative-bible/) |
 | 13 | [Reading the law](/book/13-reading-the-law/) |
 | 14 | [From source to something that runs](/book/14-from-source-to-runs/) |

@@ -61,7 +61,7 @@ for requirement in \
   'mold --version' \
   'COPY compiler/.cargo ./compiler/.cargo' \
   'CARGO_TARGET_DIR=/workspace/target cargo build -p beskid_cli --release' \
-  'CARGO_TARGET_DIR=/workspace/target cargo build -p beskid_lsp --release' \
+  'CARGO_TARGET_DIR=/workspace/target cargo build -p beskid_lsp --profile release-lsp' \
   'BESKID_CORELIB_ROOT=/workspace/runtime-output/beskid_corelib' \
   '/workspace/runtime-output/beskid --version' \
   'test -f /workspace/runtime-output/beskid_corelib/beskid_corelib/corelib.bproj' \
@@ -69,7 +69,7 @@ for requirement in \
   'BESKID_CLI_BIN=/workspace/target/release/beskid_cli' \
   'mkdir -p /workspace/runtime-output' \
   'install -m 0755 /workspace/target/release/beskid_cli /workspace/runtime-output/beskid' \
-  'install -m 0755 /workspace/target/release/beskid_lsp /workspace/runtime-output/beskid_lsp' \
+  'install -m 0755 /workspace/target/release-lsp/beskid_lsp /workspace/runtime-output/beskid_lsp' \
   'cp -a /workspace/target/native-runtime-kit /workspace/runtime-output/native-runtime-kit' \
   'COPY --from=rust /workspace/runtime-output/beskid /app/site/learn/beskid' \
   'COPY --from=rust /workspace/runtime-output/beskid_lsp /app/site/learn/beskid_lsp' \

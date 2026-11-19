@@ -21,7 +21,7 @@ Complete these tasks in order. The path uses a single source file, so you do not
 
 ## Orientation
 
-Use a supported host: Linux on AMD64, macOS on ARM64, or Windows on AMD64. You need a terminal and permission to install a user-local program.
+Use a supported host: Linux on AMD64, macOS on ARM64, or Windows on AMD64. An AMD64 CPU must support the x86-64-v2 level (SSE4.2 and POPCNT: Intel Nehalem, AMD Bulldozer or newer). You need a terminal and permission to install a user-local program.
 
 ## Choose the first task
 

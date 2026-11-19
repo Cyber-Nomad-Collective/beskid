@@ -43,6 +43,20 @@ The macOS worker needs the official arm64 agent, Git, Node, jq,
 tar, Rust 1.98.1, Xcode tools, and Homebrew LLVM; it writes under
 `~/Library/Application Support/Woodpecker/beskid-output`.
 
+Every agent, including the macOS and Windows workers, sets
+`WOODPECKER_RETRY_TIMEOUT=0` and `WOODPECKER_KEEPALIVE_TIME=30s`. The server sets
+`WOODPECKER_KEEPALIVE_MIN_TIME=10s`. Without them the first gRPC stall of two
+minutes cancels a running build, and the server would answer the agent
+keepalive with GOAWAY. A drop of more than about one minute still requeues the
+task, because the server lease is fixed.
+
+These settings are versioned here, in `deploy/woodpecker/compose.yml` for the server and the
+Linux agent. Committing them changes nothing on a running host: the owner must redeploy that
+compose file, and set the two agent variables by hand on the macOS and Windows workers, which
+are configured on those hosts. Apply the server `WOODPECKER_KEEPALIVE_MIN_TIME` first and
+restart the agents afterwards; an agent that pings every 30 s against a server still on the
+five-minute default is answered with GOAWAY (`too_many_pings`).
+
 Keep agent handoff keys in host-managed files. Keep publisher credentials out of
 tracked files and ordinary pipeline variables. Open VSX binds the existing
 `open_vsx_token` only in its final publish step; Microsoft Marketplace binds
@@ -63,10 +77,9 @@ commands, and a filter makes the pipeline fail at compile time with "only
 allowed to be used by plugins". The tracked-workflow test below is what
 confines them to that one step.
 
-The publication secrets `compiler_release_token`, `pckg_release_publisher_key`
-and `open_vsx_token` have the image filter
+The publication secrets `compiler_release_token` and `open_vsx_token` have the image filter
 `cr.beskid-lang.org/beskid/release-publisher`. The steps that bind them
-(`release.yml:publish-release`, `pckg.yml:publish-corelib-and-templates` and
+(`release.yml:publish-release` and
 `editor.yml:publish-editor-release`) are plugin steps on that image. They have
 no `commands`, `entrypoint` or `environment`. The image is built from
 `ci/plugins/release-publisher` by the manual `BESKID_TASK=publisher-image` task
@@ -88,8 +101,12 @@ commands.
 The tracked workflows add a second layer. `woodpecker-secret-scope.test.py`
 fails the Linux validation when a step binds a secret without a pinned image,
 outside a manual `main` pipeline, or expands a credential in its command text.
-It also fixes `compiler_release_token` to exactly two steps:
-`release.yml:publish-release` and `pckg.yml:publish-corelib-and-templates`.
+It also fixes `compiler_release_token` to exactly one step:
+`release.yml:publish-release`.
+
+Corelib and template packages are not published by a pipeline. The owner runs
+`scripts/release/publish-corelib.sh` on the Mac with a publisher key file; no
+Woodpecker secret holds the pckg publisher key.
 
 `compiler_release_token` is the GitHub credential with `contents: write` on
 `beskid_compiler` and write access to `beskid_homebrew`. The release scripts

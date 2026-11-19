@@ -4,16 +4,30 @@
 ## Purpose
 
 This specification defines conditionals, loops, and structured control transfer. The lowering to HIR and CLIF follows the evaluation order defined here.
-
 ## Requirements
-
 ### Requirement: Conditional and loop statement typing
-`if (cond) block else block` and `while (cond) block` MUST require `cond` to be `bool`. `for id in expr block` MUST require `expr` to be iterable per type rules (v0.1: range and array-like forms as implemented). `return expr?;` MUST return from the innermost function and `expr` MUST match the return type when present.
+`if (cond) block else block` and `while (cond) block` MUST require `cond` to be `bool`. `for id in expr block` MUST require `expr` to be iterable: the built-in `range(start, end)` form, a value whose type is an array `T[]`, or a nominal value whose type declares the iterator protocol (`Option<T> Next()`); any other iterable is **E1215**. The iterator protocol is satisfied when the iterable's nominal type declares exactly one `Next` method, with no parameters, that returns an `Option<T>` whose variants are `Some` with one payload and `None` without one. Outside a generic or contract-parameterized item, a non-`range` iterable that is not proven to be an array or a nominal iterator is **E1215**, so `beskid check` accepts exactly the loops `beskid build` lowers. `return expr?;` MUST return from the innermost function and `expr` MUST match the return type when present.
 
 #### Scenario: Non-bool if condition
 - **GIVEN** an `if` whose condition expression is not `bool`
 - **WHEN** control-flow typing runs
 - **THEN** the compiler emits a non-bool condition diagnostic
+
+#### Scenario: Nominal iterator loop builds
+- **GIVEN** a nominal type that declares `Option<i64> Next()` and a `for item in source { }` loop over a local `source` of that type
+- **WHEN** `beskid check` judges the loop and `beskid build` lowers it
+- **THEN** `beskid check` SHALL NOT report **E1215**
+- **AND** `beskid build` SHALL lower the loop without a compiler gap
+
+#### Scenario: Next returns an Option without the Some and None variants
+- **GIVEN** `pub enum Option<T> { Present(T value), Absent }`, a type `Odd` that declares `pub Option<i64> Next()`, and `unit Main(Odd odd) { for x in odd { return; } return; }`
+- **WHEN** control-flow typing runs
+- **THEN** the compiler SHALL report **E1215** at the iterable
+
+#### Scenario: For over a non-iterable value
+- **GIVEN** `unit Main(i64 n) { for i in n { return; } return; }`
+- **WHEN** control-flow typing runs
+- **THEN** the compiler SHALL report **E1215** at the iterable
 
 ### Requirement: Break continue and evaluation order
 `break;` and `continue;` MUST appear inside a loop; otherwise the compiler MUST emit **E1401** / **E1402**. Function arguments MUST be evaluated left to right before the call. Binary operators `&&` and `||` MUST evaluate the left operand before the right with short-circuit semantics. Assignment MUST evaluate the right-hand side before storing. `break` MUST exit the innermost `while`/`for`; `continue` MUST jump to the next iteration.
@@ -30,6 +44,148 @@ HIR lowering MUST normalize control flow graphs (**E1154** if non-normalized). U
 - **GIVEN** HIR that fails control-flow normalization
 - **WHEN** lowering validates the CFG
 - **THEN** the compiler emits **E1154**
+
+### Requirement: Definite return
+A function or method whose declared result is not `unit` or `never` SHALL NOT have a reachable end of body. Every path through the body SHALL end in `return <value>;` or in a statement that does not complete normally. The compiler SHALL report **E1258** for a body whose end is reachable, before lowering.
+
+A statement SHALL complete normally except as follows:
+- `return`, `break` and `continue` SHALL NOT complete normally. A reachable `break` SHALL make the end of its innermost loop reachable.
+- A `while` statement SHALL NOT complete normally when its condition is the literal `true`, with or without grouping parentheses, and its body has no reachable `break` for that loop. The compiler SHALL NOT evaluate other loop conditions.
+- An `if` statement without `else` SHALL complete normally, whatever its condition. An `if` statement with `else` SHALL complete normally when at least one of its branches completes normally.
+- A `with` statement, a scoped `use` statement with a block, and a nested block SHALL complete normally when their statements complete normally.
+- A `match` statement SHALL NOT complete normally when no arm body completes normally and the match cannot end without taking an arm: a match on an enum value, or a match on a primitive value with an unguarded `_` or binding arm.
+- A call statement whose result type is `never` SHALL NOT complete normally.
+
+`for`, `let` and `launch` statements, and all other expression statements, SHALL complete normally. Statements after a statement that does not complete normally SHALL NOT make the end of the body reachable. The rule SHALL apply in the same way to functions with `[Export]`, Mod and SDK callbacks, and methods.
+
+#### Scenario: Expression statement at the end of a valued function
+- **GIVEN** `i32 Main() { 0; }`
+- **WHEN** the code is checked or built
+- **THEN** the compiler SHALL report **E1258** at the closing brace of `Main`, and the build SHALL NOT report an internal error
+
+#### Scenario: If without else
+- **GIVEN** `i32 Sign(bool positive) { if (positive) { return 1; } }`
+- **WHEN** the code is checked
+- **THEN** the compiler SHALL report **E1258**
+
+#### Scenario: If and else both return
+- **GIVEN** `i32 Sign(bool positive) { if (positive) { return 1; } else { return -1; } }`
+- **WHEN** the code is checked
+- **THEN** the compiler SHALL NOT report **E1258**
+
+#### Scenario: Formatted infinite loop
+- **GIVEN** `i32 Wait(i32 limit) { mut i32 count = 0; while (true) { if (count >= limit) { return count; } count = count + 1; } }`
+- **WHEN** the code is checked
+- **THEN** the compiler SHALL NOT report **E1258**
+
+#### Scenario: Infinite loop with a break
+- **GIVEN** `i32 Stop() { while (true) { break; } }`
+- **WHEN** the code is checked
+- **THEN** the compiler SHALL report **E1258**
+
+#### Scenario: Enum match whose arms return
+- **GIVEN** `enum Step { Stop(), Go(i32 value) }` and `i32 Next(Step step) { match step { Step::Stop() => { return 0; }, Step::Go(value) => { return value; }, } }`
+- **WHEN** the code is checked
+- **THEN** the compiler SHALL NOT report **E1258**
+
+#### Scenario: Primitive match without a catch-all arm
+- **GIVEN** `i32 Pick(i32 code) { match code { 1 => { return 10; }, 2 => { return 20; }, } }`
+- **WHEN** the code is checked
+- **THEN** the compiler SHALL report **E1258**
+
+#### Scenario: Call that returns never
+- **GIVEN** `never Halt() { while (true) { } }` and `i32 Main() { Halt(); }`
+- **WHEN** the code is checked
+- **THEN** the compiler SHALL NOT report **E1258**
+
+### Requirement: Conditional expression evaluation and typing
+In `cond ? a : b`, `cond` SHALL have type `bool`; any other type SHALL be reported with **E1208**, the non-`bool` condition diagnostic. The branches `a` and `b` SHALL have exactly the same type, and that type SHALL be the type of the expression. The compiler SHALL NOT widen or convert a typed value to make the types equal. A bare numeric literal without a suffix in one branch SHALL take the type of the other branch; when the conditional has an expected type, both branches take it. Hence `c ? 1 : 2_i64` has type `i64`. When the expected type is a contract, each branch SHALL convert to that contract and the conditional SHALL have the contract type (see `v067-contract-dispatch`). Unequal types SHALL be reported with **E1206** at the second branch, with both branches as related locations labelled "this branch is `T`". No new code is allocated. The runtime SHALL evaluate `cond` first and then exactly one branch. The branch that is not chosen SHALL NOT be evaluated, so its side effects and traps SHALL NOT occur.
+
+#### Scenario: Chosen branch only
+- **GIVEN** `i64 v = ok ? 1 : Fail();` where `Fail` traps and `ok` is `true`
+- **WHEN** the code runs
+- **THEN** `v` is 1 and `Fail` is not called
+
+#### Scenario: Bare literal takes the other branch type
+- **GIVEN** `let v = c ? 1 : 2_i64;`
+- **WHEN** the code is checked
+- **THEN** `v` has type `i64` and no diagnostic is reported
+
+#### Scenario: Typed values do not widen
+- **GIVEN** `let v = c ? a : b;` where `a` is `i32` and `b` is `i64`
+- **WHEN** the code is checked
+- **THEN** the compiler SHALL report the type-mismatch diagnostic at `b`
+
+#### Scenario: Branch types differ
+- **GIVEN** `let v = flag ? 1 : "one";`
+- **WHEN** the code is checked
+- **THEN** the compiler SHALL report a type mismatch at `"one"`
+
+#### Scenario: Condition is not bool
+- **GIVEN** `let v = 3 ? 1 : 2;`
+- **WHEN** the code is checked
+- **THEN** the compiler SHALL report the non-`bool` condition diagnostic at `3`
+
+### Requirement: Array iteration
+`for id in expr block` where `expr` has type `T[]` SHALL evaluate `expr` exactly once, before the first iteration, to an array value; a null array value SHALL trap as an out-of-bounds access does. The loop SHALL run one iteration per index from `0` to the array's length (exclusive), in increasing order; at the start of each iteration `id` SHALL be bound to the element at the current index, read from the array value evaluated at loop entry. `id` SHALL have type `T` and SHALL be immutable (assigning it is **E1214**). Stores into not-yet-visited elements of the same array value SHALL be observed by later iterations (arrays are reference values); rebinding the local that named the iterable SHALL NOT change the iteration. `break` and `continue` SHALL target the loop. When `T` is a managed type the loop variable SHALL be a garbage-collector root for the duration of its iteration.
+
+#### Scenario: Summing an array parameter
+- **GIVEN** `i64 Sum(i64[] values) { mut i64 total = 0_i64; for value in values { total = total + value; } return total; }`
+- **WHEN** the program is built and `Sum([1_i64, 2_i64, 3_i64])` runs
+- **THEN** the compiler SHALL accept the program without a diagnostic
+- **AND** the call SHALL return `6`
+
+#### Scenario: Managed elements
+- **GIVEN** `string Last(string[] names) { mut string last = ""; for name in names { last = name; } return last; }`
+- **WHEN** the program is built
+- **THEN** the loop variable `name` SHALL be a rooted managed local for each iteration
+- **AND** `Last(["a", "b"])` SHALL return `"b"`
+
+#### Scenario: Assigning the loop variable
+- **GIVEN** `unit Main(i64[] values) { for value in values { value = 1_i64; } return; }`
+- **WHEN** `beskid check` judges `Main`
+- **THEN** the compiler SHALL report **E1214** at the assignment
+
+### Requirement: Nominal iterator iteration
+`for id in expr block` where the type of `expr` satisfies the iterator protocol with `Option<T> Next()` SHALL evaluate `expr` exactly once, before the first iteration, to an iterator value; a null iterator value SHALL trap. Before each iteration the loop SHALL call `Next()` on that iterator value: when it returns `None` the loop SHALL end, and when it returns `Some(v)` `id` SHALL be bound to `v` for that iteration. `id` SHALL have type `T` and SHALL be immutable (assigning it is **E1214**). `continue` SHALL proceed to the next `Next()` call and `break` SHALL end the loop without calling `Next()` again. The iterator value SHALL be a garbage-collector root for the whole loop, and when `T` is a managed type the loop variable SHALL be a garbage-collector root for the duration of its iteration. A generic iterator type binds its type parameters from the iterable's type; inside a generic or contract-parameterized item the protocol is resolved for each specialization.
+
+#### Scenario: Break and continue over an iterator
+- **GIVEN** a type `Counter` whose `Option<i64> Next()` yields `1` to `9` and then `None`, and a loop `for value in counter { if value == 2_i64 { continue; } if value == 5_i64 { break; } total = total + value; }`
+- **WHEN** the program is built and the loop runs with `total` starting at `0`
+- **THEN** the compiler SHALL accept the program without a diagnostic
+- **AND** `total` SHALL be `8`
+
+#### Scenario: Generic iterator with managed elements
+- **GIVEN** `pub type Repeat<T> { T value; i64 left; pub Option<T> Next() { ... } }` and a loop over a `Repeat<Cell>` value whose body forces a garbage collection and then reads `cell.value`
+- **WHEN** the program is built and the loop runs
+- **THEN** `Next` SHALL be specialized for `Repeat<Cell>`
+- **AND** each `Cell` the loop variable holds SHALL survive the collection
+
+### Requirement: Index expression evaluation order
+The evaluation of an index expression `base[index]` SHALL occur in this order:
+
+1. The operands of `base`, from left to right. A local has no operands. The operand of a field access `receiver.field` is `receiver`. The operands of an index expression are the operands of its base and then its index. Any other base, for example a call, a literal or a grouped expression, SHALL be evaluated completely in this step.
+2. `index`.
+3. In an assignment `base[index] = value`, `value`.
+4. The read of the array or string that `base` holds. This read SHALL occur after steps 2 and 3, so it observes their side effects.
+5. The bounds check, and then the read or the store of the element.
+
+A store SHALL go into the array that `base` holds after steps 2 and 3. All calls in the expression SHALL occur from left to right.
+
+#### Scenario: The index grows the array
+- **GIVEN** `table.values[Grow(table)] = v`, where `Grow` appends one element to `table.values` and returns the index of that element
+- **WHEN** the assignment executes, also when the append replaces the array of `table.values`
+- **THEN** the new last element of `table.values` is `v` and no trap occurs
+
+#### Scenario: The assigned value grows the array
+- **GIVEN** a full `table.values` and `table.values[0] = Push(table, 5, 7)`, where `Push` appends `5` and returns `7`
+- **WHEN** the assignment executes
+- **THEN** `table.values[0]` is `7` and the last element of `table.values` is `5`
+
+#### Scenario: The receiver is evaluated before the index
+- **GIVEN** `Next().values[Count()]`, where `Next` and `Count` are calls
+- **WHEN** the expression is evaluated
+- **THEN** `Next` is called before `Count`
 
 ## Informative Source Provenance
 

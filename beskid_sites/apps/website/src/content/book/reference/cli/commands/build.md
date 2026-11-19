@@ -11,7 +11,7 @@ AOT-compiles a resolved Beskid program and writes build artifacts. Executable an
 | --- | --- |
 | `[INPUT]` | Optional `.bd` entry |
 | `--project` | Project directory or `.bproj` manifest path |
-| `--target` | Target name from the manifest |
+| `--target` | Target name from the manifest. Without it, `build` uses the App target, or the Lib target when there is no App target. It never uses a Test target. Two targets of that kind are an error |
 | `--workspace-member` | Workspace member when resolving via a `.bws` workspace manifest |
 | `--frozen` | Require lockfile match; forbid updates |
 | `--locked` | Require an existing lockfile |

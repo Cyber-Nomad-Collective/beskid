@@ -8,7 +8,7 @@
 //   installed_native       the installed CLI runs one `beskid test --json` target; the raw JSON report is the
 //                          retained stdout and the producer never rewrites it.
 //   installed_host_harness the retained harness executable runs one `--exact` process per required id with
-//                          BESKID_V06_QUALIFIED_PREFIX naming the bundle; raw libtest stdout/stderr are retained
+//                          BESKID_QUALIFIED_PREFIX naming the bundle; raw libtest stdout/stderr are retained
 //                          in per-test sections, and a test without an installed invocation proof line in its
 //                          stderr is recorded as not_executed.
 // The producer refuses to run when the bundle lacks its own runtime kit or Corelib (no fallback discovery),
@@ -34,7 +34,7 @@ const PLATFORMS = {
   windows: { target: "x86_64-pc-windows-msvc", executable: "beskid.exe", cli: "beskid-windows-amd64.exe" },
 };
 const PASSTHROUGH_ENV = ["PATH", "SYSTEMROOT", "SystemRoot", "TEMP", "TMP", "TMPDIR", "COMSPEC", "PATHEXT", "WINDIR", "LANG", "LC_ALL",
-  "BESKID_V06_GLUE_CARGO", "BESKID_V06_GLUE_RUSTC", "BESKID_V06_GLUE_LINKER", "CARGO_HOME", "RUSTUP_HOME", "BESKID_V06_QUALIFIED_PROFILE",
+  "BESKID_GLUE_CARGO", "BESKID_GLUE_RUSTC", "BESKID_GLUE_LINKER", "CARGO_HOME", "RUSTUP_HOME", "BESKID_QUALIFIED_PROFILE",
   "BESKID_CODEGEN_THREADS", "RUST_MIN_STACK", "SSL_CERT_FILE", "LD_LIBRARY_PATH", "DYLD_LIBRARY_PATH",
   // Windows system locations the installed CLI's MSVC discovery reads, as on a user's machine:
   // vswhere under ProgramFiles(x86), its instance data under ProgramData, VsDevCmd.bat's own
@@ -204,6 +204,9 @@ export function ProduceReleaseCases(options) {
       const text = streams.map(stream => stream.toString("utf8").split(/\r?\n/).slice(-40).join("\n")).join("\n").slice(-6000);
       diagnostics.push(`--- ${label} ---\n${text}`);
     };
+    // Cases that bind the same installed-native command share one run: the bundle, command and
+    // environment are identical, so a second run only repeats the report (and its exposure to a hang).
+    const nativeRuns = new Map();
     for (const item of manifest.cases) {
       const binding = item.binding;
       const values = {
@@ -218,7 +221,9 @@ export function ProduceReleaseCases(options) {
       const toolFile = binding.harness ? harnesses[binding.harness] : { path: definition.cli, sha256: cliDigest };
       let stdout, stderr, tests, exitCode = 0, timedOut = false;
       if (item.execution === "installed_native") {
-        const result = run(command.argv, env, home, options.cellTimeout);
+        const runKey = JSON.stringify([command.argv, command.env, binding.target]);
+        if (!nativeRuns.has(runKey)) nativeRuns.set(runKey, run(command.argv, env, home, options.cellTimeout));
+        const result = nativeRuns.get(runKey);
         stdout = result.stdout; stderr = result.stderr; exitCode = result.status; timedOut = result.timedOut;
         let passed = [];
         try { passed = nativeReportOutcomes(stdout, binding.target, item.id); } catch (error) { failures.push(`${item.id}: ${error.message}`); exitCode = exitCode === 0 ? 1 : exitCode; }

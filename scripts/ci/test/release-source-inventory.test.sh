@@ -40,4 +40,31 @@ printf 'pub fn extra() {}\n' >"$tmp/crates/bsol/src/extra.rs"
 if bash "$script" "$tmp" bsol >"$tmp/bsol.out" 2>&1; then
   echo 'untracked BSOL dependency source was accepted' >&2; exit 1
 fi
+rm "$tmp/crates/bsol/src/extra.rs"
+mkdir -p "$tmp/runtime/beskid/tests/runtime_semantics"
+printf 'lock\n' >"$tmp/runtime/beskid/tests/runtime_semantics/Project.lock"
+bash "$script" "$tmp" compiler
+printf 'lock\n' >"$tmp/runtime/beskid/Project.lock"
+if bash "$script" "$tmp" compiler >"$tmp/lock.out" 2>&1; then
+  echo 'untracked compiler lock outside tests was accepted' >&2; exit 1
+fi
+grep -Fq 'runtime/beskid/Project.lock' "$tmp/lock.out"
+rm "$tmp/runtime/beskid/Project.lock"
+mkdir -p "$tmp/packages/tls/tests"
+printf 'lock\n' >"$tmp/packages/tls/tests/Project.lock"
+bash "$script" "$tmp" corelib
+printf 'lock\n' >"$tmp/packages/tls/Project.lock"
+if bash "$script" "$tmp" corelib >"$tmp/package-lock.out" 2>&1; then
+  echo 'untracked package lock outside tests was accepted' >&2; exit 1
+fi
+grep -Fq 'packages/tls/Project.lock' "$tmp/package-lock.out"
+rm "$tmp/packages/tls/Project.lock"
+mkdir -p "$tmp/crates/beskid_e2e_tests/fixtures/corelib_mvp"
+printf 'lock\n' >"$tmp/crates/beskid_e2e_tests/fixtures/corelib_mvp/Project.lock"
+bash "$script" "$tmp" compiler
+printf 'lock\n' >"$tmp/crates/beskid_e2e_tests/Project.lock"
+if bash "$script" "$tmp" compiler >"$tmp/crate-lock.out" 2>&1; then
+  echo 'untracked crate lock outside fixtures was accepted' >&2; exit 1
+fi
+grep -Fq 'crates/beskid_e2e_tests/Project.lock' "$tmp/crate-lock.out"
 echo 'release source inventory tests OK'

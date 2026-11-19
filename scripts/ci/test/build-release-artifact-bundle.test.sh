@@ -17,6 +17,8 @@ mkdir -p "${tmp}/root/scripts/ci" "${tmp}/root/compiler/crates/beskid_cli" \
   "${tmp}/root/compiler/corelib/mods/example_mod" \
   "${tmp}/root/compiler/scripts" "${tmp}/bin"
 cp "${builder}" "${root}/scripts/ci/qualify-native-tool-driver.py" "${tmp}/root/scripts/ci/"
+mkdir -p "${tmp}/root/scripts/ci/lib"
+cp "${root}/scripts/ci/lib/bundle-caches.mjs" "${tmp}/root/scripts/ci/lib/"
 for manifest in beskid_cli beskid_lsp beskid_up; do
   printf '[package]\nname = "%s"\nversion = "1.2.3"\n\n[dependencies]\nclap = { version = "4.4" }\n' "${manifest}" >"${tmp}/root/compiler/crates/${manifest}/Cargo.toml"
 done
@@ -69,10 +71,22 @@ if [[ " $* " == *" --message-format=json "* ]]; then
   printf '{"reason":"build-finished","success":true}\n'
   exit 0
 fi
-for binary in beskid_cli beskid_lsp beskid-up; do
+profile_dir=release
+[[ " $* " != *" --profile release-lsp "* ]] || profile_dir=release-lsp
+# The language server builds only under release-lsp, the CLI and updater only under release.
+if [[ "${profile_dir}" == release-lsp ]]; then binaries=(beskid_lsp); else binaries=(beskid_cli beskid-up); fi
+[[ " $* " != *" -p beskid_lsp "* || "${profile_dir}" == release-lsp ]] || { echo 'beskid_lsp must build with --profile release-lsp' >&2; exit 1; }
+mkdir -p "target/${target}/${profile_dir}"
+# Like the real crates, each binary reports BESKID_RELEASE_VERSION from the build environment;
+# UNSTAMPED_LSP builds a language server that ignores it.
+stamp="${BESKID_RELEASE_VERSION:-}"
+for binary in "${binaries[@]}"; do
+  name="${binary}"; [[ "${binary}" != beskid_cli ]] || name=beskid
+  reported="${stamp}"; [[ -z "${UNSTAMPED_LSP:-}" || "${binary}" != beskid_lsp ]] || reported=0.0.1
   if [[ "${binary}" == beskid_cli ]]; then
-    cat >"target/${target}/release/${binary}${extension}" <<'CLI'
-#!/usr/bin/env bash
+    printf '#!/usr/bin/env bash\n[[ "${1:-}" != --version ]] || { echo "%s %s"; exit 0; }\n' "${name}" "${reported}" \
+      >"target/${target}/${profile_dir}/${binary}${extension}"
+    cat >>"target/${target}/${profile_dir}/${binary}${extension}" <<'CLI'
 set -euo pipefail
 if [[ "${1:-}" == dev && "${2:-}" == runtime-kit && "${3:-}" == build-native-host ]]; then
   target="$(basename "$(dirname "$(dirname "$0")")")"
@@ -89,9 +103,19 @@ if [[ "${1:-}" == dev && "${2:-}" == mod && "${3:-}" == rebuild ]]; then
   [[ -n "${triple}" && "${BESKID_RUNTIME_KIT_PROFILE:-}" == debug ]] || exit 1
   [[ -f "${BESKID_RUNTIME_PREFIX}/lib/beskid-runtime/abi-5/${triple}/debug/abi.json" ]] || exit 1
   [[ -z "${FAIL_MOD_BUILD:-}" ]] || exit 1
-  artifact="$(dirname "${manifest}")/.beskid/obj/mods/$(basename "${manifest}" .bproj)/key/${triple}"
-  mkdir -p "${artifact}"
+  project="$(dirname "${manifest}")"
+  mods="${project}/.beskid/obj/mods/$(basename "${manifest}" .bproj)"
+  artifact="${mods}/0123456789abcdef0123456789abcdef/${triple}"
+  mkdir -p "${artifact}/sources" "${project}/obj/beskid/cache/salsa" "${project}/obj/beskid/deps/src/corelib_foundation-36af"
   printf '{}\n' >"${artifact}/mod.descriptor.json"
+  printf 'lock\n' >"${artifact}/sources/Project.lock"
+  # The working state a real Mod rebuild leaves beside the sealed entry.
+  printf 'lock\n' >"${mods}/.cache-lock"
+  printf 'lock\n' >"${project}/obj/beskid/.materialize-lock"
+  printf '{}\n' >"${project}/obj/beskid/cache/salsa/db.json"
+  printf 'pub i64 X() { return 0; }\n' >"${project}/obj/beskid/deps/src/corelib_foundation-36af/Core.bd"
+  mkdir -p "${BESKID_CORELIB_ROOT}/packages/foundation/.beskid/obj/units"
+  printf 'cache\n' >"${BESKID_CORELIB_ROOT}/packages/foundation/.beskid/obj/units/cache.bin"
   exit 0
 fi
 [[ "${1:-}" == dev && "${2:-}" == corelib ]] || exit 1
@@ -101,9 +125,10 @@ if [[ -n "${OMIT_CORELIB_MOD:-}" ]]; then rm -rf "${BESKID_CORELIB_ROOT}/mods"; 
 printf '%064d\n' 0 >"${BESKID_CORELIB_ROOT}/.beskid-bundle.sha256"
 CLI
   else
-    printf '#!/usr/bin/env bash\nexit 0\n' >"target/${target}/release/${binary}${extension}"
+    printf '#!/usr/bin/env bash\n# built under %s\n[[ "${1:-}" != --version ]] || echo "%s %s"\nexit 0\n' \
+      "${profile_dir}" "${name}" "${reported}" >"target/${target}/${profile_dir}/${binary}${extension}"
   fi
-  chmod +x "target/${target}/release/${binary}${extension}"
+  chmod +x "target/${target}/${profile_dir}/${binary}${extension}"
 done
 SH
 cat >"${tmp}/bin/rustup" <<'SH'
@@ -137,6 +162,8 @@ assert_bundle() {
   for binary in beskid beskid_lsp beskid-up; do
     test -x "${extracted}/bin/${binary}${extension}"
   done
+  grep -Fq '# built under release-lsp' "${extracted}/bin/beskid_lsp${extension}"
+  grep -Fq '# built under release' "${extracted}/bin/beskid-up${extension}"
   test -f "${extracted}/lib/beskid-runtime/abi-5/${target}/release/abi.json"
   test -f "${extracted}/lib/beskid-runtime/abi-5/${target}/debug/abi.json"
   test -f "${extracted}/beskid_corelib/.beskid-bundle.sha256"
@@ -144,8 +171,14 @@ assert_bundle() {
   test -f "${extracted}/beskid_corelib/beskid_corelib/corelib.bproj"
   test -f "${extracted}/beskid_corelib/packages/foundation/foundation.bproj"
   test -f "${extracted}/beskid_corelib/mods/example_mod/example_mod.bproj"
-  test -f "${extracted}/beskid_corelib/mods/example_mod/.beskid/obj/mods/example_mod/key/${target}/mod.descriptor.json"
+  local sealed="${extracted}/beskid_corelib/mods/example_mod/.beskid/obj/mods/example_mod/0123456789abcdef0123456789abcdef/${target}"
+  test -f "${sealed}/mod.descriptor.json"
+  test -f "${sealed}/sources/Project.lock"
+  # Assembly prunes the Mod prebuild caches; the archive carries none (task 6.5).
   test ! -e "${extracted}/beskid_corelib/packages/foundation/.beskid"
+  test ! -e "${extracted}/beskid_corelib/mods/example_mod/obj"
+  test ! -e "${extracted}/beskid_corelib/mods/example_mod/.beskid/obj/mods/example_mod/.cache-lock"
+  tar -tzf "${tmp}/root/${archive}" | node "${root}/scripts/ci/lib/bundle-caches.mjs" check "beskid-1.2.3-${target}"
   test ! -e "${extracted}/packages"
   grep -Fxq 1.2.3 "${extracted}/release-version.txt"
   test ! -e "${extracted}/native-runtime-kit"
@@ -176,6 +209,18 @@ if FAIL_MOD_BUILD=1 PATH="${tmp}/bin:${PATH}" bash "${tmp}/root/scripts/ci/build
   exit 1
 fi
 test ! -e "${tmp}/root/beskid-1.2.3-failed-mod.tar.gz"
+
+# Every bundle binary reports the release version exactly; one that does not fails the build.
+for binary in beskid beskid_lsp beskid-up; do
+  [[ "$("${tmp}/extracted-x86_64-unknown-linux-gnu/bin/${binary}" --version)" == "${binary} 1.2.3" ]]
+done
+if UNSTAMPED_LSP=1 PATH="${tmp}/bin:${PATH}" bash "${tmp}/root/scripts/ci/build-release-artifact.sh" \
+  beskid_bundle ignored x86_64-unknown-linux-gnu beskid-1.2.3-unstamped.tar.gz 1.2.3 2>"${tmp}/unstamped.err"; then
+  echo 'a bundle whose language server does not report the release version must be rejected' >&2
+  exit 1
+fi
+grep -Fq "reports 'beskid_lsp 0.0.1', expected 'beskid_lsp 1.2.3'" "${tmp}/unstamped.err"
+test ! -e "${tmp}/root/beskid-1.2.3-unstamped.tar.gz"
 
 # The build verifies the release version; it never edits manifests or the lock file.
 for manifest in beskid_cli beskid_lsp beskid_up; do

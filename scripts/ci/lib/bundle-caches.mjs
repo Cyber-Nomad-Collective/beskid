@@ -1,4 +1,4 @@
-// Build caches inside an extracted release bundle, and their removal before native packaging.
+// Build caches inside a release bundle: their removal at bundle assembly and the checks that none ship.
 //
 // The bundle assembly (build-release-artifact.sh) prebuilds each Corelib compiler Mod with
 // `beskid dev mod rebuild` inside the bundle's Corelib workspace. That build leaves, beside the one
@@ -15,15 +15,21 @@
 // sealed by mod.descriptor.json), the Mod manifest, sources and Project.lock, and the declared
 // dependency projects. Locks are taken only to build, and an installed prefix never builds.
 //
-// Kept: every sealed Mod entry `.beskid/obj/mods/<pkg>/<64-hex key>/<target>/` that holds
+// Kept: every sealed Mod entry `.beskid/obj/mods/<pkg>/<32-hex key>/<target>/` that holds
 // mod.descriptor.json, byte for byte. Removed: every other `obj` or `.beskid` tree (including test
 // project outputs such as `tests/<project>/obj`). The Corelib integrity seal excludes `obj`, `.beskid`
 // and Project.lock, so removal leaves the bundle seal valid.
-import { lstatSync, readdirSync, rmSync } from "node:fs";
-import { join } from "node:path";
+//
+// build-release-artifact.sh prunes the assembled bundle before it is archived
+// (`node bundle-caches.mjs prune <bundle-dir>`), woodpecker-build-platform.sh checks the archive listing
+// (`node bundle-caches.mjs check <bundle-root-name> < listing`), and native packaging refuses a bundle
+// that still carries a cache (OpenSpec v06-release-gate-calibration task 6.5).
+import { lstatSync, readFileSync, readdirSync, realpathSync, rmSync } from "node:fs";
+import { join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const CACHE_COMPONENTS = new Set(["obj", ".beskid"]);
-const KEY = /^[0-9a-f]{64}$/;
+const KEY = /^[0-9a-f]{32}$/;
 const TARGET = /^[A-Za-z0-9_]+(-[A-Za-z0-9_.]+){2,3}$/;
 
 // The bundle-relative prefix of the sealed Mod entry a path lies in, or null.
@@ -52,13 +58,32 @@ export function BundleCacheViolations(relativeFiles) {
   });
 }
 
-function Files(root, relative = "", out = []) {
+// Bundle-relative paths (`/` separators) of every non-directory entry below a bundle root.
+export function BundleFiles(root, relative = "", out = []) {
   for (const entry of readdirSync(join(root, relative), { withFileTypes: true })) {
     const path = relative ? `${relative}/${entry.name}` : entry.name;
-    if (entry.isDirectory()) Files(root, path, out);
+    if (entry.isDirectory()) BundleFiles(root, path, out);
     else out.push(path);
   }
   return out;
+}
+
+// Bundle-relative file paths of a `tar -t` listing of a bundle whose top-level directory is
+// `bundleRoot`. Directory entries (trailing `/`) are skipped; an entry outside the root is kept whole so
+// that a cache-named component in it is still reported.
+export function ListingFiles(listing, bundleRoot) {
+  const prefix = `${bundleRoot}/`;
+  return listing.split(/\r?\n/).filter(line => line && !line.endsWith("/"))
+    .map(line => line.replace(/^\.\//, ""))
+    .map(line => line.startsWith(prefix) ? line.slice(prefix.length) : line);
+}
+
+// Fail closed when a bundle carries a build cache.
+export function AssertNoBundleCaches(relativeFiles, label) {
+  const caches = BundleCacheViolations(relativeFiles);
+  if (caches.length) {
+    throw new Error(`${label} carries ${caches.length} build-cache path(s), for example ${caches.slice(0, 10).join(", ")}`);
+  }
 }
 
 function IsSealedEntry(directory) {
@@ -127,7 +152,31 @@ export function PruneBundleCaches(bundleRoot) {
     }
   };
   visit("");
-  const remaining = BundleCacheViolations(Files(bundleRoot));
+  const remaining = BundleCacheViolations(BundleFiles(bundleRoot));
   if (remaining.length) throw new Error(`bundle still contains build caches: ${remaining.slice(0, 10).join(", ")}`);
   return removed.sort();
+}
+
+function Main(argv) {
+  const [command, operand, ...rest] = argv;
+  if (command === "prune" && operand && !rest.length) {
+    const removed = PruneBundleCaches(resolve(operand));
+    process.stderr.write(`bundle assembly: removed ${removed.length} build-cache path(s)\n`);
+    return;
+  }
+  if (command === "check" && operand && !rest.length) {
+    AssertNoBundleCaches(ListingFiles(readFileSync(0, "utf8"), operand), "release bundle");
+    return;
+  }
+  throw new Error("usage: bundle-caches.mjs prune <bundle-dir> | check <bundle-root-name> < tar-listing");
+}
+
+// Compare real paths: the script may be reached through a symlinked directory (macOS /var -> /private/var).
+if (process.argv[1] && realpathSync(resolve(process.argv[1])) === realpathSync(fileURLToPath(import.meta.url))) {
+  try {
+    Main(process.argv.slice(2));
+  } catch (error) {
+    process.stderr.write(`${error.message}\n`);
+    process.exit(1);
+  }
 }

@@ -19,7 +19,8 @@ Record the output when filing bugs. Rolling builds move; "latest" is not a versi
 Create `hello.bd` anywhere (no project required for parse):
 
 ```beskid
-unit Main() {
+unit Main()
+{
     // smoke
 }
 ```

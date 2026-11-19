@@ -21,7 +21,7 @@ The stable channel changes only after maintainers promote a release. The unstabl
 
 ## Prerequisites
 
-Confirm that your host is Linux AMD64, macOS ARM64, or Windows AMD64. Close terminals that use an older Beskid installation.
+Confirm that your host is Linux AMD64, macOS ARM64, or Windows AMD64. On AMD64, the CPU must support the x86-64-v2 level (SSE3, SSSE3, SSE4.1, SSE4.2, POPCNT and CMPXCHG16B). Programs that Beskid builds for AMD64 need the same level. On Linux, `grep -o -w -E 'ssse3|sse4_2|popcnt' /proc/cpuinfo | sort -u` must print all three names. Close terminals that use an older Beskid installation.
 
 ## Actions
 

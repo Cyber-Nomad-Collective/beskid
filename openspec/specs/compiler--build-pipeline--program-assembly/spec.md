@@ -4,9 +4,7 @@
 ## Purpose
 
 Multi-module program composition from CompilePlan and materialized source roots, shared by analyze, lowering, LSP, and backend-agnostic front-end paths.
-
 ## Requirements
-
 ### Requirement: Feature hub authority: Decision [D-COMP-BUILD-0013]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
 
@@ -70,6 +68,44 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **GIVEN** an implementation claims conformance with this capability
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
+
+### Requirement: Package-native logical module paths
+Program assembly SHALL derive the logical module path of a source unit only from its location under its source root. The host project's modules SHALL have no prefix. Each Corelib package SHALL keep its own module roots, for example `Core.*`, `Testing.*`, `Concurrency.*` and `Beskid.Compiler.*`. No dependency label, package name or project kind SHALL add a segment to a logical module path. Beskid SHALL NOT have a `Std` module namespace, and assembly SHALL NOT register an alias that resolves a `Std.`-qualified path. A `use` declaration whose path starts with `Std` SHALL fail with E1105, and a qualified module path that starts with `Std` SHALL fail with E1108, exactly as any other unknown module path; the compiler SHALL NOT special-case the `Std` segment in diagnostics.
+
+#### Scenario: Host modules are unprefixed with the Core dependency
+- **GIVEN** an App with the `Core` dependency and a source file `Src/Helpers.bd`
+- **WHEN** program assembly infers the module path of that file
+- **THEN** the logical module path is `Helpers`
+
+#### Scenario: Corelib modules keep package-native paths
+- **GIVEN** an App with the `Core` dependency
+- **WHEN** program assembly infers the module paths of Corelib `Core/Output/Output.bd`, `Testing/Assert.bd` and `Concurrency/Fiber.bd`
+- **THEN** the paths are `Core.Output`, `Testing.Assert` and `Concurrency.Fiber`
+- **AND** `use Core.Output;` resolves in the App
+
+#### Scenario: A Std-qualified import is an unknown import
+- **GIVEN** an App source with `use Std.Core.Output;`
+- **WHEN** the compiler checks the source
+- **THEN** it reports E1105 with the message "unknown import path `Std.Core.Output`"
+
+#### Scenario: A Std-qualified type path does not resolve
+- **GIVEN** an App source with a parameter of type `Std.Core.Results.Widget`
+- **WHEN** the compiler resolves the parameter type
+- **THEN** the type reference stays unresolved and no `Std` alias makes it resolve
+
+### Requirement: Import-closure discovery fails closed on ambiguous module paths
+Import-closure discovery SHALL resolve each module path that it follows (a `use` path, its parent module path, a prefix of a qualified reference and a `mod` declaration path) against every effective source root of the closure: the host source root and each dependency source root. Inside one source root, the first existing candidate file SHALL provide the path, in this order: the flat file, the homonymous file, `mod.bd` and the generated file. When source roots of more than one package provide the path, program assembly SHALL fail with the E1104 module path ambiguity error. The error SHALL name the path and each provider package and file in effective root order. Program assembly SHALL NOT continue with the first provider. Source roots that reach the same canonical file SHALL count as one provider.
+
+#### Scenario: Assembly stops on an ambiguous use path
+- **GIVEN** a Lib target with an entry file that contains `use Shared.Codec;` and dependencies `alpha` and `beta` that both provide `Shared.Codec`
+- **WHEN** program assembly runs with import-closure discovery
+- **THEN** assembly fails with the E1104 module path ambiguity error for `Shared::Codec`
+- **AND** the error lists `alpha` before `beta`
+
+#### Scenario: A path with one provider still assembles
+- **GIVEN** the same dependencies and an entry file that contains only `use Alpha.Only;`, a path that only `alpha` provides
+- **WHEN** program assembly runs with import-closure discovery
+- **THEN** assembly succeeds and contains the `Alpha/Only.bd` unit and no `Shared.Codec` unit
 
 ## Informative Source Provenance
 

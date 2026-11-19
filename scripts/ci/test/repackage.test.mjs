@@ -5,11 +5,11 @@ import { spawnSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import { BundleCacheViolations, PruneBundleCaches } from "../lib/bundle-caches.mjs";
+import { AssertNoBundleCaches, BundleCacheViolations, BundleFiles, ListingFiles, PruneBundleCaches } from "../lib/bundle-caches.mjs";
 import { ClippyOnlyFailure, VerifyRepackage, WriteRepackageHandoff } from "../lib/repackage.mjs";
 import { ReadUploadComplete, ResolveBuildHandoffs, ValidateHandoff } from "../woodpecker-handoff.mjs";
 
-const KEY = "c6f41294d3c605315e57ce670a3084567c3fac17e9aa83bb6b24f26bb09c217f";
+const KEY = "c6f41294d3c605315e57ce670a308456";
 const COMPILER = "1".repeat(40), BSOL = "2".repeat(40), DISTRIB = "3".repeat(40), NEW_DISTRIB = "4".repeat(40);
 const sha256 = value => createHash("sha256").update(value).digest("hex");
 const manifest = JSON.parse(readFileSync(new URL("../release-cases-v06.json", import.meta.url), "utf8"));
@@ -87,6 +87,26 @@ test("cache detection lists every .beskid or obj path outside a sealed Mod entry
     "beskid_corelib/mods/m/obj/beskid/cache/salsa/db.json", "beskid_corelib/mods/m/.beskid/obj/mods/m/.cache-lock",
     `beskid_corelib/mods/m/.beskid/obj/mods/m/short-key/x86_64-unknown-linux-gnu/mod.o`, `obj/${sealed}/mod.descriptor.json`,
   ]).length, 4);
+});
+
+test("an archive listing is checked for caches relative to its bundle root, directories skipped", () => {
+  const root = "beskid-0.6.6-x86_64-unknown-linux-gnu";
+  const sealed = `beskid_corelib/mods/m/.beskid/obj/mods/m/${KEY}/x86_64-unknown-linux-gnu`;
+  const listing = [`${root}/`, `${root}/bin/beskid`, `${root}/beskid_corelib/mods/m/.beskid/`, `${root}/beskid_corelib/mods/m/.beskid/obj/mods/m/`,
+    `${root}/${sealed}/`, `${root}/${sealed}/mod.descriptor.json`, ""].join("\n");
+  const files = ListingFiles(listing, root);
+  assert.deepEqual(files, ["bin/beskid", `${sealed}/mod.descriptor.json`]);
+  assert.doesNotThrow(() => AssertNoBundleCaches(files, "bundle"));
+  const cached = ListingFiles(`${listing}\n${root}/beskid_corelib/mods/m/obj/beskid/.materialize-lock\r\n`, root);
+  assert.throws(() => AssertNoBundleCaches(cached, "the qualified release bundle"),
+    /the qualified release bundle carries 1 build-cache path\(s\), for example beskid_corelib\/mods\/m\/obj\/beskid\/.materialize-lock/);
+});
+
+test("packaging refuses a bundle that still carries caches instead of pruning it", (t) => {
+  const { root } = bundleWithCaches(t);
+  assert.throws(() => AssertNoBundleCaches(BundleFiles(root), "the qualified release bundle"), /carries 7 build-cache path/);
+  PruneBundleCaches(root);
+  assert.doesNotThrow(() => AssertNoBundleCaches(BundleFiles(root), "the qualified release bundle"));
 });
 
 // ---------------------------------------------------------------------------------------------

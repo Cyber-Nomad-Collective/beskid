@@ -28,16 +28,13 @@ PUBLISHER_IMAGE = re.compile(
     r"^cr\.beskid-lang\.org/beskid/release-publisher:" + re.escape(PUBLISHER_VERSION) + r"@sha256:[0-9a-f]{64}$"
 )
 # Secrets filtered to the publisher image, and the dispatcher action of each step that binds them.
-PLUGIN_SECRETS = {"compiler_release_token", "pckg_release_publisher_key", "open_vsx_token"}
+PLUGIN_SECRETS = {"compiler_release_token", "open_vsx_token"}
 PLUGIN_STEPS = {
     ("release.yml", "publish-release"): ("release-publish", {"gh_token": "compiler_release_token"}),
-    ("pckg.yml", "publish-corelib-and-templates"): (
-        "pckg-publish", {"gh_token": "compiler_release_token", "pckg_api_key": "pckg_release_publisher_key"}),
     ("editor.yml", "publish-editor-release"): ("editor-publish", {"ovsx_pat": "open_vsx_token"}),
 }
 RELEASE_TOKEN_STEPS = {
     ("release.yml", "publish-release"),
-    ("pckg.yml", "publish-corelib-and-templates"),
 }
 failures = []
 
@@ -189,7 +186,7 @@ verify_commands = "\n".join(steps["verify-release"]["commands"])
 lane = (ROOT / "scripts/ci/woodpecker-release-lane.sh").read_text()
 dispatcher = (PUBLISHER_DIR / "dispatch.sh").read_text()
 # The publish step is a plugin step; its commands are the dispatcher's release-publish branch.
-publish_commands = dispatcher[dispatcher.index("  release-publish)"):dispatcher.index("  pckg-publish)")]
+publish_commands = dispatcher[dispatcher.index("  release-publish)"):dispatcher.index("  editor-publish)")]
 if "bash scripts/ci/woodpecker-release-lane.sh verify" not in verify_commands:
     Fail("release.yml:verify-release must run the release lane without publication")
 if 'GH_TOKEN="$gh_token" bash scripts/ci/woodpecker-release-lane.sh publish' not in publish_commands:
@@ -205,8 +202,8 @@ for needle, message in (
         Fail(message)
 if lane.count('GH_TOKEN="$release_token"') != 1:
     Fail("the lane must hand GH_TOKEN only to the publishing woodpecker-release.sh call")
-if dispatcher.count('GH_TOKEN="$gh_token"') != 2:
-    Fail("the dispatcher must hand GH_TOKEN only to the release lane and the pckg toolchain fetch")
+if dispatcher.count('GH_TOKEN="$gh_token"') != 1:
+    Fail("the dispatcher must hand GH_TOKEN only to the release lane")
 if "windows_installer_owner_waiver_json" not in (publish.get("settings") or {}):
     Fail("release.yml:publish-release must pass the owner waiver to the dispatcher")
 

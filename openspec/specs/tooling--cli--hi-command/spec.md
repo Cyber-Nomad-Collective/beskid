@@ -4,11 +4,9 @@
 ## Purpose
 
 Records the 0.5.1 removal of the former terminal dashboard. Historical source text below is informative only.
-
 ## Requirements
-
 ### Requirement: Hi shell removed in 0.5.1
-The CLI MUST NOT register or launch `beskid hi` or its dashboard, palette, board editor, or shell widgets. This removal MUST NOT remove the separate `beskid graph` terminal visualization.
+The CLI SHALL NOT register or launch `beskid hi` or its dashboard, palette, board editor, or shell widgets. This removal SHALL NOT remove the separate `beskid dev project graph` terminal visualization.
 
 #### Scenario: No Hi shell entrypoint
 - **GIVEN** an installed Beskid 0.5.1 CLI
@@ -17,7 +15,7 @@ The CLI MUST NOT register or launch `beskid hi` or its dashboard, palette, board
 
 #### Scenario: Graph remains interactive
 - **GIVEN** a graph input and an interactive terminal
-- **WHEN** the user invokes `beskid graph --tui`
+- **WHEN** the user invokes `beskid dev project graph --tui`
 - **THEN** the graph visualization remains available
 
 ## Informative Source Provenance

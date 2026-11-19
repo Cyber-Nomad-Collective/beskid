@@ -233,7 +233,7 @@ function createPackageFixture() {
   copyFileSync(new URL("../../../beskid_distrib/macos/Formula/beskid.rb.tpl", import.meta.url), join(distrib, "macos/Formula/beskid.rb.tpl"));
   for (const [file, artifact] of [["deb/build-deb.sh", 'beskid-$1-amd64.deb'], ["macos/build-dmg.sh", 'beskid-$1-macos-arm64.dmg']]) {
     // Installers receive the bundle without build caches: the prebuilt Mod entry stays, its build state does not.
-    writeFileSync(join(distrib, file), `#!/bin/sh\nset -eu\ntest -x "$2/bin/beskid"\ntest -f "$2/release-version.txt"\nif test -d "$2/beskid_corelib/mods"; then test ! -e "$2/beskid_corelib/mods/m/obj"; test ! -e "$2/beskid_corelib/mods/m/.beskid/obj/mods/m/.cache-lock"; test -f "$2/beskid_corelib/mods/m/.beskid/obj/mods/m/${"a".repeat(64)}/x86_64-unknown-linux-gnu/mod.descriptor.json"; fi\nprintf 'installer tool fixture\\n' > "${artifact}"\n`, { mode: 0o755 });
+    writeFileSync(join(distrib, file), `#!/bin/sh\nset -eu\ntest -x "$2/bin/beskid"\ntest -f "$2/release-version.txt"\nif test -d "$2/beskid_corelib/mods"; then test ! -e "$2/beskid_corelib/mods/m/obj"; test ! -e "$2/beskid_corelib/mods/m/.beskid/obj/mods/m/.cache-lock"; test -f "$2/beskid_corelib/mods/m/.beskid/obj/mods/m/${"a".repeat(32)}/x86_64-unknown-linux-gnu/mod.descriptor.json"; fi\nprintf 'installer tool fixture\\n' > "${artifact}"\n`, { mode: 0o755 });
   }
   init(distrib);
   git(distrib, "add", ".");
@@ -280,7 +280,7 @@ test("packaging rejects invalid evidence before creating output", (t) => {
   assert.equal(existsSync(output), false);
 });
 
-test("packaging orchestration consumes the complete verified bundle", { skip: !["darwin", "linux"].includes(process.platform) }, (t) => {
+function packageBundleFixture(t, { caches }) {
   const platform = process.platform === "darwin" ? "macos" : "linux";
   const { root, source, checkout, packageScript } = createPackageFixture();
   t.after(() => { rmSync(root, { recursive: true, force: true }); rmSync(checkout, { recursive: true, force: true }); });
@@ -296,13 +296,15 @@ test("packaging orchestration consumes the complete verified bundle", { skip: ![
   writeFileSync(join(bundle, `lib/beskid-runtime/abi-5/${target}/debug/abi.json`), "{}\n");
   writeFileSync(join(bundle, `lib/beskid-runtime/abi-5/${target}/release/abi.json`), "{}\n");
   writeFileSync(join(bundle, "release-version.txt"), `${VERSION}\n`);
-  // Build caches the Corelib Mod prebuild leaves in the bundle; packaging removes them.
-  const sealed = join(bundle, `beskid_corelib/mods/m/.beskid/obj/mods/m/${"a".repeat(64)}/x86_64-unknown-linux-gnu`);
+  // The sealed Corelib Mod entry ships; bundle assembly already pruned the Mod prebuild caches.
+  const sealed = join(bundle, `beskid_corelib/mods/m/.beskid/obj/mods/m/${"a".repeat(32)}/x86_64-unknown-linux-gnu`);
   mkdirSync(sealed, { recursive: true });
   writeFileSync(join(sealed, "mod.descriptor.json"), "{}\n");
-  writeFileSync(join(bundle, "beskid_corelib/mods/m/.beskid/obj/mods/m/.cache-lock"), "");
-  mkdirSync(join(bundle, "beskid_corelib/mods/m/obj/beskid/cache/salsa"), { recursive: true });
-  writeFileSync(join(bundle, "beskid_corelib/mods/m/obj/beskid/cache/salsa/db.json"), "{}\n");
+  if (caches) {
+    writeFileSync(join(bundle, "beskid_corelib/mods/m/.beskid/obj/mods/m/.cache-lock"), "");
+    mkdirSync(join(bundle, "beskid_corelib/mods/m/obj/beskid/cache/salsa"), { recursive: true });
+    writeFileSync(join(bundle, "beskid_corelib/mods/m/obj/beskid/cache/salsa/db.json"), "{}\n");
+  }
   const archive = join(root, platform, `${name}.tar.gz`);
   const tar = spawnSync("tar", ["-czf", archive, "-C", stage, name], { encoding: "utf8" });
   assert.equal(tar.status, 0, tar.stderr);
@@ -316,8 +318,18 @@ test("packaging orchestration consumes the complete verified bundle", { skip: ![
   for (const name of ["release-gate-compiler.json", "release-gate-compiler.log"]) writeFileSync(join(root, platform, name), "{}\n");
   const output = join(root, "packages");
   const result = spawnSync(process.execPath, [packageScript, platform, root, output], { encoding: "utf8" });
+  return { platform, root, source, name, archive, output, result };
+}
+
+test("packaging refuses a bundle that still carries Mod build caches", { skip: !["darwin", "linux"].includes(process.platform) }, (t) => {
+  const { result } = packageBundleFixture(t, { caches: true });
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /the qualified release bundle carries 2 build-cache path\(s\)/);
+});
+
+test("packaging orchestration consumes the complete verified bundle", { skip: !["darwin", "linux"].includes(process.platform) }, (t) => {
+  const { platform, source, name, archive, output, result } = packageBundleFixture(t, { caches: false });
   assert.equal(result.status, 0, result.stderr);
-  assert.match(result.stderr, /removed 2 build-cache path\(s\)/);
   const report = JSON.parse(readFileSync(join(output, "package-result.json")));
   assert.equal(report.status, "success");
   assert.equal(report.published, false);

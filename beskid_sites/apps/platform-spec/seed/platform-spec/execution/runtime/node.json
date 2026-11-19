@@ -1,8 +1,0 @@
-{
-	"version": 1,
-	"specLevel": "area",
-	"slug": "platform-spec/execution/runtime",
-	"title": "Runtime",
-	"parentSlug": "platform-spec/execution",
-	"status": "published"
-}

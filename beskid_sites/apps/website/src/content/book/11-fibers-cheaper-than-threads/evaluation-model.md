@@ -1,10 +1,12 @@
 ---
 title: "Evaluation model"
-description: Functions, closures, and one scheduler. Why fibers instead of async, and what the compiler checks when a closure crosses a spawn.
+description: Functions, closures, and one scheduler per isolate. Why fibers instead of async, and what the compiler checks when a closure crosses a spawn.
 tableOfContents: true
 ---
 
 Beskid evaluates functions on a cooperative scheduler. A fiber runs until it blocks on something, a channel receive, a socket, a sleep, a join, and then the scheduler runs another one. There is no preemption and no kernel thread per fiber. A fiber is a stack and a program counter; on Linux x86-64 switching between them is a Cranelift tail transfer.
+
+The scheduler belongs to an isolate: one runtime instance with its own heap, its own thread, and exactly one mutator. Fibers never leave the isolate that spawned them, so inside one isolate they interleave and never run in parallel. Work spreads over cores through more isolates, started by `Core.Parallel`, not through more threads under one scheduler. `Concurrency.ProcessorCount()` returns 1 because it counts the mutators of the calling isolate; `Concurrency.HostProcessorCount()` is the number of logical processors the operating system reports.
 
 ## Why not async
 

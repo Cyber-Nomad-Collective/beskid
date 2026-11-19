@@ -41,8 +41,6 @@ Maintainer reference: authoritative URLs for **v0.3 FFI**. Use when updating lin
 | --- | --- |
 | FFI lowering and Cranelift | `/execution/runtime/ffi/` |
 | Syscalls vs extern vs runtime | `/execution/runtime/syscalls-and-abi-boundary/` |
-| Legacy dlopen policy | `/execution/runtime/extern-policy-v0-1/` |
-| Dynamic resolution (platform-spec) | `/platform-spec/language-meta/interop/c-abi-profile/dynamic-resolution-profile/` |
 | Runtime ABI symbol inventory | `/execution/runtime/runtime-abi-v0-1/` |
 
 ## Stdlib policy

@@ -38,6 +38,8 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 
 > Phase literals are defined in `compiler/crates/beskid_pipeline/src/phases.rs` and asserted by conformance tests; CLI/LSP observers rely on the same ids.
 
+The lowering boundary SHALL consist of two phase ids: `lower.ready` (every own unit passed the structural rules and the query gate) and `lower` (the executable front end of the syntax generation exists). The retired ids `lower.ast`, `lower.resolve_pass1`, `lower.normalize`, `lower.resolve`, `lower.type_check` and the structural stage `semantic.error_handling` SHALL NOT be emitted; `codegen_clif` follows `lower` directly. The ordering of every other phase is unchanged.
+
 **Stable ID:** `BSP-REQ-3269537641D5`  
 **Legacy source:** `site/spec-content/platform-spec/compiler/build-pipeline/stage-ordering/adr/0003-canonical-phase-dag/content.md`  
 **Source SHA-256:** `50d76231aca191c15fe0b99fea13de68ad19e61e49a8fb5c00b2d138cf12df1b`
@@ -46,6 +48,12 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **GIVEN** an implementation claims conformance with this capability
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
+
+#### Scenario: Build observes the lowering boundary once
+- **GIVEN** a `beskid build` of a project entry
+- **WHEN** the pipeline observer records phases
+- **THEN** `lower.ready` SHALL precede `lower`, `lower` SHALL precede `codegen_clif`
+- **AND** no `lower.type_check` phase SHALL be recorded
 
 ### Requirement: Mod rewrite before semantic gate: Decision [D-COMP-BUILD-0020]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
@@ -114,6 +122,36 @@ from the diagnostics table without changing this requirement's shape.
 - **WHEN** the compiler lowers a different reachable item in that unit
 - **THEN** the compiler SHALL NOT report E1230 or E1231 for the unreachable
   item
+
+### Requirement: Bounded atomic compiler snapshot restoration
+
+Compiler snapshot restoration SHALL bound the entire input before recursive deserialization to at most 64 MiB, JSON container depth 256, two million containers, and 4 MiB per encoded JSON string. It SHALL check bytes outside strings iteratively and SHALL retain a bounded stack for deserialization and disposal of a partially restored candidate. A valid compiler-produced snapshot deeper than the JSON library default recursion limit SHALL restore when it satisfies these limits. Turning off library recursion protection without equivalent explicit limits and stack protection SHALL NOT be accepted.
+
+Restoration SHALL validate exact compiler identity, snapshot schema version, payload digest and Salsa ingredient allocation ordering before publishing any restored state. Deserialization SHALL operate on a disposable candidate, and all rejected inputs SHALL leave the caller's live database and registries usable. Snapshot production SHALL apply the same size and structural limits before replacing an existing on-disk snapshot.
+
+#### Scenario: Real deep syntax snapshot restores
+
+- **GIVEN** a snapshot containing real persisted syntax and query memos with JSON container depth above 128 and within 256
+- **WHEN** the exact compiler reloads the unmodified snapshot
+- **THEN** restoration succeeds, file and syntax registries are restored, and the same syntax query result remains available
+
+#### Scenario: Oversized or overdeep snapshot fails before mutation
+
+- **GIVEN** an input exceeding the byte, depth, container or string limit and an existing live database
+- **WHEN** restoration is attempted
+- **THEN** it rejects the snapshot without publishing candidate state and the existing database remains usable
+
+#### Scenario: Deep malformed candidate is discarded safely
+
+- **GIVEN** bounded nested snapshot data with valid identity and digest but invalid persisted query data
+- **WHEN** candidate deserialization rejects it
+- **THEN** candidate cleanup occurs with stack protection and the caller's existing file and query state remains unchanged
+
+#### Scenario: Invalid replacement snapshot preserves prior snapshot
+
+- **GIVEN** an existing on-disk snapshot and a candidate serialization exceeding the structural limits
+- **WHEN** snapshot save is attempted
+- **THEN** save reports the limit failure before switching the snapshot and retains the previous file
 
 ## Informative Source Provenance
 

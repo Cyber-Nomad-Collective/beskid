@@ -15,7 +15,9 @@ Beskid types are **nominal** and **static**. The compiler is not impressed by yo
 
 ## Generics
 
-Think `List<T>`, `Map<K,V>`, `Option<T>`: parameterized types must be explicit at boundaries; inference helpers exist but will not save you from ambiguous APIs (see [type inference](/docs/standard/capabilities/language-meta--type-system--type-inference/)).
+Think `List<T>`, `Map<TKey, TValue>`, `Option<T>`: a type parameter is a placeholder that the caller fills in. Functions, types, enums and contracts can all declare them, a `where` clause constrains them with contracts, and the compiler infers the arguments of a call when the answer is unique (see [type inference](/docs/standard/capabilities/language-meta--type-system--type-inference/)).
+
+The practical version, with examples and the error messages, is its own chapter: [07a. Generics: write it once, argue about it once](/book/07a-generics-write-it-once/).
 
 ## Method dispatch
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Corelib gate: workspace/manifest quality checks (corelibQuality) + the
-# beskid_cli dev corelib test suite (corelibTest).
+# Corelib gate: workspace/manifest quality checks (corelibQuality), a standalone
+# `beskid build` of every Corelib package, and the beskid_cli dev corelib test
+# suite (corelibTest).
 #
 # Runs directly on a native CI worker and surfaces full per-test output.
 #
@@ -79,6 +80,117 @@ corelib_run_test_matrix() {
   corelib_run_bounded_phase "run Corelib tests" "${CORELIB_TEST_TIMEOUT:-1800}" \
     "$CLI" test --project "${TESTS_MANIFEST}" --all-targets --plain \
     --target-timeout "${CORELIB_TARGET_TIMEOUT:-600}" </dev/null
+}
+
+# Network package test projects (paths relative to the Corelib workspace root).
+# Every Test and Lib target of each project is built and run. Loopback targets
+# bind 127.0.0.1 (and ::1 when the host offers it) inside the build container,
+# which has its own loopback interface. Tests tagged `bench` are throughput
+# measurements that print numbers, assert little and run for minutes; they are
+# compiled with their target but excluded from execution with --exclude-tag.
+# Interop suites (tls/tests/interop, http2/interop, websocket/tests/interop,
+# web/interop) are separate projects that need curl, OpenSSL or Node peers; they
+# are not part of any project below and run only by hand. The compile-fail
+# project packages/network/tests/compile-fail is checked separately: each of its
+# targets must be rejected with the stated diagnostic.
+NETWORK_TEST_PROJECTS=(
+  "packages/uri/tests"
+  "packages/codec/tests"
+  "packages/crypto/tests"
+  "packages/x509/tests"
+  "packages/connect/tests"
+  "packages/tls/tests"
+  "packages/quic/tests"
+  "packages/http2/tests"
+  "packages/http3/tests"
+  "packages/websocket/tests"
+  "packages/web/tests"
+)
+
+corelib_run_network_test_matrix() {
+  local rel dir manifest failed=0
+  local excludes=(--exclude-tag bench)
+  # Four crypto Provider tests (tag native-crypto) exercise the OpenSSL 3
+  # provider. The Linux build image ships libcrypto.so.3, so Linux must run
+  # them and fails closed without it; other hosts have no libcrypto.so.3 and
+  # exclude them explicitly.
+  if [[ "$(uname -s)" == Linux ]]; then
+    # Read the whole cache listing first: `ldconfig -p | grep -q` under
+    # pipefail fails with SIGPIPE when grep exits before ldconfig finishes.
+    local ld_cache
+    ld_cache="$(ldconfig -p 2>/dev/null || true)"
+    if [[ "${ld_cache}" != *'libcrypto.so.3 '* ]]; then
+      echo "::error::libcrypto.so.3 is missing; the native-crypto Provider tests require OpenSSL 3 on Linux" >&2
+      return 1
+    fi
+  else
+    echo "excluding native-crypto tests: libcrypto.so.3 is a Linux-only provider"
+    excludes+=(--exclude-tag native-crypto)
+  fi
+  for rel in "${NETWORK_TEST_PROJECTS[@]}"; do
+    dir="${CORELIB_ROOT}/${rel}"
+    if ! manifest="$(discover_project_manifest "${dir}")"; then
+      return 1
+    fi
+    if ! (cd "${dir}" && corelib_run_bounded_phase "run network tests: ${rel}" \
+      "${CORELIB_NETWORK_PROJECT_TIMEOUT:-1800}" \
+      "$CLI" test --project "${manifest}" --all-targets --plain "${excludes[@]}" \
+      --target-timeout "${CORELIB_TARGET_TIMEOUT:-600}" </dev/null); then
+      echo "::error::network test project failed: ${rel}" >&2
+      failed=1
+    fi
+  done
+  return "${failed}"
+}
+
+# Compile-fail targets of packages/network/tests/compile-fail: "target|CODE[,CODE...]". A target
+# is accepted when the compiler rejects it with at least one of the listed diagnostic codes
+# (read from `--error-format=json`), never by matching message wording.
+#   RawHandle       E1211  inaccessible field `handle`
+#   RawDeadline     E1205 / E1206  raw integer where Option<Deadline> is required
+#   UdpIsNotStream  E1205 / E1206  UdpSocket passed where Stream is required
+NETWORK_COMPILE_FAIL_PROJECT="packages/network/tests/compile-fail"
+NETWORK_COMPILE_FAIL_TARGETS=(
+  "RawHandle|E1211"
+  "RawDeadline|E1205,E1206"
+  "UdpIsNotStream|E1205,E1206"
+)
+
+# Diagnostic codes in `--error-format=json` output (one JSON object per stderr line), one per line.
+corelib_diagnostic_codes() {
+  jq -Rr 'fromjson? | select(type == "object" and .["$message_type"] == "diagnostic") | .code.code? // empty' <<<"$1"
+}
+
+corelib_check_network_compile_fail() {
+  local dir="${CORELIB_ROOT}/${NETWORK_COMPILE_FAIL_PROJECT}" manifest entry target expected output codes code wanted matched failed=0
+  if ! manifest="$(discover_project_manifest "${dir}")"; then
+    return 1
+  fi
+  command -v jq >/dev/null 2>&1 || { echo "::error::jq is required to read compile-fail diagnostic codes" >&2; return 1; }
+  for entry in "${NETWORK_COMPILE_FAIL_TARGETS[@]}"; do
+    target="${entry%%|*}"
+    expected="${entry#*|}"
+    if output="$(cd "${dir}" && "$CLI" test --project "${manifest}" --target "${target}" --plain --error-format=json </dev/null 2>&1)"; then
+      echo "::error::compile-fail target ${target} compiled and passed; it must be rejected" >&2
+      failed=1
+      continue
+    fi
+    codes="$(corelib_diagnostic_codes "${output}")"
+    matched=""
+    for wanted in ${expected//,/ }; do
+      while IFS= read -r code; do
+        [[ "${code}" == "${wanted}" ]] && matched="${wanted}"
+      done <<<"${codes}"
+    done
+    if [[ -z "${matched}" ]]; then
+      printf '%s\n' "${output}" | tail -n 20 >&2
+      echo "::error::compile-fail target ${target} was not rejected with a diagnostic coded ${expected} (saw: $(tr '\n' ' ' <<<"${codes}"))" >&2
+      failed=1
+    else
+      echo "compile-fail OK: ${target} rejected with ${matched}"
+    fi
+  done
+  return "${failed}"
 }
 
 corelib_sanitize_diagnostic_tail() {
@@ -259,7 +371,7 @@ if [[ "$ws_name" != "corelib" ]]; then
 fi
 
 # WORKSPACE_MEMBERS (registryName, memberId, sourceRel) — must match
-# scripts/ci/lib/corelib-publish-runner.mjs.
+# scripts/release/lib/corelib-publish-runner.mjs.
 WORKSPACE_MEMBERS=(
   "corelib corelib beskid_corelib"
   "corelib_foundation foundation packages/foundation"
@@ -267,6 +379,19 @@ WORKSPACE_MEMBERS=(
   "corelib_compiler_sdk compiler_sdk packages/compiler-sdk"
   "corelib_console console packages/console"
   "corelib_concurrency concurrency packages/concurrency"
+  "corelib_network network packages/network"
+  "corelib_uri uri packages/uri"
+  "corelib_codec codec packages/codec"
+  "corelib_connect connect packages/connect"
+  "corelib_crypto crypto packages/crypto"
+  "corelib_x509 x509 packages/x509"
+  "corelib_tls tls packages/tls"
+  "corelib_http http packages/http"
+  "corelib_http2 http2 packages/http2"
+  "corelib_quic quic packages/quic"
+  "corelib_http3 http3 packages/http3"
+  "corelib_websocket websocket packages/websocket"
+  "corelib_web web packages/web"
 )
 
 for entry in "${WORKSPACE_MEMBERS[@]}"; do
@@ -489,5 +614,14 @@ export BESKID_RUNTIME_KIT_PROFILE=release
 corelib_report_step "stage native runtime kit" \
   corelib_run_bounded_phase "stage native runtime kit" "${CORELIB_RUNTIME_KIT_TIMEOUT:-900}" \
   bash scripts/stage-native-runtime-kit.sh
+# Every Corelib package must build standalone (`beskid build` in its directory of a sealed
+# Corelib copy), as a user does; the test matrix builds the packages only through the workspace.
+# The builds use the profile of the staged runtime kit.
+corelib_report_step "build Corelib packages standalone" \
+  corelib_run_bounded_phase "build Corelib packages standalone" "${CORELIB_PACKAGE_BUILDS_TIMEOUT:-3600}" \
+  env CORELIB_PACKAGE_BUILD_PROFILE="${BESKID_RUNTIME_KIT_PROFILE}" \
+  bash "${ROOT}/scripts/ci/corelib-package-builds.sh" "${CLI}"
 cd "${TESTS_DIR}"
 corelib_report_step "run Corelib tests" corelib_run_test_matrix
+corelib_report_step "run network package tests" corelib_run_network_test_matrix
+corelib_report_step "check network compile-fail fixtures" corelib_check_network_compile_fail

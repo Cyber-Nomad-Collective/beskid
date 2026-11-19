@@ -1,6 +1,5 @@
 # Beskid release publisher: the Woodpecker plugin image that alone receives the
-# publication secrets (compiler_release_token, pckg_release_publisher_key,
-# open_vsx_token). Woodpecker gives an image-filtered secret only to a plugin
+# publication secrets (compiler_release_token, open_vsx_token). Woodpecker gives an image-filtered secret only to a plugin
 # step (no commands, entrypoint or environment), so the publication steps run
 # this image with `settings:` and the dispatcher maps them onto the reviewed
 # scripts of the checked-out repository in $CI_WORKSPACE. The image carries

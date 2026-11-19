@@ -4,9 +4,7 @@
 ## Purpose
 
 This specification defines the language-level test harness, discovery, and assertions. Users rely on these semantics. Corelib testing helpers extend the semantics. The helpers do not redefine them.
-
 ## Requirements
-
 ### Requirement: Test item syntax
 `test Name { body }` MUST declare a test entry point; the identifier is followed directly by the test body block with no parameter list. `meta { key = expr; }` sections MAY attach metadata parsed as `TestMetaSection`. `skip { key = expr; }` sections MUST mark conditional skip predicates. Test bodies MUST contain only statements and meta/skip sections allowed by `TestBodyItem`.
 
@@ -22,6 +20,96 @@ This specification defines the language-level test harness, discovery, and asser
 - **GIVEN** a test with a `skip` section whose predicate evaluates true
 - **WHEN** the test runner executes the suite
 - **THEN** the test is reported as skipped and does not count as a failure
+
+### Requirement: Default test targets
+When `beskid test` resolves a host project manifest and the command has no `--target`, the command SHALL run every target of `kind = Test`, in manifest order, in one run. When the manifest declares no Test target, the command SHALL run the Lib target. When the manifest declares no Test target and two or more Lib targets, the command SHALL fail with an error that names the Lib targets and says to pass `--target <name>`. When the manifest declares neither a Test target nor a Lib target, the command SHALL run no tests, as for an App-only project.
+
+When the command runs two or more targets, it SHALL report each target and then a combined summary of all targets. A target that fails to compile SHALL be reported as a failed target, and the command SHALL continue with the next target. The command SHALL exit with a nonzero status when one or more targets fail. With `--json`, the command SHALL write one `result` record with one entry for each target and a combined summary.
+
+#### Scenario: A library with a Test target
+- **GIVEN** a manifest that declares `target "lib" { kind = Lib }` and then `target "tests" { kind = Test }`, and `tests` declares one passing `test` item
+- **WHEN** `beskid test` runs without `--target`
+- **THEN** the command runs the `tests` target, reports one passed test and exits with status 0
+
+#### Scenario: Two Test targets
+- **GIVEN** a manifest that declares the Test targets `unit` and `more`, in that order, and one test of `more` fails
+- **WHEN** `beskid test` runs without `--target`
+- **THEN** the command runs `unit` and then `more`, reports a combined summary with one failed target and exits with a nonzero status
+
+#### Scenario: No Test target
+- **GIVEN** a manifest that declares an App target and a Lib target that declares a `test` item
+- **WHEN** `beskid test` runs without `--target`
+- **THEN** the command runs the tests of the Lib target
+
+### Requirement: Generic equality assertions
+`Testing.Assert.Equal<T>`, `Testing.Assert.NotEqual<T>` and `Testing.Expect.Equal<T>` SHALL require `T: Formatting`. The failure record SHALL carry `Format()` of the expected and the actual value. The functions `Expect.EqualI64`, `Expect.EqualString` and `Expect.EqualBool` SHALL NOT exist.
+
+#### Scenario: Failure carries both values
+- **GIVEN** `Assert.Equal<i64>(3, 4)`
+- **WHEN** the assertion fails
+- **THEN** the failure record carries "3" and "4"
+
+### Requirement: Qualified test identity and selection
+The identity of a test SHALL be its qualified name relative to its source unit: the names of the inline modules that enclose it, outermost first, followed by the test name, joined by `::`. A test at the unit root SHALL have its name alone as identity. Test discovery, the `qualified_name` of each test in the `beskid test` report, and the selection of the test that the runner builds and runs SHALL all use this identity. A selection that names no test SHALL fail the build of the test target. A selection that names more than one test SHALL fail the build of the test target and SHALL NOT select one of them. Two tests with the same name in different inline modules SHALL be distinct tests.
+
+#### Scenario: Nested test runs by its qualified name
+- **GIVEN** `mod Topic { test Inner { } }` in a Test target
+- **WHEN** `beskid test` runs
+- **THEN** the report contains the test `Topic::Inner` with outcome `passed`, and the build reports no missing test
+
+#### Scenario: Failing nested test fails
+- **GIVEN** `mod Topic { test Broken { Assert.Fail("x"); } }` in a Test target
+- **WHEN** `beskid test` runs
+- **THEN** the report contains the test `Topic::Broken` with outcome `failed`, and the command fails
+
+#### Scenario: Same-named tests in two modules
+- **GIVEN** `mod Alpha { test Shared { } }`, `mod Beta { test Shared { } }` and `test Shared { }` in one file
+- **WHEN** the file is checked and `beskid test` runs
+- **THEN** the check reports no duplicate name, and the report contains `Alpha::Shared`, `Beta::Shared` and `Shared`, each with its own outcome
+
+#### Scenario: Bare name does not select a nested test
+- **GIVEN** `mod Topic { test Inner { } }` and no test `Inner` at the unit root
+- **WHEN** the selection `Inner` is built
+- **THEN** the build fails because no test has the identity `Inner`
+
+### Requirement: Test discovery with a separate namespace
+`beskid test` SHALL discover every `test` item, including a test that shares its name with a function or type. The test report SHALL identify a test by its module and name.
+
+#### Scenario: Shared name is discovered
+- **GIVEN** a function `Parse` and `test Parse { }`
+- **WHEN** `beskid test` runs
+- **THEN** the test `Parse` runs and appears in the report
+
+### Requirement: Assertion failure reporting
+A failed assertion in `Testing.Assert` SHALL end the test as a test failure. It SHALL NOT end the test as a runtime trap. The failure report SHALL name the test, the call site of the `Assert` call (file, line and column), the expected value and the actual value. The report text SHALL have the form `assertion failed: expected <expected>, found <actual>`. A runtime trap during a test body SHALL be reported separately, with the form `test crashed: <reason>`, and SHALL NOT be reported as an assertion failure. Both outcomes SHALL count as failures in the run summary. Language-server and editor integrations SHALL show an assertion failure as an error on the line of the `Assert` call.
+
+#### Scenario: Assertion failure
+- **GIVEN** a test whose body calls `Assert.Equal(3, Add(1, 3))`
+- **WHEN** the test runs
+- **THEN** the runner reports `assertion failed: expected 3, found 4` under the test name, with the location of the `Assert.Equal` call
+
+#### Scenario: Runtime trap
+- **GIVEN** a test whose body divides by zero
+- **WHEN** the test runs
+- **THEN** the runner reports `test crashed:` with the trap reason and does not report an assertion failure
+
+#### Scenario: Failure count
+- **GIVEN** one failed assertion and one crashed test
+- **WHEN** the run ends
+- **THEN** the summary counts two failures
+
+### Requirement: A project without tests passes
+`beskid test` without `--target` on a project whose manifest has no `Test` or `Lib` target (for example a project with only an `App` target) SHALL run no tests, SHALL print "No tests found." and SHALL exit with status 0, as it does for a `Lib` target that declares no `test` item. With `--json` the command SHALL write one `result` record with status `success` and a summary with zero tests. `beskid test --target <name>` where `<name>` is not a `Test` or `Lib` target of the manifest SHALL fail with a message that names the target.
+
+#### Scenario: App-only project
+- **GIVEN** a project whose manifest declares only `target "app" { kind = App; entry = "Main.bd"; }`
+- **WHEN** `beskid test --project <project>` runs
+- **THEN** the command prints "No tests found." and exits with status 0
+
+#### Scenario: Selected target that is not a test target
+- **GIVEN** the same project
+- **WHEN** `beskid test --project <project> --target app` runs
+- **THEN** the command fails with "target `app` is not a Test or Lib target"
 
 ## Informative Source Provenance
 

@@ -16,6 +16,10 @@ Fiber<unit> server = spawn (() => Serve(listener));
 
 Fibers are how Beskid does concurrency. There is no raw OS-thread API: `Thread.Spawn` and `Thread.Join` are gone from Corelib, and `Core.Threading` keeps only `Thread.Yield`, an OS-level yield.
 
+## Spawning a call or a closure
+
+`spawn F(x)` and `spawn (() => F(x))` start the same fiber with one difference in timing. In `spawn F(x)` the arguments are evaluated **in the spawning fiber**, before the new fiber exists. In the closure form the call, with its arguments, is evaluated **inside the new fiber**. If `x` is an expression with side effects, or a value that may change before the fiber starts, the first form fixes it at the `spawn` and the second reads it later.
+
 ## Types
 
 Every `spawn` expression **must** type-check to **`Fiber<T>`** where `T` is the entry callable's return type (`Concurrency.Fiber` in `corelib_concurrency`). You do not get `T` directly from `spawn`; use **`Join`**.

@@ -1,0 +1,214 @@
+---
+title: "Host and launch"
+description: Declare a host with parameters, extend another host, and start exactly one of them with launch.
+tableOfContents: true
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+A **host** is a named composition root. It is a declaration, like a `type`, and a project may declare as many as it likes. A **launch** is a statement, and a process run executes exactly one.
+
+## Declaring a host
+
+```text
+host Name(parameters) : BaseHost
+{
+    registry { ... }
+    scope Request(parameters) { ... }
+    startup(...) { ... }
+}
+```
+
+| Part | Meaning |
+| --- | --- |
+| `host Name` | The name that `launch` uses. PascalCase, like a type. |
+| `(parameters)` | **Launch inputs.** Required, even when empty. |
+| `: BaseHost` | Optional. The host whose registry this one extends. |
+| Body | Any number of `registry` blocks, `scope` definitions and hooks. |
+
+The parentheses are not optional. `host AppHost { ... }` is a parse error with its own code (E0104), because every host declares what `launch` must pass it, even if the answer is nothing.
+
+## Launch inputs
+
+Parameters on the host are values the caller supplies at `launch`. A hook can read them:
+
+```beskid
+use Core.Output;
+
+type Logger
+{
+    pub unit Info(string message)
+    {
+        Output.WriteLine(message);
+        return;
+    }
+}
+
+host GreeterHost(string name)
+{
+    registry
+    {
+        single Logger;
+    }
+
+    startup(Logger logger)
+    {
+        logger.Info("hello, ${name}");
+    }
+}
+
+i32 Main()
+{
+    launch GreeterHost("beskid");
+    return 0;
+}
+```
+
+The arguments of `launch GreeterHost(...)` must match the host's parameter list. A host with no parameters is launched with `launch AppHost();`.
+
+## The one-launch rule
+
+| Rule | Code |
+| --- | --- |
+| A host-bearing `App` or `Test` target needs exactly one `launch` | E1701 when missing |
+| Two `launch` statements on one entry path are an error | E1702 |
+| `launch` names a host, not any other type | E1709 |
+| A `Lib` target may declare hosts but must not `launch` | E1711 |
+
+Why the strictness? A `launch` starts a process-wide arrangement. Two of them would mean two global containers fighting over the same services, and the compiler would rather have you decide. A library is the other side of the same rule: it can export a host as a reusable building block, and the application that owns `Main` decides when to start it. See [targets and outputs](/book/03-project-proj-or-it-didnt-happen/targets-and-outputs/) for the difference between an `App` and a `Lib`.
+
+## Many hosts, one launch
+
+A project can declare several hosts, for example one for the real application and one that keeps quiet:
+
+```beskid
+use Core.Output;
+
+contract Logger
+{
+    unit Info(string message);
+}
+
+type ConsoleLogger : Logger
+{
+    pub unit Info(string message)
+    {
+        Output.WriteLine(message);
+        return;
+    }
+}
+
+type QuietLogger : Logger
+{
+    pub unit Info(string message)
+    {
+        return;
+    }
+}
+
+host ProductionHost()
+{
+    registry
+    {
+        single ConsoleLogger for Logger;
+    }
+
+    startup(Logger logger)
+    {
+        logger.Info("production");
+    }
+}
+
+host QuietHost()
+{
+    registry
+    {
+        single QuietLogger for Logger;
+    }
+
+    startup(Logger logger)
+    {
+        logger.Info("never printed");
+    }
+}
+
+i32 Main()
+{
+    launch ProductionHost();
+    return 0;
+}
+```
+
+Only the launched host, together with its bases, takes part in the composition of a run. `QuietHost` stays a declaration until some `launch` names it.
+
+## Extending a host
+
+A host can name a base after a colon. The base's registrations come first and the extending host's registrations override them, key by key. A library can therefore ship a base host with sensible defaults, and the application changes only what it must. These declarations reuse `Logger`, `ConsoleLogger` and `QuietLogger` from the previous example:
+
+```beskid
+host BaseHost()
+{
+    registry
+    {
+        single ConsoleLogger for Logger;
+    }
+}
+
+host AppHost() : BaseHost
+{
+    registry
+    {
+        single QuietLogger for Logger;
+    }
+
+    startup(Logger logger)
+    {
+        logger.Info("the quiet logger wins");
+    }
+}
+```
+
+`AppHost` inherits `BaseHost`'s registry and replaces the binding for the contract `Logger`. The rules for the merge are in [Registry and lifetimes](/book/11a-hosts-and-native-ioc/registry-and-lifetimes/). A base that names itself, directly or through a chain, is E1715.
+
+A base host can live in another unit of the assembly: a library of yours, or Corelib.
+
+## `ConsoleHost`
+
+Corelib ships a base host for console programs, `ConsoleHost`, in the module `Console.Hosting` (package `corelib_console`). An application writes `use Console.Hosting;` so that the unit is part of the assembly, and extends the host by name. `ConsoleHost` registers a global `single` named `CommandLine`, which gives the program its arguments and its exit status:
+
+| Member | Meaning |
+| --- | --- |
+| `All()` | All arguments, the program name first |
+| `Arguments()` | The arguments after the program name |
+| `Count()` | How many arguments follow the program name |
+| `Exit(code)` | End the program now with that exit status |
+
+```beskid
+use Console.Hosting;
+use Core.Output;
+
+host AppHost() : ConsoleHost
+{
+    startup(Hosting.CommandLine commandLine)
+    {
+        i64 count = commandLine.Count();
+        Output.WriteLine("arguments: ${count}");
+    }
+}
+
+i32 Main()
+{
+    launch AppHost();
+    return 0;
+}
+```
+
+`ConsoleHost` has no run loop. After `startup`, the program continues with the statement after `launch`, so a console program is an ordinary `Main` that has been given a command line. The app extends the base host and declares its own services and scopes beside it.
+
+## Hosts do not belong in Mods
+
+A `type: Mod` project that declares a host gets E1710. Mods change the compiler's pipeline, not your application's wiring. See [chapter 15](/book/15-mods-plugins-with-consequences/what-is-a-mod/).
+
+## Next
+
+[Registry and lifetimes](/book/11a-hosts-and-native-ioc/registry-and-lifetimes/)

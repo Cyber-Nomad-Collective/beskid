@@ -23,7 +23,7 @@ Reference types and arrays live on the **GC-managed heap**. The runtime uses a c
 
 ## Parameter passing
 
-- Parameters pass **by value**; use return values or heap/`T[]` handles when callers need updated state.
+- Parameters pass **by value**. When a caller needs the updated state, return it. Arrays need a closer look, because a `T[]` value is a handle: an element write through it (`xs[0] = 5;`) shows up in every handle to the same array, the caller's included. A length change does not. `Array.Append` or `Array.RemoveLast` through one handle never changes what another handle sees; when someone else can still read the array, the handle that grows or shrinks it gets its own copy ([Memory and references](/platform-spec/language-meta/memory-model/memory-and-references/)). `List<T>` is not an array and keeps its shared header with its own copy rules ([Core collections](/platform-spec/core-library/foundation-and-primitives/core-collections/)).
 - Cross-fiber sharing of mutable state goes through **channels**, not shared stacks ([fibers and spawn](/platform-spec/language-meta/evaluation/fibers-and-spawn/)).
 
 See also the [memory model area](/platform-spec/language-meta/memory-model/) and [execution runtime](/platform-spec/execution/runtime/) for the full normative tree.

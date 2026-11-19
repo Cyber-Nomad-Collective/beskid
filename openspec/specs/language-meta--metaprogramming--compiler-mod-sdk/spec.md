@@ -4,9 +4,7 @@
 ## Purpose
 
 This specification defines the Beskid-side compiler-mod contracts. It defines the Beskid.Syntax mirror, the declarative query, and the typed AST operations.
-
 ## Requirements
-
 ### Requirement: Mod SDK contract hierarchy
 The Compiler Mod SDK (`compiler-sdk` package) MUST be the Beskid-side surface for `type: Mod` projects. Mod behavior MUST be declared through SDK `contract` interfaces (`Collector`, `Generator`, `Analyzer`, `Rewriter`, `AttributeGenerator`) and `Beskid.Syntax` operations — not through dedicated metaprogramming grammar items in the host language. Hosts MUST discover contract implementations from AOT-compiled `Mod` packages in the dependency graph (direct and transitive).
 
@@ -24,12 +22,17 @@ During `mod.load`, the mod host MUST resolve every transitive `type: Mod` depend
 - **THEN** the host emits **E1829** or **E1851–E1870** and does not run `mod.collect`
 
 ### Requirement: Beskid.Syntax traversal and no source emission
-`Beskid.Syntax.Nodes.Node` MUST be a contract that is the sole navigation surface for mod traversal via `NodeRef` handles with stable identities per syntax generation. Mod code MUST build and transform trees through declarative fluent APIs with no string formatting or source-text emission. Language macros are not Mod contracts; they expand via `macro.expand` before `mod.load`.
+`Beskid.Syntax.Nodes.Node` MUST be a contract that is the sole navigation surface for mod traversal via `NodeRef` handles with stable identities per syntax generation. Mod code MUST build and transform trees through declarative fluent APIs with no string formatting or source-text emission. The SDK MUST NOT provide a source-text contribution type: `CodeContribution`, `CodeString`, the `codeOutputs` field and their helpers do not exist. A `Generator` result MUST be a typed structural contribution only, and the host MUST reject a native result that carries any field that is not a typed structural value. The host MUST merge generated nodes without parsing text. Language macros are not Mod contracts; they expand via `macro.expand` before `mod.load`.
 
 #### Scenario: Generator emits typed AST only
 - **GIVEN** a `Generator` contract implementation
 - **WHEN** it contributes to the host program
-- **THEN** the contribution is typed AST (not formatted source text) and may be re-expanded for embedded language macros after re-parse
+- **THEN** the contribution is typed structural AST, never formatted source text, and the host merges it without a text parse and then runs `macro.expand` again on the merged tree
+
+#### Scenario: Native result with a non-typed field is rejected
+- **GIVEN** a native `Generator` result that carries a field that is not a typed structural contribution
+- **WHEN** the host decodes the result
+- **THEN** the host rejects the whole result and merges nothing from it
 
 ## Informative Source Provenance
 

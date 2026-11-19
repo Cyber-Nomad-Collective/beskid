@@ -67,7 +67,7 @@ const FEATURE_CASES = [
 const GLUE_NOT_APPLICABLE_REASON = "Glue bindings are outside the v0.5 release contract; generated Rust/.NET bindings remain deferred to v0.6.";
 const scripts = dirname(fileURLToPath(import.meta.url));
 // Reviewed source manifest identity: update only alongside reviewed real bindings.
-const V06_CASE_MANIFEST_SHA256 = "4bdcc4bf9310a99f4903057b9a25fe3a988bff0f8bc45a7c3587289e7427ff04";
+const V06_CASE_MANIFEST_SHA256 = "c4069aad3809230567aa3996194925771d71456027339d32299f2af757ed25dd";
 
 function fail(message) {
   throw new Error(message);
@@ -400,7 +400,7 @@ export function ValidateV06FeatureEvidence(feature, manifestBytes, expected) {
       const harnessFile = harnessDigests.get(binding.harness);
       if (!harnessFile || recordedBasename(row.command.argv[0]) !== harnessFile.file || row.command.tool_sha256 !== harnessFile.sha256
           || recordedBasename(row.command.tool_file) !== harnessFile.file) fail(`${row.id} command must execute the retained harness executable`);
-      if (!samePathSegments(row.command.env.BESKID_V06_QUALIFIED_PREFIX ?? "", installed.prefix)) fail(`${row.id} harness must receive the installed prefix`);
+      if (!samePathSegments(row.command.env.BESKID_QUALIFIED_PREFIX ?? "", installed.prefix)) fail(`${row.id} harness must receive the installed prefix`);
       toolFile = harnessFile.file;
     }
     checkedPacketFile(expected, { path: toolFile, sha256: row.command.tool_sha256 }, `${row.id} command tool`);
