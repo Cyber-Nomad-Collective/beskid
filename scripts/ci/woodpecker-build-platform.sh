@@ -77,6 +77,15 @@ if [[ -n "${CI_PIPELINE_NUMBER:-}" || -n "${CI_COMMIT_SHA:-}" ]]; then
     git -C "${root}/${dependency}" diff --cached --quiet
   done
 fi
+if [[ "${version}" == 0.7.* ]]; then
+  (
+    cd "${root}/compiler"
+    host="$(rustc -vV | sed -n 's/^host: //p' | tr -d '\r')"
+    [[ "${host}" == "${target}" ]] || { echo "stack maps require native ${target}, found ${host}" >&2; exit 1; }
+    cargo test --locked --target "${target}" -p beskid_engine --no-fail-fast \
+      --test stack_maps_native --test stack_maps_parked --test stack_maps_jit -- --show-output
+  ) 2>&1 | tee "${output_dir}/stack-maps-native.log"
+fi
 bash "${platform_builder}" \
   "${target}" "${cli_asset}" "${lsp_asset}" \
   "${version}" stable "${output_dir}" "${bundle_asset}"
@@ -198,6 +207,9 @@ checksum_files=(
   woodpecker-build-result.json
   feature-evidence-v1.json
 )
+if [[ "${version}" == 0.7.* ]]; then
+  checksum_files+=(stack-maps-native.log)
+fi
 if [[ "${platform}" == linux ]]; then
   checksum_files+=(cli-surface-evidence-v1.json cli-surface-receipt-v1.json)
 fi
