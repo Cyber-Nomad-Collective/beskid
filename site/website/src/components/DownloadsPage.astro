@@ -1,33 +1,74 @@
 ---
-import { existsSync, readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
-import { beskidUiSrcUrl } from "../lib/beskid-ui-root.mjs";
-import { loadCliVersion, loadTrackerDelivery } from '../lib/load-download-versions';
-import { DownloadsSection } from '@beskid/ui-react/downloads';
+const version = "0.7.0";
+const releaseTag = `v${version}`;
+const releasesUrl = "https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases";
+const assetsUrl = `${releasesUrl}/download/${releaseTag}`;
+const platforms = [
+	{ name: "Linux x64", target: "x86_64-unknown-linux-gnu", editor: "linux-x64" },
+	{ name: "Windows x64", target: "x86_64-pc-windows-msvc", editor: "win32-x64" },
+	{ name: "macOS (Apple silicon)", target: "aarch64-apple-darwin", editor: "darwin-arm64" },
+];
 
-export interface Props {
-	version?: string;
-	versionSource?: string;
-}
-
-const cli = loadCliVersion();
-const trackerDelivery = await loadTrackerDelivery();
-
-const version = Astro.props.version ?? trackerDelivery?.downloadLabel ?? cli.version;
-const versionSource = Astro.props.versionSource ?? cli.source;
-
-const downloadsCssPath = fileURLToPath(beskidUiSrcUrl("styles/downloads.css"));
-const downloadsCss = existsSync(downloadsCssPath)
-	? readFileSync(downloadsCssPath, "utf8")
-	: "";
 ---
-
-{downloadsCss && <style is:global>{downloadsCss}</style>}
-
-{!downloadsCss && <link rel="stylesheet" href={beskidUiSrcUrl("styles/downloads.css")} />}
 
 <div class="downloads-page">
 	<div class="downloads-layout">
-		<DownloadsSection client:only="react" initialVersion={version} versionSource={versionSource} />
+		<section class="downloads-block" aria-labelledby="stable-release">
+			<header class="downloads-block__header">
+				<h1 id="stable-release" class="downloads-title">Download beskid {version}</h1>
+				<p class="downloads-lead">
+					Each toolchain archive includes the CLI, language server, Corelib, and native runtime.
+					Choose the matching VSIX to add language support to VS Code.
+				</p>
+			</header>
+			<div class="downloads-platform-rows">
+				{platforms.map(({ name, target, editor }) => (
+					<div class="downloads-platform-row">
+						<h2 class="downloads-platform-row__label">{name}</h2>
+						<div class="downloads-actions">
+							<a
+								class="downloads-btn downloads-btn--primary"
+								href={`${assetsUrl}/beskid-${version}-${target}.tar.gz`}
+								aria-label={`Download toolchain archive for ${name}`}
+							>
+								Toolchain (.tar.gz)
+							</a>
+							<a
+								class="downloads-btn downloads-btn--secondary"
+								href={`${assetsUrl}/beskid-vscode-${version}-${editor}.vsix`}
+								aria-label={`Download VS Code extension for ${name}`}
+							>
+								VS Code (.vsix)
+							</a>
+						</div>
+					</div>
+				))}
+			</div>
+			<div class="downloads-actions">
+				<a class="downloads-btn downloads-btn--secondary" href={`${assetsUrl}/SHA256SUMS`}>
+					SHA-256 checksums
+				</a>
+				<a class="downloads-btn downloads-btn--secondary" href={`${releasesUrl}/tag/${releaseTag}`}>
+					Release on GitHub
+				</a>
+			</div>
+		</section>
+
+		<section class="downloads-block" aria-labelledby="install-details">
+			<h2 id="install-details" class="downloads-title downloads-title--section">Install</h2>
+			<ol>
+				<li>Compare the SHA-256 hash of each downloaded file with its entry in <code>SHA256SUMS</code>.</li>
+				<li>
+					Extract the toolchain archive and keep the extracted directory together.
+					Run <code>bin/beskid --version</code> on Linux or macOS,
+					or <code>.\bin\beskid.exe --version</code> on Windows, from that directory.
+				</li>
+				<li>
+					In VS Code, choose <strong>Extensions: Install from VSIX...</strong> in the Command Palette
+					and select the VSIX for your platform.
+				</li>
+			</ol>
+			<p class="downloads-footnote"><a href={releasesUrl}>Browse previous releases on GitHub</a>.</p>
+		</section>
 	</div>
 </div>

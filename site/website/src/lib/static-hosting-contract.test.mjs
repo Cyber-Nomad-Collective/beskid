@@ -31,9 +31,13 @@ test('registers the React renderer required by interactive download components',
 	assert.match(astroConfig, /dedupe:\s*\['react', 'react-dom'\]/);
 });
 
-test('renders the interactive downloads widget only in the browser', async () => {
+test('renders pinned stable downloads in the static page', async () => {
 	const source = await readFile(path.join(siteRoot, 'src/components/DownloadsPage.astro'), 'utf8');
-	assert.match(source, /<DownloadsSection\s+client:only="react"/);
+	assert.doesNotMatch(source, /client:only|loadCliVersion|loadTrackerDelivery/);
+	assert.match(source, /\/download\/\$\{releaseTag\}/);
+	assert.match(source, /\.tar\.gz/);
+	assert.match(source, /\.vsix/);
+	assert.match(source, /\/SHA256SUMS/);
 });
 
 test('pins the website root in the static image so release metadata is discoverable', async () => {
