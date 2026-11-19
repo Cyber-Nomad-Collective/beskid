@@ -1,20 +1,19 @@
-## 1. Validate
+## 1. Implement
 
-- [ ] 1.1 Validate this change with `openspec validate v07-precise-stack-maps --strict` and regenerate `openspec/catalog.json` when the change is applied.
-- [ ] 1.2 Decide with the ABI owner whether the stack-map table is an ABI-v5 addition or an ABI version step.
+- [x] 1.1 Classify managed locals, temporaries and compiler-created values across all lowering paths.
+- [x] 1.2 Serialize machine stack maps with correct code and data relocations for AOT and Engine modules.
+- [x] 1.3 Publish precise roots for active and parked frames and validate the runtime-kit ABI.
+- [x] 1.4 Remove generated stack-slot registrations, construction handles and the leaf registration elision after cutover.
 
-## 2. Introduce
+## 2. Verify
 
-- [ ] 2.1 Lowering: declare every managed SSA value and managed variable with `declare_value_needs_stack_map` / `declare_var_needs_stack_map`; add a CLIF check that rejects an undeclared managed value live across a call.
-- [ ] 2.2 Emission: collect `user_stack_maps()` per function after `define_function`; write the module stack-map table (AOT section, JIT registration at finalization).
-- [ ] 2.3 Runtime: stack-map table registry; frame-pointer walk for the current thread and suspended fibers; mark the listed slots through `ManagedObjectForReference`.
-- [ ] 2.4 Manifest: table layout and registration exports in `runtime_manifest.bsol`; regenerate the ABI artifacts with the official generator.
+- [x] 2.1 Verify live and dead objects in a linked optimized program with maps as the sole protection.
+- [x] 2.2 Verify reentrant host callbacks, parked fibers, loop safepoints and temporary arguments under collection stress.
+- [x] 2.3 Qualify the final default compiler on native Linux x64, Windows x64 and macOS arm64.
+- [x] 2.4 Measure fixture pause time, checkpoint overhead and metadata size.
 
-## 3. Delete
+Before RC4 integration, the default compiler passed the linked AOT callback (debug and release), Engine JIT and parked-fiber stress tests on Linux x64, Windows Server x64 MSVC and macOS arm64. All three native runs used compiler source snapshot SHA-256 `bce1250e7541cc9a269186fa664eea5ec010ccbf3bb4d2d18b7c29a194901e49`. The Linux negative control still detects the lost live object when checkpoint publication is disabled. The mixed runtime fixtures also lower with nonempty maps in their managed functions. On Linux the canonical GC and scheduler suites each passed all ten tests. The 6000-frame recursion fixture passed in JIT, static AOT and native-kit execution.
 
-- [ ] 3.1 Remove `gc_register_root` / `gc_unregister_root` emission, the registration `trapz`, construction-temporary root handles in lowering, the TLS `RootFrame` chain, and `crates/beskid_isle/src/root_elision.rs`.
+The Linux callback fixture used 416 bytes of stack-map data with sole map protection and 800 bytes with dual protection, in both AOT profiles. With live callback roots, 1,000 collections averaged 3.43 microseconds on the release kit. A separate Linux release-kit microbenchmark took a median 30.71 ns per push/pop pair over seven batches of one million pairs. Median empty-heap collection was 449.60 ns over seven batches of ten thousand collections. These local measurements characterize the fixtures. Application workload pause measurements remain open for release.
 
-## 4. Verify
-
-- [ ] 4.1 Run all native-kit, Corelib, Serialization Mod, `runtime_semantics`, interop and release suites on Linux x86_64, macOS aarch64 and Windows x86_64.
-- [ ] 4.2 Run the `BESKID_GC_STRESS=alloc:1,verify` pass from `v061-gc-stress-and-poison` and record that it passes with no manual root emission.
+After merging RC4 and properties, compiler `cac22b277f633dd64ef8f4e5345bb8a911c77d8b` with corelib `bb8fb0b5ef9426bb871618df30744238039ea55e` passed the Engine JIT, linked AOT callback and parked-fiber tests on Linux x64, Windows Server x64 MSVC and macOS arm64. The source archive for these runs had SHA-256 `f1d3da2428047bbd0dc99dd340ed5da545c20c74ad2fdf1bd6de7a07c8883e97`. The Linux negative control detected the missing root when checkpoint publication was disabled.

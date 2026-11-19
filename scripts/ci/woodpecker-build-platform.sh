@@ -86,6 +86,15 @@ if [[ -n "${CI_PIPELINE_NUMBER:-}" || -n "${CI_COMMIT_SHA:-}" ]]; then
     git -C "${root}/${dependency}" diff --cached --quiet
   done
 fi
+if [[ "${version}" == 0.7.* ]]; then
+  (
+    cd "${root}/compiler"
+    host="$(rustc -vV | sed -n 's/^host: //p' | tr -d '\r')"
+    [[ "${host}" == "${target}" ]] || { echo "stack maps require native ${target}, found ${host}" >&2; exit 1; }
+    cargo test --locked --target "${target}" -p beskid_engine --no-fail-fast \
+      --test stack_maps_native --test stack_maps_parked --test stack_maps_jit -- --show-output
+  ) 2>&1 | tee "${output_dir}/stack-maps-native.log"
+fi
 bash "${platform_builder}" \
   "${target}" "${cli_asset}" "${lsp_asset}" \
   "${version}" stable "${output_dir}" "${bundle_asset}"
@@ -333,6 +342,9 @@ else
     case_log_name="$(basename "${case_log}")"
     [[ "${case_log_name}" == feature-evidence-v1.json ]] || checksum_files+=("${case_log_name}")
   done
+  if [[ "${version}" == 0.7.* ]]; then
+    checksum_files+=(stack-maps-native.log)
+  fi
 fi
 (
   cd "${output_dir}"
